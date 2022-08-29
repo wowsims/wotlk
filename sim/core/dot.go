@@ -183,7 +183,6 @@ func NewDot(config Dot) *Dot {
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		*dot.snapshotEffect = baseEffect
-		dot.snapshotEffect.IsSnapshot = true
 		if dot.useSnapshot {
 			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
 			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
@@ -210,7 +209,6 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
-		dot.snapshotEffect.IsSnapshot = true
 		if dot.useSnapshot {
 			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
 			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
@@ -236,7 +234,6 @@ func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEff
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
 		*dot.snapshotEffect = baseEffect
-		dot.snapshotEffect.IsSnapshot = true
 		if dot.useSnapshot {
 			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
 			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit

@@ -173,7 +173,7 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	sim.pendingActions[0].OnAction(sim)
 
 	// (1000/6) * 1.5 * 2 = 500
-	expectedDmg := 1000.0
+	expectedDmg := 500.0
 	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
 		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
 	}
@@ -182,7 +182,7 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	sim.advance(time.Second * 3)
 	sim.pendingActions[0].OnAction(sim)
 
-	expectedDmg = 1000.0 + 1000.0
+	expectedDmg = 500.0 + 500.0
 	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
 		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
 	}

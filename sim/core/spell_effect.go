@@ -46,9 +46,6 @@ type SpellEffect struct {
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
 
-	// For snapshotted effects, to ignore certain multipliers.
-	IsSnapshot bool
-
 	// Indicates this is a healing spell, rather than a damage spell.
 	IsHealing bool
 
@@ -234,9 +231,7 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	if sim.Log != nil {
 		baseDmg := spellEffect.Damage
-		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-		}
+		spellEffect.applyAttackerModifiers(sim, spell)
 		afterAttackMods := spellEffect.Damage
 		spellEffect.applyResistances(sim, spell, attackTable)
 		afterResistances := spellEffect.Damage
@@ -250,9 +245,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 			"%s %s [DEBUG] MAP: %0.01f, RAP: %0.01f, SP: %0.01f, BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
 			spellEffect.Target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 	} else {
-		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-		}
+		spellEffect.applyAttackerModifiers(sim, spell)
 		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.applyTargetModifiers(sim, spell, attackTable)
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
@@ -376,6 +369,12 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		return
 	}
 
+	// For dot snapshots, everything has already been stored in spellEffect.DamageMultiplier.
+	if spellEffect.IsPeriodic {
+		spellEffect.Damage *= spellEffect.DamageMultiplier
+		return
+	}
+
 	attacker := spell.Unit
 
 	if spellEffect.IsHealing {
@@ -395,14 +394,10 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		}
 	}
 
-	if !spellEffect.IsSnapshot {
-		spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
-	} else {
-		spellEffect.Damage *= spellEffect.DamageMultiplier
-	}
+	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
 }
 
-// snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
+// Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
 func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
 		return 1.0
