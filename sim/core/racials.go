@@ -21,6 +21,16 @@ func applyRaceEffects(agent Agent) {
 		actionID := ActionID{SpellID: 50613}
 
 		var resourceMetrics *ResourceMetrics = nil
+		if resourceMetrics == nil {
+			if character.HasRunicPowerBar() {
+				resourceMetrics = character.NewRunicPowerMetrics(actionID)
+			} else if character.HasEnergyBar() {
+				resourceMetrics = character.NewEnergyMetrics(actionID)
+			} else if character.HasManaBar() {
+				resourceMetrics = character.NewManaMetrics(actionID)
+			}
+		}
+
 		spell := character.RegisterSpell(SpellConfig{
 			ActionID: actionID,
 			Flags:    SpellFlagNoOnCastComplete,
@@ -31,16 +41,6 @@ func applyRaceEffects(agent Agent) {
 				},
 			},
 			ApplyEffects: func(sim *Simulation, unit *Unit, spell *Spell) {
-				if resourceMetrics == nil {
-					if character.HasRunicPowerBar() {
-						resourceMetrics = character.NewRunicPowerMetrics(actionID)
-					} else if character.HasEnergyBar() {
-						resourceMetrics = character.NewEnergyMetrics(actionID)
-					} else if character.HasManaBar() {
-						resourceMetrics = character.NewManaMetrics(actionID)
-					}
-				}
-
 				if spell.Unit.HasRunicPowerBar() {
 					spell.Unit.AddRunicPower(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasEnergyBar() {
