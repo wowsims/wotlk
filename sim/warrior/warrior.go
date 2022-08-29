@@ -24,11 +24,12 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance              Stance
-	overpowerValidUntil time.Duration
-	rendValidUntil      time.Duration
-	RevengeValidUntil   time.Duration
-	shoutExpiresAt      time.Duration
+	Stance               Stance
+	overpowerValidUntil  time.Duration
+	rendValidUntil       time.Duration
+	RevengeValidUntil    time.Duration
+	shoutExpiresAt       time.Duration
+	disableHsCleaveUntil time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration

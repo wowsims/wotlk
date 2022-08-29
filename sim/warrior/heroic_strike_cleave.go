@@ -42,6 +42,9 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if sim.CurrentTime < warrior.disableHsCleaveUntil {
+					return
+				}
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
