@@ -21,13 +21,12 @@ func registerNaxxramas10() {
 			Stats: stats.Stats{
 				stats.Health:      5_691_835,
 				stats.Armor:       10643,
-				stats.AttackPower: 640,
-				stats.BlockValue:  108,
+				stats.AttackPower: 1280,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       1.6,
-			MinBaseDamage:    14135,
+			SwingSpeed:       1.1,
+			MinBaseDamage:    24135,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,
@@ -57,13 +56,12 @@ func registerNaxxramas25() {
 			Stats: stats.Stats{
 				stats.Health:      16_950_147,
 				stats.Armor:       10643,
-				stats.AttackPower: 640,
-				stats.BlockValue:  108,
+				stats.AttackPower: 1280,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       1.6,
-			MinBaseDamage:    14135,
+			SwingSpeed:       1.1,
+			MinBaseDamage:    24135,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,

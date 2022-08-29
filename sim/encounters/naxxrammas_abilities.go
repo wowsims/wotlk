@@ -30,7 +30,7 @@ var Patchwerk10HatefulStrike = TargetAbility{
 
 				DamageMultiplier: 1,
 
-				BaseDamage:     core.BaseDamageConfigRoll(27750, 32250),
+				BaseDamage:     core.BaseDamageConfigRoll(2.2*27750, 2.2*32250),
 				OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
 			}),
 		})
@@ -61,7 +61,7 @@ var Patchwerk25HatefulStrike = TargetAbility{
 
 				DamageMultiplier: 1,
 
-				BaseDamage:     core.BaseDamageConfigRoll(79000, 81000),
+				BaseDamage:     core.BaseDamageConfigRoll(2.2*27750, 2.2*32250),
 				OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
 			}),
 		})

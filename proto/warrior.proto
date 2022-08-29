@@ -219,6 +219,7 @@ message ProtectionWarrior {
 		bool prio_revenge_over_shield_slam = 6;
 		bool use_shockwave_st = 7;
 		bool use_concussion_blow_st = 8;
+		bool spam_revenge_hs = 9;
 	}
 	Rotation rotation = 1;
 

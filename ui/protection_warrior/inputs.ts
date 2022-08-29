@@ -96,5 +96,10 @@ export const ProtectionWarriorRotationConfig = {
 			label: 'Use Concussion Blow (Single Target)',
 			labelTooltip: 'Use Concussion Blow in rotation in a single target fight.',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'spamRevengeHs',
+			label: 'Spam Revenge and Heroic Strike',
+			labelTooltip: 'Full spam of revenge and heroic strike.',
+		}),
 	],
 };

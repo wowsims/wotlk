@@ -9,6 +9,10 @@ import (
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
+	if !warrior.Talents.Devastate {
+		return
+	}
+
 	if warrior.Talents.SwordAndBoard > 0 {
 		warrior.SwordAndBoardAura = warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Sword And Board",
@@ -98,5 +102,9 @@ func (warrior *Warrior) registerDevastateSpell() {
 }
 
 func (warrior *Warrior) CanDevastate(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Devastate.DefaultCast.Cost
+	if warrior.Devastate != nil {
+		return warrior.CurrentRage() >= warrior.Devastate.DefaultCast.Cost
+	} else {
+		return false
+	}
 }
