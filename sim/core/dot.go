@@ -195,7 +195,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 		}
 		dot.snapshotEffect.Target = target
 
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.snapshotEffect.DamageMultiplier
 		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
 		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
@@ -223,7 +223,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 		}
 		dot.snapshotEffect.Target = target
 
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.snapshotEffect.DamageMultiplier
 		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
 		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
@@ -250,7 +250,7 @@ func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEff
 		}
 		dot.snapshotEffect.Target = target
 
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
+		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / dot.snapshotEffect.DamageMultiplier
 		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
 		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
 		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
