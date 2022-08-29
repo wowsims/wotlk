@@ -162,6 +162,7 @@ func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
 	warrior.RevengeValidUntil = 0
+	warrior.disableHsCleaveUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
