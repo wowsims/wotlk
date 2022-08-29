@@ -27,14 +27,7 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 		},
 	})
 
-	cooldownDur := time.Minute * 30
-	if warrior.Talents.ImprovedDisciplines == 1 {
-		cooldownDur -= time.Minute * 4
-	} else if warrior.Talents.ImprovedDisciplines == 2 {
-		cooldownDur -= time.Minute * 7
-	} else if warrior.Talents.ImprovedDisciplines == 3 {
-		cooldownDur -= time.Minute * 10
-	}
+	cooldownDur := time.Minute*5 - 30*time.Second*time.Duration(warrior.Talents.ImprovedDisciplines)
 	swSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 

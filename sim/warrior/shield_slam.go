@@ -11,7 +11,7 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
-	damageRollFunc := core.DamageRollFunc(420, 440)
+	damageRollFunc := core.DamageRollFunc(990, 1040)
 
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 30356},
@@ -36,7 +36,7 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 
-			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1),
+			DamageMultiplier: core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1) * (1.0 + 0.05*float64(warrior.Talents.GagOrder)),
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  305,
 

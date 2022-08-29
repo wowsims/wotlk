@@ -76,7 +76,8 @@ func (warrior *Warrior) registerBattleStanceAura() {
 func (warrior *Warrior) registerDefensiveStanceAura() {
 	actionID := core.ActionID{SpellID: 71}
 	threatMult := 2.0735
-	impDefStanceMultiplier := 1 - 0.02*float64(warrior.Talents.ImprovedDefensiveStance)
+	// TODO: Imp def stance
+	impDefStanceMultiplier := 1 - 0.03*float64(warrior.Talents.ImprovedDefensiveStance)
 
 	warrior.DefensiveStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Defensive Stance",

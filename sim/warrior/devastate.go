@@ -6,7 +6,7 @@ import (
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage)
+	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
 
 	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.0, 0.5, true)

@@ -11,7 +11,7 @@ import (
 var SunderArmorActionID = core.ActionID{SpellID: 47467}
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage)
+	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
 	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget, 0)
 	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, false)
