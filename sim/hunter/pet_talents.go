@@ -161,7 +161,7 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: hunter.applyLongevity(time.Minute * 3),
 			},
 		},
 
@@ -243,7 +243,7 @@ func (hp *HunterPet) registerRabidCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Second * 45,
+				Duration: hunter.applyLongevity(time.Second * 45),
 			},
 		},
 
@@ -300,7 +300,7 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: time.Minute * 5,
+				Duration: hunter.applyLongevity(time.Minute * 5),
 			},
 		},
 

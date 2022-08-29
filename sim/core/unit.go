@@ -418,6 +418,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats
 	unit.auraTracker.reset(sim)
+	// Spellbook needs to be reset AFTER auras.
 	for _, spell := range unit.Spellbook {
 		spell.reset(sim)
 	}

@@ -48,12 +48,18 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 		// Eclipse
 		if solarIsActive || lunarIsActive {
 			if lunarIsActive {
+				if lunarUptime.Seconds() >= float64(moonkin.mcdInsideLunarThreshold) && moonkin.mcdInsideLunarThreshold >= 0 {
+					moonkin.castAllMajorCooldowns(sim)
+				}
 				if moonfireUptime > 0 || float64(moonkin.mfInsideEclipseThreshold) >= lunarUptime.Seconds() {
 					spell = moonkin.Starfire
 				} else if moonkin.useMF {
 					spell = moonkin.Moonfire
 				}
 			} else {
+				if solarUptime.Seconds() >= float64(moonkin.mcdInsideSolarThreshold) && moonkin.mcdInsideSolarThreshold >= 0 {
+					moonkin.castAllMajorCooldowns(sim)
+				}
 				if insectSwarmUptime > 0 || float64(moonkin.isInsideEclipseThreshold) >= solarUptime.Seconds() {
 					spell = moonkin.Wrath
 				} else if moonkin.useIS {
@@ -88,4 +94,25 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)
 	}
+}
+
+func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
+	if mcd != nil {
+		if mcd.Spell.IsReady(sim) && moonkin.GCD.IsReady(sim) {
+			mcd.Spell.Cast(sim, target)
+		}
+		if mcd.Spell.SameAction(core.ActionID{ItemID: 40211}) || mcd.Spell.SameAction(core.ActionID{ItemID: 40212}) {
+			moonkin.potionUsed = true
+		}
+	}
+}
+
+func (moonkin *BalanceDruid) castAllMajorCooldowns(sim *core.Simulation) {
+	target := moonkin.CurrentTarget
+	moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+	if !moonkin.potionUsed {
+		moonkin.castMajorCooldown(moonkin.potionMCD, sim, target)
+	}
+	moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
+	moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
 }

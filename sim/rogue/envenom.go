@@ -31,7 +31,16 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// The envenom aura is actived even if the attack fails to land
+				// This aura is also applied before the hit effect
+				// See: https://github.com/where-fore/rogue-wotlk/issues/32
+				deadlyPoisonStacks := rogue.deadlyPoisonDots[rogue.CurrentTarget.Index].GetStacks()
+				doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
+				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
+				rogue.EnvenomAura.Activate(sim)
+				rogue.CastModifier(sim, spell, cast)
+			},
 			IgnoreHaste: true,
 		},
 
@@ -56,13 +65,9 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
 						rogue.deadlyPoisonDots[target.Index].Cancel(sim)
 					}
-					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
-					rogue.EnvenomAura.Activate(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

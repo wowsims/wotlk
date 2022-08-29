@@ -59,8 +59,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-AssassinationArmor"
  value: {
-  dps: 5467.28659
-  tps: 3881.77348
+  dps: 5452.83867
+  tps: 3871.51546
  }
 }
 dps_results: {
@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BonescytheBattlegear"
  value: {
-  dps: 6214.07411
-  tps: 4411.99262
+  dps: 6234.37503
+  tps: 4426.40627
  }
 }
 dps_results: {
@@ -150,8 +150,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Deathmantle"
  value: {
-  dps: 5784.82743
-  tps: 4107.22748
+  dps: 5805.44823
+  tps: 4121.86824
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Gladiator'sVestments"
  value: {
-  dps: 7046.67925
-  tps: 5003.14226
+  dps: 7055.33167
+  tps: 5009.28548
  }
 }
 dps_results: {
@@ -325,8 +325,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Mana-EtchedRegalia"
  value: {
-  dps: 4837.42256
-  tps: 3434.57002
+  dps: 4833.97206
+  tps: 3432.12016
  }
 }
 dps_results: {
@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Netherblade"
  value: {
-  dps: 5342.96398
-  tps: 3793.50442
+  dps: 5356.60784
+  tps: 3803.19157
  }
 }
 dps_results: {
@@ -381,8 +381,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-PrimalIntent"
  value: {
-  dps: 6409.37321
-  tps: 4550.65498
+  dps: 6435.39218
+  tps: 4569.12845
  }
 }
 dps_results: {
@@ -444,8 +444,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7569.34743
-  tps: 5374.23667
+  dps: 7549.19961
+  tps: 5359.93172
  }
 }
 dps_results: {
@@ -465,8 +465,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Slayer'sArmor"
  value: {
-  dps: 5254.31979
-  tps: 3730.56705
+  dps: 5314.21203
+  tps: 3773.09054
  }
 }
 dps_results: {
@@ -479,22 +479,22 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 6088.66045
-  tps: 4322.94892
+  dps: 6140.97559
+  tps: 4360.09267
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
-  dps: 5597.16109
-  tps: 3971.35466
+  dps: 5583.44918
+  tps: 3961.59613
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-StrengthoftheClefthoof"
  value: {
-  dps: 5668.75614
-  tps: 4024.81686
+  dps: 5660.35059
+  tps: 4018.84892
  }
 }
 dps_results: {
@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 6503.62409
-  tps: 4617.5731
+  dps: 6537.148
+  tps: 4641.37508
  }
 }
 dps_results: {
@@ -535,8 +535,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TheTwinStars"
  value: {
-  dps: 6736.88644
-  tps: 4783.18937
+  dps: 6757.87682
+  tps: 4798.09254
  }
 }
 dps_results: {
@@ -591,8 +591,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 6942.26955
-  tps: 4929.01138
+  dps: 6931.56173
+  tps: 4921.40883
  }
 }
 dps_results: {
@@ -605,22 +605,22 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-WastewalkerArmor"
  value: {
-  dps: 5207.45836
-  tps: 3697.29543
+  dps: 5242.49864
+  tps: 3722.17404
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-WindhawkArmor"
  value: {
-  dps: 6110.43392
-  tps: 4338.40809
+  dps: 6096.88736
+  tps: 4328.79002
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-WrathofSpellfire"
  value: {
-  dps: 5869.16683
-  tps: 4167.10845
+  dps: 5879.21921
+  tps: 4174.24564
  }
 }
 dps_results: {
@@ -969,7 +969,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6759.74107
-  tps: 4799.41616
+  dps: 6757.57115
+  tps: 4797.87552
  }
 }

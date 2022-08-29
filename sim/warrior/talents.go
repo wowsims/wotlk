@@ -24,7 +24,7 @@ func (warrior *Warrior) ApplyTalents() {
 
 	if warrior.Talents.StrengthOfArms > 0 {
 		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.StrengthOfArms))
-		warrior.AddStat(stats.Expertise, 2*float64(warrior.Talents.StrengthOfArms))
+		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
@@ -667,6 +667,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
+			warrior.disableHsCleaveUntil = sim.CurrentTime + time.Second*6
 		},
 	})
 
