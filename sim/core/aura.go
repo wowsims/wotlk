@@ -294,7 +294,7 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
 	}
-	if len(at.auras) > 100 {
+	if len(at.auras) > 300 {
 		panic(fmt.Sprintf("Over 100 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
 	}
 

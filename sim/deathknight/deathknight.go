@@ -45,6 +45,9 @@ type Deathknight struct {
 	onRuneSpendT10          core.OnRune
 	onRuneSpendBladeBarrier core.OnRune
 
+	tier9Proc core.Cooldown
+	sigilProc core.Cooldown
+
 	Inputs DeathknightInputs
 
 	RotationHelper

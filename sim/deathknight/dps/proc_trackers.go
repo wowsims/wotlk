@@ -38,11 +38,13 @@ func (ur *UnholyRotation) resetProcTrackers() {
 func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.procTrackers = make([]*ProcTracker, 0)
 
+	// Major CDs
 	dk.ur.addProc(40211, "Potion of Speed", true)
 	dk.ur.addProc(54999, "Hyperspeed Acceleration", true)
 	dk.ur.addProc(26297, "Berserking (Troll)", true)
 	dk.ur.addProc(33697, "Blood Fury", true)
 
+	// Active Trinkets
 	dk.ur.addProc(35937, "ItemActive-35937", true)
 	dk.ur.addProc(36871, "ItemActive-36871", true)
 	dk.ur.addProc(37166, "ItemActive-37166", true)
@@ -57,14 +59,28 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(46086, "ItemActive-46086", true)
 	dk.ur.addProc(47734, "ItemActive-47734", true)
 
+	// Sigils
+	dk.ur.addProc(47673, "Sigil of Virulence Proc", false)
+	dk.ur.addProc(42619, "Hateful Gladiator's Sigil of Strife Proc", false)
+	dk.ur.addProc(42620, "Deadly Gladiator's Sigil of Strife Proc", false)
+	dk.ur.addProc(42621, "Furious Gladiator's Sigil of Strife Proc", false)
+	dk.ur.addProc(42622, "Relentless Gladiator's Sigil of Strife Proc", false)
+	dk.ur.addProc(51417, "Wrathful Gladiator's Sigil of Strife Proc", false)
+
+	// Tier set
+	dk.ur.addProc(67117, "Unholy Might Proc", false)
+
+	// Enchants
 	dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc", false)
-	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc", false)
 	dk.ur.addProc(59620, "Berserking MH Proc", false)
 	dk.ur.addProc(59620, "Berserking OH Proc", false)
 	dk.ur.addProc(59626, "Black Magic Proc", false)
 
-	dk.ur.addProc(42987, "DMC Greatness Strength Proc", false)
+	// Metagem
+	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc", false)
 
+	// Proc Trinkets
+	dk.ur.addProc(42987, "DMC Greatness Strength Proc", false)
 	dk.ur.addProc(47115, "Deaths Verdict Strength Proc", false)
 	dk.ur.addProc(47131, "Deaths Verdict H Strength Proc", false)
 	dk.ur.addProc(47303, "Deaths Choice Strength Proc", false)

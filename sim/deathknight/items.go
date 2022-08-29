@@ -115,7 +115,7 @@ var ItemSetThassariansBattlegear = core.NewItemSet(core.ItemSet{
 func (dk *Deathknight) registerThassariansBattlegearProc() {
 	procAura := dk.NewTemporaryStatsAura("Unholy Might Proc", core.ActionID{SpellID: 67117}, stats.Stats{stats.Strength: 180.0}, time.Second*15)
 
-	icd := core.Cooldown{
+	dk.tier9Proc = core.Cooldown{
 		Timer:    dk.NewTimer(),
 		Duration: time.Second * 45.0,
 	}
@@ -123,12 +123,12 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
+			if !dk.tier9Proc.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
 				return
 			}
 
 			if sim.RandomFloat("UnholyMight") < 0.5 {
-				icd.Use(sim)
+				dk.tier9Proc.Use(sim)
 				procAura.Activate(sim)
 			}
 		},
@@ -412,7 +412,7 @@ func init() {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{ItemID: 47673}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
 
-		icd := core.Cooldown{
+		dk.sigilProc = core.Cooldown{
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
@@ -420,12 +420,12 @@ func init() {
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Virulence",
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !icd.IsReady(sim) || !dk.IsFuStrike(spell) {
+				if !dk.sigilProc.IsReady(sim) || !dk.IsFuStrike(spell) {
 					return
 				}
 
 				if sim.RandomFloat("SigilOfVirulence") < 0.80 {
-					icd.Use(sim)
+					dk.sigilProc.Use(sim)
 					procAura.Activate(sim)
 				}
 			},
