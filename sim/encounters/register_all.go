@@ -5,10 +5,7 @@ import (
 )
 
 func init() {
-	registerNaxxramas10()
-	registerNaxxramas25()
-	registerBlackTemple()
-	registerSunwellPlateau()
+	registerNaxxramas()
 }
 
 func AddSingleTargetBossEncounter(presetTarget core.PresetTarget) {
