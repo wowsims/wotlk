@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 4482.14902
-  tps: 3789.05018
+  dps: 5885.37661
+  tps: 5078.32322
  }
 }
 dps_results: {

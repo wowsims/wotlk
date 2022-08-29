@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Gladiator'sVestments"
  value: {
-  dps: 5270.21015
-  tps: 3741.8492
+  dps: 7046.67925
+  tps: 5003.14226
  }
 }
 dps_results: {
@@ -598,8 +598,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Warp-SpringCoil-30450"
  value: {
-  dps: 7398.41052
-  tps: 5252.87147
+  dps: 7048.94375
+  tps: 5004.75006
  }
 }
 dps_results: {

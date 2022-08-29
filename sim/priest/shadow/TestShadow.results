@@ -136,22 +136,22 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 1719.65695
-  tps: 1249.21653
+  dps: 1729.27591
+  tps: 1256.1062
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1719.65695
-  tps: 1249.21653
+  dps: 1729.27591
+  tps: 1256.1062
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 1792.19664
-  tps: 1302.07788
+  dps: 1802.05109
+  tps: 1310.57068
  }
 }
 dps_results: {

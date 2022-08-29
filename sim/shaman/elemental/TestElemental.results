@@ -383,15 +383,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 1928.0784
-  tps: 1540.28642
+  dps: 2592.04614
+  tps: 2029.2811
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-Gladiator'sWartide"
  value: {
-  dps: 2189.77303
-  tps: 1726.75011
+  dps: 2991.24677
+  tps: 2341.41415
  }
 }
 dps_results: {

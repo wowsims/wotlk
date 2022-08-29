@@ -369,8 +369,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 468.87794
-  tps: 695.33633
+  dps: 705.50116
+  tps: 1028.40834
  }
 }
 dps_results: {

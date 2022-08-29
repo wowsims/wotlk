@@ -248,8 +248,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 632.67684
-  tps: 827.26737
+  dps: 729.45823
+  tps: 953.7802
  }
 }
 dps_results: {

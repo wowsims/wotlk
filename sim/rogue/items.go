@@ -220,7 +220,7 @@ var ItemSetSlayers = core.NewItemSet(core.ItemSet{
 func init() {
 	core.NewItemEffect(30450, func(agent core.Agent) {
 		rogue := agent.(RogueAgent).GetRogue()
-		procAura := rogue.NewTemporaryStatsAura("Warp Spring Coil Proc", core.ActionID{ItemID: 30450}, stats.Stats{stats.ArmorPenetration: 1000}, time.Second*15)
+		procAura := rogue.NewTemporaryStatsAura("Warp Spring Coil Proc", core.ActionID{ItemID: 30450}, stats.Stats{stats.ArmorPenetration: 142}, time.Second*15)
 		const procChance = 0.25
 
 		icd := core.Cooldown{
