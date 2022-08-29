@@ -1059,7 +1059,7 @@ func TotemOfWrathAura(character *Character) *Aura {
 func FlametongueTotemAura(character *Character) *Aura {
 	spellPowerBonus := 144.
 	return character.GetOrRegisterAura(Aura{
-		Label:    "Flame tongueTotem",
+		Label:    "Flametongue Totem",
 		Tag:      spellPowerBuffTag,
 		ActionID: ActionID{SpellID: 58656},
 		Priority: spellPowerBonus,
@@ -1083,7 +1083,7 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 			minimumSPBonus := 0.
 			if character.HasActiveAura("Totem of Wrath") {
 				minimumSPBonus = 280
-			} else if character.HasActiveAura("Flame tongueTotem") {
+			} else if character.HasActiveAura("Flametongue Totem") {
 				minimumSPBonus = 144
 			}
 			newSPbonus := aura.Priority - minimumSPBonus
@@ -1102,7 +1102,7 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 			minimumSPBonus := 0.
 			if character.HasActiveAura("Totem of Wrath") {
 				minimumSPBonus = 280
-			} else if character.HasActiveAura("Flame tongueTotem") {
+			} else if character.HasActiveAura("Flametongue Totem") {
 				minimumSPBonus = 144
 			}
 			newSPbonus := aura.Priority - minimumSPBonus
