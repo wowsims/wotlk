@@ -366,6 +366,9 @@ func (spellEffect *SpellEffect) String() string {
 
 func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		// Even when ignoring attacker multipliers we still apply this one, because its
+		// specific to the spell.
+		spellEffect.Damage *= spellEffect.DamageMultiplier
 		return
 	}
 
