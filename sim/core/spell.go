@@ -212,7 +212,13 @@ func (spell *Spell) finalize() {
 }
 
 func (spell *Spell) reset(sim *Simulation) {
-	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
+		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	} else {
+		for i := range spell.SpellMetrics {
+			spell.SpellMetrics[i] = SpellMetrics{}
+		}
+	}
 
 	// Reset dynamic effects.
 	spell.CastTimeMultiplier = 1
