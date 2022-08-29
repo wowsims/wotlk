@@ -57,7 +57,7 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
 				ProcMask:             ProcMaskPeriodicDamage,
 				ThreatMultiplier:     1,
-				BaseDamage:           BaseDamageConfigMagicNoRoll(1000.0/6, 1),
+				BaseDamage:           BaseDamageConfigMagicNoRoll(100, 1),
 				BonusSpellCritRating: 3 * CritRatingPerCritChance,
 				DamageMultiplier:     1.5,
 				OutcomeApplier:       fa.OutcomeFuncAlwaysHit(),
@@ -103,28 +103,26 @@ func SetupFakeSim() *Simulation {
 	return sim
 }
 
+func expectDotTickDamage(t *testing.T, dot *Dot, expectedDamage float64) {
+	damageBefore := dot.Spell.SpellMetrics[0].TotalDamage
+	dot.TickOnce()
+	damageAfter := dot.Spell.SpellMetrics[0].TotalDamage
+	delta := damageAfter - damageBefore
+
+	if !WithinToleranceFloat64(expectedDamage, delta, 0.01) {
+		t.Fatalf("Incorrect tick damage applied: Expected: %0.3f, Actual: %0.3f", expectedDamage, delta)
+	}
+}
+
 func TestDotSnapshot(t *testing.T) {
 	sim := SetupFakeSim()
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	// (1000/6) * 1.5 = 250
-	expectedDmg := 250.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
+	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Rollover(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	expectedDmg = 250.0 + 250.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
+	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
 }
 
 func TestDotSnapshotSpellPower(t *testing.T) {
@@ -132,34 +130,15 @@ func TestDotSnapshotSpellPower(t *testing.T) {
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	// (1000/6) * 1.5 = 250
-	expectedDmg := 250.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
-
-	fa.GetCharacter().AddStatDynamic(sim, stats.SpellPower, 1000)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
+	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
 
 	// Spell power shouldn't get applied because dot was already snapshot.
-	expectedDmg = 250.0 + 250.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
+	fa.GetCharacter().AddStatDynamic(sim, stats.SpellPower, 100)
+	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Deactivate(sim)
 	fa.Dot.Activate(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	expectedDmg = 250.0 + 250.0 + (250.0 + 1000*1.5)
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
+	expectDotTickDamage(t, fa.Dot, 300) // (100 + 100) * 1.5
 }
 
 func TestDotSnapshotSpellMultiplier(t *testing.T) {
@@ -169,25 +148,8 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	spell.DamageMultiplier = 2
 
 	fa.Dot.Apply(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	// (1000/6) * 1.5 * 2 = 500
-	expectedDmg := 1000.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
+	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
 
 	fa.Dot.Rollover(sim)
-	sim.advance(time.Second * 3)
-	sim.pendingActions[0].OnAction(sim)
-
-	expectedDmg = 1000.0 + 1000.0
-	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
-		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
-	}
-}
-
-func TestDotRollover(t *testing.T) {
-
+	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
 }
