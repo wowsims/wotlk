@@ -245,12 +245,15 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 		return
 	}
 
-	// Otherwise add a pending action for the next time
-	pa := &core.PendingAction{
-		Priority:     core.ActionPriorityLow,
-		OnAction:     rotationCallback,
-		NextActionAt: nextEventAt,
-	}
+	// TODO: figure out why this increases dps in test cases.
+	ret.WaitUntil(sim, nextEventAt)
 
-	sim.AddPendingAction(pa)
+	// Otherwise add a pending action for the next time
+	// pa := &core.PendingAction{
+	// 	Priority:     core.ActionPriorityLow,
+	// 	OnAction:     rotationCallback,
+	// 	NextActionAt: nextEventAt,
+	// }
+
+	// sim.AddPendingAction(pa)
 }

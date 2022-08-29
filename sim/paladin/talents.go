@@ -444,7 +444,7 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 		// Crits using melee crit.
 		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
 	} else {
-		applier = paladin.OutcomeFuncAlwaysHit()
+		applier = paladin.OutcomeFuncTick()
 	}
 
 	return core.NewDot(core.Dot{
@@ -452,31 +452,21 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(int(target.Index)),
 			ActionID: paladin.RighteousVengeanceSpell.ActionID,
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				paladin.RighteousVengeanceDamage[target.Index] = 0.0
-				paladin.RighteousVengeancePools[target.Index] = 0.0
-			},
 		}),
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
-		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
-			return func() {
-				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					IsPeriodic:       true,
-					ProcMask:         core.ProcMaskPeriodicDamage,
-					DamageMultiplier: 1,
-					OutcomeApplier:   applier,
-					BaseDamage: core.BaseDamageConfig{
-						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-							tick := paladin.RighteousVengeanceDamage[target.Index]
-							paladin.RighteousVengeancePools[target.Index] -= tick
-							return tick
-						},
-						TargetSpellCoefficient: 1,
-					},
-				})(sim, target, dot.Spell)
-			}
-		},
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1,
+			// ThreatMultiplier: 1,
+			IsPeriodic: true,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {
+					return paladin.RighteousVengeanceDamage[target.Index]
+				},
+			},
+			OutcomeApplier: applier,
+		}),
 	})
 }
 
@@ -499,6 +489,8 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		return
 	}
 
+	dmgPercent := (0.10 * float64(paladin.Talents.RighteousVengeance))
+
 	paladin.RegisterAura(core.Aura{
 		Label:    "Righteous Vengeance",
 		Duration: core.NeverExpires,
@@ -511,14 +503,14 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			}
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-				paladin.RighteousVengeancePools[spellEffect.Target.Index] += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
-				paladin.RighteousVengeanceDamage[spellEffect.Target.Index] = paladin.RighteousVengeancePools[spellEffect.Target.Index] / 4
-
-				if !paladin.RighteousVengeanceDots[spellEffect.Target.Index].IsActive() {
-					paladin.RighteousVengeanceDots[spellEffect.Target.Index].Apply(sim)
+				bonus := spellEffect.Damage * dmgPercent
+				rvdot := paladin.RighteousVengeanceDots[spellEffect.Target.Index]
+				if rvdot.IsActive() {
+					// Add remaining from last dot.
+					bonus += paladin.RighteousVengeanceDamage[spellEffect.Target.Index] * float64(4-rvdot.TickCount)
 				}
-
-				paladin.RighteousVengeanceDots[spellEffect.Target.Index].Refresh(sim)
+				paladin.RighteousVengeanceDamage[spellEffect.Target.Index] = bonus / 4
+				paladin.RighteousVengeanceDots[spellEffect.Target.Index].Apply(sim)
 			}
 		},
 	})

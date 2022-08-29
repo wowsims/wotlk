@@ -87,7 +87,6 @@ type Paladin struct {
 
 	RighteousVengeanceSpell  *core.Spell
 	RighteousVengeanceDots   []*core.Dot
-	RighteousVengeancePools  []float64
 	RighteousVengeanceDamage []float64
 
 	ArtOfWarInstantCast *core.Aura
@@ -176,10 +175,6 @@ func (paladin *Paladin) Initialize() {
 		paladin.RighteousVengeanceDots = []*core.Dot{}
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
-		}
-		paladin.RighteousVengeancePools = []float64{}
-		for i := int32(0); i < targets; i++ {
-			paladin.RighteousVengeancePools = append(paladin.RighteousVengeancePools, 0.0)
 		}
 		paladin.RighteousVengeanceDamage = []float64{}
 		for i := int32(0); i < targets; i++ {
