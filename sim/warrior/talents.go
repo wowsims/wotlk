@@ -667,6 +667,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
+			warrior.disableHsCleaveUntil = sim.CurrentTime + time.Second*6
 		},
 	})
 
