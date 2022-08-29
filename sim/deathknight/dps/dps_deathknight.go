@@ -89,11 +89,13 @@ func (dk *DpsDeathknight) SetupRotations() {
 			// Unholy
 			dk.Rotation.BtGhoulFrenzy = true
 			dk.Rotation.UseEmpowerRuneWeapon = true
+			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy
 			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
 			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
 
 			mh := dk.GetMHWeapon()
 			oh := dk.GetOHWeapon()
+
 			if mh != nil && oh != nil {
 				// DW
 				dk.Rotation.BloodRuneFiller = proto.Deathknight_Rotation_BloodBoil
@@ -105,7 +107,12 @@ func (dk *DpsDeathknight) SetupRotations() {
 					dk.Rotation.UseDeathAndDecay = true
 				} else {
 					dk.Rotation.BloodRuneFiller = proto.Deathknight_Rotation_BloodStrike
+					dk.Rotation.UseDeathAndDecay = false
 				}
+			}
+			// Always use DnD if you have the glyph.
+			if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay) {
+				dk.Rotation.UseDeathAndDecay = true
 			}
 		} else if fr > uh && fr > bl {
 			// Frost rotations here.
