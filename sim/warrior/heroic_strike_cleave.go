@@ -118,6 +118,7 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 	}
 
 	if sim.CurrentTime < warrior.disableHsCleaveUntil {
+		warrior.DequeueHSOrCleave(sim)
 		return nil
 	}
 
