@@ -5,7 +5,25 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
+
+func init() {
+	RegisterAgentFactory(
+		proto.Player_ElementalShaman{},
+		proto.Spec_SpecElementalShaman,
+		func(character Character, options proto.Player) Agent {
+			return NewFakeElementalShaman(character, options)
+		},
+		func(player *proto.Player, spec interface{}) {
+			playerSpec, ok := spec.(*proto.Player_ElementalShaman)
+			if !ok {
+				panic("Invalid spec value for Elemental Shaman!")
+			}
+			player.Spec = playerSpec
+		},
+	)
+}
 
 func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 	fa := &FakeAgent{
@@ -16,6 +34,7 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 		fa.Spell = fa.RegisterSpell(SpellConfig{
 			ActionID:    ActionID{SpellID: 42},
 			SpellSchool: SpellSchoolShadow,
+			Flags:       SpellFlagIgnoreResists,
 			Cast:        CastConfig{},
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 				ProcMask:       ProcMaskSpellDamage,
@@ -38,10 +57,10 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
 				ProcMask:             ProcMaskPeriodicDamage,
 				ThreatMultiplier:     1,
-				BaseDamage:           BaseDamageConfigMagicNoRoll(1000/6, 1),
+				BaseDamage:           BaseDamageConfigMagicNoRoll(1000.0/6, 1),
 				BonusSpellCritRating: 3 * CritRatingPerCritChance,
 				DamageMultiplier:     1.5,
-				OutcomeApplier:       fa.OutcomeFuncMagicCrit(2),
+				OutcomeApplier:       fa.OutcomeFuncAlwaysHit(),
 				IsPeriodic:           true,
 			}),
 		})
@@ -50,22 +69,7 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 	return fa
 }
 
-func TestDotSnapshot(t *testing.T) {
-	RegisterAgentFactory(
-		proto.Player_ElementalShaman{},
-		proto.Spec_SpecElementalShaman,
-		func(character Character, options proto.Player) Agent {
-			return NewFakeElementalShaman(character, options)
-		},
-		func(player *proto.Player, spec interface{}) {
-			playerSpec, ok := spec.(*proto.Player_ElementalShaman)
-			if !ok {
-				panic("Invalid spec value for Elemental Shaman!")
-			}
-			player.Spec = playerSpec
-		},
-	)
-
+func SetupFakeSim() *Simulation {
 	sim := NewSim(proto.RaidSimRequest{
 		SimOptions: &proto.SimOptions{
 			RandomSeed: 100,
@@ -96,13 +100,19 @@ func TestDotSnapshot(t *testing.T) {
 	})
 	sim.Reset()
 
+	return sim
+}
+
+func TestDotSnapshot(t *testing.T) {
+	sim := SetupFakeSim()
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
 	sim.advance(time.Second * 3)
 	sim.pendingActions[0].OnAction(sim)
 
-	expectedDmg := 373.5
+	// (1000/6) * 1.5 = 250
+	expectedDmg := 250.0
 	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
 		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
 	}
@@ -111,11 +121,71 @@ func TestDotSnapshot(t *testing.T) {
 	sim.advance(time.Second * 3)
 	sim.pendingActions[0].OnAction(sim)
 
-	expectedDmg = 373.5 + 249.0
+	expectedDmg = 250.0 + 250.0
+	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
+		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
+	}
+}
+
+func TestDotSnapshotSpellPower(t *testing.T) {
+	sim := SetupFakeSim()
+	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
+
+	fa.Dot.Apply(sim)
+	sim.advance(time.Second * 3)
+	sim.pendingActions[0].OnAction(sim)
+
+	// (1000/6) * 1.5 = 250
+	expectedDmg := 250.0
 	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
 		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
 	}
 
+	fa.GetCharacter().AddStatDynamic(sim, stats.SpellPower, 1000)
+	sim.advance(time.Second * 3)
+	sim.pendingActions[0].OnAction(sim)
+
+	// Spell power shouldn't get applied because dot was already snapshot.
+	expectedDmg = 250.0 + 250.0
+	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
+		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
+	}
+
+	fa.Dot.Deactivate(sim)
+	fa.Dot.Activate(sim)
+	sim.advance(time.Second * 3)
+	sim.pendingActions[0].OnAction(sim)
+
+	expectedDmg = 250.0 + 250.0 + (250.0 + 1000*1.5)
+	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
+		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
+	}
+}
+
+func TestDotSnapshotSpellMultiplier(t *testing.T) {
+	sim := SetupFakeSim()
+	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
+	spell := fa.GetCharacter().Spellbook[0]
+	spell.DamageMultiplier = 2
+
+	fa.Dot.Apply(sim)
+	sim.advance(time.Second * 3)
+	sim.pendingActions[0].OnAction(sim)
+
+	// (1000/6) * 1.5 * 2 = 500
+	expectedDmg := 1000.0
+	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
+		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
+	}
+
+	fa.Dot.Rollover(sim)
+	sim.advance(time.Second * 3)
+	sim.pendingActions[0].OnAction(sim)
+
+	expectedDmg = 1000.0 + 1000.0
+	if !WithinToleranceFloat64(expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage, 0.01) {
+		t.Fatalf("Incorrect damage applied: Expected: %0.3f, Actual: %0.3f", expectedDmg, fa.Dot.Spell.SpellMetrics[0].TotalDamage)
+	}
 }
 
 func TestDotRollover(t *testing.T) {
