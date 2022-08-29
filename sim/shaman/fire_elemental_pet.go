@@ -19,8 +19,10 @@ const (
 type FireElemental struct {
 	core.Pet
 
-	FireBlast     *core.Spell
-	FireNova      *core.Spell
+	FireBlast       *core.Spell
+	FireNova        *core.Spell
+	FireShieldSpell *core.Spell
+
 	FireShieldDot *core.Dot
 
 	thinkChance     float64
@@ -56,7 +58,6 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		AutoSwingMelee: true,
 	})
 
-	fireElemental.OnPetEnable = fireElemental.enable
 	shaman.AddPet(fireElemental)
 
 	return fireElemental
@@ -69,14 +70,10 @@ func (fireElemental *FireElemental) GetPet() *core.Pet {
 func (fireElemental *FireElemental) Initialize() {
 	fireElemental.registerFireBlast()
 	fireElemental.registerFireNova()
-	fireElemental.registerFireShieldDot()
+	fireElemental.registerFireShieldSpell()
 }
 
 func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
-}
-
-func (fireElemental *FireElemental) enable(sim *core.Simulation) {
-	fireElemental.FireShieldDot.Apply(sim)
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
@@ -90,6 +87,10 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	if fireElemental.tryThink(sim) {
 		fireElemental.WaitUntil(sim, sim.CurrentTime+(time.Second*1))
 		return
+	}
+
+	if !fireElemental.FireShieldDot.IsActive() {
+		fireElemental.FireShieldSpell.Cast(sim, target)
 	}
 
 	randomSpell := fireElemental.tryRandomSpellPicker(sim)

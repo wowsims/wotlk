@@ -80,11 +80,10 @@ func (fireElemental *FireElemental) registerFireNova() {
 
 }
 
-func (fireElemental *FireElemental) registerFireShieldDot() {
+func (fireElemental *FireElemental) registerFireShieldSpell() {
 	actionID := core.ActionID{SpellID: 11350}
 
-	//dummy spell, dots require a spell
-	fireShieldSpell := fireElemental.RegisterSpell(core.SpellConfig{
+	fireElemental.FireShieldSpell = fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
 		Cast: core.CastConfig{
@@ -92,14 +91,17 @@ func (fireElemental *FireElemental) registerFireShieldDot() {
 				GCD: 0,
 			},
 		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			totemDuration := fireElemental.shamanOwner.NextTotemDrops[FireTotem] - sim.CurrentTime
+			fireElemental.FireShieldDot.NumberOfTicks = int(totemDuration / (time.Second * 3))
+			fireElemental.FireShieldDot.Apply(sim)
+		},
 	})
 
-	//TODO Will need to account for mutliple targets
 	target := fireElemental.CurrentTarget
 
-	//TODO Dont no what the best way to handle this is.
 	fireElemental.FireShieldDot = core.NewDot(core.Dot{
-		Spell: fireShieldSpell,
+		Spell: fireElemental.FireShieldSpell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Fire Shield",
 			ActionID: actionID,
