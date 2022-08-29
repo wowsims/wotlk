@@ -48,6 +48,10 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 				}
 			},
 		}),
+
+		InitialDamageMultiplier: 1 +
+			.10*float64(hunter.Talents.TrapMastery) +
+			.02*float64(hunter.Talents.TNT),
 	})
 
 	target := hunter.CurrentTarget
@@ -68,8 +72,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.TrapMastery)) *
-				(1 + 0.02*float64(hunter.Talents.TNT)),
+				(1.0 / 1.06), // Black Arrow is not affected by its own 1.06 aura.
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 

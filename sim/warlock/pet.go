@@ -55,6 +55,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	wp.EnableManaBarWithModifier(petConfig.PowerModifier)
+	wp.EnableResumeAfterManaWait(wp.OnGCDReady)
+
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	wp.AddStat(stats.AttackPower, -20)
 
@@ -125,12 +127,50 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		wp.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	case proto.Warlock_Options_Felguard:
 		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-		// Simulates a pre-stacked demonic frenzy
-		multiplier := 1.5 + 0.1*float64(warlock.Talents.DemonicBrutality)
+
+		talentMultiplier := 1. + 0.1*float64(warlock.Talents.DemonicBrutality)
+		glyphMultiplier := 1.
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
-			multiplier *= 1.2
+			glyphMultiplier *= 1.2
 		}
-		wp.MultiplyStat(stats.AttackPower, multiplier)
+		wp.MultiplyStat(stats.AttackPower, talentMultiplier*glyphMultiplier)
+
+		statDeps := []*stats.StatDependency{nil}
+		for i := 0; i <= 10; i++ {
+			statDeps = append(statDeps, wp.NewDynamicMultiplyStat(stats.AttackPower, (1+0.1*float64(warlock.Talents.DemonicBrutality)+0.05*float64(i))/talentMultiplier))
+		}
+
+		DemonicFrenzyAura := wp.RegisterAura(core.Aura{
+			Label:     "Demonic Frenzy",
+			ActionID:  core.ActionID{SpellID: 32851},
+			Duration:  time.Second * 10,
+			MaxStacks: 10,
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				if oldStacks != 0 {
+					aura.Unit.DisableDynamicStatDep(sim, statDeps[oldStacks])
+				}
+				if newStacks != 0 {
+					aura.Unit.EnableDynamicStatDep(sim, statDeps[newStacks])
+				}
+			},
+		})
+		wp.RegisterAura(core.Aura{
+			Label:    "Demonic Frenzy Hidden Aura",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			// OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			// 	aura.Unit.EnableDynamicStatDep(sim, statDeps[0])
+			// },
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					return
+				}
+				DemonicFrenzyAura.Activate(sim)
+				DemonicFrenzyAura.AddStack(sim)
+			},
+		})
 	}
 
 	if warlock.Talents.FelVitality > 0 {

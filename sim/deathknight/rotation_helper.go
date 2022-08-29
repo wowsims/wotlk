@@ -63,7 +63,7 @@ func (s *Sequence) NewAction(action RotationAction) *Sequence {
 }
 
 func (s *Sequence) Clear() *Sequence {
-	s.actions = make([]RotationAction, 0)
+	s.actions = s.actions[:0]
 	s.numActions = 0
 	s.idx = 0
 	return s
