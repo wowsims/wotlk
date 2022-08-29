@@ -39,7 +39,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 
 		DamageMultiplier: 1.0 + 0.3*float64(warrior.Talents.ImprovedRevenge),
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  200,
+		FlatThreatBonus:  121,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

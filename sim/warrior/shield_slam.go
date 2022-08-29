@@ -14,7 +14,7 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 	damageRollFunc := core.DamageRollFunc(990, 1040)
 
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30356},
+		ActionID:    core.ActionID{SpellID: 47488},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -26,6 +26,13 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if warrior.SwordAndBoardAura.IsActive() {
+					cast.Cost = 0
+
+					warrior.SwordAndBoardAura.Deactivate(sim)
+				}
+			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
@@ -36,9 +43,10 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 
+			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
 			DamageMultiplier: core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1) * (1.0 + 0.05*float64(warrior.Talents.GagOrder)),
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  305,
+			ThreatMultiplier: 1.3,
+			FlatThreatBonus:  770,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {

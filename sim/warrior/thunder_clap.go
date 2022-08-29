@@ -16,7 +16,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: impTCDamageMult,
-		ThreatMultiplier: 1.75,
+		ThreatMultiplier: 1.85,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

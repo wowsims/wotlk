@@ -76,6 +76,8 @@ type Warrior struct {
 	BloodsurgeAura  *core.Aura
 	SuddenDeathAura *core.Aura
 
+	SwordAndBoardAura *core.Aura
+
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
 	TraumaAuras           []*core.Aura

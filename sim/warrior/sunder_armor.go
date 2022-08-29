@@ -45,7 +45,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  301.5,
+		FlatThreatBonus:  360,
 
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
