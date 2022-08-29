@@ -139,6 +139,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					bloodFrenzy: true,
 					judgementOfLight: true,
 					heartOfTheCrusader: true,
+					frostFever: TristateEffect.TristateEffectImproved,
 				}),
 			},
 

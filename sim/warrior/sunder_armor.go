@@ -69,11 +69,10 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	if isDevastateEffect {
 		effect.OutcomeApplier = warrior.OutcomeFuncAlwaysHit()
 		effect.OnInit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if warrior.SunderArmorAura.GetStacks() == 5 {
-				spellEffect.ThreatMultiplier = 0
-				spellEffect.FlatThreatBonus = 0
-				spellEffect.DynamicThreatBonus = nil
-			}
+			// In wrath sunder from devastate generates no threat
+			spellEffect.ThreatMultiplier = 0
+			spellEffect.FlatThreatBonus = 0
+			spellEffect.DynamicThreatBonus = nil
 		}
 	}
 

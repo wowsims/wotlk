@@ -1,4 +1,4 @@
-import { Consumes, Explosive } from '../core/proto/common.js';
+import { BattleElixir, Consumes, Explosive, GuardianElixir } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -70,7 +70,8 @@ export const DefaultOptions = ProtectionWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfStoneblood,
+  battleElixir: BattleElixir.ElixirOfExpertise,
+  guardianElixir: GuardianElixir.ElixirOfProtection,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
   prepopPotion: Potions.IndestructiblePotion,

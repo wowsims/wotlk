@@ -39,7 +39,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
+			ThreatMultiplier: 2,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

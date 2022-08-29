@@ -40,7 +40,8 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, extraDurati
 
 func (warrior *Warrior) makeShoutSpell() *core.Spell {
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, 0)
+		extraDur := core.TernaryDuration(warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfBattle), 2*time.Minute, 0)
+		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, extraDur)
 	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
 		extraDur := core.TernaryDuration(warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfCommand), 2*time.Minute, 0)
 		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440}, extraDur)
