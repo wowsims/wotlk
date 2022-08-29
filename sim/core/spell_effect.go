@@ -18,6 +18,8 @@ type EffectOnSpellHitDealt func(sim *Simulation, spell *Spell, spellEffect *Spel
 type OnPeriodicDamage func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 type EffectOnPeriodicDamageDealt func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
+type DynamicThreatBonusFunc func(spellEffect *SpellEffect, spell *Spell) float64
+
 type SpellEffect struct {
 	// Target of the spell.
 	Target *Unit
@@ -42,6 +44,9 @@ type SpellEffect struct {
 
 	// Adds a fixed amount of threat to this spell, before multipliers.
 	FlatThreatBonus float64
+
+	// Adds a dynamic amount of threat to this spell, before multipliers.
+	DynamicThreatBonus DynamicThreatBonusFunc
 
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
@@ -96,7 +101,12 @@ func (spell *Spell) TotalThreatMultiplier() float64 {
 
 func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 	if spellEffect.Landed() {
-		return (spellEffect.Damage*spellEffect.ThreatMultiplier + spellEffect.FlatThreatBonus) * spell.TotalThreatMultiplier()
+		dynamicBonus := 0.0
+		if spellEffect.DynamicThreatBonus != nil {
+			dynamicBonus = spellEffect.DynamicThreatBonus(spellEffect, spell)
+		}
+
+		return (spellEffect.Damage*spellEffect.ThreatMultiplier + spellEffect.FlatThreatBonus + dynamicBonus) * spell.TotalThreatMultiplier()
 	} else {
 		return 0
 	}

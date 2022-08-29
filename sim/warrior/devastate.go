@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -38,8 +39,12 @@ func (warrior *Warrior) registerDevastateSpell() {
 		}))
 	}
 
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
+
 	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
+	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
+	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
 	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, true)
 
@@ -65,7 +70,10 @@ func (warrior *Warrior) registerDevastateSpell() {
 			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			FlatThreatBonus:  100,
+			FlatThreatBonus:  flatThreatBonus,
+			DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+				return warrior.attackPowerMultiplier(spellEffect, spell.Unit, dynaThreatBonus)
+			},
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

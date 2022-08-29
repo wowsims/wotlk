@@ -46,6 +46,9 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, 0.05)
+		},
 
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
@@ -69,6 +72,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			if warrior.SunderArmorAura.GetStacks() == 5 {
 				spellEffect.ThreatMultiplier = 0
 				spellEffect.FlatThreatBonus = 0
+				spellEffect.DynamicThreatBonus = nil
 			}
 		}
 	}
