@@ -73,5 +73,5 @@ func (warrior *Warrior) registerRendSpell() {
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime > (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }

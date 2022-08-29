@@ -127,6 +127,11 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 		return nil
 	}
 
+	if sim.CurrentTime < warrior.disableHsCleaveUntil {
+		warrior.DequeueHSOrCleave(sim)
+		return nil
+	}
+
 	if warrior.CurrentRage() < warrior.HeroicStrikeOrCleave.DefaultCast.Cost {
 		warrior.DequeueHSOrCleave(sim)
 		return nil
