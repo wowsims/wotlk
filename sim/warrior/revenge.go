@@ -4,10 +4,27 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
+	actionID := core.ActionID{SpellID: 30357}
+	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
+		Label:    "Revenge",
+		Duration: 5 * time.Second,
+		ActionID: actionID,
+	})
+
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRevenge)
+	if hasGlyph {
+		warrior.glyphOfRevengeProcAura = warrior.RegisterAura(core.Aura{
+			Label:    "Glyph of Revenge",
+			Duration: core.NeverExpires,
+			ActionID: core.ActionID{SpellID: 58398},
+		})
+	}
+
 	warrior.RegisterAura(core.Aura{
 		Label:    "Revenge Trigger",
 		Duration: core.NeverExpires,
@@ -16,7 +33,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
-				warrior.RevengeValidUntil = sim.CurrentTime + time.Second*5
+				warrior.revengeProcAura.Activate(sim)
 			}
 		},
 	})
@@ -37,7 +54,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	applyEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1.0 + 0.3*float64(warrior.Talents.ImprovedRevenge),
+		DamageMultiplier: 1.0 + 0.3*float64(warrior.Talents.ImprovedRevenge) + 0.1*float64(warrior.Talents.UnrelentingAssault),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  121,
 
@@ -50,7 +67,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			warrior.RevengeValidUntil = 0
 			if !spellEffect.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}
@@ -58,7 +74,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	})
 
 	warrior.Revenge = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30357},
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -73,12 +89,17 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second * 5,
+				Duration: time.Second*5 - 2*time.Second*time.Duration(warrior.Talents.UnrelentingAssault),
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyEffect(sim, target, spell)
+			warrior.revengeProcAura.Deactivate(sim)
+
+			if warrior.glyphOfRevengeProcAura != nil {
+				warrior.glyphOfRevengeProcAura.Activate(sim)
+			}
 
 			if target == warrior.CurrentTarget && numHits > 1 {
 				if sim.RandomFloat("Revenge Target Roll") <= 0.5*float64(warrior.Talents.ImprovedRevenge) {
@@ -90,7 +111,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 }
 
 func (warrior *Warrior) CanRevenge(sim *core.Simulation) bool {
-	return sim.CurrentTime < warrior.RevengeValidUntil &&
+	return warrior.revengeProcAura.IsActive() &&
 		warrior.StanceMatches(DefensiveStance) &&
 		warrior.CurrentRage() >= warrior.Revenge.DefaultCast.Cost &&
 		warrior.Revenge.IsReady(sim)

@@ -39,6 +39,20 @@ export const StandardTalents = {
 	}),
 };
 
+export const UATalents = {
+	name: 'UA',
+	data: SavedTalents.create({
+		talentsString: '35023301230051002020120002-2-05035122500000252',
+		glyphs: Glyphs.create({
+			major1: WarriorMajorGlyph.GlyphOfRevenge,
+			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			minor1: WarriorMinorGlyph.GlyphOfCharge,
+			minor2: WarriorMinorGlyph.GlyphOfThunderClap,
+			minor3: WarriorMinorGlyph.GlyphOfCommand,
+		}),
+	}),
+};
+
 export const DefaultRotation = ProtectionWarriorRotation.create({
 	demoShout: DemoShout.DemoShoutMaintain,
 	thunderClap: ThunderClap.ThunderClapMaintain,
@@ -160,4 +174,105 @@ export const P1_BALANCED_PRESET = {
           ]
         }
       ]}`),
+};
+
+export const P1_PRERAID_BALANCED_PRESET = {
+	name: 'P1 Pre-Raid Balanced Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+    {
+      "id": 42549,
+      "enchant": 44878,
+      "gems": [
+        41380,
+        40089
+      ]
+    },
+    {
+      "id": 40679
+    },
+    {
+      "id": 37635,
+      "enchant": 44957,
+      "gems": [
+        40089
+      ]
+    },
+    {
+      "id": 37728,
+      "enchant": 55002
+    },
+    {
+      "id": 39611,
+      "enchant": 47766,
+      "gems": [
+        40008,
+        40008
+      ]
+    },
+    {
+      "id": 37620,
+      "enchant": 44944,
+      "gems": [
+        0
+      ]
+    },
+    {
+      "id": 39622,
+      "enchant": 63770,
+      "gems": [
+        40034,
+        0
+      ]
+    },
+    {
+      "id": 37379,
+      "enchant": 54793,
+      "gems": [
+        36767,
+        36767
+      ]
+    },
+    {
+      "id": 43500,
+      "enchant": 38373,
+      "gems": [
+        40034
+      ]
+    },
+    {
+      "id": 44201,
+      "enchant": 44491
+    },
+    {
+      "id": 37784
+    },
+    {
+      "id": 37257
+    },
+    {
+      "id": 37220
+    },
+    {
+      "id": 44063,
+      "gems": [
+        40089,
+        40089
+      ]
+    },
+    {
+      "id": 37401,
+      "enchant": 22559
+    },
+    {
+      "id": 43085,
+      "enchant": 44936
+    },
+    {
+      "id": 41168,
+      "gems": [
+        36767
+      ]
+    }
+  ]}`),
 };

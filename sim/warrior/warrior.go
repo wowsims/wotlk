@@ -24,11 +24,12 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance              Stance
-	overpowerValidUntil time.Duration
-	rendValidUntil      time.Duration
-	RevengeValidUntil   time.Duration
-	shoutExpiresAt      time.Duration
+	Stance                 Stance
+	overpowerValidUntil    time.Duration
+	rendValidUntil         time.Duration
+	shoutExpiresAt         time.Duration
+	revengeProcAura        *core.Aura
+	glyphOfRevengeProcAura *core.Aura
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -60,6 +61,7 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
+	ConcussionBlow       *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -139,6 +141,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerWhirlwindSpell()
 	warrior.registerRendSpell()
 	warrior.registerShockwaveSpell()
+	warrior.registerConcussionBlowSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -164,7 +167,6 @@ func (warrior *Warrior) Initialize() {
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
-	warrior.RevengeValidUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
@@ -207,6 +209,10 @@ func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
 }
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
+	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
 }
 

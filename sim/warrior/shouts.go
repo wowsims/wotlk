@@ -10,7 +10,7 @@ import (
 
 const ShoutExpirationThreshold = time.Second * 3
 
-func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID) *core.Spell {
+func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, extraDuration time.Duration) *core.Spell {
 	cost := 10.0
 	if warrior.HasSetBonus(ItemSetBoldArmor, 2) {
 		cost -= 2
@@ -33,16 +33,17 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID) *core.Spell
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			// Actual shout effects are handled in core/buffs.go
-			warrior.shoutExpiresAt = sim.CurrentTime + warrior.shoutDuration
+			warrior.shoutExpiresAt = sim.CurrentTime + warrior.shoutDuration + extraDuration
 		},
 	})
 }
 
 func (warrior *Warrior) makeShoutSpell() *core.Spell {
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436})
+		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, 0)
 	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440})
+		extraDur := core.TernaryDuration(warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfCommand), 2*time.Minute, 0)
+		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440}, extraDur)
 	} else {
 		return nil
 	}

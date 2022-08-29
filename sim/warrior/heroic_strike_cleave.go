@@ -28,6 +28,16 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DefaultCast: core.Cast{
 				Cost: cost,
 			},
+
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if warrior.glyphOfRevengeProcAura != nil {
+					if warrior.glyphOfRevengeProcAura.IsActive() {
+						cast.Cost = 0
+
+						warrior.glyphOfRevengeProcAura.Deactivate(sim)
+					}
+				}
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

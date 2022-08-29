@@ -21,9 +21,11 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	if war.GCD.IsReady(sim) {
-		if war.CanShieldSlam(sim) {
+		if war.Rotation.PrioRevengeOverShieldSlam && war.CanRevenge(sim) {
+			war.Revenge.Cast(sim, war.CurrentTarget)
+		} else if war.CanShieldSlam(sim) {
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
-		} else if war.CanRevenge(sim) {
+		} else if !war.Rotation.PrioRevengeOverShieldSlam && war.CanRevenge(sim) {
 			war.Revenge.Cast(sim, war.CurrentTarget)
 		} else if war.ShouldShout(sim) {
 			war.Shout.Cast(sim, nil)
@@ -31,8 +33,10 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 			war.ThunderClap.Cast(sim, war.CurrentTarget)
 		} else if war.shouldDemoShout(sim) {
 			war.DemoralizingShout.Cast(sim, war.CurrentTarget)
-		} else if war.CanShockwave(sim) && war.Env.GetNumTargets() > 1 {
+		} else if war.Rotation.UseShockwaveSt && war.CanShockwave(sim) {
 			war.Shockwave.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseConcussionBlowSt && war.CanConcussionBlow(sim) {
+			war.ConcussionBlow.Cast(sim, war.CurrentTarget)
 		} else if war.CanDevastate(sim) {
 			war.Devastate.Cast(sim, war.CurrentTarget)
 		} else if war.CanSunderArmor(sim) {

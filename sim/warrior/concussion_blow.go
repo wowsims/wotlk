@@ -7,13 +7,16 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerShockwaveSpell() {
+func (warrior *Warrior) registerConcussionBlowSpell() {
+	if !warrior.Talents.ConcussionBlow {
+		return
+	}
+
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
-	cd := 20 * time.Second
 
-	warrior.Shockwave = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 46968},
+	warrior.ConcussionBlow = warrior.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 12809},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -28,22 +31,24 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cd,
+				Duration: time.Second * 30,
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskRanged,
-			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1.0,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskMeleeMHSpecial,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.75)
+					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.38)
 				},
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
+
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
@@ -53,8 +58,6 @@ func (warrior *Warrior) registerShockwaveSpell() {
 	})
 }
 
-func (warrior *Warrior) CanShockwave(sim *core.Simulation) bool {
-	return warrior.StanceMatches(DefensiveStance) &&
-		warrior.CurrentRage() >= warrior.Shockwave.DefaultCast.Cost &&
-		warrior.Shockwave.IsReady(sim)
+func (warrior *Warrior) CanConcussionBlow(sim *core.Simulation) bool {
+	return warrior.Talents.ConcussionBlow && warrior.CurrentRage() >= warrior.ConcussionBlow.DefaultCast.Cost && warrior.ConcussionBlow.IsReady(sim)
 }

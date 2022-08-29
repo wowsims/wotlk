@@ -215,6 +215,10 @@ message ProtectionWarrior {
 
 		// Minimum rage to queue HS or Cleave.
 		int32 hs_rage_threshold = 3;
+
+		bool prio_revenge_over_shield_slam = 6;
+		bool use_shockwave_st = 7;
+		bool use_concussion_blow_st = 8;
 	}
 	Rotation rotation = 1;
 

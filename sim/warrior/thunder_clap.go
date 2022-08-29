@@ -20,7 +20,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return hitEffect.MeleeAttackPower(spell.Unit)*0.12 + 300
+				return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.12) + 300
 			},
 			TargetSpellCoefficient: 1,
 		},

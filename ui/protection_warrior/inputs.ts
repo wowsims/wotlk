@@ -81,5 +81,20 @@ export const ProtectionWarriorRotationConfig = {
 			fieldName: 'useShieldBlock',
 			label: 'Use Shield Block',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'prioRevengeOverShieldSlam',
+			label: 'Prio Revenge over Shield Slam',
+			labelTooltip: 'Prio revenge over shield slam.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'useShockwaveSt',
+			label: 'Use Shockwave (Single Target)',
+			labelTooltip: 'Use Shockwave in rotation in a single target fight.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'useConcussionBlowSt',
+			label: 'Use Concussion Blow (Single Target)',
+			labelTooltip: 'Use Concussion Blow in rotation in a single target fight.',
+		}),
 	],
 };

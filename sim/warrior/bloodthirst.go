@@ -43,7 +43,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return hitEffect.MeleeAttackPower(spell.Unit) * 0.5
+					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.5)
 				},
 				TargetSpellCoefficient: 1,
 			},

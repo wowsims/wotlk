@@ -4,12 +4,30 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
+
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBlocking)
+	var glyphOfBlockingAura *core.Aura = nil
+	if hasGlyph {
+		statDep := warrior.NewDynamicMultiplyStat(stats.BlockValue, 1.1)
+		glyphOfBlockingAura = warrior.GetOrRegisterAura(core.Aura{
+			Label:    "Glyph of Blocking",
+			ActionID: core.ActionID{SpellID: 58397},
+			Duration: 10 * time.Second,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.EnableDynamicStatDep(sim, statDep)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.DisableDynamicStatDep(sim, statDep)
+			},
+		})
+	}
 
 	damageRollFunc := core.DamageRollFunc(990, 1040)
 
@@ -59,6 +77,10 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				} else {
+					if glyphOfBlockingAura != nil {
+						glyphOfBlockingAura.Activate(sim)
+					}
 				}
 			},
 		}),
