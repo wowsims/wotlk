@@ -162,6 +162,8 @@ message BalanceDruid {
 		bool use_mf = 4;
 		float mf_inside_eclipse_threshold = 5;
 		float is_inside_eclipse_threshold = 6;
+		float mcd_inside_lunar_threshold = 7;
+		float mcd_inside_solar_threshold = 8;
 	}
   Options options = 3;
 }
