@@ -43,8 +43,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				roll := (1998.0-1636.0)*sim.RandomFloat("Revenge Roll") + 1636.0
-				return roll + hitEffect.MeleeAttackPower(spell.Unit)*0.31
+				return core.DamageRoll(sim, 1636, 1998) + warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.31)
 			},
 			TargetSpellCoefficient: 1,
 		},

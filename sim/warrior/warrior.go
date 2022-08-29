@@ -59,6 +59,7 @@ type Warrior struct {
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
+	Shockwave            *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -137,6 +138,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
 	warrior.registerRendSpell()
+	warrior.registerShockwaveSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -206,6 +208,10 @@ func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
+	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * coeff
 }
 
 func init() {

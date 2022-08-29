@@ -108,33 +108,43 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
-					powerWordFortitude: TristateEffect.TristateEffectRegular,
-					shadowProtection: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					thorns: TristateEffect.TristateEffectImproved,
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
+					abominationsMight: true,
+					swiftRetribution: true,
 					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
 					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
+					sanctifiedRetribution: true,
+					devotionAura: TristateEffect.TristateEffectImproved,
+					stoneskinTotem: TristateEffect.TristateEffectImproved,
+					icyTalons: true,
+					retributionAura: true,
+					thorns: TristateEffect.TristateEffectImproved,
+					shadowProtection: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
+					blessingOfSanctuary: true,
 				}),
 				debuffs: Debuffs.create({
+					sunderArmor: true,
 					mangle: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
+					insectSwarm: true,
+					bloodFrenzy: true,
+					judgementOfLight: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ProtectionWarriorInputs.ShoutPicker,
-				ProtectionWarriorInputs.ShieldWall,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,

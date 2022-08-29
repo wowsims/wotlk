@@ -62,6 +62,49 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyBloodsurge()
 	warrior.applySuddenDeath()
 	warrior.RegisterBladestormCD()
+	warrior.applyDamageShield()
+}
+
+func (warrior *Warrior) applyDamageShield() {
+	if warrior.Talents.DamageShield == 0 {
+		return
+	}
+
+	damageShieldProcSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 58874},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return warrior.GetStat(stats.BlockValue) * 0.1 * float64(warrior.Talents.DamageShield)
+				},
+			},
+			OutcomeApplier: warrior.OutcomeFuncAlwaysHit(),
+		}),
+	})
+
+	core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
+		Label:    "Damage Shield Trigger",
+		Duration: core.NeverExpires,
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() && !spellEffect.Outcome.Matches(core.OutcomeBlock) {
+				return
+			}
+
+			if spell.SpellSchool != core.SpellSchoolPhysical {
+				return
+			}
+
+			damageShieldProcSpell.Cast(sim, spell.Unit)
+		},
+	}))
 }
 
 func (warrior *Warrior) applyAngerManagement() {

@@ -1,4 +1,4 @@
-import { Consumes } from '../core/proto/common.js';
+import { Consumes, Explosive } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -56,9 +56,12 @@ export const DefaultOptions = ProtectionWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfFortification,
-	food: Food.FoodFishermansFeast,
-	defaultPotion: Potions.IronshieldPotion,
+	flask: Flask.FlaskOfStoneblood,
+	food: Food.FoodDragonfinFilet,
+	defaultPotion: Potions.IndestructiblePotion,
+  prepopPotion: Potions.IndestructiblePotion,
+  thermalSapper: true,
+  fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const P1_BALANCED_PRESET = {

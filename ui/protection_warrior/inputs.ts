@@ -26,11 +26,6 @@ import { SimUI } from '../core/sim_ui.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const ShieldWall = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecProtectionWarrior>({
-	fieldName: 'useShieldWall',
-	id: ActionId.fromSpellId(871),
-});
-
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecProtectionWarrior>({
 	fieldName: 'startingRage',
 	label: 'Starting Rage',

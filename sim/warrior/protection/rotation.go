@@ -31,6 +31,8 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 			war.ThunderClap.Cast(sim, war.CurrentTarget)
 		} else if war.shouldDemoShout(sim) {
 			war.DemoralizingShout.Cast(sim, war.CurrentTarget)
+		} else if war.CanShockwave(sim) && war.Env.GetNumTargets() > 1 {
+			war.Shockwave.Cast(sim, war.CurrentTarget)
 		} else if war.CanDevastate(sim) {
 			war.Devastate.Cast(sim, war.CurrentTarget)
 		} else if war.CanSunderArmor(sim) {
