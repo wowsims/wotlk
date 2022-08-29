@@ -380,12 +380,15 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		return
 	}
 
+	// TODO: This behavior is problematic for spell effects that are reused.
+	// Ideally, the BonusArmorPenRating should be incremented, not assigned.
+	// However, incrementing the value causes a monotonic increase for reused effects.
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
-			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
+			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusMHArmorPenRating
 		}
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
-			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
+			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusOHArmorPenRating
 		}
 	}
 	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
