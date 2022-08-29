@@ -58,6 +58,13 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
+		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+			if dpsDk.RuneStrike.CanCast(sim) {
+				return dpsDk.RuneStrike.Spell
+			} else {
+				return nil
+			}
+		},
 	})
 
 	dpsDk.sr.dk = dpsDk
@@ -86,13 +93,11 @@ func (dk *DpsDeathknight) SetupRotations() {
 		} else {
 			dk.setupFrostSubBloodNoERWOpener()
 		}
-	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() < dk.FrostPointsInUnholy()) {
+	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() <= dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
-			//dk.setupFrostSubUnholyERWOpener()
-			dk.setupFrostSubBloodERWOpener()
+			dk.setupFrostSubUnholyERWOpener()
 		} else {
-			//dk.setupFrostSubUnholyNoERWOpener()
-			dk.setupFrostSubBloodNoERWOpener()
+			dk.setupFrostSubUnholyERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {
 		dk.setupUnholyRotations()

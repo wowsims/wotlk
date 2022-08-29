@@ -58,6 +58,10 @@ func (druid *Druid) registerStarfireSpell() {
 					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
 				}
 			}
+			// T9-4P
+			if druid.SetBonuses.balance_t9_4 {
+				spellEffect.DamageMultiplier *= 1.04
+			}
 			// Nature's Majesty
 			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},
@@ -66,6 +70,13 @@ func (druid *Druid) registerStarfireSpell() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
 					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+					if druid.SetBonuses.balance_t10_4 {
+						if druid.LasherweaveDot.IsActive() {
+							druid.LasherweaveDot.Refresh(sim)
+						} else {
+							druid.LasherweaveDot.Apply(sim)
+						}
+					}
 				}
 				if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
 					maxMoonfireTicks := druid.maxMoonfireTicks()
@@ -111,6 +122,7 @@ func (druid *Druid) registerStarfireSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
+				druid.ApplySwiftStarfireBonus(sim, cast)
 				if druid.HasActiveAura("Elune's Wrath") {
 					cast.CastTime = 0
 					druid.GetAura("Elune's Wrath").Deactivate(sim)

@@ -15,36 +15,25 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIceboundFortitude)
 
-	m := (50.0 - 35.0) / (680.0 - 540.0)
-	dtMultiplier := 1.0
+	dmgTakenMult := 1.0
 	dk.IceboundFortitudeAura = dk.RegisterAura(core.Aura{
 		Label:    "Icebound Fortitude",
 		ActionID: actionID,
 		Duration: time.Second*12 + time.Second*2*time.Duration(float64(dk.Talents.GuileOfGorefiend)) + dk.scourgebornePlateIFDurationBonus(),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// TODO: Verify formula
-			defRating := dk.IceboundFortitudeAura.Unit.GetStat(stats.Defense) * core.DefenseRatingPerDefense
-			if defRating <= 306 {
-				dtMultiplier = 1.1
-			} else {
-				dtMultiplier = 1.0 + (m*defRating - 22.8571428556)
-			}
-
-			if hasGlyph {
-				dtMultiplier = core.MaxFloat(dtMultiplier, 1.4)
-			}
-
-			dk.IceboundFortitudeAura.Unit.PseudoStats.DamageTakenMultiplier *= dtMultiplier
+			def := dk.IceboundFortitudeAura.Unit.GetStat(stats.Defense)
+			dmgTakenMult = 1.0 - core.TernaryFloat64(hasGlyph, core.MaxFloat(0.4, 0.3+0.0015*(def-400)), 0.3+0.0015*(def-400))
+			dk.IceboundFortitudeAura.Unit.PseudoStats.DamageTakenMultiplier *= dmgTakenMult
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.IceboundFortitudeAura.Unit.PseudoStats.DamageTakenMultiplier /= dtMultiplier
+			dk.IceboundFortitudeAura.Unit.PseudoStats.DamageTakenMultiplier /= dmgTakenMult
 		},
 	})
 
 	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
-
-	dk.IceboundFortitude = dk.RegisterSpell(nil, core.SpellConfig{
+	rs := &RuneSpell{}
+	dk.IceboundFortitude = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -63,8 +52,17 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.IceboundFortitudeAura.Activate(sim)
+			rs.DoCost(sim)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
 	}, nil)
+
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    dk.IceboundFortitude.Spell,
+			Type:     core.CooldownTypeSurvival,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }

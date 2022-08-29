@@ -253,6 +253,20 @@ func (druid *Druid) applyOmenOfClarity() {
 		ActionID: core.ActionID{SpellID: 16870},
 		Duration: time.Second * 15,
 	})
+	// T10-2P
+	lasherweave2P := druid.RegisterAura(core.Aura{
+		Label:    "T10-2P proc",
+		ActionID: core.ActionID{SpellID: 70718},
+		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.ArcaneDamageDealtMultiplier *= 1.15
+			druid.PseudoStats.NatureDamageDealtMultiplier *= 1.15
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.ArcaneDamageDealtMultiplier /= 1.15
+			druid.PseudoStats.NatureDamageDealtMultiplier /= 1.15
+		},
+	})
 
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
@@ -270,6 +284,9 @@ func (druid *Druid) applyOmenOfClarity() {
 			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
 				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 					druid.ClearcastingAura.Activate(sim)
+					if druid.SetBonuses.balance_t10_2 {
+						lasherweave2P.Activate(sim)
+					}
 				}
 			}
 		},
@@ -292,6 +309,7 @@ func (druid *Druid) applyEclipse() {
 
 	// Solar
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
+	// TODO : make this proc a regular Aura
 	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.RegisterAura(core.Aura{
@@ -322,6 +340,7 @@ func (druid *Druid) applyEclipse() {
 
 	// Lunar
 	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
+	// TODO : make this proc a regular Aura
 	lunarProcAura := druid.NewTemporaryStatsAura("Lunar Eclipse proc", core.ActionID{SpellID: 48518}, stats.Stats{}, time.Millisecond*15000)
 	druid.LunarICD.Duration = time.Millisecond * 30000
 	druid.RegisterAura(core.Aura{
@@ -349,4 +368,11 @@ func (druid *Druid) applyEclipse() {
 			}
 		},
 	})
+}
+
+func (druid *Druid) ApplySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
 }

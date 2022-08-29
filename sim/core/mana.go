@@ -30,15 +30,19 @@ type manaBar struct {
 // as well as enable the mana gain action to regenerate mana.
 // It will then enable mana gain metrics for reporting.
 func (character *Character) EnableManaBar() {
+	character.EnableManaBarWithModifier(1.0)
+}
+
+func (character *Character) EnableManaBarWithModifier(modifier float64) {
 	// Assumes all units have >= 20 intellect.
 	// See https://wowwiki-archive.fandom.com/wiki/Base_mana.
 	// Subtract out the non-linear part of the formula separately, so that weird
 	// mana values are not included when using the stat dependency manager.
-	character.AddStat(stats.Mana, 20-15*20)
-	character.AddStatDependency(stats.Intellect, stats.Mana, 15)
+	character.AddStat(stats.Mana, 20-15*20*modifier)
+	character.AddStatDependency(stats.Intellect, stats.Mana, 15*modifier)
 
 	// This conversion is now universal for
-	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.16)
+	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.66667)
 
 	// Not a real spell, just holds metrics from mana gain threat.
 	character.RegisterSpell(SpellConfig{

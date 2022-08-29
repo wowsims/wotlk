@@ -71,6 +71,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 7176.34833
+  tps: 5384.67447
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 7348.6235

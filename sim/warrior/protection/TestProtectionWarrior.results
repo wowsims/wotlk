@@ -129,6 +129,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-Beast-tamer'sShoulders-30892"
+ value: {
+  dps: 456.17902
+  tps: 688.02669
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-BoldArmor"
  value: {
   dps: 425.94002
@@ -357,6 +364,13 @@ dps_results: {
  value: {
   dps: 447.28532
   tps: 677.0476
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-Gladiator'sBattlegear"
+ value: {
+  dps: 705.50116
+  tps: 1028.40834
  }
 }
 dps_results: {
