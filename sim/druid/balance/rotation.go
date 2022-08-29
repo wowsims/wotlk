@@ -100,9 +100,9 @@ func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *cor
 	if mcd != nil {
 		if mcd.Spell.IsReady(sim) && moonkin.GCD.IsReady(sim) {
 			mcd.Spell.Cast(sim, target)
-		}
-		if mcd.Spell.SameAction(core.ActionID{ItemID: 40211}) || mcd.Spell.SameAction(core.ActionID{ItemID: 40212}) {
-			moonkin.potionUsed = true
+			if mcd.Spell.SameAction(core.ActionID{ItemID: 40211}) || mcd.Spell.SameAction(core.ActionID{ItemID: 40212}) {
+				moonkin.potionUsed = true
+			}
 		}
 	}
 }
