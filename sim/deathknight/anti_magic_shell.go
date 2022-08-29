@@ -82,13 +82,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			}
 
 			dk.PseudoStats.PhysicalDamageTakenMultiplier *= physDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.ArcaneDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.FireDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.FrostDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.HolyDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier *= spellDmgTakenMult
 
 			rs.DoCost(sim)
@@ -96,13 +96,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.PseudoStats.PhysicalDamageTakenMultiplier /= physDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
 			dk.PseudoStats.ArcaneDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.FireDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.FrostDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.HolyDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier /= spellDmgTakenMult
 		},
 

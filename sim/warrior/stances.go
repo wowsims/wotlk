@@ -75,8 +75,36 @@ func (warrior *Warrior) registerBattleStanceAura() {
 
 func (warrior *Warrior) registerDefensiveStanceAura() {
 	actionID := core.ActionID{SpellID: 71}
-	threatMult := 1.3 * (1 + 0.05*float64(warrior.Talents.Defiance))
-	impDefStanceMultiplier := 1 - 0.02*float64(warrior.Talents.ImprovedDefensiveStance)
+	threatMult := 2.0735
+	// TODO: Imp def stance
+	impDefStanceMultiplier := 1 - 0.03*float64(warrior.Talents.ImprovedDefensiveStance)
+
+	if warrior.Talents.ImprovedDefensiveStance > 0 {
+		enrageAura := warrior.GetOrRegisterAura(core.Aura{
+			Label:    "Enrage",
+			ActionID: core.ActionID{SpellID: 57516},
+			Duration: 12 * time.Second,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+			},
+		})
+
+		core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
+			Label:    "Enrage Trigger",
+			Duration: core.NeverExpires,
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+					if sim.RandomFloat("Enrage Trigger Chance") <= 0.5*float64(warrior.Talents.ImprovedDefensiveStance) {
+						enrageAura.Activate(sim)
+					}
+				}
+			},
+		}))
+
+	}
 
 	warrior.DefensiveStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Defensive Stance",

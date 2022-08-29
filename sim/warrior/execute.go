@@ -51,7 +51,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 1456 + hitEffect.MeleeAttackPower(spell.Unit)*0.2 + 38*(extraRage+extraRageBonus)
+					return 1456 + warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.2) + 38*(extraRage+extraRageBonus)
 				},
 				TargetSpellCoefficient: 1,
 			},

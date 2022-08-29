@@ -845,7 +845,11 @@ export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsCon
                     "colIdx": 2
                 },
                 "spellIds": [
-                    12297
+                    55129,
+                    12750,
+                    12751,
+                    12752,
+                    12753,
                 ],
                 "maxPoints": 5
             },
