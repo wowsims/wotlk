@@ -193,14 +193,15 @@ func (pet *Pet) Disable(sim *Simulation) {
 	pet.CancelGCDTimer(sim)
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.enabled = false
-	pet.DoNothing() // mark it is intionally doing nothing now.
+	pet.DoNothing() // mark it is as doing nothing now.
 
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to
 	// clear it.
 	pet.Hardcast = Hardcast{}
 
-	// Reset pet mana.
-	pet.stats[stats.Mana] = pet.MaxMana()
+	// TODO When MaxMana includes bonus mana will move this to the enable,
+	//so bonus mana from the owner inheritence applies to the pet currentMana
+	pet.manaBar.reset()
 
 	if pet.timeoutAction != nil {
 		pet.timeoutAction.Cancel(sim)

@@ -180,26 +180,27 @@ func NewDot(config Dot) *Dot {
 	return dot
 }
 
+func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect SpellEffect) {
+	*dot.snapshotEffect = baseEffect
+	if dot.useSnapshot {
+		dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
+		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
+		dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
+	} else {
+		dot.snapshotEffect.DamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
+		dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+			target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
+		dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
+	}
+	dot.snapshotEffect.Target = target
+
+	baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
+	dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
+}
+
 func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
-		*dot.snapshotEffect = baseEffect
-		if dot.useSnapshot {
-			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
-			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
-			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
-		} else {
-			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
-			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
-				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
-			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
-		}
-		dot.snapshotEffect.Target = target
-
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
-		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
-		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
-		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
-
+		dot.updateSnapshotEffect(sim, target, baseEffect)
 		effectsFunc := ApplyEffectFuncDirectDamage(*dot.snapshotEffect)
 		return func() {
 			effectsFunc(sim, target, dot.Spell)
@@ -210,24 +211,7 @@ func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
 func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
-		*dot.snapshotEffect = baseEffect
-		if dot.useSnapshot {
-			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
-			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
-			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
-		} else {
-			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
-			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
-				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
-			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
-		}
-		dot.snapshotEffect.Target = target
-
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
-		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
-		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
-		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
-
+		dot.updateSnapshotEffect(sim, target, baseEffect)
 		effectsFunc := ApplyEffectFuncAOEDamage(env, *dot.snapshotEffect)
 		return func() {
 			effectsFunc(sim, target, dot.Spell)
@@ -237,24 +221,7 @@ func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
 func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEffects {
 	return func(sim *Simulation, dot *Dot) func() {
 		target := dot.Spell.Unit.CurrentTarget
-		*dot.snapshotEffect = baseEffect
-		if dot.useSnapshot {
-			dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
-			dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
-			dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
-		} else {
-			dot.snapshotEffect.DamageMultiplier *= dot.snapshotEffect.snapshotAttackModifiers(dot.Spell) * dot.Spell.DamageMultiplier
-			dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
-				target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
-			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
-		}
-		dot.snapshotEffect.Target = target
-
-		baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell) / (dot.Spell.DamageMultiplier * dot.snapshotEffect.DamageMultiplier)
-		// because calculateBaseDamage(sim, dot.Spell) := spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
-		// and also spellEffect.DamageMultiplier will be applied in ApplyEffectFuncDirectDamage
-		dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
-
+		dot.updateSnapshotEffect(sim, target, baseEffect)
 		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, *dot.snapshotEffect)
 		return func() {
 			effectsFunc(sim, target, dot.Spell)

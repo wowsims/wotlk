@@ -636,7 +636,12 @@ func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 			Debuffs:     config.Debuffs,
 			SpecOptions: allSpecOptions,
 			Encounter:   MakeSingleTargetEncounter(5),
-			SimOptions:  AverageDefaultSimTestOptions,
+			SimOptions: &proto.SimOptions{
+				Iterations: 100,
+				IsTest:     true,
+				Debug:      false,
+				RandomSeed: 101,
+			},
 		},
 	})
 	return generator

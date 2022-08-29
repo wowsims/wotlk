@@ -21,13 +21,14 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		ProcMask: core.ProcMaskRangedSpecial,
 		BonusCritRating: 2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
 			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(hunter.Talents.TNT)),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.14 + 492
+				damageRoll := core.DamageRoll(sim, 386, 464)
+				rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
+				return damageRoll + 0.14*rap
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -62,6 +63,9 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),
+
+		InitialDamageMultiplier: 1 +
+			.02*float64(hunter.Talents.TNT),
 	})
 
 	dotEffect := baseEffect

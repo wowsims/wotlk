@@ -133,18 +133,17 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			glyphMultiplier *= 1.2
 		}
-		wp.MultiplyStat(stats.AttackPower, talentMultiplier * glyphMultiplier)
+		wp.MultiplyStat(stats.AttackPower, talentMultiplier*glyphMultiplier)
 
 		statDeps := []*stats.StatDependency{nil}
 		for i := 0; i <= 10; i++ {
-			statDeps = append(statDeps, wp.NewDynamicMultiplyStat(stats.AttackPower, (1 + 0.1*float64(warlock.Talents.DemonicBrutality) + 0.05*float64(i))/talentMultiplier ))
+			statDeps = append(statDeps, wp.NewDynamicMultiplyStat(stats.AttackPower, (1+0.1*float64(warlock.Talents.DemonicBrutality)+0.05*float64(i))/talentMultiplier))
 		}
-		
 
 		DemonicFrenzyAura := wp.RegisterAura(core.Aura{
-			Label:    "Demonic Frenzy",
-			ActionID: core.ActionID{SpellID: 32851},
-			Duration: time.Second * 10,
+			Label:     "Demonic Frenzy",
+			ActionID:  core.ActionID{SpellID: 32851},
+			Duration:  time.Second * 10,
 			MaxStacks: 10,
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 				if oldStacks != 0 {
@@ -174,7 +173,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		})
 	}
 
-if warlock.Talents.FelVitality > 0 {
+	if warlock.Talents.FelVitality > 0 {
 		bonus := 1.0 + 0.05*float64(warlock.Talents.FelVitality)
 		wp.MultiplyStat(stats.Intellect, bonus)
 		wp.MultiplyStat(stats.Stamina, bonus)

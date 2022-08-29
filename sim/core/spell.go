@@ -21,6 +21,8 @@ type SpellConfig struct {
 	Cast CastConfig
 
 	ApplyEffects ApplySpellEffects
+
+	InitialDamageMultiplier float64
 }
 
 // Metric totals for a spell against a specific target, for the current iteration.
@@ -91,6 +93,8 @@ type Spell struct {
 	CostMultiplier     float64 // For dynamic effects. Do not set during initialization.
 	DamageMultiplier   float64 // For dynamic effects. Do not set during initialization.
 	BonusCritRating    float64 // For dynamic effects. Do not set during initialization.
+
+	initialDamageMultiplier float64
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
@@ -116,6 +120,13 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		CastTimeMultiplier: 1,
 		CostMultiplier:     1,
 		DamageMultiplier:   1,
+
+		initialDamageMultiplier: 1,
+	}
+
+	if config.InitialDamageMultiplier != 0 {
+		spell.DamageMultiplier = config.InitialDamageMultiplier
+		spell.initialDamageMultiplier = config.InitialDamageMultiplier
 	}
 
 	switch spell.ResourceType {
@@ -191,21 +202,28 @@ func (spell *Spell) finalize() {
 	if spell.CostMultiplier != 1 {
 		panic(spell.ActionID.String() + " has non-default CostMultiplier during finalize!")
 	}
-	if spell.DamageMultiplier != 1 {
-		panic(spell.ActionID.String() + " has non-default DamageMultiplier during finalize!")
-	}
+	// There are now spells which need to set DamageMultiplier at start, for additive effects.
+	//if spell.DamageMultiplier != 1 {
+	//	panic(spell.ActionID.String() + " has non-default DamageMultiplier during finalize!")
+	//}
 	if spell.BonusCritRating != 0 {
 		panic(spell.ActionID.String() + " has non-default BonusCritRating during finalize!")
 	}
 }
 
 func (spell *Spell) reset(sim *Simulation) {
-	spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
+		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	} else {
+		for i := range spell.SpellMetrics {
+			spell.SpellMetrics[i] = SpellMetrics{}
+		}
+	}
 
 	// Reset dynamic effects.
 	spell.CastTimeMultiplier = 1
 	spell.CostMultiplier = 1
-	spell.DamageMultiplier = 1
+	spell.DamageMultiplier = spell.initialDamageMultiplier
 	spell.BonusCritRating = 0
 }
 
