@@ -121,7 +121,7 @@ func (ghoul *GhoulPet) GetPet() *core.Pet {
 }
 
 func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
-	if !ghoulPet.IsPetGhoul() {
+	if !ghoulPet.IsPetGhoul() || !ghoulPet.IsEnabled() {
 		return
 	}
 
@@ -172,6 +172,8 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
 		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+	} else {
+		ghoulPet.OwnerAttackSpeedChanged(sim)
 	}
 }
 

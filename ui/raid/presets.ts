@@ -265,7 +265,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HunterPresets.MarksmanTalents.data,
 		specOptions: HunterPresets.DefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
-		defaultName: 'BM Hunter',
+		defaultName: 'MM Hunter',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
