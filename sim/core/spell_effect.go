@@ -47,7 +47,7 @@ type SpellEffect struct {
 	FlatThreatBonus float64
 
 	// Adds a dynamic amount of threat to this spell, before multipliers.
-	DynamicThreatBonus DynamicThreatBonusFunc
+	DynamicThreatBonus      DynamicThreatBonusFunc
 	DynamicThreatMultiplier DynamicThreatMultiplierFunc
 
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
@@ -113,7 +113,7 @@ func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 			dynamicMultiplier = spellEffect.DynamicThreatMultiplier(spellEffect, spell)
 		}
 
-		return (spellEffect.Damage*spellEffect.ThreatMultiplier*dynamicMultiplier+spellEffect.FlatThreatBonus + dynamicBonus) * spell.TotalThreatMultiplier()
+		return (spellEffect.Damage*spellEffect.ThreatMultiplier*dynamicMultiplier + spellEffect.FlatThreatBonus + dynamicBonus) * spell.TotalThreatMultiplier()
 	} else {
 		return 0
 	}

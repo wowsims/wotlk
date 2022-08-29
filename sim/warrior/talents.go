@@ -62,6 +62,29 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applySuddenDeath()
 	warrior.RegisterBladestormCD()
 	warrior.applyDamageShield()
+	warrior.applyCriticalBlock()
+}
+
+func (warrior *Warrior) applyCriticalBlock() {
+	if warrior.Talents.CriticalBlock == 0 {
+		return
+	}
+
+	dummyCriticalBlockSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 47296},
+		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+	})
+
+	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if spellEffect.Landed() && spellEffect.Outcome.Matches(core.OutcomeBlock) {
+			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
+			if sim.RandomFloat("Critical Block Roll") <= procChance {
+				blockValue := warrior.GetStat(stats.BlockValue)
+				spellEffect.Damage = core.MaxFloat(0, spellEffect.Damage-blockValue)
+				dummyCriticalBlockSpell.Cast(sim, warrior.CurrentTarget)
+			}
+		}
+	})
 }
 
 func (warrior *Warrior) applyDamageShield() {
