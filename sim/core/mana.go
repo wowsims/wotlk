@@ -75,8 +75,7 @@ func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
 func (unit *Unit) MaxMana() float64 {
-	// TODO needs to use Max Health from stats to include bonus mana.
-	return unit.GetInitialStat(stats.Mana)
+	return unit.stats[stats.Mana]
 }
 func (unit *Unit) CurrentMana() float64 {
 	return unit.currentMana
@@ -92,6 +91,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 
 	oldMana := unit.CurrentMana()
 	newMana := MinFloat(oldMana+amount, unit.MaxMana())
+
 	metrics.AddEvent(amount, newMana-oldMana)
 
 	if sim.Log != nil {
