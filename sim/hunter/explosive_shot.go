@@ -26,7 +26,9 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.14 + 492
+				damageRoll := core.DamageRoll(sim, 386, 464)
+				rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
+				return damageRoll + 0.14*rap
 			},
 			TargetSpellCoefficient: 1,
 		},
