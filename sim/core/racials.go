@@ -18,9 +18,22 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
 
-		actionID := ActionID{SpellID: 50613}
+		var actionID ActionID
 
 		var resourceMetrics *ResourceMetrics = nil
+		if resourceMetrics == nil {
+			if character.HasRunicPowerBar() {
+				actionID = ActionID{SpellID: 50613}
+				resourceMetrics = character.NewRunicPowerMetrics(actionID)
+			} else if character.HasEnergyBar() {
+				actionID = ActionID{SpellID: 25046}
+				resourceMetrics = character.NewEnergyMetrics(actionID)
+			} else if character.HasManaBar() {
+				actionID = ActionID{SpellID: 28730}
+				resourceMetrics = character.NewManaMetrics(actionID)
+			}
+		}
+
 		spell := character.RegisterSpell(SpellConfig{
 			ActionID: actionID,
 			Flags:    SpellFlagNoOnCastComplete,
@@ -30,23 +43,13 @@ func applyRaceEffects(agent Agent) {
 					Duration: time.Minute * 2,
 				},
 			},
-			ApplyEffects: func(sim *Simulation, unit *Unit, spell *Spell) {
-				if resourceMetrics == nil {
-					if character.HasRunicPowerBar() {
-						resourceMetrics = character.NewRunicPowerMetrics(actionID)
-					} else if character.HasEnergyBar() {
-						resourceMetrics = character.NewEnergyMetrics(actionID)
-					} else if character.HasManaBar() {
-						resourceMetrics = character.NewManaMetrics(actionID)
-					}
-				}
-
+			ApplyEffects: func(sim *Simulation, _ *Unit, spell *Spell) {
 				if spell.Unit.HasRunicPowerBar() {
 					spell.Unit.AddRunicPower(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasEnergyBar() {
 					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
-				} else if unit.HasManaBar() {
-					spell.Unit.AddMana(sim, unit.MaxMana()*0.06, resourceMetrics, false)
+				} else if spell.Unit.HasManaBar() {
+					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics, false)
 				}
 			},
 		})
