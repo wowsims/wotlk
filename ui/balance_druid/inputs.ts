@@ -65,5 +65,15 @@ export const BalanceDruidRotationConfig = {
 			label: 'Insect Swarm inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
 		}),
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mcdInsideLunarThreshold',
+			label: 'CDs inside lunar eclipse max timing',
+			labelTooltip: 'Maximum lunar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
+		}),
+		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mcdInsideSolarThreshold',
+			label: 'CDs inside solar eclipse max timing',
+			labelTooltip: 'Maximum solar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
+		}),
 	],
 };
