@@ -38,8 +38,14 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			DamageMultiplier: 1 * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1) * (1 + 0.02*float64(warrior.Talents.UnendingFury)),
-			ThreatMultiplier: 1,
 			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+			ThreatMultiplier: 1,
+			DynamicThreatMultiplier: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+				if warrior.StanceMatches(DefensiveStance) {
+					return 1 + 0.21*float64(warrior.Talents.TacticalMastery)
+				}
+				return 1.0
+			},
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -49,11 +55,6 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
 
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if warrior.StanceMatches(DefensiveStance) {
-					spellEffect.ThreatMultiplier *= 1 + 0.21*float64(warrior.Talents.TacticalMastery)
-				}
-			},
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
