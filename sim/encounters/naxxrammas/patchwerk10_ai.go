@@ -1,4 +1,4 @@
-package encounters
+package naxxrammas
 
 import (
 	"time"

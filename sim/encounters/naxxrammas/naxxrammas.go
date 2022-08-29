@@ -1,6 +1,6 @@
-package encounters
+package naxxrammas
 
-func registerNaxxramas() {
+func Register() {
 	addPatchwerk25("Naxxrammas")
 
 	// TODO: Figure out why this isn't pickable
