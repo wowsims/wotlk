@@ -42,9 +42,6 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if sim.CurrentTime < warrior.disableHsCleaveUntil {
-					return
-				}
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
@@ -117,6 +114,10 @@ func (warrior *Warrior) DequeueHSOrCleave(sim *core.Simulation) {
 // Returns true if the regular melee swing should be used, false otherwise.
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !warrior.HSOrCleaveQueueAura.IsActive() {
+		return nil
+	}
+
+	if sim.CurrentTime < warrior.disableHsCleaveUntil {
 		return nil
 	}
 
