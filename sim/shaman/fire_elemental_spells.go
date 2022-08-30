@@ -62,10 +62,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 				Duration: time.Second * 4,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
-			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
+				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed()*2)
 			},
 		},
 
@@ -80,10 +77,11 @@ func (fireElemental *FireElemental) registerFireNova() {
 
 }
 
-func (fireElemental *FireElemental) registerFireShieldSpell() {
+func (fireElemental *FireElemental) registerFireShieldAura() {
 	actionID := core.ActionID{SpellID: 11350}
 
-	fireElemental.FireShieldSpell = fireElemental.RegisterSpell(core.SpellConfig{
+	//dummy spell
+	spell := fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
 		Cast: core.CastConfig{
@@ -91,17 +89,12 @@ func (fireElemental *FireElemental) registerFireShieldSpell() {
 				GCD: 0,
 			},
 		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			totemDuration := fireElemental.shamanOwner.NextTotemDrops[FireTotem] - sim.CurrentTime
-			fireElemental.FireShieldDot.NumberOfTicks = int(totemDuration / (time.Second * 3))
-			fireElemental.FireShieldDot.Apply(sim)
-		},
 	})
 
 	target := fireElemental.CurrentTarget
 
-	fireElemental.FireShieldDot = core.NewDot(core.Dot{
-		Spell: fireElemental.FireShieldSpell,
+	fireShieldDot := core.NewDot(core.Dot{
+		Spell: spell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Fire Shield",
 			ActionID: actionID,
@@ -114,5 +107,16 @@ func (fireElemental *FireElemental) registerFireShieldSpell() {
 			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
 		})),
+	})
+
+	fireElemental.FireShieldAura = fireElemental.RegisterAura(core.Aura{
+		Label:    "Fire Shield",
+		ActionID: actionID,
+		Duration: time.Minute * 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			totemDuration := fireElemental.shamanOwner.NextTotemDrops[FireTotem] - sim.CurrentTime
+			fireShieldDot.NumberOfTicks = int(totemDuration / (time.Second * 3))
+			fireShieldDot.Apply(sim)
+		},
 	})
 }

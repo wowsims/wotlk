@@ -19,11 +19,10 @@ const (
 type FireElemental struct {
 	core.Pet
 
-	FireBlast       *core.Spell
-	FireNova        *core.Spell
-	FireShieldSpell *core.Spell
+	FireBlast *core.Spell
+	FireNova  *core.Spell
 
-	FireShieldDot *core.Dot
+	FireShieldAura *core.Aura
 
 	thinkChance     float64
 	fireBlastChance float64
@@ -58,9 +57,14 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		AutoSwingMelee: true,
 	})
 
+	fireElemental.OnPetDisable = fireElemental.disable
 	shaman.AddPet(fireElemental)
 
 	return fireElemental
+}
+
+func (fireElemental *FireElemental) disable(sim *core.Simulation) {
+	fireElemental.FireShieldAura.Deactivate(sim)
 }
 
 func (fireElemental *FireElemental) GetPet() *core.Pet {
@@ -70,7 +74,7 @@ func (fireElemental *FireElemental) GetPet() *core.Pet {
 func (fireElemental *FireElemental) Initialize() {
 	fireElemental.registerFireBlast()
 	fireElemental.registerFireNova()
-	fireElemental.registerFireShieldSpell()
+	fireElemental.registerFireShieldAura()
 }
 
 func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
@@ -89,8 +93,8 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if !fireElemental.FireShieldDot.IsActive() {
-		fireElemental.FireShieldSpell.Cast(sim, target)
+	if !fireElemental.FireShieldAura.IsActive() {
+		fireElemental.FireShieldAura.Activate(sim)
 	}
 
 	randomSpell := fireElemental.tryRandomSpellPicker(sim)
@@ -142,7 +146,7 @@ func (fireElemental *FireElemental) tryRandomSpellPicker(sim *core.Simulation) R
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	stats.Mana:        1789,
+	stats.Mana:        5000,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
