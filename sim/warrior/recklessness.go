@@ -14,6 +14,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			// TODO: Apply this to specific abilities and remove the pseudostat.
 			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 		},

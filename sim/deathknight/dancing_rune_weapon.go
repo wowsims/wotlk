@@ -69,7 +69,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			// What if?
 			//dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = 0.5 * dk.PseudoStats.DamageDealtMultiplier
 
-			//dk.RuneWeapon.PseudoStats.BonusMeleeCritRating = dk.PseudoStats.BonusMeleeCritRating
 			//dk.RuneWeapon.PseudoStats.BonusSpellCritRating = dk.PseudoStats.BonusSpellCritRating
 
 			// dk.RuneWeapon.PseudoStats.PhysicalDamageDealtMultiplier = dk.PseudoStats.PhysicalDamageDealtMultiplier
