@@ -218,7 +218,7 @@ func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 }
 
 func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
-	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * coeff
+	return hitEffect.MeleeAttackPower(unit) * coeff
 }
 
 func init() {

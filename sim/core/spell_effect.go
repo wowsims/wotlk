@@ -123,10 +123,6 @@ func (spellEffect *SpellEffect) MeleeAttackPower(unit *Unit) float64 {
 	return unit.stats[stats.AttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
 }
 
-func (spellEffect *SpellEffect) MeleeAttackPowerOnTarget() float64 {
-	return spellEffect.Target.PseudoStats.BonusMeleeAttackPowerTaken
-}
-
 func (spellEffect *SpellEffect) RangedAttackPower(unit *Unit) float64 {
 	return unit.stats[stats.RangedAttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
 }
