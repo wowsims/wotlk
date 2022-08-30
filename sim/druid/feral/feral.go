@@ -49,11 +49,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	// Prevents Windfury from applying.
 	cat.HasMHWeaponImbue = true
 
-	cat.EnableEnergyBar(100.0, func(sim *core.Simulation) {
-		if cat.InForm(druid.Cat) {
-			cat.doTigersFury(sim)
-		}
-	})
+	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
