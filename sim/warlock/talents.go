@@ -522,11 +522,6 @@ func (warlock *Warlock) setupDemonicPact() {
 			aura.Activate(sim)
 		},
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			// demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
-			// demonicPactAura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
-			// 	aura.Activate(sim)
-			// }
-
 			for i, party := range warlock.Party.Raid.Parties {
 				for j, player := range party.Players {
 					demonicPactAuras[i*5+j] = core.DemonicPactAura(player.GetCharacter(), 0)
@@ -540,16 +535,6 @@ func (warlock *Warlock) setupDemonicPact() {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
-				// if demonicPactAura.IsActive() {
-				// 	if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second*10 {
-				// 		demonicPactAura.Deactivate(sim)
-				// 		demonicPactAura.Priority = newSPBonus
-				// 		demonicPactAura.Activate(sim)
-				// 	}
-				// } else {
-				// 	demonicPactAura.Priority = newSPBonus
-				// 	demonicPactAura.Activate(sim)
-				// }
 				for i, party := range warlock.Party.Raid.Parties {
 					for j, _ := range party.Players {
 						if demonicPactAuras[i*5+j].IsActive() {
