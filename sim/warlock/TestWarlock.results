@@ -374,22 +374,22 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3670.63734
-  tps: 5531.50993
+  dps: 3690.07283
+  tps: 5535.17712
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3670.63734
-  tps: 3432.97893
+  dps: 3690.07283
+  tps: 3450.51182
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Affliction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3397.15756
-  tps: 3069.03369
+  dps: 3435.44409
+  tps: 3085.036
  }
 }
 dps_results: {
