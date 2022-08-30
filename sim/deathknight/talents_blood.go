@@ -97,7 +97,7 @@ func (dk *Deathknight) applySpellDeflection() {
 		if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
-			if -1 < procChance {
+			if sim.RandomFloat("Spell Deflection Roll") < procChance {
 				spellEffect.Damage *= dmgMult
 			}
 		}

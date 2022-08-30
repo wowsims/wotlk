@@ -46,6 +46,7 @@ export const UATalents = {
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRevenge,
 			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major3: WarriorMajorGlyph.GlyphOfSweepingStrikes,
 			minor1: WarriorMinorGlyph.GlyphOfCharge,
 			minor2: WarriorMinorGlyph.GlyphOfThunderClap,
 			minor3: WarriorMinorGlyph.GlyphOfCommand,
