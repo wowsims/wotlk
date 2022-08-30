@@ -26,7 +26,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second * 4,
 			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+			OnCastComplete: func(sim *core.Simulation, _ *core.Spell) {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 			},
 		},
@@ -52,16 +52,16 @@ func (fireElemental *FireElemental) registerFireNova() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				CastTime: time.Second * 2,
 				Cost:     manaCost,
 				GCD:      core.GCDDefault,
+				CastTime: time.Second * 2,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    fireElemental.NewTimer(),
-				Duration: time.Second * 4,
+				Duration: time.Second * 2,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+			ModifyCast: func(sim *core.Simulation, _ *core.Spell, _ *core.Cast) {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed()*2)
 			},
 		},
@@ -113,9 +113,12 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		Label:    "Fire Shield",
 		ActionID: actionID,
 		Duration: time.Minute * 2,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+		OnGain: func(_ *core.Aura, sim *core.Simulation) {
 			totemDuration := fireElemental.shamanOwner.NextTotemDrops[FireTotem] - sim.CurrentTime
 			fireShieldDot.NumberOfTicks = int(totemDuration / (time.Second * 3))
+			if sim.Log != nil {
+				fireElemental.Log(sim, "FireShield Ticks: %v", fireShieldDot.NumberOfTicks)
+			}
 			fireShieldDot.Apply(sim)
 		},
 	})

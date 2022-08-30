@@ -8,12 +8,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type RandomSpell int32
-
+// Variables that control the Fire Elemental.
 const (
-	FireBlast = iota
-	FireNova
-	NoRandom
+	fireNovaCPM  = 7.5
+	fireBlastCPM = 7.5
+	castRange    = 6 // the range of Min and Max casts for variations, used for metrics
+	debugging    = false
 )
 
 type FireElemental struct {
@@ -24,8 +24,8 @@ type FireElemental struct {
 
 	FireShieldAura *core.Aura
 
-	thinkChance     float64
-	fireBlastChance float64
+	nFireBlastCasts int32
+	nFireNovaCasts  int32
 
 	shamanOwner *Shaman
 }
@@ -40,9 +40,7 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 			false,
 			true,
 		),
-		shamanOwner:     shaman,
-		thinkChance:     0.5,
-		fireBlastChance: 0.5,
+		shamanOwner: shaman,
 	}
 	fireElemental.EnableManaBar()
 	fireElemental.EnableAutoAttacks(fireElemental, core.AutoAttackOptions{
@@ -57,10 +55,32 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		AutoSwingMelee: true,
 	})
 
+	fireElemental.OnPetEnable = fireElemental.enable
 	fireElemental.OnPetDisable = fireElemental.disable
+
 	shaman.AddPet(fireElemental)
 
 	return fireElemental
+}
+
+func (fireElemental *FireElemental) enable(sim *core.Simulation) {
+
+	fireElemental.nFireNovaCasts = rollNumberSpellCasts(sim, fireNovaCPM)
+	fireElemental.nFireBlastCasts = rollNumberSpellCasts(sim, fireBlastCPM)
+
+	if sim.Log != nil && debugging {
+		fireElemental.Log(sim, "Fire Blast #Casts: %v", fireElemental.nFireNovaCasts)
+		fireElemental.Log(sim, "Fire ova #Casts: %v", fireElemental.nFireBlastCasts)
+	}
+
+	fireElemental.FireShieldAura.Activate(sim)
+}
+
+func rollNumberSpellCasts(sim *core.Simulation, cpm float64) int32 {
+	totalCasts := cpm * 2 // Total casts in 2 minutes
+	minCast := totalCasts - castRange
+	deltaCast := (totalCasts + castRange) - minCast
+	return int32(math.Round(minCast+deltaCast*sim.RandomFloat("Fire Ele Cast Roll"))) + 1
 }
 
 func (fireElemental *FireElemental) disable(sim *core.Simulation) {
@@ -83,66 +103,31 @@ func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	target := fireElemental.CurrentTarget
 
+	//Check for mana issues first
 	if fireElemental.CurrentMana() < fireElemental.FireNova.CurCast.Cost {
 		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
 		return
 	}
 
-	if fireElemental.tryThink(sim) {
-		fireElemental.WaitUntil(sim, sim.CurrentTime+(time.Second*1))
+	//If no CD's are available on this GCD lets wait for the next spell off CD
+	if !fireElemental.FireBlast.IsReady(sim) && !fireElemental.FireNova.IsReady(sim) {
+		waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
+		fireElemental.WaitUntil(sim, sim.CurrentTime+waitingOnCD)
 		return
 	}
 
-	if !fireElemental.FireShieldAura.IsActive() {
-		fireElemental.FireShieldAura.Activate(sim)
+	numberCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
+	if numberCasts <= fireElemental.nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
+		fireElemental.FireBlast.Cast(sim, target)
+		return
 	}
 
-	randomSpell := fireElemental.tryRandomSpellPicker(sim)
-
-	if fireElemental.FireNova.IsReady(sim) && randomSpell != FireBlast {
-		if fireElemental.FireNova.Cast(sim, target) {
-			fireElemental.thinkChance = .95
-			fireElemental.fireBlastChance = .95
-			return
-		}
+	numberCasts = fireElemental.FireNova.SpellMetrics[0].Casts
+	if numberCasts <= fireElemental.nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+		fireElemental.FireNova.Cast(sim, target)
+		return
 	}
 
-	if fireElemental.FireBlast.IsReady(sim) && randomSpell != FireNova {
-		if fireElemental.FireBlast.Cast(sim, target) {
-			fireElemental.thinkChance = .95
-			fireElemental.fireBlastChance = 0.05
-			return
-		}
-	}
-
-	waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
-	if waitingOnCD == 0 {
-		waitingOnCD = core.MaxDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
-	}
-
-	fireElemental.WaitUntil(sim, sim.CurrentTime+waitingOnCD)
-}
-
-func (fireElemental *FireElemental) tryThink(sim *core.Simulation) bool {
-	if sim.RandomFloat("Fire Ele Thinking") < fireElemental.thinkChance {
-		fireElemental.thinkChance -= .15
-		return true
-	}
-
-	return false
-}
-
-func (fireElemental *FireElemental) tryRandomSpellPicker(sim *core.Simulation) RandomSpell {
-
-	if !fireElemental.FireBlast.IsReady(sim) || !fireElemental.FireNova.IsReady(sim) {
-		return NoRandom
-	}
-
-	if sim.RandomFloat("Fire Ele RNG") < fireElemental.fireBlastChance {
-		return FireBlast
-	}
-
-	return FireNova
 }
 
 var fireElementalPetBaseStats = stats.Stats{
@@ -152,6 +137,10 @@ var fireElementalPetBaseStats = stats.Stats{
 	stats.Stamina:     327,
 	stats.SpellPower:  995,  //Estimated
 	stats.AttackPower: 1369, //Estimated
+
+	// TODO : No idea what his crit is at, he does not seem to gain any crit from owner.
+	// Stole from spirit wolves.
+	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 }
 
 func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {

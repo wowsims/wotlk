@@ -38,12 +38,12 @@ func (shaman *Shaman) registerFireElementalTotem() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			shaman.FireElemental.EnableWithTimeout(sim, shaman.FireElemental, fireTotemDuration)
-
 			// TODO Need to handle ToW
 			shaman.MagmaTotemDot.Cancel(sim)
 			shaman.SearingTotemDot.Cancel(sim)
 			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + fireTotemDuration
+
+			shaman.FireElemental.EnableWithTimeout(sim, shaman.FireElemental, fireTotemDuration)
 
 			// Add a dummy aura to show in metrics
 			fireElementalAura.Activate(sim)
