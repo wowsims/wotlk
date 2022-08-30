@@ -197,19 +197,19 @@ message Warrior {
 
 message ProtectionWarrior {
 	message Rotation {
-		enum DemoShout {
-			DemoShoutNone = 0;
-			DemoShoutMaintain = 1;
-			DemoShoutFiller = 2;
+		enum DemoShoutChoice {
+			DemoShoutChoiceNone = 0;
+			DemoShoutChoiceMaintain = 1;
+			DemoShoutChoiceFiller = 2;
 		}
-		DemoShout demo_shout = 1;
+		DemoShoutChoice demo_shout_choice = 1;
 
-		enum ThunderClap {
-			ThunderClapNone = 0;
-			ThunderClapMaintain = 1;
-			ThunderClapOnCD = 2;
+		enum ThunderClapChoice {
+			ThunderClapChoiceNone = 0;
+			ThunderClapChoiceMaintain = 1;
+			ThunderClapChoiceOnCD = 2;
 		}
-		ThunderClap thunder_clap = 2;
+		ThunderClapChoice thunder_clap_choice = 2;
 
 		enum SpellOption {
 			NoSpell = 0;
@@ -217,10 +217,12 @@ message ProtectionWarrior {
 			ShieldSlam = 2;
 			Devastate = 3;
 			SunderArmor = 4;
-			DemoralizingShout = 5;
-			BattleShout = 6;
-			CommandingShout = 7;
+			Shout = 5;
+			DemoralizingShout = 6;
+			ThunderClap = 7;
 			MortalStrike = 8;
+			ConcussionBlow = 9;
+			Shockwave = 10;
 		}
 		CustomRotation custom_rotation = 3;
 

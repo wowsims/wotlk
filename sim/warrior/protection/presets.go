@@ -45,6 +45,13 @@ var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	},
 }
 
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarriorMajorGlyph_GlyphOfBlocking),
+	Major2: int32(proto.WarriorMajorGlyph_GlyphOfDevastate),
+	Major3: int32(proto.WarriorMajorGlyph_GlyphOfVigilance),
+	// No interesting minor glyphs.
+}
+
 var warriorRotation = &proto.ProtectionWarrior_Rotation{
 	HsRageThreshold: 30,
 }

@@ -8,15 +8,20 @@ import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { Target } from '../core/target.js';
+import { EnumPicker } from '../core/components/enum_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
+import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
+import { CustomRotation } from '../core/proto/common.js';
 
 import {
 	WarriorShout,
 	WarriorTalents as WarriorTalents,
 	ProtectionWarrior,
 	ProtectionWarrior_Rotation as ProtectionWarriorRotation,
-	ProtectionWarrior_Rotation_DemoShout as DemoShout,
-	ProtectionWarrior_Rotation_ThunderClap as ThunderClap,
-	ProtectionWarrior_Options as ProtectionWarriorOptions
+	ProtectionWarrior_Rotation_DemoShoutChoice as DemoShoutChoice,
+	ProtectionWarrior_Rotation_ThunderClapChoice as ThunderClapChoice,
+	ProtectionWarrior_Options as ProtectionWarriorOptions,
+	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -49,27 +54,43 @@ export const PrecastShout = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecPr
 
 export const ProtectionWarriorRotationConfig = {
 	inputs: [
+		InputHelpers.makeCustomRotationInput<Spec.SpecProtectionWarrior, SpellOption>({
+			fieldName: 'customRotation',
+			numColumns: 3,
+			values: [
+				{ actionId: ActionId.fromSpellId(30357), value: SpellOption.Revenge },
+				{ actionId: ActionId.fromSpellId(47488), value: SpellOption.ShieldSlam },
+				{ actionId: ActionId.fromSpellId(47440), value: SpellOption.Shout},
+				{ actionId: ActionId.fromSpellId(47502), value: SpellOption.ThunderClap },
+				{ actionId: ActionId.fromSpellId(25203), value: SpellOption.DemoralizingShout },
+				{ actionId: ActionId.fromSpellId(71552), value: SpellOption.MortalStrike },
+				{ actionId: ActionId.fromSpellId(30022), value: SpellOption.Devastate },
+				{ actionId: ActionId.fromSpellId(47467), value: SpellOption.SunderArmor},
+				{ actionId: ActionId.fromSpellId(12809), value: SpellOption.ConcussionBlow },
+				{ actionId: ActionId.fromSpellId(46968), value: SpellOption.Shockwave },
+			],
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecProtectionWarrior>({
 			fieldName: 'hsRageThreshold',
 			label: 'HS rage threshold',
 			labelTooltip: 'Heroic Strike when rage is above:',
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, DemoShout>({
-			fieldName: 'demoShout',
+		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, DemoShoutChoice>({
+			fieldName: 'demoShoutChoice',
 			label: 'Demo Shout',
 			values: [
-				{ name: 'Never', value: DemoShout.DemoShoutNone },
-				{ name: 'Maintain Debuff', value: DemoShout.DemoShoutMaintain },
-				{ name: 'Filler', value: DemoShout.DemoShoutFiller },
+				{ name: 'Never', value: DemoShoutChoice.DemoShoutChoiceNone },
+				{ name: 'Maintain Debuff', value: DemoShoutChoice.DemoShoutChoiceMaintain },
+				{ name: 'Filler', value: DemoShoutChoice.DemoShoutChoiceFiller },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, ThunderClap>({
-			fieldName: 'thunderClap',
+		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, ThunderClapChoice>({
+			fieldName: 'thunderClapChoice',
 			label: 'Thunder Clap',
 			values: [
-				{ name: 'Never', value: ThunderClap.ThunderClapNone },
-				{ name: 'Maintain Debuff', value: ThunderClap.ThunderClapMaintain },
-				{ name: 'On CD', value: ThunderClap.ThunderClapOnCD },
+				{ name: 'Never', value: ThunderClapChoice.ThunderClapChoiceNone },
+				{ name: 'Maintain Debuff', value: ThunderClapChoice.ThunderClapChoiceMaintain },
+				{ name: 'On CD', value: ThunderClapChoice.ThunderClapChoiceOnCD },
 			],
 		}),
 	],
