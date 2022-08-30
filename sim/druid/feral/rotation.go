@@ -10,7 +10,15 @@ import (
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
+func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
+	cat.TryUseCooldowns(sim)
+	if cat.InForm(druid.Cat) {
+		cat.doTigersFury(sim)
+	}
+}
+
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
+	cat.TryUseCooldowns(sim)
 	cat.doRotation(sim)
 }
 
