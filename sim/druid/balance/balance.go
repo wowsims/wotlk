@@ -36,15 +36,8 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 	}
 
 	moonkin := &BalanceDruid{
-		Druid:                    druid.New(character, druid.Moonkin, selfBuffs, *balanceOptions.Talents),
-		primaryRotation:          *balanceOptions.Rotation,
-		useBattleRes:             balanceOptions.Options.BattleRes,
-		useIS:                    balanceOptions.Options.UseIs,
-		useMF:                    balanceOptions.Options.UseMf,
-		mfInsideEclipseThreshold: balanceOptions.Options.MfInsideEclipseThreshold,
-		isInsideEclipseThreshold: balanceOptions.Options.IsInsideEclipseThreshold,
-		mcdInsideLunarThreshold:  balanceOptions.Options.McdInsideLunarThreshold - 0.5,
-		mcdInsideSolarThreshold:  balanceOptions.Options.McdInsideSolarThreshold - 0.5,
+		Druid:    druid.New(character, druid.Moonkin, selfBuffs, *balanceOptions.Talents),
+		Rotation: *balanceOptions.Rotation,
 	}
 
 	moonkin.ResetTalentsBonuses()
@@ -56,14 +49,7 @@ func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDru
 type BalanceDruid struct {
 	*druid.Druid
 
-	primaryRotation          proto.BalanceDruid_Rotation
-	useBattleRes             bool
-	useIS                    bool
-	useMF                    bool
-	mfInsideEclipseThreshold float32
-	isInsideEclipseThreshold float32
-	mcdInsideLunarThreshold  float32
-	mcdInsideSolarThreshold  float32
+	Rotation proto.BalanceDruid_Rotation
 	// These are only used when primary spell is set to 'Adaptive'. When the mana
 	// tracker tells us we have extra mana to spare, use surplusRotation instead of
 	// primaryRotation.
@@ -95,7 +81,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
-	if moonkin.mcdInsideLunarThreshold > 0 || moonkin.mcdInsideSolarThreshold > 0 {
+	if moonkin.Rotation.McdInsideLunarThreshold > 0 || moonkin.Rotation.McdInsideSolarThreshold > 0 {
 		moonkin.potionUsed = false
 		consumes := &moonkin.Consumes
 		if consumes.DefaultPotion == proto.Potions_PotionOfSpeed {
