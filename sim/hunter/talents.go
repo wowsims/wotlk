@@ -251,7 +251,7 @@ func (hunter *Hunter) applyPiercingShots() {
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			psDot.Apply(sim)
