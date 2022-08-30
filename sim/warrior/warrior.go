@@ -24,11 +24,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance              Stance
-	overpowerValidUntil time.Duration
-	rendValidUntil      time.Duration
-	RevengeValidUntil   time.Duration
-	shoutExpiresAt      time.Duration
+	Stance                 Stance
+	overpowerValidUntil    time.Duration
+	rendValidUntil         time.Duration
+	shoutExpiresAt         time.Duration
+	revengeProcAura        *core.Aura
+	glyphOfRevengeProcAura *core.Aura
+	disableHsCleaveUntil   time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -59,6 +61,8 @@ type Warrior struct {
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
+	Shockwave            *core.Spell
+	ConcussionBlow       *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -75,6 +79,8 @@ type Warrior struct {
 
 	BloodsurgeAura  *core.Aura
 	SuddenDeathAura *core.Aura
+
+	SwordAndBoardAura *core.Aura
 
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
@@ -135,6 +141,8 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
 	warrior.registerRendSpell()
+	warrior.registerShockwaveSpell()
+	warrior.registerConcussionBlowSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -160,7 +168,6 @@ func (warrior *Warrior) Initialize() {
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
-	warrior.RevengeValidUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
@@ -204,6 +211,14 @@ func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
+	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
+	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * coeff
 }
 
 func init() {

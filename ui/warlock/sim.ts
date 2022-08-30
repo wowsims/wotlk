@@ -130,6 +130,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.MP5Buff,
 				IconInputs.AttackPowerPercentBuff,
 				IconInputs.AttackPowerBuff,
+				IconInputs.StrengthAndAgilityBuff,
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [

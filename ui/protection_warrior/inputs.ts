@@ -26,11 +26,6 @@ import { SimUI } from '../core/sim_ui.js';
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const ShieldWall = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecProtectionWarrior>({
-	fieldName: 'useShieldWall',
-	id: ActionId.fromSpellId(871),
-});
-
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecProtectionWarrior>({
 	fieldName: 'startingRage',
 	label: 'Starting Rage',
@@ -85,6 +80,26 @@ export const ProtectionWarriorRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
 			fieldName: 'useShieldBlock',
 			label: 'Use Shield Block',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'prioRevengeOverShieldSlam',
+			label: 'Prio Revenge over Shield Slam',
+			labelTooltip: 'Prio revenge over shield slam.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'useShockwaveSt',
+			label: 'Use Shockwave (Single Target)',
+			labelTooltip: 'Use Shockwave in rotation in a single target fight.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'useConcussionBlowSt',
+			label: 'Use Concussion Blow (Single Target)',
+			labelTooltip: 'Use Concussion Blow in rotation in a single target fight.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'spamRevengeHs',
+			label: 'Spam Revenge and Heroic Strike',
+			labelTooltip: 'Full spam of revenge and heroic strike.',
 		}),
 	],
 };

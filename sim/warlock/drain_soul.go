@@ -17,46 +17,13 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	}
 }
 
-func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
-
-	// Execute Multiplier - is now basekit for performance optimization
-	// Additive with Death's Embrace so we need to remove its effect to add it again with the spell's own execution multiplier.
-	// if sim.IsExecutePhase25() {
-	// 	dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace))/(1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
-	// }
-
-	// Soul Siphon Multiplier
-	soulSiphonMultiplier := 1.
-	if warlock.Talents.SoulSiphon > 0 {
-		afflictionSpellNumber := 1. // Counts Drain Soul/Drain Life itself
-		if warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.CorruptionDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.UnstableAfflictionDot.IsActive() || warlock.ImmolateDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if afflictionSpellNumber < 3 {
-			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber) / (1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
-		}
-	}
-
-	return soulSiphonMultiplier
-}
-
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	// For performance optimization, the execute modifier is basekit since we never use it before execute
 	executeMultiplier := (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
-	maxDynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.
-	drainSoulDamageMultiplier := baseAdditiveMultiplier * executeMultiplier * maxDynamicMultiplier
+	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
 	baseCost := warlock.BaseMana * 0.14
 	channelTime := 3 * time.Second
 	epsilon := 1 * time.Millisecond
@@ -93,12 +60,34 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: drainSoulDamageMultiplier * warlock.dynamicDrainSoulMultiplier(),
+		DamageMultiplier: baseAdditiveMultiplier * executeMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 3./7.),
+		BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagicNoRoll(142, 0.429),
+			func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
+				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					w := warlock
+					auras := []*core.Aura{
+						w.HauntDebuffAura(target),
+						w.UnstableAfflictionDot.Aura, w.CorruptionDot.Aura,
+						w.SeedDots[hitEffect.Target.Index].Aura, w.CurseOfAgonyDot.Aura,
+						w.CurseOfDoomDot.Aura, w.CurseOfElementsAura, w.CurseOfWeaknessAura,
+						w.CurseOfTonguesAura,
+						// missing: death coil
+					}
+					counter := 0
+					for _, aura := range auras {
+						if aura.IsActive() {
+							counter++
+						}
+					}
+					// fmt.Println("Spellpower: ", warlock.GetStats()[stats.SpellPower])
+					return oldCalc(sim, hitEffect, spell) *
+						(1.0 + float64(core.MinInt(3, counter))*soulSiphonMultiplier)
+				}
+			}),
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{

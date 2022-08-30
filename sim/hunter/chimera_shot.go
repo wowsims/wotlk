@@ -81,8 +81,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 			ProcMask: core.ProcMaskRangedSpecial,
 
 			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1) *
 				(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
@@ -96,5 +94,9 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 		}),
+
+		InitialDamageMultiplier: 1 +
+			0.1*float64(hunter.Talents.ImprovedStings) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
 	})
 }

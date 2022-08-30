@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 91
   final_stats: 57
-  final_stats: 304.99052
+  final_stats: 304.59211
   final_stats: 0
   final_stats: 0
   final_stats: 3973.508
@@ -243,6 +243,13 @@ dps_results: {
  value: {
   dps: 846.6779
   tps: 1130.0918
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-Gladiator'sWildhide"
+ value: {
+  dps: 729.45823
+  tps: 953.7802
  }
 }
 dps_results: {
@@ -542,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-StormshroudArmor"
  value: {
-  dps: 697.63856
-  tps: 907.7166
+  dps: 697.57142
+  tps: 907.65356
  }
 }
 dps_results: {

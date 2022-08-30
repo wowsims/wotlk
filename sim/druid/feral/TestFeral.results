@@ -16,7 +16,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 107
   final_stats: 135
-  final_stats: 221.95439
+  final_stats: 221.62296
   final_stats: 0
   final_stats: 0
   final_stats: 5531.46902
@@ -159,6 +159,13 @@ dps_results: {
  value: {
   dps: 1433.25329
   tps: 1047.46148
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Gladiator'sWildhide"
+ value: {
+  dps: 1222.24747
+  tps: 897.3124
  }
 }
 dps_results: {

@@ -95,10 +95,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 		}
 	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() <= dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
-			//dk.setupFrostSubUnholyERWOpener()
 			dk.setupFrostSubUnholyERWOpener()
 		} else {
-			//dk.setupFrostSubUnholyNoERWOpener()
 			dk.setupFrostSubUnholyERWOpener()
 		}
 	} else if dk.Talents.SummonGargoyle {

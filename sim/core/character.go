@@ -357,6 +357,9 @@ func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) 
 
 	if len(character.Pets) > 0 {
 		for _, petAgent := range character.Pets {
+			if !petAgent.GetPet().enabled {
+				continue
+			}
 			petAgent.GetPet().advance(sim, elapsedTime)
 		}
 	}

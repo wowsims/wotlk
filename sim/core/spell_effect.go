@@ -18,6 +18,9 @@ type EffectOnSpellHitDealt func(sim *Simulation, spell *Spell, spellEffect *Spel
 type OnPeriodicDamage func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 type EffectOnPeriodicDamageDealt func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
+type DynamicThreatMultiplierFunc func(spellEffect *SpellEffect, spell *Spell) float64
+type DynamicThreatBonusFunc func(spellEffect *SpellEffect, spell *Spell) float64
+
 type SpellEffect struct {
 	// Target of the spell.
 	Target *Unit
@@ -42,6 +45,10 @@ type SpellEffect struct {
 
 	// Adds a fixed amount of threat to this spell, before multipliers.
 	FlatThreatBonus float64
+
+	// Adds a dynamic amount of threat to this spell, before multipliers.
+	DynamicThreatBonus      DynamicThreatBonusFunc
+	DynamicThreatMultiplier DynamicThreatMultiplierFunc
 
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
@@ -96,7 +103,17 @@ func (spell *Spell) TotalThreatMultiplier() float64 {
 
 func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 	if spellEffect.Landed() {
-		return (spellEffect.Damage*spellEffect.ThreatMultiplier + spellEffect.FlatThreatBonus) * spell.TotalThreatMultiplier()
+		dynamicBonus := 0.0
+		if spellEffect.DynamicThreatBonus != nil {
+			dynamicBonus = spellEffect.DynamicThreatBonus(spellEffect, spell)
+		}
+
+		dynamicMultiplier := 1.0
+		if spellEffect.DynamicThreatMultiplier != nil {
+			dynamicMultiplier = spellEffect.DynamicThreatMultiplier(spellEffect, spell)
+		}
+
+		return (spellEffect.Damage*spellEffect.ThreatMultiplier*dynamicMultiplier + spellEffect.FlatThreatBonus + dynamicBonus) * spell.TotalThreatMultiplier()
 	} else {
 		return 0
 	}
@@ -224,16 +241,14 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
 	} else {
-		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell) * spellEffect.DamageMultiplier * spell.DamageMultiplier
+		return spellEffect.BaseDamage.Calculator(sim, spellEffect, spell)
 	}
 }
 
 func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	if sim.Log != nil {
 		baseDmg := spellEffect.Damage
-		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-		}
+		spellEffect.applyAttackerModifiers(sim, spell)
 		afterAttackMods := spellEffect.Damage
 		spellEffect.applyResistances(sim, spell, attackTable)
 		afterResistances := spellEffect.Damage
@@ -247,9 +262,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 			"%s %s [DEBUG] MAP: %0.01f, RAP: %0.01f, SP: %0.01f, BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
 			spellEffect.Target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 	} else {
-		if !spellEffect.IsPeriodic { // dots snapshot personal attack dmg bonuses
-			spellEffect.applyAttackerModifiers(sim, spell)
-		}
+		spellEffect.applyAttackerModifiers(sim, spell)
 		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.applyTargetModifiers(sim, spell, attackTable)
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
@@ -370,6 +383,15 @@ func (spellEffect *SpellEffect) String() string {
 
 func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		// Even when ignoring attacker multipliers we still apply this one, because its
+		// specific to the spell.
+		spellEffect.Damage *= spellEffect.DamageMultiplier
+		return
+	}
+
+	// For dot snapshots, everything has already been stored in spellEffect.DamageMultiplier.
+	if spellEffect.IsPeriodic {
+		spellEffect.Damage *= spellEffect.DamageMultiplier
 		return
 	}
 
@@ -380,18 +402,22 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		return
 	}
 
+	// TODO: This behavior is problematic for spell effects that are reused.
+	// Ideally, the BonusArmorPenRating should be incremented, not assigned.
+	// However, incrementing the value causes a monotonic increase for reused effects.
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
-			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusMHArmorPenRating
+			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusMHArmorPenRating
 		}
 		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
-			spellEffect.BonusArmorPenRating += attacker.PseudoStats.BonusOHArmorPenRating
+			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusOHArmorPenRating
 		}
 	}
+
 	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
 }
 
-// snapshotAttackModifiers will calculate the total %dmg to add from attacker bonuses.
+// Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
 func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
 		return 1.0
@@ -400,6 +426,9 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	attacker := spell.Unit
 
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
+
+	multiplier *= spell.DamageMultiplier
+	multiplier *= spellEffect.DamageMultiplier
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
