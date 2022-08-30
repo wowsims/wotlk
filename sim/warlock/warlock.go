@@ -1,10 +1,11 @@
 package warlock
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 type Warlock struct {
@@ -65,9 +66,9 @@ type Warlock struct {
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
-	DPSPAverage            float64
-	PreviousTime           time.Duration
-	SpellsRotation         []SpellRotation
+	DPSPAverage             float64
+	PreviousTime            time.Duration
+	SpellsRotation          []SpellRotation
 }
 
 type SpellRotation struct {
