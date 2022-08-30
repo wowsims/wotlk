@@ -110,7 +110,7 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	stats.Mana:        5000,
+	stats.Mana:        1789,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,

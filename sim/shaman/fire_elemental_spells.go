@@ -114,11 +114,6 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		ActionID: actionID,
 		Duration: time.Minute * 2,
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
-			totemDuration := fireElemental.shamanOwner.NextTotemDrops[FireTotem] - sim.CurrentTime
-			fireShieldDot.NumberOfTicks = int(totemDuration / (time.Second * 3))
-			if sim.Log != nil {
-				fireElemental.Log(sim, "FireShield Ticks: %v", fireShieldDot.NumberOfTicks)
-			}
 			fireShieldDot.Apply(sim)
 		},
 	})
