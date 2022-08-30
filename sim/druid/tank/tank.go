@@ -1,7 +1,6 @@
 package tank
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -55,8 +54,8 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
-			BaseDamageMin:        130 - 27,
-			BaseDamageMax:        130 + 27,
+			BaseDamageMin:        210 - 28,
+			BaseDamageMax:        210 + 28,
 			SwingSpeed:           2.5,
 			NormalizedSwingSpeed: 2.5,
 			SwingDuration:        time.Millisecond * 2500,
@@ -70,20 +69,6 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 
 	// Prevents Windfury from applying.
 	bear.HasMHWeaponImbue = true
-
-	bear.PseudoStats.ThreatMultiplier *= 1.3 + 0.05*float64(bear.Talents.FeralInstinct)
-
-	// Bear Form adds 210 AP (3 * Level).
-	bear.AddStat(stats.AttackPower, 3*float64(core.CharacterLevel))
-
-	// Dire Bear Form bonuses.
-	bear.MultiplyStat(stats.Stamina, 1.25)
-
-	dps := (((bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + bear.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / bear.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
-	fap := math.Floor((dps - 54.8) * 14)
-	if fap > 0 {
-		bear.AddStat(stats.AttackPower, fap)
-	}
 
 	return bear
 }
@@ -105,10 +90,11 @@ func (bear *FeralTankDruid) Initialize() {
 }
 
 func (bear *FeralTankDruid) ApplyGearBonuses() {
-	bear.AddStat(stats.Armor, bear.Equip.Stats()[stats.Armor]*4)
+	bear.AddStat(stats.Armor, bear.Equip.Stats()[stats.Armor]*3.7)
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {
 	bear.Druid.Reset(sim)
-	//bear.BearFormAura.Activate(sim)
+	bear.Druid.ClearForm(sim)
+	bear.BearFormAura.Activate(sim)
 }

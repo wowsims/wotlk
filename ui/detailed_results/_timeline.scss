@@ -32,6 +32,13 @@ $combo-points-color: #ffa07a;
 }
 
 .timeline-root {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+}
+
+.timeline-disclaimer {
+	padding-right: 20px;
 }
 
 .timeline-warning {
@@ -57,9 +64,7 @@ $combo-points-color: #ffa07a;
 }
 
 .timeline-plots-container {
-	margin: 5px;
-	margin-top: 15px;
-	height: 70vh;
+	flex-grow: 1;
 }
 
 .timeline-plot > div {
@@ -67,6 +72,10 @@ $combo-points-color: #ffa07a;
 }
 
 .dps-resources-plot {
+}
+
+.timeline-content > .dr-row {
+	padding: 0;
 }
 
 .timeline-tooltip {

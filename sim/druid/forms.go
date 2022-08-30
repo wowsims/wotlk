@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -31,6 +32,12 @@ func (druid *Druid) InForm(form DruidForm) bool {
 	return druid.form.Matches(form)
 }
 
+func (druid *Druid) ClearForm(sim *core.Simulation) {
+	druid.CatFormAura.Deactivate(sim)
+	druid.BearFormAura.Deactivate(sim)
+	druid.form = Humanoid
+}
+
 func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 
 	if !druid.GCD.IsReady(sim) {
@@ -47,22 +54,53 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 	return true
 }
 
+// Handles things that function for *both* cat/bear
+func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
+	weap := druid.GetMHWeapon()
+	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
+	fap := 0.0
+	if weap != nil {
+		dps := (((weap.WeaponDamageMax - weap.WeaponDamageMin) / 2.0) + weap.WeaponDamageMin) / weap.SwingSpeed
+		fap = math.Floor((dps - 54.8) * 14)
+	}
+	druid.AddStatDynamic(sim, stats.AttackPower, pos*fap)
+
+	if druid.Talents.PredatoryStrikes > 0 {
+		druid.AddStatDynamic(sim, stats.AttackPower, pos*float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
+
+		if fap > 0 {
+			druid.AddStatDynamic(sim, stats.AttackPower, pos*fap*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
+		}
+	}
+	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
+	druid.AddStatDynamic(sim, stats.Dodge, pos*core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
+}
+
 func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
 	baseCost := druid.BaseMana * 0.35
 
 	srm := druid.getSavageRoarMultiplier()
 
+	apDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
+
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if druid.form != Humanoid {
+				panic("must leave form first")
+			}
 			druid.form = Cat
 			druid.AutoAttacks.EnableAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+
+			druid.applyFeralShift(sim, true)
+			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
+			druid.EnableDynamicStatDep(sim, apDep)
 
 			// These buffs stay up, but corresponding changes don't
 			if druid.SavageRoarAura.IsActive() {
@@ -78,6 +116,10 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+
+			druid.applyFeralShift(sim, false)
+			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			druid.DisableDynamicStatDep(sim, apDep)
 
 			druid.TigersFuryAura.Deactivate(sim)
 
@@ -143,25 +185,51 @@ func (druid *Druid) registerBearFormSpell() {
 	previousRage := 0.0
 	finalRage := 0.0
 
+	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
+
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if druid.form != Humanoid {
+				panic("must leave form first")
+			}
 			druid.form = Bear
+
+			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
+			druid.EnableDynamicStatDep(sim, stamdep)
+			druid.PseudoStats.ThreatMultiplier *= 1.3
+
+			druid.applyFeralShift(sim, true)
 			druid.AutoAttacks.EnableAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
+
+			rb := druid.GetAura("RageBar")
+			if rb != nil {
+				rb.Activate(sim)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			previousRage = druid.CurrentRage()
 			druid.form = Humanoid
+
+			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
+			druid.DisableDynamicStatDep(sim, stamdep)
+			druid.PseudoStats.ThreatMultiplier /= 1.3
+
+			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 			druid.EnrageAura.Deactivate(sim)
+			rb := druid.GetAura("RageBar")
+			if rb != nil {
+				rb.Deactivate(sim)
+			}
 		},
 	})
 

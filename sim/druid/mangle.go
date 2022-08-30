@@ -120,7 +120,11 @@ func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
 }
 
 func (druid *Druid) CanMangleCat() bool {
-	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.MangleCat.DefaultCast.Cost || druid.ClearcastingAura.IsActive())
+	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentMangleCatCost() || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentMangleCatCost() float64 {
+	return druid.MangleCat.ApplyCostModifiers(druid.MangleCat.BaseCost)
 }
 
 func (druid *Druid) IsMangle(spell *core.Spell) bool {

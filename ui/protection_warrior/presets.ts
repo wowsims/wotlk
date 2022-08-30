@@ -1,3 +1,4 @@
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { BattleElixir, Consumes, Explosive, GuardianElixir } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
@@ -9,9 +10,10 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	WarriorShout,
 	ProtectionWarrior_Rotation as ProtectionWarriorRotation,
-	ProtectionWarrior_Rotation_DemoShout as DemoShout,
-	ProtectionWarrior_Rotation_ThunderClap as ThunderClap,
+	ProtectionWarrior_Rotation_DemoShoutChoice as DemoShoutChoice,
+	ProtectionWarrior_Rotation_ThunderClapChoice as ThunderClapChoice,
 	ProtectionWarrior_Options as ProtectionWarriorOptions,
+  ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 } from '../core/proto/warrior.js';
@@ -46,6 +48,7 @@ export const UATalents = {
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRevenge,
 			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major3: WarriorMajorGlyph.GlyphOfSweepingStrikes,
 			minor1: WarriorMinorGlyph.GlyphOfCharge,
 			minor2: WarriorMinorGlyph.GlyphOfThunderClap,
 			minor3: WarriorMinorGlyph.GlyphOfCommand,
@@ -54,10 +57,23 @@ export const UATalents = {
 };
 
 export const DefaultRotation = ProtectionWarriorRotation.create({
-	demoShout: DemoShout.DemoShoutMaintain,
-	thunderClap: ThunderClap.ThunderClapMaintain,
+  customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.ShieldSlam }),
+			CustomSpell.create({ spell: SpellOption.Revenge }),
+			CustomSpell.create({ spell: SpellOption.Shout }),
+			CustomSpell.create({ spell: SpellOption.ThunderClap }),
+			CustomSpell.create({ spell: SpellOption.DemoralizingShout }),
+			CustomSpell.create({ spell: SpellOption.MortalStrike }),
+			CustomSpell.create({ spell: SpellOption.Devastate }),
+			CustomSpell.create({ spell: SpellOption.SunderArmor }),
+			CustomSpell.create({ spell: SpellOption.ConcussionBlow }),
+			CustomSpell.create({ spell: SpellOption.Shockwave }),
+		],
+	}),
+	demoShoutChoice: DemoShoutChoice.DemoShoutChoiceNone,
+	thunderClapChoice: ThunderClapChoice.ThunderClapChoiceNone,
 	hsRageThreshold: 30,
-	useShieldBlock: true,
 });
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
