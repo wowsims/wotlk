@@ -262,12 +262,12 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	previousTime := sim.CurrentTime
 
 	for _, s := range pendingActions {
-		delta_t := float64(s.refreshTime - previousTime)
-		if delta_t/float64(time.Second) < s.cost/10.0 {
-			floatingEnergy += s.cost - 10.0*(delta_t/float64(time.Second))
+		delta_t := float64((s.refreshTime - previousTime) / core.EnergyTickDuration)
+		if delta_t < s.cost {
+			floatingEnergy += s.cost - delta_t
 			previousTime = s.refreshTime
 		} else {
-			previousTime += time.Duration((s.cost / 10.0) * float64(time.Second))
+			previousTime += time.Duration(s.cost * float64(core.EnergyTickDuration))
 		}
 	}
 
