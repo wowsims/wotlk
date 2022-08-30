@@ -10,10 +10,8 @@ import (
 
 // Variables that control the Fire Elemental.
 const (
-	fireNovaCPM  = 7.5
-	fireBlastCPM = 7.5
-	castRange    = 6 // the range of Min and Max casts for variations, used for metrics
-	debugging    = false
+	nFireBlastCasts = 15
+	nFireNovaCasts  = 15
 )
 
 type FireElemental struct {
@@ -23,9 +21,6 @@ type FireElemental struct {
 	FireNova  *core.Spell
 
 	FireShieldAura *core.Aura
-
-	nFireBlastCasts int32
-	nFireNovaCasts  int32
 
 	shamanOwner *Shaman
 }
@@ -45,8 +40,8 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 	fireElemental.EnableManaBar()
 	fireElemental.EnableAutoAttacks(fireElemental, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  1,  // TODO find out values
-			BaseDamageMax:  24, // TODO find out values
+			BaseDamageMin:  1,  // Estimated from base AP
+			BaseDamageMax:  24, // Estimated from base AP
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2, // Pretty sure this is right.
@@ -64,23 +59,7 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 }
 
 func (fireElemental *FireElemental) enable(sim *core.Simulation) {
-
-	fireElemental.nFireNovaCasts = rollNumberSpellCasts(sim, fireNovaCPM)
-	fireElemental.nFireBlastCasts = rollNumberSpellCasts(sim, fireBlastCPM)
-
-	if sim.Log != nil && debugging {
-		fireElemental.Log(sim, "Fire Blast #Casts: %v", fireElemental.nFireNovaCasts)
-		fireElemental.Log(sim, "Fire ova #Casts: %v", fireElemental.nFireBlastCasts)
-	}
-
 	fireElemental.FireShieldAura.Activate(sim)
-}
-
-func rollNumberSpellCasts(sim *core.Simulation, cpm float64) int32 {
-	totalCasts := cpm * 2 // Total casts in 2 minutes
-	minCast := totalCasts - castRange
-	deltaCast := (totalCasts + castRange) - minCast
-	return int32(math.Round(minCast+deltaCast*sim.RandomFloat("Fire Ele Cast Roll"))) + 1
 }
 
 func (fireElemental *FireElemental) disable(sim *core.Simulation) {
@@ -117,13 +96,13 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	}
 
 	numberCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
-	if numberCasts <= fireElemental.nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
+	if numberCasts < nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
 		fireElemental.FireBlast.Cast(sim, target)
 		return
 	}
 
 	numberCasts = fireElemental.FireNova.SpellMetrics[0].Casts
-	if numberCasts <= fireElemental.nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+	if numberCasts < nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
 		fireElemental.FireNova.Cast(sim, target)
 		return
 	}
