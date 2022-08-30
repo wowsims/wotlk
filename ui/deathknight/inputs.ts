@@ -190,7 +190,7 @@ export const OblitDelayDurationInput = InputHelpers.makeRotationNumberInput<Spec
 export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'autoRotation',
 	label: 'Automatic Rotation',
-	labelTooltip: 'Have sim automatically adjust rotation based on the scenario.',
+	labelTooltip: 'Have sim automatically adjust rotation based on the scenario. This is still in development and currently only works for Unholy.',
 });
 
 
