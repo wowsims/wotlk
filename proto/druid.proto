@@ -145,25 +145,25 @@ enum DruidMinorGlyph {
 
 message BalanceDruid {
   message Rotation {
-	enum RotationType {
-		Unknown = 0;
-		Adaptive = 1;
-	}
-	RotationType type = 1;
-  }
-  Rotation rotation = 1;
-
-  DruidTalents talents = 2;
-
-  message Options {
-    RaidTarget innervate_target = 1;
-    bool battle_res = 2;
+		enum Type {
+			Unknown = 0;
+			Adaptive = 1;
+		}
+		Type type = 1;
+		bool use_battle_res = 2;
 		bool use_is = 3;
 		bool use_mf = 4;
 		float mf_inside_eclipse_threshold = 5;
 		float is_inside_eclipse_threshold = 6;
 		float mcd_inside_lunar_threshold = 7;
 		float mcd_inside_solar_threshold = 8;
+  }
+
+  Rotation rotation = 1;
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
 	}
   Options options = 3;
 }
