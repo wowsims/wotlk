@@ -15,12 +15,6 @@ func (war *ProtectionWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spe
 }
 
 func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
-	// Always save rage for Shield Slam
-	if war.ShieldSlam.IsReady(sim) && !war.HasEnoughRageForShieldSlam() {
-		war.DoNothing()
-		return
-	}
-
 	if war.CustomRotation != nil {
 		war.CustomRotation.Cast(sim)
 	} else {
