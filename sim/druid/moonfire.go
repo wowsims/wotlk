@@ -41,12 +41,12 @@ func (druid *Druid) registerMoonfireSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: (float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance) + iffCritBonus,
-			DamageMultiplier:     1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
-			ThreatMultiplier:     1,
-			BaseDamage:           core.BaseDamageConfigMagic(305, 357, 0.15),
-			OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			ProcMask:         core.ProcMaskSpellDamage,
+			BonusCritRating:  (float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance) + iffCritBonus,
+			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
+			ThreatMultiplier: 1,
+			BaseDamage:       core.BaseDamageConfigMagic(305, 357, 0.15),
+			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.MoonfireDot.Apply(sim)

@@ -29,9 +29,8 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Bonus stats to be added to the spell.
-	BonusSpellHitRating  float64
-	BonusSpellPower      float64
-	BonusSpellCritRating float64
+	BonusSpellHitRating float64
+	BonusSpellPower     float64
 
 	BonusArmorPenRating float64
 	BonusAttackPower    float64
@@ -188,10 +187,9 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
-		critRating += (spellEffect.BonusSpellCritRating) + (spellEffect.BonusCritRating)
+		critRating += spellEffect.BonusCritRating
 	} else {
 		critRating += unit.GetStat(stats.SpellCrit) +
-			spellEffect.BonusSpellCritRating +
 			spellEffect.BonusCritRating +
 			spellEffect.Target.PseudoStats.BonusCritRatingTaken +
 			spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken +
@@ -214,10 +212,9 @@ func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) floa
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
-		critRating += (spellEffect.BonusSpellCritRating) + (spellEffect.BonusCritRating)
+		critRating += spellEffect.BonusCritRating
 	} else {
 		critRating += unit.GetStat(stats.SpellCrit) +
-			spellEffect.BonusSpellCritRating +
 			spellEffect.BonusCritRating +
 			spell.BonusCritRating
 	}

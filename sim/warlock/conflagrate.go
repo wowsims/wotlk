@@ -25,13 +25,13 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone)) * core.CritRatingPerCritChance,
-		DamageMultiplier:     baseAdditiveMultiplier,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagicNoRoll(0.6*785/5.*float64(warlock.ImmolateDot.NumberOfTicks), 0.6*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnSpellHitDealt:      applyDotOnLanded(&warlock.ConflagrateDot),
+		ProcMask:         core.ProcMaskSpellDamage,
+		BonusCritRating:  5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) + float64(warlock.Talents.FireAndBrimstone)) * core.CritRatingPerCritChance,
+		DamageMultiplier: baseAdditiveMultiplier,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:       core.BaseDamageConfigMagicNoRoll(0.6*785/5.*float64(warlock.ImmolateDot.NumberOfTicks), 0.6*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnSpellHitDealt:  applyDotOnLanded(&warlock.ConflagrateDot),
 	}
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{

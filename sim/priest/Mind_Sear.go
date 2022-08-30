@@ -52,13 +52,13 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier:     1,
-		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		BonusSpellHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		IsPeriodic:           true,
-		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		ProcMask:             core.ProcMaskSpellDamage,
-		OutcomeApplier:       priest.OutcomeFuncMagicHitBinary(),
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		IsPeriodic:          true,
+		BonusCritRating:     float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		ProcMask:            core.ProcMaskSpellDamage,
+		OutcomeApplier:      priest.OutcomeFuncMagicHitBinary(),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)

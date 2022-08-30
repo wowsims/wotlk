@@ -110,7 +110,6 @@ func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 		// if not rolling over, keep a snapshot of the effects.
 		dot.snapshotMultiplier = dot.snapshotEffect.DamageMultiplier
 		dot.snapshotCrit = dot.snapshotEffect.BonusCritRating
-		dot.snapshotSpellCrit = dot.snapshotEffect.BonusSpellCritRating
 	}
 }
 
@@ -184,13 +183,14 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 	*dot.snapshotEffect = baseEffect
 	if dot.useSnapshot {
 		dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
-		dot.snapshotEffect.BonusSpellCritRating = dot.snapshotSpellCrit
 		dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
 	} else {
 		dot.snapshotEffect.DamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
-		dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) +
-			target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
-		dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
+		dot.snapshotEffect.BonusCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.BonusCritRating + target.PseudoStats.BonusCritRatingTaken
+		if !dot.Spell.SpellSchool.Matches(SpellSchoolPhysical) {
+			dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusSpellCritRatingTaken
+			//TODO : Add spell school specific crit bonus
+		}
 	}
 	dot.snapshotEffect.Target = target
 

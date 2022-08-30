@@ -19,11 +19,11 @@ func (druid *Druid) registerWrathSpell() {
 	spellCoefficient := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: druid.TalentsBonuses.naturesMajestyBonusCrit,
-		DamageMultiplier:     1 + druid.TalentsBonuses.moonfuryMultiplier,
-		ThreatMultiplier:     1,
-		OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+		ProcMask:         core.ProcMaskSpellDamage,
+		BonusCritRating:  druid.TalentsBonuses.naturesMajestyBonusCrit,
+		DamageMultiplier: 1 + druid.TalentsBonuses.moonfuryMultiplier,
+		ThreatMultiplier: 1,
+		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
@@ -41,15 +41,15 @@ func (druid *Druid) registerWrathSpell() {
 			}
 		},
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.BonusSpellCritRating = 0
+			spellEffect.BonusCritRating = 0
 			spellEffect.DamageMultiplier = 1 + druid.TalentsBonuses.moonfuryMultiplier
 			// T7-4P
 			if druid.SetBonuses.balance_t7_4 {
-				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+				spellEffect.BonusCritRating += 5 * core.CritRatingPerCritChance
 			}
 			// Improved Faerie Fire
 			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-				spellEffect.BonusSpellCritRating += druid.TalentsBonuses.iffBonusCrit
+				spellEffect.BonusCritRating += druid.TalentsBonuses.iffBonusCrit
 			}
 			// Improved Insect Swarm
 			if druid.InsectSwarmDot.IsActive() {
@@ -66,7 +66,7 @@ func (druid *Druid) registerWrathSpell() {
 				spellEffect.DamageMultiplier *= 1.04
 			}
 			// Nature's Majesty
-			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
+			spellEffect.BonusCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},
 	}
 

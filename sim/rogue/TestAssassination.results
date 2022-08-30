@@ -150,8 +150,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Deathmantle"
  value: {
-  dps: 5805.44823
-  tps: 4121.86824
+  dps: 5805.53408
+  tps: 4121.9292
  }
 }
 dps_results: {
@@ -479,15 +479,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-SpellstrikeInfusion"
  value: {
-  dps: 6140.97559
-  tps: 4360.09267
+  dps: 6141.08814
+  tps: 4360.17258
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
-  dps: 5583.44918
-  tps: 3961.59613
+  dps: 5583.68151
+  tps: 3961.76109
  }
 }
 dps_results: {
@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Average-Default"
  value: {
-  dps: 7256.37648
-  tps: 5152.0273
+  dps: 7256.37776
+  tps: 5152.02821
  }
 }
 dps_results: {

@@ -56,7 +56,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			DamageMultiplier: baseAdditiveMultiplier,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
-			BonusSpellCritRating: core.CritRatingPerCritChance * (3*float64(warlock.Talents.Malediction) +
+			BonusCritRating: core.CritRatingPerCritChance * (3*float64(warlock.Talents.Malediction) +
 				5*core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
 			OutcomeApplier: applier,
 			IsPeriodic:     true,

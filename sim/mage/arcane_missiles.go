@@ -100,9 +100,9 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
-			BonusSpellCritRating: bonusCrit,
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
+			BonusCritRating:     bonusCrit,
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),

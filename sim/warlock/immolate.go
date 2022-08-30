@@ -20,13 +20,13 @@ func (warlock *Warlock) registerImmolateSpell() {
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     baseAdditiveMultiplier,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnSpellHitDealt:      applyDotOnLanded(&warlock.ImmolateDot),
-		ProcMask:             core.ProcMaskSpellDamage,
+		BonusCritRating:  core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier: baseAdditiveMultiplier,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:       core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnSpellHitDealt:  applyDotOnLanded(&warlock.ImmolateDot),
+		ProcMask:         core.ProcMaskSpellDamage,
 	}
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
