@@ -400,6 +400,7 @@ func ApplyEffectFuncDamageMultiple(baseEffects []SpellEffect) ApplySpellEffects 
 		}
 	}
 }
+
 func ApplyEffectFuncDamageMultipleTargeted(baseEffects []SpellEffect) ApplySpellEffects {
 	for _, effect := range baseEffects {
 		effect.Validate()

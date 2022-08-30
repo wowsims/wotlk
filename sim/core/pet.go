@@ -96,7 +96,7 @@ func (pet *Pet) OwnerAttackSpeedChanged(sim *Simulation) {}
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
 	// Temporary pets dont update stats after summon
-	if pet.isGuardian {
+	if pet.isGuardian || !pet.enabled {
 		return
 	}
 	inheritedChange := pet.currentStatInheritance(addedStats)

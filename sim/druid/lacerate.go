@@ -16,12 +16,18 @@ func (druid *Druid) registerLacerateSpell() {
 	refundAmount := cost * 0.8
 
 	tickDamage := 320.0 / 5
+	initialDamage := 88.0
 	if druid.HasSetBonus(ItemSetNordrassilHarness, 4) {
 		tickDamage += 15
 	}
 	if druid.Equip[items.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
 		tickDamage += 8
+		initialDamage += 8
 	}
+
+	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
+	dwdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1.0)
+	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(2), 1.05, 1.0)
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
@@ -44,13 +50,13 @@ func (druid *Druid) registerLacerateSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
+			DamageMultiplier: lbdm * dwdm,
 			ThreatMultiplier: 0.5,
 			FlatThreatBonus:  267,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 88 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := initialDamage + 0.01*(hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -90,13 +96,11 @@ func (druid *Druid) registerLacerateSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: lbdm * t9bonus,
 			ThreatMultiplier: 0.5,
 			IsPeriodic:       true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return tickDamage + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
-				},
+				Calculator:             core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),
 				TargetSpellCoefficient: 0,
 			}, dotAura),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),

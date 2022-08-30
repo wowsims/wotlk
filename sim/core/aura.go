@@ -205,6 +205,10 @@ func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
 	}
 }
 
+func (aura *Aura) StartedAt() time.Duration {
+	return aura.startTime
+}
+
 func (aura *Aura) ExpiresAt() time.Duration {
 	return aura.expires
 }
@@ -294,8 +298,8 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
 	}
-	if len(at.auras) > 100 {
-		panic(fmt.Sprintf("Over 100 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
+	if len(at.auras) > 200 {
+		panic(fmt.Sprintf("Over 200 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
 	}
 
 	newAura := &Aura{}
