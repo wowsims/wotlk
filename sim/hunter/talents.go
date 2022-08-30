@@ -251,7 +251,7 @@ func (hunter *Hunter) applyPiercingShots() {
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			psDot.Apply(sim)
@@ -287,10 +287,15 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			totalDmg := spellEffect.Damage * dmgMultiplier
+			// Specifically account for bleed modifiers, since it still affects the spell
+			// but we're ignoring all modifiers.
+			totalDmg *= spellEffect.Target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+
 			if psDot.IsActive() {
 				remainingTicks := 8 - psDot.TickCount
 				totalDmg += currentTickDmg * float64(remainingTicks)
 			}
+
 			currentTickDmg = totalDmg / 8
 
 			// Reassign tick effect to update the damage.
@@ -506,18 +511,20 @@ func (hunter *Hunter) applyImprovedTracking() {
 
 	hunter.RegisterResetEffect(
 		func(s *core.Simulation) {
-			if !applied {
-				for _, target := range hunter.Env.Encounter.Targets {
-					switch target.MobType {
-					case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon,
-						proto.MobType_MobTypeDragonkin, proto.MobType_MobTypeElemental,
-						proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
-						proto.MobType_MobTypeUndead:
+			if applied {
+				return
+			}
+			applied = true
 
-						hunter.AttackTables[target.UnitIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
-					}
+			for _, target := range hunter.Env.Encounter.Targets {
+				switch target.MobType {
+				case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon,
+					proto.MobType_MobTypeDragonkin, proto.MobType_MobTypeElemental,
+					proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
+					proto.MobType_MobTypeUndead:
+
+					hunter.AttackTables[target.UnitIndex].DamageDealtMultiplier *= 1.0 + 0.01*float64(hunter.Talents.ImprovedTracking)
 				}
-				applied = true
 			}
 		},
 	)
