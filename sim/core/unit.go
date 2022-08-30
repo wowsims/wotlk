@@ -267,7 +267,7 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
-			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
+			unit.Log(sim, "Dynamic dep disabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
 	}
 }
