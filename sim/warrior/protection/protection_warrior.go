@@ -71,12 +71,9 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(war.Rotation.UseCleave, float64(war.Rotation.HsRageThreshold))
+	war.RegisterHSOrCleave(false, float64(war.Rotation.HsRageThreshold))
 	war.RegisterShieldWallCD()
-
-	if war.Rotation.UseShieldBlock {
-		war.RegisterShieldBlockCD()
-	}
+	war.RegisterShieldBlockCD()
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {

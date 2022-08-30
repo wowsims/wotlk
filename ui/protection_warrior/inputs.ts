@@ -49,11 +49,6 @@ export const PrecastShout = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecPr
 
 export const ProtectionWarriorRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'useCleave',
-			label: 'Use Cleave',
-			labelTooltip: 'Use Cleave instead of Heroic Strike.',
-		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecProtectionWarrior>({
 			fieldName: 'hsRageThreshold',
 			label: 'HS rage threshold',
@@ -76,30 +71,6 @@ export const ProtectionWarriorRotationConfig = {
 				{ name: 'Maintain Debuff', value: ThunderClap.ThunderClapMaintain },
 				{ name: 'On CD', value: ThunderClap.ThunderClapOnCD },
 			],
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'useShieldBlock',
-			label: 'Use Shield Block',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'prioRevengeOverShieldSlam',
-			label: 'Prio Revenge over Shield Slam',
-			labelTooltip: 'Prio revenge over shield slam.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'useShockwaveSt',
-			label: 'Use Shockwave (Single Target)',
-			labelTooltip: 'Use Shockwave in rotation in a single target fight.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'useConcussionBlowSt',
-			label: 'Use Concussion Blow (Single Target)',
-			labelTooltip: 'Use Concussion Blow in rotation in a single target fight.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
-			fieldName: 'spamRevengeHs',
-			label: 'Spam Revenge and Heroic Strike',
-			labelTooltip: 'Full spam of revenge and heroic strike.',
 		}),
 	],
 };

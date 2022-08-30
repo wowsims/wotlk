@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+import "common.proto";
+
 message WarriorTalents {
 	// Arms
 	int32 improved_heroic_strike = 1;
@@ -209,17 +211,20 @@ message ProtectionWarrior {
 		}
 		ThunderClap thunder_clap = 2;
 
-		bool use_shield_block = 5;
+		enum SpellOption {
+			NoSpell = 0;
+			Revenge = 1;
+			ShieldSlam = 2;
+			Devastate = 3;
+			SunderArmor = 4;
+			DemoralizingShout = 5;
+			BattleShout = 6;
+			CommandingShout = 7;
+			MortalStrike = 8;
+		}
+		CustomRotation custom_rotation = 3;
 
-		bool use_cleave = 4;
-
-		// Minimum rage to queue HS or Cleave.
-		int32 hs_rage_threshold = 3;
-
-		bool prio_revenge_over_shield_slam = 6;
-		bool use_shockwave_st = 7;
-		bool use_concussion_blow_st = 8;
-		bool spam_revenge_hs = 9;
+		double hs_rage_threshold = 4;
 	}
 	Rotation rotation = 1;
 
@@ -227,7 +232,6 @@ message ProtectionWarrior {
 
 	message Options {
 		double starting_rage = 1;
-		bool use_shield_wall = 8;
 
 		WarriorShout shout = 4;
 		bool precast_shout = 5;

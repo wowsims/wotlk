@@ -55,10 +55,9 @@ export const UATalents = {
 };
 
 export const DefaultRotation = ProtectionWarriorRotation.create({
-	demoShout: DemoShout.DemoShoutMaintain,
-	thunderClap: ThunderClap.ThunderClapMaintain,
+	demoShout: DemoShout.DemoShoutNone,
+	thunderClap: ThunderClap.ThunderClapNone,
 	hsRageThreshold: 30,
-	useShieldBlock: true,
 });
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
