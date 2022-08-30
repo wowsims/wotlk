@@ -349,14 +349,18 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		dk.Gargoyle = dk.NewGargoyle()
 	}
 
-	dk.ArmyGhoul = make([]*GhoulPet, 8)
-	for i := 0; i < 8; i++ {
-		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
+	if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse {
+		dk.ArmyGhoul = make([]*GhoulPet, 8)
+		for i := 0; i < 8; i++ {
+			dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
+		}
 	}
 
-	dk.Bloodworm = make([]*BloodwormPet, 4)
-	for i := 0; i < 4; i++ {
-		dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+	if dk.Talents.Bloodworms > 0 {
+		dk.Bloodworm = make([]*BloodwormPet, 4)
+		for i := 0; i < 4; i++ {
+			dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+		}
 	}
 
 	dk.RuneWeapon = dk.NewRuneWeapon()

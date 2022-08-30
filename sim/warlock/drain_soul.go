@@ -83,6 +83,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 							counter++
 						}
 					}
+					// fmt.Println("Spellpower: ", warlock.GetStats()[stats.SpellPower])
 					return oldCalc(sim, hitEffect, spell) *
 						(1.0 + float64(core.MinInt(3, counter))*soulSiphonMultiplier)
 				}

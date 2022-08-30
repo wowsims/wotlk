@@ -17,7 +17,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskEmpty,
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  56,
+		FlatThreatBonus:  63.2,
 		OutcomeApplier:   warrior.OutcomeFuncMagicHit(),
 	}
 
