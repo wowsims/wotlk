@@ -1071,19 +1071,9 @@ func init() {
 	})
 	core.NewItemEffect(12590, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		effectAura := character.GetOrRegisterAura(core.Aura{
-			Label:    "Felstriker Proc",
-			ActionID: core.ActionID{SpellID: 16551},
-			Duration: time.Second * 3,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusMeleeCritRating += 100 * core.CritRatingPerCritChance
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusMeleeCritRating -= 100 * core.CritRatingPerCritChance
-
-			},
-		})
+		effectAura := character.NewTemporaryStatsAura("Felstriker Proc", core.ActionID{SpellID: 16551}, stats.Stats{stats.MeleeCrit: 100 * core.CritRatingPerCritChance}, time.Second*3)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMelee)
+
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Felstriker",
 			Duration: core.NeverExpires,

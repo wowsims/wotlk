@@ -312,7 +312,6 @@ type PseudoStats struct {
 	BonusDamage float64 // Comes from '+X Weapon Damage' effects
 
 	BonusRangedHitRating      float64 // Hit rating for ranged only.
-	BonusMeleeCritRating      float64 // Crit rating for melee only (not ranged).
 	BonusRangedCritRating     float64 // Crit rating for ranged only.
 	BonusFireCritRating       float64 // Crit rating for fire spells only.
 	BonusShadowCritRating     float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
