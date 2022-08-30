@@ -5,6 +5,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var FrostDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDisease),
+	// No interesting minor glyphs.
+}
+
+var UnholyDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfTheGhoul),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfDarkDeath),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay),
+	// No interesting minor glyphs.
+}
+
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Talents:  UnholyTalents,

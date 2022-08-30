@@ -23,6 +23,7 @@ func TestProtectionWarrior(t *testing.T) {
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
+		Glyphs:      DefaultGlyphs,
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,

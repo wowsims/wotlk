@@ -23,6 +23,8 @@ func TestUnholy(t *testing.T) {
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
 
+		Glyphs: UnholyDefaultGlyphs,
+
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,
@@ -51,6 +53,8 @@ func TestFrost(t *testing.T) {
 		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
+
+		Glyphs: FrostDefaultGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
