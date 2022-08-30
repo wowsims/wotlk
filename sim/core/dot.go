@@ -188,7 +188,7 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 		dot.snapshotEffect.BonusCritRating = dot.snapshotCrit
 	} else {
 		dot.snapshotEffect.DamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
-		dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) + dot.Spell.Unit.PseudoStats.BonusSpellCritRating +
+		dot.snapshotEffect.BonusSpellCritRating += dot.Spell.Unit.GetStat(stats.SpellCrit) +
 			target.PseudoStats.BonusSpellCritRatingTaken //TODO : Add spell school specific crit bonus
 		dot.snapshotEffect.BonusCritRating += target.PseudoStats.BonusCritRatingTaken + dot.Spell.BonusCritRating // no personal crit rating?
 	}

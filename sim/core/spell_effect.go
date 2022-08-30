@@ -194,7 +194,6 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 		critRating += unit.GetStat(stats.SpellCrit) +
 			spellEffect.BonusSpellCritRating +
 			spellEffect.BonusCritRating +
-			unit.PseudoStats.BonusSpellCritRating +
 			spellEffect.Target.PseudoStats.BonusCritRatingTaken +
 			spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken +
 			spell.BonusCritRating

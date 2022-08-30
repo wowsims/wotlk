@@ -321,7 +321,6 @@ type PseudoStats struct {
 	BonusMeleeSpellCritRating float64 // Crit rating for melee special attacks, used for Warrior Recklessness
 	BonusMHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
 	BonusOHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
-	BonusSpellCritRating      float64 // Crit rating bonus to spells
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
