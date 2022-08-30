@@ -15,7 +15,7 @@ import (
 //   granting you 270 Strength for 10 sec.
 
 func init() {
-	const drainChance = 0.2
+	const drainChance = 0.5
 
 	core.NewItemEffect(49623, func(agent core.Agent) {
 		player := agent.GetCharacter()
@@ -24,7 +24,7 @@ func init() {
 		choasBaneSpell := player.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 71904},
 			SpellSchool: core.SpellSchoolShadow,
-			ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(player.Env, core.SpellEffect{
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{ // simulate this as hitting single target for now.
 				ProcMask:         core.ProcMaskEmpty, // not sure if this can proc things.
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
@@ -53,6 +53,11 @@ func init() {
 					stackingAura.Deactivate(sim)
 					tempStrProc.Activate(sim)
 					choasBaneSpell.Cast(sim, player.CurrentTarget)
+					return
+				}
+
+				if tempStrProc.IsActive() {
+					return
 				}
 
 				if sim.RandomFloat("shadowmourne") > drainChance {
