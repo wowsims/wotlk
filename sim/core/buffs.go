@@ -1023,8 +1023,6 @@ func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
 		panic("Wrong Replenishment Action ID")
 	}
 
-	// statDep = character.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
-
 	return character.GetOrRegisterAura(Aura{
 		Label:    "Replenishment-" + actionID.String(),
 		Tag:      ReplenishmentAuraTag,
