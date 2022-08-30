@@ -33,7 +33,7 @@ func addThaddius25(bossPrefix string) {
 		AI: NewThaddius25AI(),
 	})
 	core.AddPresetEncounter("Thaddius 25", []string{
-		bossPrefix + "/Thaddius  25",
+		bossPrefix + "/Thaddius 25",
 	})
 }
 
