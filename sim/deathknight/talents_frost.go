@@ -16,8 +16,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Toughness
 	if dk.Talents.Toughness > 0 {
-		armorCoeff := 0.02 * float64(dk.Talents.Toughness)
-		dk.MultiplyStat(stats.Armor, 1.0+armorCoeff)
+		dk.AddStat(stats.Armor, dk.Equip.Stats()[stats.Armor]*0.02*float64(dk.Talents.Toughness))
 	}
 
 	// Icy Reach

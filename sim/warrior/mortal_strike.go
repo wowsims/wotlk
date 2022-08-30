@@ -42,17 +42,18 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 				(1 + 0.01*float64(warrior.Talents.ImprovedMortalStrike)) *
 				core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfMortalStrike), 1.1, 1) *
 				core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 1.05, 1),
-			ThreatMultiplier: 1,
 			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+			ThreatMultiplier: 1,
+			DynamicThreatMultiplier: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+				if warrior.StanceMatches(DefensiveStance) {
+					return 1 + 0.21*float64(warrior.Talents.TacticalMastery)
+				}
+				return 1.0
+			},
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 80, 1, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
 
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if warrior.StanceMatches(DefensiveStance) {
-					spellEffect.ThreatMultiplier *= 1 + 0.21*float64(warrior.Talents.TacticalMastery)
-				}
-			},
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
@@ -63,5 +64,9 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 }
 
 func (warrior *Warrior) CanMortalStrike(sim *core.Simulation) bool {
-	return warrior.Talents.MortalStrike && warrior.CurrentRage() >= warrior.MortalStrike.DefaultCast.Cost && warrior.MortalStrike.IsReady(sim)
+	if warrior.Talents.MortalStrike {
+		return warrior.CurrentRage() >= warrior.MortalStrike.DefaultCast.Cost && warrior.MortalStrike.IsReady(sim)
+	} else {
+		return false
+	}
 }

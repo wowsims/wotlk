@@ -19,7 +19,6 @@ import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 
 import { FeralDruid, FeralDruid_Rotation as FeralDruidRotation, DruidTalents as DruidTalents, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
-import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -34,9 +33,11 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			cssClass: 'feral-druid-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Most Sets / new items aren't functional",
 				"Rotations need updating",
 				"Lacerate doesn't snapshot correctly",
+				"Form Stat changes may display/function incorrectly",
+				"Bear / cat auto attacks don't change with form",
+				"ilotp mana regen not implemented"
 			],
 			warnings: [
 				// Warning that a frontal rotation is not implemented.
@@ -80,17 +81,17 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.266,
-					[Stat.StatAgility]: 3.5,
+					[Stat.StatStrength]: 2.379,
+					[Stat.StatAgility]: 2.15,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatMeleeHit]: 3.2,
-					[Stat.StatMeleeCrit]: 2.37,
-					[Stat.StatMeleeHaste]: 1.36,
-					[Stat.StatArmorPenetration]: 0.47,
-					[Stat.StatExpertise]: 3.2,
+					[Stat.StatMeleeHit]: 2.51,
+					[Stat.StatMeleeCrit]: 2,
+					[Stat.StatMeleeHaste]: 1.67,
+					[Stat.StatArmorPenetration]: 1.66,
+					[Stat.StatExpertise]: 2.28,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -164,11 +165,8 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
 				],
 			},
 		});

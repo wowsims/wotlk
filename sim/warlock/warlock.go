@@ -1,10 +1,11 @@
 package warlock
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 type Warlock struct {
@@ -65,9 +66,9 @@ type Warlock struct {
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
-	DPSPAverage            float64
-	PreviousTime           time.Duration
-	SpellsRotation         []SpellRotation
+	DPSPAverage             float64
+	PreviousTime            time.Duration
+	SpellsRotation          []SpellRotation
 }
 
 type SpellRotation struct {
@@ -128,10 +129,10 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		warlock.Talents.ImprovedImp == 2,
 	))
 
-	if warlock.Talents.DemonicPact > 0 {
-		raidBuffs.DemonicPact = int32(float64(stats.SpellPower) * 0.02 * float64(warlock.Talents.DemonicPact) * 1.111)
-		// * 1.1 because the buff gets 10% better after the first refresh and so on every 20s
-	}
+	raidBuffs.FelIntelligence = core.MaxTristate(raidBuffs.FelIntelligence, core.MakeTristateValue(
+		warlock.Options.Summon == proto.Warlock_Options_Felhunter,
+		warlock.Talents.ImprovedFelhunter == 2,
+	))
 }
 
 func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {

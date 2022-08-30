@@ -10,7 +10,8 @@ func (warrior *Warrior) registerBloodrageCD() {
 	actionID := core.ActionID{SpellID: 2687}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
-	instantRage := 20.0 + 3*float64(warrior.Talents.ImprovedBloodrage)
+	instantRage := 20.0 * (1.0 + 0.25*float64(warrior.Talents.ImprovedBloodrage))
+	ragePerSec := 1 + 0.25*float64(warrior.Talents.ImprovedBloodrage)
 
 	cooldownDur := time.Minute
 	if warrior.Talents.IntensifyRage == 1 {
@@ -37,7 +38,7 @@ func (warrior *Warrior) registerBloodrageCD() {
 				NumTicks: 10,
 				Period:   time.Second * 1,
 				OnAction: func(sim *core.Simulation) {
-					warrior.AddRage(sim, 1, rageMetrics)
+					warrior.AddRage(sim, ragePerSec, rageMetrics)
 				},
 			})
 		},

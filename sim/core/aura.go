@@ -205,6 +205,10 @@ func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
 	}
 }
 
+func (aura *Aura) StartedAt() time.Duration {
+	return aura.startTime
+}
+
 func (aura *Aura) ExpiresAt() time.Duration {
 	return aura.expires
 }

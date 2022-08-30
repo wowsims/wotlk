@@ -246,7 +246,7 @@
 .player-pet-toggle {
 	display: flex;
 	justify-content: center;
-	margin: 10px;
+	padding: 10px;
 }
 .player-pet-toggle > * {
 	margin: 0 10px;
@@ -256,7 +256,6 @@
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	margin-top: 10px;
 }
 
 .glyphs-picker {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -41,15 +42,20 @@ func (target *Target) initialize(config *proto.Target) {
 	if target.AI != nil {
 		target.AI.Initialize(target)
 
-		target.RegisterResetEffect(func(sim *Simulation) {
-			StartPeriodicAction(sim, PeriodicActionOptions{
-				Period:          time.Millisecond * 1620, // 1.62s ability interval
-				TickImmediately: true,
-				OnAction: func(sim *Simulation) {
-					target.AI.DoAction(sim)
-				},
-			})
-		})
+		target.gcdAction = &PendingAction{
+			Priority: ActionPriorityGCD,
+			OnAction: func(sim *Simulation) {
+				if target.GCD.IsReady(sim) {
+					target.OnGCDReady(sim)
+
+					if !target.doNothing && target.GCD.IsReady(sim) && (!target.IsWaiting() && !target.IsWaitingForMana()) {
+						msg := fmt.Sprintf("Target `%s` did not perform any actions. Either this is a bug or agent should use 'WaitUntil' or 'WaitForMana' to explicitly wait.\n\tIf character has no action to perform use 'DoNothing'.", target.Label)
+						panic(msg)
+					}
+					target.doNothing = false
+				}
+			},
+		}
 	}
 }
 
@@ -60,7 +66,23 @@ func (target *Target) ApplyGearBonuses()                          {}
 func (target *Target) ApplyTalents()                              {}
 func (target *Target) GetCharacter() *Character                   { return nil }
 func (target *Target) Initialize()                                {}
-func (target *Target) OnGCDReady(sim *Simulation)                 {}
+
+func (target *Target) DoNothing() {
+	target.doNothing = true
+}
+
+func (target *Target) OnAutoAttack(sim *Simulation, spell *Spell) {
+	if target.GCD.IsReady(sim) {
+		if target.AI != nil {
+			target.AI.DoAction(sim)
+		}
+	}
+}
+func (target *Target) OnGCDReady(sim *Simulation) {
+	if target.AI != nil {
+		target.AI.DoAction(sim)
+	}
+}
 
 type AIFactory func() TargetAI
 
