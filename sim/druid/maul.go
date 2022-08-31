@@ -14,6 +14,8 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	baseDamage := 578.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		baseDamage += 50
+	} else if druid.Equip[items.ItemSlotRanged].ID == 38365 { // Idol of Perspicacious Attacks
+		baseDamage += 120
 	}
 
 	baseEffect := core.SpellEffect{

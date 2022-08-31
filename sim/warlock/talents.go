@@ -475,7 +475,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	actionID := core.ActionID{SpellID: 54118}
 	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
 	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
-	replAura := core.ReplenishmentAura(warlock.GetCharacter(), actionID)
+	var replTargets []*core.Character
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Improved Soul Leech Hidden Aura",
@@ -489,7 +489,12 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
-						replAura.Activate(sim)
+						replTargets = core.ReplenishmentAuraTargetting(warlock.GetCharacter())
+						for _, char := range replTargets {
+							if !(char == nil) {
+								core.ReplenishmentAura(char, actionID).Activate(sim)
+							}
+						}
 					}
 				}
 			}
@@ -509,7 +514,7 @@ func (warlock *Warlock) setupDemonicPact() {
 		return
 	}
 
-	var demonicPactAura *core.Aura
+	var demonicPactAuras [25]*core.Aura
 	icd := core.Cooldown{
 		Timer:    warlock.NewTimer(),
 		Duration: time.Second * 5,
@@ -522,24 +527,32 @@ func (warlock *Warlock) setupDemonicPact() {
 			aura.Activate(sim)
 		},
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			demonicPactAura = core.DemonicPactAura(warlock.GetCharacter(), 0)
-			demonicPactAura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
+			for i, party := range warlock.Party.Raid.Parties {
+				for j, player := range party.Players {
+					demonicPactAuras[i*5+j] = core.DemonicPactAura(player.GetCharacter(), 0)
+					demonicPactAuras[i*5+j].OnReset = func(aura *core.Aura, sim *core.Simulation) {
+						aura.Activate(sim)
+					}
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
-				if demonicPactAura.IsActive() {
-					if demonicPactAura.Priority < newSPBonus || demonicPactAura.RemainingDuration(sim) < time.Second*10 {
-						demonicPactAura.Deactivate(sim)
-						demonicPactAura.Priority = newSPBonus
-						demonicPactAura.Activate(sim)
+				for i, party := range warlock.Party.Raid.Parties {
+					for j, _ := range party.Players {
+						if demonicPactAuras[i*5+j].IsActive() {
+							if demonicPactAuras[i*5+j].Priority < newSPBonus || demonicPactAuras[i*5+j].RemainingDuration(sim) < time.Second*10 {
+								demonicPactAuras[i*5+j].Deactivate(sim)
+								demonicPactAuras[i*5+j].Priority = newSPBonus
+								demonicPactAuras[i*5+j].Activate(sim)
+							}
+						} else {
+							demonicPactAuras[i*5+j].Priority = newSPBonus
+							demonicPactAuras[i*5+j].Activate(sim)
+						}
 					}
-				} else {
-					demonicPactAura.Priority = newSPBonus
-					demonicPactAura.Activate(sim)
 				}
 			}
 		},

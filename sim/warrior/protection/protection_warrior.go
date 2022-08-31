@@ -1,6 +1,7 @@
 package protection
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -28,6 +29,8 @@ type ProtectionWarrior struct {
 
 	Rotation proto.ProtectionWarrior_Rotation
 	Options  proto.ProtectionWarrior_Options
+
+	CustomRotation *common.CustomRotation
 }
 
 func NewProtectionWarrior(character core.Character, options proto.Player) *ProtectionWarrior {
@@ -71,12 +74,11 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(war.Rotation.UseCleave, float64(war.Rotation.HsRageThreshold))
+	war.RegisterHSOrCleave(false, float64(war.Rotation.HsRageThreshold))
 	war.RegisterShieldWallCD()
+	war.RegisterShieldBlockCD()
 
-	if war.Rotation.UseShieldBlock {
-		war.RegisterShieldBlockCD()
-	}
+	war.CustomRotation = war.makeCustomRotation()
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {

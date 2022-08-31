@@ -197,6 +197,8 @@ message Deathknight {
 		bool use_ams = 13;
 		double avg_ams_success_rate = 14;
 		double avg_ams_hit = 15;
+
+		bool auto_rotation = 16;
 	}
 	Rotation rotation = 1;
 

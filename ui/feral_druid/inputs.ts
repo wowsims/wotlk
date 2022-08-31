@@ -1,4 +1,3 @@
-import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
 import { FeralDruid_Options as DruidOptions } from '../core/proto/druid.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
@@ -48,59 +47,6 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 
 export const FeralDruidRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, FinishingMove>({
-			fieldName: 'finishingMove',
-			label: 'Finishing Move',
-			labelTooltip: 'Specify whether Rip or Ferocious Bite should be used as the primary finisher in the DPS rotation.',
-			values: [
-				{ name: 'Rip', value: FinishingMove.Rip },
-				{ name: 'Ferocious Bite', value: FinishingMove.Bite },
-				{ name: 'None', value: FinishingMove.None },
-			],
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'biteweave',
-			label: 'Enable Bite-weaving',
-			labelTooltip: 'Spend Combo Points on Ferocious Bite when Rip is already applied on the target.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().finishingMove == FinishingMove.Rip,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'ripweave',
-			label: 'Enable Rip-weaving',
-			labelTooltip: 'Spend Combo Points on Rip when at 52 Energy or above.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().finishingMove == FinishingMove.Bite,
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, number>({
-			fieldName: 'ripMinComboPoints',
-			label: 'Rip CP Threshold',
-			labelTooltip: 'Minimum Combo Points to accumulate before casting Rip as a finisher.',
-			values: [
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
-			],
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => (player.getRotation().finishingMove == FinishingMove.Rip) || (player.getRotation().ripweave && (player.getRotation().finishingMove != FinishingMove.None)),
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, number>({
-			fieldName: 'biteMinComboPoints',
-			label: 'Bite CP Threshold',
-			labelTooltip: 'Minimum Combo Points to accumulate before casting Ferocious Bite as a finisher.',
-			values: [
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
-			],
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => (player.getRotation().finishingMove == FinishingMove.Bite) || (player.getRotation().biteweave && (player.getRotation().finishingMove != FinishingMove.None)),
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'mangleTrick',
-			label: 'Use Mangle trick',
-			labelTooltip: 'Cast Mangle rather than Shred when between 50-56 Energy with 2pT6, or 60-61 Energy without 2pT6, and with less than 1 second remaining until the next Energy tick.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'rakeTrick',
-			label: 'Use Rake/Bite tricks',
-			labelTooltip: 'Cast Rake or Ferocious Bite rather than powershifting when between 35-39 Energy without 2pT6, and with more than 1 second remaining until the next Energy tick.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => numThunderheartPieces(player) < 2,
-		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'maintainFaerieFire',
 			label: 'Maintain Faerie Fire',
