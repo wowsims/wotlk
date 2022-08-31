@@ -75,6 +75,11 @@ export const ProtectionWarriorRotationConfig = {
 			label: 'HS rage threshold',
 			labelTooltip: 'Heroic Strike when rage is above:',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionWarrior>({
+			fieldName: 'prioSslamOnShieldBlock',
+			label: 'Prio SSlam on Shield Block',
+			labelTooltip: 'The rotation code will prio SSlam over Revenge during active shield block windows.',
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecProtectionWarrior, DemoShoutChoice>({
 			fieldName: 'demoShoutChoice',
 			label: 'Demo Shout',
