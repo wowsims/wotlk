@@ -212,11 +212,11 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	return critRating / (CritRatingPerCritChance * 100)
 }
 func (spellEffect *SpellEffect) spellCritRating(unit *Unit, spell *Spell) float64 {
-	critRating := unit.GetStat(stats.SpellCrit) +
+	critRating := unit.stats[stats.SpellCrit] +
+		spell.BonusCritRating +
 		spellEffect.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
-		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken +
-		spell.BonusCritRating
+		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 
 	if spell.SpellSchool.Matches(SpellSchoolFire) {
 		critRating += unit.PseudoStats.BonusFireCritRating

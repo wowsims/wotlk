@@ -619,8 +619,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7869.84446
-  tps: 4665.1376
+  dps: 7716.80723
+  tps: 4573.31526
  }
 }
 dps_results: {
