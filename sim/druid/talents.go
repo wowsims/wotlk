@@ -40,12 +40,6 @@ func (druid *Druid) ApplyTalents() {
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
-
-		if druid.InForm(Cat) {
-			druid.MultiplyStat(stats.AttackPower, 1.0+0.5*bonus)
-		} else if druid.InForm(Bear) {
-			druid.MultiplyStat(stats.Stamina, 1.0+0.5*bonus)
-		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
