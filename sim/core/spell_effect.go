@@ -39,6 +39,9 @@ type SpellEffect struct {
 	// Used only for dot snapshotting. Internal-only.
 	bonusSpellCritRating float64
 
+	// Use snapshotted values for crit/damage rather than recomputing them.
+	isSnapshot bool
+
 	// Additional multiplier that is always applied, for damage effects.
 	DamageMultiplier float64
 
@@ -158,7 +161,7 @@ func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *Attac
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
 	critRating := 0.0
-	if spellEffect.IsPeriodic {
+	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 		// ignoring units real time crit in this case
 		critRating = spellEffect.BonusCritRating
@@ -198,7 +201,7 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
 	critRating := 0.0
-	if spellEffect.IsPeriodic {
+	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 		// ignoring units real time crit in this case
 		critRating = spellEffect.bonusSpellCritRating
@@ -400,7 +403,7 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	}
 
 	// For dot snapshots, everything has already been stored in spellEffect.DamageMultiplier.
-	if spellEffect.IsPeriodic {
+	if spellEffect.isSnapshot {
 		spellEffect.Damage *= spellEffect.DamageMultiplier
 		return
 	}

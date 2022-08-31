@@ -395,78 +395,78 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9830.84547
-  tps: 10879.82533
+  dps: 9784.62706
+  tps: 10833.60692
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6198.98309
-  tps: 5260.62569
+  dps: 6153.39621
+  tps: 5215.03881
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7041.70857
-  tps: 5882.88538
+  dps: 7039.90819
+  tps: 5881.085
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6989.64548
-  tps: 9116.46839
+  dps: 6960.4845
+  tps: 9087.30741
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3706.36381
-  tps: 3445.02924
+  dps: 3677.53993
+  tps: 3416.20537
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3704.96488
-  tps: 3351.70256
+  dps: 3700.07223
+  tps: 3346.80991
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 5207.75736
-  tps: 5843.66602
+  dps: 5195.67405
+  tps: 5831.58271
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5207.75736
-  tps: 3943.25201
+  dps: 5195.67405
+  tps: 3931.1687
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5895.69539
-  tps: 4236.1306
+  dps: 5894.47651
+  tps: 4234.91172
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2890.25612
-  tps: 4369.93092
+  dps: 2888.34661
+  tps: 4368.02141
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Destro Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2890.25612
-  tps: 2369.13562
+  dps: 2888.34661
+  tps: 2367.22611
  }
 }
 dps_results: {

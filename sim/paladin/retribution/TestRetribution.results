@@ -381,7 +381,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 3603.80431
+  dps: 3651.28804
   tps: 3258.63516
  }
 }
@@ -724,7 +724,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 3603.80431
+  dps: 3651.28804
   tps: 3258.63516
  }
 }

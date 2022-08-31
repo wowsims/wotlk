@@ -180,6 +180,7 @@ func NewDot(config Dot) *Dot {
 
 func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect SpellEffect) {
 	*dot.snapshotEffect = baseEffect
+	dot.snapshotEffect.isSnapshot = true
 	dot.snapshotEffect.Target = target
 	if dot.useSnapshot {
 		dot.snapshotEffect.DamageMultiplier = dot.snapshotMultiplier
