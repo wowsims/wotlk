@@ -74,13 +74,14 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
 	effect := core.SpellEffect{
+		ProcMask:            core.ProcMaskSpellDamage,
+		IsPeriodic:          true,
+		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:     float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		DamageMultiplier:    1,
 		ThreatMultiplier:    1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		IsPeriodic:          true,
-		BonusCritRating:     float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
-		OutcomeApplier:      priest.OutcomeFuncMagicHitAndCrit(1 + float64(priest.Talents.ShadowPower)*0.2),
-		ProcMask:            core.ProcMaskSpellDamage,
+
+		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)

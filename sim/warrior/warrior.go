@@ -77,10 +77,10 @@ type Warrior struct {
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
-	BloodsurgeAura  *core.Aura
-	SuddenDeathAura *core.Aura
-
+	BloodsurgeAura    *core.Aura
+	SuddenDeathAura   *core.Aura
 	SwordAndBoardAura *core.Aura
+	ShieldBlockAura   *core.Aura
 
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
@@ -136,7 +136,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
-	warrior.registerShieldSlamSpell(primaryTimer)
+	warrior.registerShieldSlamSpell()
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()

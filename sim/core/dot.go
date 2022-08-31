@@ -2,8 +2,6 @@ package core
 
 import (
 	"time"
-
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type TickEffects func(*Simulation, *Dot) func()
@@ -191,7 +189,7 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 		dot.snapshotEffect.BonusCritRating = dot.snapshotEffect.physicalCritRating(dot.Spell.Unit, dot.Spell)
 	}
 	//if sim.Log != nil {
-	//	dot.Spell.Unit.Log(sim, "Snapshot spell crit for spell %s: Rating: %0.02f, Chance: %0.02f, statCrit: %0.02f, spellBonus: %0.02f, effectBonus: %0.02f, target: %0.02f, targetSpell: %0.02f",
+	//	dot.Spell.Unit.Log(sim, "[DEBUG] Snapshot spell crit for spell %s: Rating: %0.02f, Chance: %0.02f, statCrit: %0.02f, spellBonus: %0.02f, effectBonus: %0.02f, target: %0.02f, targetSpell: %0.02f",
 	//		dot.Spell.ActionID.String(),
 	//		dot.snapshotEffect.bonusSpellCritRating,
 	//		dot.snapshotEffect.bonusSpellCritRating/(100*CritRatingPerCritChance),
