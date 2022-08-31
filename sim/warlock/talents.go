@@ -55,17 +55,18 @@ func (warlock *Warlock) ApplyTalents() {
 			switch warlock.Options.Summon {
 			case proto.Warlock_Options_Imp:
 				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.Pet.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Succubus:
 				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.Pet.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Felguard:
 				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			}
 		}
 		// Extract stats for demonic knowledge
 		if warlock.Talents.DemonicKnowledge > 0 {
-			petChar := warlock.Pets[0].GetCharacter()
+			petChar := warlock.Pet.GetCharacter()
 			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
 			warlock.AddStat(stats.SpellPower, bonus)
 			//TODO : pet buffs influence
@@ -123,6 +124,13 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		warlock.registerGlyphOfLifeTapAura()
 	}
+}
+
+func (warlock *Warlock) masterDemonologistFireCrit() float64 {
+	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
+}
+func (warlock *Warlock) masterDemonologistShadowCrit() float64 {
+	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
