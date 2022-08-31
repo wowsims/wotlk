@@ -182,6 +182,13 @@ message Warrior {
 		bool spam_execute = 15;
 		bool use_ww_during_execute = 16;
 		bool use_slam_over_execute = 17;
+
+		enum StanceOption {
+			DefaultStance = 0;
+			BattleStance = 1;
+			BerserkerStance = 2;
+		}
+		StanceOption stance_option = 19;
 	}
 	Rotation rotation = 1;
 

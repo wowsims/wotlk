@@ -38,9 +38,9 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 			}
 		}
 	} else {
-		if war.Talents.Bloodthirst {
+		if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
 			war.trySwapToBerserker(sim)
-		} else if war.Talents.MortalStrike {
+		} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
 			war.trySwapToBattle(sim)
 		}
 	}

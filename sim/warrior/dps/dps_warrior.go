@@ -96,20 +96,27 @@ func (war *DpsWarrior) Initialize() {
 		}
 	}
 
+	if war.Rotation.StanceOption == proto.Warrior_Rotation_DefaultStance {
+		if war.Talents.Bloodthirst {
+			war.Rotation.StanceOption = proto.Warrior_Rotation_BerserkerStance
+		} else {
+			war.Rotation.StanceOption = proto.Warrior_Rotation_BattleStance
+		}
+	}
+
 	war.DelayDPSCooldownsForArmorDebuffs()
 }
 
 func (war *DpsWarrior) Reset(sim *core.Simulation) {
-	if war.Talents.Bloodthirst {
+	if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
 		war.Warrior.Reset(sim)
 		war.BerserkerStanceAura.Activate(sim)
 		war.Stance = warrior.BerserkerStance
-	} else if war.Talents.MortalStrike {
+	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
 		war.Warrior.Reset(sim)
 		war.BattleStanceAura.Activate(sim)
 		war.Stance = warrior.BattleStance
 	}
-
 	war.canSwapStanceAt = 0
 	war.maintainSunder = war.Rotation.SunderArmor != proto.Warrior_Rotation_SunderArmorNone
 	war.castSlamAt = 0
