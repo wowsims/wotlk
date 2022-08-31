@@ -385,6 +385,8 @@ func (mage *Mage) registerCombustionCD() {
 		Duration: time.Minute * 2,
 	}
 
+	var fireSpells []*core.Spell
+
 	numCrits := 0
 	const critPerStack = 10 * core.CritRatingPerCritChance
 
@@ -393,6 +395,9 @@ func (mage *Mage) registerCombustionCD() {
 		ActionID:  actionID,
 		Duration:  core.NeverExpires,
 		MaxStacks: 20,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			fireSpells = mage.GetSpellsMatchingSchool(core.SpellSchoolFire)
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
 		},
@@ -400,7 +405,10 @@ func (mage *Mage) registerCombustionCD() {
 			cd.Use(sim)
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusFireCritRating += critPerStack * float64(newStacks-oldStacks)
+			bonusCrit := critPerStack * float64(newStacks-oldStacks)
+			for _, spell := range fireSpells {
+				spell.BonusCritRating += bonusCrit
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {

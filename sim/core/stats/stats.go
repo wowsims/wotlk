@@ -313,8 +313,6 @@ type PseudoStats struct {
 
 	BonusRangedHitRating      float64 // Hit rating for ranged only.
 	BonusRangedCritRating     float64 // Crit rating for ranged only.
-	BonusFireCritRating       float64 // Crit rating for fire spells only.
-	BonusShadowCritRating     float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
 	BonusMHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
 	BonusMeleeSpellCritRating float64 // Crit rating for melee special attacks, used for Warrior Recklessness

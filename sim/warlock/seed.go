@@ -35,12 +35,16 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	}
 
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
+		ProcMask: core.ProcMaskSpellDamage,
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:       core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
-		BonusCritRating:  float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
+
+		BaseDamage:     core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
@@ -125,12 +129,14 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
+
 			DamageMultiplier: baseAdditiveMultiplierDot,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
-			OutcomeApplier:   warlock.OutcomeFuncTick(),
-			IsPeriodic:       true,
+
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
+			OutcomeApplier: warlock.OutcomeFuncTick(),
 		}),
 	})
 }

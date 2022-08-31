@@ -43,7 +43,7 @@ func (warlock *Warlock) corruptionTracker() float64 {
 	// Damage multipler (looking for TotT)
 	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
 	// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
-	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusShadowCritRating +
+	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.Corruption.BonusCritRating +
 		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
 	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
 	// Combination of all multipliers
