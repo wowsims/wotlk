@@ -229,7 +229,7 @@ func (druid *Druid) applyOmenOfClarity() {
 		return
 	}
 
-	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMelee)
+	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 
 	druid.ClearcastingAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Clearcasting",
@@ -261,7 +261,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee
+			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			}
 			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
