@@ -10,7 +10,15 @@ import (
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
+func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
+	cat.TryUseCooldowns(sim)
+	if cat.InForm(druid.Cat) {
+		cat.doTigersFury(sim)
+	}
+}
+
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
+	cat.TryUseCooldowns(sim)
 	cat.doRotation(sim)
 }
 
@@ -86,9 +94,9 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	maxRipDur := time.Duration(float64(cat.maxRipTicks) * float64(cat.RipDot.TickLength))
 
 	ripDur := cat.RipDot.Aura.StartedAt() + maxRipDur - sim.CurrentTime
-	roarDur := cat.SavageRoarAura.ExpiresAt() - sim.CurrentTime
+	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
 	availableTime := ripDur - roarDur
-	expectedEnergyGain := 10.0 * float64(availableTime/time.Second)
+	expectedEnergyGain := 10.0 * (float64(availableTime) / float64(time.Second))
 
 	if cat.tfExpectedBefore(sim, cat.RipDot.ExpiresAt()) {
 		expectedEnergyGain += 60.0
@@ -110,13 +118,13 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	// Now calculate the effective Energy cost for building back 5 CPs once
 	// Roar expires and casting Rip
 	ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.RipDot.ExpiresAt()), 15.0, 30.0)
-	cpPerBuilder := 1 + cat.GetStat(stats.MeleeCrit)
+	cpPerBuilder := 1 + ((cat.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance) / 100)
 	costPerBuilder := (42. + 42. + 35.) / 3. * (1 + 0.2*cat.missChance)
 	ripRefreshCost := 5./cpPerBuilder*costPerBuilder + ripCost
 
 	// If the cost is less than the expected Energy gain in the available
 	// time, then there's no reason to clip Roar.
-	if availableEnergy >= ripRefreshCost {
+	if ripRefreshCost <= availableEnergy {
 		return false
 	}
 
@@ -141,12 +149,16 @@ func (cat *FeralDruid) doOnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 
 func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 	// Handle tigers fury
-	leewayTime := core.MaxFloat(float64(cat.GCD.TimeToReady(sim)/time.Second), float64(cat.latency/time.Second))
+	gcdTimeToRdy := float64(cat.GCD.TimeToReady(sim))
+	leewayTime := core.MaxFloat(float64(gcdTimeToRdy/float64(time.Second)), float64(cat.latency)/float64(time.Second))
 	tfEnergyThresh := 40.0 - 10.0*(leewayTime+core.TernaryFloat64(cat.ClearcastingAura.IsActive(), 1.0, 0))
 	tfNow := (cat.CurrentEnergy() < tfEnergyThresh) && cat.TigersFury.IsReady(sim) && !cat.BerserkAura.IsActive()
 
 	if tfNow {
 		cat.TigersFury.Cast(sim, nil)
+		// Kick gcd loop, also need to account for any gcd 'left'
+		// otherwise it breaks gcd logic
+		cat.WaitUntil(sim, sim.CurrentTime+time.Duration(leewayTime*float64(time.Second)))
 	}
 }
 
@@ -223,11 +235,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		return pendingActions[i].refreshTime < pendingActions[j].refreshTime
 	})
 
-	if !cat.SavageRoarAura.IsActive() && curEnergy >= 25 {
-		endThresh = time.Second * 10
-	}
-
-	latencySecs := cat.latency / time.Second
+	latencySecs := float64(cat.latency) / float64(time.Second)
 	// Allow for bearweaving if the next pending action is >= 4.5s away
 	furorCap := core.MinFloat(20.0*float64(cat.Talents.Furor), 85)
 	weaveEnergy := furorCap - 30 - 20*float64(latencySecs)
@@ -254,12 +262,12 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	previousTime := sim.CurrentTime
 
 	for _, s := range pendingActions {
-		delta_t := s.refreshTime - previousTime
-		if float64(delta_t/time.Second) < s.cost/10.0 {
-			floatingEnergy += s.cost - 10.0*float64(delta_t/time.Second)
+		delta_t := float64((s.refreshTime - previousTime) / core.EnergyTickDuration)
+		if delta_t < s.cost {
+			floatingEnergy += s.cost - delta_t
 			previousTime = s.refreshTime
 		} else {
-			previousTime += time.Duration((s.cost / 10.0) * float64(time.Second))
+			previousTime += time.Duration(s.cost * float64(core.EnergyTickDuration))
 		}
 	}
 
@@ -375,7 +383,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		nextAction = core.MinDuration(nextAction, pendingActions[0].refreshTime)
 	}
 
-	nextAction += latencySecs
+	nextAction += time.Duration(latencySecs * float64(time.Second))
 
 	// TODO: This probably shouldnt happen
 	if nextAction <= sim.CurrentTime {

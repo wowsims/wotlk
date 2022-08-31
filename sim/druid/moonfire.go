@@ -45,7 +45,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			BonusSpellCritRating: (float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance) + iffCritBonus,
 			DamageMultiplier:     1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
 			ThreatMultiplier:     1,
-			BaseDamage:           core.BaseDamageConfigMagic(305, 357, 0.15),
+			BaseDamage:           core.BaseDamageConfigMagic(406, 476, 0.15),
 			OutcomeApplier:       druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -72,7 +72,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier + moonfireGlyphDotDamageMultiplier) * druid.TalentsBonuses.genesisMultiplier,
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
+			BaseDamage:       core.BaseDamageConfigMagicNoRoll(800, 0.13),
 			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,
 		}),
