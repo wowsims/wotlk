@@ -237,19 +237,22 @@ func (druid *Druid) applyOmenOfClarity() {
 		Duration: time.Second * 15,
 	})
 	// T10-2P
-	lasherweave2P := druid.RegisterAura(core.Aura{
-		Label:    "T10-2P proc",
-		ActionID: core.ActionID{SpellID: 70718},
-		Duration: time.Second * 6,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.ArcaneDamageDealtMultiplier *= 1.15
-			druid.PseudoStats.NatureDamageDealtMultiplier *= 1.15
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.ArcaneDamageDealtMultiplier /= 1.15
-			druid.PseudoStats.NatureDamageDealtMultiplier /= 1.15
-		},
-	})
+	var lasherweave2P *core.Aura
+	if druid.HasSetBonus(ItemSetLasherweaveRegalia, 2) {
+		lasherweave2P = druid.RegisterAura(core.Aura{
+			Label:    "T10-2P proc",
+			ActionID: core.ActionID{SpellID: 70718},
+			Duration: time.Second * 6,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				druid.PseudoStats.ArcaneDamageDealtMultiplier *= 1.15
+				druid.PseudoStats.NatureDamageDealtMultiplier *= 1.15
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				druid.PseudoStats.ArcaneDamageDealtMultiplier /= 1.15
+				druid.PseudoStats.NatureDamageDealtMultiplier /= 1.15
+			},
+		})
+	}
 
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
