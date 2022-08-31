@@ -63,7 +63,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
-			BonusSpellCritRating: 0 +
+			BonusCritRating: 0 +
 				float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
 

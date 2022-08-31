@@ -75,7 +75,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
-			BonusSpellCritRating: 0 +
+			BonusCritRating: 0 +
 				3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
 				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 

@@ -15,7 +15,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		ProcMask:            core.ProcMaskSpellDamage,
 		BonusSpellHitRating: 0,
 
-		BonusSpellCritRating: 0 +
+		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),

@@ -52,7 +52,7 @@ func (mage *Mage) registerScorchSpell() {
 			ProcMask:            core.ProcMaskSpellDamage,
 			BonusSpellHitRating: 0,
 
-			BonusSpellCritRating: 0 +
+			BonusCritRating: 0 +
 				float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 

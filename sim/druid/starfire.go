@@ -33,29 +33,29 @@ func (druid *Druid) registerStarfireSpell() {
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.BonusSpellCritRating = 0
+			spellEffect.BonusCritRating = 0
 			// Improved Insect Swarm
 			if druid.MoonfireDot.IsActive() {
-				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+				spellEffect.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
 			}
 			// T6-4P
 			if druid.SetBonuses.balance_t6_2 {
-				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+				spellEffect.BonusCritRating += 5 * core.CritRatingPerCritChance
 			}
 			// T7-4P
 			if druid.SetBonuses.balance_t7_4 {
-				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+				spellEffect.BonusCritRating += 5 * core.CritRatingPerCritChance
 			}
 			// Improved Faerie Fire
 			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-				spellEffect.BonusSpellCritRating += druid.TalentsBonuses.iffBonusCrit
+				spellEffect.BonusCritRating += druid.TalentsBonuses.iffBonusCrit
 			}
 			// Lunar eclipse buff
 			if druid.HasAura("Lunar Eclipse proc") {
-				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
+				spellEffect.BonusCritRating += core.CritRatingPerCritChance * 40
 				// T8-2P
 				if druid.SetBonuses.balance_t8_2 {
-					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
+					spellEffect.BonusCritRating += core.CritRatingPerCritChance * 7
 				}
 			}
 			// T9-4P
@@ -63,7 +63,7 @@ func (druid *Druid) registerStarfireSpell() {
 				spellEffect.DamageMultiplier *= 1.04
 			}
 			// Nature's Majesty
-			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
+			spellEffect.BonusCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
 		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {

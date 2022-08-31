@@ -35,12 +35,12 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	}
 
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		DamageMultiplier:     baseAdditiveMultiplier,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		BaseDamage:           core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
-		BonusSpellCritRating: float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
+		ProcMask:         core.ProcMaskSpellDamage,
+		DamageMultiplier: baseAdditiveMultiplier,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		BaseDamage:       core.BaseDamageConfigMagic(1633+flatBonus, 1897+flatBonus, 0.2129),
+		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
+		BonusCritRating:  float64(warlock.Talents.ImprovedCorruption) * core.CritRatingPerCritChance,
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
