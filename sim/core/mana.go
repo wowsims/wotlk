@@ -25,6 +25,9 @@ type manaBar struct {
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
 	PleaManaMetrics       *ResourceMetrics
+
+	replenishmentDep  *stats.StatDependency
+	ReplenishmentAura *Aura
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)

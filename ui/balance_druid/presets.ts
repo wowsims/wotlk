@@ -16,7 +16,7 @@ import {SavedTalents} from '../core/proto/ui.js';
 import {
     BalanceDruid_Rotation as BalanceDruidRotation,
     BalanceDruid_Options as BalanceDruidOptions,
-    BalanceDruid_Rotation_RotationType as RotationType, DruidMajorGlyph, DruidMinorGlyph,
+    BalanceDruid_Rotation_Type as RotationType, DruidMajorGlyph, DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -45,17 +45,17 @@ export const StandardTalents = {
 
 export const DefaultRotation = BalanceDruidRotation.create({
     type: RotationType.Adaptive,
-});
-
-export const DefaultOptions = BalanceDruidOptions.create({
-    battleRes: true,
-    innervateTarget: RaidTarget.create({
-        targetIndex: NO_TARGET,
-    }),
+    useBattleRes: true,
     isInsideEclipseThreshold: 15,
     mfInsideEclipseThreshold: 14,
     useIs: false,
     useMf: true,
+});
+
+export const DefaultOptions = BalanceDruidOptions.create({
+    innervateTarget: RaidTarget.create({
+        targetIndex: NO_TARGET,
+    }),
 });
 
 export const DefaultConsumes = Consumes.create({
