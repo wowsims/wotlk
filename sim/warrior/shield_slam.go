@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
+func (warrior *Warrior) registerShieldSlamSpell() {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
@@ -53,7 +53,7 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
-				Timer:    cdTimer,
+				Timer:    warrior.NewTimer(),
 				Duration: time.Second * 6,
 			},
 		},
@@ -88,6 +88,12 @@ func (warrior *Warrior) registerShieldSlamSpell(cdTimer *core.Timer) {
 }
 
 func (warrior *Warrior) HasEnoughRageForShieldSlam() bool {
+	if warrior.SwordAndBoardAura != nil {
+		if warrior.SwordAndBoardAura.IsActive() {
+			return true
+		}
+	}
+
 	return warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost
 }
 
