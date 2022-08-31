@@ -33,8 +33,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			cssClass: 'feral-druid-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"Only 'mono-cat' rotation implemented",
 				"Lacerate doesn't snapshot correctly",
-				"Form Stat changes may display/function incorrectly",
+				"Stats display only humanoid form",
 				"Bear / cat auto attacks don't change with form",
 				"ilotp mana regen not implemented"
 			],

@@ -81,15 +81,6 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
-	if druid.Talents.MasterShapeshifter > 0 {
-		bonus := 0.02 * float64(druid.Talents.MasterShapeshifter)
-		if druid.InForm(Bear) {
-			druid.PseudoStats.DamageDealtMultiplier += bonus
-		} else if druid.InForm(Cat) {
-			druid.AddStat(stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
-		}
-	}
-
 	druid.setupNaturesGrace()
 	druid.registerNaturesSwiftnessCD()
 	druid.applyPrimalFury()
