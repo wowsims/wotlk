@@ -136,7 +136,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		replenishmentActionID.SpellID = 44561
 	}
 	if !(replenishmentActionID.IsEmptyAction()) {
-		MakePermanent(ReplenishmentAura(character, replenishmentActionID))
+		MakePermanent(ReplenishmentAura(&character.Unit, replenishmentActionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -562,7 +562,7 @@ func registerBloodlustCD(agent Agent) {
 	character.AddMajorCooldown(MajorCooldown{
 		Spell:    spell,
 		Priority: CooldownPriorityBloodlust,
-		Type:     CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+		Type:     CooldownTypeDPS,
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
 			// Haste portion doesn't stack with Power Infusion, so prefer to wait.
 			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
@@ -626,7 +626,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     PowerInfusionDuration,
 			AuraCD:           PowerInfusionCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Haste portion doesn't stack with Bloodlust, so prefer to wait.
@@ -685,7 +685,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     TricksOfTheTradeDuration,
 			AuraCD:           TricksOfTheTradeCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				return true
@@ -732,7 +732,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     UnholyFrenzyDuration,
 			AuraCD:           UnholyFrenzyCD,
-			Type:             CooldownTypeDPS | CooldownTypeUsableShapeShifted,
+			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				return true
@@ -873,7 +873,7 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     InnervateDuration,
 			AuraCD:           InnervateCD,
-			Type:             CooldownTypeMana | CooldownTypeUsableShapeShifted,
+			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only cast innervate when very low on mana, to make sure all other mana CDs are prioritized.
 				if character.CurrentMana() > innervateThreshold {
@@ -963,7 +963,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     ManaTideTotemDuration,
 			AuraCD:           ManaTideTotemCD,
-			Type:             CooldownTypeMana | CooldownTypeUsableShapeShifted,
+			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// A normal resto shaman would wait to use MTT.
 				if sim.CurrentTime < initialDelay {
@@ -1018,24 +1018,41 @@ var ReplenishmentAuraTag = "Replenishment"
 
 const ReplenishmentAuraDuration = time.Second * 15
 
-func ReplenishmentAura(character *Character, actionID ActionID) *Aura {
+func ReplenishmentAura(unit *Unit, actionID ActionID) *Aura {
 	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
 		panic("Wrong Replenishment Action ID")
 	}
 
-	return character.GetOrRegisterAura(Aura{
+	if unit.HasManaBar() {
+		unit.replenishmentDep = unit.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
+	}
+
+	unit.ReplenishmentAura = unit.GetOrRegisterAura(Aura{
 		Label:    "Replenishment-" + actionID.String(),
 		Tag:      ReplenishmentAuraTag,
 		ActionID: ActionID{SpellID: 57669},
 		Priority: 1,
 		Duration: ReplenishmentAuraDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.EnableDynamicStatDep(sim, character.replenishmentDep)
+			if aura.Unit.HasManaBar() {
+				aura.Unit.EnableDynamicStatDep(sim, aura.Unit.replenishmentDep)
+			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.DisableDynamicStatDep(sim, character.replenishmentDep)
+			if aura.Unit.HasManaBar() {
+				aura.Unit.DisableDynamicStatDep(sim, aura.Unit.replenishmentDep)
+			}
 		},
 	})
+	return unit.ReplenishmentAura
+}
+
+func InitReplenishmentAuras(character *Character, actionID ActionID) {
+	for _, unit := range character.Env.Raid.AllUnits {
+		if unit.HasManaBar() {
+			ReplenishmentAura(unit, actionID)
+		}
+	}
 }
 
 func ReplenishmentAuraTargetting(character *Character) []*Character {

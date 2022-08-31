@@ -2,7 +2,6 @@ package druid
 
 import (
 	"math"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -265,9 +264,6 @@ func (druid *Druid) registerBearFormSpell() {
 	})
 }
 
-// A bit arbitrary
-const cooldownDelayThresHold = time.Second * 10
-
 func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 
 	// Disable cooldowns not usable in form and/or delay others
@@ -276,26 +272,10 @@ func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 		druid.EnableAllCooldowns(druid.disabledMCDs)
 		druid.disabledMCDs = nil
 
-		if druid.InForm(Cat | Bear) {
-			// Check if any dps cooldown that requires shifting is ready soon
-			// disable all cooldowns if that is the case
-			nonUsableDpsMCDReadySoon := false
+		if druid.InForm(Humanoid) {
+			// Disable cooldown that incurs a gcd, so we dont get stuck out of form when we dont need to (Greater Drums)
 			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.TimeToReady(sim) < cooldownDelayThresHold && cd.IsEnabled() && !cd.Type.Matches(core.CooldownTypeUsableShapeShifted) && cd.Type.Matches(core.CooldownTypeDPS) {
-					nonUsableDpsMCDReadySoon = true
-					break
-				}
-			}
-			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.IsEnabled() && (nonUsableDpsMCDReadySoon || !cd.Type.Matches(core.CooldownTypeUsableShapeShifted)) {
-					druid.DisableMajorCooldown(cd.Spell.ActionID)
-					druid.disabledMCDs = append(druid.disabledMCDs, cd)
-				}
-			}
-		} else {
-			// Disable cooldown that can be used in form, but incurs a gcd, so we dont get stuck out of form when we dont need to (Greater Drums)
-			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.Type.Matches(core.CooldownTypeUsableShapeShifted) && cd.Spell.DefaultCast.GCD > 0 {
+				if cd.Spell.DefaultCast.GCD > 0 {
 					druid.DisableMajorCooldown(cd.Spell.ActionID)
 					druid.disabledMCDs = append(druid.disabledMCDs, cd)
 				}
