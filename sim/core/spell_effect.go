@@ -157,7 +157,15 @@ func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *Attac
 }
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
-	critRating := spellEffect.physicalCritRating(unit, spell)
+	critRating := 0.0
+	if spellEffect.IsPeriodic {
+		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
+		// ignoring units real time crit in this case
+		critRating = spellEffect.BonusCritRating
+	} else {
+		critRating = spellEffect.physicalCritRating(unit, spell)
+	}
+
 	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
 }
 func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) float64 {
