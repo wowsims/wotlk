@@ -82,6 +82,7 @@ func (druid *Druid) registerCatFormSpell() {
 	srm := druid.getSavageRoarMultiplier()
 
 	apDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
+	catHotw := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
@@ -99,7 +100,9 @@ func (druid *Druid) registerCatFormSpell() {
 
 			druid.applyFeralShift(sim, true)
 			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
+			druid.EnableDynamicStatDep(sim, catHotw)
 			druid.EnableDynamicStatDep(sim, apDep)
+			druid.AddStatDynamic(sim, stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 
 			// These buffs stay up, but corresponding changes don't
 			if druid.SavageRoarAura.IsActive() {
@@ -118,7 +121,9 @@ func (druid *Druid) registerCatFormSpell() {
 
 			druid.applyFeralShift(sim, false)
 			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			druid.DisableDynamicStatDep(sim, catHotw)
 			druid.DisableDynamicStatDep(sim, apDep)
+			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 
 			druid.TigersFuryAura.Deactivate(sim)
 
@@ -185,6 +190,7 @@ func (druid *Druid) registerBearFormSpell() {
 	finalRage := 0.0
 
 	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
+	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
@@ -198,7 +204,9 @@ func (druid *Druid) registerBearFormSpell() {
 
 			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
 			druid.EnableDynamicStatDep(sim, stamdep)
+			druid.EnableDynamicStatDep(sim, bearHotw)
 			druid.PseudoStats.ThreatMultiplier *= 1.3
+			druid.PseudoStats.DamageDealtMultiplier += 0.02 * float64(druid.Talents.MasterShapeshifter)
 
 			druid.applyFeralShift(sim, true)
 			druid.AutoAttacks.EnableAutoSwing(sim)
@@ -216,8 +224,10 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Humanoid
 
 			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
+			druid.DisableDynamicStatDep(sim, bearHotw)
 			druid.DisableDynamicStatDep(sim, stamdep)
 			druid.PseudoStats.ThreatMultiplier /= 1.3
+			druid.PseudoStats.DamageDealtMultiplier -= 0.02 * float64(druid.Talents.MasterShapeshifter)
 
 			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
