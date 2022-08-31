@@ -81,6 +81,13 @@ func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	target := fireElemental.CurrentTarget
+	fireBlastCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
+	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
+
+	if fireBlastCasts == nFireBlastCasts && fireNovaCasts == nFireNovaCasts {
+		fireElemental.CancelGCDTimer(sim)
+		return
+	}
 
 	//Check for mana issues first
 	if fireElemental.CurrentMana() < fireElemental.FireNova.CurCast.Cost {
@@ -88,25 +95,24 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	//If no CD's are available on this GCD lets wait for the next spell off CD
-	if !fireElemental.FireBlast.IsReady(sim) && !fireElemental.FireNova.IsReady(sim) {
-		waitingOnCD := core.MinDuration(fireElemental.FireBlast.TimeToReady(sim), fireElemental.FireNova.TimeToReady(sim))
-		fireElemental.WaitUntil(sim, sim.CurrentTime+waitingOnCD)
-		return
-	}
-
-	numberCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
-	if numberCasts < nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
+	if fireBlastCasts < nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
 		if fireElemental.FireBlast.Cast(sim, target) {
 			return
 		}
 	}
 
-	numberCasts = fireElemental.FireNova.SpellMetrics[0].Casts
-	if numberCasts < nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
-		fireElemental.FireNova.Cast(sim, target)
+	if fireNovaCasts < nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+		if fireElemental.FireNova.Cast(sim, target) {
+			return
+		}
 	}
 
+	// Handle GCD down time.
+	if !fireElemental.FireBlast.IsReady(sim) {
+		fireElemental.WaitUntil(sim, fireElemental.FireBlast.CD.ReadyAt())
+	} else {
+		fireElemental.WaitUntil(sim, fireElemental.FireNova.CD.ReadyAt())
+	}
 }
 
 var fireElementalPetBaseStats = stats.Stats{
@@ -117,7 +123,8 @@ var fireElementalPetBaseStats = stats.Stats{
 	stats.SpellPower:  995,  //Estimated
 	stats.AttackPower: 1369, //Estimated
 
-	// TODO : No idea what his crit is at, he does not seem to gain any crit from owner.
+	// TODO : No idea what his melee crit is, he does not seem to gain any crit from owner,
+	// probably has base agility that provides some crit.
 	// Stole from spirit wolves.
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
 	stats.SpellCrit: 2.61 * core.CritRatingPerCritChance,
