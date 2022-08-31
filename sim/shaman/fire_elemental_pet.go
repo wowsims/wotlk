@@ -105,7 +105,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	numberCasts = fireElemental.FireNova.SpellMetrics[0].Casts
 	if numberCasts < nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
 		fireElemental.FireNova.Cast(sim, target)
-		return
 	}
 
 }
