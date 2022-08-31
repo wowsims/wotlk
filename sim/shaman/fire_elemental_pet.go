@@ -49,7 +49,7 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		},
 		AutoSwingMelee: true,
 	})
-
+	fireElemental.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritRatingPerCritChance/212)
 	fireElemental.OnPetEnable = fireElemental.enable
 	fireElemental.OnPetDisable = fireElemental.disable
 
@@ -120,6 +120,7 @@ var fireElementalPetBaseStats = stats.Stats{
 	// TODO : No idea what his crit is at, he does not seem to gain any crit from owner.
 	// Stole from spirit wolves.
 	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
+	stats.SpellCrit: 2.61 * core.CritRatingPerCritChance,
 }
 
 func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {

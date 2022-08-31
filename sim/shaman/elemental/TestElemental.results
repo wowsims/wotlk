@@ -887,42 +887,42 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4357.39483
+  dps: 4357.97122
   tps: 3713.18646
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3660.24712
+  dps: 3660.27323
   tps: 2553.42114
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4905.87378
+  dps: 4905.1344
   tps: 3018.19704
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2359.92078
+  dps: 2359.46157
   tps: 1654.16793
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2017.39817
+  dps: 2017.94148
   tps: 1324.31632
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4369.41891
+  dps: 4359.87575
   tps: 2662.72456
  }
 }
@@ -971,42 +971,42 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4235.00006
+  dps: 4235.20226
   tps: 3617.91706
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3591.14753
+  dps: 3591.62159
   tps: 2516.34645
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4785.65903
+  dps: 4779.88651
   tps: 2985.06408
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2347.39651
+  dps: 2346.89587
   tps: 1661.33759
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2008.69941
+  dps: 2008.70452
   tps: 1337.56567
  }
 }
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4281.5076
+  dps: 4275.75415
   tps: 2644.51627
  }
 }
