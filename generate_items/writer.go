@@ -349,6 +349,12 @@ var allowList = map[int]bool{
 	33504: true, // Libram of Divine Purpose
 	33829: true, // Hex Shrunken Head
 
+	27510: true, // Tidefury Gauntlets
+	27802: true, // Tidefury Shoulderguards
+	27909: true, // Tidefury Kilt
+	28231: true, // Tidefury Chestpiece
+	28349: true, // Tidefury Helm
+
 	15056: true, // Stormshroud Armor
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders

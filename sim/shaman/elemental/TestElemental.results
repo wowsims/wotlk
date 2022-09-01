@@ -584,6 +584,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-TidefuryRaiment"
+ value: {
+  dps: 2143.11942
+  tps: 1694.59858
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-TinyAbominationinaJar-50351"
  value: {
   dps: 3355.24671

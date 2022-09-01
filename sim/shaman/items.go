@@ -8,6 +8,22 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetTidefury = core.NewItemSet(core.ItemSet{
+	Name: "Tidefury Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Handled in chain_lightning.go
+		},
+		4: func(agent core.Agent) {
+			shaman := agent.(ShamanAgent).GetShaman()
+
+			if shaman.SelfBuffs.Shield == proto.ShamanShield_WaterShield {
+				shaman.AddStat(stats.MP5, 3)
+			}
+		},
+	},
+})
+
 var ItemSetSkyshatterRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Skyshatter Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
