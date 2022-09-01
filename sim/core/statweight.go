@@ -192,22 +192,11 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		statMod := defaultStatMod
 		if stat == stats.SpellHit {
 			statMod = spellHitStatMod
-			// Prevent stat mods from going over cap as that would influence their worth?
-			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
-				statModsHigh[stat] = baseStats[stat] - spellHitCap
-				statModsLow[stat] = -statMod
-			}
 		} else if stat == stats.MeleeHit {
 			statMod = meleeHitStatMod
-			// Prevent stat mods from going over cap as that would influence their worth?
-			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
-				statModsHigh[stat] = baseStats[stat] - melee2HHitCap
-				statModsLow[stat] = -statMod
-			}
-		} else {
-			statModsHigh[stat] = statMod
-			statModsLow[stat] = -statMod
 		}
+		statModsHigh[stat] = statMod
+		statModsLow[stat] = -statMod
 	}
 
 	for stat, _ := range statModsLow {
@@ -241,6 +230,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 				resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
 				resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
 				resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
+			} else if baseStats[stat]+spellHitStatMod >= spellHitCap {
+
 			}
 		} else if stat == stats.MeleeHit {
 			if baseStats[stat] >= melee2HHitCap {
