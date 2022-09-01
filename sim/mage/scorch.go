@@ -49,8 +49,8 @@ func (mage *Mage) registerScorchSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: 0,
+			ProcMask:       core.ProcMaskSpellDamage,
+			BonusHitRating: 0,
 
 			BonusCritRating: 0 +
 				float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +

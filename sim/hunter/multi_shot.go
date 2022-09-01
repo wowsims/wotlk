@@ -14,7 +14,9 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusCritRating: 4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
 		ThreatMultiplier: 1,

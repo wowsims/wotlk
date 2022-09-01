@@ -30,8 +30,8 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: 0,
+			ProcMask:       core.ProcMaskSpellDamage,
+			BonusHitRating: 0,
 
 			BonusCritRating: 0 +
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
