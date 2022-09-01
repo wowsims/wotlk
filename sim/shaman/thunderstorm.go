@@ -37,13 +37,13 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 
 	if doDamage {
 		effect := core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-			BonusCritRating:     core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
-			DamageMultiplier:    1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-			ThreatMultiplier:    1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-			BaseDamage:          core.BaseDamageConfigMagic(1450, 1656, 0.172),
-			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			ProcMask:         core.ProcMaskSpellDamage,
+			BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+			BonusCritRating:  core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
+			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+			BaseDamage:       core.BaseDamageConfigMagic(1450, 1656, 0.172),
+			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}
 		aoeApply := core.ApplyEffectFuncAOEDamageCapped(shaman.Env, effect)
 		spellConfig.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {

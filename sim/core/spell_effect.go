@@ -29,11 +29,10 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Bonus stats to be added to the spell.
-	BonusSpellHitRating float64
 	BonusSpellPower     float64
-
 	BonusArmorPenRating float64
 	BonusAttackPower    float64
+	BonusHitRating      float64
 	BonusCritRating     float64
 
 	// Used only for dot snapshotting. Internal-only.
@@ -151,11 +150,9 @@ func (spellEffect *SpellEffect) ExpertisePercentage(unit *Unit) float64 {
 }
 
 func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *AttackTable) float64 {
-	hitRating := unit.stats[stats.MeleeHit] + spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
-
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		hitRating += unit.PseudoStats.BonusRangedHitRating
-	}
+	hitRating := unit.stats[stats.MeleeHit] +
+		spellEffect.BonusHitRating +
+		spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
 	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
 
@@ -177,9 +174,6 @@ func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) flo
 		spell.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		critRating += unit.PseudoStats.BonusRangedCritRating
-	}
 	if spell.Flags.Matches(SpellFlagAgentReserved1) {
 		critRating += unit.PseudoStats.BonusCritRatingAgentReserved1
 	}
@@ -193,6 +187,14 @@ func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) flo
 
 func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 	return unit.GetStat(stats.SpellPower) + unit.GetStat(spell.SpellSchool.Stat()) + unit.PseudoStats.MobTypeSpellPower + spellEffect.BonusSpellPower
+}
+
+func (spellEffect *SpellEffect) SpellHitChance(spell *Spell) float64 {
+	hitRating := spell.Unit.stats[stats.SpellHit] +
+		spellEffect.BonusHitRating +
+		spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken
+
+	return hitRating / (SpellHitRatingPerHitChance * 100)
 }
 
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {

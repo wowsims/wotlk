@@ -21,7 +21,9 @@ func (hunter *Hunter) registerVolleySpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
+			ProcMask:        core.ProcMaskRangedSpecial,
+			BonusHitRating:  hunter.bonusRangedHit(),
+			BonusCritRating: hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 *
 				(1 + 0.04*float64(hunter.Talents.Barrage)),
 

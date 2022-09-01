@@ -311,8 +311,6 @@ type PseudoStats struct {
 	//  This includes almost all "(Normalized) Weapon Damage", but also some "School Damage (Physical)" abilities.
 	BonusDamage float64 // Comes from '+X Weapon Damage' effects
 
-	BonusRangedHitRating  float64 // Hit rating for ranged only.
-	BonusRangedCritRating float64 // Crit rating for ranged only.
 	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
 	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization

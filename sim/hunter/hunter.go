@@ -122,6 +122,8 @@ func (hunter *Hunter) Initialize() {
 	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
 	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
 	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.RangedEffect.BonusHitRating += hunter.bonusRangedHit()
+	hunter.AutoAttacks.RangedEffect.BonusCritRating += hunter.bonusRangedCrit()
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()

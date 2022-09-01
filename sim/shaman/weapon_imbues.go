@@ -113,11 +113,11 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier:    1,
-		ThreatMultiplier:    1,
-		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		ProcMask:         core.ProcMaskEmpty,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -197,11 +197,11 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:            core.ProcMaskEmpty,
-		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier:    1,
-		ThreatMultiplier:    1,
-		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		ProcMask:         core.ProcMaskEmpty,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -285,8 +285,8 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 		SpellSchool: core.SpellSchoolFrost,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			ProcMask:       core.ProcMaskEmpty,
+			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

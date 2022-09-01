@@ -21,10 +21,10 @@ func (mage *Mage) registerWintersChillSpell() {
 		Flags:       SpellFlagMage,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:            core.ProcMaskEmpty,
-			BonusSpellHitRating: 0,
-			ThreatMultiplier:    1,
-			OutcomeApplier:      mage.OutcomeFuncMagicHit(),
+			ProcMask:         core.ProcMaskEmpty,
+			BonusHitRating:   0,
+			ThreatMultiplier: 1,
+			OutcomeApplier:   mage.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					wcAura.Activate(sim)
