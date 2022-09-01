@@ -73,7 +73,7 @@ func (druid *Druid) ApplyTalents() {
 	}
 
 	if druid.Talents.PrimalPrecision > 0 {
-		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision))
+		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision)*core.ExpertisePerQuarterPercentReduction)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
