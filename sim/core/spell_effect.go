@@ -179,10 +179,6 @@ func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) flo
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		critRating += unit.PseudoStats.BonusRangedCritRating
-	} else {
-		if spellEffect.ProcMask.Matches(ProcMaskMeleeSpecial) {
-			critRating += unit.PseudoStats.BonusMeleeSpellCritRating
-		}
 	}
 	if spell.Flags.Matches(SpellFlagAgentReserved1) {
 		critRating += unit.PseudoStats.BonusCritRatingAgentReserved1
