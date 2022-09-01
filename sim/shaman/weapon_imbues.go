@@ -147,9 +147,6 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 	imbueCount := 1.0
 	spBonus := 211.0
 	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
-	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
-		spBonus += 20.0
-	}
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}
@@ -231,9 +228,6 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 	imbueCount := 1.0
 	spBonus := 186.0
 	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
-	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
-		spBonus += 20.0
-	}
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}

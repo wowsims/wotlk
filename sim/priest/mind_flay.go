@@ -98,8 +98,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
 	miseryCalc := core.BaseDamageFuncMagic(588/3, 588/3, (1+float64(priest.Talents.Misery)*0.05)*0.257)
 
-	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) * // initialize modifier
-		core.TernaryFloat64(priest.HasSetBonus(ItemSetIncarnate, 4), 1.05, 1)
+	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
 
 	effect.BaseDamage = core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {

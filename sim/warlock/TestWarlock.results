@@ -85,13 +85,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestWarlock-AllItems-CorruptorRaiment"
- value: {
-  dps: 5502.04692
-  tps: 4855.45963
- }
-}
-dps_results: {
  key: "TestWarlock-AllItems-DarkCoven'sRegalia"
  value: {
   dps: 7710.95789
@@ -211,13 +204,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestWarlock-AllItems-OblivionRaiment"
- value: {
-  dps: 5277.66884
-  tps: 4662.42685
- }
-}
-dps_results: {
  key: "TestWarlock-AllItems-PersistentEarthshatterDiamond"
  value: {
   dps: 6983.34745
@@ -288,13 +274,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestWarlock-AllItems-TheBlackBook-19337"
- value: {
-  dps: 6973.31155
-  tps: 6243.44281
- }
-}
-dps_results: {
  key: "TestWarlock-AllItems-ThunderingSkyflareDiamond"
  value: {
   dps: 6983.34745
@@ -327,20 +306,6 @@ dps_results: {
  value: {
   dps: 7009.81137
   tps: 6274.04928
- }
-}
-dps_results: {
- key: "TestWarlock-AllItems-VoidStarTalisman-30449"
- value: {
-  dps: 7077.11756
-  tps: 6353.22757
- }
-}
-dps_results: {
- key: "TestWarlock-AllItems-VoidheartRaiment"
- value: {
-  dps: 5539.41857
-  tps: 4865.26493
  }
 }
 dps_results: {

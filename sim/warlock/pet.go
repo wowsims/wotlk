@@ -171,10 +171,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		wp.MultiplyStat(stats.Stamina, bonus)
 	}
 
-	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {
-		wp.AddStat(stats.MP5, 45)
-	}
-
 	core.ApplyPetConsumeEffects(&wp.Character, warlock.Consumes)
 
 	warlock.AddPet(wp)
