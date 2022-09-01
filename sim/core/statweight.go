@@ -134,10 +134,13 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			panic("Stat weights error: " + errorStr)
 		}
 		dpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dps
-		tpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dps
+		tpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Threat
 		dtpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dtps
 		dpsDiff := (dpsMetrics.Avg - baselineDpsMetrics.Avg) / value
 		tpsDiff := (tpsMetrics.Avg - baselineTpsMetrics.Avg) / value
+
+		// Im unsure this is a good way to define it, a negative result here is actually the
+		// good outcome, which is contrary to dps/tps.
 		dtpsDiff := (dtpsMetrics.Avg - baselineDtpsMetrics.Avg) / value
 
 		if isLow {
@@ -163,7 +166,21 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		}
 	}
 
+	// Melee hit cap is 8% in WoTLK
+	melee2HHitCap := 8 * MeleeHitRatingPerHitChance
+	if swr.Debuffs != nil && swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved {
+		melee2HHitCap -= 3 * MeleeHitRatingPerHitChance
+	}
+
+	// Spell hit cap is 17% in WoTLK
+	spellHitCap := 17 * SpellHitRatingPerHitChance
+	if swr.Debuffs != nil && swr.Debuffs.Misery {
+		spellHitCap -= 3 * SpellHitRatingPerHitChance
+	}
+
 	const defaultStatMod = 50.0
+	const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
+	const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
 	statModsLow := stats.Stats{}
 	statModsHigh := stats.Stats{}
 
@@ -173,11 +190,24 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 	for _, stat := range statsToWeigh {
 		statMod := defaultStatMod
-		if stat == stats.SpellHit || stat == stats.MeleeHit || stat == stats.Expertise {
-			statMod = 15
+		if stat == stats.SpellHit {
+			statMod = spellHitStatMod
+			// Prevent stat mods from going over cap as that would influence their worth?
+			if baseStats[stat]+statMod > spellHitCap {
+				statModsHigh[stat] = baseStats[stat] - spellHitCap
+				statModsLow[stat] = -statMod
+			}
+		} else if stat == stats.MeleeHit {
+			statMod = meleeHitStatMod
+			// Prevent stat mods from going over cap as that would influence their worth?
+			if baseStats[stat]+statMod > melee2HHitCap {
+				statModsHigh[stat] = baseStats[stat] - melee2HHitCap
+				statModsLow[stat] = -statMod
+			}
+		} else {
+			statModsHigh[stat] = statMod
+			statModsLow[stat] = -statMod
 		}
-		statModsHigh[stat] = statMod
-		statModsLow[stat] = -statMod
 	}
 
 	for stat, _ := range statModsLow {
@@ -194,11 +224,6 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 	waitGroup.Wait()
 
-	melee2HHitCap := 9 * MeleeHitRatingPerHitChance
-	if swr.Debuffs != nil && swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved {
-		melee2HHitCap -= 3 * MeleeHitRatingPerHitChance
-	}
-
 	for _, stat := range statsToWeigh {
 		// Check for hard caps.
 		if stat == stats.SpellHit || stat == stats.MeleeHit || stat == stats.Expertise {
@@ -209,34 +234,21 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		}
 
 		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
+		//
 		if stat == stats.SpellHit {
-			if baseStats[stat] > 80 {
+			if baseStats[stat] >= spellHitCap {
 				statModsHigh[stat] = statModsLow[stat]
 				resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
 				resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
 				resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
 			}
 		} else if stat == stats.MeleeHit {
-			if baseStats[stat] > 30 {
-				if baseStats[stat] < melee2HHitCap || baseStats[stat] > melee2HHitCap+30 {
-					statModsHigh[stat] = statModsLow[stat]
-					resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
-					resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
-					resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
-				} else {
-					statModsLow[stat] = statModsHigh[stat]
-					resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
-					resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
-					resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
-				}
+			if baseStats[stat] >= melee2HHitCap {
+				statModsHigh[stat] = statModsLow[stat]
+				resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
+				resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
+				resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
 			}
-			//} else if stat == stats.Expertise {
-			//	if baseStats[stat] > 20 {
-			//		statModsHigh[stat] = statModsLow[stat]
-			//		resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
-			//		resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
-			//		resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
-			//	}
 		}
 	}
 
@@ -268,7 +280,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		result.Tps.EpValuesStdev[stat] = result.Tps.WeightsStdev[stat] / math.Abs(result.Tps.Weights[referenceStat])
 		if result.Dtps.Weights[DTPSReferenceStat] != 0 {
 			result.Dtps.EpValues[stat] = result.Dtps.Weights[stat] / result.Dtps.Weights[DTPSReferenceStat]
-			result.Dtps.EpValuesStdev[stat] = result.Dtps.WeightsStdev[stat] / math.Abs(result.Dps.Weights[DTPSReferenceStat])
+			// Dtps not dps
+			result.Dtps.EpValuesStdev[stat] = result.Dtps.WeightsStdev[stat] / math.Abs(result.Dtps.Weights[DTPSReferenceStat])
 		}
 
 		//dpsWeightStdevLow := computeStDevFromHists(swr.SimOptions.Iterations/2, statModsLow[stat], dpsHistsLow[stat], baselineDpsMetrics.Hist, nil, statModsLow[referenceStat])
@@ -301,6 +314,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	return result
 }
 
+// TODO: Get rid of this?
 func computeStDevFromHists(iters int32, modValue float64, moddedStatDpsHist map[int32]int32, baselineDpsHist map[int32]int32, referenceDpsHist map[int32]int32, referenceModValue float64) float64 {
 	if referenceDpsHist != nil && len(referenceDpsHist) == 1 {
 		return 0
