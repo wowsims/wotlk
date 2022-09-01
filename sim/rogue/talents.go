@@ -172,10 +172,11 @@ func (rogue *Rogue) registerColdBloodCD() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 += 100 * core.CritRatingPerCritChance
+			// TODO: Fix this, can copy logic from warrior/recklessness.go
+			//aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 += 100 * core.CritRatingPerCritChance
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 -= 100 * core.CritRatingPerCritChance
+			//aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 -= 100 * core.CritRatingPerCritChance
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			aura.Deactivate(sim)

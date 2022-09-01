@@ -342,10 +342,6 @@ type PseudoStats struct {
 	ShadowDamageDealtMultiplier   float64
 	DiseaseDamageDealtMultiplier  float64
 
-	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
-	BonusCritRatingAgentReserved1       float64
-	AgentReserved1DamageDealtMultiplier float64
-
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
@@ -413,15 +409,14 @@ func NewPseudoStats() PseudoStats {
 		DamageDealtMultiplier:       1,
 		RangedDamageDealtMultiplier: 1,
 
-		PhysicalDamageDealtMultiplier:       1,
-		ArcaneDamageDealtMultiplier:         1,
-		FireDamageDealtMultiplier:           1,
-		FrostDamageDealtMultiplier:          1,
-		HolyDamageDealtMultiplier:           1,
-		NatureDamageDealtMultiplier:         1,
-		ShadowDamageDealtMultiplier:         1,
-		DiseaseDamageDealtMultiplier:        1,
-		AgentReserved1DamageDealtMultiplier: 1,
+		PhysicalDamageDealtMultiplier: 1,
+		ArcaneDamageDealtMultiplier:   1,
+		FireDamageDealtMultiplier:     1,
+		FrostDamageDealtMultiplier:    1,
+		HolyDamageDealtMultiplier:     1,
+		NatureDamageDealtMultiplier:   1,
+		ShadowDamageDealtMultiplier:   1,
+		DiseaseDamageDealtMultiplier:  1,
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 

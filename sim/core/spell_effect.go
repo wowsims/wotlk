@@ -174,9 +174,6 @@ func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) flo
 		spell.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		critRating += unit.PseudoStats.BonusCritRatingAgentReserved1
-	}
 	if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
 		critRating += unit.PseudoStats.BonusMHCritRating
 	} else if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
@@ -436,9 +433,6 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		multiplier *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
 	}
 	if spell.Flags.Matches(SpellFlagDisease) {
 		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
