@@ -63,6 +63,7 @@ type Warrior struct {
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell
+	Bladestorm           *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
