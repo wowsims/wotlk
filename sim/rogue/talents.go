@@ -166,19 +166,35 @@ func (rogue *Rogue) registerColdBloodCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 14177}
+	var affectedSpells []*core.Spell
 
 	coldBloodAura := rogue.RegisterAura(core.Aura{
 		Label:    "Cold Blood",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
+					affectedSpells = append(affectedSpells, spell)
+				}
+			}
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 += 100 * core.CritRatingPerCritChance
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 -= 100 * core.CritRatingPerCritChance
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			aura.Deactivate(sim)
+			for _, affectedSpell := range affectedSpells {
+				if spell == affectedSpell {
+					aura.Deactivate(sim)
+				}
+			}
 		},
 	})
 
