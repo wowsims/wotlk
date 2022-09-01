@@ -192,6 +192,9 @@ func (druid *Druid) registerBearFormSpell() {
 	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
 	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 
+	potpdtm := 0.04 * float64(druid.Talents.ProtectorOfThePack)
+	potpap := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.ProtectorOfThePack))
+
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
 		ActionID: actionID,
@@ -205,8 +208,10 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
 			druid.EnableDynamicStatDep(sim, stamdep)
 			druid.EnableDynamicStatDep(sim, bearHotw)
+			druid.EnableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier *= 1.3
 			druid.PseudoStats.DamageDealtMultiplier += 0.02 * float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier += -1.0 * potpdtm
 
 			druid.applyFeralShift(sim, true)
 			druid.AutoAttacks.EnableAutoSwing(sim)
@@ -226,8 +231,10 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
 			druid.DisableDynamicStatDep(sim, bearHotw)
 			druid.DisableDynamicStatDep(sim, stamdep)
+			druid.DisableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier /= 1.3
 			druid.PseudoStats.DamageDealtMultiplier -= 0.02 * float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier += 1.0 * potpdtm
 
 			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
