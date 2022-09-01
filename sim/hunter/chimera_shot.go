@@ -19,7 +19,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
