@@ -58,6 +58,8 @@ func (warlock *Warlock) registerHauntSpell() {
 			DamageMultiplier: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
 			MissileSpeed:     20,
 
+			BonusCritRating: 0 +
+				warlock.masterDemonologistShadowCrit(),
 			BaseDamage:     core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 			OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),
 

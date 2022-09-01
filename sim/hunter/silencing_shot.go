@@ -33,7 +33,9 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
+			ProcMask:        core.ProcMaskRangedSpecial,
+			BonusHitRating:  hunter.bonusRangedHit(),
+			BonusCritRating: hunter.bonusRangedCrit(),
 			DamageMultiplier: 0.5 *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,

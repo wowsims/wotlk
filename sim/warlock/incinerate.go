@@ -16,12 +16,18 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:       warlock.incinerateDamage(),
-		OutcomeApplier:   warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+
+		BaseDamage:     warlock.incinerateDamage(),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warlock.ImmolateDot.IsActive() {
 				spellEffect.DamageMultiplier = normalMultiplier

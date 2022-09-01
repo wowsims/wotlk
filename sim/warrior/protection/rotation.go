@@ -70,13 +70,29 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 		int32(proto.ProtectionWarrior_Rotation_Revenge): common.CustomSpell{
 			Spell: war.Revenge,
 			Condition: func(sim *core.Simulation) bool {
-				return war.CanRevenge(sim)
+				if !war.Rotation.PrioSslamOnShieldBlock {
+					return war.CanRevenge(sim)
+				}
+
+				if war.ShieldBlockAura.IsActive() {
+					return !war.CanShieldSlam(sim) && war.CanRevenge(sim)
+				} else {
+					return war.CanRevenge(sim)
+				}
 			},
 		},
 		int32(proto.ProtectionWarrior_Rotation_ShieldSlam): common.CustomSpell{
 			Spell: war.ShieldSlam,
 			Condition: func(sim *core.Simulation) bool {
-				return war.CanShieldSlam(sim)
+				if !war.Rotation.PrioSslamOnShieldBlock {
+					return war.CanShieldSlam(sim)
+				}
+
+				if war.ShieldBlockAura.IsActive() {
+					return war.CanShieldSlam(sim)
+				} else {
+					return !war.CanRevenge(sim) && war.CanShieldSlam(sim)
+				}
 			},
 		},
 		int32(proto.ProtectionWarrior_Rotation_Devastate): common.CustomSpell{

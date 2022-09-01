@@ -71,11 +71,6 @@ func init() {
 		})
 	})
 
-	core.NewItemEffect(18283, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		character.PseudoStats.BonusRangedHitRating += 30
-	})
-
 	core.NewItemEffect(22535, func(agent core.Agent) {
 		agent.GetCharacter().PseudoStats.BonusDamage += 2
 	})
@@ -137,11 +132,6 @@ func init() {
 		w := &agent.GetCharacter().AutoAttacks.Ranged
 		w.BaseDamageMin += 12
 		w.BaseDamageMax += 12
-	})
-
-	core.NewItemEffect(23766, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		character.PseudoStats.BonusRangedCritRating += 28
 	})
 
 	core.NewItemEffect(33150, func(agent core.Agent) {

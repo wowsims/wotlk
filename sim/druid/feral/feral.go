@@ -54,8 +54,8 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
-			BaseDamageMin:        72,
-			BaseDamageMax:        95,
+			BaseDamageMin:        43,
+			BaseDamageMax:        66,
 			SwingSpeed:           1.0,
 			NormalizedSwingSpeed: 1.0,
 			SwingDuration:        time.Second,

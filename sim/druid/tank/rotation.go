@@ -51,7 +51,7 @@ func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool 
 }
 
 func (bear *FeralTankDruid) shouldSwipe(sim *core.Simulation) bool {
-	ap := bear.GetStat(stats.AttackPower) + bear.PseudoStats.MobTypeAttackPower + bear.CurrentTarget.PseudoStats.BonusMeleeAttackPowerTaken
+	ap := bear.GetStat(stats.AttackPower) + bear.PseudoStats.MobTypeAttackPower
 
 	return bear.Rotation.Swipe == proto.FeralTankDruid_Rotation_SwipeWithEnoughAP &&
 		bear.CanSwipeBear() &&
