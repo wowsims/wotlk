@@ -7,39 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var ItemSetBeastLord = core.NewItemSet(core.ItemSet{
-	Name: "Beast Lord Armor",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-		},
-		4: func(agent core.Agent) {
-			// Handled in kill_command.go
-		},
-	},
-})
-
-var ItemSetDemonStalker = core.NewItemSet(core.ItemSet{
-	Name: "Demon Stalker Armor",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-		},
-		4: func(agent core.Agent) {
-			// Handled in multi_shot.go
-		},
-	},
-})
-
-var ItemSetRiftStalker = core.NewItemSet(core.ItemSet{
-	Name: "Rift Stalker Armor",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-		},
-		4: func(agent core.Agent) {
-			// Handled in steady_shot.go
-		},
-	},
-})
-
 var ItemSetGronnstalker = core.NewItemSet(core.ItemSet{
 	Name: "Gronnstalker's Armor",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -52,48 +19,7 @@ var ItemSetGronnstalker = core.NewItemSet(core.ItemSet{
 	},
 })
 
-//func (hunter *Hunter) talonOfAlarDamageMod(baseDamageConfig core.BaseDamageConfig) core.BaseDamageConfig {
-//	if hunter.HasTrinketEquipped(30448) {
-//		return core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-//			return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-//				normalDamage := oldCalculator(sim, hitEffect, spell)
-//				if hunter.TalonOfAlarAura.IsActive() {
-//					return normalDamage + 40
-//				} else {
-//					return normalDamage
-//				}
-//			}
-//		})
-//	} else {
-//		return baseDamageConfig
-//	}
-//}
-
 func init() {
-	//core.NewItemEffect(30448, func(agent core.Agent) {
-	//	hunter := agent.(HunterAgent).GetHunter()
-
-	//	procAura := hunter.GetOrRegisterAura(core.Aura{
-	//		Label:    "Talon of Alar Proc",
-	//		ActionID: core.ActionID{ItemID: 30448},
-	//		// Add 1 in case we use arcane shot exactly off CD.
-	//		Duration: time.Second*6 + 1,
-	//	})
-
-	//	hunter.TalonOfAlarAura = hunter.GetOrRegisterAura(core.Aura{
-	//		Label:    "Talon of Alar",
-	//		Duration: core.NeverExpires,
-	//		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-	//			aura.Activate(sim)
-	//		},
-	//		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	//			if spell == hunter.ArcaneShot {
-	//				procAura.Activate(sim)
-	//			}
-	//		},
-	//	})
-	//})
-
 	core.NewItemEffect(32336, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
 		const manaGain = 8.0

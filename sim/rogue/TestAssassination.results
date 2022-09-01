@@ -57,13 +57,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-AssassinationArmor"
- value: {
-  dps: 5464.77819
-  tps: 3879.99252
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-AustereEarthsiegeDiamond"
  value: {
   dps: 7152.20717
@@ -99,13 +92,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-Braxley'sBackyardMoonshine-35937"
- value: {
-  dps: 7121.06512
-  tps: 5055.95623
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 7294.70218
@@ -138,20 +124,6 @@ dps_results: {
  value: {
   dps: 7161.48986
   tps: 5084.6578
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 7143.50419
-  tps: 5071.88798
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-Deathmantle"
- value: {
-  dps: 5817.11531
-  tps: 4130.15187
  }
 }
 dps_results: {
@@ -288,13 +260,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-InfusedColdstoneRune-35935"
- value: {
-  dps: 7031.00563
-  tps: 4992.01399
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 7152.20717
@@ -323,24 +288,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-Mana-EtchedRegalia"
- value: {
-  dps: 4841.19481
-  tps: 3437.24832
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 7230.41663
   tps: 5133.59581
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-Netherblade"
- value: {
-  dps: 5355.60565
-  tps: 3802.48001
  }
 }
 dps_results: {
@@ -376,13 +327,6 @@ dps_results: {
  value: {
   dps: 7152.20717
   tps: 5078.06709
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-PrimalIntent"
- value: {
-  dps: 6456.19245
-  tps: 4583.89664
  }
 }
 dps_results: {
@@ -435,13 +379,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-Serrah'sStar-37559"
- value: {
-  dps: 7042.34046
-  tps: 5000.06172
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
   dps: 7578.3237
@@ -477,24 +414,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-SpellstrikeInfusion"
- value: {
-  dps: 6114.77045
-  tps: 4341.48702
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
   dps: 5610.39098
   tps: 3980.77056
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-StrengthoftheClefthoof"
- value: {
-  dps: 5700.47017
-  tps: 4047.33382
  }
 }
 dps_results: {
@@ -530,13 +453,6 @@ dps_results: {
  value: {
   dps: 6067.73814
   tps: 4308.09408
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-TheTwinStars"
- value: {
-  dps: 6762.34801
-  tps: 4801.26708
  }
 }
 dps_results: {
@@ -593,34 +509,6 @@ dps_results: {
  value: {
   dps: 6928.00902
   tps: 4918.88641
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-Warp-SpringCoil-30450"
- value: {
-  dps: 7089.44379
-  tps: 5033.50509
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-WastewalkerArmor"
- value: {
-  dps: 5248.83048
-  tps: 3726.66964
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-WindhawkArmor"
- value: {
-  dps: 6103.54447
-  tps: 4333.51657
- }
-}
-dps_results: {
- key: "TestAssassination-AllItems-WrathofSpellfire"
- value: {
-  dps: 5876.00639
-  tps: 4171.96454
  }
 }
 dps_results: {

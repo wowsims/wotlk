@@ -85,20 +85,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-Braxley'sBackyardMoonshine-35937"
- value: {
-  dps: 7331.33849
-  tps: 5588.59408
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-BurningRage"
- value: {
-  dps: 6473.83185
-  tps: 4846.88853
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 7890.34536
@@ -155,13 +141,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 7169.95737
-  tps: 5562.20694
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-Defender'sCode-40257"
  value: {
   dps: 7305.93562
@@ -169,24 +148,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-DesolationBattlegear"
- value: {
-  dps: 5701.0939
-  tps: 4321.12667
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-DestructiveSkyflareDiamond"
  value: {
   dps: 7828.45379
   tps: 5844.10455
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-DoomplateBattlegear"
- value: {
-  dps: 5884.34728
-  tps: 4472.72866
  }
 }
 dps_results: {
@@ -236,27 +201,6 @@ dps_results: {
  value: {
   dps: 7299.86869
   tps: 5570.95416
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-FaithinFelsteel"
- value: {
-  dps: 6345.31901
-  tps: 4775.69395
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-FelstalkerArmor"
- value: {
-  dps: 6594.41225
-  tps: 4953.37766
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-FlameGuard"
- value: {
-  dps: 5935.84639
-  tps: 4477.06801
  }
 }
 dps_results: {
@@ -337,13 +281,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-InfusedColdstoneRune-35935"
- value: {
-  dps: 7244.92886
-  tps: 5545.4056
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 7808.09327
@@ -372,31 +309,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-Mana-EtchedRegalia"
- value: {
-  dps: 5459.80652
-  tps: 4121.20864
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 7547.54147
   tps: 5629.99697
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-NetherscaleArmor"
- value: {
-  dps: 6641.70947
-  tps: 5014.22932
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-NetherstrikeArmor"
- value: {
-  dps: 6537.86138
-  tps: 4897.75981
  }
 }
 dps_results: {
@@ -432,13 +348,6 @@ dps_results: {
  value: {
   dps: 7808.09327
   tps: 5844.35991
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-PrimalIntent"
- value: {
-  dps: 6719.93348
-  tps: 5073.47476
  }
 }
 dps_results: {
@@ -526,13 +435,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-Serrah'sStar-37559"
- value: {
-  dps: 7281.95572
-  tps: 5507.56598
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-ShinyShardoftheGods"
  value: {
   dps: 7323.28931
@@ -575,24 +477,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-SpellstrikeInfusion"
- value: {
-  dps: 6792.49224
-  tps: 5079.54965
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-StormshroudArmor"
  value: {
   dps: 5949.91792
   tps: 4449.77231
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-StrengthoftheClefthoof"
- value: {
-  dps: 6375.00795
-  tps: 4782.65302
  }
 }
 dps_results: {
@@ -628,13 +516,6 @@ dps_results: {
  value: {
   dps: 6623.96558
   tps: 4963.47546
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-TheTwinStars"
- value: {
-  dps: 7361.20035
-  tps: 5498.38753
  }
 }
 dps_results: {
@@ -687,31 +568,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestUnholy-AllItems-WastewalkerArmor"
- value: {
-  dps: 5698.1528
-  tps: 4350.93842
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-WindhawkArmor"
- value: {
-  dps: 6491.30617
-  tps: 4857.67645
- }
-}
-dps_results: {
  key: "TestUnholy-AllItems-WrathfulGladiator'sSigilofStrife-51417"
  value: {
   dps: 7923.9165
   tps: 5990.547
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-WrathofSpellfire"
- value: {
-  dps: 6398.72764
-  tps: 4843.42553
  }
 }
 dps_results: {

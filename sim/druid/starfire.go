@@ -89,22 +89,6 @@ func (druid *Druid) registerStarfireSpell() {
 		},
 	}
 
-	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
-		effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-			return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				normalDamage := oldCalculator(sim, hitEffect, spell)
-
-				// Check if moonfire/insectswarm is ticking on the target.
-				// TODO: in a raid simulator we need to be able to see which dots are ticking from other druids.
-				if druid.MoonfireDot.IsActive() || druid.InsectSwarmDot.IsActive() {
-					return normalDamage * 1.1
-				} else {
-					return normalDamage
-				}
-			}
-		})
-	}
-
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolArcane,
