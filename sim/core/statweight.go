@@ -138,10 +138,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		dtpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dtps
 		dpsDiff := (dpsMetrics.Avg - baselineDpsMetrics.Avg) / value
 		tpsDiff := (tpsMetrics.Avg - baselineTpsMetrics.Avg) / value
-
-		// Im unsure this is a good way to define it, a negative result here is actually the
-		// good outcome, which is contrary to dps/tps.
-		dtpsDiff := (dtpsMetrics.Avg - baselineDtpsMetrics.Avg) / value
+		dtpsDiff := -(dtpsMetrics.Avg - baselineDtpsMetrics.Avg) / value
 
 		if isLow {
 			resultLow.Dps.Weights[stat] = dpsDiff
@@ -194,14 +191,14 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			statMod = spellHitStatMod
 			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
 				statModsHigh[stat] = baseStats[stat] - spellHitCap
-				statModsLow[stat] = -statMod
+				statModsLow[stat] = -(baseStats[stat] - melee2HHitCap)
 				continue
 			}
 		} else if stat == stats.MeleeHit {
 			statMod = meleeHitStatMod
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
 				statModsHigh[stat] = baseStats[stat] - melee2HHitCap
-				statModsLow[stat] = -statMod
+				statModsLow[stat] = -(baseStats[stat] - melee2HHitCap)
 				continue
 			}
 		}
@@ -236,17 +233,17 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		//
 		if stat == stats.SpellHit {
 			if baseStats[stat] >= spellHitCap {
-				statModsHigh[stat] = statModsLow[stat]
-				resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
-				resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
-				resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
+				statModsLow[stat] = statModsHigh[stat]
+				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
+				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
+				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
 			}
 		} else if stat == stats.MeleeHit {
 			if baseStats[stat] >= melee2HHitCap {
-				statModsHigh[stat] = statModsLow[stat]
-				resultHigh.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
-				resultHigh.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
-				resultHigh.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
+				statModsLow[stat] = statModsHigh[stat]
+				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
+				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
+				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
 			}
 		}
 	}
@@ -274,12 +271,13 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		}
 
 		result.Dps.EpValues[stat] = result.Dps.Weights[stat] / result.Dps.Weights[referenceStat]
-		result.Tps.EpValues[stat] = result.Tps.Weights[stat] / result.Tps.Weights[referenceStat]
 		result.Dps.EpValuesStdev[stat] = result.Dps.WeightsStdev[stat] / math.Abs(result.Dps.Weights[referenceStat])
+
+		result.Tps.EpValues[stat] = result.Tps.Weights[stat] / result.Tps.Weights[referenceStat]
 		result.Tps.EpValuesStdev[stat] = result.Tps.WeightsStdev[stat] / math.Abs(result.Tps.Weights[referenceStat])
+
 		if result.Dtps.Weights[DTPSReferenceStat] != 0 {
 			result.Dtps.EpValues[stat] = result.Dtps.Weights[stat] / result.Dtps.Weights[DTPSReferenceStat]
-			// Dtps not dps
 			result.Dtps.EpValuesStdev[stat] = result.Dtps.WeightsStdev[stat] / math.Abs(result.Dtps.Weights[DTPSReferenceStat])
 		}
 
