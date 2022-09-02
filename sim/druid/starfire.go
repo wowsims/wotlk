@@ -26,45 +26,21 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
 	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 
+	bonusCritRating := druid.TalentsBonuses.naturesMajestyBonusCrit +
+		core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
+		core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0) // T7-4P
+
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 + druid.TalentsBonuses.moonfuryMultiplier,
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.BonusCritRating = 0
-			// Improved Insect Swarm
-			if druid.MoonfireDot.IsActive() {
-				spellEffect.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
-			}
-			// T6-4P
-			if druid.SetBonuses.balance_t6_2 {
-				spellEffect.BonusCritRating += 5 * core.CritRatingPerCritChance
-			}
-			// T7-4P
-			if druid.SetBonuses.balance_t7_4 {
-				spellEffect.BonusCritRating += 5 * core.CritRatingPerCritChance
-			}
-			// Improved Faerie Fire
-			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-				spellEffect.BonusCritRating += druid.TalentsBonuses.iffBonusCrit
-			}
-			// Lunar eclipse buff
-			if druid.HasAura("Lunar Eclipse proc") {
-				spellEffect.BonusCritRating += core.CritRatingPerCritChance * 40
-				// T8-2P
-				if druid.SetBonuses.balance_t8_2 {
-					spellEffect.BonusCritRating += core.CritRatingPerCritChance * 7
-				}
-			}
-			// T9-4P
-			if druid.SetBonuses.balance_t9_4 {
-				spellEffect.DamageMultiplier *= 1.04
-			}
-			// Nature's Majesty
-			spellEffect.BonusCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
-		},
+
+		BonusCritRating: bonusCritRating,
+
+		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
+			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -85,6 +61,11 @@ func (druid *Druid) registerStarfireSpell() {
 						druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
 					}
 				}
+			}
+		},
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if druid.FaerieFireAura.IsActive() {
+				spellEffect.BonusCritRating = bonusCritRating + (core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire))
 			}
 		},
 	}

@@ -12,7 +12,6 @@ func (druid *Druid) registerMoonfireSpell() {
 	actionID := core.ActionID{SpellID: 48463}
 	baseCost := 0.21 * druid.BaseMana
 
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasActiveAura("Improved Faerie Fire"), druid.TalentsBonuses.iffBonusCrit, 0)
 	improvedMoonfireDamageMultiplier := 0.05 * float64(druid.Talents.ImprovedMoonfire)
 
 	moonfireGlyphBaseDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
@@ -42,13 +41,13 @@ func (druid *Druid) registerMoonfireSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			BonusCritRating:  (float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance) + iffCritBonus,
-			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
 			ThreatMultiplier: 1,
 
-			BaseDamage:     core.BaseDamageConfigMagic(406, 476, 0.15),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			BonusCritRating:  float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+			BaseDamage:       core.BaseDamageConfigMagic(406, 476, 0.15),
+			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
 
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.MoonfireDot.Apply(sim)
@@ -67,6 +66,12 @@ func (druid *Druid) registerMoonfireSpell() {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Moonfire Dot",
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				druid.Starfire.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				druid.Starfire.BonusCritRating -= core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+			},
 		}),
 		NumberOfTicks: 4 + core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0) + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 3,
@@ -77,6 +82,11 @@ func (druid *Druid) registerMoonfireSpell() {
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
 			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if druid.FaerieFireAura.IsActive() {
+					spellEffect.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire)
+				}
+			},
 		}),
 	})
 }
