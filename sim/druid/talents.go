@@ -64,16 +64,8 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
-	if druid.Talents.ProtectorOfThePack > 0 {
-		bonus := 0.02 * float64(druid.Talents.ProtectorOfThePack)
-		if druid.InForm(Bear) {
-			druid.MultiplyStat(stats.AttackPower, 1.0+bonus)
-			druid.PseudoStats.DamageTakenMultiplier -= 0.04 * float64(druid.Talents.ProtectorOfThePack)
-		}
-	}
-
 	if druid.Talents.PrimalPrecision > 0 {
-		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision))
+		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision)*core.ExpertisePerQuarterPercentReduction)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
