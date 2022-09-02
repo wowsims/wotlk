@@ -9,9 +9,6 @@ import (
 
 func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 	cost := 20.0
-	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
-		cost -= 5
-	}
 	refundAmount := cost * 0.8
 
 	warrior.Bloodthirst = warrior.RegisterSpell(core.SpellConfig{

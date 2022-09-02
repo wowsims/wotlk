@@ -35,6 +35,7 @@ import {
     SimLog,
     ThreatLogGroup,
 } from './logs_parser.js';
+import { MAX_PARTY_SIZE } from '../party.js';
 
 export interface SimResultFilter {
     // Raid index of the player to display, or null for all players.
@@ -99,7 +100,7 @@ export class SimResult {
     }
 
     getPlayerWithIndex(unitIndex: number): UnitMetrics | null {
-        return this.getPlayers().find(player => player.unitIndex == unitIndex) || null;
+        return this.raidMetrics.parties[Math.floor(unitIndex/MAX_PARTY_SIZE)].players[unitIndex%MAX_PARTY_SIZE]
     }
 
     getTargets(filter?: SimResultFilter): Array<UnitMetrics> {
@@ -245,7 +246,7 @@ export class UnitMetrics {
     private readonly metrics: UnitMetricsProto;
 
     readonly index: number;
-		readonly unitIndex: number;
+	readonly unitIndex: number;
     readonly name: string;
     readonly spec: Spec;
     readonly petActionId: ActionId | null;
@@ -291,7 +292,7 @@ export class UnitMetrics {
         this.metrics = metrics;
 
         this.index = index;
-				this.unitIndex = metrics.unitIndex;
+		this.unitIndex = metrics.unitIndex;
         this.name = metrics.name;
         this.spec = player ? playerToSpec(player) : 0;
         this.petActionId = petActionId;
