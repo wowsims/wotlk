@@ -181,12 +181,14 @@ export class RaidMetrics {
     private readonly metrics: RaidMetricsProto;
 
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly parties: Array<PartyMetrics>;
 
     private constructor(raid: RaidProto, metrics: RaidMetricsProto, parties: Array<PartyMetrics>) {
         this.raid = raid;
         this.metrics = metrics;
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.parties = parties;
     }
 
@@ -212,6 +214,7 @@ export class PartyMetrics {
 
     readonly partyIndex: number;
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly players: Array<UnitMetrics>;
 
     private constructor(party: PartyProto, metrics: PartyMetricsProto, partyIndex: number, players: Array<UnitMetrics>) {
@@ -219,6 +222,7 @@ export class PartyMetrics {
         this.metrics = metrics;
         this.partyIndex = partyIndex;
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.players = players;
     }
 
@@ -253,6 +257,7 @@ export class UnitMetrics {
     readonly iconUrl: string;
     readonly classColor: string;
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly tps: DistributionMetricsProto;
     readonly dtps: DistributionMetricsProto;
     readonly actions: Array<ActionMetrics>;
@@ -300,6 +305,7 @@ export class UnitMetrics {
             (this.isTarget ? defaultTargetIcon : '');
         this.classColor = this.isTarget ? 'black' : classColors[specToClass[this.spec]];
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.tps = this.metrics.threat!;
         this.dtps = this.metrics.dtps!;
         this.actions = actions;

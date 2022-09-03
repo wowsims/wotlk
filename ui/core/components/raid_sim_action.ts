@@ -312,7 +312,8 @@ export class RaidSimResultsManager {
 
 			content += `
 				<div class="results-sim-hps healing-metrics">
-					<span class="topline-result-avg">${playerMetrics.hps.toFixed(2)}</span>
+					<span class="topline-result-avg">${playerMetrics.hps.avg.toFixed(2)}</span>
+					<span class="topline-result-stdev">${playerMetrics.hps.stdev.toFixed(2)}</span>
 				</div>
 			`;
 		} else {
