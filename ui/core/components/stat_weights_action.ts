@@ -73,6 +73,8 @@ class EpWeightsMenu extends Popup {
 							<th>Stat</th>
 							<th class="type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
 							<th class="type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
+							<th class="healing-metrics type-weight"><span>HPS Weight</span><span class="col-action fa fa-copy"></span></th>
+							<th class="healing-metrics type-ep"><span>HPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-weight"><span>TPS Weight</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-ep"><span>TPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-weight"><span>DTPS Weight</span><span class="col-action fa fa-copy"></span></th>
@@ -139,11 +141,13 @@ class EpWeightsMenu extends Popup {
 		};
 		makeUpdateWeights(colActionButtons[0], 'Per-point increase in DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.weights);
 		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
-		makeUpdateWeights(colActionButtons[2], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
-		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
-		makeUpdateWeights(colActionButtons[4], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
-		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${statNames[Stat.StatArmor]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
-		makeUpdateWeights(colActionButtons[6], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
+		makeUpdateWeights(colActionButtons[2], 'Per-point increase in HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.weights);
+		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
+		makeUpdateWeights(colActionButtons[4], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
+		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
+		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
+		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${statNames[Stat.StatArmor]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
+		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {

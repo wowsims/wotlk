@@ -126,6 +126,7 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+	defaultTarget *Unit
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -387,6 +388,7 @@ func (unit *Unit) finalize() {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}
 
+	unit.defaultTarget = unit.CurrentTarget
 	unit.applyParryHaste()
 	unit.updateCastSpeed()
 

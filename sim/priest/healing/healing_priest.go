@@ -23,6 +23,12 @@ func RegisterHealingPriest() {
 	)
 }
 
+type HealingPriest struct {
+	*priest.Priest
+
+	rotation proto.HealingPriest_Rotation
+}
+
 func NewHealingPriest(character core.Character, options proto.Player) *HealingPriest {
 	healingOptions := options.GetHealingPriest()
 
@@ -49,18 +55,14 @@ func NewHealingPriest(character core.Character, options proto.Player) *HealingPr
 	return hpriest
 }
 
-type HealingPriest struct {
-	*priest.Priest
-
-	rotation proto.HealingPriest_Rotation
-}
-
 func (hpriest *HealingPriest) GetPriest() *priest.Priest {
 	return hpriest.Priest
 }
 
 func (hpriest *HealingPriest) Initialize() {
+	hpriest.CurrentTarget = &hpriest.Env.Raid.GetFirstTargetDummy().Unit
 	hpriest.Priest.Initialize()
+	hpriest.Priest.RegisterHealingSpells()
 
 	hpriest.RegisterHymnOfHopeCD()
 }

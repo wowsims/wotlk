@@ -20,6 +20,7 @@ export class Raid {
     private buffs: RaidBuffs = RaidBuffs.create();
     private debuffs: Debuffs = Debuffs.create();
     private tanks: Array<RaidTarget> = [];
+		private targetDummies: number = 0;
 
     // Emits when a raid member is added/removed/moved.
     readonly compChangeEmitter = new TypedEvent<void>();
@@ -27,6 +28,7 @@ export class Raid {
     readonly buffsChangeEmitter = new TypedEvent<void>();
     readonly debuffsChangeEmitter = new TypedEvent<void>();
     readonly tanksChangeEmitter = new TypedEvent<void>();
+    readonly targetDummiesChangeEmitter = new TypedEvent<void>();
 
     // Emits when anything in the raid changes.
     readonly changeEmitter: TypedEvent<void>;
@@ -51,6 +53,7 @@ export class Raid {
             this.buffsChangeEmitter,
             this.debuffsChangeEmitter,
             this.tanksChangeEmitter,
+            this.targetDummiesChangeEmitter,
         ], 'RaidChange');
     }
 
@@ -151,6 +154,18 @@ export class Raid {
         // Make a defensive copy
         this.tanks = newTanks.map(tank => RaidTarget.clone(tank));
         this.tanksChangeEmitter.emit(eventID);
+    }
+
+    getTargetDummies(): number {
+        return this.targetDummies;
+    }
+
+    setTargetDummies(eventID: EventID, newTargetDummies: number) {
+        if (this.targetDummies == newTargetDummies)
+            return;
+
+        this.targetDummies = newTargetDummies;
+        this.targetDummiesChangeEmitter.emit(eventID);
     }
 
     toProto(forExport?: boolean): RaidProto {

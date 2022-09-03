@@ -45,6 +45,10 @@ func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimRe
 			}
 
 			partyConfig := request.Raid.Parties[player.GetCharacter().Party.Index]
+			if player.GetCharacter().PartyIndex >= len(partyConfig.Players) {
+				// This happens for target dummies.
+				continue
+			}
 			playerConfig := partyConfig.Players[player.GetCharacter().PartyIndex]
 
 			presimOptions := presimmer.GetPresimOptions(*playerConfig)

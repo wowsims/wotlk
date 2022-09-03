@@ -101,6 +101,7 @@ type SettingsCombos struct {
 	Buffs       []BuffsCombo
 	Encounters  []EncounterCombo
 	SimOptions  *proto.SimOptions
+	IsHealer    bool
 }
 
 func (combos *SettingsCombos) NumTests() int {
@@ -165,6 +166,9 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 			buffsCombo.Debuffs),
 		Encounter:  encounterCombo.Encounter,
 		SimOptions: combos.SimOptions,
+	}
+	if combos.IsHealer {
+		rsr.Raid.TargetDummies = 1
 	}
 
 	return strings.Join(testNameParts, "-"), nil, nil, rsr
@@ -318,6 +322,7 @@ type ItemsTestGenerator struct {
 	Debuffs    *proto.Debuffs
 	Encounter  *proto.Encounter
 	SimOptions *proto.SimOptions
+	IsHealer   bool
 
 	// Some fields are populated automatically.
 	ItemFilter ItemFilter
@@ -405,6 +410,9 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 		Encounter:  generator.Encounter,
 		SimOptions: generator.SimOptions,
 	}
+	if generator.IsHealer {
+		rsr.Raid.TargetDummies = 1
+	}
 
 	return label, nil, nil, rsr
 }
@@ -454,6 +462,7 @@ type CharacterSuiteConfig struct {
 	Consumes    *proto.Consumes
 	Debuffs     *proto.Debuffs
 
+	IsHealer        bool
 	IsTank          bool
 	InFrontOfTarget bool
 
@@ -490,6 +499,9 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 	if config.IsTank {
 		defaultRaid.Tanks = append(defaultRaid.Tanks, &proto.RaidTarget{TargetIndex: 0})
 	}
+	if config.IsHealer {
+		defaultRaid.TargetDummies = 1
+	}
 
 	generator := &CombinedTestGenerator{
 		subgenerators: []SubGenerator{
@@ -522,6 +534,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 							Consumes: config.Consumes,
 						},
 					},
+					IsHealer:   config.IsHealer,
 					Encounters: MakeDefaultEncounterCombos(config.Debuffs),
 					SimOptions: DefaultSimTestOptions,
 				},
@@ -536,6 +549,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					Encounter:  MakeSingleTargetEncounter(0),
 					SimOptions: DefaultSimTestOptions,
 					ItemFilter: config.ItemFilter,
+					IsHealer:   config.IsHealer,
 				},
 			},
 		},

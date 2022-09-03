@@ -32,6 +32,7 @@ type Priest struct {
 	SurgeOfLightProcAura *core.Aura
 
 	DevouringPlague *core.Spell
+	GreaterHeal     *core.Spell
 	HolyFire        *core.Spell
 	InnerFocus      *core.Spell
 	ShadowWordPain  *core.Spell
@@ -153,6 +154,10 @@ func (priest *Priest) Initialize() {
 		priest.newMindSearDot(5),
 	}
 
+}
+
+func (priest *Priest) RegisterHealingSpells() {
+	priest.registerGreaterHealSpell()
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {

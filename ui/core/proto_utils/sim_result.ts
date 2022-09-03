@@ -401,6 +401,10 @@ export class UnitMetrics {
         return this.getActionsForDisplay().filter(e => !e.isMeleeAction);
     }
 
+    getHealingActions(): Array<ActionMetrics> {
+        return this.getActionsForDisplay();
+    }
+
     getResourceMetrics(resourceType: ResourceType): Array<ResourceMetrics> {
         return this.resources.filter(resource => resource.type == resourceType);
     }
@@ -670,6 +674,10 @@ export class ActionMetrics {
         return this.combinedMetrics.dps;
     }
 
+    get hps() {
+        return this.combinedMetrics.dps;
+    }
+
     get tps() {
         return this.combinedMetrics.tps;
     }
@@ -684,6 +692,10 @@ export class ActionMetrics {
 
     get avgCast() {
         return this.combinedMetrics.avgCast;
+    }
+
+    get avgCastHealing() {
+        return this.combinedMetrics.avgCastHealing;
     }
 
     get avgCastThreat() {
@@ -842,6 +854,10 @@ export class TargetedActionMetrics {
         return this.data.damage / this.iterations / this.duration;
     }
 
+    get hps() {
+        return (this.data.healing + this.data.shielding) / this.iterations / this.duration;
+    }
+
     get tps() {
         return this.data.threat / this.iterations / this.duration;
     }
@@ -856,6 +872,10 @@ export class TargetedActionMetrics {
 
     get avgCast() {
         return (this.data.damage / this.iterations) / (this.casts || 1);
+    }
+
+    get avgCastHealing() {
+        return ((this.data.healing + this.data.shielding) / this.iterations) / (this.casts || 1);
     }
 
     get avgCastThreat() {
@@ -936,6 +956,8 @@ export class TargetedActionMetrics {
                 glances: sum(actions.map(a => a.data.glances)),
                 damage: sum(actions.map(a => a.data.damage)),
                 threat: sum(actions.map(a => a.data.threat)),
+                healing: sum(actions.map(a => a.data.healing)),
+                shielding: sum(actions.map(a => a.data.shielding)),
             }));
     }
 }
