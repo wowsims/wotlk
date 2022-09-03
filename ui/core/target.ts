@@ -266,19 +266,18 @@ export class Target {
     static defaultProto(): TargetProto {
         return TargetProto.create({
             level: Mechanics.BOSS_LEVEL,
-            mobType: MobType.MobTypeDemon,
+            mobType: MobType.MobTypeUndead,
             tankIndex: 0,
-            swingSpeed: 2,
-            minBaseDamage: 10000,
-            dualWield: false,
+            swingSpeed: 2.0,
+            minBaseDamage: 28270,
+            dualWield: true,
             dualWieldPenalty: false,
             suppressDodge: false,
             parryHaste: true,
             spellSchool: SpellSchool.SpellSchoolPhysical,
             stats: Stats.fromMap({
                 [Stat.StatArmor]: 10643,
-                [Stat.StatBlockValue]: 54,
-                [Stat.StatAttackPower]: 320,
+                [Stat.StatAttackPower]: 640,
             }).asArray(),
         });
     }

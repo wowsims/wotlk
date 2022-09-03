@@ -700,6 +700,9 @@ func (warrior *Warrior) registerLastStandCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: lastStandSpell,
 		Type:  core.CooldownTypeSurvival,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return warrior.StanceMatches(DefensiveStance)
+		},
 	})
 }
 
