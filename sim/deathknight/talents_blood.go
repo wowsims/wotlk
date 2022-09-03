@@ -41,8 +41,10 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implemented outside
 
 	// Dark Conviction
-	dk.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
-	dk.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
+	dk.AddStats(stats.Stats{
+		stats.MeleeCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+		stats.SpellCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+	})
 
 	// Death Rune Mastery
 	// TODO: Implemented outside

@@ -457,3 +457,13 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 	}
 	unit.resetCDs(sim)
 }
+
+func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
+	var spells []*Spell
+	for _, spell := range unit.Spellbook {
+		if spell.SpellSchool.Matches(school) {
+			spells = append(spells, spell)
+		}
+	}
+	return spells
+}

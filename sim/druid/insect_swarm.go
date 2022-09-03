@@ -56,6 +56,12 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Insect Swarm",
 			ActionID: actionID,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				druid.Wrath.DamageMultiplier *= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				druid.Wrath.DamageMultiplier /= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
+			},
 		}),
 		NumberOfTicks: 6 + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 2,

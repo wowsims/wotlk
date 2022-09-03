@@ -92,10 +92,10 @@ var Items = []Item{
 		if itemData.Response == nil {
 			continue
 		}
-		itemLevel := itemData.Response.GetItemLevel()
 		if itemData.Declaration.Filter {
 			continue
 		}
+
 		deny := false
 		for _, pattern := range denyListNameRegexes {
 			if pattern.MatchString(itemData.Response.GetName()) {
@@ -106,9 +106,12 @@ var Items = []Item{
 		if deny {
 			continue
 		}
+
 		if !itemData.Response.IsEquippable() {
 			continue
 		}
+
+		itemLevel := itemData.Response.GetItemLevel()
 		allow := allowList[itemData.Declaration.ID]
 		if !allow {
 			qual := itemData.Response.GetQuality()
@@ -117,22 +120,15 @@ var Items = []Item{
 			} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
 				continue
 			} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
-				if itemLevel < 105 {
+				if itemLevel < 145 {
 					continue
 				}
-				if itemLevel < 110 && itemData.Response.GetItemSetName() == "" {
-					continue
-				}
-			} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
-				if itemLevel < 110 {
-					continue
-				}
-				if itemLevel < 140 && itemData.Response.GetItemSetName() == "" {
+				if itemLevel < 149 && itemData.Response.GetItemSetName() == "" {
 					continue
 				}
 			} else {
 				// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-				if itemLevel < 75 {
+				if itemLevel < 140 {
 					continue
 				}
 			}
@@ -322,6 +318,7 @@ var denyListNameRegexes = []*regexp.Regexp{
 var allowList = map[int]bool{
 	9449:  true, // Manual Crowd Pummeler
 	11815: true, // Hand of Justice
+	12590: true, // Felstriker
 	12632: true, // Storm Gauntlets
 	15808: true, // Fine Light Crossbow (for hunter testing).
 	17111: true, // Blazefury Medallion
@@ -335,6 +332,7 @@ var allowList = map[int]bool{
 	24114: true, // Braided Eternium Chain
 	27947: true, // Totem of Impact
 	28041: true, // Bladefist's Breadth
+	28785: true, // The Lightning Capacitor
 	31139: true, // Fist of Reckoning
 	31149: true, // Gloves of Pandemonium
 	31193: true, // Blade of Unquenched Thirst
@@ -346,7 +344,17 @@ var allowList = map[int]bool{
 	6360:  true, // Steelscale Crushfish
 	8345:  true, // Wolfshead Helm
 	28032: true, // Delicate Green Poncho
-	12590: true, // Felstriker
+	32387: true, // Idol of the Raven Goddess
+	32658: true, // Badge of Tenacity
+	33504: true, // Libram of Divine Purpose
+	33829: true, // Hex Shrunken Head
+
+	27510: true, // Tidefury Gauntlets
+	27802: true, // Tidefury Shoulderguards
+	27909: true, // Tidefury Kilt
+	28231: true, // Tidefury Chestpiece
+	28349: true, // Tidefury Helm
+
 	15056: true, // Stormshroud Armor
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders

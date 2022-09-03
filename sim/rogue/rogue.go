@@ -75,7 +75,6 @@ type Rogue struct {
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
-	DeathmantleProcAura  *core.Aura
 	VanCleefsProcAura    *core.Aura
 	EnvenomAura          *core.Aura
 	ExposeArmorAura      *core.Aura

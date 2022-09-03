@@ -15,7 +15,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusSpellHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
+		BonusHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(hunter.Talents.TNT)),
 		ThreatMultiplier: 1,
@@ -75,9 +75,9 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		TickEffects: core.TickFuncAOESnapshot(hunter.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 
-			BonusSpellHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
-			DamageMultiplier:    1,
-			ThreatMultiplier:    1,
+			BonusHitRating:   float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

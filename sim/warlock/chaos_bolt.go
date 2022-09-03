@@ -17,12 +17,17 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	spellCoefficient := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     1,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagic(1429.0, 1813.0, spellCoefficient),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		ProcMask: core.ProcMaskSpellDamage,
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+
+		BaseDamage:     core.BaseDamageConfigMagic(1429.0, 1813.0, spellCoefficient),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+
 		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warlock.ImmolateDot.IsActive() {
 				spellEffect.DamageMultiplier = normalMultiplier

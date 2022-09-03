@@ -2,7 +2,6 @@ package druid
 
 import (
 	"math"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -83,6 +82,7 @@ func (druid *Druid) registerCatFormSpell() {
 	srm := druid.getSavageRoarMultiplier()
 
 	apDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
+	catHotw := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
@@ -100,7 +100,9 @@ func (druid *Druid) registerCatFormSpell() {
 
 			druid.applyFeralShift(sim, true)
 			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
+			druid.EnableDynamicStatDep(sim, catHotw)
 			druid.EnableDynamicStatDep(sim, apDep)
+			druid.AddStatDynamic(sim, stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 
 			// These buffs stay up, but corresponding changes don't
 			if druid.SavageRoarAura.IsActive() {
@@ -119,7 +121,9 @@ func (druid *Druid) registerCatFormSpell() {
 
 			druid.applyFeralShift(sim, false)
 			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			druid.DisableDynamicStatDep(sim, catHotw)
 			druid.DisableDynamicStatDep(sim, apDep)
+			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 
 			druid.TigersFuryAura.Deactivate(sim)
 
@@ -186,6 +190,10 @@ func (druid *Druid) registerBearFormSpell() {
 	finalRage := 0.0
 
 	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
+	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+
+	potpdtm := 0.04 * float64(druid.Talents.ProtectorOfThePack)
+	potpap := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.ProtectorOfThePack))
 
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
@@ -199,7 +207,11 @@ func (druid *Druid) registerBearFormSpell() {
 
 			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
 			druid.EnableDynamicStatDep(sim, stamdep)
+			druid.EnableDynamicStatDep(sim, bearHotw)
+			druid.EnableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier *= 1.3
+			druid.PseudoStats.DamageDealtMultiplier += 0.02 * float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier += -1.0 * potpdtm
 
 			druid.applyFeralShift(sim, true)
 			druid.AutoAttacks.EnableAutoSwing(sim)
@@ -217,8 +229,12 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Humanoid
 
 			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
+			druid.DisableDynamicStatDep(sim, bearHotw)
 			druid.DisableDynamicStatDep(sim, stamdep)
+			druid.DisableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier /= 1.3
+			druid.PseudoStats.DamageDealtMultiplier -= 0.02 * float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier += 1.0 * potpdtm
 
 			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
@@ -265,9 +281,6 @@ func (druid *Druid) registerBearFormSpell() {
 	})
 }
 
-// A bit arbitrary
-const cooldownDelayThresHold = time.Second * 10
-
 func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 
 	// Disable cooldowns not usable in form and/or delay others
@@ -276,26 +289,10 @@ func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 		druid.EnableAllCooldowns(druid.disabledMCDs)
 		druid.disabledMCDs = nil
 
-		if druid.InForm(Cat | Bear) {
-			// Check if any dps cooldown that requires shifting is ready soon
-			// disable all cooldowns if that is the case
-			nonUsableDpsMCDReadySoon := false
+		if druid.InForm(Humanoid) {
+			// Disable cooldown that incurs a gcd, so we dont get stuck out of form when we dont need to (Greater Drums)
 			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.TimeToReady(sim) < cooldownDelayThresHold && cd.IsEnabled() && !cd.Type.Matches(core.CooldownTypeUsableShapeShifted) && cd.Type.Matches(core.CooldownTypeDPS) {
-					nonUsableDpsMCDReadySoon = true
-					break
-				}
-			}
-			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.IsEnabled() && (nonUsableDpsMCDReadySoon || !cd.Type.Matches(core.CooldownTypeUsableShapeShifted)) {
-					druid.DisableMajorCooldown(cd.Spell.ActionID)
-					druid.disabledMCDs = append(druid.disabledMCDs, cd)
-				}
-			}
-		} else {
-			// Disable cooldown that can be used in form, but incurs a gcd, so we dont get stuck out of form when we dont need to (Greater Drums)
-			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.Type.Matches(core.CooldownTypeUsableShapeShifted) && cd.Spell.DefaultCast.GCD > 0 {
+				if cd.Spell.DefaultCast.GCD > 0 {
 					druid.DisableMajorCooldown(cd.Spell.ActionID)
 					druid.disabledMCDs = append(druid.disabledMCDs, cd)
 				}
