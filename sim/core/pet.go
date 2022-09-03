@@ -158,7 +158,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	pet.AddStatsDynamic(sim, pet.inheritedStats)
 	pet.currentStatInheritance = pet.statInheritance
 
-	//reset mana after adding stats
+	//reset current mana after applying stats
 	pet.manaBar.reset()
 
 	pet.SetGCDTimer(sim, sim.CurrentTime)

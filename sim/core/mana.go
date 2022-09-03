@@ -77,6 +77,8 @@ func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulat
 func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
+
+// Gets the Maxiumum mana including bonus and temporary affects that would increase your mana pool.
 func (unit *Unit) MaxMana() float64 {
 	return unit.stats[stats.Mana]
 }
