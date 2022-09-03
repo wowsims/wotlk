@@ -106,90 +106,87 @@ var FullDebuffs = &proto.Debuffs{
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }
 
-var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 40576,
-		"enchant": 44879,
+		"id": 32235,
+		"enchant": 29192,
 		"gems": [
-			41398,
-			40037
+			32409,
+			32193
 		]
 	},
 	{
-		"id": 44664,
+		"id": 30022
+	},
+	{
+		"id": 30055,
+		"enchant": 28888,
 		"gems": [
-			42142
+			32193
 		]
 	},
 	{
-		"id": 40578,
-		"enchant": 44871,
+		"id": 33590,
+		"enchant": 34004
+	},
+	{
+		"id": 30905,
+		"enchant": 24003,
 		"gems": [
-			49110
+			32211,
+			32193,
+			32217
 		]
 	},
 	{
-		"id": 40403,
-		"enchant": 55002
+		"id": 32574,
+		"enchant": 27899
 	},
 	{
-		"id": 40574,
-		"enchant": 44489,
+		"id": 29947,
+		"enchant": 33995
+	},
+	{
+		"id": 30106,
 		"gems": [
-			42142,
-			39996
+			32193,
+			32211
 		]
 	},
 	{
-		"id": 40186,
-		"enchant": 44484,
+		"id": 30900,
+		"enchant": 29535,
 		"gems": [
-			0
+			32193,
+			32193,
+			32193
 		]
 	},
 	{
-		"id": 40541,
-		"enchant": 54999,
+		"id": 32366,
+		"enchant": 22544,
 		"gems": [
-			0
+			32193,
+			32217
 		]
 	},
 	{
-		"id": 40205,
-		"gems": [
-			39996
-		]
+		"id": 32526
 	},
 	{
-		"id": 40577,
-		"enchant": 38374,
-		"gems": [
-			42142,
-			40038
-		]
+		"id": 30834
 	},
 	{
-		"id": 39701,
-		"enchant": 55016
+		"id": 33831
 	},
 	{
-		"id": 40075
+		"id": 28830
 	},
 	{
-		"id": 40474
+		"id": 32332,
+		"enchant": 22559
 	},
 	{
-		"id": 42987
-	},
-	{
-		"id": 40431
-	},
-	{
-		"id": 40384,
-		"enchant": 44492
-	},
-	{},
-	{
-		"id": 42852
+		"id": 27484
 	}
 ]}`)

@@ -69,11 +69,13 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+			BonusCritRating: 0 +
+				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
+				core.TernaryFloat64(hunter.HasSetBonus(ItemSetRiftStalker, 4), 5*core.CritRatingPerCritChance, 0),
+
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),
+
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

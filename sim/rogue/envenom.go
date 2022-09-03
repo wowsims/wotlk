@@ -9,11 +9,14 @@ import (
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	baseDamage := 215.0
+	baseDamage := 215 + core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0)
 	apRatio := 0.09
 	chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
 
 	cost := 35.0
+	if rogue.HasSetBonus(ItemSetAssassination, 4) {
+		cost -= 10
+	}
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},

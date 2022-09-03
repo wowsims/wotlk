@@ -19,7 +19,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -41,8 +41,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating:   hunter.bonusRangedHit(),
-			BonusCritRating:  hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
@@ -82,8 +80,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating:  hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 *
 				(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
 				hunter.markedForDeathMultiplier(),

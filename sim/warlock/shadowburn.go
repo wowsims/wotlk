@@ -29,16 +29,12 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
-		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-
-		BaseDamage:     core.BaseDamageConfigMagic(775.0, 865.0, 0.429*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		ProcMask:             core.ProcMaskSpellDamage,
+		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * core.TernaryFloat64(warlock.Talents.Devastation, 1, 0),
+		DamageMultiplier:     baseAdditiveMultiplier,
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:           core.BaseDamageConfigMagic(775.0, 865.0, 0.429*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
 
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{

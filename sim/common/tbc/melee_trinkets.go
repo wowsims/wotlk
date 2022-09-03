@@ -186,7 +186,7 @@ func init() {
 
 		character.AddMajorCooldown(core.MajorCooldown{
 			Spell: spell,
-			Type:  core.CooldownTypeDPS,
+			Type:  core.CooldownTypeDPS | core.CooldownTypeUsableShapeShifted,
 		})
 	})
 

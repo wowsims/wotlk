@@ -50,15 +50,13 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: baseAdditiveMultiplier,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
-			BonusCritRating: 0 +
-				warlock.masterDemonologistShadowCrit() +
-				3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
-			OutcomeApplier: applier,
-			IsPeriodic:     true,
-			ProcMask:       core.ProcMaskPeriodicDamage,
+			DamageMultiplier:     baseAdditiveMultiplier,
+			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
+			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
+			OutcomeApplier:       applier,
+			IsPeriodic:           true,
+			ProcMask:             core.ProcMaskPeriodicDamage,
 		}),
 	})
 }

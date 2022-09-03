@@ -55,13 +55,13 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			TickLength:          time.Second * 3,
 			AffectedByCastSpeed: true,
 			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
-				ProcMask:         ProcMaskPeriodicDamage,
-				ThreatMultiplier: 1,
-				BaseDamage:       BaseDamageConfigMagicNoRoll(100, 1),
-				BonusCritRating:  3 * CritRatingPerCritChance,
-				DamageMultiplier: 1.5,
-				OutcomeApplier:   fa.OutcomeFuncAlwaysHit(),
-				IsPeriodic:       true,
+				ProcMask:             ProcMaskPeriodicDamage,
+				ThreatMultiplier:     1,
+				BaseDamage:           BaseDamageConfigMagicNoRoll(100, 1),
+				BonusSpellCritRating: 3 * CritRatingPerCritChance,
+				DamageMultiplier:     1.5,
+				OutcomeApplier:       fa.OutcomeFuncAlwaysHit(),
+				IsPeriodic:           true,
 			}),
 		})
 	}

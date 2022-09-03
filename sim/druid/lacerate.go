@@ -17,6 +17,9 @@ func (druid *Druid) registerLacerateSpell() {
 
 	tickDamage := 320.0 / 5
 	initialDamage := 88.0
+	if druid.HasSetBonus(ItemSetNordrassilHarness, 4) {
+		tickDamage += 15
+	}
 	if druid.Equip[items.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
 		tickDamage += 8
 		initialDamage += 8
@@ -53,7 +56,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := initialDamage + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := initialDamage + 0.01*(hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {

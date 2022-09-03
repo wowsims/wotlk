@@ -119,7 +119,15 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
 	switch summonChoice {
+	case proto.Warlock_Options_Imp:
+		wp.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+		wp.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+	case proto.Warlock_Options_Succubus:
+		wp.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+		wp.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 	case proto.Warlock_Options_Felguard:
+		wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+
 		talentMultiplier := 1. + 0.1*float64(warlock.Talents.DemonicBrutality)
 		glyphMultiplier := 1.
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
@@ -169,6 +177,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		bonus := 1.0 + 0.05*float64(warlock.Talents.FelVitality)
 		wp.MultiplyStat(stats.Intellect, bonus)
 		wp.MultiplyStat(stats.Stamina, bonus)
+	}
+
+	if warlock.HasSetBonus(ItemSetOblivionRaiment, 2) {
+		wp.AddStat(stats.MP5, 45)
 	}
 
 	core.ApplyPetConsumeEffects(&wp.Character, warlock.Consumes)

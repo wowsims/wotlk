@@ -45,6 +45,9 @@ func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 func (rogue *Rogue) registerSliceAndDice() {
 	durationMultiplier := 1.0 + 0.25*float64(rogue.Talents.ImprovedSliceAndDice)
 	durationBonus := time.Duration(0)
+	if rogue.HasSetBonus(ItemSetNetherblade, 2) {
+		durationBonus += time.Second * 3
+	}
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSliceAndDice) {
 		durationBonus += time.Second * 3
 	}

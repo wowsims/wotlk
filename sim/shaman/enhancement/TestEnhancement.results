@@ -99,10 +99,45 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Braxley'sBackyardMoonshine-35937"
+ value: {
+  dps: 5273.82615
+  tps: 2941.85018
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-CataclysmHarness"
+ value: {
+  dps: 3979.33182
+  tps: 2206.69556
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-CataclysmRegalia"
+ value: {
+  dps: 3881.60322
+  tps: 2158.44202
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 5405.55891
   tps: 3020.78738
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-CycloneHarness"
+ value: {
+  dps: 3831.37372
+  tps: 2114.74858
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-CycloneRegalia"
+ value: {
+  dps: 3825.38846
+  tps: 2115.94417
  }
 }
 dps_results: {
@@ -141,10 +176,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 5281.65988
+  tps: 2943.28041
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Defender'sCode-40257"
  value: {
   dps: 5181.9604
   tps: 2890.7009
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-DesolationBattlegear"
+ value: {
+  dps: 3792.86101
+  tps: 2098.98556
  }
 }
 dps_results: {
@@ -215,6 +264,20 @@ dps_results: {
  value: {
   dps: 5370.84342
   tps: 3000.87865
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Fathom-BroochoftheTidewalker-30663"
+ value: {
+  dps: 5181.9604
+  tps: 2891.4579
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-FelstalkerArmor"
+ value: {
+  dps: 4569.69294
+  tps: 2544.36633
  }
 }
 dps_results: {
@@ -309,6 +372,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-InfusedColdstoneRune-35935"
+ value: {
+  dps: 5219.83876
+  tps: 2909.94517
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 5294.70185
@@ -334,6 +404,34 @@ dps_results: {
  value: {
   dps: 5181.9604
   tps: 2890.7009
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Mana-EtchedRegalia"
+ value: {
+  dps: 3729.18346
+  tps: 2057.49624
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-NaturalAlignmentCrystal-19344"
+ value: {
+  dps: 5220.59612
+  tps: 2913.1436
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-NetherscaleArmor"
+ value: {
+  dps: 4580.02185
+  tps: 2544.41215
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-NetherstrikeArmor"
+ value: {
+  dps: 4561.90087
+  tps: 2546.49134
  }
 }
 dps_results: {
@@ -386,6 +484,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-PrimalIntent"
+ value: {
+  dps: 4628.17295
+  tps: 2576.58951
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-PurifiedShardoftheGods"
  value: {
   dps: 5181.9604
@@ -435,6 +540,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Serrah'sStar-37559"
+ value: {
+  dps: 5257.34193
+  tps: 2929.09781
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-ShinyShardoftheGods"
  value: {
   dps: 5181.9604
@@ -446,6 +558,13 @@ dps_results: {
  value: {
   dps: 5181.9604
   tps: 2890.7009
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-SkycallTotem-33506"
+ value: {
+  dps: 5380.36855
+  tps: 3006.89364
  }
 }
 dps_results: {
@@ -470,10 +589,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-SpellstrikeInfusion"
+ value: {
+  dps: 4590.42722
+  tps: 2573.70204
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
+ value: {
+  dps: 5412.0025
+  tps: 3023.36703
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-StormshroudArmor"
  value: {
   dps: 3922.61
   tps: 2174.6273
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-StrengthoftheClefthoof"
+ value: {
+  dps: 4230.02096
+  tps: 2356.91157
  }
 }
 dps_results: {
@@ -502,6 +642,13 @@ dps_results: {
  value: {
   dps: 4163.07694
   tps: 2269.85012
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-TheTwinStars"
+ value: {
+  dps: 5055.78582
+  tps: 2816.13031
  }
 }
 dps_results: {
@@ -582,6 +729,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-TotemofthePulsingEarth-29389"
+ value: {
+  dps: 5387.14655
+  tps: 3009.82896
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 5286.51452
@@ -596,6 +750,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-WastewalkerArmor"
+ value: {
+  dps: 3781.58592
+  tps: 2091.93837
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-WindhawkArmor"
+ value: {
+  dps: 4543.68866
+  tps: 2540.44024
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
   dps: 4950.74538
@@ -607,6 +775,13 @@ dps_results: {
  value: {
   dps: 4498.61896
   tps: 2524.92013
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-WrathofSpellfire"
+ value: {
+  dps: 4518.87321
+  tps: 2518.94459
  }
 }
 dps_results: {

@@ -113,11 +113,11 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		ProcMask:            core.ProcMaskEmpty,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1,
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -147,6 +147,9 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 	imbueCount := 1.0
 	spBonus := 211.0
 	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
+	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
+		spBonus += 20.0
+	}
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}
@@ -194,11 +197,11 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		ProcMask:            core.ProcMaskEmpty,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier:    1,
+		ThreatMultiplier:    1,
+		OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -228,6 +231,9 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 	imbueCount := 1.0
 	spBonus := 186.0
 	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
+	if shaman.HasSetBonus(ItemSetCycloneRegalia, 2) {
+		spBonus += 20.0
+	}
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}
@@ -279,8 +285,8 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 		SpellSchool: core.SpellSchoolFrost,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
-			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			ProcMask:            core.ProcMaskEmpty,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

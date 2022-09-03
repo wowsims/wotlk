@@ -131,6 +131,78 @@ var ItemSetBonescythe = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetAssassination = core.NewItemSet(core.ItemSet{
+	Name: "Assassination Armor",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+		},
+		4: func(agent core.Agent) {
+			// Your Eviscerate and Envenom abilities cost 10 less energy.
+			// Handled in eviscerate.go.
+		},
+	},
+})
+
+var ItemSetNetherblade = core.NewItemSet(core.ItemSet{
+	Name: "Netherblade",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the duration of your Slice and Dice ability by 3 sec.
+			// Handled in slice_and_dice.go.
+		},
+		4: func(agent core.Agent) {
+			// Your finishing moves have a 15% chance to grant you an extra combo point.
+			// Handled in talents.go.
+		},
+	},
+})
+
+var ItemSetDeathmantle = core.NewItemSet(core.ItemSet{
+	Name: "Deathmantle",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Eviscerate and Envenom abilities cause 40 extra damage per combo point.
+			// Handled in eviscerate.go.
+		},
+		4: func(agent core.Agent) {
+			// Your attacks have a chance to make your next finishing move cost no energy.
+			rogue := agent.(RogueAgent).GetRogue()
+
+			rogue.DeathmantleProcAura = rogue.RegisterAura(core.Aura{
+				Label:    "Deathmantle 4pc Proc",
+				ActionID: core.ActionID{SpellID: 37171},
+				Duration: time.Second * 15,
+			})
+
+			ppmm := rogue.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMelee)
+
+			rogue.RegisterAura(core.Aura{
+				Label:    "Deathmantle 4pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if !spellEffect.Landed() {
+						return
+					}
+
+					// https://wotlk.wowhead.com/spell=37170/free-finisher-chance, proc mask = 20.
+					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+
+					if !ppmm.Proc(sim, spellEffect.ProcMask, "Deathmantle 4pc") {
+						return
+					}
+
+					rogue.DeathmantleProcAura.Activate(sim)
+				},
+			})
+		},
+	},
+})
+
 var ItemSetSlayers = core.NewItemSet(core.ItemSet{
 	Name: "Slayer's Armor",
 	Bonuses: map[int32]core.ApplyEffect{

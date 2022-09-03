@@ -31,7 +31,6 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedSpecial,
-			BonusHitRating:   hunter.bonusRangedHit(),
 			ThreatMultiplier: 1,
 			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

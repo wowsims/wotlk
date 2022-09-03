@@ -52,11 +52,11 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		NumberOfTicks: 24,
 		TickLength:    time.Second * 60 / 24,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
-			BaseDamage:       core.BaseDamageConfigMagic(90, 120, 0.167),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			ProcMask:            core.ProcMaskEmpty,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
+			BaseDamage:          core.BaseDamageConfigMagic(90, 120, 0.167),
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }
@@ -98,11 +98,11 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(371, 0.1),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			ProcMask:            core.ProcMaskEmpty,
+			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
+			BaseDamage:          core.BaseDamageConfigMagicNoRoll(371, 0.1),
+			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }
@@ -157,7 +157,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 // 		TickLength:    tickLength,
 // 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, 9975, core.SpellEffect{
 // 			ProcMask:            core.ProcMaskEmpty,
-// 			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+// 			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 // 			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
 // 			BaseDamage:          core.BaseDamageConfigMagic(654, 730, 0.214),
 // 			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),

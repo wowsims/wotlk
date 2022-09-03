@@ -45,9 +45,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		},
 
 		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1.0,
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: 0.0,
+			DamageMultiplier:     1.0,
+			ThreatMultiplier:     1.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

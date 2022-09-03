@@ -18,8 +18,8 @@ func (mage *Mage) registerLivingBombSpell() {
 	bonusCrit := float64(mage.Talents.WorldInFlames+mage.Talents.CriticalMass) * 2 * core.CritRatingPerCritChance
 
 	livingBombExplosionEffect := core.SpellEffect{
-		ProcMask:        core.ProcMaskSpellDamage,
-		BonusCritRating: bonusCrit,
+		ProcMask:             core.ProcMaskSpellDamage,
+		BonusSpellCritRating: bonusCrit,
 
 		DamageMultiplier: mage.spellDamageMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
@@ -99,7 +99,7 @@ func (mage *Mage) registerLivingBombSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
 
-			BonusCritRating: bonusCrit,
+			BonusSpellCritRating: bonusCrit,
 
 			DamageMultiplier: mage.spellDamageMultiplier,
 			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),

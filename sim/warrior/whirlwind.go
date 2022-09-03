@@ -10,6 +10,9 @@ import (
 
 func (warrior *Warrior) registerWhirlwindSpell() {
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
+	if warrior.HasSetBonus(ItemSetWarbringerBattlegear, 2) {
+		cost -= 5
+	}
 	cd := core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfWhirlwind), time.Second*8, time.Second*10)
 
 	baseEffectMH := core.SpellEffect{

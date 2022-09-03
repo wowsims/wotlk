@@ -52,18 +52,14 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
-			IsPeriodic: true,
-
+			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: baseAdditiveMultiplier,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
-			BonusCritRating: 0 +
-				warlock.masterDemonologistShadowCrit() +
-				3*float64(warlock.Talents.Malediction)*core.CritRatingPerCritChance +
-				core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-
+			BonusSpellCritRating: core.CritRatingPerCritChance * (3*float64(warlock.Talents.Malediction) +
+				5*core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
 			OutcomeApplier: applier,
+			IsPeriodic:     true,
 		}),
 	})
 }

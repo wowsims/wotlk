@@ -9,6 +9,91 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var ItemSetMalorneRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Malorne Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 37295})
+
+			core.MakePermanent(druid.RegisterAura(core.Aura{
+				Label: "Malorne Regalia 2pc",
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+						return
+					}
+					if !spellEffect.Landed() {
+						return
+					}
+					if sim.RandomFloat("malorne 2p") > 0.05 {
+						return
+					}
+					spell.Unit.AddMana(sim, 120, manaMetrics, false)
+				},
+			}))
+		},
+		4: func(agent core.Agent) {
+			// Currently this is handled in druid.go (reducing CD of innervate)
+		},
+	},
+})
+
+var ItemSetMalorneHarness = core.NewItemSet(core.ItemSet{
+	Name: "Malorne Harness",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+
+			// Proc chance should 'scale down' with level,
+			// not sure exact formula but its 0 at 80
+			procChance := core.TernaryFloat64(druid.Level >= 80, 0.0, 0.04)
+			rageMetrics := druid.NewRageMetrics(core.ActionID{SpellID: 37306})
+			energyMetrics := druid.NewEnergyMetrics(core.ActionID{SpellID: 37311})
+
+			core.MakePermanent(druid.RegisterAura(core.Aura{
+				Label: "Malorne 4pc",
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spellEffect.Landed() && spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+						if sim.RandomFloat("Malorne 2pc") < procChance {
+							if druid.InForm(Bear) {
+								druid.AddRage(sim, 10, rageMetrics)
+							} else if druid.InForm(Cat) {
+								druid.AddEnergy(sim, 20, energyMetrics)
+							}
+						}
+					}
+				},
+			}))
+		},
+		4: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			if druid.InForm(Bear) {
+				druid.AddStat(stats.Armor, 1400)
+			} else if druid.InForm(Cat) {
+				druid.AddStat(stats.Strength, 30)
+			}
+		},
+	},
+})
+
+var ItemSetNordrassilRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Nordrassil Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		4: func(agent core.Agent) {
+			// Implemented in starfire.go.
+		},
+	},
+})
+
+var ItemSetNordrassilHarness = core.NewItemSet(core.ItemSet{
+	Name: "Nordrassil Harness",
+	Bonuses: map[int32]core.ApplyEffect{
+		4: func(agent core.Agent) {
+			// Implemented in lacerate.go.
+		},
+	},
+})
+
 var ItemSetThunderheartRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Thunderheart Regalia",
 	Bonuses: map[int32]core.ApplyEffect{

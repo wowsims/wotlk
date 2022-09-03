@@ -227,7 +227,6 @@ message ProtectionWarrior {
 		CustomRotation custom_rotation = 3;
 
 		double hs_rage_threshold = 4;
-		bool prio_sslam_on_shield_block = 5;
 	}
 	Rotation rotation = 1;
 

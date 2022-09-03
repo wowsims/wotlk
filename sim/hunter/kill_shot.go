@@ -32,10 +32,8 @@ func (hunter *Hunter) registerKillShotSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),
+			ProcMask:        core.ProcMaskRangedSpecial,
+			BonusCritRating: 5 * core.CritRatingPerCritChance * float64(hunter.Talents.SniperTraining),
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,

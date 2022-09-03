@@ -20,17 +20,13 @@ func (warlock *Warlock) registerImmolateSpell() {
 	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-
-		BaseDamage:      core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
-		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnSpellHitDealt: applyDotOnLanded(&warlock.ImmolateDot),
+		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier:     baseAdditiveMultiplier,
+		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		BaseDamage:           core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
+		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OnSpellHitDealt:      applyDotOnLanded(&warlock.ImmolateDot),
+		ProcMask:             core.ProcMaskSpellDamage,
 	}
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
@@ -62,17 +58,16 @@ func (warlock *Warlock) registerImmolateSpell() {
 			Label:    "Immolate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore),
-		TickLength:    time.Second * 3,
+		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore) +
+			core.TernaryInt(warlock.HasSetBonus(ItemSetVoidheartRaiment, 4), 1, 0), // voidheart 4p gives 1 extra tick
+		TickLength: time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
-			IsPeriodic: true,
-
 			DamageMultiplier: baseAdditiveMultiplierDot,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, spellCoefficient),
-
-			OutcomeApplier: warlock.OutcomeFuncTick(),
+			OutcomeApplier:   warlock.OutcomeFuncTick(),
+			IsPeriodic:       true,
+			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),
 	})
 }

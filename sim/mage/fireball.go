@@ -34,10 +34,10 @@ func (mage *Mage) registerFireballSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: 0,
 
-			BonusCritRating: 0 +
+			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 				float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance +
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),

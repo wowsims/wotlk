@@ -26,21 +26,45 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
 	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 
-	bonusCritRating := druid.TalentsBonuses.naturesMajestyBonusCrit +
-		core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
-		core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0) // T7-4P
-
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
+		DamageMultiplier: 1 + druid.TalentsBonuses.moonfuryMultiplier,
 		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
 		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-
-		BonusCritRating: bonusCritRating,
-
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
-
+		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			spellEffect.BonusSpellCritRating = 0
+			// Improved Insect Swarm
+			if druid.MoonfireDot.IsActive() {
+				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
+			}
+			// T6-4P
+			if druid.SetBonuses.balance_t6_2 {
+				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+			}
+			// T7-4P
+			if druid.SetBonuses.balance_t7_4 {
+				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
+			}
+			// Improved Faerie Fire
+			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+				spellEffect.BonusSpellCritRating += druid.TalentsBonuses.iffBonusCrit
+			}
+			// Lunar eclipse buff
+			if druid.HasAura("Lunar Eclipse proc") {
+				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
+				// T8-2P
+				if druid.SetBonuses.balance_t8_2 {
+					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
+				}
+			}
+			// T9-4P
+			if druid.SetBonuses.balance_t9_4 {
+				spellEffect.DamageMultiplier *= 1.04
+			}
+			// Nature's Majesty
+			spellEffect.BonusSpellCritRating += druid.TalentsBonuses.naturesMajestyBonusCrit
+		},
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -63,11 +87,22 @@ func (druid *Druid) registerStarfireSpell() {
 				}
 			}
 		},
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if druid.FaerieFireAura.IsActive() {
-				spellEffect.BonusCritRating = bonusCritRating + (core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire))
+	}
+
+	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
+		effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+			return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+				normalDamage := oldCalculator(sim, hitEffect, spell)
+
+				// Check if moonfire/insectswarm is ticking on the target.
+				// TODO: in a raid simulator we need to be able to see which dots are ticking from other druids.
+				if druid.MoonfireDot.IsActive() || druid.InsectSwarmDot.IsActive() {
+					return normalDamage * 1.1
+				} else {
+					return normalDamage
+				}
 			}
-		},
+		})
 	}
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{

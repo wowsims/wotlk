@@ -22,6 +22,7 @@ const (
 	CooldownTypeMana    CooldownType = 1 << iota
 	CooldownTypeDPS
 	CooldownTypeSurvival
+	CooldownTypeUsableShapeShifted
 )
 
 func (ct CooldownType) Matches(other CooldownType) bool {
@@ -451,7 +452,7 @@ func (mcdm *majorCooldownManager) sort() {
 func RegisterTemporaryStatsOnUseCD(character *Character, auraLabel string, tempStats stats.Stats, duration time.Duration, config SpellConfig) {
 	aura := character.NewTemporaryStatsAura(auraLabel, config.ActionID, tempStats, duration)
 
-	cdType := CooldownTypeUnknown
+	cdType := CooldownTypeUsableShapeShifted
 	if tempStats.DotProduct(stats.Stats{stats.Armor: 1, stats.Block: 1, stats.BlockValue: 1, stats.Dodge: 1, stats.Parry: 1, stats.Health: 1}).Equals(stats.Stats{}) {
 		cdType |= CooldownTypeDPS
 	} else {

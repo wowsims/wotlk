@@ -34,8 +34,8 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskSpellDamage,
-			BonusCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier: (1.0 + float64(dk.Talents.Morbidity)*0.05) *
 				core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,
@@ -67,8 +67,8 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskSpellDamage,
-			BonusCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
+			ProcMask:             core.ProcMaskSpellDamage,
+			BonusSpellCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
 			DamageMultiplier: (1.0 + float64(dk.Talents.Morbidity)*0.05) *
 				core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 			ThreatMultiplier: 1.0,

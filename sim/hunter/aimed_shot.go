@@ -37,10 +37,8 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
+			ProcMask: core.ProcMaskRangedSpecial,
+			BonusCritRating: 4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
 				core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),

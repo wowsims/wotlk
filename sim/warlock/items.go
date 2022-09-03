@@ -7,6 +7,78 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TBC Dungeon Set
+var ItemSetOblivionRaiment = core.NewItemSet(core.ItemSet{
+	Name: "Oblivion Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// in pet.go constructor
+		},
+		4: func(agent core.Agent) {
+			// in seed.go
+		},
+	},
+})
+
+// T4
+var ItemSetVoidheartRaiment = core.NewItemSet(core.ItemSet{
+	Name: "Voidheart Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			warlock := agent.(WarlockAgent).GetWarlock()
+
+			shadowBonus := warlock.NewTemporaryStatsAura(
+				"Shadowflame",
+				core.ActionID{SpellID: 37377},
+				stats.Stats{stats.ShadowSpellPower: 135},
+				time.Second*15,
+			)
+
+			fireBonus := warlock.NewTemporaryStatsAura(
+				"Shadowflame Hellfire",
+				core.ActionID{SpellID: 39437},
+				stats.Stats{stats.ShadowSpellPower: 135},
+				time.Second*15,
+			)
+
+			warlock.RegisterAura(core.Aura{
+				Label:    "Voidheart Raiment 2pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if sim.RandomFloat("cycl4p") > 0.05 {
+						return
+					}
+					if spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+						shadowBonus.Activate(sim)
+					}
+					if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+						fireBonus.Activate(sim)
+					}
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// implemented in immolate.go and corruption.go
+		},
+	},
+})
+
+// T5
+var ItemSetCorruptorRaiment = core.NewItemSet(core.ItemSet{
+	Name: "Corruptor Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// heals pet
+		},
+		4: func(agent core.Agent) {
+			// TODO: increase corruption tick damage on target whenever shadowbolt hits.
+		},
+	},
+})
+
 // T6
 var ItemSetMaleficRaiment = core.NewItemSet(core.ItemSet{
 	Name: "Malefic Raiment",
@@ -32,7 +104,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				Label:    "Demonic Soul",
 				ActionID: core.ActionID{SpellID: 61595},
 				Duration: time.Second * 10,
-				AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
 						aura.Deactivate(sim)
 					}
@@ -48,8 +120,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 			})
 
 			warlock.RegisterAura(core.Aura{
-				Label: "2pT7 Hidden Aura",
-				// ActionID: core.ActionID{SpellID: 60170},
+				Label:    "2pT7 Hidden Aura",
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)

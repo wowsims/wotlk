@@ -95,7 +95,6 @@ type Spell struct {
 	BonusCritRating    float64 // For dynamic effects. Do not set during initialization.
 
 	initialDamageMultiplier float64
-	initialBonusCritRating  float64
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
@@ -203,7 +202,13 @@ func (spell *Spell) finalize() {
 	if spell.CostMultiplier != 1 {
 		panic(spell.ActionID.String() + " has non-default CostMultiplier during finalize!")
 	}
-	spell.initialBonusCritRating = spell.BonusCritRating
+	// There are now spells which need to set DamageMultiplier at start, for additive effects.
+	//if spell.DamageMultiplier != 1 {
+	//	panic(spell.ActionID.String() + " has non-default DamageMultiplier during finalize!")
+	//}
+	if spell.BonusCritRating != 0 {
+		panic(spell.ActionID.String() + " has non-default BonusCritRating during finalize!")
+	}
 }
 
 func (spell *Spell) reset(sim *Simulation) {
@@ -219,7 +224,7 @@ func (spell *Spell) reset(sim *Simulation) {
 	spell.CastTimeMultiplier = 1
 	spell.CostMultiplier = 1
 	spell.DamageMultiplier = spell.initialDamageMultiplier
-	spell.BonusCritRating = spell.initialBonusCritRating
+	spell.BonusCritRating = 0
 }
 
 func (spell *Spell) doneIteration() {

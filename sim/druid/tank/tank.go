@@ -54,8 +54,8 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
-			BaseDamageMin:        109,
-			BaseDamageMax:        165,
+			BaseDamageMin:        210 - 28,
+			BaseDamageMax:        210 + 28,
 			SwingSpeed:           2.5,
 			NormalizedSwingSpeed: 2.5,
 			SwingDuration:        time.Millisecond * 2500,

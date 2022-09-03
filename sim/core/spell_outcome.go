@@ -407,12 +407,12 @@ func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 
 // Calculates a hit check using the stats from this spell.
 func (spellEffect *SpellEffect) MagicHitCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
-	missChance := attackTable.BaseSpellMissChance - spellEffect.SpellHitChance(spell)
+	missChance := attackTable.BaseSpellMissChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
 func (spellEffect *SpellEffect) MagicHitCheckBinary(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
 	baseHitChance := (1 - attackTable.BaseSpellMissChance) * attackTable.GetBinaryHitChance(spell.SpellSchool)
-	missChance := 1 - baseHitChance - spellEffect.SpellHitChance(spell)
+	missChance := 1 - baseHitChance - (spell.Unit.GetStat(stats.SpellHit)+spellEffect.BonusSpellHitRating+spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken)/(SpellHitRatingPerHitChance*100)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
 

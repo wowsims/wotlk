@@ -700,9 +700,6 @@ func (warrior *Warrior) registerLastStandCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: lastStandSpell,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.StanceMatches(DefensiveStance)
-		},
 	})
 }
 
@@ -715,7 +712,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 
-	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
+	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagChanneled,
@@ -783,7 +780,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	}
 
 	bladestormDot = core.NewDot(core.Dot{
-		Spell: warrior.Bladestorm,
+		Spell: bladestormSpell,
 		Aura: warrior.RegisterAura(core.Aura{
 			Label:    "Bladestorm",
 			ActionID: actionID,
@@ -794,7 +791,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
-		Spell: warrior.Bladestorm,
+		Spell: bladestormSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return warrior.CurrentRage() >= cost

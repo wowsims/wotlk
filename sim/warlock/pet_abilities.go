@@ -74,14 +74,11 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
-
-			BonusCritRating: wp.owner.masterDemonologistFireCrit(),
 			DamageMultiplier: (1.0 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
 				(1.0 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
 			ThreatMultiplier: 1,
-
-			BaseDamage:     core.BaseDamageConfigMagic(203, 227, 0.571),
-			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(2),
+			BaseDamage:       core.BaseDamageConfigMagic(203, 227, 0.571),
+			OutcomeApplier:   wp.OutcomeFuncMagicHitAndCrit(2),
 		}),
 	})
 }
@@ -148,12 +145,9 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 			},
 		},
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
-			BonusCritRating:  wp.owner.masterDemonologistShadowCrit(),
+			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1.0,
 			ThreatMultiplier: 1,
-
 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
 			BaseDamage:     core.BaseDamageConfigMagic(237, 237, 0.429),
 			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(1.5),

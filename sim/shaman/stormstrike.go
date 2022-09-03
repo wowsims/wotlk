@@ -49,6 +49,9 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	}
 
 	var flatDamageBonus float64 = 0
+	if shaman.HasSetBonus(ItemSetCycloneHarness, 4) {
+		flatDamageBonus += 30
+	}
 	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheDancingFlame {
 		flatDamageBonus += 155
 	}

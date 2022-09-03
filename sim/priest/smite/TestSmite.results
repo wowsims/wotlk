@@ -71,6 +71,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-AvatarRegalia"
+ value: {
+  dps: 1522.33377
+  tps: 1314.29293
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 1943.47241
@@ -89,6 +96,13 @@ dps_results: {
  value: {
   dps: 2061.37413
   tps: 1727.71481
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Braxley'sBackyardMoonshine-35937"
+ value: {
+  dps: 1964.05012
+  tps: 1676.52052
  }
 }
 dps_results: {
@@ -138,6 +152,13 @@ dps_results: {
  value: {
   dps: 2020.59318
   tps: 1729.12917
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 1961.31165
+  tps: 1674.88238
  }
 }
 dps_results: {
@@ -267,10 +288,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-IncarnateRaiment"
+ value: {
+  dps: 1431.58607
+  tps: 1237.18192
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-IncisorFragment-37723"
  value: {
   dps: 1943.47241
   tps: 1662.42045
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-InfusedColdstoneRune-35935"
+ value: {
+  dps: 1979.49293
+  tps: 1690.63494
  }
 }
 dps_results: {
@@ -299,6 +334,13 @@ dps_results: {
  value: {
   dps: 2102.90475
   tps: 1795.57067
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Mana-EtchedRegalia"
+ value: {
+  dps: 1272.36043
+  tps: 1098.12654
  }
 }
 dps_results: {
@@ -400,6 +442,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-Serrah'sStar-37559"
+ value: {
+  dps: 1957.92701
+  tps: 1671.40698
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ShinyShardoftheGods"
  value: {
   dps: 1943.47241
@@ -421,6 +470,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-SpellstrikeInfusion"
+ value: {
+  dps: 1677.42448
+  tps: 1435.27564
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 2048.23149
@@ -439,6 +495,13 @@ dps_results: {
  value: {
   dps: 2048.23149
   tps: 1751.23608
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-TheTwinStars"
+ value: {
+  dps: 1993.41886
+  tps: 1704.40904
  }
 }
 dps_results: {
@@ -488,6 +551,13 @@ dps_results: {
  value: {
   dps: 2061.37413
   tps: 1762.03329
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-WrathofSpellfire"
+ value: {
+  dps: 1727.96077
+  tps: 1481.78972
  }
 }
 dps_results: {

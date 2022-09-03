@@ -82,16 +82,18 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 	spellCoefficient += float64(shaman.Talents.Shamanism) * 0.04
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
-		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-		BonusCritRating: 0 +
-			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
-			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
+		ProcMask:            core.ProcMaskSpellDamage,
+		BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+		BonusSpellCritRating: 0 +
+			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance),
 		BonusSpellPower:  0,
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
 		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+	}
+	if shaman.Talents.CallOfThunder {
+		effect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
 	}
 
 	if isLightningOverload {

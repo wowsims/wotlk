@@ -30,10 +30,10 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
+			ProcMask:            core.ProcMaskSpellDamage,
+			BonusSpellHitRating: 0,
 
-			BonusCritRating: 0 +
+			BonusSpellCritRating: 0 +
 				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
 				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
 				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +

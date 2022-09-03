@@ -25,9 +25,7 @@ type manaBar struct {
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
 	PleaManaMetrics       *ResourceMetrics
-
-	replenishmentDep  *stats.StatDependency
-	ReplenishmentAura *Aura
+	replenishmentDep      *stats.StatDependency
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
@@ -47,6 +45,9 @@ func (character *Character) EnableManaBarWithModifier(modifier float64) {
 
 	// This conversion is now universal for
 	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.66667)
+
+	// Replenishment Buff
+	character.replenishmentDep = character.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
 
 	// Not a real spell, just holds metrics from mana gain threat.
 	character.RegisterSpell(SpellConfig{

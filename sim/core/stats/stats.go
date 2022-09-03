@@ -311,10 +311,17 @@ type PseudoStats struct {
 	//  This includes almost all "(Normalized) Weapon Damage", but also some "School Damage (Physical)" abilities.
 	BonusDamage float64 // Comes from '+X Weapon Damage' effects
 
-	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
-	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
-	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
-	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
+	BonusRangedHitRating      float64 // Hit rating for ranged only.
+	BonusMeleeCritRating      float64 // Crit rating for melee only (not ranged).
+	BonusRangedCritRating     float64 // Crit rating for ranged only.
+	BonusFireCritRating       float64 // Crit rating for fire spells only.
+	BonusShadowCritRating     float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
+	BonusMHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
+	BonusOHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
+	BonusMeleeSpellCritRating float64 // Crit rating for melee special attacks, used for Warrior Recklessness
+	BonusMHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
+	BonusOHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
+	BonusSpellCritRating      float64 // Crit rating bonus to spells
 
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
@@ -342,6 +349,10 @@ type PseudoStats struct {
 	ShadowDamageDealtMultiplier   float64
 	DiseaseDamageDealtMultiplier  float64
 
+	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
+	BonusCritRatingAgentReserved1       float64
+	AgentReserved1DamageDealtMultiplier float64
+
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
@@ -358,7 +369,8 @@ type PseudoStats struct {
 
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
-	BonusRangedAttackPowerTaken float64 // Hunters mark
+	BonusMeleeAttackPowerTaken  float64 // Imp Hunters mark, EW
+	BonusRangedAttackPowerTaken float64 // Hunters mark, EW
 	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
 	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
 	BonusMeleeHitRatingTaken    float64 //
@@ -409,14 +421,15 @@ func NewPseudoStats() PseudoStats {
 		DamageDealtMultiplier:       1,
 		RangedDamageDealtMultiplier: 1,
 
-		PhysicalDamageDealtMultiplier: 1,
-		ArcaneDamageDealtMultiplier:   1,
-		FireDamageDealtMultiplier:     1,
-		FrostDamageDealtMultiplier:    1,
-		HolyDamageDealtMultiplier:     1,
-		NatureDamageDealtMultiplier:   1,
-		ShadowDamageDealtMultiplier:   1,
-		DiseaseDamageDealtMultiplier:  1,
+		PhysicalDamageDealtMultiplier:       1,
+		ArcaneDamageDealtMultiplier:         1,
+		FireDamageDealtMultiplier:           1,
+		FrostDamageDealtMultiplier:          1,
+		HolyDamageDealtMultiplier:           1,
+		NatureDamageDealtMultiplier:         1,
+		ShadowDamageDealtMultiplier:         1,
+		DiseaseDamageDealtMultiplier:        1,
+		AgentReserved1DamageDealtMultiplier: 1,
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 

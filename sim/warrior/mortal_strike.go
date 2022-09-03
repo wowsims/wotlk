@@ -10,6 +10,9 @@ import (
 
 func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	cost := 30.0
+	if warrior.HasSetBonus(ItemSetDestroyerBattlegear, 4) {
+		cost -= 5
+	}
 	refundAmount := cost * 0.8
 
 	warrior.MortalStrike = warrior.RegisterSpell(core.SpellConfig{

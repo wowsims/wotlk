@@ -30,7 +30,7 @@ func (mage *Mage) registerFireBlastSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			BonusCritRating: 0 +
+			BonusSpellCritRating: 0 +
 				float64(mage.Talents.CriticalMass+mage.Talents.Incineration)*2*core.CritRatingPerCritChance,
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.SpellImpact)),

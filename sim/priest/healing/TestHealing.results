@@ -62,6 +62,10 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestHealing-AllItems-AvatarRegalia"
+ value: {}
+}
+dps_results: {
  key: "TestHealing-AllItems-Bandit'sInsignia-40371"
  value: {}
 }
@@ -71,6 +75,10 @@ dps_results: {
 }
 dps_results: {
  key: "TestHealing-AllItems-BracingEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Braxley'sBackyardMoonshine-35937"
  value: {}
 }
 dps_results: {
@@ -99,6 +107,10 @@ dps_results: {
 }
 dps_results: {
  key: "TestHealing-AllItems-DarkmoonCard:Greatness-44254"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-DeathKnight'sAnguish-38212"
  value: {}
 }
 dps_results: {
@@ -174,7 +186,15 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestHealing-AllItems-IncarnateRaiment"
+ value: {}
+}
+dps_results: {
  key: "TestHealing-AllItems-IncisorFragment-37723"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-InfusedColdstoneRune-35935"
  value: {}
 }
 dps_results: {
@@ -191,6 +211,10 @@ dps_results: {
 }
 dps_results: {
  key: "TestHealing-AllItems-MajesticDragonFigurine-40430"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-Mana-EtchedRegalia"
  value: {}
 }
 dps_results: {
@@ -250,6 +274,10 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestHealing-AllItems-Serrah'sStar-37559"
+ value: {}
+}
+dps_results: {
  key: "TestHealing-AllItems-ShinyShardoftheGods"
  value: {}
 }
@@ -262,6 +290,10 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestHealing-AllItems-SpellstrikeInfusion"
+ value: {}
+}
+dps_results: {
  key: "TestHealing-AllItems-SwiftSkyflareDiamond"
  value: {}
 }
@@ -271,6 +303,10 @@ dps_results: {
 }
 dps_results: {
  key: "TestHealing-AllItems-SwiftWindfireDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-TheTwinStars"
  value: {}
 }
 dps_results: {
@@ -299,6 +335,10 @@ dps_results: {
 }
 dps_results: {
  key: "TestHealing-AllItems-TrenchantEarthsiegeDiamond"
+ value: {}
+}
+dps_results: {
+ key: "TestHealing-AllItems-WrathofSpellfire"
  value: {}
 }
 dps_results: {

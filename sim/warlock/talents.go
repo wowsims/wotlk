@@ -55,18 +55,17 @@ func (warlock *Warlock) ApplyTalents() {
 			switch warlock.Options.Summon {
 			case proto.Warlock_Options_Imp:
 				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusFireCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Succubus:
 				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.BonusShadowCritRating *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Felguard:
 				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			}
 		}
 		// Extract stats for demonic knowledge
 		if warlock.Talents.DemonicKnowledge > 0 {
-			petChar := warlock.Pet.GetCharacter()
+			petChar := warlock.Pets[0].GetCharacter()
 			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
 			warlock.AddStat(stats.SpellPower, bonus)
 			//TODO : pet buffs influence
@@ -124,13 +123,6 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		warlock.registerGlyphOfLifeTapAura()
 	}
-}
-
-func (warlock *Warlock) masterDemonologistFireCrit() float64 {
-	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
-}
-func (warlock *Warlock) masterDemonologistShadowCrit() float64 {
-	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -378,7 +370,7 @@ func (warlock *Warlock) setupMoltenCore() {
 		ActionID:  core.ActionID{SpellID: 71165},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
-		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == warlock.Incinerate || spell == warlock.SoulFire {
 				aura.RemoveStack(sim)
 			}
@@ -396,8 +388,7 @@ func (warlock *Warlock) setupMoltenCore() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label: "Molten Core Hidden Aura",
-		// ActionID: core.ActionID{SpellID: 47247},
+		Label:    "Molten Core Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -484,9 +475,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	actionID := core.ActionID{SpellID: 54118}
 	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
 	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
-
 	var replTargets []*core.Character
-	core.InitReplenishmentAuras(warlock.GetCharacter(), actionID)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Improved Soul Leech Hidden Aura",
@@ -502,8 +491,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
 						replTargets = core.ReplenishmentAuraTargetting(warlock.GetCharacter())
 						for _, char := range replTargets {
-							if char != nil {
-								char.ReplenishmentAura.Activate(sim)
+							if !(char == nil) {
+								core.ReplenishmentAura(char, actionID).Activate(sim)
 							}
 						}
 					}
