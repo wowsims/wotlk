@@ -123,17 +123,15 @@ var fireElementalPetBaseStats = stats.Stats{
 	stats.SpellPower:  995,  //Estimated
 	stats.AttackPower: 1369, //Estimated
 
-	// TODO : No idea what his melee crit is, he does not seem to gain any crit from owner,
-	// probably has base agility that provides some crit.
-	// Stole from spirit wolves.
-	stats.MeleeCrit: (1.1515 + 1.8) * core.CritRatingPerCritChance,
+	// TODO : Log digging and my own samples this seems to be around the 5% mark.
+	stats.MeleeCrit: (5 + 1.8) * core.CritRatingPerCritChance,
 	stats.SpellCrit: 2.61 * core.CritRatingPerCritChance,
 }
 
 func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerSpellHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
-		spellHitRatingFromOwner := math.Floor(ownerSpellHitChance) * core.SpellHitRatingPerHitChance
+		spellHitRatingFromOwner := ownerSpellHitChance * core.SpellHitRatingPerHitChance
 
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
@@ -144,11 +142,13 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 			stats.SpellPower:  ownerStats[stats.SpellPower] * 0.5218,
 			stats.AttackPower: ownerStats[stats.SpellPower] * 4.45,
 
+			// TODO tested useing pre-patch lvl 70 stats need to confirm in WOTLK at 80.
+			stats.MeleeHit: hitRatingFromOwner,
+			stats.SpellHit: spellHitRatingFromOwner,
+
 			/*
-				TODO these need to be confirmed borrowed from Hunter/Warlock pets.
+				TODO these need to be confirmed borrowed from Hunter pets
 			*/
-			stats.MeleeHit:  hitRatingFromOwner / 2,
-			stats.SpellHit:  spellHitRatingFromOwner,
 			stats.Expertise: math.Floor((math.Floor(ownerHitChance/2) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
