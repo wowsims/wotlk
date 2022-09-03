@@ -378,7 +378,7 @@ func (warlock *Warlock) setupMoltenCore() {
 		ActionID:  core.ActionID{SpellID: 71165},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == warlock.Incinerate || spell == warlock.SoulFire {
 				aura.RemoveStack(sim)
 			}
@@ -396,7 +396,8 @@ func (warlock *Warlock) setupMoltenCore() {
 	})
 
 	warlock.RegisterAura(core.Aura{
-		Label:    "Molten Core Hidden Aura",
+		Label: "Molten Core Hidden Aura",
+		// ActionID: core.ActionID{SpellID: 47247},
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)

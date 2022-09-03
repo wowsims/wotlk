@@ -32,7 +32,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				Label:    "Demonic Soul",
 				ActionID: core.ActionID{SpellID: 61595},
 				Duration: time.Second * 10,
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
 						aura.Deactivate(sim)
 					}
@@ -48,7 +48,8 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 			})
 
 			warlock.RegisterAura(core.Aura{
-				Label:    "2pT7 Hidden Aura",
+				Label: "2pT7 Hidden Aura",
+				// ActionID: core.ActionID{SpellID: 60170},
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
