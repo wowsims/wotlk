@@ -12,6 +12,7 @@ message SimSettings {
 	int32 phase = 2;
 	int64 fixed_rng_seed = 3;
 	bool show_threat_metrics = 4;
+	bool show_healing_metrics = 7;
 	bool show_experimental = 5;
 	Faction faction = 6;
 }
@@ -26,6 +27,7 @@ message IndividualSimSettings {
 	Player player = 3;
 	Encounter encounter = 4;
 	repeated double ep_weights = 6;
+	int32 target_dummies = 9;
 }
 
 // Local storage data for gear settings.

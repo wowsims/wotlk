@@ -17,6 +17,9 @@ export class Popup extends Component {
 		if (parent.closest('.hide-threat-metrics')) {
 			this.rootElem.classList.add('hide-threat-metrics');
 		}
+		if (parent.closest('.hide-healing-metrics')) {
+			this.rootElem.classList.add('hide-healing-metrics');
+		}
 
 		$(this.rootElem).bPopup({
 			onClose: () => this.rootElem.remove(),

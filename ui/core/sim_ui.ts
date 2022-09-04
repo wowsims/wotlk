@@ -69,6 +69,16 @@ export abstract class SimUI extends Component {
         updateShowThreatMetrics();
         this.sim.showThreatMetricsChangeEmitter.on(updateShowThreatMetrics);
 
+        const updateShowHealingMetrics = () => {
+            if (this.sim.getShowHealingMetrics()) {
+                this.rootElem.classList.remove('hide-healing-metrics');
+            } else {
+                this.rootElem.classList.add('hide-healing-metrics');
+            }
+        };
+        updateShowHealingMetrics();
+        this.sim.showHealingMetricsChangeEmitter.on(updateShowHealingMetrics);
+
         const updateShowExperimental = () => {
             if (this.sim.getShowExperimental()) {
                 this.rootElem.classList.remove('hide-experimental');

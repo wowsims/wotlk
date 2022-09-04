@@ -30,6 +30,7 @@ func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
 
 type StatWeightsResult struct {
 	Dps  StatWeightValues
+	Hps  StatWeightValues
 	Tps  StatWeightValues
 	Dtps StatWeightValues
 }
@@ -37,6 +38,7 @@ type StatWeightsResult struct {
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
 		Dps:  swr.Dps.ToProto(),
+		Hps:  swr.Dps.ToProto(),
 		Tps:  swr.Tps.ToProto(),
 		Dtps: swr.Dtps.ToProto(),
 	}
@@ -68,6 +70,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		return StatWeightsResult{}
 	}
 	baselineDpsMetrics := baselineResult.RaidMetrics.Parties[0].Players[0].Dps
+	baselineHpsMetrics := baselineResult.RaidMetrics.Parties[0].Players[0].Hps
 	baselineTpsMetrics := baselineResult.RaidMetrics.Parties[0].Players[0].Threat
 	baselineDtpsMetrics := baselineResult.RaidMetrics.Parties[0].Players[0].Dtps
 
@@ -78,6 +81,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	resultHigh := StatWeightsResult{}
 	dpsHistsLow := [stats.Len]map[int32]int32{}
 	dpsHistsHigh := [stats.Len]map[int32]int32{}
+	hpsHistsLow := [stats.Len]map[int32]int32{}
+	hpsHistsHigh := [stats.Len]map[int32]int32{}
 	tpsHistsLow := [stats.Len]map[int32]int32{}
 	tpsHistsHigh := [stats.Len]map[int32]int32{}
 	dtpsHistsLow := [stats.Len]map[int32]int32{}
@@ -133,30 +138,38 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			panic("Stat weights error: " + errorStr)
 		}
 		dpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dps
+		hpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Hps
 		tpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Threat
 		dtpsMetrics := simResult.RaidMetrics.Parties[0].Players[0].Dtps
 		dpsDiff := (dpsMetrics.Avg - baselineDpsMetrics.Avg) / value
+		hpsDiff := (hpsMetrics.Avg - baselineHpsMetrics.Avg) / value
 		tpsDiff := (tpsMetrics.Avg - baselineTpsMetrics.Avg) / value
 		dtpsDiff := -(dtpsMetrics.Avg - baselineDtpsMetrics.Avg) / value
 
 		if isLow {
 			resultLow.Dps.Weights[stat] = dpsDiff
+			resultLow.Hps.Weights[stat] = hpsDiff
 			resultLow.Tps.Weights[stat] = tpsDiff
 			resultLow.Dtps.Weights[stat] = dtpsDiff
 			resultLow.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
+			resultLow.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
 			resultLow.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
 			resultLow.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
 			dpsHistsLow[stat] = dpsMetrics.Hist
+			hpsHistsLow[stat] = hpsMetrics.Hist
 			tpsHistsLow[stat] = tpsMetrics.Hist
 			dtpsHistsLow[stat] = dtpsMetrics.Hist
 		} else {
 			resultHigh.Dps.Weights[stat] = dpsDiff
+			resultHigh.Hps.Weights[stat] = tpsDiff
 			resultHigh.Tps.Weights[stat] = tpsDiff
 			resultHigh.Dtps.Weights[stat] = dtpsDiff
 			resultHigh.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
+			resultHigh.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
 			resultHigh.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
 			resultHigh.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
 			dpsHistsHigh[stat] = dpsMetrics.Hist
+			hpsHistsHigh[stat] = hpsMetrics.Hist
 			tpsHistsHigh[stat] = tpsMetrics.Hist
 			dtpsHistsHigh[stat] = dtpsMetrics.Hist
 		}
@@ -247,6 +260,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] >= spellHitCap {
 				statModsLow[stat] = statModsHigh[stat]
 				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
+				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
 				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
 				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
 			}
@@ -254,6 +268,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] >= melee2HHitCap {
 				statModsLow[stat] = statModsHigh[stat]
 				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
+				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
 				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
 				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
 			}
@@ -268,10 +283,12 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		}
 
 		result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat] + resultHigh.Dps.Weights[stat]) / 2
+		result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat] + resultHigh.Hps.Weights[stat]) / 2
 		result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat] + resultHigh.Tps.Weights[stat]) / 2
 		result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat] + resultHigh.Dtps.Weights[stat]) / 2
 
 		result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat] + resultHigh.Dps.WeightsStdev[stat]) / 2
+		result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat] + resultHigh.Hps.WeightsStdev[stat]) / 2
 		result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat] + resultHigh.Tps.WeightsStdev[stat]) / 2
 		result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2
 	}
@@ -284,6 +301,9 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 		result.Dps.EpValues[stat] = result.Dps.Weights[stat] / result.Dps.Weights[referenceStat]
 		result.Dps.EpValuesStdev[stat] = result.Dps.WeightsStdev[stat] / math.Abs(result.Dps.Weights[referenceStat])
+
+		result.Hps.EpValues[stat] = result.Hps.Weights[stat] / result.Hps.Weights[referenceStat]
+		result.Hps.EpValuesStdev[stat] = result.Hps.WeightsStdev[stat] / math.Abs(result.Hps.Weights[referenceStat])
 
 		result.Tps.EpValues[stat] = result.Tps.Weights[stat] / result.Tps.Weights[referenceStat]
 		result.Tps.EpValuesStdev[stat] = result.Tps.WeightsStdev[stat] / math.Abs(result.Tps.Weights[referenceStat])
