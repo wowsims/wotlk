@@ -1205,6 +1205,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
 			epWeights: this.player.getEpWeights().asArray(),
+			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
 
@@ -1240,6 +1241,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
 			this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
 			this.sim.raid.setTanks(eventID, settings.tanks || []);
+			this.sim.raid.setTargetDummies(eventID, settings.targetDummies);
 			const party = this.player.getParty();
 			if (party) {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());

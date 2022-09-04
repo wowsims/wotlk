@@ -99,7 +99,7 @@ const layoutHTML = `
 			<div class="dr-row topline-results">
 			</div>
 			<div class="dr-row single-player-only">
-				<div class="healing-metrics">
+				<div class="healing-spell-metrics">
 				</div>
 			</div>
 			<div class="dr-row hps-histogram">
@@ -167,7 +167,7 @@ const resultsFilter = new ResultsFilter({
 const castMetrics = new CastMetricsTable({ parent: document.body.getElementsByClassName('cast-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const meleeMetrics = new MeleeMetricsTable({ parent: document.body.getElementsByClassName('melee-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const spellMetrics = new SpellMetricsTable({ parent: document.body.getElementsByClassName('spell-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
-const healingMetrics = new HealingMetricsTable({ parent: document.body.getElementsByClassName('healing-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
+const healingMetrics = new HealingMetricsTable({ parent: document.body.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const resourceMetrics = new ResourceMetricsTable({ parent: document.body.getElementsByClassName('resource-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const playerDamageMetrics = new PlayerDamageMetricsTable({ parent: document.body.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings }, resultsFilter);
 const buffAuraMetrics = new AuraMetricsTable({

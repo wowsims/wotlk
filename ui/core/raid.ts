@@ -174,6 +174,7 @@ export class Raid {
             buffs: this.getBuffs(),
             debuffs: this.getDebuffs(),
             tanks: this.getTanks(),
+						targetDummies: this.getTargetDummies(),
         });
     }
 
@@ -182,6 +183,7 @@ export class Raid {
             this.setBuffs(eventID, proto.buffs || RaidBuffs.create());
             this.setDebuffs(eventID, proto.debuffs || Debuffs.create());
             this.setTanks(eventID, proto.tanks);
+						this.setTargetDummies(eventID, proto.targetDummies);
 
             for (let i = 0; i < MAX_NUM_PARTIES; i++) {
                 if (proto.parties[i]) {

@@ -28,6 +28,9 @@
 .results-sim-dps .topline-result-avg:after {
   content: " DPS";
 }
+.results-sim-hps .topline-result-avg:after {
+  content: " HPS";
+}
 .results-sim-tps .topline-result-avg:after {
   content: " TPS";
 }

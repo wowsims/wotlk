@@ -60,7 +60,12 @@ func (hpriest *HealingPriest) GetPriest() *priest.Priest {
 }
 
 func (hpriest *HealingPriest) Initialize() {
-	hpriest.CurrentTarget = &hpriest.Env.Raid.GetFirstTargetDummy().Unit
+	firstDummy := hpriest.Env.Raid.GetFirstTargetDummy()
+	if firstDummy == nil {
+		hpriest.CurrentTarget = &hpriest.Unit
+	} else {
+		hpriest.CurrentTarget = &firstDummy.Unit
+	}
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
 

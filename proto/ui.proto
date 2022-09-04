@@ -27,6 +27,7 @@ message IndividualSimSettings {
 	Player player = 3;
 	Encounter encounter = 4;
 	repeated double ep_weights = 6;
+	int32 target_dummies = 9;
 }
 
 // Local storage data for gear settings.
