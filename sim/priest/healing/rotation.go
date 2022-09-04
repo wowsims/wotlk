@@ -18,5 +18,9 @@ func (hpriest *HealingPriest) tryUseGCD(sim *core.Simulation) {
 }
 
 func (hpriest *HealingPriest) chooseSpell(sim *core.Simulation) *core.Spell {
-	return hpriest.GreaterHeal
+	if !hpriest.RenewHots[hpriest.CurrentTarget.UnitIndex].IsActive() {
+		return hpriest.Renew
+	} else {
+		return hpriest.GreaterHeal
+	}
 }

@@ -7,11 +7,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (priest *Priest) registerGreaterHealSpell() {
-	baseCost := .32 * priest.BaseMana
+func (priest *Priest) registerFlashHealSpell() {
+	baseCost := .18 * priest.BaseMana
 
-	priest.GreaterHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48063},
+	priest.FlashHeal = priest.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 48071},
 		SpellSchool: core.SpellSchoolHoly,
 
 		ResourceType: stats.Mana,
@@ -19,10 +19,10 @@ func (priest *Priest) registerGreaterHealSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - .05*float64(priest.Talents.ImprovedHealing)),
+				Cost: baseCost * (1 - .05*float64(priest.Talents.ImprovedFlashHeal)),
 
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
+				CastTime: time.Millisecond * 1500,
 			},
 		},
 
@@ -34,7 +34,7 @@ func (priest *Priest) registerGreaterHealSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-			BaseDamage:     core.BaseDamageConfigHealing(3980, 4621, 1.6114+0.08*float64(priest.Talents.EmpoweredHealing)),
+			BaseDamage:     core.BaseDamageConfigHealing(1896, 2203, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
 			OutcomeApplier: priest.OutcomeFuncMagicCrit(priest.DefaultSpellCritMultiplier()),
 		}),
 	})

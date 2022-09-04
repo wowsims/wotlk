@@ -32,6 +32,7 @@ type Priest struct {
 	SurgeOfLightProcAura *core.Aura
 
 	DevouringPlague *core.Spell
+	FlashHeal       *core.Spell
 	GreaterHeal     *core.Spell
 	HolyFire        *core.Spell
 	InnerFocus      *core.Spell
@@ -40,6 +41,7 @@ type Priest struct {
 	MindFlay        []*core.Spell
 	MindSear        []*core.Spell
 	Penance         *core.Spell
+	Renew           *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
@@ -54,6 +56,8 @@ type Priest struct {
 	MindSearDot        []*core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
+
+	RenewHots []*core.Dot
 
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
@@ -157,7 +161,9 @@ func (priest *Priest) Initialize() {
 }
 
 func (priest *Priest) RegisterHealingSpells() {
+	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
+	priest.registerRenewSpell()
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
