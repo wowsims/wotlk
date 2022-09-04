@@ -11,7 +11,7 @@ func (priest *Priest) registerGreaterHealSpell() {
 	baseCost := .32 * priest.BaseMana
 
 	priest.GreaterHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 42842},
+		ActionID:    core.ActionID{SpellID: 48063},
 		SpellSchool: core.SpellSchoolHoly,
 
 		ResourceType: stats.Mana,
