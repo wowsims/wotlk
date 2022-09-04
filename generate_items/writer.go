@@ -324,6 +324,7 @@ var allowList = map[int]bool{
 	17111: true, // Blazefury Medallion
 	17112: true, // Empyrean Demolisher
 	19808: true, // Rockhide Strongfish
+	20837: true, // Sunstrider Axe
 	20966: true, // Jade Pendant of Blasting
 	22395: true, // Totem of Rage
 	23198: true, // Idol of Brutality
@@ -344,6 +345,7 @@ var allowList = map[int]bool{
 	6360:  true, // Steelscale Crushfish
 	8345:  true, // Wolfshead Helm
 	28032: true, // Delicate Green Poncho
+	29996: true, // Rod of the Sun King
 	32387: true, // Idol of the Raven Goddess
 	32658: true, // Badge of Tenacity
 	33504: true, // Libram of Divine Purpose
