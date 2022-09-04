@@ -22,6 +22,7 @@ func (priest *Priest) ApplyTalents() {
 	priest.PseudoStats.FrostDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.NatureDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.ShadowDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.HealingDealtMultiplier *= 1 + .01*float64(priest.Talents.BlessedResilience)
 
 	if priest.Talents.Shadowform {
 		priest.PseudoStats.ShadowDamageDealtMultiplier *= 1.15

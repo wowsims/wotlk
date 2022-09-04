@@ -19,10 +19,10 @@ func (priest *Priest) registerGreaterHealSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost * (1 - .05*float64(priest.Talents.ImprovedHealing)),
 
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.HolySpecialization),
+				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},
 		},
 
@@ -30,6 +30,7 @@ func (priest *Priest) registerGreaterHealSpell() {
 			IsHealing: true,
 			ProcMask:  core.ProcMaskSpellDamage,
 
+			BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
