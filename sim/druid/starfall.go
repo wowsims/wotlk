@@ -20,8 +20,7 @@ func (druid *Druid) registerStarfallSpell() {
 	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
-	// Improved Faerie Fire and Nature's Majesty
-	iffCritBonus := core.TernaryFloat64(druid.CurrentTarget.HasAura("Improved Faerie Fire"), druid.TalentsBonuses.iffBonusCrit, 0)
+	// Nature's Majesty
 	naturesMajestyCritBonus := druid.TalentsBonuses.naturesMajestyBonusCrit
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
@@ -73,7 +72,12 @@ func (druid *Druid) registerStarfallSpell() {
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
+			BonusCritRating:  naturesMajestyCritBonus,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if druid.FaerieFireAura.IsActive() {
+					spellEffect.BonusCritRating = naturesMajestyCritBonus + core.CritRatingPerCritChance*float64(druid.Talents.ImprovedFaerieFire)
+				}
+			},
 		})),
 	})
 
@@ -92,7 +96,12 @@ func (druid *Druid) registerStarfallSpell() {
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-			BonusCritRating:  iffCritBonus + naturesMajestyCritBonus,
+			BonusCritRating:  naturesMajestyCritBonus,
+			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if druid.FaerieFireAura.IsActive() {
+					spellEffect.BonusCritRating = naturesMajestyCritBonus + core.CritRatingPerCritChance*float64(druid.Talents.ImprovedFaerieFire)
+				}
+			},
 		})),
 	})
 }

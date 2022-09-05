@@ -18,8 +18,10 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	baseCost := 0.07 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskRangedSpecial,
-		BonusCritRating: 2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
+		ProcMask:       core.ProcMaskRangedSpecial,
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
 			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

@@ -1,10 +1,11 @@
 package druid
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 type Druid struct {
@@ -70,6 +71,8 @@ type Druid struct {
 	NaturesSwiftnessAura *core.Aura
 	TigersFuryAura       *core.Aura
 	SavageRoarAura       *core.Aura
+	SolarEclipseProcAura *core.Aura
+	LunarEclipseProcAura *core.Aura
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 
@@ -120,7 +123,6 @@ func (druid *Druid) RegisterTalentsBonuses() {
 		moonfuryMultiplier:      []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury],
 		genesisMultiplier:       1 + 0.01*float64(druid.Talents.Genesis),
 		moonglowMultiplier:      1 - 0.03*float64(druid.Talents.Moonglow),
-		iffBonusCrit:            float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance,
 		naturesMajestyBonusCrit: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
 		vengeanceModifier:       0.2 * float64(druid.Talents.Vengeance),
 		naturesSplendorTick:     core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
@@ -287,28 +289,30 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:    6892, // 8227 health shown on naked character (would include tauren bonus)
-		stats.Strength:  94,
-		stats.Agility:   78,
-		stats.Stamina:   99,
-		stats.Intellect: 139,
-		stats.Spirit:    161,
-		stats.Mana:      3496,                                // 5301 mana shown on naked character
-		stats.SpellCrit: 1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.MeleeCrit: 7.48 * core.CritRatingPerCritChance, // 8.41% chance to crit shown on naked character screen
-		stats.Dodge:     5.59 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      6892, // 8227 health shown on naked character (would include tauren bonus)
+		stats.Strength:    94,
+		stats.Agility:     78,
+		stats.Stamina:     99,
+		stats.Intellect:   139,
+		stats.Spirit:      161,
+		stats.Mana:        3496,                                // 5301 mana shown on naked character
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.41% chance to crit shown on naked character screen
+		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
+		stats.AttackPower: -20,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:    7237, // 8217 health shown on naked character
-		stats.Strength:  85,
-		stats.Agility:   86,
-		stats.Stamina:   98,
-		stats.Intellect: 143,
-		stats.Spirit:    159,
-		stats.Mana:      3496,                                // 5361 mana shown on naked character
-		stats.SpellCrit: 1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.MeleeCrit: 7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
-		stats.Dodge:     5.59 * core.DodgeRatingPerDodgeChance,
+		stats.Health:      7237, // 8217 health shown on naked character
+		stats.Strength:    85,
+		stats.Agility:     86,
+		stats.Stamina:     98,
+		stats.Intellect:   143,
+		stats.Spirit:      159,
+		stats.Mana:        3496,                                // 5361 mana shown on naked character
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
+		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
+		stats.AttackPower: -20,
 	}
 }
 

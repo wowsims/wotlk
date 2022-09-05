@@ -61,15 +61,9 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	relentlessStrikes := rogue.Talents.RelentlessStrikes
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
 
-	netherblade4pc := rogue.HasSetBonus(ItemSetNetherblade, 4)
-	netherblade4pcMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 37168})
-
 	return func(sim *core.Simulation, numPoints int32) {
 		if ruthlessnessChance > 0 && sim.RandomFloat("Ruthlessness") < ruthlessnessChance {
 			rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
-		}
-		if netherblade4pc && sim.RandomFloat("Netherblade 4pc") < 0.15 {
-			rogue.AddComboPoints(sim, 1, netherblade4pcMetrics)
 		}
 		if relentlessStrikes > 0 {
 			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(relentlessStrikes)*float64(numPoints) {
@@ -82,7 +76,6 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
 	builderCostMultiplier := 1.0
 	costReduction := 40.0
-	hasDeathmantle := rogue.HasSetBonus(ItemSetDeathmantle, 4)
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
 		builderCostMultiplier -= 0.05
 	}
@@ -90,13 +83,6 @@ func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core
 		costMultiplier := 1.0
 		if spell.Flags.Matches(SpellFlagBuilder) {
 			costMultiplier *= builderCostMultiplier
-		}
-		if spell.Flags.Matches(SpellFlagFinisher) {
-			if hasDeathmantle && rogue.DeathmantleProcAura.IsActive() {
-				cast.Cost = 0
-				rogue.DeathmantleProcAura.Deactivate(sim)
-				return
-			}
 		}
 		cast.Cost *= costMultiplier
 		cast.Cost = math.Ceil(cast.Cost)
@@ -166,19 +152,35 @@ func (rogue *Rogue) registerColdBloodCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 14177}
+	var affectedSpells []*core.Spell
 
 	coldBloodAura := rogue.RegisterAura(core.Aura{
 		Label:    "Cold Blood",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
+					affectedSpells = append(affectedSpells, spell)
+				}
+			}
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 += 100 * core.CritRatingPerCritChance
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.BonusCritRatingAgentReserved1 -= 100 * core.CritRatingPerCritChance
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			aura.Deactivate(sim)
+			for _, affectedSpell := range affectedSpells {
+				if spell == affectedSpell {
+					aura.Deactivate(sim)
+				}
+			}
 		},
 	})
 

@@ -9,15 +9,14 @@ func (hpriest *HealingPriest) OnGCDReady(sim *core.Simulation) {
 }
 
 func (hpriest *HealingPriest) tryUseGCD(sim *core.Simulation) {
-	hpriest.DoNothing()
-	//var spell *core.Spell
-	//spell = hpriest.chooseSpell(sim)
+	var spell *core.Spell
+	spell = hpriest.chooseSpell(sim)
 
-	//if success := spell.Cast(sim, hpriest.CurrentTarget); !success {
-	//	hpriest.WaitForMana(sim, spell.CurCast.Cost)
-	//}
+	if success := spell.Cast(sim, hpriest.CurrentTarget); !success {
+		hpriest.WaitForMana(sim, spell.CurCast.Cost)
+	}
 }
 
 func (hpriest *HealingPriest) chooseSpell(sim *core.Simulation) *core.Spell {
-	return nil
+	return hpriest.GreaterHeal
 }

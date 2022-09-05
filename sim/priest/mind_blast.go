@@ -12,12 +12,12 @@ func (priest *Priest) registerMindBlastSpell() {
 	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
 	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellHitRating:  0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
-		BonusSpellCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		DamageMultiplier:     1,
-		ThreatMultiplier:     1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		OutcomeApplier:       priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
+		ProcMask:         core.ProcMaskSpellDamage,
+		BonusHitRating:   0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
+		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		OutcomeApplier:   priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)

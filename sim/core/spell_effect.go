@@ -29,13 +29,17 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Bonus stats to be added to the spell.
-	BonusSpellHitRating  float64
-	BonusSpellPower      float64
-	BonusSpellCritRating float64
-
+	BonusSpellPower     float64
 	BonusArmorPenRating float64
 	BonusAttackPower    float64
+	BonusHitRating      float64
 	BonusCritRating     float64
+
+	// Used only for dot snapshotting. Internal-only.
+	bonusSpellCritRating float64
+
+	// Use snapshotted values for crit/damage rather than recomputing them.
+	isSnapshot bool
 
 	// Additional multiplier that is always applied, for damage effects.
 	DamageMultiplier float64
@@ -123,10 +127,6 @@ func (spellEffect *SpellEffect) MeleeAttackPower(unit *Unit) float64 {
 	return unit.stats[stats.AttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
 }
 
-func (spellEffect *SpellEffect) MeleeAttackPowerOnTarget() float64 {
-	return spellEffect.Target.PseudoStats.BonusMeleeAttackPowerTaken
-}
-
 func (spellEffect *SpellEffect) RangedAttackPower(unit *Unit) float64 {
 	return unit.stats[stats.RangedAttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
 }
@@ -150,66 +150,68 @@ func (spellEffect *SpellEffect) ExpertisePercentage(unit *Unit) float64 {
 }
 
 func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *AttackTable) float64 {
-	hitRating := unit.stats[stats.MeleeHit] + spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
-
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		hitRating += unit.PseudoStats.BonusRangedHitRating
-	}
+	hitRating := unit.stats[stats.MeleeHit] +
+		spellEffect.BonusHitRating +
+		spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
 	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
 
 func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
+	critRating := 0.0
+	if spellEffect.isSnapshot {
+		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
+		// ignoring units real time crit in this case
+		critRating = spellEffect.BonusCritRating
+	} else {
+		critRating = spellEffect.physicalCritRating(unit, spell)
+	}
+
+	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
+}
+func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) float64 {
 	critRating := unit.stats[stats.MeleeCrit] +
 		spellEffect.BonusCritRating +
 		spell.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
-		critRating += unit.PseudoStats.BonusRangedCritRating
-	} else {
-		critRating += unit.PseudoStats.BonusMeleeCritRating
-		if spellEffect.ProcMask.Matches(ProcMaskMeleeSpecial) {
-			critRating += unit.PseudoStats.BonusMeleeSpellCritRating
-		}
-	}
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		critRating += unit.PseudoStats.BonusCritRatingAgentReserved1
-	}
 	if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
 		critRating += unit.PseudoStats.BonusMHCritRating
 	} else if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
 		critRating += unit.PseudoStats.BonusOHCritRating
 	}
-
-	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
+	return critRating
 }
 
 func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 	return unit.GetStat(stats.SpellPower) + unit.GetStat(spell.SpellSchool.Stat()) + unit.PseudoStats.MobTypeSpellPower + spellEffect.BonusSpellPower
 }
 
+func (spellEffect *SpellEffect) SpellHitChance(spell *Spell) float64 {
+	hitRating := spell.Unit.stats[stats.SpellHit] +
+		spellEffect.BonusHitRating +
+		spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken
+
+	return hitRating / (SpellHitRatingPerHitChance * 100)
+}
+
 func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
 	critRating := 0.0
-	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
-	// ignoring units real time crit in this case
-	if spellEffect.IsPeriodic {
-		critRating += (spellEffect.BonusSpellCritRating) + (spellEffect.BonusCritRating)
+	if spellEffect.isSnapshot {
+		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
+		// ignoring units real time crit in this case
+		critRating = spellEffect.bonusSpellCritRating
 	} else {
-		critRating += unit.GetStat(stats.SpellCrit) +
-			spellEffect.BonusSpellCritRating +
-			spellEffect.BonusCritRating +
-			unit.PseudoStats.BonusSpellCritRating +
-			spellEffect.Target.PseudoStats.BonusCritRatingTaken +
-			spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken +
-			spell.BonusCritRating
+		critRating = spellEffect.spellCritRating(unit, spell)
 	}
 
-	if spell.SpellSchool.Matches(SpellSchoolFire) {
-		critRating += unit.PseudoStats.BonusFireCritRating
-	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		critRating += unit.PseudoStats.BonusShadowCritRating
-	}
 	return critRating / (CritRatingPerCritChance * 100)
+}
+func (spellEffect *SpellEffect) spellCritRating(unit *Unit, spell *Spell) float64 {
+	return unit.stats[stats.SpellCrit] +
+		spell.BonusCritRating +
+		spellEffect.BonusCritRating +
+		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
+		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 }
 
 func (spellEffect *SpellEffect) HealingPower(unit *Unit, _ *Spell) float64 {
@@ -220,10 +222,9 @@ func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) floa
 	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 	// ignoring units real time crit in this case
 	if spellEffect.IsPeriodic {
-		critRating += (spellEffect.BonusSpellCritRating) + (spellEffect.BonusCritRating)
+		critRating += spellEffect.BonusCritRating
 	} else {
 		critRating += unit.GetStat(stats.SpellCrit) +
-			spellEffect.BonusSpellCritRating +
 			spellEffect.BonusCritRating +
 			spell.BonusCritRating
 	}
@@ -390,7 +391,7 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	}
 
 	// For dot snapshots, everything has already been stored in spellEffect.DamageMultiplier.
-	if spellEffect.IsPeriodic {
+	if spellEffect.isSnapshot {
 		spellEffect.Damage *= spellEffect.DamageMultiplier
 		return
 	}
@@ -432,9 +433,6 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
-	}
-	if spell.Flags.Matches(SpellFlagAgentReserved1) {
-		multiplier *= attacker.PseudoStats.AgentReserved1DamageDealtMultiplier
 	}
 	if spell.Flags.Matches(SpellFlagDisease) {
 		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier

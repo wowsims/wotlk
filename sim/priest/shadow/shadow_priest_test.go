@@ -19,10 +19,7 @@ func TestShadow(t *testing.T) {
 		Race:       proto.Race_RaceUndead,
 		OtherRaces: []proto.Race{proto.Race_RaceNightElf, proto.Race_RaceDraenei},
 
-		GearSet: core.GearSetCombo{Label: "P3", GearSet: P3Gear},
-		OtherGearSets: []core.GearSetCombo{
-			core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Ideal", SpecOptions: PlayerOptionsIdeal},
 		OtherSpecOptions: []core.SpecOptionsCombo{

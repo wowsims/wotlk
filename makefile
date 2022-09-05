@@ -2,8 +2,8 @@ OUT_DIR := dist/wotlk
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)
 ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
-# Recursive wildcard function
-rwildcard := $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+# Recursive wildcard function. Needs to be '=' instead of ':=' because of recursion.
+rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 GOROOT := $(shell go env GOROOT)
 UI_SRC := $(shell find ui -name '*.ts' -o -name '*.scss' -o -name '*.html')
 HTML_INDECIES := ui/balance_druid/index.html \

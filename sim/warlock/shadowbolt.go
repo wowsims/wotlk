@@ -24,8 +24,11 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.CritRatingPerCritChance * 5 * (core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 1, 0) + core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 1, 0)),
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		MissileSpeed:     20,

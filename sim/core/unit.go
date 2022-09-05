@@ -126,6 +126,7 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+	defaultTarget *Unit
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -387,6 +388,7 @@ func (unit *Unit) finalize() {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}
 
+	unit.defaultTarget = unit.CurrentTarget
 	unit.applyParryHaste()
 	unit.updateCastSpeed()
 
@@ -456,4 +458,14 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 		spell.doneIteration()
 	}
 	unit.resetCDs(sim)
+}
+
+func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
+	var spells []*Spell
+	for _, spell := range unit.Spellbook {
+		if spell.SpellSchool.Matches(school) {
+			spells = append(spells, spell)
+		}
+	}
+	return spells
 }

@@ -63,6 +63,7 @@ type Warrior struct {
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell
+	Bladestorm           *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -185,9 +186,9 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 	warrior.PseudoStats.CanParry = true
 
 	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
-	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/85.1)
+	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .05) // 5% block from str
+	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
 
 	return warrior
 }
@@ -218,7 +219,7 @@ func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 }
 
 func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
-	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * coeff
+	return hitEffect.MeleeAttackPower(unit) * coeff
 }
 
 func init() {

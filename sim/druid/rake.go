@@ -42,7 +42,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 176 + 0.01*(hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
+					damage := 176 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {

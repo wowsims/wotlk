@@ -103,11 +103,6 @@ func init() {
 		character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
 	})
 
-	core.NewItemEffect(41167, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		character.PseudoStats.BonusRangedCritRating += 40
-	})
-
 	core.NewItemEffect(42500, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 42500}
