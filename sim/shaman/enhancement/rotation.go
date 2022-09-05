@@ -8,9 +8,6 @@ import (
 )
 
 func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	// if enh.GCD.IsReady(sim) {
-	// 	enh.tryUseGCD(sim)
-	// }
 }
 
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
@@ -18,6 +15,7 @@ func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 }
 
 func (enh *EnhancementShaman) tryUseGCD(sim *core.Simulation) {
+	// TODO move this into the rotation
 	if enh.TryDropTotems(sim) {
 		return
 	}
@@ -29,7 +27,42 @@ type Rotation interface {
 	Reset(*EnhancementShaman, *core.Simulation)
 }
 
+// PRIORITY ROTATION (default)
+func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
+	target := enh.CurrentTarget
+
+	upcomingCD := enh.AutoAttacks.NextAttackAt()
+	var cast Cast
+	for _, spell := range rotation.spellPriority {
+		if spell.condition(sim, target) && spell.cast(sim, target) {
+			return
+		}
+
+		readyAt := spell.readyAt()
+		if readyAt > sim.CurrentTime && upcomingCD > readyAt {
+			upcomingCD = readyAt
+			cast = spell.cast
+		}
+	}
+
+	enh.WaitUntil(sim, upcomingCD)
+
+	if cast != nil {
+		enh.HardcastWaitUntil(sim, upcomingCD, func(sim *core.Simulation, target *core.Unit) {
+			enh.GCD.Reset()
+			cast(sim, target)
+		})
+	}
+}
+
+func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+
+}
+
+// The amont of spell in the priority array
 const prioritySize = 9
+
+//Default Priority Order
 const (
 	StormstrikeApplyDebuff = iota
 	LightningBolt
@@ -49,43 +82,13 @@ type PriorityRotation struct {
 
 type Cast func(sim *core.Simulation, target *core.Unit) bool
 type Condition func(sim *core.Simulation, target *core.Unit) bool
+type ReadyAt func() time.Duration
 
+//Holds all the spell info we need to make decisions
 type Spell struct {
-	readyAt   func() time.Duration
+	readyAt   ReadyAt
 	cast      Cast
 	condition Condition
-}
-
-// PRIORITY ROTATION (default)
-func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
-	target := enh.CurrentTarget
-
-	upcomingCD := enh.AutoAttacks.NextAttackAt()
-	var cast Cast
-	for _, spell := range rotation.spellPriority {
-		if spell.condition(sim, target) && spell.cast(sim, target) {
-			return
-		}
-
-		readyAt := spell.readyAt()
-		if readyAt > 0 && upcomingCD > readyAt {
-			upcomingCD = readyAt
-			cast = spell.cast
-		}
-	}
-
-	enh.WaitUntil(sim, upcomingCD)
-
-	if cast != nil {
-		enh.HardcastWaitUntil(sim, upcomingCD, func(sim *core.Simulation, target *core.Unit) {
-			enh.GCD.Reset()
-			cast(sim, target)
-		})
-	}
-}
-
-func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
-
 }
 
 func NewPriorityRotation(enh *EnhancementShaman, options *proto.EnhancementShaman_Rotation) *PriorityRotation {
@@ -128,7 +131,7 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 			return enh.Stormstrike.IsReady(sim)
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-
+			//TODO add in SS delay so we don't loose flametongues, if Last attack = current time
 			return enh.Stormstrike.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
@@ -210,6 +213,7 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 			return enh.LavaLash.IsReady(sim)
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			//TODO add in LL delay so we don't loose flametongues, if Last attack = current time
 			return enh.LavaLash.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
@@ -234,7 +238,6 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 //	CUSTOM ROTATION (advanced) (also WIP).
 //TODO: figure out how to do this (probably too complicated to copy hunters)
-
 type AgentAction interface {
 	GetActionID() core.ActionID
 
