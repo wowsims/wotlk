@@ -45,9 +45,12 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
+	//Lets wait on a upcoming CD or AutoAttack
 	enh.WaitUntil(sim, upcomingCD)
 
+	//Incase the next auto is our best CD then there are no spells to cast.
 	if cast != nil {
+		//We have a upcoming CD and we know what to cast lets just do that.
 		enh.HardcastWaitUntil(sim, upcomingCD, func(sim *core.Simulation, target *core.Unit) {
 			enh.GCD.Reset()
 			cast(sim, target)
