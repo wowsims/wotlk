@@ -165,6 +165,7 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			//TODO add in check for how much time we have left, IE we don't want to cast a FS with 4 seconds left.
 			return !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim)
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
