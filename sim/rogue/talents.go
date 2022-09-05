@@ -18,7 +18,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyFocusedAttacks()
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
-	rogue.AddStat(stats.MeleeHaste, core.HasteRatingPerHastePercent*[]float64{0, 3, 6, 10}[rogue.Talents.LightningReflexes])
+	rogue.PseudoStats.MeleeSpeedMultiplier *= (1.0 + []float64{0, 0.03, 0.06, 0.10}[rogue.Talents.LightningReflexes])
 	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
