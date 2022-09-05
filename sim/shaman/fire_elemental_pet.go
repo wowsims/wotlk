@@ -10,8 +10,8 @@ import (
 
 // Variables that control the Fire Elemental.
 const (
-	nFireBlastCasts = 15
-	nFireNovaCasts  = 15
+	maxFireBlastCasts = 15
+	maxFireNovaCasts  = 15
 )
 
 type FireElemental struct {
@@ -84,7 +84,7 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	fireBlastCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
 	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
 
-	if fireBlastCasts == nFireBlastCasts && fireNovaCasts == nFireNovaCasts {
+	if fireBlastCasts == maxFireBlastCasts && fireNovaCasts == maxFireNovaCasts {
 		fireElemental.CancelGCDTimer(sim)
 		return
 	}
@@ -95,13 +95,13 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if fireBlastCasts < nFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
+	if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
 		if fireElemental.FireBlast.Cast(sim, target) {
 			return
 		}
 	}
 
-	if fireNovaCasts < nFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+	if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
 		if fireElemental.FireNova.Cast(sim, target) {
 			return
 		}
@@ -110,8 +110,10 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	// Handle GCD down time.
 	if !fireElemental.FireBlast.IsReady(sim) {
 		fireElemental.WaitUntil(sim, fireElemental.FireBlast.CD.ReadyAt())
-	} else {
+	} else if !fireElemental.FireNova.IsReady(sim) {
 		fireElemental.WaitUntil(sim, fireElemental.FireNova.CD.ReadyAt())
+	} else {
+		fireElemental.WaitUntil(sim, fireElemental.AutoAttacks.NextAttackAt())
 	}
 }
 
