@@ -351,8 +351,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
-		warlock.ImmolationAura.IsReady(sim) {
-		warlock.ImmolationAura.Cast(sim, target)
+		warlock.ImmolationAura.IsReady(sim) && warlock.ImmolationAura.Cast(sim, target) {
+		return
 	}
 
 	// ------------------------------------------

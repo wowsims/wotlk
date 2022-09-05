@@ -94,6 +94,7 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
+				GCD:  core.GCDDefault,
 				Cost: baseCost,
 			},
 			CD: core.Cooldown{
