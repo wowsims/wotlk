@@ -92,13 +92,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-BeastLordArmor"
- value: {
-  dps: 4323.47353
-  tps: 3642.91437
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-BlackBowoftheBetrayer-32336"
  value: {
   dps: 5151.74487
@@ -110,13 +103,6 @@ dps_results: {
  value: {
   dps: 5505.71332
   tps: 4578.60146
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-Braxley'sBackyardMoonshine-35937"
- value: {
-  dps: 5468.10087
-  tps: 4649.0866
  }
 }
 dps_results: {
@@ -162,31 +148,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 5462.93579
-  tps: 4639.92801
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-Defender'sCode-40257"
  value: {
   dps: 5416.1479
   tps: 4597.59299
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-DemonStalkerArmor"
- value: {
-  dps: 4434.54345
-  tps: 3742.13826
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-DesolationBattlegear"
- value: {
-  dps: 4386.3566
-  tps: 3677.09152
  }
 }
 dps_results: {
@@ -243,13 +208,6 @@ dps_results: {
  value: {
   dps: 5497.46628
   tps: 4676.1931
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-FelstalkerArmor"
- value: {
-  dps: 5138.49293
-  tps: 4340.66491
  }
 }
 dps_results: {
@@ -323,13 +281,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-InfusedColdstoneRune-35935"
- value: {
-  dps: 5438.39698
-  tps: 4619.8979
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 5623.55854
@@ -358,31 +309,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-Mana-EtchedRegalia"
- value: {
-  dps: 4160.17245
-  tps: 3494.25112
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 5534.62559
   tps: 4701.14557
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-NetherscaleArmor"
- value: {
-  dps: 5175.64523
-  tps: 4381.09781
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-NetherstrikeArmor"
- value: {
-  dps: 5053.80749
-  tps: 4275.72677
  }
 }
 dps_results: {
@@ -421,13 +351,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-PrimalIntent"
- value: {
-  dps: 5132.82896
-  tps: 4349.88882
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-PurifiedShardoftheGods"
  value: {
   dps: 5416.1479
@@ -463,13 +386,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-RiftStalkerArmor"
- value: {
-  dps: 4595.90918
-  tps: 3865.18914
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-RuneofRepulsion-40372"
  value: {
   dps: 5416.1479
@@ -488,13 +404,6 @@ dps_results: {
  value: {
   dps: 5416.1479
   tps: 4597.59299
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-Serrah'sStar-37559"
- value: {
-  dps: 5437.32649
-  tps: 4619.57576
  }
 }
 dps_results: {
@@ -519,24 +428,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-SpellstrikeInfusion"
- value: {
-  dps: 4900.86946
-  tps: 4159.61684
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-StormshroudArmor"
  value: {
   dps: 4393.74766
   tps: 3717.20111
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-StrengthoftheClefthoof"
- value: {
-  dps: 4728.59166
-  tps: 3959.40667
  }
 }
 dps_results: {
@@ -565,13 +460,6 @@ dps_results: {
  value: {
   dps: 5403.30665
   tps: 4581.66004
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-TheTwinStars"
- value: {
-  dps: 5363.54484
-  tps: 4545.09452
  }
 }
 dps_results: {
@@ -624,31 +512,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestHunter-AllItems-WastewalkerArmor"
- value: {
-  dps: 4333.86557
-  tps: 3636.51758
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-WindhawkArmor"
- value: {
-  dps: 5032.97659
-  tps: 4260.93024
- }
-}
-dps_results: {
  key: "TestHunter-AllItems-Windrunner'sPursuit"
  value: {
   dps: 5747.81125
   tps: 4907.25361
- }
-}
-dps_results: {
- key: "TestHunter-AllItems-WrathofSpellfire"
- value: {
-  dps: 4873.05377
-  tps: 4116.70862
  }
 }
 dps_results: {

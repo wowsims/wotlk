@@ -85,13 +85,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-Braxley'sBackyardMoonshine-35937"
- value: {
-  dps: 4262.73361
-  tps: 3590.31337
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 4505.70575
@@ -131,13 +124,6 @@ dps_results: {
  value: {
   dps: 4243.34416
   tps: 3562.72914
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 4264.51093
-  tps: 3586.06219
  }
 }
 dps_results: {
@@ -274,13 +260,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-InfusedColdstoneRune-35935"
- value: {
-  dps: 4290.66947
-  tps: 3614.85285
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 4372.63329
@@ -320,13 +299,6 @@ dps_results: {
  value: {
   dps: 4229.94964
   tps: 3549.94872
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-Mana-EtchedRegalia"
- value: {
-  dps: 3420.67617
-  tps: 2854.62181
  }
 }
 dps_results: {
@@ -421,13 +393,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-Serrah'sStar-37559"
- value: {
-  dps: 4287.67322
-  tps: 3606.76301
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-ShinyShardoftheGods"
  value: {
   dps: 4239.60047
@@ -446,13 +411,6 @@ dps_results: {
  value: {
   dps: 4277.35486
   tps: 3595.34554
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-SpellstrikeInfusion"
- value: {
-  dps: 4038.84722
-  tps: 3399.77086
  }
 }
 dps_results: {
@@ -481,13 +439,6 @@ dps_results: {
  value: {
   dps: 4386.94619
   tps: 3687.19525
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-TheTwinStars"
- value: {
-  dps: 4241.84215
-  tps: 3571.32245
  }
 }
 dps_results: {
@@ -537,13 +488,6 @@ dps_results: {
  value: {
   dps: 4416.37341
   tps: 3712.12222
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-WrathofSpellfire"
- value: {
-  dps: 4093.90741
-  tps: 3439.85002
  }
 }
 dps_results: {

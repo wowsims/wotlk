@@ -64,16 +64,8 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 	}
 
-	if druid.Talents.ProtectorOfThePack > 0 {
-		bonus := 0.02 * float64(druid.Talents.ProtectorOfThePack)
-		if druid.InForm(Bear) {
-			druid.MultiplyStat(stats.AttackPower, 1.0+bonus)
-			druid.PseudoStats.DamageTakenMultiplier -= 0.04 * float64(druid.Talents.ProtectorOfThePack)
-		}
-	}
-
 	if druid.Talents.PrimalPrecision > 0 {
-		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision))
+		druid.AddStat(stats.Expertise, 5.0*float64(druid.Talents.PrimalPrecision)*core.ExpertisePerQuarterPercentReduction)
 	}
 
 	if druid.Talents.LivingSpirit > 0 {
@@ -280,10 +272,22 @@ func (druid *Druid) applyEclipse() {
 
 	// Solar
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
-	// TODO : make this proc a regular Aura
-	solarProcAura := druid.NewTemporaryStatsAura("Solar Eclipse proc", core.ActionID{SpellID: 48517}, stats.Stats{}, time.Millisecond*15000)
 	druid.SolarICD.Duration = time.Millisecond * 30000
-	druid.RegisterAura(core.Aura{
+	druid.SolarEclipseProcAura = druid.GetOrRegisterAura(core.Aura{
+		Label:    "Solar Eclipse proc",
+		Duration: time.Millisecond * 15000,
+		ActionID: core.ActionID{SpellID: 48517},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			druid.Wrath.DamageMultiplier *= 1.4 + tierEclipseMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			druid.Wrath.DamageMultiplier /= 1.4 + tierEclipseMultiplier
+		},
+	})
+
+	druid.GetOrRegisterAura(core.Aura{
 		Label:    "Eclipse (Solar)",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -304,16 +308,27 @@ func (druid *Druid) applyEclipse() {
 			}
 			if sim.RandomFloat("Eclipse (Solar)") < solarProcChance {
 				druid.SolarICD.Use(sim)
-				solarProcAura.Activate(sim)
+				druid.SolarEclipseProcAura.Activate(sim)
 			}
 		},
 	})
 
 	// Lunar
 	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
-	// TODO : make this proc a regular Aura
-	lunarProcAura := druid.NewTemporaryStatsAura("Lunar Eclipse proc", core.ActionID{SpellID: 48518}, stats.Stats{}, time.Millisecond*15000)
 	druid.LunarICD.Duration = time.Millisecond * 30000
+	druid.LunarEclipseProcAura = druid.GetOrRegisterAura(core.Aura{
+		Label:    "Lunar Eclipse proc",
+		Duration: time.Millisecond * 15000,
+		ActionID: core.ActionID{SpellID: 48518},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			druid.Starfire.BonusCritRating += (core.CritRatingPerCritChance * 40) + tierEclipseBonus
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			druid.Starfire.BonusCritRating -= (core.CritRatingPerCritChance * 40) + tierEclipseBonus
+		},
+	})
 	druid.RegisterAura(core.Aura{
 		Label:    "Eclipse (Lunar)",
 		Duration: core.NeverExpires,
@@ -335,7 +350,7 @@ func (druid *Druid) applyEclipse() {
 			}
 			if sim.RandomFloat("Eclipse (Lunar)") < lunarProcChance {
 				druid.LunarICD.Use(sim)
-				lunarProcAura.Activate(sim)
+				druid.LunarEclipseProcAura.Activate(sim)
 			}
 		},
 	})
