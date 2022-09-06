@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 // Variables that control the Fire Elemental.
 const (
+	// 7.5 CPM
 	maxFireBlastCasts = 15
 	maxFireNovaCasts  = 15
 )
@@ -80,7 +82,6 @@ func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
-	target := fireElemental.CurrentTarget
 	fireBlastCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
 	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
 
@@ -95,30 +96,34 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
+	random := 2 * sim.RandomFloat("Fire Elemental WaitTime")
+	randomTimeToWait := time.Duration(random*float64(time.Second)) + sim.CurrentTime + time.Millisecond
+	var spell *core.Spell
 	if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
-		if fireElemental.FireBlast.Cast(sim, target) {
-			return
-		}
+		spell = fireElemental.FireBlast
+		println("choose FireBlast")
+	} else if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+		spell = fireElemental.FireNova
+		println("Choose FireNova")
 	}
 
-	if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
-		if fireElemental.FireNova.Cast(sim, target) {
-			return
-		}
+	if spell != nil {
+		//Cast at random times, so we can adjust the swing timer at different intervals, this will hurt auto's
+		fireElemental.HardcastWaitUntil(sim, randomTimeToWait, func(sim *core.Simulation, target *core.Unit) {
+			fireElemental.GCD.Reset()
+			spell.Cast(sim, target)
+		})
+		fireElemental.WaitUntil(sim, randomTimeToWait)
+		fmt.Printf("Waiting Random: %v \n", randomTimeToWait)
+		return
 	}
 
-	// Handle GCD down time.
-	if !fireElemental.FireBlast.IsReady(sim) {
-		fireElemental.WaitUntil(sim, fireElemental.FireBlast.CD.ReadyAt())
-	} else if !fireElemental.FireNova.IsReady(sim) {
-		fireElemental.WaitUntil(sim, fireElemental.FireNova.CD.ReadyAt())
-	} else {
-		fireElemental.WaitUntil(sim, fireElemental.AutoAttacks.NextAttackAt())
-	}
+	fmt.Printf("Waiting Auto: %v \n", fireElemental.AutoAttacks.NextAttackAt())
+	fireElemental.WaitUntil(sim, fireElemental.AutoAttacks.NextAttackAt())
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	stats.Mana:        1789,
+	stats.Mana:        5000,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
