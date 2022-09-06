@@ -361,4 +361,6 @@ var allowList = map[int]bool{
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
+
+	37574: true,
 }

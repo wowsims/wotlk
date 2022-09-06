@@ -72,6 +72,10 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
 
 	// Include the items we want icons for here.
+	{ID: 43005}, // Pet foods
+	{ID: 33874}, //
+	{ID: 41174}, // Spellstones
+	{ID: 41196}, //
 	{ID: 12662}, // Demonic Rune
 	{ID: 43015}, // Food IDs
 	{ID: 34753}, // Food IDs
@@ -160,6 +164,7 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 41119}, // Potions / In Battle Consumes
 	{ID: 40771}, // Potions / In Battle Consumes
 
+	// Filter out these items
 	{ID: 17782, Filter: true}, // talisman of the binding shard
 	{ID: 17783, Filter: true}, // talisman of the binding fragment
 	{ID: 17802, Filter: true}, // Deprecated version of Thunderfury
