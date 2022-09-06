@@ -1,7 +1,6 @@
 package shaman
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -96,15 +95,12 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	random := 2 * sim.RandomFloat("Fire Elemental WaitTime")
-	randomTimeToWait := time.Duration(random*float64(time.Second)) + sim.CurrentTime + time.Millisecond
+	randomTimeToWait := time.Duration(1*sim.RandomFloat("Fire Elemental WaitTime")*float64(time.Second)) + sim.CurrentTime
 	var spell *core.Spell
 	if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
 		spell = fireElemental.FireBlast
-		println("choose FireBlast")
 	} else if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
 		spell = fireElemental.FireNova
-		println("Choose FireNova")
 	}
 
 	if spell != nil {
@@ -114,16 +110,15 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 			spell.Cast(sim, target)
 		})
 		fireElemental.WaitUntil(sim, randomTimeToWait)
-		fmt.Printf("Waiting Random: %v \n", randomTimeToWait)
+
 		return
 	}
 
-	fmt.Printf("Waiting Auto: %v \n", fireElemental.AutoAttacks.NextAttackAt())
 	fireElemental.WaitUntil(sim, fireElemental.AutoAttacks.NextAttackAt())
 }
 
 var fireElementalPetBaseStats = stats.Stats{
-	stats.Mana:        5000,
+	stats.Mana:        1789,
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
