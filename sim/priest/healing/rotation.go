@@ -21,6 +21,11 @@ func (hpriest *HealingPriest) chooseSpell(sim *core.Simulation) *core.Spell {
 	if !hpriest.RenewHots[hpriest.CurrentTarget.UnitIndex].IsActive() {
 		return hpriest.Renew
 	} else {
-		return hpriest.GreaterHeal
+		for !hpriest.spellCycle[hpriest.nextCycleIndex].IsReady(sim) {
+			hpriest.nextCycleIndex = (hpriest.nextCycleIndex + 1) % len(hpriest.spellCycle)
+		}
+		spell := hpriest.spellCycle[hpriest.nextCycleIndex]
+		hpriest.nextCycleIndex = (hpriest.nextCycleIndex + 1) % len(hpriest.spellCycle)
+		return spell
 	}
 }

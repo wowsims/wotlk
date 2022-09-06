@@ -367,6 +367,10 @@ func (raid Raid) GetPlayerFromRaidTarget(raidTarget proto.RaidTarget) Agent {
 	return nil
 }
 
+func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
+	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
+}
+
 func (raid *Raid) reset(sim *Simulation) {
 	for _, party := range raid.Parties {
 		party.reset(sim)

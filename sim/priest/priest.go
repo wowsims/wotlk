@@ -31,6 +31,8 @@ type Priest struct {
 
 	SurgeOfLightProcAura *core.Aura
 
+	BindingHeal     *core.Spell
+	CircleOfHealing *core.Spell
 	DevouringPlague *core.Spell
 	FlashHeal       *core.Spell
 	GreaterHeal     *core.Spell
@@ -161,6 +163,8 @@ func (priest *Priest) Initialize() {
 }
 
 func (priest *Priest) RegisterHealingSpells() {
+	priest.registerBindingHealSpell()
+	priest.registerCircleOfHealingSpell()
 	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
 	priest.registerRenewSpell()

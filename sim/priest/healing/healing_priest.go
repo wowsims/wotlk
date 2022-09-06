@@ -27,6 +27,10 @@ type HealingPriest struct {
 	*priest.Priest
 
 	rotation proto.HealingPriest_Rotation
+
+	// Spells to rotate through for cyclic rotation.
+	spellCycle     []*core.Spell
+	nextCycleIndex int
 }
 
 func NewHealingPriest(character core.Character, options proto.Player) *HealingPriest {
@@ -59,19 +63,31 @@ func (hpriest *HealingPriest) GetPriest() *priest.Priest {
 	return hpriest.Priest
 }
 
-func (hpriest *HealingPriest) Initialize() {
-	firstDummy := hpriest.Env.Raid.GetFirstTargetDummy()
-	if firstDummy == nil {
-		hpriest.CurrentTarget = &hpriest.Unit
+func (hpriest *HealingPriest) GetMainTarget() *core.Unit {
+	target := hpriest.Env.Raid.GetFirstTargetDummy()
+	if target == nil {
+		return &hpriest.Unit
 	} else {
-		hpriest.CurrentTarget = &firstDummy.Unit
+		return &target.Unit
 	}
+}
+
+func (hpriest *HealingPriest) Initialize() {
+	hpriest.CurrentTarget = hpriest.GetMainTarget()
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
 
 	hpriest.RegisterHymnOfHopeCD()
+
+	hpriest.spellCycle = []*core.Spell{
+		hpriest.GreaterHeal,
+		hpriest.FlashHeal,
+		hpriest.CircleOfHealing,
+		hpriest.BindingHeal,
+	}
 }
 
 func (hpriest *HealingPriest) Reset(sim *core.Simulation) {
 	hpriest.Priest.Reset(sim)
+	hpriest.nextCycleIndex = 0
 }
