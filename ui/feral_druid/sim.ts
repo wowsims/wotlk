@@ -36,7 +36,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				"Only 'mono-cat' rotation implemented",
 				"Lacerate doesn't snapshot correctly",
 				"Stats display only humanoid form",
-				"Bear / cat auto attacks don't change with form",
 				"ilotp mana regen not implemented"
 			],
 			warnings: [

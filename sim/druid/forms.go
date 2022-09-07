@@ -2,6 +2,7 @@ package druid
 
 import (
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -111,6 +112,16 @@ func (druid *Druid) registerCatFormSpell() {
 			if druid.BerserkAura.IsActive() {
 				druid.PseudoStats.CostMultiplier /= 2.0
 			}
+
+			druid.AutoAttacks.MH = core.Weapon{
+				BaseDamageMin:        43,
+				BaseDamageMax:        66,
+				SwingSpeed:           1.0,
+				NormalizedSwingSpeed: 1.0,
+				SwingDuration:        time.Second,
+				CritMultiplier:       druid.MeleeCritMultiplier(),
+			}
+			druid.AutoAttacks.ReplaceMHSwing = nil
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
@@ -222,6 +233,19 @@ func (druid *Druid) registerBearFormSpell() {
 			rb := druid.GetAura("RageBar")
 			if rb != nil {
 				rb.Activate(sim)
+			}
+
+			druid.AutoAttacks.MH = core.Weapon{
+				BaseDamageMin:        109,
+				BaseDamageMax:        165,
+				SwingSpeed:           2.5,
+				NormalizedSwingSpeed: 2.5,
+				SwingDuration:        time.Millisecond * 2500,
+				CritMultiplier:       druid.MeleeCritMultiplier(),
+			}
+
+			druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+				return druid.TryMaul(sim, mhSwingSpell)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
