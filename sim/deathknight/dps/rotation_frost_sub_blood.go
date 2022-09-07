@@ -7,126 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) RotationActionCallback_BasicPrio(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-
-	if !dk.GCD.IsReady(sim) {
-		return dk.NextGCDAt()
-	}
-
-	t := sim.CurrentTime
-	ff := dk.FrostFeverDisease[target.Index].ExpiresAt() - t
-	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
-	b := dk.CurrentBloodRunes() + dk.CurrentDeathRunes()
-	_, f, u := dk.NormalCurrentRunes()
-	_, fg, ug := dk.CurrentRuneGraces(sim)
-
-	if ff <= 0 {
-		dk.IcyTouch.Cast(sim, target)
-		return -1
-	}
-
-	if bp <= 0 {
-		dk.PlagueStrike.Cast(sim, target)
-		return -1
-	}
-
-	if ff <= 2*time.Second || bp <= 2*time.Second {
-		dk.Pestilence.Cast(sim, target)
-		return -1
-	} else {
-
-		if f > 0 && u > 0 {
-
-			if dk.KM() {
-
-				if fg >= 1500*time.Millisecond && ug >= 1500*time.Millisecond {
-					dk.FrostStrike.Cast(sim, target)
-					return -1
-				} else {
-					dk.Obliterate.Cast(sim, target)
-					return -1
-				}
-
-			} else {
-				dk.Obliterate.Cast(sim, target)
-				return -1
-			}
-
-		} else {
-
-			if dk.KM() {
-				if dk.CurrentRunicPower() >= 32.0 {
-					dk.FrostStrike.Cast(sim, target)
-					return -1
-				} else {
-
-					if b == 2 {
-
-						if dk.CurrentRunicPower() <= dk.MaxRunicPower()-15.0 {
-							dk.BloodStrike.Cast(sim, target)
-							return -1
-						} else {
-							dk.FrostStrike.Cast(sim, target)
-							return -1
-						}
-
-					} else {
-
-						if dk.CurrentRunicPower() >= 32.0 {
-							dk.FrostStrike.Cast(sim, target)
-							return -1
-						} else {
-							dk.HornOfWinter.Cast(sim, target)
-							return -1
-						}
-
-					}
-
-				}
-			} else {
-
-				if dk.Rime() {
-
-					if dk.CurrentRunicPower() <= dk.MaxRunicPower()-5.0 {
-						dk.HowlingBlast.Cast(sim, target)
-						return -1
-					} else {
-						dk.FrostStrike.Cast(sim, target)
-						return -1
-					}
-
-				} else {
-
-					if b == 2 {
-
-						if dk.CurrentRunicPower() <= dk.MaxRunicPower()-15.0 {
-							dk.BloodStrike.Cast(sim, target)
-							return -1
-						} else {
-							dk.FrostStrike.Cast(sim, target)
-							return -1
-						}
-
-					} else {
-
-						if dk.CurrentRunicPower() >= 32.0 {
-							dk.FrostStrike.Cast(sim, target)
-							return -1
-						} else {
-							dk.HornOfWinter.Cast(sim, target)
-							return -1
-						}
-
-					}
-
-				}
-
-			}
-		}
-
-	}
-}
-
 func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime time.Duration) *deathknight.RuneSpell {
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
@@ -493,7 +373,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_BasicPrio)
+		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {

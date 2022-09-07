@@ -63,6 +63,9 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 			Spell:    dk.IceboundFortitude.Spell,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityLow,
+			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.IceboundFortitude.CanCast(sim)
+			},
 		})
 	}
 }

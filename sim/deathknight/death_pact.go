@@ -52,8 +52,8 @@ func (dk *Deathknight) registerDeathPactSpell() {
 			Spell:    dk.DeathPact.Spell,
 			Type:     core.CooldownTypeDPS,
 			Priority: core.CooldownPriorityLow,
-			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.DeathPact.CanCast(sim) && dk.CurrentHealthPercent() <= 0.75
+			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.DeathPact.CanCast(sim)
 			},
 		})
 	}
