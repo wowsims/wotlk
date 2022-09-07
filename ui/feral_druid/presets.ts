@@ -38,7 +38,7 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
-	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
+  bearWeaveType: FeralDruid_Rotation_BearweaveType.Lacerate,
   minCombosForRip: 5,
   minCombosForBite: 5,
 

@@ -48,6 +48,8 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
+	cat.EnableRageBar(0.0, 1.0, func(sim *core.Simulation) {})
+
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
@@ -93,7 +95,7 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterFeralSpells(15)
+	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs()
 }
 
