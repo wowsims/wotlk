@@ -410,6 +410,22 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
+func (dk *Deathknight) KM() bool {
+	if dk.KillingMachineAura != nil {
+		return dk.KillingMachineAura.IsActive()
+	}
+
+	return false
+}
+
+func (dk *Deathknight) Rime() bool {
+	if dk.KillingMachineAura != nil {
+		return dk.KillingMachineAura.IsActive()
+	}
+
+	return false
+}
+
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
