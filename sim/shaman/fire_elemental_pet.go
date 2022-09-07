@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -104,7 +105,7 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if spell != nil {
-		//Cast at random times, so we can adjust the swing timer at different intervals, this will hurt auto's
+		//Cast at random times, so we can adjust the swing timer at different intervals, this will hurt auto's more often
 		fireElemental.HardcastWaitUntil(sim, randomTimeToWait, func(sim *core.Simulation, target *core.Unit) {
 			fireElemental.GCD.Reset()
 			spell.Cast(sim, target)
@@ -137,7 +138,7 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
-
+		fmt.Printf("%v \n", ownerHitChance)
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.75,
 			stats.Intellect:   ownerStats[stats.Intellect] * 0.30,
