@@ -362,5 +362,13 @@ var allowList = map[int]bool{
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
 
+	// Strong contenders for possible pre-raid bis for physical classes
+	28830: true, // Dragonspine Trophy
+	29383: true, // Bloodlust Brooch
+	30032: true, // Red Belt of Battle
+	33122: true, // Cloak of Darkness
+	34472: true, // Shard of Contempt
+	38287: true, // Empty Mug of Direbrew
+
 	37574: true,
 }
