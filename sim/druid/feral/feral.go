@@ -46,9 +46,6 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	// Passive Cat Form threat reduction
 	cat.PseudoStats.ThreatMultiplier *= 0.71
 
-	// Prevents Windfury from applying.
-	cat.HasMHWeaponImbue = true
-
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
