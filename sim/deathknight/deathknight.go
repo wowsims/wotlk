@@ -76,6 +76,7 @@ type Deathknight struct {
 	DeathStrike      *RuneSpell
 	DeathStrikeMhHit *RuneSpell
 	DeathStrikeOhHit *RuneSpell
+	DeathStrikeHeals []float64
 
 	Obliterate      *RuneSpell
 	ObliterateMhHit *RuneSpell
@@ -288,6 +289,8 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	if dk.Inputs.PrecastHornOfWinter {
 		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
 	}
+
+	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -408,6 +411,26 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	applyGuile := dk.Talents.GuileOfGorefiend > 0
 	applyMightOfMograine := dk.Talents.MightOfMograine > 0
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
+}
+
+func (dk *Deathknight) AverageDSHeal() float64 {
+	count := len(dk.DeathStrikeHeals)
+	if count >= 5 {
+		sum := dk.DeathStrikeHeals[count-1]
+		sum += dk.DeathStrikeHeals[count-2]
+		sum += dk.DeathStrikeHeals[count-3]
+		sum += dk.DeathStrikeHeals[count-4]
+		sum += dk.DeathStrikeHeals[count-5]
+		return sum / 5.0
+	} else if count > 0 {
+		sum := dk.DeathStrikeHeals[count-1]
+		for i := 1; i < count; i++ {
+			sum += dk.DeathStrikeHeals[count-i-1]
+		}
+		return sum / float64(count)
+	} else {
+		return 0
+	}
 }
 
 func init() {
