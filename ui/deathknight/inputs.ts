@@ -30,6 +30,7 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathk
 	label: 'Ghoul Uptime (%)',
 	labelTooltip: 'Percent of the fight duration for which your ghoul will be on target.',
 	percent: true,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().masterOfGhouls,
 });
 
 export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
