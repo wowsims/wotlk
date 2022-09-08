@@ -145,7 +145,12 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	attackSpeed := core.TernaryFloat64(dk.HasMHWeapon(), dk.GetMHWeapon().SwingSpeed, 2.0)
+
+	attackSpeed := 2.0
+	if dk.HasMHWeapon() {
+		attackSpeed = dk.GetMHWeapon().SwingSpeed
+	}
+
 	procChance := attackSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
