@@ -413,6 +413,22 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
 }
 
+func (dk *Deathknight) KM() bool {
+	if dk.KillingMachineAura != nil {
+		return dk.KillingMachineAura.IsActive()
+	} else {
+		return false
+	}
+}
+
+func (dk *Deathknight) Rime() bool {
+	if dk.RimeAura != nil {
+		return dk.RimeAura.IsActive()
+	} else {
+		return false
+	}
+}
+
 func (dk *Deathknight) AverageDSHeal() float64 {
 	count := len(dk.DeathStrikeHeals)
 	if count >= 5 {
