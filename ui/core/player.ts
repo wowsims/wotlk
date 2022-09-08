@@ -659,7 +659,7 @@ export class Player<SpecType extends Spec> {
     }
 
     setWowheadData(equippedItem: EquippedItem, elem: HTMLElement) {
-        let parts = [];
+        let parts = ['domain=wotlk'];
         if (equippedItem.gems.length > 0) {
             parts.push('gems=' + equippedItem.gems.map(gem => gem ? gem.id : 0).join(':'));
         }
