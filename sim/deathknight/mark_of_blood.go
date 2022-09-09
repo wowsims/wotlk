@@ -52,6 +52,9 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 			Spell:    dk.MarkOfBlood.Spell,
 			Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
 			Type:     core.CooldownTypeSurvival,
+			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.MarkOfBlood.CanCast(sim)
+			},
 		})
 	}
 }
