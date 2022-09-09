@@ -47,11 +47,6 @@ type Character struct {
 	// innervates / etc.
 	ExpectedBonusMana float64
 
-	// Hack for ensuring we don't apply windfury totem aura if there's already
-	// a MH imbue.
-	// TODO: Figure out a cleaner way to do this.
-	HasMHWeaponImbue bool
-
 	defensiveTrinketCD *Timer
 	offensiveTrinketCD *Timer
 	conjuredCD         *Timer
