@@ -24,6 +24,7 @@ func (priest *Priest) registerRenewSpell() {
 				IsHealing: true,
 				ProcMask:  core.ProcMaskSpellDamage,
 
+				BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 				DamageMultiplier: 1 *
 					priest.renewHealingMultiplier() *
 					.05 * float64(priest.Talents.EmpoweredRenew) *
@@ -31,7 +32,7 @@ func (priest *Priest) registerRenewSpell() {
 				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
-				OutcomeApplier: priest.OutcomeFuncTick(),
+				OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 			}),
 		})
 	}

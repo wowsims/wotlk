@@ -21,9 +21,8 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		BaseDamage: core.BaseDamageConfigHealing(2109, 2228, 0.526),
-		// TODO: Difference between spell crit multiplier and healing crit multiplier?
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultSpellCritMultiplier()),
+		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
+		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
 
 	// Separate ApplyEffects functions for each party.
@@ -89,7 +88,6 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 			Label:    "PoH Glyph" + strconv.Itoa(int(priest.Index)),
 			ActionID: spell.ActionID,
 		}),
-		// TODO: What's the correct tick cadence?
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{

@@ -17,11 +17,10 @@ func (priest *Priest) registerBindingHealSpell() {
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
-		// TODO: Description says low threat
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+		ThreatMultiplier: 0.5 * (1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve]),
 
 		BaseDamage:     core.BaseDamageConfigHealing(1959, 2516, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultSpellCritMultiplier()),
+		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
 
 	var effects []core.SpellEffect

@@ -24,7 +24,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		BaseDamage:     core.BaseDamageConfigHealing(958, 1058, 0.4029),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultSpellCritMultiplier()),
+		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
 
 	var effects []core.SpellEffect
