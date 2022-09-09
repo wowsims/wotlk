@@ -66,7 +66,8 @@ func (fireElemental *FireElemental) registerFireNova() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		// TODO is this the right affect should it be Capped?
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(fireElemental.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -101,7 +102,9 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		}),
 		NumberOfTicks: 40,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+
+		// TODO is this the right affect should it be Capped?
+		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(fireElemental.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP

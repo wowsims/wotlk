@@ -59,7 +59,7 @@ var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Talents:  StandardTalents,
 		Options:  enhShamOptions,
-		Rotation: enhShamRotation,
+		Rotation: enhShamRotationFireElemental,
 	},
 }
 

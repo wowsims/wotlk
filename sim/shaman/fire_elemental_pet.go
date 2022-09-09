@@ -1,7 +1,6 @@
 package shaman
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -138,7 +137,6 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
-		fmt.Printf("%v \n", ownerHitChance)
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.75,
 			stats.Intellect:   ownerStats[stats.Intellect] * 0.30,
