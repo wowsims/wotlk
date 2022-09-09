@@ -118,7 +118,7 @@ func (dk *Deathknight) applyNecrosis() {
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskEmpty,
 
 			DamageMultiplier: necrosisCoeff,
 			ThreatMultiplier: 1,

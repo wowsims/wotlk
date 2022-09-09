@@ -21,7 +21,6 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			BonusCritRating:  -100 * core.CritRatingPerCritChance, // Disable criticals for shadow hit
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
