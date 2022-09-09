@@ -15,7 +15,8 @@ func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 }
 
 func (enh *EnhancementShaman) tryUseGCD(sim *core.Simulation) {
-	// TODO move this into the rotation
+	// TODO move this into the rotation, also this uses waitForMana if it was unable to cast the totem
+	// that will need to be pulled out so we are not waiting for a magma totem mana cost.
 	if enh.TryDropTotems(sim) {
 		return
 	}
@@ -31,10 +32,18 @@ type Rotation interface {
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
+	//TODO Add in a mana guard
+
+	// We could choose to not wait for auto attacks if we don't have any MW stacks,
+	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
 	upcomingCD := enh.AutoAttacks.NextAttackAt()
 	var cast Cast
 	for _, spell := range rotation.spellPriority {
-		if spell.condition(sim, target) && spell.cast(sim, target) {
+		if !spell.condition(sim, target) {
+			continue
+		}
+
+		if spell.cast(sim, target) {
 			return
 		}
 
@@ -62,16 +71,16 @@ func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simula
 
 }
 
-// The amont of spell in the priority array
+// The amont of spells in the priority array
 const prioritySize = 9
 
 //Default Priority Order
 const (
-	StormstrikeApplyDebuff = iota
-	LightningBolt
+	LightningBolt = iota
+	StormstrikeApplyDebuff
+	Weave
 	Stormstrike
 	FlameShock
-	Weave
 	EarthShock
 	LightningShield
 	FireNova
@@ -89,8 +98,9 @@ type ReadyAt func() time.Duration
 
 //Holds all the spell info we need to make decisions
 type Spell struct {
-	readyAt   ReadyAt
-	cast      Cast
+	readyAt ReadyAt
+	cast    Cast
+	// Must pass this check to cast or use readyAt, a special condition to be met
 	condition Condition
 }
 
@@ -99,18 +109,18 @@ func NewPriorityRotation(enh *EnhancementShaman, options *proto.EnhancementShama
 		options: options,
 	}
 
-	rotation.buildPriority(enh)
+	rotation.buildPriorityRotation(enh)
 
 	return &rotation
 }
 
-func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
+func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) {
 	stormstrikeApplyDebuff := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return !enh.StormstrikeDebuffAura(target).IsActive() && enh.Stormstrike.IsReady(sim)
+			return !enh.StormstrikeDebuffAura(target).IsActive()
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.Stormstrike.Cast(sim, target)
+			return enh.Stormstrike.IsReady(sim) && enh.Stormstrike.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.Stormstrike.ReadyAt()
@@ -131,11 +141,12 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 	stormstrike := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.Stormstrike.IsReady(sim)
+			//Checking if we learned the spell, ie untalented
+			return enh.Stormstrike != nil
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			//TODO add in SS delay so we don't loose flametongues, if Last attack = current time
-			return enh.Stormstrike.Cast(sim, target)
+			return enh.Stormstrike.IsReady(sim) && enh.Stormstrike.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.Stormstrike.ReadyAt()
@@ -146,7 +157,6 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
-
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			if rotation.options.LavaburstWeave && enh.CastLavaBurstWeave(sim, target) {
 				return true
@@ -166,10 +176,10 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			//TODO add in check for how much time we have left, IE we don't want to cast a FS with 4 seconds left.
-			return !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim)
+			return !enh.FlameShockDot.IsActive()
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.FlameShock.Cast(sim, target)
+			return enh.FlameShock.IsReady(sim) && enh.FlameShock.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.FlameShock.ReadyAt()
@@ -178,10 +188,11 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 	earthShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.EarthShock.IsReady(sim)
+			// No special condition needed
+			return true
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.EarthShock.Cast(sim, target)
+			return enh.EarthShock.IsReady(sim) && enh.EarthShock.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.EarthShock.ReadyAt()
@@ -202,10 +213,10 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 	fireNova := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.Totems.Fire != proto.FireTotem_NoFireTotem && enh.FireNova.IsReady(sim) && enh.CurrentMana() > rotation.options.FirenovaManaThreshold
+			return enh.Totems.Fire != proto.FireTotem_NoFireTotem && enh.CurrentMana() > rotation.options.FirenovaManaThreshold
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.FireNova.Cast(sim, target)
+			return enh.FireNova.IsReady(sim) && enh.FireNova.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.FireNova.ReadyAt()
@@ -214,11 +225,12 @@ func (rotation *PriorityRotation) buildPriority(enh *EnhancementShaman) {
 
 	lavaLash := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.LavaLash.IsReady(sim)
+			//Checking if we learned the spell, ie untalented
+			return enh.LavaLash != nil
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			//TODO add in LL delay so we don't loose flametongues, if Last attack = current time
-			return enh.LavaLash.Cast(sim, target)
+			return enh.LavaLash.IsReady(sim) && enh.LavaLash.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.LavaLash.ReadyAt()
