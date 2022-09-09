@@ -35,7 +35,7 @@ func (priest *Priest) registerGreaterHealSpell() {
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			BaseDamage:     core.BaseDamageConfigHealing(3980, 4621, 1.6114+0.08*float64(priest.Talents.EmpoweredHealing)),
-			OutcomeApplier: priest.OutcomeFuncMagicCrit(priest.DefaultSpellCritMultiplier()),
+			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultSpellCritMultiplier()),
 		}),
 	})
 }

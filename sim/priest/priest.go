@@ -43,6 +43,7 @@ type Priest struct {
 	MindFlay        []*core.Spell
 	MindSear        []*core.Spell
 	Penance         *core.Spell
+	PrayerOfHealing *core.Spell
 	Renew           *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
@@ -167,6 +168,7 @@ func (priest *Priest) RegisterHealingSpells() {
 	priest.registerCircleOfHealingSpell()
 	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
+	priest.registerPrayerOfHealingSpell()
 	priest.registerRenewSpell()
 }
 

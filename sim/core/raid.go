@@ -371,6 +371,17 @@ func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
 	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
 }
 
+func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {
+	for _, party := range raid.Parties {
+		for _, agent := range party.PlayersAndPets {
+			if agent.GetCharacter().UnitIndex == unitIndex {
+				return agent
+			}
+		}
+	}
+	return nil
+}
+
 func (raid *Raid) reset(sim *Simulation) {
 	for _, party := range raid.Parties {
 		party.reset(sim)
