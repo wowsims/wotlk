@@ -35,7 +35,14 @@ var StandardTalents = &proto.DruidTalents{
 	OmenOfClarity:           true,
 }
 
-var PlayerOptionsBiteweave = &proto.Player_FeralDruid{
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfRip),
+	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
+	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
+	// No interesting minor glyphs.
+}
+
+var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
 		Talents: StandardTalents,
 		Options: &proto.FeralDruid_Options{
@@ -43,8 +50,14 @@ var PlayerOptionsBiteweave = &proto.Player_FeralDruid{
 			LatencyMs:       100,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
-			BearWeaveType:      proto.FeralDruid_Rotation_None,
+			BearWeaveType:      proto.FeralDruid_Rotation_Lacerate,
+			UseRake:            true,
+			MinCombosForRip:    5,
+			MinCombosForBite:   5,
+			BiteTime:           10.0,
 			MaintainFaerieFire: true,
+			BerserkBiteThresh:  30.0,
+			MaxRoarClip:        10.0,
 		},
 	},
 }
