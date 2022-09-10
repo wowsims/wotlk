@@ -22,6 +22,8 @@ func (priest *Priest) ApplyTalents() {
 	priest.PseudoStats.FrostDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.NatureDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.ShadowDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.HealingDealtMultiplier *= 1 + .02*float64(priest.Talents.SpiritualHealing)
+	priest.PseudoStats.HealingDealtMultiplier *= 1 + .01*float64(priest.Talents.BlessedResilience)
 
 	if priest.Talents.Shadowform {
 		priest.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
@@ -66,19 +68,29 @@ func (priest *Priest) applySurgeOfLight() {
 	priest.SurgeOfLightProcAura = priest.RegisterAura(core.Aura{
 		Label:    "Surge of Light Proc",
 		ActionID: core.ActionID{SpellID: 33154},
-		Duration: core.NeverExpires,
+		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier -= 1
 			priest.Smite.CostMultiplier -= 1
 			priest.Smite.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if priest.FlashHeal != nil {
+				priest.FlashHeal.CastTimeMultiplier -= 1
+				priest.FlashHeal.CostMultiplier -= 1
+				priest.FlashHeal.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			priest.Smite.CastTimeMultiplier += 1
 			priest.Smite.CostMultiplier += 1
 			priest.Smite.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if priest.FlashHeal != nil {
+				priest.FlashHeal.CastTimeMultiplier += 1
+				priest.FlashHeal.CostMultiplier += 1
+				priest.FlashHeal.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == priest.Smite {
+			if spell == priest.Smite || (priest.FlashHeal != nil && spell == priest.FlashHeal) {
 				aura.Deactivate(sim)
 			}
 		},
