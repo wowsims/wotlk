@@ -81,11 +81,12 @@ func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
+	target := fireElemental.CurrentTarget
 	fireBlastCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
 	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
 
 	if fireBlastCasts == maxFireBlastCasts && fireNovaCasts == maxFireNovaCasts {
-		fireElemental.CancelGCDTimer(sim)
+		fireElemental.DoNothing()
 		return
 	}
 
@@ -95,26 +96,19 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	randomTimeToWait := time.Duration(1*sim.RandomFloat("Fire Elemental WaitTime")*float64(time.Second)) + sim.CurrentTime
 	var spell *core.Spell
-	if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
-		spell = fireElemental.FireBlast
-	} else if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
+	if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
 		spell = fireElemental.FireNova
+	} else if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
+		spell = fireElemental.FireBlast
 	}
 
-	if spell != nil {
-		//Cast at random times, so we can adjust the swing timer at different intervals, this will hurt auto's more often
-		fireElemental.HardcastWaitUntil(sim, randomTimeToWait, func(sim *core.Simulation, target *core.Unit) {
-			fireElemental.GCD.Reset()
-			spell.Cast(sim, target)
-		})
-		fireElemental.WaitUntil(sim, randomTimeToWait)
-
+	if spell != nil && spell.Cast(sim, target) {
 		return
 	}
 
-	fireElemental.WaitUntil(sim, fireElemental.AutoAttacks.NextAttackAt())
+	//Will just wait for 2 second's
+	fireElemental.WaitUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 }
 
 var fireElementalPetBaseStats = stats.Stats{

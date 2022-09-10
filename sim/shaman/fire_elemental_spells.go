@@ -24,7 +24,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    fireElemental.NewTimer(),
-				Duration: time.Second * 4, // TODO estimated from from log diggig,
+				Duration: time.Second,
 			},
 			OnCastComplete: func(sim *core.Simulation, _ *core.Spell) {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
@@ -59,7 +59,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    fireElemental.NewTimer(),
-				Duration: time.Second * 4, // TODO estimated from from log diggig,
+				Duration: time.Second, // TODO estimated from from log diggig,
 			},
 			ModifyCast: func(sim *core.Simulation, _ *core.Spell, _ *core.Cast) {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed()*2)
