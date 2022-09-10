@@ -220,14 +220,24 @@ func RunTestSuite(t *testing.T, suiteName string, generator TestGenerator) {
 				testSuite.TestDPS(fullTestName, rsr)
 				if actualDpsResult, ok := testSuite.testResults.DpsResults[fullTestName]; ok {
 					if expectedDpsResult, ok := expectedResults.DpsResults[fullTestName]; ok {
+						// Check whichever of DPS/HPS is larger first, so we get better test diff printouts.
+						if actualDpsResult.Dps < actualDpsResult.Hps {
+							if actualDpsResult.Hps < expectedDpsResult.Hps-tolerance || actualDpsResult.Hps > expectedDpsResult.Hps+tolerance {
+								t.Logf("HPS expected %0.03f but was %0.03f!.", expectedDpsResult.Hps, actualDpsResult.Hps)
+								t.Fail()
+							}
+						}
 						if actualDpsResult.Dps < expectedDpsResult.Dps-tolerance || actualDpsResult.Dps > expectedDpsResult.Dps+tolerance {
 							t.Logf("DPS expected %0.03f but was %0.03f!.", expectedDpsResult.Dps, actualDpsResult.Dps)
 							t.Fail()
 						}
-						if actualDpsResult.Hps < expectedDpsResult.Hps-tolerance || actualDpsResult.Hps > expectedDpsResult.Hps+tolerance {
-							t.Logf("HPS expected %0.03f but was %0.03f!.", expectedDpsResult.Hps, actualDpsResult.Hps)
-							t.Fail()
+						if actualDpsResult.Dps >= actualDpsResult.Hps {
+							if actualDpsResult.Hps < expectedDpsResult.Hps-tolerance || actualDpsResult.Hps > expectedDpsResult.Hps+tolerance {
+								t.Logf("HPS expected %0.03f but was %0.03f!.", expectedDpsResult.Hps, actualDpsResult.Hps)
+								t.Fail()
+							}
 						}
+
 						if actualDpsResult.Tps < expectedDpsResult.Tps-tolerance || actualDpsResult.Tps > expectedDpsResult.Tps+tolerance {
 							t.Logf("TPS expected %0.03f but was %0.03f!.", expectedDpsResult.Tps, actualDpsResult.Tps)
 							t.Fail()

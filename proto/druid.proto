@@ -171,9 +171,13 @@ message BalanceDruid {
 message FeralDruid {
   message Rotation {
     enum BearweaveType {
-			None = 0;
-			Mangle = 1;
-			Lacerate = 2;
+      None = 0;
+      Mangle = 1;
+      Lacerate = 2;
+    }
+	enum BiteModeType {
+      Emperical = 0;
+      Analytical = 1;
     }
 
     BearweaveType bear_weave_type = 1;
@@ -187,6 +191,7 @@ message FeralDruid {
 	int32 berserk_bite_thresh = 9;
 	bool powerbear = 10;
 	float max_roar_clip = 11;
+	BiteModeType bite_mode_type = 12;
   }
   Rotation rotation = 1;
 

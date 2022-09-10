@@ -69,9 +69,11 @@ func (druid *Druid) registerLacerateSpell() {
 					if druid.LacerateDot.IsActive() {
 						druid.LacerateDot.Refresh(sim)
 						druid.LacerateDot.AddStack(sim)
+						druid.LacerateDot.TakeSnapshot(sim, true)
 					} else {
 						druid.LacerateDot.Activate(sim)
 						druid.LacerateDot.SetStacks(sim, 1)
+						druid.LacerateDot.TakeSnapshot(sim, true)
 					}
 				} else {
 					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
@@ -91,7 +93,7 @@ func (druid *Druid) registerLacerateSpell() {
 		Aura:          dotAura,
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: lbdm * t9bonus,
 			ThreatMultiplier: 0.5,
@@ -101,7 +103,7 @@ func (druid *Druid) registerLacerateSpell() {
 				TargetSpellCoefficient: 0,
 			}, dotAura),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
-		})),
+		}),
 	})
 }
 
