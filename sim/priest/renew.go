@@ -16,13 +16,13 @@ func (priest *Priest) registerRenewSpell() {
 	var empoweredRenew *core.Spell
 	if priest.Talents.EmpoweredRenew > 0 {
 		empoweredRenew = priest.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID.WithTag(1),
+			ActionID:    core.ActionID{SpellID: 63543},
 			SpellSchool: core.SpellSchoolHoly,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
-				ProcMask:  core.ProcMaskSpellDamage,
+				ProcMask:  core.ProcMaskSpellHealing,
 
 				BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 				DamageMultiplier: 1 *
@@ -77,7 +77,7 @@ func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
 		NumberOfTicks: priest.renewTicks(),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
+			ProcMask:   core.ProcMaskPeriodicHealing,
 			IsPeriodic: true,
 			IsHealing:  true,
 

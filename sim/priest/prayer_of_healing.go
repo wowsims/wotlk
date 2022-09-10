@@ -14,7 +14,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 	baseEffect := core.SpellEffect{
 		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellHealing,
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
@@ -91,7 +91,7 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
+			ProcMask:   core.ProcMaskPeriodicHealing,
 			IsPeriodic: true,
 			IsHealing:  true,
 

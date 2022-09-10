@@ -44,6 +44,7 @@ type Priest struct {
 	MindSear        []*core.Spell
 	Penance         *core.Spell
 	PrayerOfHealing *core.Spell
+	PrayerOfMending *core.Spell
 	Renew           *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
@@ -61,6 +62,8 @@ type Priest struct {
 	VampiricTouchDot   *core.Dot
 
 	RenewHots []*core.Dot
+
+	ProcPrayerOfMending core.ApplySpellEffects
 
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
@@ -164,11 +167,13 @@ func (priest *Priest) Initialize() {
 }
 
 func (priest *Priest) RegisterHealingSpells() {
+	priest.RegisterPenanceSpell()
 	priest.registerBindingHealSpell()
 	priest.registerCircleOfHealingSpell()
 	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
 	priest.registerPrayerOfHealingSpell()
+	priest.registerPrayerOfMendingSpell()
 	priest.registerRenewSpell()
 }
 

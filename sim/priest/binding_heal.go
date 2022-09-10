@@ -12,7 +12,7 @@ func (priest *Priest) registerBindingHealSpell() {
 
 	baseEffect := core.SpellEffect{
 		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellHealing,
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *

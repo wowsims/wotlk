@@ -85,6 +85,8 @@ func (hpriest *HealingPriest) Initialize() {
 		hpriest.CircleOfHealing,
 		hpriest.BindingHeal,
 		hpriest.PrayerOfHealing,
+		hpriest.PrayerOfMending,
+		hpriest.Penance,
 	}
 }
 
