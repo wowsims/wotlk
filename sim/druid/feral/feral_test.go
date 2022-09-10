@@ -20,13 +20,14 @@ func TestFeral(t *testing.T) {
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsBiteweave},
+		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsBearweaveLacerate},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
 		Debuffs:     FullDebuffs,
+		Glyphs:      StandardGlyphs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -51,8 +52,9 @@ func BenchmarkSimulate(b *testing.B) {
 				Class:     proto.Class_ClassDruid,
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsBiteweave,
+				Spec:      PlayerOptionsBearweaveLacerate,
 				Buffs:     FullIndividualBuffs,
+				Glyphs:    StandardGlyphs,
 
 				InFrontOfTarget: true,
 			},

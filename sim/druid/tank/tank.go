@@ -67,9 +67,6 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 		},
 	})
 
-	// Prevents Windfury from applying.
-	bear.HasMHWeaponImbue = true
-
 	return bear
 }
 

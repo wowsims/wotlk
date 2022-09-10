@@ -28,7 +28,9 @@ func (druid *Druid) registerSavageRoarSpell() {
 			druid.PseudoStats.PhysicalDamageDealtMultiplier *= srm
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.PhysicalDamageDealtMultiplier /= srm
+			if druid.InForm(Cat) {
+				druid.PseudoStats.PhysicalDamageDealtMultiplier /= srm
+			}
 		},
 	})
 
