@@ -373,7 +373,7 @@ export class RaidSimUI extends SimUI {
 		TypedEvent.freezeAllAndDo(() => {
 			this.sim.raid.fromProto(eventID, RaidProto.create());
 			this.sim.encounter.applyDefaults(eventID);
-			this.sim.applyDefaults(eventID, true);
+			this.sim.applyDefaults(eventID, true, true);
 		});
 	}
 

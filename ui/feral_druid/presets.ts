@@ -12,6 +12,7 @@ import {
 	DruidMajorGlyph,
 	DruidMinorGlyph,
     FeralDruid_Rotation_BearweaveType,
+    FeralDruid_Rotation_BiteModeType,
  } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -38,13 +39,14 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
-	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
+  bearWeaveType: FeralDruid_Rotation_BearweaveType.Lacerate,
   minCombosForRip: 5,
   minCombosForBite: 5,
 
   useRake: true,
   useBite: false,
   mangleSpam: false,
+  biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
   biteTime: 10.0,
   berserkBiteThresh: 30.0,
   powerbear: false,

@@ -47,11 +47,6 @@ type Character struct {
 	// innervates / etc.
 	ExpectedBonusMana float64
 
-	// Hack for ensuring we don't apply windfury totem aura if there's already
-	// a MH imbue.
-	// TODO: Figure out a cleaner way to do this.
-	HasMHWeaponImbue bool
-
 	defensiveTrinketCD *Timer
 	offensiveTrinketCD *Timer
 	conjuredCD         *Timer
@@ -254,17 +249,29 @@ func (character *Character) calculateCritMultiplier(normalCritDamage float64, pr
 	}
 	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
 }
+func (character *Character) calculateHealingCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
+	if character.HasMetaGemEquipped(41376) {
+		primaryModifiers *= 1.03
+	}
+	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
+}
 func (character *Character) SpellCritMultiplier(primaryModifiers float64, secondaryModifiers float64) float64 {
 	return character.calculateCritMultiplier(1.5, primaryModifiers, secondaryModifiers)
 }
 func (character *Character) MeleeCritMultiplier(primaryModifiers float64, secondaryModifiers float64) float64 {
 	return character.calculateCritMultiplier(2.0, primaryModifiers, secondaryModifiers)
 }
+func (character *Character) HealingCritMultiplier(primaryModifiers float64, secondaryModifiers float64) float64 {
+	return character.calculateHealingCritMultiplier(1.5, primaryModifiers, secondaryModifiers)
+}
 func (character *Character) DefaultSpellCritMultiplier() float64 {
 	return character.SpellCritMultiplier(1, 0)
 }
 func (character *Character) DefaultMeleeCritMultiplier() float64 {
 	return character.MeleeCritMultiplier(1, 0)
+}
+func (character *Character) DefaultHealingCritMultiplier() float64 {
+	return character.HealingCritMultiplier(1, 0)
 }
 
 func (character *Character) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -338,7 +345,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
-	character.Unit.CurrentTarget = &character.Env.Encounter.Targets[0].Unit
+	character.CurrentTarget = character.defaultTarget
 
 	if character.Type == PlayerUnit {
 		character.SetGCDTimer(sim, 0)

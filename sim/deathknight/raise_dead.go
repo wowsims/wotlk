@@ -52,8 +52,8 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 			Spell:    dk.RaiseDead.Spell,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityLow,
-			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.RaiseDead.CanCast(sim) && dk.CurrentHealthPercent() <= 0.5
+			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.RaiseDead.CanCast(sim) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDurationPercent() > 0.15
 			},
 		})
 	}

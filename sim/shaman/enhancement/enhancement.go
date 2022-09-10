@@ -78,7 +78,6 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
-		enh.HasMHWeaponImbue = true
 	}
 
 	enh.SpiritWolves = &shaman.SpiritWolves{

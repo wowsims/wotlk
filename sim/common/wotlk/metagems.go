@@ -11,7 +11,6 @@ func init() {
 	// Keep these in order by item ID.
 
 	// TODO: Destructive Skyflare (1% spell reflect)
-	// TODO: Revitalizing Skyflare (3% increased critical healing effect)
 	// TODO: Invigorating Earthsiege (heal on crits)
 
 	core.NewItemEffect(41333, func(agent core.Agent) {
@@ -105,5 +104,6 @@ func init() {
 
 	// These are handled in character.go, but create empty effects so they are included in tests.
 	core.NewItemEffect(41285, func(_ core.Agent) {}) // Chaotic Skyflare Diamond
+	core.NewItemEffect(41376, func(_ core.Agent) {}) // Revitalizing Skyflare Diamond
 	core.NewItemEffect(41398, func(_ core.Agent) {}) // Relentless Earthsiege Diamond
 }

@@ -79,7 +79,7 @@ import { newIndividualImporters } from './components/importers.js';
 import { newGlyphsPicker } from './talents/factory.js';
 import { newTalentsPicker } from './talents/factory.js';
 import { professionNames, raceNames } from './proto_utils/names.js';
-import { isTankSpec } from './proto_utils/utils.js';
+import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
 import { specNames } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { specToLocalStorageKey } from './proto_utils/utils.js';
@@ -1130,6 +1130,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			const tankSpec = isTankSpec(this.player.spec);
+			const healingSpec = isHealingSpec(this.player.spec);
 
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
@@ -1147,10 +1148,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 
-			if (!this.isWithinRaidSim) {
+			if (this.isWithinRaidSim) {
+				this.sim.raid.setTargetDummies(eventID, 0);
+			} else {
+				this.sim.raid.setTargetDummies(eventID, healingSpec ? 9 : 0);
 				this.sim.encounter.applyDefaults(eventID);
 				this.sim.raid.setDebuffs(eventID, this.individualConfig.defaults.debuffs);
-				this.sim.applyDefaults(eventID, tankSpec);
+				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
 
 				if (tankSpec) {
 					this.sim.raid.setTanks(eventID, [this.player.makeRaidTarget()]);
@@ -1201,6 +1205,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
 			epWeights: this.player.getEpWeights().asArray(),
+			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
 
@@ -1236,6 +1241,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
 			this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
 			this.sim.raid.setTanks(eventID, settings.tanks || []);
+			this.sim.raid.setTargetDummies(eventID, settings.targetDummies);
 			const party = this.player.getParty();
 			if (party) {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());

@@ -13,13 +13,15 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime t
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
 
-	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+	km := dk.KM()
+	rime := dk.Rime()
+	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km {
 		return dk.FrostStrike
 	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
 		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-		return dk.HowlingBlast
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
+	} else if sim.CurrentTime+spGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km && rime {
+		return dk.FrostStrike
+	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && rime {
 		return dk.HowlingBlast
 	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
 		return dk.FrostStrike
@@ -85,10 +87,11 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 
+	km := dk.KM()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
 		if dk.Obliterate.CanCast(sim) && ffActive && bpActive {
 			casted = dk.Obliterate.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+		} else if dk.FrostStrike.CanCast(sim) && km {
 			casted = dk.FrostStrike.Cast(sim, target)
 		} else if dk.FrostStrike.CanCast(sim) {
 			casted = dk.FrostStrike.Cast(sim, target)
@@ -112,7 +115,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		if dk.KillingMachineAura.IsActive() && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
+		km := dk.KM()
+		if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
 			if dk.FrostStrike.CanCast(sim) {
 				dk.FrostStrike.Cast(sim, target)
 			}
@@ -152,7 +156,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 		} else if br == 2 {
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			if dk.KillingMachineAura.IsActive() && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
+			km := dk.KM()
+			if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
 				dk.DeathRuneRevertAt() > sim.CurrentTime+1500*time.Millisecond {
 				if dk.FrostStrike.CanCast(sim) {
 					casted = dk.FrostStrike.Cast(sim, target)
@@ -231,10 +236,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			casted := false
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
+			km := dk.KM()
+			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
 				dk.fr.oblitDelay == 1500*time.Millisecond {
 				casted = dk.FrostStrike.Cast(sim, target)
-			} else if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
+			} else if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
 				dk.fr.oblitDelay >= 1500*time.Millisecond {
 				casted = dk.FrostStrike.Cast(sim, target)
 				dk.fr.oblitDelay = 0
@@ -437,14 +443,16 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Sequence_Pesti(si
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
+	km := dk.KM()
+	rime := dk.Rime()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
-		if dk.FrostStrike.CanCast(sim) && dk.KillingMachineAura.IsActive() {
+		if dk.FrostStrike.CanCast(sim) && km {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && dk.KillingMachineAura.IsActive() && dk.RimeAura.IsActive() {
-			casted = dk.HowlingBlast.Cast(sim, target)
+		} else if dk.FrostStrike.CanCast(sim) && km && rime {
+			casted = dk.FrostStrike.Cast(sim, target)
 		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && dk.RimeAura.IsActive() {
+		} else if dk.HowlingBlast.CanCast(sim) && rime {
 			casted = dk.HowlingBlast.Cast(sim, target)
 		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
 			casted = dk.FrostStrike.Cast(sim, target)

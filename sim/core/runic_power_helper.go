@@ -124,6 +124,8 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 		return
 	}
 	rp.ConvertFromDeath(sim, rp.btslot)
+	bloodTapAura := rp.unit.GetAura("Blood Tap")
+	bloodTapAura.Deactivate(sim)
 	rp.btslot = -1
 }
 

@@ -302,6 +302,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-LibramofFuriousBlows-37574"
+ value: {
+  dps: 5491.33858
+  tps: 4930.40879
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-LibramofReciprocation-40706"
  value: {
   dps: 5462.4505

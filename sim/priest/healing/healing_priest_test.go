@@ -14,7 +14,8 @@ func init() {
 
 func TestHealing(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassPriest,
+		Class:    proto.Class_ClassPriest,
+		IsHealer: true,
 
 		Race: proto.Race_RaceUndead,
 
