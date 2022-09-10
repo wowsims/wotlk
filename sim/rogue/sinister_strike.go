@@ -48,13 +48,13 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					points := 1
-					if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
+					points := int32(1)
+					if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) && spellEffect.DidCrit() {
 						if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
 							points += 1
 						}
 					}
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+					rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
 				} else {
 					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 				}
