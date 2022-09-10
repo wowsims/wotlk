@@ -122,22 +122,22 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 1893.16569
-  tps: 1619.59523
+  dps: 1905.6822
+  tps: 1631.84862
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 1893.16569
-  tps: 1619.59523
+  dps: 1905.6822
+  tps: 1631.84862
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 1980.75852
-  tps: 1693.02645
+  dps: 1994.28692
+  tps: 1708.01566
  }
 }
 dps_results: {

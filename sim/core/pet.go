@@ -158,6 +158,9 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	pet.AddStatsDynamic(sim, pet.inheritedStats)
 	pet.currentStatInheritance = pet.statInheritance
 
+	//reset current mana after applying stats
+	pet.manaBar.reset()
+
 	pet.SetGCDTimer(sim, sim.CurrentTime)
 	pet.AutoAttacks.EnableAutoSwing(sim)
 
@@ -198,10 +201,6 @@ func (pet *Pet) Disable(sim *Simulation) {
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to
 	// clear it.
 	pet.Hardcast = Hardcast{}
-
-	// TODO When MaxMana includes bonus mana will move this to the enable,
-	//so bonus mana from the owner inheritence applies to the pet currentMana
-	pet.manaBar.reset()
 
 	if pet.timeoutAction != nil {
 		pet.timeoutAction.Cancel(sim)
