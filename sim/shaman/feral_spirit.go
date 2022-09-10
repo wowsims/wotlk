@@ -36,6 +36,15 @@ func (shaman *Shaman) registerFeralSpirit() {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Minute * 3,
 			},
+			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				attackSpeed := shaman.AutoAttacks.MainhandSwingSpeed()
+
+				if shaman.AutoAttacks.IsDualWielding {
+					attackSpeed = core.MinDuration(attackSpeed, shaman.AutoAttacks.OffhandSwingSpeed())
+				}
+
+				shaman.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+attackSpeed)
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
