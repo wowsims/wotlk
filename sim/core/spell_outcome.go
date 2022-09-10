@@ -109,6 +109,19 @@ func (unit *Unit) OutcomeFuncMagicHitAndCritBinary(critMultiplier float64) Outco
 	}
 }
 
+func (unit *Unit) OutcomeFuncHealingCrit(critMultiplier float64) OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		if spellEffect.HealingCritCheck(sim, spell, attackTable) {
+			spellEffect.Outcome = OutcomeCrit
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
+			spellEffect.Damage *= critMultiplier
+		} else {
+			spellEffect.Outcome = OutcomeHit
+			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
+		}
+	}
+}
+
 func (unit *Unit) OutcomeFuncCritFixedChance(critChance float64, critMultiplier float64) OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spellEffect.fixedCritCheck(sim, critChance) {
@@ -423,6 +436,11 @@ func (spellEffect *SpellEffect) fixedCritCheck(sim *Simulation, critChance float
 func (spellEffect *SpellEffect) MagicCritCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
 	critChance := spellEffect.SpellCritChance(spell.Unit, spell)
 	return sim.RandomFloat("Magical Crit Roll") < critChance
+}
+
+func (spellEffect *SpellEffect) HealingCritCheck(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {
+	critChance := spellEffect.HealingCritChance(spell.Unit, spell)
+	return sim.RandomFloat("Healing Crit Roll") < critChance
 }
 
 func (spellEffect *SpellEffect) physicalCritRoll(sim *Simulation, spell *Spell, attackTable *AttackTable) bool {

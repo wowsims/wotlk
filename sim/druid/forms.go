@@ -2,6 +2,7 @@ package druid
 
 import (
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -32,8 +33,11 @@ func (druid *Druid) InForm(form DruidForm) bool {
 }
 
 func (druid *Druid) ClearForm(sim *core.Simulation) {
-	druid.CatFormAura.Deactivate(sim)
-	druid.BearFormAura.Deactivate(sim)
+	if druid.InForm(Cat) {
+		druid.CatFormAura.Deactivate(sim)
+	} else if druid.InForm(Bear) {
+		druid.BearFormAura.Deactivate(sim)
+	}
 	druid.form = Humanoid
 }
 
@@ -90,10 +94,9 @@ func (druid *Druid) registerCatFormSpell() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if druid.form != Humanoid {
-				panic("must leave form first")
+				druid.ClearForm(sim)
 			}
 			druid.form = Cat
-			druid.AutoAttacks.EnableAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
@@ -111,6 +114,17 @@ func (druid *Druid) registerCatFormSpell() {
 			if druid.BerserkAura.IsActive() {
 				druid.PseudoStats.CostMultiplier /= 2.0
 			}
+
+			druid.AutoAttacks.MH = core.Weapon{
+				BaseDamageMin:        43,
+				BaseDamageMax:        66,
+				SwingSpeed:           1.0,
+				NormalizedSwingSpeed: 1.0,
+				SwingDuration:        time.Second,
+				CritMultiplier:       druid.MeleeCritMultiplier(),
+			}
+			druid.AutoAttacks.ReplaceMHSwing = nil
+			druid.AutoAttacks.EnableAutoSwing(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
@@ -186,9 +200,6 @@ func (druid *Druid) registerBearFormSpell() {
 	baseCost := druid.BaseMana * 0.35
 	furorProcChance := 0.2 * float64(druid.Talents.Furor)
 
-	previousRage := 0.0
-	finalRage := 0.0
-
 	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
 	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 
@@ -201,7 +212,7 @@ func (druid *Druid) registerBearFormSpell() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if druid.form != Humanoid {
-				panic("must leave form first")
+				druid.ClearForm(sim)
 			}
 			druid.form = Bear
 
@@ -210,22 +221,29 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.EnableDynamicStatDep(sim, bearHotw)
 			druid.EnableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier *= 1.3
-			druid.PseudoStats.DamageDealtMultiplier += 0.02 * float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier += -1.0 * potpdtm
+			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier *= (1.0 - potpdtm)
 
 			druid.applyFeralShift(sim, true)
-			druid.AutoAttacks.EnableAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
-			rb := druid.GetAura("RageBar")
-			if rb != nil {
-				rb.Activate(sim)
+			druid.AutoAttacks.MH = core.Weapon{
+				BaseDamageMin:        109,
+				BaseDamageMax:        165,
+				SwingSpeed:           2.5,
+				NormalizedSwingSpeed: 2.5,
+				SwingDuration:        time.Millisecond * 2500,
+				CritMultiplier:       druid.MeleeCritMultiplier(),
 			}
+
+			druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+				return druid.TryMaul(sim, mhSwingSpell)
+			}
+			druid.AutoAttacks.EnableAutoSwing(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			previousRage = druid.CurrentRage()
 			druid.form = Humanoid
 
 			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
@@ -233,8 +251,8 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.DisableDynamicStatDep(sim, stamdep)
 			druid.DisableDynamicStatDep(sim, potpap)
 			druid.PseudoStats.ThreatMultiplier /= 1.3
-			druid.PseudoStats.DamageDealtMultiplier -= 0.02 * float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier += 1.0 * potpdtm
+			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier /= (1.0 - potpdtm)
 
 			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
@@ -242,10 +260,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 			druid.EnrageAura.Deactivate(sim)
-			rb := druid.GetAura("RageBar")
-			if rb != nil {
-				rb.Deactivate(sim)
-			}
+			druid.MaulQueueAura.Deactivate(sim)
 		},
 	})
 
@@ -267,9 +282,9 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rageDelta := finalRage - previousRage
-			if furorProcChance == 1 || (furorProcChance > 0 && sim.RandomFloat("Furor") < furorProcChance) {
-				finalRage += 10.0
+			rageDelta := 0.0 - druid.CurrentRage()
+			if furorProcChance >= 0.9 || (furorProcChance > 0 && sim.RandomFloat("Furor") < furorProcChance) {
+				rageDelta += 10.0
 			}
 			if rageDelta > 0 {
 				druid.AddRage(sim, rageDelta, rageMetrics)

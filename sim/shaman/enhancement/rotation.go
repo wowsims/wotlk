@@ -72,7 +72,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim) {
+	if rotation.options.WeaveFlameShock && !enh.FlameShockDot.IsActive() && enh.FlameShock.IsReady(sim) {
 		if !enh.FlameShock.Cast(sim, target) {
 			enh.DoNothing()
 		}
@@ -101,8 +101,17 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 	}
 
-	if enh.EarthShock.IsReady(sim) {
-		if !enh.EarthShock.Cast(sim, target) {
+	//Earth shock and Frost shock share the same cd, so should be fine to use EarthShock IsReady here.
+	if proto.EnhancementShaman_Rotation_None != rotation.options.PrimaryShock && enh.EarthShock.IsReady(sim) {
+		var spell *core.Spell
+
+		if rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Frost {
+			spell = enh.FrostShock
+		} else {
+			spell = enh.EarthShock
+		}
+
+		if spell.IsReady(sim) && !spell.Cast(sim, target) {
 			enh.DoNothing()
 		}
 		return

@@ -84,6 +84,36 @@ func BaseDamageConfigMagicNoRoll(flatDamage float64, spellCoefficient float64) B
 	return BaseDamageConfigMagic(flatDamage, flatDamage, spellCoefficient)
 }
 
+func BaseDamageFuncHealing(minFlatHealing float64, maxFlatHealing float64, spellCoefficient float64) BaseDamageCalculator {
+	if spellCoefficient == 0 {
+		return BaseDamageFuncRoll(minFlatHealing, maxFlatHealing)
+	}
+
+	if minFlatHealing == 0 && maxFlatHealing == 0 {
+		return func(_ *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			return hitEffect.HealingPower(spell.Unit, spell) * spellCoefficient
+		}
+	} else if minFlatHealing == maxFlatHealing {
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			damage := hitEffect.HealingPower(spell.Unit, spell) * spellCoefficient
+			return damage + minFlatHealing
+		}
+	} else {
+		deltaHealing := maxFlatHealing - minFlatHealing
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			damage := hitEffect.HealingPower(spell.Unit, spell) * spellCoefficient
+			damage += damageRollOptimized(sim, minFlatHealing, deltaHealing)
+			return damage
+		}
+	}
+}
+func BaseDamageConfigHealing(minFlatHealing float64, maxFlatHealing float64, spellCoefficient float64) BaseDamageConfig {
+	return BuildBaseDamageConfig(BaseDamageFuncHealing(minFlatHealing, maxFlatHealing, spellCoefficient), spellCoefficient)
+}
+func BaseDamageConfigHealingNoRoll(flatHealing float64, spellCoefficient float64) BaseDamageConfig {
+	return BaseDamageConfigHealing(flatHealing, flatHealing, spellCoefficient)
+}
+
 func MultiplyByStacks(config BaseDamageConfig, aura *Aura) BaseDamageConfig {
 	return WrapBaseDamageConfig(config, func(oldCalculator BaseDamageCalculator) BaseDamageCalculator {
 		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {

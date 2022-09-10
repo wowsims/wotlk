@@ -41,55 +41,51 @@ func (dk *TankDeathknight) setupBloodTankERWThreatOpener() {
 }
 
 func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	waitUntil := time.Duration(-1)
-
-	attackGcd := 1500 * time.Millisecond
-	spellGcd := dk.SpellGCD()
-	ff := dk.FrostFeverDisease[target.Index].IsActive()
-	bp := dk.BloodPlagueDisease[target.Index].IsActive()
-	fbAt := core.MinDuration(dk.FrostFeverDisease[target.Index].ExpiresAt(), dk.BloodPlagueDisease[target.Index].ExpiresAt())
-
-	if dk.NextCast == dk.BloodStrike && dk.CurrentHealthPercent() > 0.6 {
-		if dk.NormalCurrentBloodRunes() > 0 {
-			dk.BloodStrike.Cast(sim, target)
-			dk.NextCast = nil
-		}
-	} else {
-		if !ff && dk.IcyTouch.CanCast(sim) {
-			dk.IcyTouch.Cast(sim, target)
-		} else if !bp && dk.PlagueStrike.CanCast(sim) {
-			dk.PlagueStrike.Cast(sim, target)
-		} else if !dk.btr.itCycle && dk.DeathStrike.CanCast(sim) && sim.CurrentTime+attackGcd < fbAt {
-			casted := dk.DeathStrike.Cast(sim, target)
-			if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-				dk.btr.dsCount++
-			}
-
-			if dk.btr.dsCount == 4 {
-				dk.btr.dsCount = 0
-				dk.btr.itCount = 0
-				dk.btr.itCycle = true
-			}
-		} else if dk.btr.itCycle && dk.IcyTouch.CanCast(sim) && sim.CurrentTime+attackGcd < fbAt {
-			casted := dk.IcyTouch.Cast(sim, target)
-			if casted && dk.LastOutcome.Matches(core.OutcomeLanded) {
-				dk.btr.itCount++
-			}
-
-			if dk.btr.itCount == 4 {
-				dk.btr.dsCount = 0
-				dk.btr.itCount = 0
-				dk.btr.itCycle = false
-			}
-		} else {
-			if sim.CurrentTime < fbAt-2*spellGcd {
-				waitUntil = fbAt - 2*spellGcd
-			} else {
-				dk.Pestilence.Cast(sim, target)
-				dk.NextCast = dk.BloodStrike
-			}
-		}
+	if !dk.GCD.IsReady(sim) {
+		return dk.NextGCDAt()
 	}
 
-	return waitUntil
+	t := sim.CurrentTime
+	ff := dk.FrostFeverDisease[target.Index].ExpiresAt() - t
+	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
+	fd := dk.CurrentFrostRunes() + dk.CurrentDeathRunes()
+	ud := dk.CurrentUnholyRunes() + dk.CurrentDeathRunes()
+	b, _, _ := dk.NormalCurrentRunes()
+
+	if ff <= 0 {
+		dk.IcyTouch.Cast(sim, target)
+		return -1
+	}
+
+	if bp <= 0 {
+		dk.PlagueStrike.Cast(sim, target)
+		return -1
+	}
+
+	if ff <= 2*time.Second || bp <= 2*time.Second {
+		dk.Pestilence.Cast(sim, target)
+		return -1
+	}
+
+	if fd > 0 && ud > 0 && dk.CurrentHealthPercent() > 0.5 && dk.CurrentHealth()+dk.AverageDSHeal() <= 1.05*dk.MaxHealth() {
+		dk.DeathStrike.Cast(sim, target)
+		return -1
+	} else if fd > 0 && ud > 0 {
+		dk.IcyTouch.Cast(sim, target)
+		return -1
+	}
+
+	if dk.BloodTap.CanCast(sim) {
+		dk.BloodTap.Cast(sim, target)
+		dk.IcyTouch.Cast(sim, target)
+		dk.CancelBloodTap(sim)
+		return -1
+	}
+
+	if b == 1 && dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second {
+		dk.BloodStrike.Cast(sim, target)
+		return -1
+	}
+
+	return -1
 }

@@ -46,10 +46,9 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	// Passive Cat Form threat reduction
 	cat.PseudoStats.ThreatMultiplier *= 0.71
 
-	// Prevents Windfury from applying.
-	cat.HasMHWeaponImbue = true
-
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
+
+	cat.EnableRageBar(0.0, 1.0, func(sim *core.Simulation) {})
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
@@ -96,7 +95,7 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterFeralSpells(15)
+	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs()
 }
 

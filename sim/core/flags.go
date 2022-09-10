@@ -53,6 +53,8 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskPeriodicDamage
+	ProcMaskSpellHealing
+	ProcMaskPeriodicHealing
 )
 
 const (
