@@ -146,7 +146,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 }
 
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
-	config, effect := shaman.newShockSpellConfig(49326, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
+	config, effect := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
 	config.Flags |= core.SpellFlagBinary
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 

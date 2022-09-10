@@ -64,6 +64,8 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	},
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
+	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
+	WeaveFlameShock:              true,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
