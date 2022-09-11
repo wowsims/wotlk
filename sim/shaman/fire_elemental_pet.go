@@ -81,6 +81,10 @@ func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
+	/*
+		TODO this is a little dirty, can probably clean this up, the rotation might go through some more overhauls,
+		the random AI is hard to emulate.
+	*/
 	target := fireElemental.CurrentTarget
 	fireBlastCasts := fireElemental.FireBlast.SpellMetrics[0].Casts
 	fireNovaCasts := fireElemental.FireNova.SpellMetrics[0].Casts
@@ -90,25 +94,32 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	//Check for mana issues first
-	if fireElemental.CurrentMana() < fireElemental.FireNova.CurCast.Cost {
-		fireElemental.WaitForMana(sim, fireElemental.FireNova.CurCast.Cost)
+	random := sim.RandomFloat("Fire Elemental Pet Spell")
+
+	//Meele the other 30%
+	if random >= .65 {
+		if !fireElemental.TryCast(sim, target, fireElemental.FireNova, maxFireNovaCasts) {
+			fireElemental.TryCast(sim, target, fireElemental.FireBlast, maxFireBlastCasts)
+		}
+	} else if random >= .35 {
+		if !fireElemental.TryCast(sim, target, fireElemental.FireBlast, maxFireBlastCasts) {
+			fireElemental.TryCast(sim, target, fireElemental.FireNova, maxFireNovaCasts)
+		}
+	}
+
+	if !fireElemental.GCD.IsReady(sim) {
 		return
 	}
 
-	var spell *core.Spell
-	if fireNovaCasts < maxFireNovaCasts && fireElemental.FireNova.IsReady(sim) {
-		spell = fireElemental.FireNova
-	} else if fireBlastCasts < maxFireBlastCasts && fireElemental.FireBlast.IsReady(sim) {
-		spell = fireElemental.FireBlast
+	fireElemental.WaitUntil(sim, sim.CurrentTime+time.Second)
+}
+
+func (fireElemental *FireElemental) TryCast(sim *core.Simulation, target *core.Unit, spell *core.Spell, maxCastCount int32) bool {
+	if maxCastCount == spell.SpellMetrics[0].Casts {
+		return false
 	}
 
-	if spell != nil && spell.Cast(sim, target) {
-		return
-	}
-
-	//Will just wait for 2 second's
-	fireElemental.WaitUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
+	return spell.IsReady(sim) && spell.Cast(sim, target)
 }
 
 var fireElementalPetBaseStats = stats.Stats{
@@ -142,9 +153,10 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 			stats.SpellHit: spellHitRatingFromOwner,
 
 			/*
-				TODO these need to be confirmed borrowed from Hunter pets
+				TODO working on figuring this out, getting close need more trials. will need to remove specific buffs,
+				ie does not gain the benefit from draenei buff.
 			*/
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance/2) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: math.Floor((spellHitRatingFromOwner * 0.79)) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }
