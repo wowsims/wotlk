@@ -20,7 +20,7 @@ func (hpriest *HealingPriest) tryUseGCD(sim *core.Simulation) {
 func (hpriest *HealingPriest) chooseSpell(sim *core.Simulation) *core.Spell {
 	if !hpriest.RenewHots[hpriest.CurrentTarget.UnitIndex].IsActive() {
 		return hpriest.Renew
-	} else if hpriest.CanCastPWS(hpriest.CurrentTarget) {
+	} else if hpriest.CanCastPWS(sim, hpriest.CurrentTarget) {
 		return hpriest.PowerWordShield
 	} else {
 		for !hpriest.spellCycle[hpriest.nextCycleIndex].IsReady(sim) {

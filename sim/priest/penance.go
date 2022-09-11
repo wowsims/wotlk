@@ -93,8 +93,10 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit) *core.Dot {
 			IsPeriodic: true,
 			IsHealing:  true,
 
-			BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
+			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			DamageMultiplier: 1 *
+				(1 + .05*float64(priest.Talents.SearingLight)) *
+				(1 + .01*float64(priest.Talents.TwinDisciplines)),
 			ThreatMultiplier: 0,
 
 			BaseDamage:     core.BaseDamageConfigHealing(1484, 1676, .5362),
