@@ -316,7 +316,6 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
-	9449:  true, // Manual Crowd Pummeler
 	11815: true, // Hand of Justice
 	12590: true, // Felstriker
 	12632: true, // Storm Gauntlets
@@ -332,24 +331,33 @@ var allowList = map[int]bool{
 	23836: true, // Goblin Rocket Launcher
 	24114: true, // Braided Eternium Chain
 	27947: true, // Totem of Impact
+	28032: true, // Delicate Green Poncho
 	28041: true, // Bladefist's Breadth
 	28785: true, // The Lightning Capacitor
+	28830: true, // Dragonspine Trophy
+	29383: true, // Bloodlust Brooch
+	29996: true, // Rod of the Sun King
+	30032: true, // Red Belt of Battle
 	31139: true, // Fist of Reckoning
 	31149: true, // Gloves of Pandemonium
 	31193: true, // Blade of Unquenched Thirst
+	32387: true, // Idol of the Raven Goddess
 	32508: true, // Necklace of the Deep
+	32658: true, // Badge of Tenacity
+	33122: true, // Cloak of Darkness
 	33135: true, // Falling Star
 	33140: true, // Blood of Amber
 	33143: true, // Stone of Blades
 	33144: true, // Facet of Eternity
-	6360:  true, // Steelscale Crushfish
-	8345:  true, // Wolfshead Helm
-	28032: true, // Delicate Green Poncho
-	29996: true, // Rod of the Sun King
-	32387: true, // Idol of the Raven Goddess
-	32658: true, // Badge of Tenacity
 	33504: true, // Libram of Divine Purpose
 	33829: true, // Hex Shrunken Head
+	33831: true, // Berserkers Call
+	34472: true, // Shard of Contempt
+	37574: true, // Libram of Furious Blows
+	38287: true, // Empty Mug of Direbrew
+	6360:  true, // Steelscale Crushfish
+	8345:  true, // Wolfshead Helm
+	9449:  true, // Manual Crowd Pummeler
 
 	27510: true, // Tidefury Gauntlets
 	27802: true, // Tidefury Shoulderguards

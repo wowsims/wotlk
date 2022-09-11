@@ -52,7 +52,7 @@ func (druid *Druid) registerShredSpell() {
 							modifier += .3
 						}
 						if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
-							modifier += (0.04 * float64(druid.Talents.RendAndTear))
+							modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 						}
 
 						return normalDamage * modifier

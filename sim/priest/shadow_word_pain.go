@@ -28,7 +28,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(priest.Talents.MentalAgility)),
+				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
 				GCD:  core.GCDDefault,
 			},
 		},

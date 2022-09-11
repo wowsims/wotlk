@@ -271,6 +271,10 @@ func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
+func (rp *RunicPowerBar) CurrentRuneGraces(sim *Simulation) (time.Duration, time.Duration, time.Duration) {
+	return rp.CurrentBloodRuneGrace(sim), rp.CurrentFrostRuneGrace(sim), rp.CurrentUnholyRuneGrace(sim)
+}
+
 func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Duration {
 	readyAt := NeverExpires
 	if rp.runeStates&isDeaths[0] == 0 && rp.runeStates&isSpents[0] != 0 {
@@ -556,6 +560,9 @@ func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
 	return count
 }
 
+func (rp *RunicPowerBar) NormalCurrentRunes() (int32, int32, int32) {
+	return rp.NormalCurrentBloodRunes(), rp.NormalCurrentFrostRunes(), rp.NormalCurrentUnholyRunes()
+}
 func (rp *RunicPowerBar) AllRunesSpent() bool {
 	const allSpent = isSpent | (isSpent << 2) | (isSpent << 4) | (isSpent << 6) | (isSpent << 8) | (isSpent << 10)
 	return rp.runeStates&allSpent == allSpent

@@ -271,7 +271,14 @@ message EnhancementShaman {
         double firenova_mana_threshold = 6;
         double shamanistic_rage_mana_threshold = 7;
 
-        //add frost shock option back maybe?
+		enum PrimaryShock {
+			None = 0;
+			Earth = 1;
+			Frost = 2;
+    	}
+
+		bool weave_flame_shock = 8;
+		PrimaryShock primary_shock = 9;
     }
 
     message Options {

@@ -681,7 +681,7 @@ export class ActionMetrics {
     }
 
     get hps() {
-        return this.combinedMetrics.dps;
+        return this.combinedMetrics.hps;
     }
 
     get tps() {
