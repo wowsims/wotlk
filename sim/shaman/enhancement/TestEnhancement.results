@@ -659,6 +659,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 15155.07292
+  tps: 8698.76995
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5082.81851
+  tps: 2588.44519
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6492.47915
+  tps: 2870.84704
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12055.25651
+  tps: 7121.82453
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3558.35319
+  tps: 1899.65289
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4917.03714
+  tps: 2215.01355
+ }
+}
+dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 14978.50057
@@ -698,6 +740,48 @@ dps_results: {
  value: {
   dps: 4763.98115
   tps: 2534.80634
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14982.44488
+  tps: 8696.11227
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 5083.81551
+  tps: 2613.28728
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 6413.57057
+  tps: 2872.72799
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12163.90779
+  tps: 7294.24354
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3560.12083
+  tps: 1906.07111
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4959.16911
+  tps: 2287.78442
  }
 }
 dps_results: {

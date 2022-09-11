@@ -44,7 +44,7 @@ func NewShaman(character core.Character, talents proto.ShamanTalents, totems pro
 	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
 		shaman.AddStat(stats.MP5, 100)
 	}
-
+	shaman.FireElemental = shaman.NewFireElemental()
 	return shaman
 }
 
@@ -104,6 +104,9 @@ type Shaman struct {
 
 	FeralSpirit  *core.Spell
 	SpiritWolves *SpiritWolves
+
+	FireElemental      *FireElemental
+	FireElementalTotem *core.Spell
 
 	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
@@ -225,7 +228,7 @@ func (shaman *Shaman) Initialize() {
 	}
 
 	shaman.registerFeralSpirit()
-
+	shaman.registerFireElementalTotem()
 	shaman.registerShocks()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerMagmaTotemSpell()

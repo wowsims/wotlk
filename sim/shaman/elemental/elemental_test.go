@@ -22,12 +22,12 @@ func TestElemental(t *testing.T) {
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
-		// OtherSpecOptions: []core.SpecOptionsCombo{
-		// 	core.SpecOptionsCombo{Label: "LBOnly", SpecOptions: PlayerOptionsLBOnly},
-		// 	core.SpecOptionsCombo{Label: "Fixed3LBCL", SpecOptions: PlayerOptionsFixed3LBCL},
-		// 	core.SpecOptionsCombo{Label: "CLOnClearcastNoBuffs", SpecOptions: PlayerOptionsCLOnClearcastNoBuffs},
-		// 	core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
-		// },
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			core.SpecOptionsCombo{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
+			// 	core.SpecOptionsCombo{Label: "Fixed3LBCL", SpecOptions: PlayerOptionsFixed3LBCL},
+			// 	core.SpecOptionsCombo{Label: "CLOnClearcastNoBuffs", SpecOptions: PlayerOptionsCLOnClearcastNoBuffs},
+			// 	core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
+		},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

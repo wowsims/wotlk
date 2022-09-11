@@ -55,6 +55,26 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	},
 }
 
+var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
+	EnhancementShaman: &proto.EnhancementShaman{
+		Talents:  StandardTalents,
+		Options:  enhShamOptions,
+		Rotation: enhShamRotationFireElemental,
+	},
+}
+
+var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
+	Totems: &proto.ShamanTotems{
+		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
+		Air:              proto.AirTotem_WindfuryTotem,
+		Water:            proto.WaterTotem_ManaSpringTotem,
+		Fire:             proto.FireTotem_MagmaTotem,
+		UseFireElemental: true,
+	},
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
+}
+
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	Totems: &proto.ShamanTotems{
 		Earth: proto.EarthTotem_StrengthOfEarthTotem,

@@ -710,6 +710,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 5708.80752
+  tps: 3621.28525
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 3679.05914
+  tps: 2542.59578
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 5000.4166
+  tps: 3058.6012
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 3788.08099
+  tps: 1659.46925
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 2088.76812
+  tps: 1352.88697
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4479.63238
+  tps: 2657.15491
+ }
+}
+dps_results: {
  key: "TestElemental-Settings-Troll-P1-Adaptive-FullBuffs-LongMultiTarget"
  value: {
   dps: 3979.66416
@@ -749,6 +791,48 @@ dps_results: {
  value: {
   dps: 3512.71669
   tps: 2715.51826
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 5519.74854
+  tps: 3526.6071
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 3579.7022
+  tps: 2489.89468
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 4840.29814
+  tps: 2982.99576
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 3675.68044
+  tps: 1643.10103
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 2042.07714
+  tps: 1332.21207
+ }
+}
+dps_results: {
+ key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4352.63498
+  tps: 2597.66764
  }
 }
 dps_results: {
