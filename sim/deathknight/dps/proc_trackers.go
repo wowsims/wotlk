@@ -43,19 +43,19 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(26297, "Berserking (Troll)", true)
 	dk.ur.addProc(33697, "Blood Fury", true)
 
-	dk.ur.addProc(35937, "ItemActive-35937", true)
-	dk.ur.addProc(36871, "ItemActive-36871", true)
-	dk.ur.addProc(37166, "ItemActive-37166", true)
-	dk.ur.addProc(37556, "ItemActive-37556", true)
-	dk.ur.addProc(37557, "ItemActive-37557", true)
-	dk.ur.addProc(38080, "ItemActive-38080", true)
-	dk.ur.addProc(38081, "ItemActive-38081", true)
-	dk.ur.addProc(38761, "ItemActive-38761", true)
-	dk.ur.addProc(39257, "ItemActive-39257", true)
-	dk.ur.addProc(44014, "ItemActive-44014", true)
-	dk.ur.addProc(45263, "ItemActive-45263", true)
-	dk.ur.addProc(46086, "ItemActive-46086", true)
-	dk.ur.addProc(47734, "ItemActive-47734", true)
+	// dk.ur.addProc(35937, "ItemActive-35937", true)
+	// dk.ur.addProc(36871, "ItemActive-36871", true)
+	// dk.ur.addProc(37166, "ItemActive-37166", true)
+	// dk.ur.addProc(37556, "ItemActive-37556", true)
+	// dk.ur.addProc(37557, "ItemActive-37557", true)
+	// dk.ur.addProc(38080, "ItemActive-38080", true)
+	// dk.ur.addProc(38081, "ItemActive-38081", true)
+	// dk.ur.addProc(38761, "ItemActive-38761", true)
+	// dk.ur.addProc(39257, "ItemActive-39257", true)
+	// dk.ur.addProc(44014, "ItemActive-44014", true)
+	// dk.ur.addProc(45263, "ItemActive-45263", true)
+	// dk.ur.addProc(46086, "ItemActive-46086", true)
+	// dk.ur.addProc(47734, "ItemActive-47734", true)
 
 	dk.ur.addProc(53344, "Rune Of The Fallen Crusader Proc", false)
 	dk.ur.addProc(55379, "Thundering Skyflare Diamond Proc", false)
@@ -96,4 +96,61 @@ func (dk *DpsDeathknight) initProcTrackers() {
 	dk.ur.addProc(52572, "Ashen Band of Endless Might Proc", false)
 	dk.ur.addProc(54569, "Sharpened Twilight Scale Proc", false)
 	dk.ur.addProc(54590, "Sharpened Twilight Scale H Proc", false)
+}
+
+func (dk *DpsDeathknight) setupGargoyleCooldowns() {
+	dk.ur.majorCds = make([]*core.MajorCooldown, 0)
+
+	// hyperspeed accelerators
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
+
+	// berserking (troll)
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+
+	// blood fury (orc)
+	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
+
+	// potion of speed
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
+
+	// active ap trinkets
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 35937}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36871}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37166}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37556}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37557}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38080}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38081}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38761}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 39257}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45263}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46086}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 47734}, false)
+
+	// active haste trinkets
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36972}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37558}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37560}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37562}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38070}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38258}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38259}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38764}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40531}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 43836}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45466}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46088}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 48722}, false)
+	dk.gargoyleCooldownSync(core.ActionID{ItemID: 50260}, false)
+}
+
+func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
+	if dk.Character.HasMajorCooldown(actionID) {
+		majorCd := dk.Character.GetMajorCooldown(actionID)
+		dk.ur.majorCds = append(dk.ur.majorCds, majorCd)
+
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+		}
+	}
 }

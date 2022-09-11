@@ -226,33 +226,6 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	return true
 }
 
-func (dk *DpsDeathknight) setupGargoyleCooldowns() {
-	dk.ur.majorCds = make([]*core.MajorCooldown, 0)
-
-	// hyperspeed accelerators
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
-
-	// berserking (troll)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
-
-	// blood fury (orc)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
-
-	// potion of speed
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
-}
-
-func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
-		dk.ur.majorCds = append(dk.ur.majorCds, majorCd)
-
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
-		}
-	}
-}
-
 func logMessage(sim *core.Simulation, message string) {
 	if sim.Log != nil {
 		sim.Log(message)
