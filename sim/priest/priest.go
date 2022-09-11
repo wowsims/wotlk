@@ -43,6 +43,7 @@ type Priest struct {
 	MindFlay        []*core.Spell
 	MindSear        []*core.Spell
 	Penance         *core.Spell
+	PowerWordShield *core.Spell
 	PrayerOfHealing *core.Spell
 	PrayerOfMending *core.Spell
 	Renew           *core.Spell
@@ -61,7 +62,9 @@ type Priest struct {
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
 
-	RenewHots []*core.Dot
+	RenewHots     []*core.Dot
+	PWSShields    []*core.Shield
+	WeakenedSouls []*core.Aura
 
 	ProcPrayerOfMending core.ApplySpellEffects
 
@@ -172,6 +175,7 @@ func (priest *Priest) RegisterHealingSpells() {
 	priest.registerCircleOfHealingSpell()
 	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
+	priest.registerPowerWordShieldSpell()
 	priest.registerPrayerOfHealingSpell()
 	priest.registerPrayerOfMendingSpell()
 	priest.registerRenewSpell()
