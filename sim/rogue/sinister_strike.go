@@ -15,6 +15,7 @@ func (rogue *Rogue) SinisterStrikeEnergyCost() float64 {
 func (rogue *Rogue) registerSinisterStrikeSpell() {
 	energyCost := rogue.SinisterStrikeEnergyCost()
 	refundAmount := energyCost * 0.8
+	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
 
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48638},
@@ -49,7 +50,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					points := int32(1)
-					if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) && spellEffect.DidCrit() {
+					if hasGlyphOfSinisterStrike && spellEffect.DidCrit() {
 						if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
 							points += 1
 						}
