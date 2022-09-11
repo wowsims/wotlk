@@ -1,6 +1,7 @@
 package priest
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -8,6 +9,21 @@ import (
 )
 
 func (priest *Priest) ApplyTalents() {
+	// TODO:
+	// Reflective Shield
+	// Improved Flash Heal
+	// Renewed Hope
+	// Rapture
+	// Pain Suppression
+	// Test of Faith
+	// Guardian Spirit
+
+	priest.applyDivineAegis()
+	priest.applyGrace()
+	priest.applyBorrowedTime()
+	priest.applyInspiration()
+	priest.applyHolyConcentration()
+	priest.applySerendipity()
 	priest.applySurgeOfLight()
 	priest.applyMisery()
 	priest.applyShadowWeaving()
@@ -58,6 +74,227 @@ func (priest *Priest) ApplyTalents() {
 	if priest.Talents.TwistedFaith > 0 {
 		priest.AddStatDependency(stats.Spirit, stats.SpellPower, 0.04*float64(priest.Talents.TwistedFaith))
 	}
+}
+
+func (priest *Priest) applyDivineAegis() {
+	if priest.Talents.DivineAegis == 0 {
+		return
+	}
+
+	divineAegis := priest.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 47515},
+		SpellSchool: core.SpellSchoolHoly,
+	})
+
+	shields := make([]*core.Shield, len(priest.Env.AllUnits))
+	for _, unit := range priest.Env.AllUnits {
+		if !priest.IsOpponent(unit) {
+			shield := core.NewShield(core.Shield{
+				Spell: divineAegis,
+				Aura: unit.GetOrRegisterAura(core.Aura{
+					Label:    "Divine Aegis",
+					ActionID: divineAegis.ActionID,
+					Duration: time.Second * 12,
+				}),
+			})
+			shields[unit.UnitIndex] = shield
+		}
+	}
+
+	multiplier := 0.1 * float64(priest.Talents.DivineAegis)
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Divine Aegis Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				shield := shields[spellEffect.Target.UnitIndex]
+				shield.Apply(sim, spellEffect.Damage*multiplier)
+			}
+		},
+	})
+}
+
+func (priest *Priest) applyGrace() {
+	if priest.Talents.Grace == 0 {
+		return
+	}
+
+	procChance := .5 * float64(priest.Talents.Grace)
+
+	auras := make([]*core.Aura, len(priest.Env.AllUnits))
+	for _, unit := range priest.Env.AllUnits {
+		if !priest.IsOpponent(unit) {
+			aura := unit.RegisterAura(core.Aura{
+				Label:     "Grace" + strconv.Itoa(int(priest.Index)),
+				ActionID:  core.ActionID{SpellID: 47517},
+				Duration:  time.Second * 15,
+				MaxStacks: 3,
+				OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
+					priest.AttackTables[aura.Unit.UnitIndex].HealingDealtMultiplier /= 1 + .03*float64(oldStacks)
+					priest.AttackTables[aura.Unit.UnitIndex].HealingDealtMultiplier *= 1 + .03*float64(newStacks)
+				},
+			})
+			auras[unit.UnitIndex] = aura
+		}
+	}
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Grace Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.Penance {
+				if procChance == 1 || sim.RandomFloat("Grace") < procChance {
+					aura := auras[spellEffect.Target.UnitIndex]
+					aura.Activate(sim)
+					aura.AddStack(sim)
+				}
+			}
+		},
+	})
+}
+
+func (priest *Priest) applyBorrowedTime() {
+	if priest.Talents.BorrowedTime == 0 {
+		return
+	}
+
+	multiplier := 1 + .05*float64(priest.Talents.BorrowedTime)
+
+	procAura := priest.RegisterAura(core.Aura{
+		Label:    "Borrowed Time",
+		ActionID: core.ActionID{SpellID: 52800},
+		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			priest.MultiplyCastSpeed(multiplier)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			priest.MultiplyCastSpeed(1 / multiplier)
+		},
+	})
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Borrwed Time Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == priest.PowerWordShield {
+				procAura.Activate(sim)
+			} else {
+				procAura.Deactivate(sim)
+			}
+		},
+	})
+}
+
+func (priest *Priest) applyInspiration() {
+	if priest.Talents.Inspiration == 0 {
+		return
+	}
+
+	auras := make([]*core.Aura, len(priest.Env.AllUnits))
+	for _, unit := range priest.Env.AllUnits {
+		if !priest.IsOpponent(unit) {
+			aura := core.InspirationAura(unit, priest.Talents.Inspiration)
+			auras[unit.UnitIndex] = aura
+		}
+	}
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Inspiration Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == priest.FlashHeal ||
+				spell == priest.GreaterHeal ||
+				spell == priest.BindingHeal ||
+				spell == priest.PrayerOfMending ||
+				spell == priest.PrayerOfHealing ||
+				spell == priest.CircleOfHealing ||
+				spell == priest.Penance {
+				auras[spellEffect.Target.UnitIndex].Activate(sim)
+			}
+		},
+	})
+}
+
+func (priest *Priest) applyHolyConcentration() {
+	if priest.Talents.HolyConcentration == 0 {
+		return
+	}
+
+	multiplier := 1 + []float64{0, .16, .32, .50}[priest.Talents.HolyConcentration]
+
+	procAura := priest.RegisterAura(core.Aura{
+		Label:    "Holy Concentration",
+		ActionID: core.ActionID{SpellID: 34860},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			priest.MultiplyCastSpeed(multiplier)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			priest.MultiplyCastSpeed(1 / multiplier)
+		},
+	})
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Holy Concentration Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.DidCrit() &&
+				(spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.EmpoweredRenew) {
+				procAura.Activate(sim)
+			}
+		},
+	})
+}
+
+func (priest *Priest) applySerendipity() {
+	if priest.Talents.Serendipity == 0 {
+		return
+	}
+
+	reductionPerStack := .04 * float64(priest.Talents.Serendipity)
+
+	procAura := priest.RegisterAura(core.Aura{
+		Label:     "Serendipity",
+		ActionID:  core.ActionID{SpellID: 63737},
+		Duration:  time.Second * 20,
+		MaxStacks: 3,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
+			priest.PrayerOfHealing.CastTimeMultiplier += reductionPerStack * float64(oldStacks)
+			priest.PrayerOfHealing.CastTimeMultiplier -= reductionPerStack * float64(newStacks)
+			priest.GreaterHeal.CastTimeMultiplier += reductionPerStack * float64(oldStacks)
+			priest.GreaterHeal.CastTimeMultiplier -= reductionPerStack * float64(newStacks)
+		},
+	})
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Serendipity Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell == priest.FlashHeal || spell == priest.BindingHeal {
+				procAura.Activate(sim)
+				procAura.AddStack(sim)
+			}
+		},
+	})
 }
 
 func (priest *Priest) applySurgeOfLight() {

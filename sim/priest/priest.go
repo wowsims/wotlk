@@ -47,6 +47,7 @@ type Priest struct {
 	PrayerOfHealing *core.Spell
 	PrayerOfMending *core.Spell
 	Renew           *core.Spell
+	EmpoweredRenew  *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell

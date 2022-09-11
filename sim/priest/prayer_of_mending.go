@@ -19,13 +19,15 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		}
 	}
 
+	var curTarget *core.Unit
 	priest.ProcPrayerOfMending = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)),
+			(1 + .02*float64(priest.Talents.DivineProvidence)) *
+			(1 + .01*float64(priest.Talents.TwinDisciplines)),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
@@ -33,6 +35,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			pomAuras[spellEffect.Target.UnitIndex].Deactivate(sim)
+			curTarget = nil
 
 			// Bounce to new ally.
 
@@ -50,6 +53,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 
 			if newTarget != nil {
 				pomAuras[newTarget.UnitIndex].Activate(sim)
+				curTarget = newTarget
 			}
 		},
 	})
@@ -75,7 +79,12 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if curTarget != nil {
+				pomAuras[curTarget.UnitIndex].Deactivate(sim)
+			}
+
 			pomAuras[target.UnitIndex].Activate(sim)
+			curTarget = target
 		},
 	})
 }

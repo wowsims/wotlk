@@ -13,9 +13,8 @@ func (priest *Priest) registerRenewSpell() {
 	actionID := core.ActionID{SpellID: 48068}
 	baseCost := 0.17 * priest.BaseMana
 
-	var empoweredRenew *core.Spell
 	if priest.Talents.EmpoweredRenew > 0 {
-		empoweredRenew = priest.RegisterSpell(core.SpellConfig{
+		priest.EmpoweredRenew = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 63543},
 			SpellSchool: core.SpellSchoolHoly,
 			Flags:       core.SpellFlagNoOnCastComplete,
@@ -52,8 +51,8 @@ func (priest *Priest) registerRenewSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if empoweredRenew != nil {
-				empoweredRenew.Cast(sim, target)
+			if priest.EmpoweredRenew != nil {
+				priest.EmpoweredRenew.Cast(sim, target)
 			}
 			priest.RenewHots[target.UnitIndex].Apply(sim)
 		},
