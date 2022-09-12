@@ -198,9 +198,13 @@ func (warrior *Warrior) secondaryCritModifier(applyImpale bool) float64 {
 	if applyImpale {
 		secondaryModifier += 0.1 * float64(warrior.Talents.Impale)
 	}
-	if warrior.Talents.PoleaxeSpecialization > 0 {
-		secondaryModifier += 0.01 * float64(warrior.Talents.PoleaxeSpecialization)
+	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
+		if warrior.Talents.PoleaxeSpecialization > 0 &&
+			weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
+			secondaryModifier += 0.01 * float64(warrior.Talents.PoleaxeSpecialization)
+		}
 	}
+
 	return secondaryModifier
 }
 func (warrior *Warrior) critMultiplier(applyImpale bool) float64 {
