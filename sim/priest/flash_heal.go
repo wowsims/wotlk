@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -19,7 +20,9 @@ func (priest *Priest) registerFlashHealSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - .05*float64(priest.Talents.ImprovedFlashHeal)),
+				Cost: baseCost * (1 -
+					.05*float64(priest.Talents.ImprovedFlashHeal) -
+					core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfFlashHeal), .1, 0)),
 
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,

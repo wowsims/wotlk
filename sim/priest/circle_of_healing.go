@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -28,7 +29,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	}
 
 	var effects []core.SpellEffect
-	targets := priest.Env.Raid.GetFirstNPlayersOrPets(5)
+	targets := priest.Env.Raid.GetFirstNPlayersOrPets(5 + core.TernaryInt32(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfCircleOfHealing), 1, 0))
 	for _, target := range targets {
 		effect := baseEffect
 		effect.Target = target

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -22,6 +23,25 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			Timer:    priest.NewTimer(),
 			Duration: time.Second * 4,
 		}
+	}
+
+	var glyphHeal *core.Spell
+	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPowerWordShield) {
+		glyphHeal = priest.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: 42408},
+			SpellSchool: core.SpellSchoolHoly,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+				IsHealing: true,
+				ProcMask:  core.ProcMaskSpellHealing,
+
+				DamageMultiplier: 0.2 * multiplier,
+				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+
+				BaseDamage:     core.BaseDamageConfigHealingNoRoll(2230, coeff),
+				OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
+			}),
+		})
 	}
 
 	priest.PowerWordShield = priest.RegisterSpell(core.SpellConfig{
@@ -51,6 +71,10 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
 			weakenedSoul.Activate(sim)
+
+			if glyphHeal != nil {
+				glyphHeal.Cast(sim, target)
+			}
 		},
 	})
 
