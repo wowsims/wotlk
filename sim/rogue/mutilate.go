@@ -43,7 +43,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	}
 	if !isMH {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1, false)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, 1, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), false)
 	}
 
 	effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
