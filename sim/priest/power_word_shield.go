@@ -15,7 +15,8 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 
 	// TODO: Account for attacker/target multipliers
 	multiplier := 1 *
-		(1 + .05*float64(priest.Talents.ImprovedPowerWordShield) + .01*float64(priest.Talents.TwinDisciplines))
+		(1 + .05*float64(priest.Talents.ImprovedPowerWordShield) + .01*float64(priest.Talents.TwinDisciplines)) *
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.05, 1)
 
 	cd := core.Cooldown{}
 	if !priest.Talents.SoulWarding {
@@ -44,6 +45,10 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		})
 	}
 
+	wsDuration := time.Second*15 -
+		core.TernaryDuration(priest.HasSetBonus(ItemSetGladiatorsInvestiture, 4), time.Second*2, 0) -
+		core.TernaryDuration(priest.HasSetBonus(ItemSetGladiatorsRaiment, 4), time.Second*2, 0)
+
 	priest.PowerWordShield = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
@@ -70,6 +75,8 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			shieldAmount := (2230.0 + priest.GetStat(stats.HealingPower)*coeff) * multiplier
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
+
+			weakenedSoul.Duration = wsDuration
 			weakenedSoul.Activate(sim)
 
 			if glyphHeal != nil {

@@ -19,7 +19,10 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		}
 	}
 
+	maxJumps := 5 + core.TernaryInt(priest.HasSetBonus(ItemSetRegaliaOfFaith, 2), 1, 0)
+
 	var curTarget *core.Unit
+	var remainingJumps int
 	priest.ProcPrayerOfMending = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
@@ -27,7 +30,8 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)) *
-			(1 + .01*float64(priest.Talents.TwinDisciplines)),
+			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
@@ -38,6 +42,9 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 			curTarget = nil
 
 			// Bounce to new ally.
+			if remainingJumps == 0 {
+				return
+			}
 
 			// Find ally with lowest % HP and is not the current mending target.
 			var newTarget *core.Unit
@@ -54,6 +61,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 			if newTarget != nil {
 				pomAuras[newTarget.UnitIndex].Activate(sim)
 				curTarget = newTarget
+				remainingJumps--
 			}
 		},
 	})
@@ -85,6 +93,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 
 			pomAuras[target.UnitIndex].Activate(sim)
 			curTarget = target
+			remainingJumps = maxJumps
 		},
 	})
 }

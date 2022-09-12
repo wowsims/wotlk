@@ -99,6 +99,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-CrimsonAcolyte'sRaiment"
+ value: {
+  dps: 2390.86302
+  tps: 2042.64643
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
   dps: 2049.60319
@@ -246,6 +253,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-Gladiator'sInvestiture"
+ value: {
+  dps: 2465.40741
+  tps: 2105.98219
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Gladiator'sRaiment"
+ value: {
+  dps: 1996.45359
+  tps: 1696.34817
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 2001.63029
@@ -351,6 +372,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-RegaliaofFaith"
+ value: {
+  dps: 1827.12829
+  tps: 1573.06632
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ReignoftheDead-47316"
  value: {
   dps: 2067.50375
@@ -390,6 +418,13 @@ dps_results: {
  value: {
   dps: 1841.83966
   tps: 1586.21207
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SanctificationRegalia"
+ value: {
+  dps: 1905.79921
+  tps: 1638.3654
  }
 }
 dps_results: {
@@ -488,6 +523,20 @@ dps_results: {
  value: {
   dps: 2060.33045
   tps: 1761.35001
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-VestmentsofAbsolution"
+ value: {
+  dps: 1391.14511
+  tps: 1207.10216
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Zabra'sRaiment"
+ value: {
+  dps: 2132.7352
+  tps: 1830.33479
  }
 }
 dps_results: {

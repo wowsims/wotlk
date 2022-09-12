@@ -101,7 +101,8 @@ func (priest *Priest) applyDivineAegis() {
 		}
 	}
 
-	multiplier := 0.1 * float64(priest.Talents.DivineAegis)
+	multiplier := 0.1 * float64(priest.Talents.DivineAegis) *
+		core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1)
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Divine Aegis Talent",

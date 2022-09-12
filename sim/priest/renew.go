@@ -25,9 +25,10 @@ func (priest *Priest) registerRenewSpell() {
 
 				BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 				DamageMultiplier: 1 *
+					float64(priest.renewTicks()) *
 					priest.renewHealingMultiplier() *
 					.05 * float64(priest.Talents.EmpoweredRenew) *
-					float64(priest.renewTicks()),
+					core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
 				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
