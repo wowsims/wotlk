@@ -188,7 +188,7 @@ func (priest *Priest) applyBorrowedTime() {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == priest.PowerWordShield {
 				procAura.Activate(sim)
-			} else {
+			} else if spell.CurCast.CastTime > 0 {
 				procAura.Deactivate(sim)
 			}
 		},
