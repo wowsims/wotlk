@@ -265,6 +265,13 @@ func (dk *Deathknight) Initialize() {
 	dk.registerDeathPactSpell()
 }
 
+func (dk *Deathknight) offhandDamageCalculator(flatBonus float64, baseMultiplier float64) core.BaseDamageCalculator {
+	return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+		nwd := spell.Unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
+		return (nwd + flatBonus) * baseMultiplier * 0.5 * dk.nervesOfColdSteelBonus()
+	}
+}
+
 func (dk *Deathknight) ResetBonusCoeffs() {
 	dk.bonusCoeffs = DeathknightCoeffs{
 		glacierRotBonusCoeff:      1.0,

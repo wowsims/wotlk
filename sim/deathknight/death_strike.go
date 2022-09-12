@@ -13,7 +13,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 1.0, 0.75, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 297.0+bonusBaseDamage, dk.nervesOfColdSteelBonus(), 0.75, true)
+		weaponBaseDamage = dk.offhandDamageCalculator(297.0+bonusBaseDamage, 0.75)
 	}
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
@@ -92,7 +92,7 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 			dk.DeathStrikeHeals = append(dk.DeathStrikeHeals, healingAmount)
 		}
 
-		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
+		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeOhHit)
 	})
 	dk.DeathStrike = dk.DeathStrikeMhHit
 }

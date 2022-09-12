@@ -10,7 +10,7 @@ var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 1.0, 0.4, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, dk.nervesOfColdSteelBonus(), 0.4, true)
+		weaponBaseDamage = dk.offhandDamageCalculator(764.0, 0.4)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
@@ -40,7 +40,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}
-	if isMH { // offhand doesnt need GCD
+	if isMH { // offhand doesn't need GCD
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(10, 1, 0, 0, 0))
 		conf.Cast = core.CastConfig{
@@ -73,9 +73,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 
 func (dk *Deathknight) registerBloodStrikeSpell() {
 	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
-			dk.BloodStrikeOhHit.Cast(sim, spellEffect.Target)
-		}
+		dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeOhHit)
 		dk.LastOutcome = spellEffect.Outcome
 
 		if spellEffect.Outcome.Matches(core.OutcomeLanded) {

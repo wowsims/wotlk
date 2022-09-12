@@ -197,7 +197,7 @@ func (dk *Deathknight) applyIcyTalons() {
 	icyTalonsCoeff := 1.0 + 0.04*float64(dk.Talents.IcyTalons)
 
 	dk.IcyTalonsAura = dk.RegisterAura(core.Aura{
-		ActionID: core.ActionID{SpellID: 50887}, // This probably doesnt need to be in metrics.
+		ActionID: core.ActionID{SpellID: 50887}, // This probably doesn't need to be in metrics.
 		Label:    "Icy Talons",
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -217,10 +217,6 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 	dk.bonusCoeffs.threatOfThassarianChance = []float64{0.0, 0.3, 0.6, 1.0}[dk.Talents.ThreatOfThassarian]
 }
 
-func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
-}
-
 func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
 	critMultiplier := dk.critMultiplier()
 	if isGuileOfGorefiendStrike || isMightOfMograineStrike {
@@ -236,8 +232,19 @@ func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.Spell
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *RuneSpell, ohSpell *RuneSpell) {
-	if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, ohSpell *RuneSpell) {
+	if dk.threatOfThassarianWillProc(sim) && dk.GetOHWeapon() != nil {
 		ohSpell.Cast(sim, spellEffect.Target)
+	}
+}
+
+func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
+	switch dk.Talents.ThreatOfThassarian {
+	case 0:
+		return false
+	case 3:
+		return true
+	default:
+		return sim.RandomFloat("Threat of Thassarian") < dk.bonusCoeffs.threatOfThassarianChance
 	}
 }

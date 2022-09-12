@@ -12,7 +12,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 1.0, 0.55, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, dk.nervesOfColdSteelBonus(), 0.55, true)
+		weaponBaseDamage = dk.offhandDamageCalculator(baseDamage, 0.55)
 	}
 
 	effect := core.SpellEffect{
@@ -74,7 +74,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 func (dk *Deathknight) registerFrostStrikeSpell() {
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
-		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
+		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeOhHit)
 
 		// KM Consume after OH
 		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {

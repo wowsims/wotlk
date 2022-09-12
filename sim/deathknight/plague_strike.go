@@ -11,7 +11,7 @@ var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 1.0, 0.5, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, dk.nervesOfColdSteelBonus(), 0.5, true)
+		weaponBaseDamage = dk.offhandDamageCalculator(378.0, 0.5)
 	}
 
 	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
@@ -71,9 +71,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
-			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
-		}
+		dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeOhHit)
 		dk.LastOutcome = spellEffect.Outcome
 		if spellEffect.Landed() {
 			dk.BloodPlagueExtended[spellEffect.Target.Index] = 0

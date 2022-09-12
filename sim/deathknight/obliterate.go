@@ -13,7 +13,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, 1.0, 0.8, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, dk.nervesOfColdSteelBonus(), 0.8, true)
+		weaponBaseDamage = dk.offhandDamageCalculator(584.0+bonusBaseDamage, 0.8)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
@@ -85,7 +85,7 @@ func (dk *Deathknight) registerObliterateSpell() {
 
 	dk.ObliterateMhHit = dk.newObliterateHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
-		dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateMhHit, dk.ObliterateOhHit)
+		dk.threatOfThassarianProc(sim, spellEffect, dk.ObliterateOhHit)
 
 		if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
 			dk.FrostFeverDisease[spellEffect.Target.Index].Deactivate(sim)
