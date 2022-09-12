@@ -54,7 +54,7 @@ dps_results: {
  value: {
   dps: 53.02736
   tps: 28.85961
-  hps: 2880.51139
+  hps: 2706.16007
  }
 }
 dps_results: {
@@ -62,7 +62,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -70,7 +70,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -78,7 +78,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -86,7 +86,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.7784
-  hps: 4217.17917
+  hps: 4183.95144
  }
 }
 dps_results: {
@@ -94,7 +94,7 @@ dps_results: {
  value: {
   dps: 71.00872
   tps: 34.23681
-  hps: 4201.41692
+  hps: 4142.9857
  }
 }
 dps_results: {
@@ -102,7 +102,15 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4189.65911
+  hps: 4129.55763
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-CrimsonAcolyte'sRaiment"
+ value: {
+  dps: 71.47446
+  tps: 37.28754
+  hps: 4467.48841
  }
 }
 dps_results: {
@@ -110,7 +118,7 @@ dps_results: {
  value: {
   dps: 76.17372
   tps: 37.28754
-  hps: 4001.29833
+  hps: 3797.53517
  }
 }
 dps_results: {
@@ -118,7 +126,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -126,7 +134,7 @@ dps_results: {
  value: {
   dps: 69.72012
   tps: 39.79547
-  hps: 4296.33175
+  hps: 4245.42985
  }
 }
 dps_results: {
@@ -134,7 +142,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -142,7 +150,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -150,7 +158,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.84771
-  hps: 4307.52903
+  hps: 4319.46347
  }
 }
 dps_results: {
@@ -158,7 +166,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -166,7 +174,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4192.43946
+  hps: 4132.8162
  }
 }
 dps_results: {
@@ -174,7 +182,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -182,7 +190,7 @@ dps_results: {
  value: {
   dps: 71.00872
   tps: 34.69551
-  hps: 4232.17327
+  hps: 4195.91088
  }
 }
 dps_results: {
@@ -190,7 +198,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4189.65911
+  hps: 4129.55763
  }
 }
 dps_results: {
@@ -198,7 +206,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4189.12583
+  hps: 4128.98153
  }
 }
 dps_results: {
@@ -206,7 +214,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -214,7 +222,7 @@ dps_results: {
  value: {
   dps: 70.20566
   tps: 39.79547
-  hps: 4300.46425
+  hps: 4248.85546
  }
 }
 dps_results: {
@@ -222,7 +230,7 @@ dps_results: {
  value: {
   dps: 72.75692
   tps: 39.79547
-  hps: 4404.39896
+  hps: 4352.28256
  }
 }
 dps_results: {
@@ -230,7 +238,7 @@ dps_results: {
  value: {
   dps: 69.36558
   tps: 39.79547
-  hps: 4291.70825
+  hps: 4241.27498
  }
 }
 dps_results: {
@@ -238,7 +246,7 @@ dps_results: {
  value: {
   dps: 71.00872
   tps: 34.23681
-  hps: 4201.41692
+  hps: 4142.9857
  }
 }
 dps_results: {
@@ -246,7 +254,7 @@ dps_results: {
  value: {
   dps: 70.90258
   tps: 34.23681
-  hps: 4196.95212
+  hps: 4138.5914
  }
 }
 dps_results: {
@@ -254,7 +262,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -262,7 +270,7 @@ dps_results: {
  value: {
   dps: 69.43787
   tps: 39.84771
-  hps: 4356.73908
+  hps: 4352.61807
  }
 }
 dps_results: {
@@ -270,7 +278,23 @@ dps_results: {
  value: {
   dps: 60.48745
   tps: 33.00773
-  hps: 3470.1459
+  hps: 3316.85612
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-Gladiator'sInvestiture"
+ value: {
+  dps: 70.77833
+  tps: 35.09277
+  hps: 4409.22185
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-Gladiator'sRaiment"
+ value: {
+  dps: 80.12203
+  tps: 35.09277
+  hps: 3913.4611
  }
 }
 dps_results: {
@@ -278,7 +302,7 @@ dps_results: {
  value: {
   dps: 72.3673
   tps: 39.79547
-  hps: 4412.02947
+  hps: 4363.77948
  }
 }
 dps_results: {
@@ -286,7 +310,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4189.65911
+  hps: 4129.55763
  }
 }
 dps_results: {
@@ -294,7 +318,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4189.12583
+  hps: 4128.98153
  }
 }
 dps_results: {
@@ -302,7 +326,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -310,7 +334,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 39.79547
-  hps: 4360.87112
+  hps: 4312.69898
  }
 }
 dps_results: {
@@ -318,7 +342,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -326,7 +350,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -334,7 +358,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.89622
-  hps: 4436.83053
+  hps: 4433.64769
  }
 }
 dps_results: {
@@ -342,7 +366,7 @@ dps_results: {
  value: {
   dps: 69.36558
   tps: 39.79547
-  hps: 4292.39389
+  hps: 4241.8402
  }
 }
 dps_results: {
@@ -350,7 +374,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4255.5858
+  hps: 4214.93229
  }
 }
 dps_results: {
@@ -358,7 +382,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -366,7 +390,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -374,7 +398,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -382,7 +406,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -390,7 +414,15 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-RegaliaofFaith"
+ value: {
+  dps: 59.30858
+  tps: 32.8541
+  hps: 3599.8021
  }
 }
 dps_results: {
@@ -398,7 +430,7 @@ dps_results: {
  value: {
   dps: 71.30591
   tps: 39.79547
-  hps: 4396.96247
+  hps: 4348.41068
  }
 }
 dps_results: {
@@ -406,7 +438,7 @@ dps_results: {
  value: {
   dps: 71.68801
   tps: 39.79547
-  hps: 4413.62002
+  hps: 4364.89301
  }
 }
 dps_results: {
@@ -414,7 +446,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -422,7 +454,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4261.98369
+  hps: 4210.95905
  }
 }
 dps_results: {
@@ -430,7 +462,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -438,7 +470,15 @@ dps_results: {
  value: {
   dps: 62.67603
   tps: 33.53448
-  hps: 3610.39884
+  hps: 3471.60235
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-SanctificationRegalia"
+ value: {
+  dps: 64.07398
+  tps: 34.01733
+  hps: 3810.63016
  }
 }
 dps_results: {
@@ -446,7 +486,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -454,7 +494,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -462,7 +502,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -470,7 +510,7 @@ dps_results: {
  value: {
   dps: 68.12175
   tps: 39.89771
-  hps: 4361.27959
+  hps: 4337.19179
  }
 }
 dps_results: {
@@ -478,7 +518,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -486,7 +526,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -494,7 +534,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -502,7 +542,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 34.23681
-  hps: 4179.09291
+  hps: 4121.01418
  }
 }
 dps_results: {
@@ -510,7 +550,7 @@ dps_results: {
  value: {
   dps: 67.80052
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -518,7 +558,7 @@ dps_results: {
  value: {
   dps: 67.80052
   tps: 39.79547
-  hps: 4258.14957
+  hps: 4211.05797
  }
 }
 dps_results: {
@@ -526,7 +566,7 @@ dps_results: {
  value: {
   dps: 71.00872
   tps: 34.23681
-  hps: 4201.41692
+  hps: 4142.9857
  }
 }
 dps_results: {
@@ -534,7 +574,7 @@ dps_results: {
  value: {
   dps: 70.90258
   tps: 34.23681
-  hps: 4196.95212
+  hps: 4138.5914
  }
 }
 dps_results: {
@@ -542,7 +582,7 @@ dps_results: {
  value: {
   dps: 70.90258
   tps: 34.23681
-  hps: 4196.95212
+  hps: 4138.5914
  }
 }
 dps_results: {
@@ -550,7 +590,23 @@ dps_results: {
  value: {
   dps: 71.00872
   tps: 34.23681
-  hps: 4201.41692
+  hps: 4142.9857
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-VestmentsofAbsolution"
+ value: {
+  dps: 51.47008
+  tps: 28.33286
+  hps: 2818.53611
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-Zabra'sRaiment"
+ value: {
+  dps: 67.30932
+  tps: 35.59757
+  hps: 4069.17186
  }
 }
 dps_results: {
@@ -558,15 +614,15 @@ dps_results: {
  value: {
   dps: 69.75593
   tps: 35.59757
-  hps: 3912.65794
+  hps: 3768.03132
  }
 }
 dps_results: {
  key: "TestDisc-Average-Default"
  value: {
-  dps: 72.2304
-  tps: 39.67198
-  hps: 4342.88493
+  dps: 72.22908
+  tps: 39.67112
+  hps: 4312.39109
  }
 }
 dps_results: {
@@ -574,7 +630,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 780.90938
-  hps: 3897.71124
+  hps: 3856.99539
  }
 }
 dps_results: {
@@ -582,7 +638,7 @@ dps_results: {
  value: {
   dps: 70.47803
   tps: 39.04547
-  hps: 3897.71124
+  hps: 3856.99539
  }
 }
 dps_results: {
@@ -598,7 +654,7 @@ dps_results: {
  value: {
   dps: 56.66864
   tps: 527.97948
-  hps: 2676.48828
+  hps: 2574.56769
  }
 }
 dps_results: {
@@ -606,7 +662,7 @@ dps_results: {
  value: {
   dps: 56.66864
   tps: 26.39897
-  hps: 2676.48828
+  hps: 2574.56769
  }
 }
 dps_results: {
@@ -622,6 +678,6 @@ dps_results: {
  value: {
   dps: 59.97344
   tps: 39.79547
-  hps: 4360.87112
+  hps: 4312.69898
  }
 }

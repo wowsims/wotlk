@@ -16,7 +16,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating: 0 +
+			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
@@ -37,7 +39,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - .1*float64(priest.Talents.HealingPrayers)),
+				Cost: baseCost * (1 -
+					.1*float64(priest.Talents.HealingPrayers) -
+					core.TernaryFloat64(priest.HasSetBonus(ItemSetVestmentsOfAbsolution, 2), 0.1, 0)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,
 			},
