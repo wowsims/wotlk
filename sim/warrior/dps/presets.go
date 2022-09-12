@@ -99,6 +99,8 @@ var armsRotation = &proto.Warrior_Rotation{
 
 	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
+
+	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
 var warriorRotation = &proto.Warrior_Rotation{
@@ -117,6 +119,8 @@ var warriorRotation = &proto.Warrior_Rotation{
 
 	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
+
+	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
 var warriorOptions = &proto.Warrior_Options{

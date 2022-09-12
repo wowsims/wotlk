@@ -5,39 +5,79 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.PriestTalents{
+var DiscTalents = &proto.PriestTalents{
 	TwinDisciplines:            5,
-	SilentResolve:              3,
 	ImprovedInnerFire:          3,
 	ImprovedPowerWordFortitude: 2,
 	Meditation:                 3,
 	InnerFocus:                 true,
+	ImprovedPowerWordShield:    3,
 	MentalAgility:              3,
 	MentalStrength:             5,
+	SoulWarding:                true,
 	FocusedPower:               2,
 	Enlightenment:              3,
-	FocusedWill:                3,
 	PowerInfusion:              true,
+	ImprovedFlashHeal:          3,
+	RenewedHope:                1,
+	Rapture:                    3,
+	Aspiration:                 2,
+	DivineAegis:                3,
+	PainSuppression:            true,
+	Grace:                      2,
+	BorrowedTime:               5,
+	Penance:                    true,
 
+	HealingFocus:       2,
+	ImprovedRenew:      3,
 	HolySpecialization: 5,
-	SpellWarding:       5,
+	SpellWarding:       1,
+	DesperatePrayer:    true,
+	Inspiration:        3,
+	ImprovedHealing:    3,
+}
+
+var HolyTalents = &proto.PriestTalents{
+	TwinDisciplines:            5,
+	ImprovedInnerFire:          3,
+	ImprovedPowerWordFortitude: 2,
+	Meditation:                 3,
+	InnerFocus:                 true,
+	ImprovedPowerWordShield:    1,
+	MentalAgility:              3,
+
+	HealingFocus:       2,
+	ImprovedRenew:      3,
+	HolySpecialization: 4,
 	DivineFury:         5,
 	DesperatePrayer:    true,
+	Inspiration:        3,
 	HolyReach:          2,
-	SearingLight:       2,
+	HealingPrayers:     2,
 	SpiritOfRedemption: true,
 	SpiritualGuidance:  5,
 	SurgeOfLight:       2,
-
-	SpiritTap:         3,
-	ImprovedSpiritTap: 2,
-	Darkness:          4,
+	SpiritualHealing:   5,
+	HolyConcentration:  3,
+	EmpoweredHealing:   4,
+	Serendipity:        3,
+	EmpoweredRenew:     1,
+	CircleOfHealing:    true,
+	DivineProvidence:   5,
+	GuardianSpirit:     true,
 }
 
-var DefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PriestMajorGlyph_GlyphOfSmite),
-	Major2: int32(proto.PriestMajorGlyph_GlyphOfHolyNova),
-	Major3: int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath),
+var DiscGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PriestMajorGlyph_GlyphOfPowerWordShield),
+	Major2: int32(proto.PriestMajorGlyph_GlyphOfFlashHeal),
+	Major3: int32(proto.PriestMajorGlyph_GlyphOfPenance),
+	// No interesting minor glyphs.
+}
+
+var HolyGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing),
+	Major2: int32(proto.PriestMajorGlyph_GlyphOfRenew),
+	Major3: int32(proto.PriestMajorGlyph_GlyphOfCircleOfHealing),
 	// No interesting minor glyphs.
 }
 
@@ -62,14 +102,22 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 }
 
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	CurseOfElements:   true,
+var FullDebuffs = &proto.Debuffs{}
+
+var PlayerOptionsDisc = &proto.Player_HealingPriest{
+	HealingPriest: &proto.HealingPriest{
+		Talents: DiscTalents,
+		Options: &proto.HealingPriest_Options{
+			UseInnerFire:   true,
+			UseShadowfiend: true,
+		},
+		Rotation: &proto.HealingPriest_Rotation{},
+	},
 }
 
-var PlayerOptionsBasic = &proto.Player_HealingPriest{
+var PlayerOptionsHoly = &proto.Player_HealingPriest{
 	HealingPriest: &proto.HealingPriest{
-		Talents: StandardTalents,
+		Talents: HolyTalents,
 		Options: &proto.HealingPriest_Options{
 			UseInnerFire:   true,
 			UseShadowfiend: true,
@@ -80,80 +128,92 @@ var PlayerOptionsBasic = &proto.Player_HealingPriest{
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 40562,
-		"enchant": 44877,
+		"id": 40456,
+		"enchant": 44876,
 		"gems": [
-			41307,
-			40049
+			41401,
+			39998
 		]
 	},
 	{
-		"id": 40374
+		"id": 44657,
+		"gems": [
+			40047
+		]
 	},
 	{
-		"id": 40555,
-		"enchant": 44874
+		"id": 40450,
+		"enchant": 44872,
+		"gems": [
+			42144
+		]
 	},
 	{
-		"id": 41610,
+		"id": 40724,
 		"enchant": 63765
 	},
 	{
-		"id": 40526,
-		"enchant": 33990,
+		"id": 40194,
+		"enchant": 44489,
 		"gems": [
-			40049
+			42144
 		]
 	},
 	{
-		"id": 40325,
+		"id": 40741,
 		"enchant": 44498,
 		"gems": [
 			0
 		]
 	},
 	{
-		"id": 40454,
+		"id": 40445,
 		"enchant": 44592,
 		"gems": [
-			40049,
+			42144,
 			0
 		]
 	},
 	{
-		"id": 40301,
+		"id": 40271,
+		"enchant": 54793,
 		"gems": [
-			40049
+			40027,
+			39998
 		]
 	},
 	{
-		"id": 40560,
-		"enchant": 41602
+		"id": 40398,
+		"enchant": 41602,
+		"gems": [
+			39998,
+			39998
+		]
 	},
 	{
-		"id": 40246,
-		"enchant": 60623
+		"id": 40236,
+		"enchant": 55016
 	},
 	{
-		"id": 40399
+		"id": 40108
 	},
 	{
-		"id": 39389
+		"id": 40433
 	},
 	{
-		"id": 42129
+		"id": 37835
 	},
 	{
-		"id": 40382
+		"id": 40258
 	},
 	{
 		"id": 40395,
 		"enchant": 44487
 	},
 	{
-		"id": 40273
+		"id": 40350
 	},
 	{
-		"id": 39712
+		"id": 40245
 	}
 ]}`)

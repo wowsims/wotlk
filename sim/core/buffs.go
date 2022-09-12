@@ -342,25 +342,29 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuff
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 }
 
+func InspirationAura(unit *Unit, points int32) *Aura {
+	multiplier := 1 - []float64{0, .03, .07, .10}[points]
+
+	return unit.GetOrRegisterAura(Aura{
+		Label:    "Inspiration",
+		ActionID: ActionID{SpellID: 15363},
+		Duration: time.Second * 15,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
+		},
+	})
+}
+
 func applyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
 	uptime = MinFloat(1, uptime)
 
-	var curBonus stats.Stats
-	inspirationAura := character.RegisterAura(Aura{
-		Label:    "Inspiration",
-		ActionID: ActionID{SpellID: 15363},
-		Duration: time.Second * 15,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			curBonus = stats.Stats{stats.Armor: character.GetStat(stats.Armor) * 0.25}
-			aura.Unit.AddStatsDynamic(sim, curBonus)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
-		},
-	})
+	inspirationAura := InspirationAura(&character.Unit, 3)
 
 	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500)
 }

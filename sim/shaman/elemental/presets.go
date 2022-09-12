@@ -31,6 +31,14 @@ var BasicTotems = &proto.ShamanTotems{
 	Fire:  proto.FireTotem_TotemOfWrath,
 }
 
+var FireElementalBasicTotems = &proto.ShamanTotems{
+	Earth:            proto.EarthTotem_TremorTotem,
+	Air:              proto.AirTotem_WrathOfAirTotem,
+	Water:            proto.WaterTotem_ManaSpringTotem,
+	Fire:             proto.FireTotem_TotemOfWrath,
+	UseFireElemental: true,
+}
+
 var eleShamOptions = &proto.ElementalShaman_Options{
 	Shield:    proto.ShamanShield_WaterShield,
 	Bloodlust: true,
@@ -41,6 +49,17 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 		Options: eleShamOptions,
 		Rotation: &proto.ElementalShaman_Rotation{
 			Totems: BasicTotems,
+			Type:   proto.ElementalShaman_Rotation_Adaptive,
+		},
+	},
+}
+
+var PlayerOptionsAdaptiveFireElemental = &proto.Player_ElementalShaman{
+	ElementalShaman: &proto.ElementalShaman{
+		Talents: StandardTalents,
+		Options: eleShamOptions,
+		Rotation: &proto.ElementalShaman_Rotation{
+			Totems: FireElementalBasicTotems,
 			Type:   proto.ElementalShaman_Rotation_Adaptive,
 		},
 	},

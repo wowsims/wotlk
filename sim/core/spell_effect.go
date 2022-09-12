@@ -468,7 +468,7 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 	target := spellEffect.Target
 
 	if spellEffect.IsHealing {
-		spellEffect.Damage *= target.PseudoStats.HealingTakenMultiplier
+		spellEffect.Damage *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 		return
 	}
 

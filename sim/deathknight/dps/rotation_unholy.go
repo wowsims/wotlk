@@ -20,7 +20,7 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true))
 
-	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_DND).
@@ -176,12 +176,16 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	// the cast is canceled and a disease recast is queued. Priority is as follows:
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
-		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
+		fuStrike := dk.ScourgeStrike
+		if dk.Talents.Annihilation > 0 {
+			fuStrike = dk.Obliterate
+		}
+		if dk.uhDiseaseCheck(sim, target, fuStrike, true, 1) {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
-			casted = dk.ScourgeStrike.Cast(sim, target)
+			casted = fuStrike.Cast(sim, target)
 		} else {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
@@ -282,7 +286,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			}
 		}
 
-		if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
 		} else {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
@@ -308,7 +312,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 		}
 	}
 
-	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
 	} else {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
@@ -344,7 +348,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 		}
 	}
 
-	if dk.Rotation.UseDeathAndDecay || !dk.Talents.ScourgeStrike {
+	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
 	} else {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)

@@ -31,7 +31,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssClass: 'enhancement-shaman-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-                "Fire Elemental is not yet implemented",
+                "Fire Elemental is in a alpha state",
                 "Some things regarding weapon imbues need further testing and changes",
 			],
 

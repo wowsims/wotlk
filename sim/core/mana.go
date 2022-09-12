@@ -77,9 +77,10 @@ func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulat
 func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
+
+// Gets the Maxiumum mana including bonus and temporary affects that would increase your mana pool.
 func (unit *Unit) MaxMana() float64 {
-	// TODO needs to use Max Health from stats to include bonus mana.
-	return unit.GetInitialStat(stats.Mana)
+	return unit.stats[stats.Mana]
 }
 func (unit *Unit) CurrentMana() float64 {
 	return unit.currentMana

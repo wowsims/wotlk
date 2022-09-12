@@ -15,6 +15,7 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
+	Warrior_Rotation_StanceOption as StanceOption
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -132,7 +133,7 @@ export const WarriorRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'spamExecute',
 			label: 'Spam Execute',
-			labelTooltip: 'Use Execute whenever possible during Execute Phase',
+			labelTooltip: 'Use Execute whenever possible during Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 		}),
@@ -143,6 +144,16 @@ export const WarriorRotationConfig = {
 				{ name: 'Never', value: SunderArmor.SunderArmorNone },
 				{ name: 'Help Stack', value: SunderArmor.SunderArmorHelpStack },
 				{ name: 'Maintain Debuff', value: SunderArmor.SunderArmorMaintain },
+			],
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, StanceOption>({
+			fieldName: 'stanceOption',
+			label: 'Stance Option',
+			labelTooltip: 'Stance to stay on. The default for Fury (Bloodthirst) is Berserker Stance and Battle Stance for everything else.',
+			values: [
+				{ name: 'Default', value: StanceOption.DefaultStance },
+				{ name: 'Battle Stance', value: StanceOption.BattleStance },
+				{ name: 'Berserker Stance', value: StanceOption.BerserkerStance },
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({

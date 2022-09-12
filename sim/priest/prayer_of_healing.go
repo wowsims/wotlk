@@ -16,7 +16,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating: 0 +
+			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
@@ -27,6 +29,31 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 	// Separate ApplyEffects functions for each party.
 	var applyPartyEffects []core.ApplySpellEffects
+
+	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 48072},
+		SpellSchool: core.SpellSchoolHoly,
+
+		ResourceType: stats.Mana,
+		BaseCost:     baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost * (1 -
+					.1*float64(priest.Talents.HealingPrayers) -
+					core.TernaryFloat64(priest.HasSetBonus(ItemSetVestmentsOfAbsolution, 2), 0.1, 0)),
+				GCD:      core.GCDDefault,
+				CastTime: time.Second * 3,
+			},
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
+			party := targetAgent.GetCharacter().Party
+			applyPartyEffects[party.Index](sim, target, spell)
+		},
+	})
+
 	for _, party := range priest.Env.Raid.Parties {
 		var effects []core.SpellEffect
 		var hots []*core.Dot
@@ -38,6 +65,11 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
 				hots = append(hots, priest.makePrayerOfHealingGlyphHot(effect.Target, baseEffect))
 			}
+		}
+
+		if len(effects) == 0 {
+			applyPartyEffects = append(applyPartyEffects, nil)
+			continue
 		}
 
 		applyDirectEffects := core.ApplyEffectFuncDamageMultiple(effects)
@@ -52,28 +84,6 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			applyPartyEffects = append(applyPartyEffects, applyDirectEffects)
 		}
 	}
-
-	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48072},
-		SpellSchool: core.SpellSchoolHoly,
-
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - .1*float64(priest.Talents.HealingPrayers)),
-				GCD:      core.GCDDefault,
-				CastTime: time.Second * 3,
-			},
-		},
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
-			party := targetAgent.GetCharacter().Party
-			applyPartyEffects[party.Index](sim, target, spell)
-		},
-	})
 }
 
 func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect core.SpellEffect) *core.Dot {
