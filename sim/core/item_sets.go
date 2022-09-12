@@ -60,21 +60,25 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 	}
 
 	set.Items = make(map[int32]struct{})
+	foundName := false
+	foundAlternativeName := false
 	for _, item := range items.Items {
-		if len(set.AlternativeName) == 0 {
+		if item.SetName == set.Name || (len(set.AlternativeName) > 0 && item.SetName == set.AlternativeName) {
+			//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
+			set.Items[item.ID] = struct{}{}
+
 			if item.SetName == set.Name {
-				//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
-				set.Items[item.ID] = struct{}{}
-			}
-		} else {
-			if item.SetName == set.Name || item.SetName == set.AlternativeName {
-				//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
-				set.Items[item.ID] = struct{}{}
+				foundName = true
+			} else {
+				foundAlternativeName = true
 			}
 		}
 	}
-	if len(set.Items) == 0 {
+	if !foundName {
 		panic("No items found for set " + set.Name)
+	}
+	if len(set.AlternativeName) > 0 && !foundAlternativeName {
+		panic("No items found for set alternative " + set.AlternativeName)
 	}
 
 	sets = append(sets, set)
