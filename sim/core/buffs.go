@@ -289,6 +289,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if partyBuffs.ChainOfTheTwilightOwl {
 		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
+	if individualBuffs.FocusMagic {
+		character.AddStats(stats.Stats{stats.SpellCrit: 3 * CritRatingPerCritChance})
+	}
 }
 
 // Applies buffs to pets.
