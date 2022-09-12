@@ -526,7 +526,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
     },
     {
       "id": 40491,
-      "enchant": 44495
+      "enchant": 53344
     },
     {
       "id": 42620
