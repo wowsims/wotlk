@@ -62,7 +62,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 
 			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
-			DamageMultiplier: core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1) * (1.0 + 0.05*float64(warrior.Talents.GagOrder)),
+			DamageMultiplier: (1.0 + 0.05*float64(warrior.Talents.GagOrder)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1), // TODO: GagOrder might apply differently
 			ThreatMultiplier: 1.3,
 			FlatThreatBonus:  770,
 
@@ -74,7 +74,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {

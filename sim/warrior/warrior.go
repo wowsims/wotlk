@@ -1,6 +1,7 @@
 package warrior
 
 import (
+	"github.com/wowsims/wotlk/sim/core/items"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -118,8 +119,8 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
-	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
-	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
+	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(mh))
+	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(oh))
 
 	warrior.Shout = warrior.makeShoutSpell()
 
@@ -193,25 +194,33 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 	return warrior
 }
 
-func (warrior *Warrior) secondaryCritModifier(applyImpale bool) float64 {
-	secondaryModifier := 0.0
-	if applyImpale {
-		secondaryModifier += 0.1 * float64(warrior.Talents.Impale)
-	}
-	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		if warrior.Talents.PoleaxeSpecialization > 0 &&
-			weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
-			secondaryModifier += 0.01 * float64(warrior.Talents.PoleaxeSpecialization)
+type hand int8
+
+const (
+	none hand = 0
+	mh   hand = 1
+	oh   hand = 2
+)
+
+func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0)
+}
+
+func primary(warrior *Warrior, hand hand) float64 {
+	if warrior.Talents.PoleaxeSpecialization > 0 {
+		if (hand == mh && isPoleaxe(warrior.GetMHWeapon())) || (hand == oh && isPoleaxe(warrior.GetOHWeapon())) {
+			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
 		}
 	}
+	return 1
+}
 
-	return secondaryModifier
+func isPoleaxe(weapon *items.Item) bool {
+	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
 }
-func (warrior *Warrior) critMultiplier(applyImpale bool) float64 {
-	return warrior.MeleeCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
-}
-func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
-	return warrior.SpellCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
+
+func (warrior *Warrior) critMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0.1*float64(warrior.Talents.Impale))
 }
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
