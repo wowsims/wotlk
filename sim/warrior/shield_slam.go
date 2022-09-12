@@ -68,7 +68,9 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return damageRollFunc(sim) + warrior.GetStat(stats.BlockValue)
+					sbv := warrior.GetStat(stats.BlockValue)
+					sbvBonus := core.TernaryFloat(sbv <= 1960.0, sbv, 0.0) + core.TernaryFloat(sbv > 1960.0 && sbv <= 3160.0, 0.09333333333*sbv+1777.06666667, 0.0) + core.TernaryFloat(sbv > 3160.0, 2072.0, 0.0)
+					return damageRollFunc(sim) + sbvBonus
 				},
 				TargetSpellCoefficient: 1,
 			},
