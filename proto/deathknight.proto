@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+import "common.proto";
+
 message DeathknightTalents {
 	// Blood
 	int32 butchery = 1;
@@ -210,6 +212,8 @@ message Deathknight {
 		
 		bool precast_ghoul_frenzy = 3;
 		bool precast_horn_of_winter = 4;
+
+		RaidTarget unholy_frenzy_target = 5;
 	}
 	Options options = 3;
 }
@@ -225,6 +229,7 @@ message TankDeathknight {
 	
 	message Options {
 		double starting_runic_power = 1;
+		RaidTarget unholy_frenzy_target = 2;
 	}
 	Options options = 3;
 }

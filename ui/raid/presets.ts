@@ -164,6 +164,31 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		iconUrl: talentTreeIcons[Class.ClassDeathknight][2],
 	},
 	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultBloodRotation,
+		talents: DeathknightPresets.BloodTalents.data,
+		specOptions: DeathknightPresets.DefaultBloodOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'Blood Dps DK',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceTroll,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+			},
+		},
+		otherDefaults: DeathknightPresets.OtherDefaults,
+		tooltip: 'Blood Dps DK',
+		iconUrl: talentTreeIcons[Class.ClassDeathknight][0],
+	},
+	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
 		talents: BalanceDruidPresets.StandardTalents.data,
@@ -967,4 +992,23 @@ export const buffBotPresets: Array<BuffBotSettings> = [
             debuffs.sunderArmor = true;
         },
     },
+	{
+		// The value of this field must never change, to preserve local storage data.
+		buffBotId: 'Unholy Frenzy Dk',
+		spec: Spec.SpecDeathknight,
+		name: 'Blood DK',
+		tooltip: 'Deathknight: Adds Unholy Frenzy.',
+		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_bladedarmor.jpg',
+		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
+			const unholyFrenzyIndex = buffBot.getUnholyFrenzyAssignment().targetIndex;
+			if (unholyFrenzyIndex != NO_TARGET) {
+				const partyIndex = Math.floor(unholyFrenzyIndex / 5);
+				const playerIndex = unholyFrenzyIndex % 5;
+				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
+				if (playerProto.buffs) {
+					playerProto.buffs.unholyFrenzy++;
+				}
+			}
+		},
+	},
 ];

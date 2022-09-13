@@ -13,6 +13,8 @@ type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
 
+	UnholyFrenzyTarget proto.RaidTarget
+
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
 	PrecastHornOfWinter bool
@@ -263,6 +265,8 @@ func (dk *Deathknight) Initialize() {
 	dk.registerArmyOfTheDeadCD()
 	dk.registerDancingRuneWeaponCD()
 	dk.registerDeathPactSpell()
+
+	dk.registerUnholyFrenzyCD()
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {

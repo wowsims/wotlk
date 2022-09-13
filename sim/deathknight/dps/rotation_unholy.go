@@ -55,7 +55,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		return sim.CurrentTime
 	}
 
-	// What follows is a simple APL where every cast is checked against current diseses
+	// What follows is a simple priority where every cast is checked against current diseses
 	// And if the cast would leave the DK with not enough runes to cast disease before falloff
 	// the cast is canceled and a disease recast is queued. Priority is as follows:
 	// Death and Decay -> Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
@@ -171,7 +171,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		return sim.CurrentTime
 	}
 
-	// What follows is a simple APL where every cast is checked against current diseses
+	// What follows is a simple priority where every cast is checked against current diseses
 	// And if the cast would leave the DK with not enough runes to cast disease before falloff
 	// the cast is canceled and a disease recast is queued. Priority is as follows:
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter

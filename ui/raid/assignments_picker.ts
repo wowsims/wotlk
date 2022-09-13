@@ -23,6 +23,7 @@ export class AssignmentsPicker extends Component {
 	private readonly innervatesPicker: InnervatesPicker;
 	private readonly powerInfusionsPicker: PowerInfusionsPicker;
 	private readonly tricksOfTheTradesPicker: TricksOfTheTradesPicker;
+	private readonly unholyFrenzyPicker: UnholyFrenzyPicker;
 
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
@@ -30,6 +31,7 @@ export class AssignmentsPicker extends Component {
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
 		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
+		this.unholyFrenzyPicker = new UnholyFrenzyPicker(this.rootElem, raidSimUI);
 	}
 }
 
@@ -239,4 +241,41 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
 		buffBot.setTricksOfTheTradeAssignment(eventID, newValue);
 	}
+}
+
+class UnholyFrenzyPicker extends AssignedBuffPicker {
+    getTitle(): string {
+        return 'Unholy Frenzy';
+    }
+
+    getSourcePlayers(): Array<Player<any> | BuffBot> {
+        return this.raidSimUI.getPlayersAndBuffBots()
+            .filter(playerOrBot => playerOrBot?.getClass() == Class.ClassDeathknight)
+            .filter(playerOrBot => {
+                if (playerOrBot instanceof BuffBot) {
+                    return playerOrBot.settings.buffBotId == 'Unholy Frenzy Dk';
+                } else {
+                    const player = playerOrBot as Player<Spec.SpecDeathknight>;
+                    return player.getTalents().hysteria;
+                }
+            }) as Array<Player<any> | BuffBot>;
+    }
+
+    getPlayerValue(player: Player<any>): RaidTarget {
+        return (player as Player<Spec.SpecDeathknight>).getSpecOptions().unholyFrenzyTarget || emptyRaidTarget();
+    }
+
+    setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+        const newOptions = (player as Player<Spec.SpecDeathknight>).getSpecOptions();
+        newOptions.unholyFrenzyTarget = newValue;
+        player.setSpecOptions(eventID, newOptions);
+    }
+
+    getBuffBotValue(buffBot: BuffBot): RaidTarget {
+        return buffBot.getUnholyFrenzyAssignment();
+    }
+
+    setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
+        buffBot.setUnholyFrenzyAssignment(eventID, newValue);
+    }
 }
