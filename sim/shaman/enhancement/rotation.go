@@ -32,7 +32,14 @@ type Rotation interface {
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
-	//TODO Add in a mana guard
+	//Mana guard, our cheapest spell.
+	if enh.CurrentMana() < enh.LavaBurst.CurCast.Cost {
+		if enh.LightningShieldAura.GetStacks() < 3 {
+			enh.LightningShield.Cast(sim, nil)
+		}
+		enh.WaitForMana(sim, enh.LavaBurst.CurCast.Cost)
+		return
+	}
 
 	// We could choose to not wait for auto attacks if we don't have any MW stacks,
 	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
