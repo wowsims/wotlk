@@ -85,7 +85,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 						SP: 0.044,
 					}
 
-					damage := paladin.GetMHWeapon().ToProto().WeaponSpeed * ((scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell)))
+					damage := paladin.GetMHWeapon().SwingSpeed * ((scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell)))
 					return damage
 				},
 			},
