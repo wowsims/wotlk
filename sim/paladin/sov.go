@@ -121,7 +121,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
-					return core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1, damagePerStack, false), dot.Aura).Calculator(sim, hitEffect, spell)
+					return core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, damagePerStack, false), dot.Aura).Calculator(sim, hitEffect, spell)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit

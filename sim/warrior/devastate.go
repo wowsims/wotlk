@@ -46,7 +46,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
-	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, false)
+	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, false)
 
 	warrior.Devastate = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47498},

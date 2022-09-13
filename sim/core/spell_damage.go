@@ -156,13 +156,13 @@ type Hand bool
 const MainHand Hand = true
 const OffHand Hand = false
 
-func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, baseMultiplier float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageCalculator {
+func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageCalculator {
 	// Bonus weapon damage applies after OH penalty: https://www.youtube.com/watch?v=bwCIU87hqTs
 	if normalized {
 		if hand == MainHand {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = damage*baseMultiplier + flatBonus
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}
@@ -171,18 +171,18 @@ func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, ba
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = damage*0.5*baseMultiplier + flatBonus
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}
-				return damage * weaponMultiplier
+				return damage * weaponMultiplier * 0.5
 			}
 		}
 	} else {
 		if hand == MainHand {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.MH.CalculateWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = damage*baseMultiplier + flatBonus
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}
@@ -191,17 +191,17 @@ func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, ba
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.OH.CalculateWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = damage*0.5*baseMultiplier + flatBonus
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}
-				return damage * weaponMultiplier
+				return damage * weaponMultiplier * 0.5
 			}
 		}
 	}
 }
-func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, baseMultiplier float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageConfig {
-	calculator := BaseDamageFuncMeleeWeapon(hand, normalized, flatBonus, baseMultiplier, weaponMultiplier, includeBonusWeaponDamage)
+func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageConfig {
+	calculator := BaseDamageFuncMeleeWeapon(hand, normalized, flatBonus, weaponMultiplier, includeBonusWeaponDamage)
 	if includeBonusWeaponDamage {
 		return BuildBaseDamageConfig(calculator, 1)
 	} else {

@@ -43,7 +43,7 @@ func (druid *Druid) registerShredSpell() {
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, 1.0, 2.25, true),
+				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, 2.25, true),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						normalDamage := oldCalculator(sim, spellEffect, spell)
