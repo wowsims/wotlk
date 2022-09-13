@@ -59,11 +59,10 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 
 // Handles things that function for *both* cat/bear
 func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
-	weap := druid.GetMHWeapon()
 	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
 	fap := 0.0
-	if weap != nil {
-		dps := (((weap.WeaponDamageMax - weap.WeaponDamageMin) / 2.0) + weap.WeaponDamageMin) / weap.SwingSpeed
+	if weapon := druid.GetMHWeapon(); weapon != nil {
+		dps := (weapon.WeaponDamageMax + weapon.WeaponDamageMin) / 2.0 / weapon.SwingSpeed
 		fap = math.Floor((dps - 54.8) * 14)
 	}
 	druid.AddStatDynamic(sim, stats.AttackPower, pos*fap)

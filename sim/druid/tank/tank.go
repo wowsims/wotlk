@@ -42,7 +42,13 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 		Options:  *tankOptions.Options,
 	}
 
-	bear.EnableRageBar(bear.Options.StartingRage, 1, func(sim *core.Simulation) {
+	rbo := core.RageBarOptions{
+		StartingRage:   bear.Options.StartingRage,
+		RageMultiplier: 1,
+		MHSwingSpeed:   2.5,
+	}
+
+	bear.EnableRageBar(rbo, func(sim *core.Simulation) {
 		if bear.GCD.IsReady(sim) {
 			bear.TryUseCooldowns(sim)
 			if bear.GCD.IsReady(sim) {
