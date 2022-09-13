@@ -661,7 +661,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6950.73707
-  tps: 5291.36093
+  dps: 6173.63696
+  tps: 4689.46441
  }
 }

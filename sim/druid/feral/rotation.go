@@ -410,7 +410,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	} else if bearweaveNow {
 		cat.readyToShift = true
-	} else if rotation.MangleSpam && !isClearcast {
+	} else if (rotation.MangleSpam && !isClearcast) || cat.PseudoStats.InFrontOfTarget {
 		if excessE >= cat.CurrentMangleCatCost() {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
@@ -485,5 +485,4 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		RevitFreq:          15.0 / (8 * hotUptime),
 		LacerateTime:       10.0 * time.Second,
 	}
-
 }

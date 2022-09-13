@@ -37,13 +37,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				"ilotp mana regen not implemented"
 			],
 			warnings: [
-				// Warning that a frontal rotation is not implemented.
-				(simUI: IndividualSimUI<Spec.SpecFeralDruid>) => {
-					return {
-						updateOn: simUI.player.inFrontOfTargetChangeEmitter,
-						getContent: () => simUI.player.getInFrontOfTarget() ? 'Frontal rotation (without Shred) is not implemented.' : '',
-					};
-				},
 			],
 
 			// All stats for which EP should be calculated.
