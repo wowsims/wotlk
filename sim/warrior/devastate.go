@@ -46,10 +46,10 @@ func (warrior *Warrior) registerDevastateSpell() {
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
-	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, true)
+	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, false)
 
 	warrior.Devastate = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30022},
+		ActionID:    core.ActionID{SpellID: 47498},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -88,7 +88,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
