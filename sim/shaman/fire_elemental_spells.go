@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -97,7 +98,7 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 	fireShieldDot := core.NewDot(core.Dot{
 		Spell: spell,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "Fire Shield",
+			Label:    "FireShield-" + strconv.Itoa(int(fireElemental.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 40,
