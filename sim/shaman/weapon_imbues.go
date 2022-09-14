@@ -278,11 +278,14 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 		Label:    "Frostbrand Attack-" + shaman.Label,
 		ActionID: core.ActionID{SpellID: 58799},
 		Duration: time.Second * 8,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			//placeholder
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			//placeholder part 2
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell.Unit != &shaman.Unit {
+				return
+			}
+			//if spell != shaman.LightningBolt || shaman.ChainLightning || shaman.FlameShock || shaman.FrostShock || shaman.EarthShock || shaman.LavaLash {
+			//	return
+			//}
+			//modifier goes here, maybe?? might need to go in the specific spell files i guess
 		},
 		//TODO: figure out how to implement frozen power (might not be here)
 	})
