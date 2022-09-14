@@ -147,7 +147,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion: proto.Potions_IndestructiblePotion,
-	PrepopPotion:  proto.Potions_IndestructiblePotion,
+	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
 }
 

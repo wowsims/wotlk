@@ -182,6 +182,12 @@ func (warrior *Warrior) applyTasteForBlood() {
 			if sim.RandomFloat("Taste for Blood") > procChance {
 				return
 			}
+
+			// Taste for Blood has 25% chance to not proc due to a bug. The chance is calculated from a controlled test here
+			// https://classic.warcraftlogs.com/reports/2zcDnpNFXGaAPg34/#fight=last&type=damage-done&source=1
+			if sim.RandomFloat("Taste for Blood bug") <= 0.25 {
+				return
+			}
 			icd.Use(sim)
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
 		},

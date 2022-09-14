@@ -424,7 +424,7 @@ export const P1_ARMS_PRESET = {
           "enchant": 44879,
           "gems": [
             41398,
-            39996
+            42153
           ]
         },
         {
@@ -437,7 +437,7 @@ export const P1_ARMS_PRESET = {
           "id": 40530,
           "enchant": 44871,
           "gems": [
-            40058
+            40038
           ]
         },
         {
@@ -445,19 +445,17 @@ export const P1_ARMS_PRESET = {
           "enchant": 55002
         },
         {
-          "id": 40525,
+          "id": 40539,
           "enchant": 44489,
           "gems": [
-            42142,
-            49110
+            42153
           ]
         },
         {
           "id": 40330,
           "enchant": 44484,
           "gems": [
-            39996,
-            39996
+            40002
           ]
         },
         {
@@ -468,17 +466,17 @@ export const P1_ARMS_PRESET = {
           ]
         },
         {
-          "id": 40317,
+          "id": 40205,
           "gems": [
-            42142
+            42153
           ]
         },
         {
-          "id": 40529,
+          "id": 40318,
           "enchant": 38374,
           "gems": [
-            42142,
-            39996
+            49110,
+            40038
           ]
         },
         {
@@ -488,11 +486,11 @@ export const P1_ARMS_PRESET = {
         {
           "id": 43993,
           "gems": [
-            39996
+            40002
           ]
         },
         {
-          "id": 40717
+          "id": 40474
         },
         {
           "id": 42987
