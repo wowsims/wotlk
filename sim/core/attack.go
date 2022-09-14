@@ -229,14 +229,14 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			ProcMask:         ProcMaskMeleeMHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
 			ProcMask:         ProcMaskMeleeOHAuto,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, 1, true),
+			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
 			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{

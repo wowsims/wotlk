@@ -12,25 +12,25 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	cd := core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfWhirlwind), time.Second*8, time.Second*10)
 
+	dm := 1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)
+
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury),
+		DamageMultiplier: dm,
 		ThreatMultiplier: 1.25,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
 	baseEffectOH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeOHSpecial,
 
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(warrior.Talents.UnendingFury)) *
-			(1 + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
+		DamageMultiplier: dm * (1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)),
 		ThreatMultiplier: 1.25,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
 	}
 
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())

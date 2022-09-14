@@ -99,6 +99,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-CrimsonAcolyte'sRaiment"
+ value: {
+  dps: 4432.4299
+  tps: 3302.63675
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
   dps: 4422.09677
@@ -122,22 +129,22 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 3794.64358
-  tps: 2829.32264
+  dps: 3890.81407
+  tps: 2905.06185
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 3794.64358
-  tps: 2829.32264
+  dps: 3890.81407
+  tps: 2905.06185
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 3971.70764
-  tps: 2961.16962
+  dps: 3980.84253
+  tps: 2975.40046
  }
 }
 dps_results: {
@@ -246,6 +253,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-Gladiator'sInvestiture"
+ value: {
+  dps: 4463.0591
+  tps: 3324.182
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-Gladiator'sRaiment"
+ value: {
+  dps: 4034.33645
+  tps: 2991.36759
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 3866.97859
@@ -344,6 +365,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-RegaliaofFaith"
+ value: {
+  dps: 3401.71602
+  tps: 2535.76241
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-ReignoftheDead-47316"
  value: {
   dps: 3909.6416
@@ -383,6 +411,13 @@ dps_results: {
  value: {
   dps: 3598.03231
   tps: 2681.66567
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-SanctificationRegalia"
+ value: {
+  dps: 3532.95636
+  tps: 2632.66437
  }
 }
 dps_results: {
@@ -481,6 +516,20 @@ dps_results: {
  value: {
   dps: 3885.39725
   tps: 2895.0418
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-VestmentsofAbsolution"
+ value: {
+  dps: 2583.38964
+  tps: 1922.73332
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-Zabra'sRaiment"
+ value: {
+  dps: 3933.40363
+  tps: 2923.53688
  }
 }
 dps_results: {

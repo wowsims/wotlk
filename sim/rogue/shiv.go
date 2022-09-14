@@ -33,11 +33,11 @@ func (rogue *Rogue) registerShivSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeOHSpecial,
-			DamageMultiplier: 1 +
+			DamageMultiplier: (1 +
 				0.02*float64(rogue.Talents.FindWeakness) +
-				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0),
+				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0)) * (1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),
 			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1, false),
+			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, false),
 			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(false, true)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

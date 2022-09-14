@@ -39,11 +39,11 @@ func (druid *Druid) registerShredSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
+			DamageMultiplier: 2.25,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, 1.0, 2.25, true),
+				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, true),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						normalDamage := oldCalculator(sim, spellEffect, spell)
@@ -52,7 +52,7 @@ func (druid *Druid) registerShredSpell() {
 							modifier += .3
 						}
 						if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
-							modifier += (0.04 * float64(druid.Talents.RendAndTear))
+							modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 						}
 
 						return normalDamage * modifier

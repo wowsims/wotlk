@@ -12,17 +12,17 @@ func (druid *Druid) registerEnrageSpell() {
 
 	instantRage := []float64{20, 24, 27, 30}[druid.Talents.Intensity]
 
-	dmgBonus := 5.0 * float64(druid.Talents.KingOfTheJungle)
+	dmgBonus := 0.05 * float64(druid.Talents.KingOfTheJungle)
 
 	druid.EnrageAura = druid.RegisterAura(core.Aura{
 		Label:    "Enrage Aura",
 		ActionID: actionID,
-		Duration: 10,
+		Duration: 10 * time.Second,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.DamageDealtMultiplier += dmgBonus
+			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + dmgBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.DamageDealtMultiplier -= dmgBonus
+			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + dmgBonus
 		},
 	})
 

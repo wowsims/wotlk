@@ -10,14 +10,19 @@ var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 1.0, 0.55, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, dk.nervesOfColdSteelBonus(), 0.55, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage*0.5, true)
+	}
+
+	weaponMulti := 0.55
+	if !isMH {
+		weaponMulti = 0.55 * dk.nervesOfColdSteelBonus()
 	}
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.bloodOfTheNorthCoeff(),
+		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{

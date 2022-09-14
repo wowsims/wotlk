@@ -62,12 +62,12 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskMeleeMHSpecial,
 			BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0),
-			DamageMultiplier: 1 +
+			DamageMultiplier: (1 +
 				0.02*float64(rogue.Talents.FindWeakness) +
-				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) * weaponDamageBonus,
 			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
-				core.MainHand, true, 0, 1.0, weaponDamageBonus, true),
+				core.MainHand, true, 0, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

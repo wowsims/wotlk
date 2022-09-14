@@ -19,22 +19,26 @@ func (priest *Priest) registerGreaterHealSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
+				Cost: baseCost *
+					(1 - .05*float64(priest.Talents.ImprovedHealing)) *
+					core.TernaryFloat64(priest.HasSetBonus(ItemSetRegaliaOfFaith, 4), .95, 1),
 
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.HolySpecialization),
+				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			IsHealing: true,
-			ProcMask:  core.ProcMaskSpellDamage,
+			ProcMask:  core.ProcMaskSpellHealing,
 
-			DamageMultiplier: 1,
+			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			DamageMultiplier: 1 *
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetVestmentsOfAbsolution, 4), 1.05, 1),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-			BaseDamage:     core.BaseDamageConfigMagic(3980, 4621, 1.6114+0.08*float64(priest.Talents.EmpoweredHealing)),
-			OutcomeApplier: priest.OutcomeFuncMagicCrit(priest.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigHealing(3980, 4621, 1.6114+0.08*float64(priest.Talents.EmpoweredHealing)),
+			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 		}),
 	})
 }

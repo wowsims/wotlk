@@ -219,17 +219,20 @@ func (spellEffect *SpellEffect) HealingPower(unit *Unit, _ *Spell) float64 {
 }
 func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) float64 {
 	critRating := 0.0
-	// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
-	// ignoring units real time crit in this case
-	if spellEffect.IsPeriodic {
-		critRating += spellEffect.BonusCritRating
+	if spellEffect.isSnapshot {
+		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
+		// ignoring units real time crit in this case
+		critRating = spellEffect.bonusSpellCritRating
 	} else {
-		critRating += unit.GetStat(stats.SpellCrit) +
-			spellEffect.BonusCritRating +
-			spell.BonusCritRating
+		critRating = spellEffect.healingCritRating(unit, spell)
 	}
 
 	return critRating / (CritRatingPerCritChance * 100)
+}
+func (spellEffect *SpellEffect) healingCritRating(unit *Unit, spell *Spell) float64 {
+	return unit.GetStat(stats.SpellCrit) +
+		spellEffect.BonusCritRating +
+		spell.BonusCritRating
 }
 
 func (spellEffect *SpellEffect) init(sim *Simulation, spell *Spell) {
@@ -465,7 +468,7 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 	target := spellEffect.Target
 
 	if spellEffect.IsHealing {
-		spellEffect.Damage *= target.PseudoStats.HealingTakenMultiplier
+		spellEffect.Damage *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 		return
 	}
 

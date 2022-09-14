@@ -32,12 +32,12 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + float64(warrior.Talents.UnrelentingAssault)*0.1,
+		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
 		ThreatMultiplier: 0.75,
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 35, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(mh)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -52,7 +52,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		cooldownDur -= time.Second * 4
 	}
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 11585},
+		ActionID:    core.ActionID{SpellID: 7384},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 

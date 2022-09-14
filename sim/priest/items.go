@@ -1,6 +1,7 @@
 package priest
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -11,10 +12,22 @@ var ItemSetAbsolution = core.NewItemSet(core.ItemSet{
 	Name: "Absolution Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// this is implemented in swp.go
+			// Implemented in swp.go
 		},
 		4: func(agent core.Agent) {
-			// this is implemented in mindblast.go
+			// Implemented in mindblast.go
+		},
+	},
+})
+
+var ItemSetVestmentsOfAbsolution = core.NewItemSet(core.ItemSet{
+	Name: "Vestments of Absolution",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in prayer_of_healing.go
+		},
+		4: func(agent core.Agent) {
+			// Implemented in greater_heal.go
 		},
 	},
 })
@@ -31,11 +44,23 @@ var ItemSetValorous = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetRegaliaOfFaith = core.NewItemSet(core.ItemSet{
+	Name: "Regalia of Faith",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in prayer_of_mending.go
+		},
+		4: func(agent core.Agent) {
+			// Implemented in greater_heal.go
+		},
+	},
+})
+
 var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 	Name: "Sanctification Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// this is implemented in devouring_plague.go
+			// Implemented in devouring_plague.go
 		},
 		4: func(agent core.Agent) {
 			priest := agent.(PriestAgent).GetPriest()
@@ -47,11 +72,37 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
+				// TODO: Does this affect the spell that procs it?
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell != priest.MindBlast {
-						return
+					if spell == priest.MindBlast {
+						procAura.Activate(sim)
 					}
-					procAura.Activate(sim)
+				},
+			})
+		},
+	},
+})
+
+var ItemSetSanctificationRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Sanctification Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+		},
+		4: func(agent core.Agent) {
+			priest := agent.(PriestAgent).GetPriest()
+			procAura := priest.NewTemporaryStatsAura("Sanctification Reglia 4pc", core.ActionID{SpellID: 64912}, stats.Stats{stats.SpellPower: 250, stats.HealingPower: 250}, time.Second*5)
+
+			priest.RegisterAura(core.Aura{
+				Label:    "Sancitifcation Reglia 4pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				// TODO: Does this affect the spell that procs it?
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell == priest.PowerWordShield {
+						procAura.Activate(sim)
+					}
 				},
 			})
 		},
@@ -62,10 +113,23 @@ var ItemSetZabras = core.NewItemSet(core.ItemSet{
 	Name: "Zabra's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// this is implemented in vampiric_touch.go
+			// Implemented in vampiric_touch.go
 		},
 		4: func(agent core.Agent) {
-			// this is implemented in mind_flay.go
+			// Implemented in mind_flay.go
+		},
+	},
+})
+
+var ItemSetZabrasRaiment = core.NewItemSet(core.ItemSet{
+	Name:            "Zabra's Raiment",
+	AlternativeName: "Velen's Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in prayer_of_mending.go
+		},
+		4: func(agent core.Agent) {
+			// Implemented in talents.go and renew.go
 		},
 	},
 })
@@ -74,10 +138,103 @@ var ItemSetCrimsonAcolyte = core.NewItemSet(core.ItemSet{
 	Name: "Crimson Acolyte's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// this is implemented in vampiric_touch.go/devouring_plague.go/swp.go
+			// Implemented in vampiric_touch.go/devouring_plague.go/swp.go
 		},
 		4: func(agent core.Agent) {
-			// this is implemented in mind_flay.go
+			// Implemented in mind_flay.go
+		},
+	},
+})
+
+var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
+	Name: "Crimson Acolyte's Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			priest := agent.(PriestAgent).GetPriest()
+
+			spell := priest.RegisterSpell(core.SpellConfig{
+				ActionID:    core.ActionID{SpellID: 70770},
+				SpellSchool: core.SpellSchoolHoly,
+				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+			})
+
+			hots := make([]*core.Dot, len(priest.Env.AllUnits))
+			var curAmount float64
+			for _, unit := range priest.Env.AllUnits {
+				if !priest.IsOpponent(unit) {
+					hots[unit.UnitIndex] = core.NewDot(core.Dot{
+						Spell: spell,
+						Aura: unit.RegisterAura(core.Aura{
+							Label:    "CrimsonAcolyteRaiment2pc" + strconv.Itoa(int(priest.Index)),
+							ActionID: spell.ActionID,
+						}),
+						NumberOfTicks: 3,
+						TickLength:    time.Second * 3,
+						TickEffects: core.TickFuncSnapshot(unit, core.SpellEffect{
+							ProcMask:   core.ProcMaskPeriodicHealing,
+							IsPeriodic: true,
+							IsHealing:  true,
+
+							DamageMultiplier: 1,
+							ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+
+							BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+								return curAmount * 0.33
+							}, 0),
+							OutcomeApplier: priest.OutcomeFuncTick(),
+						}),
+					})
+				}
+			}
+
+			priest.RegisterAura(core.Aura{
+				Label:    "Crimson Acolytes Raiment 2pc",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spell != priest.FlashHeal || sim.RandomFloat("Crimson Acolytes Raiment 2pc") >= 0.33 {
+						return
+					}
+
+					curAmount = spellEffect.Damage
+					hot := hots[spellEffect.Target.UnitIndex]
+					hot.Apply(sim)
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// Implemented in power_word_shield.go and circle_of_healing.go
+		},
+	},
+})
+
+var ItemSetGladiatorsInvestiture = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Investiture",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.SpellPower, 29)
+			agent.GetCharacter().AddStat(stats.HealingPower, 29)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 88)
+			agent.GetCharacter().AddStat(stats.HealingPower, 88)
+		},
+	},
+})
+var ItemSetGladiatorsRaiment = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Raiment",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.SpellPower, 29)
+			agent.GetCharacter().AddStat(stats.HealingPower, 29)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 88)
+			agent.GetCharacter().AddStat(stats.HealingPower, 88)
 		},
 	},
 })

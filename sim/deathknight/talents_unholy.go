@@ -179,8 +179,13 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 }
 
 func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
-	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, 1.0, true)
-	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), 1.0, true)
+	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, true)
+	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, true)
+
+	weaponMulti := 1.0
+	if !isMh {
+		weaponMulti = dk.nervesOfColdSteelBonus()
+	}
 
 	procMask := core.ProcMaskMeleeOHSpecial
 	if isMh {
@@ -195,7 +200,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: procMask,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: weaponMulti,
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

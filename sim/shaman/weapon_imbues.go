@@ -31,12 +31,13 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	}
 
 	weaponDamageMultiplier := 1 + math.Round(float64(shaman.Talents.ElementalWeapons)*13.33)/100
+	baseEffect.DamageMultiplier *= weaponDamageMultiplier
 	if isMH {
 		actionID.Tag = 1
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1, weaponDamageMultiplier, true)
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true)
 	} else {
 		actionID.Tag = 2
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, 1, weaponDamageMultiplier, true)
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, true)
 
 		// For whatever reason, OH penalty does not apply to the bonus AP from WF OH
 		// hits. Implement this by doubling the AP bonus we provide.
@@ -273,7 +274,26 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 	})
 }
 
+func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
+	return target.GetOrRegisterAura(core.Aura{
+		Label:    "Frostbrand Attack-" + shaman.Label,
+		ActionID: core.ActionID{SpellID: 58799},
+		Duration: time.Second * 8,
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spell.Unit != &shaman.Unit {
+				return
+			}
+			//if spell != shaman.LightningBolt || shaman.ChainLightning || shaman.FlameShock || shaman.FrostShock || shaman.EarthShock || shaman.LavaLash {
+			//	return
+			//}
+			//modifier goes here, maybe?? might need to go in the specific spell files i guess
+		},
+		//TODO: figure out how to implement frozen power (might not be here)
+	})
+}
+
 func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
+
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},
 		SpellSchool: core.SpellSchoolFrost,
@@ -321,6 +341,7 @@ func (shaman *Shaman) ApplyFrostbrandImbue(mh bool, oh bool) {
 			} else {
 				ohSpell.Cast(sim, spellEffect.Target)
 			}
+			shaman.FrostbrandDebuffAura(shaman.CurrentTarget).Activate(sim)
 		},
 	})
 }

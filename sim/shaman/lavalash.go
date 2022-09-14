@@ -67,7 +67,7 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, 1, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, true),
 			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier(0)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() { //TODO: verify that it actually needs to hit

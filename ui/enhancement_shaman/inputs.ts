@@ -11,7 +11,8 @@ import {
 	ShamanTotems,
 	ShamanShield,
     ShamanImbue,
-    ShamanSyncType
+    ShamanSyncType,
+    EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 } from '../core/proto/shaman.js';
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
@@ -75,6 +76,20 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 export const EnhancementShamanRotationConfig = {
     inputs:
         [
+        InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, PrimaryShock>({
+                fieldName: 'primaryShock',
+                label: 'Primary Shock',
+                values: [
+                    { name: 'None', value: PrimaryShock.None },
+                    { name: 'Earth Shock', value: PrimaryShock.Earth },
+                    { name: 'Frost Shock', value: PrimaryShock.Frost },
+                ],
+        }),
+        InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'weaveFlameShock',
+            label: 'Weave Flame Shock',
+            labelTooltip: 'Use Flame Shock whenever the target does not already have the DoT.',
+        }),
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
             fieldName: 'lightningboltWeave',
             label: 'Enable Weaving Lightning Bolt',
@@ -112,3 +127,4 @@ export const EnhancementShamanRotationConfig = {
         }),
     ],
 };
+

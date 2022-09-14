@@ -34,6 +34,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 
 	//Mana guard, our cheapest spell.
 	if enh.CurrentMana() < enh.LavaBurst.CurCast.Cost {
+		// Lets top off lightning shield stacks before waiting for mana.
 		if enh.LightningShieldAura.GetStacks() < 3 {
 			enh.LightningShield.Cast(sim, nil)
 		}
@@ -79,7 +80,7 @@ func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simula
 }
 
 // The amont of spells in the priority array
-const prioritySize = 9
+const prioritySize = 10
 
 //Default Priority Order
 const (
@@ -89,6 +90,7 @@ const (
 	Stormstrike
 	FlameShock
 	EarthShock
+	FrostShock
 	LightningShield
 	FireNova
 	LavaLash
@@ -183,7 +185,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			//TODO add in check for how much time we have left, IE we don't want to cast a FS with 4 seconds left.
-			return !enh.FlameShockDot.IsActive()
+			return rotation.options.WeaveFlameShock && !enh.FlameShockDot.IsActive()
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.FlameShock.IsReady(sim) && enh.FlameShock.Cast(sim, target)
@@ -195,11 +197,22 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	earthShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			// No special condition needed
-			return true
+			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Earth
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.EarthShock.IsReady(sim) && enh.EarthShock.Cast(sim, target)
+		},
+		readyAt: func() time.Duration {
+			return enh.EarthShock.ReadyAt()
+		},
+	}
+
+	frostShock := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Frost
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.FrostShock.IsReady(sim) && enh.FrostShock.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
 			return enh.EarthShock.ReadyAt()
@@ -255,6 +268,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 	spellPriority[FireNova] = fireNova
 	spellPriority[LavaLash] = lavaLash
 	spellPriority[Weave] = weave
+	spellPriority[FrostShock] = frostShock
 
 	rotation.spellPriority = spellPriority
 }

@@ -46,10 +46,9 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	// Passive Cat Form threat reduction
 	cat.PseudoStats.ThreatMultiplier *= 0.71
 
-	// Prevents Windfury from applying.
-	cat.HasMHWeaponImbue = true
-
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
+
+	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5}, func(sim *core.Simulation) {})
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
@@ -91,12 +90,14 @@ func (cat *FeralDruid) MissChance() float64 {
 		Target:           cat.CurrentTarget,
 	}
 	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
-	return at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
+	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
+	dodge := at.BaseDodgeChance - speffect.ExpertisePercentage(&cat.Druid.Unit) - cat.CurrentTarget.PseudoStats.DodgeReduction
+	return miss + dodge
 }
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterFeralSpells(15)
+	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs()
 }
 

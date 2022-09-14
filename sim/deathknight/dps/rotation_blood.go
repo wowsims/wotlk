@@ -34,7 +34,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 	}
 
 	if !casted {
-		if dk.blDiseaseCheck(sim, target, dk.HeartStrike, true, 1) {
+		if dk.blDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
 			if dk.shShouldSpreadDisease(sim) {
 				return dk.blSpreadDiseases(sim, target, s)
 			} else {

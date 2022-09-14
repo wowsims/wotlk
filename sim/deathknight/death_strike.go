@@ -10,17 +10,21 @@ import (
 var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 1.0, 0.75, true)
+	bonusBaseDamage := dk.sigilOfAwarenessBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 297.0+bonusBaseDamage, dk.nervesOfColdSteelBonus(), 0.75, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, (297.0+bonusBaseDamage)*0.5, true)
 	}
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
+	weaponMulti := 0.75
+	if !isMH {
+		weaponMulti = 0.75 * dk.nervesOfColdSteelBonus()
+	}
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike),
+		DamageMultiplier: weaponMulti * (1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -98,10 +102,11 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 }
 
 func (dk *Deathknight) registerDrwDeathStrikeSpell() {
-	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.DeathStrike)
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, 1.0, 0.75, true)
+	bonusBaseDamage := dk.sigilOfAwarenessBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
+	weaponMulti := 0.75
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(1),
@@ -110,7 +115,7 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeSpecial,
 			BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
-			DamageMultiplier: dk.improvedDeathStrikeDamageBonus(),
+			DamageMultiplier: weaponMulti * dk.improvedDeathStrikeDamageBonus(),
 			ThreatMultiplier: 1,
 			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
 			BaseDamage: core.BaseDamageConfig{
