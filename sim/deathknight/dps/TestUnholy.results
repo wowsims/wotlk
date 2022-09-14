@@ -360,15 +360,15 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7582.56821
-  tps: 5731.26115
+  dps: 7337.59215
+  tps: 5489.00273
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7621.04587
-  tps: 5762.37311
+  dps: 7344.63348
+  tps: 5494.6358
  }
 }
 dps_results: {
