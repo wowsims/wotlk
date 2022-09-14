@@ -109,10 +109,10 @@ var furyRotation = &proto.Warrior_Rotation{
 	UseRend:   false,
 	UseCleave: false,
 
-	HsRageThreshold:        60,
+	HsRageThreshold:        50,
 	RendRageThresholdBelow: 70,
-	SlamRageThreshold:      15,
-	RendCdThreshold:        1,
+	SlamRageThreshold:      30,
+	RendCdThreshold:        0,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,
