@@ -48,8 +48,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
-	// CHECK changing RageBarOptions affects cat dps, which sounds very fishy
-	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 1}, func(sim *core.Simulation) {})
+	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5}, func(sim *core.Simulation) {})
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
