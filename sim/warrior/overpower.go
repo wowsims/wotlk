@@ -46,10 +46,13 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 	})
 	cooldownDur := time.Second * 5
+	gcdDur := core.GCDDefault
+
 	if warrior.Talents.UnrelentingAssault == 1 {
 		cooldownDur -= time.Second * 2
 	} else if warrior.Talents.UnrelentingAssault == 2 {
 		cooldownDur -= time.Second * 4
+		gcdDur -= time.Millisecond * 500
 	}
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 7384},
@@ -62,7 +65,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD:  gcdDur,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
