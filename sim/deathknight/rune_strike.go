@@ -40,7 +40,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					bonusDmg := 0.15 * hitEffect.MeleeAttackPower(spell.Unit)
-					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, bonusDmg, 1.5, 1.0, true)
+					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, bonusDmg, 1.5, true)
 
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						dk.RoRTSBonus(hitEffect.Target)

@@ -26,7 +26,7 @@ func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffe
 		DamageMultiplier: 1 +
 			0.02*float64(rogue.Talents.FindWeakness),
 		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(hand, true, 0, baseMultiplier, 1, true),
+		BaseDamage:       core.BaseDamageConfigMeleeWeapon(hand, true, 0, baseMultiplier, true),
 		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
 	}
 }

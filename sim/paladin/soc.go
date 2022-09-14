@@ -51,7 +51,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				core.MainHand,
 				false,
 				0,
-				1.0,
 				(0.19),
 				true,
 			), func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -75,7 +74,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			core.MainHand,
 			false,
 			0,
-			1,
 			(0.36),
 			true,
 		),

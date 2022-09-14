@@ -48,7 +48,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 				return 1.0
 			},
 
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 380, 1, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 380, 1, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

@@ -750,7 +750,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		DamageMultiplier: dm,
 		ThreatMultiplier: 1.25,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
 	baseEffectOH := core.SpellEffect{
@@ -759,7 +759,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		DamageMultiplier: dm,
 		ThreatMultiplier: 1.25,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
 	}
 

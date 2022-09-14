@@ -16,13 +16,13 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 	if isMH {
 		weaponMultiplier := core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		procMask = core.ProcMaskMeleeMHSpecial
-		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1, weaponMultiplier, false)
+		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, weaponMultiplier, false)
 
 	} else {
 		weaponMultiplier := core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		weaponMultiplier += 0.1 * float64(rogue.Talents.DualWieldSpecialization)
 		procMask = core.ProcMaskMeleeOHSpecial
-		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, 1, weaponMultiplier, false)
+		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, weaponMultiplier, false)
 	}
 	return core.SpellEffect{
 		ProcMask: procMask,

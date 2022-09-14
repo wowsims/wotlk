@@ -26,7 +26,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		FlatThreatBonus:  344,
 
 		BaseDamage: core.WrapBaseDamageConfig(
-			core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, 1, true),
+			core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, 1, true),
 			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 				return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 					normalDamage := oldCalculator(sim, spellEffect, spell)
