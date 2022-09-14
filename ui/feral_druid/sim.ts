@@ -34,6 +34,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Stats display only humanoid form",
+				"Revitalize doesn't work",
 				"ilotp mana regen not implemented"
 			],
 			warnings: [
