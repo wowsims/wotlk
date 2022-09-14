@@ -437,15 +437,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7171.30163
-  tps: 5487.38854
+  dps: 6951.79602
+  tps: 5309.40844
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7194.99505
-  tps: 5505.88219
+  dps: 6951.79602
+  tps: 5309.40844
  }
 }
 dps_results: {

@@ -54,6 +54,12 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		Rotation: *dk.Rotation,
 	}
 
+	if dk.Options.UnholyFrenzyTarget != nil {
+		dpsDk.Inputs.UnholyFrenzyTarget = *dk.Options.UnholyFrenzyTarget
+	} else {
+		dpsDk.Inputs.UnholyFrenzyTarget.TargetIndex = -1
+	}
+
 	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),

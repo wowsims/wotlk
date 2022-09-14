@@ -95,7 +95,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: ProcTrigger{
 			Callback: OnSpellHitDealt,
-			ProcMask: core.ProcMaskDirect,
+			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 		},
@@ -108,7 +108,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: ProcTrigger{
 			Callback: OnSpellHitDealt,
-			ProcMask: core.ProcMaskDirect,
+			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 		},
@@ -124,7 +124,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: ProcTrigger{
 			Callback: OnSpellHitDealt,
-			ProcMask: core.ProcMaskDirect,
+			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 		},
@@ -137,7 +137,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: ProcTrigger{
 			Callback: OnSpellHitDealt,
-			ProcMask: core.ProcMaskDirect,
+			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 		},
