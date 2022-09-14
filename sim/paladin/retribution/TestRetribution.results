@@ -409,15 +409,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5612.14237
-  tps: 5063.86045
+  dps: 5431.55652
+  tps: 4885.39142
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 5646.2574
-  tps: 5096.84157
+  dps: 5444.78901
+  tps: 4897.52537
  }
 }
 dps_results: {
