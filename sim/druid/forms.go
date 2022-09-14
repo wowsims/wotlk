@@ -61,8 +61,10 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
 	fap := 0.0
+	weapAp := 0.0
 	if weapon := druid.GetMHWeapon(); weapon != nil {
 		dps := (weapon.WeaponDamageMax + weapon.WeaponDamageMin) / 2.0 / weapon.SwingSpeed
+		weapAp = weapon.Stats[stats.AttackPower]
 		fap = math.Floor((dps - 54.8) * 14)
 	}
 	druid.AddStatDynamic(sim, stats.AttackPower, pos*fap)
@@ -71,7 +73,7 @@ func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 		druid.AddStatDynamic(sim, stats.AttackPower, pos*float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
 
 		if fap > 0 {
-			druid.AddStatDynamic(sim, stats.AttackPower, pos*fap*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
+			druid.AddStatDynamic(sim, stats.AttackPower, pos*(fap+weapAp)*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
 		}
 	}
 	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
