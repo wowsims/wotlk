@@ -10,7 +10,7 @@ import (
 var ObliterateActionID = core.ActionID{SpellID: 51425}
 
 func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	bonusBaseDamage := dk.sigilOfAwarenessBonus(dk.Obliterate)
+	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, 0.8, true)
 	if !isMH {
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0+bonusBaseDamage, dk.nervesOfColdSteelBonus()*0.8, true)
