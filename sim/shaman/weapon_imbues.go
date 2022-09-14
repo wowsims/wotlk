@@ -279,7 +279,23 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 	})
 }
 
+func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
+	return target.GetOrRegisterAura(core.Aura{
+		Label:    "Frostbrand Attack-" + shaman.Label,
+		ActionID: core.ActionID{SpellID: 58799},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			//placeholder
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			//placeholder part 2
+		},
+		//TODO: figure out how to implement frozen power (might not be here)
+	})
+}
+
 func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
+
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},
 		SpellSchool: core.SpellSchoolFrost,
@@ -327,6 +343,7 @@ func (shaman *Shaman) ApplyFrostbrandImbue(mh bool, oh bool) {
 			} else {
 				ohSpell.Cast(sim, spellEffect.Target)
 			}
+			shaman.FrostbrandDebuffAura(shaman.CurrentTarget).Activate(sim)
 		},
 	})
 }
