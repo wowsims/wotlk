@@ -8,12 +8,16 @@ import (
 var HeartStrikeActionID = core.ActionID{SpellID: 55050}
 
 func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, true)
 	if !isMainTarget {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 0.25, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, true)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
+	weaponMulti := 0.5
+	if !isMainTarget {
+		weaponMulti = 0.25
+	}
 
 	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.critMultiplierGoGandMoM())
 	if isDrw {
@@ -24,7 +28,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskMeleeSpecial,
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.thassariansPlateDamageBonus() * dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) * dk.bloodyStrikesBonus(dk.HeartStrike),
+		DamageMultiplier: weaponMulti * dk.thassariansPlateDamageBonus() * dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) * dk.bloodyStrikesBonus(dk.HeartStrike),
 		ThreatMultiplier: 1,
 		OutcomeApplier:   outcomeApplier,
 		BaseDamage: core.BaseDamageConfig{

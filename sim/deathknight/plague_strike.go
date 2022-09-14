@@ -9,17 +9,22 @@ import (
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, dk.nervesOfColdSteelBonus()*0.5, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, true)
 	}
 
 	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
 	glyphDmgBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfPlagueStrike), 1.2, 1.0)
 
+	weaponMulti := 0.5
+	if !isMH {
+		weaponMulti = 0.5 * dk.nervesOfColdSteelBonus()
+	}
+
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: outbreakBonus,
+		DamageMultiplier: weaponMulti * outbreakBonus,
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
@@ -90,7 +95,8 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrike = dk.PlagueStrikeMhHit
 }
 func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
+	weaponMulti := 0.5
 	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
 
 	dk.RuneWeapon.PlagueStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
@@ -100,7 +106,7 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
-			DamageMultiplier: outbreakBonus,
+			DamageMultiplier: weaponMulti * outbreakBonus,
 			ThreatMultiplier: 1,
 			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
 			BaseDamage: core.BaseDamageConfig{

@@ -40,7 +40,8 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, 0.7, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, true)
+	weaponMulti := 0.7
 	outbreakBonus := []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak]
 	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
@@ -67,7 +68,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			BonusCritRating:  (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
-			DamageMultiplier: outbreakBonus * dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+			DamageMultiplier: weaponMulti * outbreakBonus * dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{

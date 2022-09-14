@@ -45,7 +45,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			ThreatMultiplier: 1,
 			BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 				[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, 1, true),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

@@ -8,16 +8,20 @@ import (
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, 0.4, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, dk.nervesOfColdSteelBonus()*0.4, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0, true)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
+	weaponMulti := 0.4
+	if !isMH {
+		weaponMulti = 0.4 * dk.nervesOfColdSteelBonus()
+	}
 
 	effect := core.SpellEffect{
 		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus() * dk.bloodyStrikesBonus(dk.BloodStrike),
+		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus() * dk.bloodyStrikesBonus(dk.BloodStrike),
 		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
