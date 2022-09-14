@@ -37,7 +37,7 @@ var ArmsTalents = &proto.WarriorTalents{
 	MortalStrike:                  true,
 	StrengthOfArms:                2,
 	ImprovedSlam:                  2,
-	ImprovedMortalStrike:          3,
+	ImprovedMortalStrike:          2,
 	UnrelentingAssault:            2,
 	SuddenDeath:                   3,
 	EndlessRage:                   true,
@@ -90,10 +90,10 @@ var armsRotation = &proto.Warrior_Rotation{
 	UseMs:     true,
 	UseCleave: false,
 
-	HsRageThreshold:   60,
-	MsRageThreshold:   50,
-	SlamRageThreshold: 15,
-	RendCdThreshold:   1,
+	HsRageThreshold:   50,
+	MsRageThreshold:   40,
+	SlamRageThreshold: 30,
+	RendCdThreshold:   0,
 
 	SpamExecute: false,
 

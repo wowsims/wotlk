@@ -34,7 +34,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const ArmsTalents = {
 	name: 'Arms',
 	data: SavedTalents.create({
-		talentsString: '3022032023335100102012213231251-305-2033',
+		talentsString: '3022032023335100202012212231251-305-2033',
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRending,
 			major2: WarriorMajorGlyph.GlyphOfMortalStrike,
@@ -87,10 +87,10 @@ export const ArmsRotation = WarriorRotation.create({
 	useMs: true,
   useCleave: false,
 	sunderArmor: SunderArmor.SunderArmorHelpStack,
-	msRageThreshold: 50,
-  slamRageThreshold: 15,
-	hsRageThreshold: 60,
-	rendCdThreshold: 1,
+	msRageThreshold: 40,
+  slamRageThreshold: 30,
+	hsRageThreshold: 50,
+	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	spamExecute: true,
   stanceOption: StanceOption.DefaultStance,
