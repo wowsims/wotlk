@@ -171,7 +171,7 @@ func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, in
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = (damage + flatBonus) * 0.5
+				damage = damage*0.5 + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}
@@ -191,7 +191,7 @@ func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, in
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
 				damage := spell.Unit.AutoAttacks.OH.CalculateWeaponDamage(sim, hitEffect.MeleeAttackPower(spell.Unit))
-				damage = (damage + flatBonus) * 0.5
+				damage = damage*0.5 + flatBonus
 				if includeBonusWeaponDamage {
 					damage += hitEffect.BonusWeaponDamage(spell.Unit)
 				}

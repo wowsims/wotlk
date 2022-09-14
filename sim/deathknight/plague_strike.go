@@ -11,7 +11,7 @@ var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0*0.5, true)
 	}
 
 	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)

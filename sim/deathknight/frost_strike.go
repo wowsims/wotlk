@@ -12,7 +12,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage*0.5, true)
 	}
 
 	weaponMulti := 0.55
