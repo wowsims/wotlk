@@ -20,7 +20,8 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	baseEffectMH := core.SpellEffect{ // wait how will this work, something like whirlwind
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: baseMultiplier,
+		DamageMultiplier: baseMultiplier *
+			(1.1), // base 1.1 multiplier, can be further improved by 10% via taow for a grand total of 1.21. NOTE: Unlike cs, ds tooltip IS NOT updated to reflect this.
 		ThreatMultiplier: 1,
 		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 
@@ -30,7 +31,6 @@ func (paladin *Paladin) registerDivineStormSpell() {
 			core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0)+ // Libram of Discord
 				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0), // Venture Co. Libram of Retribution
 			// (much akin to what stuff like hs or ms have intrinsically)
-			(1.1), // base 1.1 multiplier, can be further improved by 10% via taow for a grand total of 1.21. NOTE: Unlike cs, ds tooltip IS NOT updated to reflect this.
 			true,
 		),
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),

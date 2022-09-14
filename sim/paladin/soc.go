@@ -41,8 +41,9 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: judgementMultiplier,
+			ProcMask: core.ProcMaskMeleeOrRangedSpecial,
+			DamageMultiplier: judgementMultiplier *
+				(0.19),
 			ThreatMultiplier: 1,
 
 			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
@@ -51,7 +52,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				core.MainHand,
 				false,
 				0,
-				(0.19),
 				true,
 			), func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -67,14 +67,14 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	})
 
 	baseEffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		DamageMultiplier: baseMultiplier,
+		ProcMask: core.ProcMaskEmpty,
+		DamageMultiplier: baseMultiplier *
+			(0.36),
 		ThreatMultiplier: 1,
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,
 			false,
 			0,
-			(0.36),
 			true,
 		),
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
