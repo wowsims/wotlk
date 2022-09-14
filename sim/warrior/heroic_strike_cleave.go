@@ -28,6 +28,16 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DefaultCast: core.Cast{
 				Cost: cost,
 			},
+
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if warrior.glyphOfRevengeProcAura != nil {
+					if warrior.glyphOfRevengeProcAura.IsActive() {
+						cast.Cost = 0
+
+						warrior.glyphOfRevengeProcAura.Deactivate(sim)
+					}
+				}
+			},
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -35,13 +45,16 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			FlatThreatBonus:  194,
+			FlatThreatBonus:  259,
 			BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, 1, 1, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if sim.CurrentTime < warrior.disableHsCleaveUntil {
+					return
+				}
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
@@ -62,11 +75,11 @@ func (warrior *Warrior) registerCleaveSpell() {
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  125,
+		FlatThreatBonus:  225,
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
@@ -114,6 +127,11 @@ func (warrior *Warrior) DequeueHSOrCleave(sim *core.Simulation) {
 // Returns true if the regular melee swing should be used, false otherwise.
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !warrior.HSOrCleaveQueueAura.IsActive() {
+		return nil
+	}
+
+	if sim.CurrentTime < warrior.disableHsCleaveUntil {
+		warrior.DequeueHSOrCleave(sim)
 		return nil
 	}
 

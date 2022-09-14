@@ -31,6 +31,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedSpecial,
+			BonusHitRating:   hunter.bonusRangedHit(),
 			ThreatMultiplier: 1,
 			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -39,6 +40,10 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				}
 			},
 		}),
+
+		InitialDamageMultiplier: 1 +
+			0.1*float64(hunter.Talents.ImprovedStings) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
 	})
 
 	dotOutcome := hunter.OutcomeFuncTick()
@@ -61,7 +66,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				// Check for 1 because this aura will always be active inside OnGain.
 				if aura.Unit.NumActiveAurasWithTag("SerpentSting") == 1 {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-						otherHunter.SteadyShot.DamageMultiplier *= 1.1
+						otherHunter.SteadyShot.DamageMultiplier += .1
 					}
 				}
 			},
@@ -69,7 +74,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier /= noxiousStingsMultiplier
 				if !aura.Unit.HasActiveAuraWithTag("SerpentSting") {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-						otherHunter.SteadyShot.DamageMultiplier /= 1.1
+						otherHunter.SteadyShot.DamageMultiplier -= .1
 					}
 				}
 			},
@@ -77,10 +82,8 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1),
+			ProcMask:         core.ProcMaskPeriodicDamage,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 

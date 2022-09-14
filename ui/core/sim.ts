@@ -74,6 +74,7 @@ export class Sim {
 	private show2hWeapons: boolean = true;
 	private showMatchingGems: boolean = true;
 	private showThreatMetrics: boolean = false;
+	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
 
 	readonly raid: Raid;
@@ -95,6 +96,7 @@ export class Sim {
 	readonly show2hWeaponsChangeEmitter = new TypedEvent<void>();
 	readonly showMatchingGemsChangeEmitter = new TypedEvent<void>();
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
+	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
@@ -136,6 +138,7 @@ export class Sim {
 			this.show2hWeaponsChangeEmitter,
 			this.showMatchingGemsChangeEmitter,
 			this.showThreatMetricsChangeEmitter,
+			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
 		]);
 
@@ -448,6 +451,16 @@ export class Sim {
 		}
 	}
 
+	getShowHealingMetrics(): boolean {
+		return this.showHealingMetrics;
+	}
+	setShowHealingMetrics(eventID: EventID, newShowThreatMetrics: boolean) {
+		if (newShowThreatMetrics != this.showHealingMetrics) {
+			this.showHealingMetrics = newShowThreatMetrics;
+			this.showHealingMetricsChangeEmitter.emit(eventID);
+		}
+	}
+
 	getShowExperimental(): boolean {
 		return this.showExperimental;
 	}
@@ -507,6 +520,7 @@ export class Sim {
 			phase: this.getPhase(),
 			fixedRngSeed: BigInt(this.getFixedRngSeed()),
 			showThreatMetrics: this.getShowThreatMetrics(),
+			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
 			faction: this.getFaction(),
 		});
@@ -518,17 +532,19 @@ export class Sim {
 			this.setPhase(eventID, proto.phase || OtherConstants.CURRENT_PHASE);
 			this.setFixedRngSeed(eventID, Number(proto.fixedRngSeed));
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
+			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
 		});
 	}
 
-	applyDefaults(eventID: EventID, isTankSim: boolean) {
+	applyDefaults(eventID: EventID, isTankSim: boolean, isHealingSim: boolean) {
 		this.fromProto(eventID, SimSettingsProto.create({
 			iterations: 3000,
 			phase: OtherConstants.CURRENT_PHASE,
 			faction: Faction.Alliance,
 			showThreatMetrics: isTankSim,
+			showHealingMetrics: isHealingSim,
 		}));
 	}
 }

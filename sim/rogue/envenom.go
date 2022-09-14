@@ -9,14 +9,11 @@ import (
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	baseDamage := 215 + core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0)
+	baseDamage := 215.0
 	apRatio := 0.09
 	chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
 
 	cost := 35.0
-	if rogue.HasSetBonus(ItemSetAssassination, 4) {
-		cost -= 10
-	}
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
@@ -31,7 +28,16 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// The envenom aura is actived even if the attack fails to land
+				// This aura is also applied before the hit effect
+				// See: https://github.com/where-fore/rogue-wotlk/issues/32
+				deadlyPoisonStacks := rogue.deadlyPoisonDots[rogue.CurrentTarget.Index].GetStacks()
+				doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
+				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
+				rogue.EnvenomAura.Activate(sim)
+				rogue.CastModifier(sim, spell, cast)
+			},
 			IgnoreHaste: true,
 		},
 
@@ -56,13 +62,9 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
 						rogue.deadlyPoisonDots[target.Index].Cancel(sim)
 					}
-					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
-					rogue.EnvenomAura.Activate(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

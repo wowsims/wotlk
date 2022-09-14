@@ -17,6 +17,7 @@ type Party struct {
 	PlayersAndPets []Agent // Cached list of players + pets, concatenated.
 
 	dpsMetrics DistributionMetrics
+	hpsMetrics DistributionMetrics
 }
 
 func NewParty(raid *Raid, index int, partyConfig proto.Party) *Party {
@@ -24,6 +25,7 @@ func NewParty(raid *Raid, index int, partyConfig proto.Party) *Party {
 		Raid:       raid,
 		Index:      index,
 		dpsMetrics: NewDistributionMetrics(),
+		hpsMetrics: NewDistributionMetrics(),
 	}
 
 	for playerIndex, playerConfig := range partyConfig.Players {
@@ -74,20 +76,24 @@ func (party *Party) reset(sim *Simulation) {
 	}
 
 	party.dpsMetrics.reset()
+	party.hpsMetrics.reset()
 }
 
 func (party *Party) doneIteration(sim *Simulation) {
 	for _, agent := range party.Players {
 		agent.GetCharacter().doneIteration(sim)
 		party.dpsMetrics.Total += agent.GetCharacter().Metrics.dps.Total
+		party.hpsMetrics.Total += agent.GetCharacter().Metrics.hps.Total
 	}
 
 	party.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
+	party.hpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (party *Party) GetMetrics(numIterations int32) *proto.PartyMetrics {
 	metrics := &proto.PartyMetrics{
 		Dps: party.dpsMetrics.ToProto(numIterations),
+		Hps: party.hpsMetrics.ToProto(numIterations),
 	}
 
 	playerIdx := 0
@@ -110,6 +116,7 @@ type Raid struct {
 	Parties []*Party
 
 	dpsMetrics DistributionMetrics
+	hpsMetrics DistributionMetrics
 
 	AllUnits []*Unit // Cached list of all Units (players and pets) in the raid.
 
@@ -120,6 +127,7 @@ type Raid struct {
 func NewRaid(raidConfig proto.Raid) *Raid {
 	raid := &Raid{
 		dpsMetrics:   NewDistributionMetrics(),
+		hpsMetrics:   NewDistributionMetrics(),
 		nextPetIndex: 25,
 	}
 
@@ -166,6 +174,12 @@ func NewRaid(raidConfig proto.Raid) *Raid {
 		}
 	}
 
+	for i := 0; i < int(raidConfig.TargetDummies); i++ {
+		party, partyIndex := raid.GetFirstEmptyRaidIndex()
+		dummy := NewTargetDummy(i, party, partyIndex)
+		party.Players = append(party.Players, dummy)
+	}
+
 	return raid
 }
 
@@ -179,6 +193,41 @@ func (raid *Raid) Size() int {
 
 func (raid *Raid) IsFull() bool {
 	return raid.Size() >= 25
+}
+
+// Returns (party, index within party)
+func (raid *Raid) GetFirstEmptyRaidIndex() (*Party, int) {
+	for _, party := range raid.Parties {
+		if party.IsFull() {
+			continue
+		}
+
+		for partyIndex := 0; partyIndex < 5; partyIndex++ {
+			slotTaken := false
+			for _, player := range party.Players {
+				if player.GetCharacter().PartyIndex == partyIndex {
+					slotTaken = true
+				}
+			}
+			if !slotTaken {
+				return party, partyIndex
+			}
+		}
+	}
+
+	panic("Raid is full")
+}
+
+func (raid *Raid) GetFirstTargetDummy() *TargetDummy {
+	for _, party := range raid.Parties {
+		for _, player := range party.Players {
+			dummy, ok := player.(*TargetDummy)
+			if ok {
+				return dummy
+			}
+		}
+	}
+	return nil
 }
 
 func (raid *Raid) getNextPetIndex() int32 {
@@ -245,6 +294,10 @@ func (raid *Raid) applyCharacterEffects(raidConfig proto.Raid) *proto.RaidStats 
 
 		// Apply all buffs to the players in this party.
 		for playerIdx, player := range party.Players {
+			if playerIdx >= len(partyConfig.Players) {
+				// This happens for target dummies.
+				continue
+			}
 			playerConfig := *partyConfig.Players[playerIdx]
 			individualBuffs := proto.IndividualBuffs{}
 			if playerConfig.Buffs != nil {
@@ -314,25 +367,44 @@ func (raid Raid) GetPlayerFromRaidTarget(raidTarget proto.RaidTarget) Agent {
 	return nil
 }
 
+func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
+	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
+}
+
+func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {
+	for _, party := range raid.Parties {
+		for _, agent := range party.PlayersAndPets {
+			if agent.GetCharacter().UnitIndex == unitIndex {
+				return agent
+			}
+		}
+	}
+	return nil
+}
+
 func (raid *Raid) reset(sim *Simulation) {
 	for _, party := range raid.Parties {
 		party.reset(sim)
 	}
 	raid.dpsMetrics.reset()
+	raid.hpsMetrics.reset()
 }
 
 func (raid *Raid) doneIteration(sim *Simulation) {
 	for _, party := range raid.Parties {
 		party.doneIteration(sim)
 		raid.dpsMetrics.Total += party.dpsMetrics.Total
+		raid.hpsMetrics.Total += party.hpsMetrics.Total
 	}
 
 	raid.dpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
+	raid.hpsMetrics.doneIteration(sim.rand.GetSeed(), sim.CurrentTime.Seconds())
 }
 
 func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
 	metrics := &proto.RaidMetrics{
 		Dps: raid.dpsMetrics.ToProto(numIterations),
+		Hps: raid.hpsMetrics.ToProto(numIterations),
 	}
 	for _, party := range raid.Parties {
 		metrics.Parties = append(metrics.Parties, party.GetMetrics(numIterations))

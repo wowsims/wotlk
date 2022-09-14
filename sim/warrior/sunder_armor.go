@@ -11,7 +11,7 @@ import (
 var SunderArmorActionID = core.ActionID{SpellID: 47467}
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
-	cost := 15.0 - float64(warrior.Talents.ImprovedSunderArmor) - float64(warrior.Talents.FocusedRage)
+	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
 	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget, 0)
 	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, false)
@@ -45,7 +45,10 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  301.5,
+		FlatThreatBonus:  360,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, 0.05)
+		},
 
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
@@ -66,10 +69,10 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	if isDevastateEffect {
 		effect.OutcomeApplier = warrior.OutcomeFuncAlwaysHit()
 		effect.OnInit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if warrior.SunderArmorAura.GetStacks() == 5 {
-				spellEffect.ThreatMultiplier = 0
-				spellEffect.FlatThreatBonus = 0
-			}
+			// In wrath sunder from devastate generates no threat
+			spellEffect.ThreatMultiplier = 0
+			spellEffect.FlatThreatBonus = 0
+			spellEffect.DynamicThreatBonus = nil
 		}
 	}
 

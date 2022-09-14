@@ -12,7 +12,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(warrior.Talents.Deflection))
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(warrior.Talents.Anticipation))
+	warrior.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 	warrior.AutoAttacks.OHEffect.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
@@ -24,7 +24,7 @@ func (warrior *Warrior) ApplyTalents() {
 
 	if warrior.Talents.StrengthOfArms > 0 {
 		warrior.MultiplyStat(stats.Strength, 1.0+0.01*float64(warrior.Talents.StrengthOfArms))
-		warrior.AddStat(stats.Expertise, 2*float64(warrior.Talents.StrengthOfArms))
+		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	}
 
 	// TODO: This should only be applied while berserker stance is active.
@@ -33,12 +33,13 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.ShieldMastery > 0 {
-		warrior.MultiplyStat(stats.BlockValue, 1.0+0.1*float64(warrior.Talents.ShieldMastery))
+		warrior.MultiplyStat(stats.BlockValue, 1.0+0.15*float64(warrior.Talents.ShieldMastery))
 	}
 
 	if warrior.Talents.Vitality > 0 {
 		warrior.MultiplyStat(stats.Stamina, 1.0+0.01*float64(warrior.Talents.Vitality))
 		warrior.MultiplyStat(stats.Strength, 1.0+0.02*float64(warrior.Talents.Vitality))
+		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.Vitality))
 	}
 
 	warrior.applyAngerManagement()
@@ -60,6 +61,72 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyBloodsurge()
 	warrior.applySuddenDeath()
 	warrior.RegisterBladestormCD()
+	warrior.applyDamageShield()
+	warrior.applyCriticalBlock()
+}
+
+func (warrior *Warrior) applyCriticalBlock() {
+	if warrior.Talents.CriticalBlock == 0 {
+		return
+	}
+
+	dummyCriticalBlockSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 47296},
+		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+	})
+
+	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+		if spellEffect.Outcome.Matches(core.OutcomeBlock) && !spellEffect.Outcome.Matches(core.OutcomeMiss) && !spellEffect.Outcome.Matches(core.OutcomeParry) && !spellEffect.Outcome.Matches(core.OutcomeDodge) {
+			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
+			if sim.RandomFloat("Critical Block Roll") <= procChance {
+				blockValue := warrior.GetStat(stats.BlockValue)
+				spellEffect.Damage = core.MaxFloat(0, spellEffect.Damage-blockValue)
+				dummyCriticalBlockSpell.Cast(sim, warrior.CurrentTarget)
+			}
+		}
+	})
+}
+
+func (warrior *Warrior) applyDamageShield() {
+	if warrior.Talents.DamageShield == 0 {
+		return
+	}
+
+	damageShieldProcSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 58874},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return warrior.GetStat(stats.BlockValue) * 0.1 * float64(warrior.Talents.DamageShield)
+				},
+			},
+			OutcomeApplier: warrior.OutcomeFuncAlwaysHit(),
+		}),
+	})
+
+	core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
+		Label:    "Damage Shield Trigger",
+		Duration: core.NeverExpires,
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() && !spellEffect.Outcome.Matches(core.OutcomeBlock) {
+				return
+			}
+
+			if spell.SpellSchool != core.SpellSchoolPhysical {
+				return
+			}
+
+			damageShieldProcSpell.Cast(sim, spell.Unit)
+		},
+	}))
 }
 
 func (warrior *Warrior) applyAngerManagement() {
@@ -506,6 +573,7 @@ func (warrior *Warrior) applyShieldSpecialization() {
 	warrior.AddStat(stats.Block, core.BlockRatingPerBlockChance*1*float64(warrior.Talents.ShieldSpecialization))
 
 	procChance := 0.2 * float64(warrior.Talents.ShieldSpecialization)
+	rageAdded := float64(warrior.Talents.ShieldSpecialization)
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727})
 
 	warrior.RegisterAura(core.Aura{
@@ -515,9 +583,9 @@ func (warrior *Warrior) applyShieldSpecialization() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock) {
-				if procChance == 1 || sim.RandomFloat("Shield Specialization") < procChance {
-					warrior.AddRage(sim, 1, rageMetrics)
+			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+				if procChance == 1.0 || sim.RandomFloat("Shield Specialization") < procChance {
+					warrior.AddRage(sim, rageAdded, rageMetrics)
 				}
 			}
 		},
@@ -620,7 +688,7 @@ func (warrior *Warrior) registerLastStandCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Minute * 8,
+				Duration: time.Minute * 3,
 			},
 		},
 
@@ -632,6 +700,9 @@ func (warrior *Warrior) registerLastStandCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: lastStandSpell,
 		Type:  core.CooldownTypeSurvival,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return warrior.StanceMatches(DefensiveStance)
+		},
 	})
 }
 
@@ -644,7 +715,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 
-	bladestormSpell := warrior.RegisterSpell(core.SpellConfig{
+	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagChanneled,
@@ -667,28 +738,29 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
+			warrior.disableHsCleaveUntil = sim.CurrentTime + time.Second*6
 		},
 	})
+
+	dm := 1 + 0.1*float64(warrior.Talents.ImprovedWhirlwind) + 0.02*float64(warrior.Talents.UnendingFury)
 
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury),
+		DamageMultiplier: dm,
 		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
 	baseEffectOH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeOHSpecial,
 
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(warrior.Talents.UnendingFury)) *
-			(1 + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
+		DamageMultiplier: dm,
 		ThreatMultiplier: 1.25,
 
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
 	}
 
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
@@ -711,7 +783,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	}
 
 	bladestormDot = core.NewDot(core.Dot{
-		Spell: bladestormSpell,
+		Spell: warrior.Bladestorm,
 		Aura: warrior.RegisterAura(core.Aura{
 			Label:    "Bladestorm",
 			ActionID: actionID,
@@ -722,7 +794,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
-		Spell: bladestormSpell,
+		Spell: warrior.Bladestorm,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return warrior.CurrentRage() >= cost

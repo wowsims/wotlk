@@ -51,8 +51,8 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 				},
 			},
 		}, core.SpellEffect{
-			ProcMask:            core.ProcMaskSpellDamage,
-			BonusSpellHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+			ProcMask:       core.ProcMaskSpellDamage,
+			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 			BonusSpellPower: 0 +
 				core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfRage, 30, 0) +
 				core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfImpact, 46, 0),
@@ -146,7 +146,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 }
 
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
-	config, effect := shaman.newShockSpellConfig(49326, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
+	config, effect := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
 	config.Flags |= core.SpellFlagBinary
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 

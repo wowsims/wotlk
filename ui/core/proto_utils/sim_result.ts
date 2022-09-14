@@ -35,6 +35,7 @@ import {
     SimLog,
     ThreatLogGroup,
 } from './logs_parser.js';
+import { MAX_PARTY_SIZE } from '../party.js';
 
 export interface SimResultFilter {
     // Raid index of the player to display, or null for all players.
@@ -99,7 +100,7 @@ export class SimResult {
     }
 
     getPlayerWithIndex(unitIndex: number): UnitMetrics | null {
-        return this.getPlayers().find(player => player.unitIndex == unitIndex) || null;
+        return this.raidMetrics.parties[Math.floor(unitIndex/MAX_PARTY_SIZE)].players[unitIndex%MAX_PARTY_SIZE]
     }
 
     getTargets(filter?: SimResultFilter): Array<UnitMetrics> {
@@ -180,12 +181,14 @@ export class RaidMetrics {
     private readonly metrics: RaidMetricsProto;
 
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly parties: Array<PartyMetrics>;
 
     private constructor(raid: RaidProto, metrics: RaidMetricsProto, parties: Array<PartyMetrics>) {
         this.raid = raid;
         this.metrics = metrics;
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.parties = parties;
     }
 
@@ -211,6 +214,7 @@ export class PartyMetrics {
 
     readonly partyIndex: number;
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly players: Array<UnitMetrics>;
 
     private constructor(party: PartyProto, metrics: PartyMetricsProto, partyIndex: number, players: Array<UnitMetrics>) {
@@ -218,6 +222,7 @@ export class PartyMetrics {
         this.metrics = metrics;
         this.partyIndex = partyIndex;
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.players = players;
     }
 
@@ -245,13 +250,14 @@ export class UnitMetrics {
     private readonly metrics: UnitMetricsProto;
 
     readonly index: number;
-		readonly unitIndex: number;
+	readonly unitIndex: number;
     readonly name: string;
     readonly spec: Spec;
     readonly petActionId: ActionId | null;
     readonly iconUrl: string;
     readonly classColor: string;
     readonly dps: DistributionMetricsProto;
+    readonly hps: DistributionMetricsProto;
     readonly tps: DistributionMetricsProto;
     readonly dtps: DistributionMetricsProto;
     readonly actions: Array<ActionMetrics>;
@@ -291,7 +297,7 @@ export class UnitMetrics {
         this.metrics = metrics;
 
         this.index = index;
-				this.unitIndex = metrics.unitIndex;
+		this.unitIndex = metrics.unitIndex;
         this.name = metrics.name;
         this.spec = player ? playerToSpec(player) : 0;
         this.petActionId = petActionId;
@@ -299,6 +305,7 @@ export class UnitMetrics {
             (this.isTarget ? defaultTargetIcon : '');
         this.classColor = this.isTarget ? 'black' : classColors[specToClass[this.spec]];
         this.dps = this.metrics.dps!;
+        this.hps = this.metrics.hps!;
         this.tps = this.metrics.threat!;
         this.dtps = this.metrics.dtps!;
         this.actions = actions;
@@ -398,6 +405,10 @@ export class UnitMetrics {
 
     getSpellActions(): Array<ActionMetrics> {
         return this.getActionsForDisplay().filter(e => !e.isMeleeAction);
+    }
+
+    getHealingActions(): Array<ActionMetrics> {
+        return this.getActionsForDisplay();
     }
 
     getResourceMetrics(resourceType: ResourceType): Array<ResourceMetrics> {
@@ -669,6 +680,10 @@ export class ActionMetrics {
         return this.combinedMetrics.dps;
     }
 
+    get hps() {
+        return this.combinedMetrics.hps;
+    }
+
     get tps() {
         return this.combinedMetrics.tps;
     }
@@ -683,6 +698,10 @@ export class ActionMetrics {
 
     get avgCast() {
         return this.combinedMetrics.avgCast;
+    }
+
+    get avgCastHealing() {
+        return this.combinedMetrics.avgCastHealing;
     }
 
     get avgCastThreat() {
@@ -841,6 +860,10 @@ export class TargetedActionMetrics {
         return this.data.damage / this.iterations / this.duration;
     }
 
+    get hps() {
+        return (this.data.healing + this.data.shielding) / this.iterations / this.duration;
+    }
+
     get tps() {
         return this.data.threat / this.iterations / this.duration;
     }
@@ -855,6 +878,10 @@ export class TargetedActionMetrics {
 
     get avgCast() {
         return (this.data.damage / this.iterations) / (this.casts || 1);
+    }
+
+    get avgCastHealing() {
+        return ((this.data.healing + this.data.shielding) / this.iterations) / (this.casts || 1);
     }
 
     get avgCastThreat() {
@@ -935,6 +962,8 @@ export class TargetedActionMetrics {
                 glances: sum(actions.map(a => a.data.glances)),
                 damage: sum(actions.map(a => a.data.damage)),
                 threat: sum(actions.map(a => a.data.threat)),
+                healing: sum(actions.map(a => a.data.healing)),
+                shielding: sum(actions.map(a => a.data.shielding)),
             }));
     }
 }

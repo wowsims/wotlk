@@ -1,5 +1,5 @@
 import { Component } from '../components/component.js';
-import { getLaunchedSims, raidSimLaunched } from '../launched_sims.js';
+import { getLaunchedSims, raidSimLaunched, memeSpecs } from '../launched_sims.js';
 import { Spec } from '../proto/common.js';
 import {
 	classColors,
@@ -43,6 +43,7 @@ export class Title extends Component {
 
 		const orderedLaunchedSpecs: Array<Spec | null> = (naturalSpecOrder
 			.filter(spec => getLaunchedSims().includes(spec)) as Array<Spec | null>)
+			.filter(spec => !spec || !memeSpecs.includes(spec))
 			.concat(raidSimLaunched ? [null] : []); // Null represents the raid sim.
 
 		dropdownPanel.style.gridTemplateRows = `repeat(${Math.ceil(orderedLaunchedSpecs.length / 2)}, 1fr)`;

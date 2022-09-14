@@ -76,6 +76,7 @@ type Deathknight struct {
 	DeathStrike      *RuneSpell
 	DeathStrikeMhHit *RuneSpell
 	DeathStrikeOhHit *RuneSpell
+	DeathStrikeHeals []float64
 
 	Obliterate      *RuneSpell
 	ObliterateMhHit *RuneSpell
@@ -288,6 +289,8 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	if dk.Inputs.PrecastHornOfWinter {
 		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
 	}
+
+	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -349,14 +352,18 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		dk.Gargoyle = dk.NewGargoyle()
 	}
 
-	dk.ArmyGhoul = make([]*GhoulPet, 8)
-	for i := 0; i < 8; i++ {
-		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
+	if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse {
+		dk.ArmyGhoul = make([]*GhoulPet, 8)
+		for i := 0; i < 8; i++ {
+			dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
+		}
 	}
 
-	dk.Bloodworm = make([]*BloodwormPet, 4)
-	for i := 0; i < 4; i++ {
-		dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+	if dk.Talents.Bloodworms > 0 {
+		dk.Bloodworm = make([]*BloodwormPet, 4)
+		for i := 0; i < 4; i++ {
+			dk.Bloodworm[i] = dk.NewBloodwormPet(i)
+		}
 	}
 
 	dk.RuneWeapon = dk.NewRuneWeapon()
@@ -404,6 +411,42 @@ func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
 	applyGuile := dk.Talents.GuileOfGorefiend > 0
 	applyMightOfMograine := dk.Talents.MightOfMograine > 0
 	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
+}
+
+func (dk *Deathknight) KM() bool {
+	if dk.KillingMachineAura != nil {
+		return dk.KillingMachineAura.IsActive()
+	} else {
+		return false
+	}
+}
+
+func (dk *Deathknight) Rime() bool {
+	if dk.RimeAura != nil {
+		return dk.RimeAura.IsActive()
+	} else {
+		return false
+	}
+}
+
+func (dk *Deathknight) AverageDSHeal() float64 {
+	count := len(dk.DeathStrikeHeals)
+	if count >= 5 {
+		sum := dk.DeathStrikeHeals[count-1]
+		sum += dk.DeathStrikeHeals[count-2]
+		sum += dk.DeathStrikeHeals[count-3]
+		sum += dk.DeathStrikeHeals[count-4]
+		sum += dk.DeathStrikeHeals[count-5]
+		return sum / 5.0
+	} else if count > 0 {
+		sum := dk.DeathStrikeHeals[count-1]
+		for i := 1; i < count; i++ {
+			sum += dk.DeathStrikeHeals[count-i-1]
+		}
+		return sum / float64(count)
+	} else {
+		return 0
+	}
 }
 
 func init() {
@@ -527,4 +570,146 @@ func (dk *Deathknight) GetDeathKnight() *Deathknight {
 
 type DeathKnightAgent interface {
 	GetDeathKnight() *Deathknight
+}
+
+func PointsInTalents(talents proto.DeathknightTalents) (int, int, int) {
+	blood := 0
+	blood += int(talents.Butchery)
+	blood += int(talents.Subversion)
+	blood += int(talents.BladeBarrier)
+	blood += int(talents.BladedArmor)
+	blood += int(talents.ScentOfBlood)
+	blood += int(talents.TwoHandedWeaponSpecialization)
+	blood += int(talents.DarkConviction)
+	blood += int(talents.DeathRuneMastery)
+	blood += int(talents.ImprovedRuneTap)
+	blood += int(talents.SpellDeflection)
+	blood += int(talents.Vendetta)
+	blood += int(talents.BloodyStrikes)
+	blood += int(talents.VeteranOfTheThirdWar)
+	blood += int(talents.BloodyVengeance)
+	blood += int(talents.AbominationsMight)
+	blood += int(talents.Bloodworms)
+	blood += int(talents.ImprovedBloodPresence)
+	blood += int(talents.ImprovedDeathStrike)
+	blood += int(talents.SuddenDoom)
+	blood += int(talents.WillOfTheNecropolis)
+	blood += int(talents.MightOfMograine)
+	blood += int(talents.BloodGorged)
+	if talents.RuneTap {
+		blood++
+	}
+	if talents.Hysteria {
+		blood++
+	}
+	if talents.MarkOfBlood {
+		blood++
+	}
+	if talents.VampiricBlood {
+		blood++
+	}
+	if talents.HeartStrike {
+		blood++
+	}
+	if talents.DancingRuneWeapon {
+		blood++
+	}
+
+	frost := 0
+
+	frost += int(talents.ImprovedIcyTouch)
+	frost += int(talents.RunicPowerMastery)
+	frost += int(talents.Toughness)
+	frost += int(talents.IcyReach)
+	frost += int(talents.BlackIce)
+	frost += int(talents.NervesOfColdSteel)
+	frost += int(talents.IcyTalons)
+	frost += int(talents.Annihilation)
+	frost += int(talents.KillingMachine)
+	frost += int(talents.ChillOfTheGrave)
+	frost += int(talents.EndlessWinter)
+	frost += int(talents.FrigidDreadplate)
+	frost += int(talents.GlacierRot)
+	frost += int(talents.MercilessCombat)
+	frost += int(talents.Rime)
+	frost += int(talents.Chilblains)
+	frost += int(talents.ImprovedFrostPresence)
+	frost += int(talents.ThreatOfThassarian)
+	frost += int(talents.BloodOfTheNorth)
+	frost += int(talents.Acclimation)
+	frost += int(talents.GuileOfGorefiend)
+	frost += int(talents.TundraStalker)
+	if talents.HowlingBlast {
+		frost++
+	}
+	if talents.Lichborne {
+		frost++
+	}
+	if talents.Deathchill {
+		frost++
+	}
+	if talents.ImprovedIcyTalons {
+		frost++
+	}
+	if talents.HungeringCold {
+		frost++
+	}
+	if talents.UnbreakableArmor {
+		frost++
+	}
+	if talents.FrostStrike {
+		frost++
+	}
+
+	unholy := 0
+
+	unholy += int(talents.ViciousStrikes)
+	unholy += int(talents.Virulence)
+	unholy += int(talents.Anticipation)
+	unholy += int(talents.Epidemic)
+	unholy += int(talents.Morbidity)
+	unholy += int(talents.UnholyCommand)
+	unholy += int(talents.RavenousDead)
+	unholy += int(talents.Outbreak)
+	unholy += int(talents.Necrosis)
+	unholy += int(talents.OnAPaleHorse)
+	unholy += int(talents.BloodCakedBlade)
+	unholy += int(talents.NightOfTheDead)
+	unholy += int(talents.Impurity)
+	unholy += int(talents.Dirge)
+	unholy += int(talents.Desecration)
+	unholy += int(talents.MagicSuppression)
+	unholy += int(talents.Reaping)
+	unholy += int(talents.Desolation)
+	unholy += int(talents.ImprovedUnholyPresence)
+	unholy += int(talents.CryptFever)
+	unholy += int(talents.WanderingPlague)
+	unholy += int(talents.EbonPlaguebringer)
+	unholy += int(talents.RageOfRivendare)
+	if talents.CorpseExplosion {
+		unholy++
+	}
+	if talents.UnholyBlight {
+		unholy++
+	}
+	if talents.MasterOfGhouls {
+		unholy++
+	}
+	if talents.AntiMagicZone {
+		unholy++
+	}
+	if talents.GhoulFrenzy {
+		unholy++
+	}
+	if talents.BoneShield {
+		unholy++
+	}
+	if talents.ScourgeStrike {
+		unholy++
+	}
+	if talents.SummonGargoyle {
+		unholy++
+	}
+
+	return blood, frost, unholy
 }

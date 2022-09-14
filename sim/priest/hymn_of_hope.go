@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 // TODO: This currently only affects the caster, not other raid members.
@@ -11,15 +12,8 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 	actionID := core.ActionID{SpellID: 64901}
 	manaMetrics := priest.NewManaMetrics(actionID)
 
-	numTicks := int32(4)
-
+	numTicks := 4 + core.TernaryInt32(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfHymnOfHope), 1, 0)
 	channelTime := time.Duration(numTicks) * time.Second * 2
-	manaPerTick := 0.0
-	priest.Env.RegisterPostFinalizeEffect(func() {
-		// This is 3%, but it increases the target's max mana by 20% for the duration
-		// so just simplify to 3 * 1.2 = 3.6%.
-		manaPerTick = priest.MaxMana() * 0.036
-	})
 
 	hymnOfHopeSpell := priest.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -41,7 +35,9 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 				Period:   period,
 				NumTicks: int(numTicks),
 				OnAction: func(sim *core.Simulation) {
-					priest.AddMana(sim, manaPerTick, manaMetrics, true)
+					// This is 3%, but it increases the target's max mana by 20% for the duration
+					// so just simplify to 3 * 1.2 = 3.6%.
+					priest.AddMana(sim, priest.MaxMana()*0.036, manaMetrics, true)
 				},
 			})
 		},

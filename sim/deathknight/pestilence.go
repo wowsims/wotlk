@@ -27,10 +27,9 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		},
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     0.0,
-			ThreatMultiplier:     0.0,
+			ProcMask:         core.ProcMaskSpellDamage,
+			DamageMultiplier: 0.0,
+			ThreatMultiplier: 0.0,
 
 			// Zero damage spell with a Hit mechanic, thanks blizz!
 			BaseDamage:     core.BaseDamageConfigFlat(0),

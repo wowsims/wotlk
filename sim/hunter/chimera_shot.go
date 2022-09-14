@@ -19,7 +19,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -41,6 +41,8 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
+			BonusHitRating:   hunter.bonusRangedHit(),
+			BonusCritRating:  hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
@@ -80,9 +82,9 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
+			BonusHitRating:  hunter.bonusRangedHit(),
+			BonusCritRating: hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1) *
 				(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
@@ -96,5 +98,9 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 		}),
+
+		InitialDamageMultiplier: 1 +
+			0.1*float64(hunter.Talents.ImprovedStings) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
 	})
 }

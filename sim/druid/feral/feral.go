@@ -1,12 +1,10 @@
 package feral
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -42,25 +40,22 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
 	}
 
+	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
 	cat.PseudoStats.ThreatMultiplier *= 0.71
 
-	// Prevents Windfury from applying.
-	cat.HasMHWeaponImbue = true
+	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
-	cat.EnableEnergyBar(100.0, func(sim *core.Simulation) {
-		if cat.GCD.IsReady(sim) {
-			cat.doRotation(sim)
-		}
-	})
+	// CHECK changing RageBarOptions affects cat dps, which sounds very fishy
+	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 1}, func(sim *core.Simulation) {})
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand: core.Weapon{
-			BaseDamageMin:        43.5,
-			BaseDamageMax:        66.5,
+			BaseDamageMin:        43,
+			BaseDamageMax:        66,
 			SwingSpeed:           1.0,
 			NormalizedSwingSpeed: 1.0,
 			SwingDuration:        time.Second,
@@ -68,16 +63,6 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		},
 		AutoSwingMelee: true,
 	})
-
-	// Cat Form adds (2 x Level) AP + 1 AP per Agi
-	cat.AddStat(stats.AttackPower, 140)
-	cat.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-
-	dps := (((cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMax - cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / 2.0) + cat.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponDamageMin) / cat.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed
-	fap := math.Floor((dps - 54.8) * 14)
-	if fap > 0 {
-		cat.AddStat(stats.AttackPower, fap)
-	}
 
 	return cat
 }
@@ -87,23 +72,37 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
+	missChance     float64
 	readyToShift   bool
 	waitingForTick bool
 	latency        time.Duration
+	maxRipTicks    int
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
 	return cat.Druid
 }
 
+func (cat *FeralDruid) MissChance() float64 {
+	speffect := core.SpellEffect{
+		ProcMask:         core.ProcMaskMeleeMHSpecial,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		Target:           cat.CurrentTarget,
+	}
+	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
+	return at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
+}
+
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterFeralSpells(15)
+	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs()
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.Druid.Reset(sim)
+	cat.Druid.ClearForm(sim)
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false

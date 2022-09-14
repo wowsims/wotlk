@@ -7,6 +7,7 @@ import { Blessings } from '../core/proto/paladin.js';
 import { BlessingsAssignment } from '../core/proto/ui.js';
 import { BlessingsAssignments } from '../core/proto/ui.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
+import { memeSpecs } from '../core/launched_sims.js';
 import {
 	makeDefaultBlessings,
 	classColors,
@@ -47,7 +48,9 @@ export class BlessingsPicker extends Component {
 		const headerRow = this.rootElem.getElementsByClassName('blessings-table-header-row')[0] as HTMLTableRowElement;
 		const bodyElem = this.rootElem.getElementsByClassName('blessings-table-body')[0] as HTMLTableSectionElement;
 
-		const specs = naturalSpecOrder.filter(spec => implementedSpecs.includes(spec));
+		const specs = naturalSpecOrder
+			.filter(spec => implementedSpecs.includes(spec))
+			.filter(spec => !memeSpecs.includes(spec));
 		const paladinIndexes = [...Array(MAX_PALADINS).keys()];
 
 		this.cols = [];

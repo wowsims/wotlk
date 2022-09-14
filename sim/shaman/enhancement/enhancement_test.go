@@ -23,6 +23,8 @@ func TestEnhancement(t *testing.T) {
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
+		OtherSpecOptions: []core.SpecOptionsCombo{{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental}},
+
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
 		PlayerBuffs: FullIndividualBuffs,

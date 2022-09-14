@@ -18,9 +18,22 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
 
-		actionID := ActionID{SpellID: 50613}
+		var actionID ActionID
 
 		var resourceMetrics *ResourceMetrics = nil
+		if resourceMetrics == nil {
+			if character.HasRunicPowerBar() {
+				actionID = ActionID{SpellID: 50613}
+				resourceMetrics = character.NewRunicPowerMetrics(actionID)
+			} else if character.HasEnergyBar() {
+				actionID = ActionID{SpellID: 25046}
+				resourceMetrics = character.NewEnergyMetrics(actionID)
+			} else if character.HasManaBar() {
+				actionID = ActionID{SpellID: 28730}
+				resourceMetrics = character.NewManaMetrics(actionID)
+			}
+		}
+
 		spell := character.RegisterSpell(SpellConfig{
 			ActionID: actionID,
 			Flags:    SpellFlagNoOnCastComplete,
@@ -30,23 +43,13 @@ func applyRaceEffects(agent Agent) {
 					Duration: time.Minute * 2,
 				},
 			},
-			ApplyEffects: func(sim *Simulation, unit *Unit, spell *Spell) {
-				if resourceMetrics == nil {
-					if character.HasRunicPowerBar() {
-						resourceMetrics = character.NewRunicPowerMetrics(actionID)
-					} else if character.HasEnergyBar() {
-						resourceMetrics = character.NewEnergyMetrics(actionID)
-					} else if character.HasManaBar() {
-						resourceMetrics = character.NewManaMetrics(actionID)
-					}
-				}
-
+			ApplyEffects: func(sim *Simulation, _ *Unit, spell *Spell) {
 				if spell.Unit.HasRunicPowerBar() {
 					spell.Unit.AddRunicPower(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasEnergyBar() {
 					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
-				} else if unit.HasManaBar() {
-					spell.Unit.AddMana(sim, unit.MaxMana()*0.06, resourceMetrics, false)
+				} else if spell.Unit.HasManaBar() {
+					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics, false)
 				}
 			},
 		})
@@ -62,12 +65,7 @@ func applyRaceEffects(agent Agent) {
 	case proto.Race_RaceDwarf:
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
-		// Gun specialization (+1% ranged crit when using a gun).
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
-			if weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
-				character.PseudoStats.BonusRangedCritRating += 1 * CritRatingPerCritChance
-			}
-		}
+		// Gun specialization (+1% ranged crit when using a gun) handled in hunter code.
 
 		applyWeaponSpecialization(
 			character,
@@ -166,12 +164,7 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
 	case proto.Race_RaceTroll:
-		// Bow specialization (+1% ranged crit when using a bow).
-		if weapon := character.Equip[proto.ItemSlot_ItemSlotRanged]; weapon.ID != 0 {
-			if weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
-				character.PseudoStats.BonusRangedCritRating += 1 * CritRatingPerCritChance
-			}
-		}
+		// Bow specialization (+1% ranged crit when using a bow) handled in hunter code.
 
 		// Beast Slaying (+5% damage to beasts)
 		if character.CurrentTarget.MobType == proto.MobType_MobTypeBeast {

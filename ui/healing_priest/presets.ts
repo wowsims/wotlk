@@ -30,14 +30,28 @@ import * as Tooltips from '../core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const StandardTalents = {
-	name: 'Standard',
+export const DiscTalents = {
+	name: 'Disc',
 	data: SavedTalents.create({
-		talentsString: '0533203100300502331-005551002020152-324',
+		talentsString: '0503203130300512301313231251-2351010303',
 		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfSmite,
-			major2: MajorGlyph.GlyphOfHolyNova,
-			major3: MajorGlyph.GlyphOfShadowWordDeath,
+			major1: MajorGlyph.GlyphOfPowerWordShield,
+			major2: MajorGlyph.GlyphOfFlashHeal,
+			major3: MajorGlyph.GlyphOfPenance,
+			minor1: MinorGlyph.GlyphOfFortitude,
+			minor2: MinorGlyph.GlyphOfShadowfiend,
+			minor3: MinorGlyph.GlyphOfFading,
+		}),
+	}),
+};
+export const HolyTalents = {
+	name: 'Holy',
+	data: SavedTalents.create({
+		talentsString: '05032031103-234051032002152530004311051',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfPrayerOfHealing,
+			major2: MajorGlyph.GlyphOfRenew,
+			major3: MajorGlyph.GlyphOfCircleOfHealing,
 			minor1: MinorGlyph.GlyphOfFortitude,
 			minor2: MinorGlyph.GlyphOfShadowfiend,
 			minor3: MinorGlyph.GlyphOfFading,
@@ -83,192 +97,400 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
 	vampiricTouch: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	sunderArmor: true,
-	faerieFire: TristateEffect.TristateEffectImproved,
-	bloodFrenzy: true,
-	ebonPlaguebringer: true,
-	heartOfTheCrusader: true,
-	judgementOfWisdom: true,
 });
 
-export const PRERAID_PRESET = {
-	name: 'Preraid Preset',
+export const DISC_PRERAID_PRESET = {
+	name: 'Disc Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 42553,
-			"enchant": 44877,
+			"id": 37294,
+			"enchant": 44876,
 			"gems": [
-				41307,
-				40014
+				41401,
+				39998
 			]
 		},
 		{
-			"id": 39472
+			"id": 40681
 		},
 		{
-			"id": 34210,
-			"enchant": 44874,
+			"id": 37691,
+			"enchant": 44872
+		},
+		{
+			"id": 37630,
+			"enchant": 63765
+		},
+		{
+			"id": 39515,
+			"enchant": 44489,
 			"gems": [
-				40014,
-				40014
+				42144,
+				42144
 			]
 		},
 		{
-			"id": 41610,
-			"enchant": 44472
-		},
-		{
-			"id": 42102,
-			"enchant": 33990
-		},
-		{
-			"id": 40740,
+			"id": 37361,
 			"enchant": 44498,
 			"gems": [
 				0
 			]
 		},
 		{
-			"id": 42113,
+			"id": 39519,
 			"enchant": 44592,
+			"gems": [
+				42144,
+				0
+			]
+		},
+		{
+			"id": 40697,
+			"enchant": 54793,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 37622,
+			"enchant": 41602
+		},
+		{
+			"id": 44202,
+			"enchant": 55016,
+			"gems": [
+				40027
+			]
+		},
+		{
+			"id": 44283
+		},
+		{
+			"id": 37195
+		},
+		{
+			"id": 37660
+		},
+		{
+			"id": 42413,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 37360,
+			"enchant": 45059
+		},
+		{},
+		{
+			"id": 37238
+		}
+	]}`),
+};
+
+export const DISC_P1_PRESET = {
+	name: 'Disc P1 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40456,
+			"enchant": 44876,
+			"gems": [
+				41401,
+				39998
+			]
+		},
+		{
+			"id": 44657,
+			"gems": [
+				40047
+			]
+		},
+		{
+			"id": 40450,
+			"enchant": 44872,
+			"gems": [
+				42144
+			]
+		},
+		{
+			"id": 40724,
+			"enchant": 63765
+		},
+		{
+			"id": 40194,
+			"enchant": 44489,
+			"gems": [
+				42144
+			]
+		},
+		{
+			"id": 40741,
+			"enchant": 44498,
 			"gems": [
 				0
 			]
 		},
 		{
-			"id": 40696,
+			"id": 40445,
+			"enchant": 44592,
 			"gems": [
-				40014,
-				40014
+				42144,
+				0
 			]
 		},
 		{
-			"id": 34181,
+			"id": 40271,
+			"enchant": 54793,
+			"gems": [
+				40027,
+				39998
+			]
+		},
+		{
+			"id": 40398,
 			"enchant": 41602,
 			"gems": [
-				40014,
-				40014,
-				40014
+				39998,
+				39998
 			]
 		},
 		{
-			"id": 40750,
-			"enchant": 60623
+			"id": 40236,
+			"enchant": 55016
 		},
 		{
-			"id": 43253,
-			"gems": [
-				40014
-			]
+			"id": 40108
 		},
 		{
-			"id": 40719
+			"id": 40433
 		},
 		{
 			"id": 37835
 		},
 		{
-			"id": 37873
-		},
-		{
-			"id": 45085,
-			"enchant": 44487
-		},
-		{
-			"id": 40698
-		},
-		{
-			"id": 37177
-		}
-	]}`),
-};
-
-export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 40562,
-			"enchant": 44877,
-			"gems": [
-				41307,
-				40049
-			]
-		},
-		{
-			"id": 40374
-		},
-		{
-			"id": 40555,
-			"enchant": 44874
-		},
-		{
-			"id": 41610,
-			"enchant": 63765
-		},
-		{
-			"id": 40526,
-			"enchant": 33990,
-			"gems": [
-				40049
-			]
-		},
-		{
-			"id": 40325,
-			"enchant": 44498,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 40454,
-			"enchant": 44592,
-			"gems": [
-				40049,
-				0
-			]
-		},
-		{
-			"id": 40301,
-			"gems": [
-				40049
-			]
-		},
-		{
-			"id": 40560,
-			"enchant": 41602
-		},
-		{
-			"id": 40246,
-			"enchant": 60623
-		},
-		{
-			"id": 40399
-		},
-		{
-			"id": 39389
-		},
-		{
-			"id": 42129
-		},
-		{
-			"id": 40382
+			"id": 40258
 		},
 		{
 			"id": 40395,
 			"enchant": 44487
 		},
 		{
-			"id": 40273
+			"id": 40350
 		},
 		{
-			"id": 39712
+			"id": 40245
+		}
+	]}`),
+};
+
+export const HOLY_PRERAID_PRESET = {
+	name: 'Holy Preraid Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 42553,
+			"enchant": 44876,
+			"gems": [
+				41401,
+				42148
+			]
+		},
+		{
+			"id": 40681
+		},
+		{
+			"id": 37655,
+			"enchant": 44872
+		},
+		{
+			"id": 37291,
+			"enchant": 44472
+		},
+		{
+			"id": 39515,
+			"enchant": 44489,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 37361,
+			"enchant": 44555,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39519,
+			"enchant": 54999,
+			"gems": [
+				40012,
+				0
+			]
+		},
+		{
+			"id": 40697,
+			"enchant": 54793,
+			"gems": [
+				42148,
+				42148
+			]
+		},
+		{
+			"id": 37189,
+			"enchant": 41602,
+			"gems": [
+				40047,
+				49110
+			]
+		},
+		{
+			"id": 44202,
+			"enchant": 55016,
+			"gems": [
+				40092
+			]
+		},
+		{
+			"id": 44283
+		},
+		{
+			"id": 37694
+		},
+		{
+			"id": 37111
+		},
+		{
+			"id": 42413,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 37360,
+			"enchant": 45059
+		},
+		{},
+		{
+			"id": 37619
+		}
+	]}`),
+};
+
+export const HOLY_P1_PRESET = {
+	name: 'Holy P1 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40447,
+			"enchant": 44876,
+			"gems": [
+				41401,
+				40051
+			]
+		},
+		{
+			"id": 44657,
+			"gems": [
+				40012
+			]
+		},
+		{
+			"id": 40450,
+			"enchant": 44872,
+			"gems": [
+				40012
+			]
+		},
+		{
+			"id": 40723,
+			"enchant": 44472
+		},
+		{
+			"id": 40381,
+			"enchant": 44489,
+			"gems": [
+				40012,
+				49110
+			]
+		},
+		{
+			"id": 40741,
+			"enchant": 44555,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40454,
+			"enchant": 54999,
+			"gems": [
+				40051,
+				0
+			]
+		},
+		{
+			"id": 40271,
+			"enchant": 54793,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 40398,
+			"enchant": 41602,
+			"gems": [
+				42148,
+				42148
+			]
+		},
+		{
+			"id": 40326,
+			"enchant": 55016,
+			"gems": [
+				42148
+			]
+		},
+		{
+			"id": 40719
+		},
+		{
+			"id": 40375
+		},
+		{
+			"id": 37111
+		},
+		{
+			"id": 42413,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 40395,
+			"enchant": 44487
+		},
+		{
+			"id": 40350
+		},
+		{
+			"id": 40245
 		}
 	]}`),
 };

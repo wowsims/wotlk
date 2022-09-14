@@ -72,6 +72,10 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
 
 	// Include the items we want icons for here.
+	{ID: 43005}, // Pet foods
+	{ID: 33874}, //
+	{ID: 41174}, // Spellstones
+	{ID: 41196}, //
 	{ID: 12662}, // Demonic Rune
 	{ID: 43015}, // Food IDs
 	{ID: 34753}, // Food IDs
@@ -160,6 +164,78 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 41119}, // Potions / In Battle Consumes
 	{ID: 40771}, // Potions / In Battle Consumes
 
+	// Wrath Enchant Icons
+	{ID: 38375},
+	{ID: 38376},
+	{ID: 44069},
+	{ID: 44075},
+	{ID: 44875},
+	{ID: 44137},
+	{ID: 44138},
+	{ID: 44139},
+	{ID: 44140},
+	{ID: 44141},
+	{ID: 44876},
+	{ID: 44877},
+	{ID: 44878},
+	{ID: 44879},
+	{ID: 44067},
+	{ID: 44068},
+	{ID: 44129},
+	{ID: 44130},
+	{ID: 44131},
+	{ID: 44132},
+	{ID: 37330},
+	{ID: 37331},
+	{ID: 44494},
+	{ID: 37347},
+	{ID: 37349},
+	{ID: 44471},
+	{ID: 44472},
+	{ID: 44488},
+	{ID: 37340},
+	{ID: 44489},
+	{ID: 44484},
+	{ID: 44498},
+	{ID: 44944},
+	{ID: 44485},
+	{ID: 38371},
+	{ID: 38372},
+	{ID: 38373},
+	{ID: 38374},
+	{ID: 44963},
+	{ID: 41601},
+	{ID: 41602},
+	{ID: 41603},
+	{ID: 41604},
+	{ID: 44490},
+	{ID: 44491},
+	{ID: 37339},
+	{ID: 37344},
+	{ID: 41976},
+	{ID: 44486},
+	{ID: 44487},
+	{ID: 44492},
+	{ID: 44494},
+	{ID: 44495},
+	{ID: 44496},
+	{ID: 44473},
+	{ID: 44483},
+	{ID: 42500},
+	{ID: 44936},
+	{ID: 41146},
+	{ID: 41167},
+	{ID: 44739},
+	{ID: 49633},
+	{ID: 49634},
+	{ID: 43468},
+	{ID: 37094},
+	{ID: 43464},
+	{ID: 43466},
+	{ID: 37092},
+	{ID: 37098},
+
+	// Filter out these items
 	{ID: 17782, Filter: true}, // talisman of the binding shard
 	{ID: 17783, Filter: true}, // talisman of the binding fragment
 	{ID: 17802, Filter: true}, // Deprecated version of Thunderfury
@@ -176,4 +252,5 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
+	{ID: 50256, Filter: true}, // Shadow's Edge One-Hander (NEW)
 }

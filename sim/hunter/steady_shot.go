@@ -17,22 +17,22 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			ActionID: core.ActionID{SpellID: 53220},
 			Duration: time.Second * 12,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AimedShot.DamageMultiplier *= 1.15
+				hunter.AimedShot.DamageMultiplier += .15
 				hunter.AimedShot.CostMultiplier -= 0.2
-				hunter.ArcaneShot.DamageMultiplier *= 1.15
+				hunter.ArcaneShot.DamageMultiplier += .15
 				hunter.ArcaneShot.CostMultiplier -= 0.2
 				if hunter.ChimeraShot != nil {
-					hunter.ChimeraShot.DamageMultiplier *= 1.15
+					hunter.ChimeraShot.DamageMultiplier += .15
 					hunter.ChimeraShot.CostMultiplier -= 0.2
 				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AimedShot.DamageMultiplier /= 1.15
+				hunter.AimedShot.DamageMultiplier -= .15
 				hunter.AimedShot.CostMultiplier += 0.2
-				hunter.ArcaneShot.DamageMultiplier /= 1.15
+				hunter.ArcaneShot.DamageMultiplier -= .15
 				hunter.ArcaneShot.CostMultiplier += 0.2
 				if hunter.ChimeraShot != nil {
-					hunter.ChimeraShot.DamageMultiplier /= 1.15
+					hunter.ChimeraShot.DamageMultiplier -= .15
 					hunter.ChimeraShot.CostMultiplier += 0.2
 				}
 			},
@@ -69,13 +69,11 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusCritRating: 0 +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetRiftStalker, 4), 5*core.CritRatingPerCritChance, 0),
+			BonusHitRating: hunter.bonusRangedHit(),
+			BonusCritRating: hunter.bonusRangedCrit() +
+				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
 			DamageMultiplier: 1 *
-				(1 + 0.03*float64(hunter.Talents.FerociousInspiration)) *
-				hunter.markedForDeathMultiplier() *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), 1.1, 1),
+				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
@@ -95,6 +93,10 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				}
 			},
 		}),
+
+		InitialDamageMultiplier: 1 +
+			.03*float64(hunter.Talents.FerociousInspiration) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), .1, 0),
 	})
 }
 

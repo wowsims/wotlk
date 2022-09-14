@@ -18,12 +18,16 @@ type manaBar struct {
 
 	BaseMana float64
 
+	currentMana           float64
 	manaCastingMetrics    *ResourceMetrics
 	manaNotCastingMetrics *ResourceMetrics
 	JowManaMetrics        *ResourceMetrics
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
 	PleaManaMetrics       *ResourceMetrics
+
+	replenishmentDep  *stats.StatDependency
+	ReplenishmentAura *Aura
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
@@ -73,11 +77,13 @@ func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulat
 func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
+
+// Gets the Maxiumum mana including bonus and temporary affects that would increase your mana pool.
 func (unit *Unit) MaxMana() float64 {
-	return unit.GetInitialStat(stats.Mana)
+	return unit.stats[stats.Mana]
 }
 func (unit *Unit) CurrentMana() float64 {
-	return unit.stats[stats.Mana]
+	return unit.currentMana
 }
 func (unit *Unit) CurrentManaPercent() float64 {
 	return unit.CurrentMana() / unit.MaxMana()
@@ -96,7 +102,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 		unit.Log(sim, "Gained %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, oldMana, newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaGained += newMana - oldMana
 	if isBonusMana {
 		unit.Metrics.BonusManaGained += newMana - oldMana
@@ -115,7 +121,7 @@ func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMe
 		unit.Log(sim, "Spent %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, unit.CurrentMana(), newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaSpent += amount
 }
 
@@ -278,4 +284,12 @@ func (sim *Simulation) initManaTickAction() {
 		sim.AddPendingAction(pa)
 	}
 	sim.AddPendingAction(pa)
+}
+
+func (mb *manaBar) reset() {
+	if mb.unit == nil {
+		return
+	}
+
+	mb.currentMana = mb.unit.MaxMana()
 }

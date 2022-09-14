@@ -145,43 +145,53 @@ enum DruidMinorGlyph {
 
 message BalanceDruid {
   message Rotation {
-	enum RotationType {
-		Unknown = 0;
-		Adaptive = 1;
-	}
-	RotationType type = 1;
-  }
-  Rotation rotation = 1;
-
-  DruidTalents talents = 2;
-
-  message Options {
-    RaidTarget innervate_target = 1;
-    bool battle_res = 2;
+		enum Type {
+			Unknown = 0;
+			Adaptive = 1;
+		}
+		Type type = 1;
+		bool use_battle_res = 2;
 		bool use_is = 3;
 		bool use_mf = 4;
 		float mf_inside_eclipse_threshold = 5;
 		float is_inside_eclipse_threshold = 6;
+		float mcd_inside_lunar_threshold = 7;
+		float mcd_inside_solar_threshold = 8;
+  }
+
+  Rotation rotation = 1;
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
 	}
   Options options = 3;
 }
 
 message FeralDruid {
   message Rotation {
-    enum FinishingMove {
-			Rip = 0;
-			Bite = 1;
-			None = 2;
+    enum BearweaveType {
+      None = 0;
+      Mangle = 1;
+      Lacerate = 2;
+    }
+	enum BiteModeType {
+      Emperical = 0;
+      Analytical = 1;
     }
 
-    FinishingMove finishing_move = 1;
-    bool mangle_trick = 2;
-    bool biteweave = 3;
-    bool ripweave = 8;
-    int32 rip_min_combo_points = 5;
-    int32 bite_min_combo_points = 6;
-    bool rake_trick = 7;
-	bool maintain_faerie_fire = 9;
+    BearweaveType bear_weave_type = 1;
+	bool maintain_faerie_fire = 2;
+	int32 min_combos_for_rip = 3;
+	bool use_rake = 4;
+	bool use_bite = 5;
+	bool mangle_spam = 6;
+	float bite_time = 7;
+	int32 min_combos_for_bite = 8;
+	int32 berserk_bite_thresh = 9;
+	bool powerbear = 10;
+	float max_roar_clip = 11;
+	BiteModeType bite_mode_type = 12;
   }
   Rotation rotation = 1;
 

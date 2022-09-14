@@ -85,13 +85,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFire-AllItems-Braxley'sBackyardMoonshine-35937"
- value: {
-  dps: 5559.05742
-  tps: 4038.01594
- }
-}
-dps_results: {
  key: "TestFire-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 5888.46518
@@ -115,29 +108,22 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 5560.35047
-  tps: 4040.54247
+  dps: 5620.73438
+  tps: 4084.02947
  }
 }
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 5560.35047
-  tps: 4040.54247
+  dps: 5620.73438
+  tps: 4084.02947
  }
 }
 dps_results: {
  key: "TestFire-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 5713.44017
-  tps: 4130.70971
- }
-}
-dps_results: {
- key: "TestFire-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 5566.14326
-  tps: 4043.12734
+  dps: 5665.42011
+  tps: 4102.62953
  }
 }
 dps_results: {
@@ -274,13 +260,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFire-AllItems-InfusedColdstoneRune-35935"
- value: {
-  dps: 5671.6759
-  tps: 4115.80821
- }
-}
-dps_results: {
  key: "TestFire-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 5794.50703
@@ -320,13 +299,6 @@ dps_results: {
  value: {
   dps: 5658.94529
   tps: 4093.63525
- }
-}
-dps_results: {
- key: "TestFire-AllItems-Mana-EtchedRegalia"
- value: {
-  dps: 3783.14094
-  tps: 2805.66247
  }
 }
 dps_results: {
@@ -421,13 +393,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFire-AllItems-Serrah'sStar-37559"
- value: {
-  dps: 5614.02669
-  tps: 4061.77135
- }
-}
-dps_results: {
  key: "TestFire-AllItems-ShinyShardoftheGods"
  value: {
   dps: 5483.46655
@@ -446,13 +411,6 @@ dps_results: {
  value: {
   dps: 5650.84139
   tps: 4102.7965
- }
-}
-dps_results: {
- key: "TestFire-AllItems-SpellstrikeInfusion"
- value: {
-  dps: 5010.98652
-  tps: 3678.50179
  }
 }
 dps_results: {
@@ -481,13 +439,6 @@ dps_results: {
  value: {
   dps: 5822.62201
   tps: 4232.78497
- }
-}
-dps_results: {
- key: "TestFire-AllItems-TheTwinStars"
- value: {
-  dps: 5454.36627
-  tps: 3978.57783
  }
 }
 dps_results: {
@@ -537,13 +488,6 @@ dps_results: {
  value: {
   dps: 5860.85947
   tps: 4260.07921
- }
-}
-dps_results: {
- key: "TestFire-AllItems-WrathofSpellfire"
- value: {
-  dps: 4944.90462
-  tps: 3622.14847
  }
 }
 dps_results: {

@@ -19,6 +19,7 @@ import {
 	Warrior_Options as WarriorOptions,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
+  Warrior_Rotation_StanceOption as StanceOption,
 } from '../core/proto/warrior.js';
 
 import * as Gems from '../core/proto_utils/gems.js';
@@ -78,6 +79,7 @@ export const DefaultRotation = WarriorRotation.create({
 	useWwDuringExecute: true,
 	useSlamOverExecute: true,
   spamExecute: true,
+  stanceOption: StanceOption.DefaultStance,
 });
 
 export const ArmsRotation = WarriorRotation.create({
@@ -91,6 +93,7 @@ export const ArmsRotation = WarriorRotation.create({
 	rendCdThreshold: 1,
 	useHsDuringExecute: true,
 	spamExecute: true,
+  stanceOption: StanceOption.DefaultStance,
 });
 
 export const DefaultOptions = WarriorOptions.create({
@@ -271,7 +274,7 @@ export const P1_FURY_PRESET = {
           "id": 40529,
           "enchant": 38374,
           "gems": [
-            39996,
+            42142,
             39996
           ]
         },
@@ -446,7 +449,7 @@ export const P1_ARMS_PRESET = {
           "enchant": 44489,
           "gems": [
             42142,
-            42142
+            49110
           ]
         },
         {
@@ -474,8 +477,8 @@ export const P1_ARMS_PRESET = {
           "id": 40529,
           "enchant": 38374,
           "gems": [
-            39996,
-            49110
+            42142,
+            39996
           ]
         },
         {

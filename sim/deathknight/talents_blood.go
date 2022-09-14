@@ -41,8 +41,10 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implemented outside
 
 	// Dark Conviction
-	dk.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
-	dk.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
+	dk.AddStats(stats.Stats{
+		stats.MeleeCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+		stats.SpellCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+	})
 
 	// Death Rune Mastery
 	// TODO: Implemented outside
@@ -97,7 +99,7 @@ func (dk *Deathknight) applySpellDeflection() {
 		if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
-			if -1 < procChance {
+			if sim.RandomFloat("Spell Deflection Roll") < procChance {
 				spellEffect.Damage *= dmgMult
 			}
 		}

@@ -82,6 +82,46 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
+	if dk.Rotation.AutoRotation {
+		bl, fr, uh := deathknight.PointsInTalents(dk.Talents)
+
+		if uh > fr && uh > bl {
+			// Unholy
+			dk.Rotation.BtGhoulFrenzy = true
+			dk.Rotation.UseEmpowerRuneWeapon = true
+			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy
+			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
+			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
+
+			mh := dk.GetMHWeapon()
+			oh := dk.GetOHWeapon()
+
+			if mh != nil && oh != nil {
+				// DW
+				dk.Rotation.BloodRuneFiller = proto.Deathknight_Rotation_BloodBoil
+				dk.Rotation.UseDeathAndDecay = true
+			} else {
+				// 2h
+				if dk.Env.GetNumTargets() > 1 {
+					dk.Rotation.BloodRuneFiller = proto.Deathknight_Rotation_BloodBoil
+					dk.Rotation.UseDeathAndDecay = true
+				} else {
+					dk.Rotation.BloodRuneFiller = proto.Deathknight_Rotation_BloodStrike
+					dk.Rotation.UseDeathAndDecay = false
+				}
+			}
+			// Always use DnD if you have the glyph.
+			if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay) {
+				dk.Rotation.UseDeathAndDecay = true
+			}
+		} else if fr > uh && fr > bl {
+			// Frost rotations here.
+		} else if bl > fr && bl > uh {
+			// Blood rotations here.
+		} else {
+			// some weird spec where two trees are equal...
+		}
+	}
 	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
 	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 

@@ -16,10 +16,12 @@ func (druid *Druid) registerRakeSpell() {
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
+	t9bonus := core.TernaryInt(druid.HasT9FeralSetBonus(2), 1, 0)
+
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
@@ -53,6 +55,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.RakeDot.Apply(sim)
 				} else {
 					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
@@ -69,24 +72,26 @@ func (druid *Druid) registerRakeSpell() {
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
-		NumberOfTicks: 3,
+		NumberOfTicks: 3 + t9bonus,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
+			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 358 + 0.06*hitEffect.MeleeAttackPower(spell.Unit)
-				},
+				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: druid.OutcomeFuncTick(),
+			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier()), druid.OutcomeFuncTick()),
 		})),
 	})
 }
 
-func (druid *Druid) CanRake(sim *core.Simulation) bool {
-	return druid.CurrentEnergy() >= druid.Rake.DefaultCast.Cost
+func (druid *Druid) CanRake() bool {
+	return druid.InForm(Cat) && ((druid.CurrentEnergy() >= druid.CurrentRakeCost()) || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentRakeCost() float64 {
+	return druid.Rake.ApplyCostModifiers(druid.Rake.BaseCost)
 }

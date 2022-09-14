@@ -66,6 +66,9 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			Spell:    dk.VampiricBlood.Spell,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityLow,
+			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return dk.VampiricBlood.CanCast(sim)
+			},
 		})
 	}
 }

@@ -16,8 +16,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Toughness
 	if dk.Talents.Toughness > 0 {
-		armorCoeff := 0.02 * float64(dk.Talents.Toughness)
-		dk.MultiplyStat(stats.Armor, 1.0+armorCoeff)
+		dk.AddStat(stats.Armor, dk.Equip.Stats()[stats.Armor]*0.02*float64(dk.Talents.Toughness))
 	}
 
 	// Icy Reach
@@ -146,7 +145,12 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	attackSpeed := core.TernaryFloat64(dk.HasMHWeapon(), dk.GetMHWeapon().SwingSpeed, 2.0)
+
+	attackSpeed := 2.0
+	if dk.HasMHWeapon() {
+		attackSpeed = dk.GetMHWeapon().SwingSpeed
+	}
+
 	procChance := attackSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{

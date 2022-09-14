@@ -177,6 +177,7 @@ input, select {
 .sim-toolbar {
 	display: flex;
 	align-items: flex-end;
+	background-color: #1112187d;
 }
 
 .sim-tabs {
@@ -269,6 +270,10 @@ input, select {
 }
 
 .hide-threat-metrics .threat-metrics {
+	display: none !important;
+}
+
+.hide-healing-metrics .healing-metrics {
 	display: none !important;
 }
 

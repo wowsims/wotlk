@@ -126,6 +126,7 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+	defaultTarget *Unit
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -194,7 +195,6 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	unit.statsWithoutDeps = unit.statsWithoutDeps.Add(bonus)
 
 	bonus = unit.ApplyStatDependencies(bonus)
-	bonus[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	if sim.Log != nil {
 		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
@@ -254,7 +254,6 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
-		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
@@ -266,11 +265,10 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
-		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
-			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
+			unit.Log(sim, "Dynamic dep disabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
 	}
 }
@@ -355,8 +353,8 @@ func (unit *Unit) Armor() float64 {
 	return unit.PseudoStats.ArmorMultiplier * unit.stats[stats.Armor]
 }
 
-func (unit *Unit) ArmorPenetrationPercentage() float64 {
-	return MaxFloat(MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
+func (unit *Unit) ArmorPenetrationPercentage(armorPenRating float64) float64 {
+	return MaxFloat(MinFloat(armorPenRating/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
 
 func (unit *Unit) RangedSwingSpeed() float64 {
@@ -390,6 +388,7 @@ func (unit *Unit) finalize() {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}
 
+	unit.defaultTarget = unit.CurrentTarget
 	unit.applyParryHaste()
 	unit.updateCastSpeed()
 
@@ -421,10 +420,12 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats
 	unit.auraTracker.reset(sim)
+	// Spellbook needs to be reset AFTER auras.
 	for _, spell := range unit.Spellbook {
 		spell.reset(sim)
 	}
 
+	unit.manaBar.reset()
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
 
@@ -457,4 +458,14 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 		spell.doneIteration()
 	}
 	unit.resetCDs(sim)
+}
+
+func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
+	var spells []*Spell
+	for _, spell := range unit.Spellbook {
+		if spell.SpellSchool.Matches(school) {
+			spells = append(spells, spell)
+		}
+	}
+	return spells
 }

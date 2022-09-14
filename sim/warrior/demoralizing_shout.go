@@ -8,16 +8,12 @@ import (
 )
 
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
-	cost := 10.0
-	cost -= float64(warrior.Talents.FocusedRage)
-	if warrior.HasSetBonus(ItemSetBoldArmor, 2) {
-		cost -= 2
-	}
+	cost := 10.0 - float64(warrior.Talents.FocusedRage)
 
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskEmpty,
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  56,
+		FlatThreatBonus:  63.2,
 		OutcomeApplier:   warrior.OutcomeFuncMagicHit(),
 	}
 

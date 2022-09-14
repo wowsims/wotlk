@@ -16,7 +16,7 @@ import {SavedTalents} from '../core/proto/ui.js';
 import {
     BalanceDruid_Rotation as BalanceDruidRotation,
     BalanceDruid_Options as BalanceDruidOptions,
-    BalanceDruid_Rotation_RotationType as RotationType, DruidMajorGlyph, DruidMinorGlyph,
+    BalanceDruid_Rotation_Type as RotationType, DruidMajorGlyph, DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -29,12 +29,12 @@ import {NO_TARGET} from "../core/proto_utils/utils";
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-    name: 'Standard',
+    name: 'Phase 1',
     data: SavedTalents.create({
-        talentsString: '5012203125331203213305311231--205003012',
+        talentsString: '5032003115331303213305311231--205003012',
         glyphs: Glyphs.create({
-            major1: DruidMajorGlyph.GlyphOfMoonfire,
-            major2: DruidMajorGlyph.GlyphOfStarfire,
+            major1: DruidMajorGlyph.GlyphOfFocus,
+            major2: DruidMajorGlyph.GlyphOfInsectSwarm,
             major3: DruidMajorGlyph.GlyphOfStarfall,
             minor1: DruidMinorGlyph.GlyphOfTyphoon,
             minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
@@ -45,17 +45,17 @@ export const StandardTalents = {
 
 export const DefaultRotation = BalanceDruidRotation.create({
     type: RotationType.Adaptive,
-});
-
-export const DefaultOptions = BalanceDruidOptions.create({
-    battleRes: true,
-    innervateTarget: RaidTarget.create({
-        targetIndex: NO_TARGET,
-    }),
+    useBattleRes: true,
     isInsideEclipseThreshold: 15,
     mfInsideEclipseThreshold: 14,
     useIs: false,
     useMf: true,
+});
+
+export const DefaultOptions = BalanceDruidOptions.create({
+    innervateTarget: RaidTarget.create({
+        targetIndex: NO_TARGET,
+    }),
 });
 
 export const DefaultConsumes = Consumes.create({

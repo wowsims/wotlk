@@ -61,7 +61,7 @@ func (warrior *Warrior) registerRendSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
-			// 135% damage multiplier is applied at the begining of the fight and removed when target is at 75% health
+			// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
 			DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
 			ThreatMultiplier: 1,
 			IsPeriodic:       true,
@@ -73,5 +73,5 @@ func (warrior *Warrior) registerRendSpell() {
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime > (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }

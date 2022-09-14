@@ -18,6 +18,8 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		dmgPerComboPoint += 14
 	}
 
+	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+
 	var excessEnergy float64
 
 	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
@@ -48,20 +50,21 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.03*float64(druid.Talents.FeralAggression) +
-				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
+			ProcMask:        core.ProcMaskMeleeMHSpecial,
+			BonusCritRating: t9bonus,
+			DamageMultiplier: (1 + 0.03*float64(druid.Talents.FeralAggression)) *
+				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0),
 			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					comboPoints := float64(druid.ComboPoints())
 
-					bonusDmg := excessEnergy * (9.4 + hitEffect.MeleeAttackPower(spell.Unit)/410)
+					attackPower := hitEffect.MeleeAttackPower(spell.Unit)
+					bonusDmg := excessEnergy * (9.4 + attackPower/410)
 					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
 					roll := sim.RandomFloat("Ferocious Bite") * 140.0
-					return base + roll + hitEffect.MeleeAttackPower(spell.Unit)*0.07*comboPoints
+					return base + roll + attackPower*0.07*comboPoints
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -76,4 +79,12 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 		}),
 	})
+}
+
+func (druid *Druid) CanFerociousBite() bool {
+	return druid.InForm(Cat) && druid.ComboPoints() > 0 && ((druid.CurrentEnergy() >= druid.CurrentFerociousBiteCost()) || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentFerociousBiteCost() float64 {
+	return druid.FerociousBite.ApplyCostModifiers(druid.FerociousBite.BaseCost)
 }

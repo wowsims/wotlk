@@ -26,13 +26,18 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Unlaunched,
 	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
-	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,
 	[Spec.SpecWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
+	[Spec.SpecProtectionWarrior]: LaunchStatus.Alpha,
 	[Spec.SpecDeathknight]: LaunchStatus.Alpha,
 	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
 };
+
+// Meme specs are excluded from title drop-down menu.
+export const memeSpecs: Array<Spec> = [
+	Spec.SpecSmitePriest,
+];
 
 export function getLaunchedSims(): Array<Spec> {
     return Object.keys(simLaunchStatuses)

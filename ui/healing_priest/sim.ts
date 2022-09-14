@@ -52,6 +52,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
@@ -63,14 +64,14 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.DISC_P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 1.38,
 					[Stat.StatSpirit]: 1.18,
 					[Stat.StatHealingPower]: 1,
 					[Stat.StatSpellCrit]: 0.44,
-					[Stat.StatSpellHaste]: 0.28, // tricky because SP is tricky
+					[Stat.StatSpellHaste]: 0.28,
 					[Stat.StatMP5]: 2.05,
 				}),
 				// Default consumes settings.
@@ -78,7 +79,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.StandardTalents.data,
+				talents: Presets.DiscTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -114,12 +115,15 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.StandardTalents,
+					Presets.DiscTalents,
+					Presets.HolyTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
+					Presets.DISC_PRERAID_PRESET,
+					Presets.DISC_P1_PRESET,
+					Presets.HOLY_PRERAID_PRESET,
+					Presets.HOLY_P1_PRESET,
 				],
 			},
 		});

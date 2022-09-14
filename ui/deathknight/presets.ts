@@ -101,7 +101,7 @@ export const BloodTalents = {
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
   useDeathAndDecay: true,
-  btGhoulFrenzy: false,
+  btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
   useEmpowerRuneWeapon: true,
   startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
@@ -149,7 +149,7 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
-	name: 'P1 2H Pre-Raid Unholy',
+	name: 'Pre-Raid 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -245,7 +245,7 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
 };
 
 export const P1_UNHOLY_2H_BIS_PRESET = {
-	name: 'P1 2H BiS Unholy',
+	name: 'P1 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -341,7 +341,7 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
 };
 
 export const P1_UNHOLY_DW_PRERAID_PRESET = {
-	name: 'P1 DW Pre-Raid Unholy',
+	name: 'Pre-Raid DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -440,7 +440,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 };
 
 export const P1_UNHOLY_DW_BIS_PRESET = {
-	name: 'P1 DW BiS Unholy',
+	name: 'P1 DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -448,7 +448,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 44006,
       "enchant": 44879,
       "gems": [
-        41400,
+        41398,
         42702
       ]
     },
@@ -509,7 +509,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       ]
     },
     {
-      "id": 40717
+      "id": 39401
     },
     {
       "id": 40075
@@ -521,12 +521,12 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
       "id": 42987
     },
     {
-      "id": 40189,
+      "id": 40402,
       "enchant": 53344
     },
     {
       "id": 40491,
-      "enchant": 44495
+      "enchant": 53344
     },
     {
       "id": 42620
@@ -535,7 +535,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 };
 
 export const P1_FROST_PRE_BIS_PRESET = {
-	name: 'P1 Pre-Raid Frost',
+	name: 'Pre-Raid Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
@@ -631,7 +631,7 @@ export const P1_FROST_PRE_BIS_PRESET = {
 };
 
 export const P1_FROST_BIS_PRESET = {
-	name: 'P1 BiS Frost',
+	name: 'P1 Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
@@ -730,7 +730,7 @@ export const P1_FROST_BIS_PRESET = {
 };
 
 export const P1_FROST_GAME_BIS_PRESET = {
-	name: 'P1 Game BiS Frost',
+	name: 'End Game Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -850,7 +850,7 @@ export const P1_FROST_GAME_BIS_PRESET = {
 };
 
 export const P1_BLOOD_BIS_PRESET = {
-	name: 'P1 BiS Blood',
+	name: 'P1 Blood',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [

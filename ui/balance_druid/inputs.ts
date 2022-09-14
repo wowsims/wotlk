@@ -1,4 +1,4 @@
-import { BalanceDruid_Options as DruidOptions, BalanceDruid_Rotation_RotationType as RotationType } from '../core/proto/druid.js';
+import { BalanceDruid_Options as DruidOptions, BalanceDruid_Rotation_Type as RotationType } from '../core/proto/druid.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
@@ -40,30 +40,42 @@ export const BalanceDruidRotationConfig = {
 				{ name: 'Adaptive', value: RotationType.Adaptive },
 			],
 		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'battleRes',
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useBattleRes',
 			label: 'Use Battle Res',
 			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
 		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'useIs',
-			label: 'Use Insect Swarm',
-			labelTooltip: 'Should the rotation use Insect Swarm.',
-		}),
-		InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecBalanceDruid>({
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'useMf',
 			label: 'Use Moonfire',
 			labelTooltip: 'Should the rotation use Moonfire.',
 		}),
-		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useIs',
+			label: 'Use Insect Swarm',
+			labelTooltip: 'Should the rotation use Insect Swarm.',
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'mfInsideEclipseThreshold',
 			label: 'Moonfire inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useMf,
 		}),
-		InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'isInsideEclipseThreshold',
 			label: 'Insect Swarm inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useIs,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mcdInsideLunarThreshold',
+			label: 'CDs inside lunar eclipse max timing',
+			labelTooltip: 'Maximum lunar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'mcdInsideSolarThreshold',
+			label: 'CDs inside solar eclipse max timing',
+			labelTooltip: 'Maximum solar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
 		}),
 	],
 };

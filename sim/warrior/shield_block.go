@@ -11,7 +11,7 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 	actionID := core.ActionID{SpellID: 2565}
 
 	statDep := warrior.NewDynamicMultiplyStat(stats.BlockValue, 2)
-	shieldBlockAura := warrior.RegisterAura(core.Aura{
+	warrior.ShieldBlockAura = warrior.RegisterAura(core.Aura{
 		Label:    "Shield Block",
 		ActionID: actionID,
 		Duration: time.Second * 10,
@@ -40,7 +40,7 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			shieldBlockAura.Activate(sim)
+			warrior.ShieldBlockAura.Activate(sim)
 		},
 	})
 

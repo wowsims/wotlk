@@ -13,6 +13,9 @@ import (
 )
 
 func (dk *Deathknight) ApplyUnholyTalents() {
+	// Anticipation
+	dk.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(dk.Talents.Anticipation))
+
 	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
 
@@ -72,7 +75,7 @@ func (dk *Deathknight) applyImpurity() {
 }
 
 func (dk *Deathknight) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * dk.bonusCoeffs.impurityBonusCoeff
+	return hitEffect.MeleeAttackPower(unit) * dk.bonusCoeffs.impurityBonusCoeff
 }
 
 func (dk *Deathknight) applyWanderingPlague() {

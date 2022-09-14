@@ -103,11 +103,6 @@ func init() {
 		character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
 	})
 
-	core.NewItemEffect(41167, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		character.PseudoStats.BonusRangedCritRating += 40
-	})
-
 	core.NewItemEffect(42500, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 42500}
@@ -331,9 +326,14 @@ func init() {
 	})
 
 	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
-		baseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, 1.0, true)
-		if !isMH {
-			baseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, 1.0, 1.0, true)
+		dmg := 0.0
+
+		if weapon := character.GetMHWeapon(); isMH && weapon != nil {
+			dmg = 0.5 * (weapon.WeaponDamageMin + weapon.WeaponDamageMax) * 0.02
+		} else if weapon := character.GetOHWeapon(); !isMH && weapon != nil {
+			dmg = 0.5 * (weapon.WeaponDamageMin + weapon.WeaponDamageMax) * 0.02
+		} else {
+			return nil
 		}
 
 		return character.RegisterSpell(core.SpellConfig{
@@ -348,7 +348,7 @@ func init() {
 
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return baseDamage(sim, spellEffect, spell) * 0.02
+						return dmg
 					},
 				},
 				OutcomeApplier: character.OutcomeFuncAlwaysHit(),

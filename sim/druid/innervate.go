@@ -1,8 +1,6 @@
 package druid
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -20,9 +18,6 @@ func (druid *Druid) registerInnervateCD() {
 
 	baseCost := druid.BaseMana * 0.04
 	innervateCD := core.InnervateCD
-	if druid.HasSetBonus(ItemSetMalorneRegalia, 4) {
-		innervateCD -= time.Second * 48
-	}
 
 	var innervateAura *core.Aura
 	var expectedManaPerInnervate float64
