@@ -66,6 +66,8 @@ message BuffBot {
 	RaidTarget power_infusion_assignment = 4;
 
 	RaidTarget tricks_of_the_trade_assignment = 5;
+
+	RaidTarget unholy_frenzy_assignment = 6;
 }
 
 message BlessingsAssignment {
