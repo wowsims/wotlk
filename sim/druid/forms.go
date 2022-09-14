@@ -102,8 +102,8 @@ func (druid *Druid) registerCatFormSpell() {
 
 			druid.applyFeralShift(sim, true)
 			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
-			druid.EnableDynamicStatDep(sim, catHotw)
 			druid.EnableDynamicStatDep(sim, apDep)
+			druid.EnableDynamicStatDep(sim, catHotw)
 			druid.AddStatDynamic(sim, stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 
 			// These buffs stay up, but corresponding changes don't
@@ -132,11 +132,11 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
-			druid.applyFeralShift(sim, false)
-			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
 			druid.DisableDynamicStatDep(sim, catHotw)
 			druid.DisableDynamicStatDep(sim, apDep)
-			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
+			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			druid.applyFeralShift(sim, false)
 
 			druid.TigersFuryAura.Deactivate(sim)
 
@@ -215,15 +215,16 @@ func (druid *Druid) registerBearFormSpell() {
 			}
 			druid.form = Bear
 
+			druid.applyFeralShift(sim, true)
 			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
 			druid.EnableDynamicStatDep(sim, stamdep)
 			druid.EnableDynamicStatDep(sim, bearHotw)
 			druid.EnableDynamicStatDep(sim, potpap)
+
 			druid.PseudoStats.ThreatMultiplier *= 1.3
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= (1.0 - potpdtm)
 
-			druid.applyFeralShift(sim, true)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
@@ -245,15 +246,16 @@ func (druid *Druid) registerBearFormSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
 
-			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
+			druid.DisableDynamicStatDep(sim, potpap)
 			druid.DisableDynamicStatDep(sim, bearHotw)
 			druid.DisableDynamicStatDep(sim, stamdep)
-			druid.DisableDynamicStatDep(sim, potpap)
+			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
+			druid.applyFeralShift(sim, false)
+
 			druid.PseudoStats.ThreatMultiplier /= 1.3
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier /= (1.0 - potpdtm)
 
-			druid.applyFeralShift(sim, false)
 			druid.AutoAttacks.CancelAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
