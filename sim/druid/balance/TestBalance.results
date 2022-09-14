@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 2910.4109
+  tps: 2841.58711
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 4926.34088
@@ -607,6 +614,13 @@ dps_results: {
  value: {
   dps: 4926.34088
   tps: 4869.20406
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 2357.40408
+  tps: 2285.02601
  }
 }
 dps_results: {

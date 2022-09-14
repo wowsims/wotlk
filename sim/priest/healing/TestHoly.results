@@ -90,6 +90,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 58.60188
+  tps: 31.80082
+  hps: 2556.25081
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 72.58834

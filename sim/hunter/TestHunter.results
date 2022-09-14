@@ -99,6 +99,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-BlessedGarboftheUndeadSlayer"
+ value: {
+  dps: 4717.5682
+  tps: 3993.80498
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 4547.80314
+  tps: 3842.90908
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 5548.8964
@@ -509,6 +523,13 @@ dps_results: {
  value: {
   dps: 5548.8964
   tps: 4712.52383
+ }
+}
+dps_results: {
+ key: "TestHunter-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 4662.82948
+  tps: 3951.57103
  }
 }
 dps_results: {

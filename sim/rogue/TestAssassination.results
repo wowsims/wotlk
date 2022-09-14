@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 5397.41287
+  tps: 3832.16314
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-BonescytheBattlegear"
  value: {
   dps: 6273.21436
@@ -502,6 +509,13 @@ dps_results: {
  value: {
   dps: 7186.32552
   tps: 5102.29112
+ }
+}
+dps_results: {
+ key: "TestAssassination-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 5714.47577
+  tps: 4057.2778
  }
 }
 dps_results: {
