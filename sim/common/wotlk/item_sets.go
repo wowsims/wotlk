@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -77,3 +78,34 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		},
 	})
 }
+
+func makeUndeadSet(setName string) *core.ItemSet {
+	return core.NewItemSet(core.ItemSet{
+		Name: setName,
+		Bonuses: map[int32]core.ApplyEffect{
+			2: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.01
+				}
+			},
+			3: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.02 / 1.01
+				}
+			},
+			4: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.03 / 1.02
+				}
+			},
+		},
+	})
+}
+
+var ItemSetBlessedBattlegearOfUndeadSlaying = makeUndeadSet("Blessed Battlegear of Undead Slaying")
+var ItemSetBlessedRegaliaOfUndeadCleansing = makeUndeadSet("Blessed Regalia of Undead Cleansing")
+var ItemSetBlessedGarbOfTheUndeadSlayer = makeUndeadSet("Blessed Garb of the Undead Slayer")
+var ItemSetUndeadSlayersBlessedArmor = makeUndeadSet("Undead Slayer's Blessed Armor")

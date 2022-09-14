@@ -85,6 +85,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 2986.34976
+  tps: 2224.49436
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 3885.39725

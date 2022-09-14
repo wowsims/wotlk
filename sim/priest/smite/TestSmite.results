@@ -85,6 +85,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 1529.20893
+  tps: 1318.88573
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 2060.33045

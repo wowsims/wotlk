@@ -92,6 +92,27 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-BlessedBattlegearofUndeadSlaying"
+ value: {
+  dps: 4502.67339
+  tps: 4073.62094
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-BlessedGarboftheUndeadSlayer"
+ value: {
+  dps: 4351.28903
+  tps: 3944.1926
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 4304.84185
+  tps: 3899.07262
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 5440.67529
@@ -572,6 +593,13 @@ dps_results: {
  value: {
   dps: 5406.4201
   tps: 4736.14036
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 4350.16354
+  tps: 3941.27582
  }
 }
 dps_results: {
