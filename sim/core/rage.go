@@ -32,6 +32,7 @@ type RageBarOptions struct {
 func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 	rageFromDamageTakenMetrics := unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken})
 
+	unit.SetCurrentPowerBar(RageBar)
 	unit.RegisterAura(Aura{
 		Label:    "RageBar",
 		Duration: NeverExpires,

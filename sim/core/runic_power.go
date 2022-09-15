@@ -119,6 +119,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 	onUnholyRuneGain OnRune,
 	onDeathRuneGain OnRune,
 	onRunicPowerGain OnRunicPowerGain) {
+	unit.SetCurrentPowerBar(RunicPower)
 	unit.RunicPowerBar = RunicPowerBar{
 		unit: unit,
 

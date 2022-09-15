@@ -35,6 +35,7 @@ type manaBar struct {
 // It will then enable mana gain metrics for reporting.
 func (character *Character) EnableManaBar() {
 	character.EnableManaBarWithModifier(1.0)
+	character.Unit.SetCurrentPowerBar(ManaBar)
 }
 
 func (character *Character) EnableManaBarWithModifier(modifier float64) {

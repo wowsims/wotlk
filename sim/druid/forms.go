@@ -39,6 +39,7 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 		druid.BearFormAura.Deactivate(sim)
 	}
 	druid.form = Humanoid
+	druid.SetCurrentPowerBar(core.ManaBar)
 }
 
 func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
@@ -98,6 +99,7 @@ func (druid *Druid) registerCatFormSpell() {
 				druid.ClearForm(sim)
 			}
 			druid.form = Cat
+			druid.SetCurrentPowerBar(core.EnergyBar)
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
@@ -217,6 +219,7 @@ func (druid *Druid) registerBearFormSpell() {
 			}
 			druid.form = Bear
 
+			druid.SetCurrentPowerBar(core.RageBar)
 			druid.applyFeralShift(sim, true)
 			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
 			druid.EnableDynamicStatDep(sim, stamdep)
