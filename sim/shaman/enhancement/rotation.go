@@ -167,11 +167,12 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			if rotation.options.LavaburstWeave && enh.CastLavaBurstWeave(sim, target) {
+			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
+			if rotation.options.LavaburstWeave && enh.LavaBurst.IsReady(sim) && enh.CastLavaBurstWeave(sim, target, reactionTime) {
 				return true
 			}
 
-			if rotation.options.LightningboltWeave && enh.CastLightningBoltWeave(sim, target) {
+			if rotation.options.LightningboltWeave && enh.CastLightningBoltWeave(sim, target, reactionTime) {
 				return true
 			}
 
