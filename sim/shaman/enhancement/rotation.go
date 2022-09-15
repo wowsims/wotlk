@@ -168,7 +168,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
-			if rotation.options.LavaburstWeave && enh.CastLavaBurstWeave(sim, target, reactionTime) {
+			if rotation.options.LavaburstWeave && enh.LavaBurst.IsReady(sim) && enh.CastLavaBurstWeave(sim, target, reactionTime) {
 				return true
 			}
 

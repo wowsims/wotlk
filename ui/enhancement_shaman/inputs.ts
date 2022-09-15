@@ -111,7 +111,7 @@ export const EnhancementShamanRotationConfig = {
         InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
             fieldName: 'weaveReactionTime',
             label: 'Weaving Reaction Time',
-            labelTooltip: 'The Reaction time to gaining stacks of Maelstrom Stacks after a auto attack in milliseconds',
+            labelTooltip: 'The Reaction time to gaining maelstrom stacks after a auto attack in milliseconds',
             enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
         }),
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
