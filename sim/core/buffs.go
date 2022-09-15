@@ -790,13 +790,14 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 				NumTicks: ticks,
 				OnAction: func(s *Simulation) {
 					if s.RandomFloat("Revitalize Proc") < 0.15 {
-						if aura.Unit.HasManaBar() {
+						cpb := aura.Unit.GetCurrentPowerBar()
+						if cpb == ManaBar {
 							aura.Unit.AddMana(s, aura.Unit.MaxMana()*0.01, manaMetrics, true)
-						} else if aura.Unit.HasEnergyBar() {
+						} else if cpb == EnergyBar {
 							aura.Unit.AddEnergy(s, 8, energyMetrics)
-						} else if aura.Unit.HasRageBar() {
+						} else if cpb == RageBar {
 							aura.Unit.AddRage(s, 4, rageMetrics)
-						} else if aura.Unit.HasRunicPowerBar() {
+						} else if cpb == RunicPower {
 							aura.Unit.AddRunicPower(s, 16, rpMetrics)
 						}
 					}

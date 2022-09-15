@@ -15,6 +15,15 @@ const (
 	PetUnit
 )
 
+type PowerBarType int
+
+const (
+	ManaBar PowerBarType = iota
+	EnergyBar
+	RageBar
+	RunicPower
+)
+
 type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
 
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
@@ -78,6 +87,7 @@ type Unit struct {
 
 	PseudoStats stats.PseudoStats
 
+	currentPowerBar PowerBarType
 	healthBar
 	manaBar
 	rageBar
@@ -376,6 +386,14 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 	unit.PseudoStats.RangedSpeedMultiplier *= amount
 	unit.AutoAttacks.UpdateSwingTime(sim)
+}
+
+func (unit *Unit) SetCurrentPowerBar(bar PowerBarType) {
+	unit.currentPowerBar = bar
+}
+
+func (unit *Unit) GetCurrentPowerBar() PowerBarType {
+	return unit.currentPowerBar
 }
 
 func (unit *Unit) finalize() {

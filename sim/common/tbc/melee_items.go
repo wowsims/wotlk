@@ -628,11 +628,13 @@ func init() {
 		const procChance = 2.7 / 60.0
 		actionID := core.ActionID{ItemID: 29996}
 
-		var resourceMetrics *core.ResourceMetrics
+		var resourceMetricsRage *core.ResourceMetrics
+		var resourceMetricsEnergy *core.ResourceMetrics
 		if character.HasRageBar() {
-			resourceMetrics = character.NewRageMetrics(actionID)
-		} else if character.HasEnergyBar() {
-			resourceMetrics = character.NewEnergyMetrics(actionID)
+			resourceMetricsRage = character.NewRageMetrics(actionID)
+		}
+		if character.HasEnergyBar() {
+			resourceMetricsEnergy = character.NewEnergyMetrics(actionID)
 		}
 
 		character.GetOrRegisterAura(core.Aura{
@@ -646,16 +648,17 @@ func init() {
 					return
 				}
 
-				if spell.Unit.HasRageBar() {
+				cpb := spell.Unit.GetCurrentPowerBar()
+				if cpb == core.RageBar {
 					if sim.RandomFloat("Rod of the Sun King") > procChance {
 						return
 					}
-					spell.Unit.AddRage(sim, 5, resourceMetrics)
-				} else if spell.Unit.HasEnergyBar() {
+					spell.Unit.AddRage(sim, 5, resourceMetricsRage)
+				} else if cpb == core.EnergyBar {
 					if sim.RandomFloat("Rod of the Sun King") > procChance {
 						return
 					}
-					spell.Unit.AddEnergy(sim, 10, resourceMetrics)
+					spell.Unit.AddEnergy(sim, 10, resourceMetricsEnergy)
 				}
 			},
 		})
