@@ -133,8 +133,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			rotationInputs: DruidInputs.FeralDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				Stat.StatIntellect,
-				Stat.StatMP5
+				IconInputs.IntellectBuff,
+				IconInputs.MP5Buff,
+				IconInputs.JudgementOfWisdom,
 			],
 			excludeBuffDebuffInputs: [
 			],

@@ -160,7 +160,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 		expectedEnergyGain += 42.0
 	}
 
-	//expectedEnergyGain += availableTime.Seconds() / cat.Rotation.RevitFreq * 0.15 * 8.0
+	expectedEnergyGain += availableTime.Seconds() / cat.Rotation.RevitFreq * 0.15 * 8.0
 
 	// Add current Energy minus cost of Roaring now
 	roarCost := cat.CurrentSavageRoarCost()
@@ -469,7 +469,6 @@ type FeralDruidRotation struct {
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
-	hotUptime := 0.75
 	cat.Rotation = FeralDruidRotation{
 		BearweaveType:      rotation.BearWeaveType,
 		MaintainFaerieFire: rotation.MaintainFaerieFire,
@@ -482,7 +481,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
 		MaxRoarClip:        time.Duration(float64(rotation.MaxRoarClip) * float64(time.Second)),
-		RevitFreq:          15.0 / (8 * hotUptime),
+		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 	}
 }

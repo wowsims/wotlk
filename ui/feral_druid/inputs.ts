@@ -58,6 +58,12 @@ export const FeralDruidRotationConfig = {
 			],
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'hotUptime',
+			label: 'Revitalize Hot Uptime',
+			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
+			percent: true
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'maxRoarClip',
 			label: 'Roar Clip',
 			labelTooltip: 'Max seconds to clip roar',
