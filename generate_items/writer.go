@@ -355,9 +355,11 @@ var allowList = map[int]bool{
 	34472: true, // Shard of Contempt
 	37574: true, // Libram of Furious Blows
 	38287: true, // Empty Mug of Direbrew
-	6360:  true, // Steelscale Crushfish
-	8345:  true, // Wolfshead Helm
-	9449:  true, // Manual Crowd Pummeler
+	39208: true, // Sigil of the Dark Rider
+
+	6360: true, // Steelscale Crushfish
+	8345: true, // Wolfshead Helm
+	9449: true, // Manual Crowd Pummeler
 
 	27510: true, // Tidefury Gauntlets
 	27802: true, // Tidefury Shoulderguards
