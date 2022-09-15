@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 761.40955
+  tps: 1018.14684
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 862.4168
@@ -607,6 +614,13 @@ dps_results: {
  value: {
   dps: 862.4168
   tps: 1178.54117
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 821.25205
+  tps: 1100.31518
  }
 }
 dps_results: {

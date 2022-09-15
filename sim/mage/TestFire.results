@@ -71,6 +71,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 4459.07151
+  tps: 3275.17503
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-Bloodmage'sRegalia"
  value: {
   dps: 6648.09813
