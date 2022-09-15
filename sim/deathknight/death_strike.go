@@ -13,7 +13,8 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 297.0*0.5+bonusBaseDamage, true)
+		// SpellID 66953
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 148.0+bonusBaseDamage, true)
 	}
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
@@ -39,10 +40,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		OnSpellHitDealt: onhit,
 	}
 
-	// TODO: might of mograine crit damage bonus!
-	dk.threatOfThassarianProcMasks(isMH, &effect, false, true, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-		return outcomeApplier
-	})
+	dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:     DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -96,7 +94,7 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 			dk.DeathStrikeHeals = append(dk.DeathStrikeHeals, healingAmount)
 		}
 
-		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeMhHit, dk.DeathStrikeOhHit)
+		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeOhHit)
 	})
 	dk.DeathStrike = dk.DeathStrikeMhHit
 }
@@ -117,7 +115,7 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 			BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: weaponMulti * dk.improvedDeathStrikeDamageBonus(),
 			ThreatMultiplier: 1,
-			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)

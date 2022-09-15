@@ -46,7 +46,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.DefaultMeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome
@@ -75,11 +75,11 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (baseDamage + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.15)
+					return baseDamage + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.15
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
 		}),
 	})
 }
