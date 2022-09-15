@@ -8,9 +8,10 @@ import (
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0, true)
+	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0+bonusBaseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0*0.5, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 764.0*0.5+bonusBaseDamage, true)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)

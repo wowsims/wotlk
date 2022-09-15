@@ -262,6 +262,10 @@ func (dk *Deathknight) registerScourgelordsPlateProc() {
 	}))
 }
 
+func (dk *Deathknight) sigilOfTheDarkRiderBonus() float64 {
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 39208, 90, 0)
+}
+
 func (dk *Deathknight) sigilOfAwarenessBonus() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40207, 420, 0)
 }

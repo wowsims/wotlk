@@ -9,10 +9,10 @@ import (
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, true)
+	baseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0+baseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage*0.5, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 250.0*0.5+baseDamage, true)
 	}
 
 	weaponMulti := 0.55

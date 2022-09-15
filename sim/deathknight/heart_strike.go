@@ -8,9 +8,10 @@ import (
 var HeartStrikeActionID = core.ActionID{SpellID: 55050}
 
 func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, true)
+	bonusBaseDamage := 250.0 + dk.sigilOfTheDarkRiderBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, bonusBaseDamage, true)
 	if !isMainTarget {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.MainHand, true, bonusBaseDamage, true)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
