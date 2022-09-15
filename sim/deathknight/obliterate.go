@@ -13,7 +13,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 584.0+bonusBaseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, (584.0+bonusBaseDamage)*0.5, true)
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 584.0*0.5+bonusBaseDamage, true)
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
