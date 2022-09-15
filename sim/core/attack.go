@@ -175,6 +175,7 @@ type AutoAttacks struct {
 
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
+	PreviousSwingAt   time.Duration
 
 	// Current melee swing speed, based on haste stat and melee swing multiplier pseudostat.
 	curSwingSpeed float64
@@ -299,6 +300,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.MainhandSwingAt = 0
 	aa.OffhandSwingAt = 0
 	aa.RangedSwingAt = 0
+	aa.PreviousSwingAt = 0
 
 	// Apply random delay of 0 - 50% swing time, to one of the weapons if dual wielding
 	if aa.IsDualWielding {
@@ -436,6 +438,7 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	attackSpell.Cast(sim, target)
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	aa.previousMHSwingAt = sim.CurrentTime
+	aa.PreviousSwingAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, attackSpell)
 }
 
@@ -479,6 +482,7 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
+	aa.PreviousSwingAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, aa.OHAuto)
 }
 
@@ -490,6 +494,7 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
+	aa.PreviousSwingAt = sim.CurrentTime
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {

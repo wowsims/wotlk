@@ -118,26 +118,55 @@ func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.scheduler.Reset(sim, enh.GetCharacter())
 }
 
-func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, target *core.Unit) bool {
+func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, target *core.Unit, reactionTime time.Duration) bool {
+	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousSwingAt
+	reactionTime = core.TernaryDuration(previousAttack < reactionTime, reactionTime-previousAttack, 0)
+
 	//calculate cast times for weaving
-	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime - (time.Millisecond * time.Duration(500*enh.MaelstromWeaponAura.GetStacks())))
+	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime-(time.Millisecond*time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))) + reactionTime
 	//calculate swing times for weaving
 	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 
 	if lbCastTime < timeUntilSwing {
+		if reactionTime > 0 {
+			reactionTime += sim.CurrentTime
+
+			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
+				enh.GCD.Reset()
+				enh.LightningBolt.Cast(sim, target)
+			})
+
+			enh.WaitUntil(sim, reactionTime)
+			return true
+		}
 		return enh.LightningBolt.Cast(sim, target)
 	}
 
 	return false
 }
 
-func (enh *EnhancementShaman) CastLavaBurstWeave(sim *core.Simulation, target *core.Unit) bool {
+func (enh *EnhancementShaman) CastLavaBurstWeave(sim *core.Simulation, target *core.Unit, reactionTime time.Duration) bool {
+	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousSwingAt
+	reactionTime = core.TernaryDuration(previousAttack < reactionTime, reactionTime-previousAttack, 0)
+
 	//calculate cast times for weaving
-	lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime)
+	lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime) + reactionTime
 	//calculate swing times for weaving
 	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 
 	if lvbCastTime < timeUntilSwing {
+		if reactionTime > 0 {
+			reactionTime += sim.CurrentTime
+
+			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
+				enh.GCD.Reset()
+				enh.LavaBurst.Cast(sim, target)
+			})
+
+			enh.WaitUntil(sim, reactionTime)
+			return true
+		}
+
 		return enh.LavaBurst.Cast(sim, target)
 	}
 

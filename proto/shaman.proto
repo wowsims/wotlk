@@ -266,10 +266,11 @@ message EnhancementShaman {
         bool lavaburst_weave = 3;
         bool lightningbolt_weave = 4;
         int32 maelstromweapon_min_stack = 5;
+		double weave_reaction_time = 6;
 
         //other general rotation config options
-        double firenova_mana_threshold = 6;
-        double shamanistic_rage_mana_threshold = 7;
+        double firenova_mana_threshold = 7;
+        double shamanistic_rage_mana_threshold = 8;
 
 		enum PrimaryShock {
 			None = 0;
@@ -277,8 +278,9 @@ message EnhancementShaman {
 			Frost = 2;
     	}
 
-		bool weave_flame_shock = 8;
-		PrimaryShock primary_shock = 9;
+		bool weave_flame_shock = 9;
+		PrimaryShock primary_shock = 10;
+
     }
 
     message Options {

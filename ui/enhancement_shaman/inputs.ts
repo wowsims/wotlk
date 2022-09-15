@@ -105,8 +105,13 @@ export const EnhancementShamanRotationConfig = {
                 { name: '2', value: 2 },
                 { name: '3', value: 3 },
                 { name: '4', value: 4 },
-                { name: '5', value: 5 }, // 5 is effectively disabled. likely unnessecary
             ],
+            enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+        }),
+        InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+            fieldName: 'weaveReactionTime',
+            label: 'Weaving Reaction Time',
+            labelTooltip: 'The Reaction time to gaining stacks of Maelstrom Stacks after a auto attack in milliseconds',
             enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
         }),
         InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({

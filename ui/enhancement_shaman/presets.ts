@@ -53,6 +53,7 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	}),
   maelstromweaponMinStack: 3,
   lightningboltWeave: true,
+  weaveReactionTime: 0,
   lavaburstWeave: false,
   firenovaManaThreshold: 3000,
   shamanisticRageManaThreshold: 25,
