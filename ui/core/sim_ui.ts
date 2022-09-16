@@ -59,6 +59,16 @@ export abstract class SimUI extends Component {
 
         this.sim.crashEmitter.on((eventID: EventID, error: SimError) => this.handleCrash(error));
 
+        const updateShowDamageMetrics = () => {
+            if (this.sim.getShowDamageMetrics()) {
+                this.rootElem.classList.remove('hide-damage-metrics');
+            } else {
+                this.rootElem.classList.add('hide-damage-metrics');
+            }
+        };
+        updateShowDamageMetrics();
+        this.sim.showDamageMetricsChangeEmitter.on(updateShowDamageMetrics);
+
         const updateShowThreatMetrics = () => {
             if (this.sim.getShowThreatMetrics()) {
                 this.rootElem.classList.remove('hide-threat-metrics');

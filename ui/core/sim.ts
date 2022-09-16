@@ -73,6 +73,7 @@ export class Sim {
 	private show1hWeapons: boolean = true;
 	private show2hWeapons: boolean = true;
 	private showMatchingGems: boolean = true;
+	private showDamageMetrics: boolean = true;
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
@@ -95,6 +96,7 @@ export class Sim {
 	readonly show1hWeaponsChangeEmitter = new TypedEvent<void>();
 	readonly show2hWeaponsChangeEmitter = new TypedEvent<void>();
 	readonly showMatchingGemsChangeEmitter = new TypedEvent<void>();
+	readonly showDamageMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
@@ -137,6 +139,7 @@ export class Sim {
 			this.show1hWeaponsChangeEmitter,
 			this.show2hWeaponsChangeEmitter,
 			this.showMatchingGemsChangeEmitter,
+			this.showDamageMetricsChangeEmitter,
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
@@ -441,6 +444,16 @@ export class Sim {
 		}
 	}
 
+	getShowDamageMetrics(): boolean {
+		return this.showDamageMetrics;
+	}
+	setShowDamageMetrics(eventID: EventID, newShowDamageMetrics: boolean) {
+		if (newShowDamageMetrics != this.showDamageMetrics) {
+			this.showDamageMetrics = newShowDamageMetrics;
+			this.showDamageMetricsChangeEmitter.emit(eventID);
+		}
+	}
+
 	getShowThreatMetrics(): boolean {
 		return this.showThreatMetrics;
 	}
@@ -454,9 +467,9 @@ export class Sim {
 	getShowHealingMetrics(): boolean {
 		return this.showHealingMetrics;
 	}
-	setShowHealingMetrics(eventID: EventID, newShowThreatMetrics: boolean) {
-		if (newShowThreatMetrics != this.showHealingMetrics) {
-			this.showHealingMetrics = newShowThreatMetrics;
+	setShowHealingMetrics(eventID: EventID, newShowHealingMetrics: boolean) {
+		if (newShowHealingMetrics != this.showHealingMetrics) {
+			this.showHealingMetrics = newShowHealingMetrics;
 			this.showHealingMetricsChangeEmitter.emit(eventID);
 		}
 	}
@@ -519,6 +532,7 @@ export class Sim {
 			iterations: this.getIterations(),
 			phase: this.getPhase(),
 			fixedRngSeed: BigInt(this.getFixedRngSeed()),
+			showDamageMetrics: this.getShowDamageMetrics(),
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
@@ -531,6 +545,7 @@ export class Sim {
 			this.setIterations(eventID, proto.iterations || 3000);
 			this.setPhase(eventID, proto.phase || OtherConstants.CURRENT_PHASE);
 			this.setFixedRngSeed(eventID, Number(proto.fixedRngSeed));
+			this.setShowDamageMetrics(eventID, proto.showDamageMetrics);
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
@@ -543,6 +558,7 @@ export class Sim {
 			iterations: 3000,
 			phase: OtherConstants.CURRENT_PHASE,
 			faction: Faction.Alliance,
+			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
 			showHealingMetrics: isHealingSim,
 		}));

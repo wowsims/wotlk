@@ -464,7 +464,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section buffs-section">
 						<legend>Raid Buffs</legend>
 					</fieldset>
-					<fieldset class="settings-section debuffs-section">
+					<fieldset class="settings-section debuffs-section damage-metrics">
 						<legend>Debuffs</legend>
 					</fieldset>
 				</div>
@@ -494,7 +494,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 								<div class="consumes-food"></div>
 							</div>
 						</div>
-						<div class="consumes-row">
+						<div class="consumes-row damage-metrics">
 							<span>Eng</span>
 							<div class="consumes-row-inputs consumes-trade">
 							</div>
@@ -1248,6 +1248,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
+
+			// Needed because of new proto field addition. Can remove on 2022/11/14 (2 months).
+			if (!isHealingSpec(this.player.spec)) {
+				this.sim.setShowDamageMetrics(eventID, true);
+			}
 		});
 	}
 

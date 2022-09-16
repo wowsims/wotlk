@@ -354,6 +354,7 @@ message ProgressMetrics {
 
 	// Partial Results 
 	double dps = 5;
+	double hps = 9;
 
 	// Final Results
 	RaidSimResult final_raid_result = 6; // only set when completed

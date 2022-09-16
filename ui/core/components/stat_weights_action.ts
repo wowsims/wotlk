@@ -71,8 +71,8 @@ class EpWeightsMenu extends Popup {
 					<tbody id="ep-tbody">
 						<tr>
 							<th>Stat</th>
-							<th class="type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
+							<th class="damage-metrics type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
+							<th class="damage-metrics type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="healing-metrics type-weight"><span>HPS Weight</span><span class="col-action fa fa-copy"></span></th>
 							<th class="healing-metrics type-ep"><span>HPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-weight"><span>TPS Weight</span><span class="col-action fa fa-copy"></span></th>
@@ -232,8 +232,8 @@ class EpWeightsMenu extends Popup {
 		const row = document.createElement('tr');
 		row.innerHTML = `
 			<td>${statNames[stat]}</td>
-			<td class="stdev-cell type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
