@@ -68,7 +68,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-		BonusSpellPower:  0,
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + 0.02*float64(shaman.Talents.CallOfFlame)),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:       core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+bonusCoeff)),
