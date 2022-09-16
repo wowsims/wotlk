@@ -36,7 +36,8 @@ type SpellEffect struct {
 	BonusCritRating     float64
 
 	// Used only for dot snapshotting. Internal-only.
-	bonusSpellCritRating float64
+	snapshotMeleeCritRating float64
+	snapshotSpellCritRating float64
 
 	// Use snapshotted values for crit/damage rather than recomputing them.
 	isSnapshot bool
@@ -161,7 +162,7 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 		// ignoring units real time crit in this case
-		critRating = spellEffect.BonusCritRating
+		critRating = spellEffect.snapshotMeleeCritRating
 	} else {
 		critRating = spellEffect.physicalCritRating(unit, spell)
 	}
@@ -199,7 +200,7 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 		// ignoring units real time crit in this case
-		critRating = spellEffect.bonusSpellCritRating
+		critRating = spellEffect.snapshotSpellCritRating
 	} else {
 		critRating = spellEffect.spellCritRating(unit, spell)
 	}
@@ -222,7 +223,7 @@ func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) floa
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
 		// ignoring units real time crit in this case
-		critRating = spellEffect.bonusSpellCritRating
+		critRating = spellEffect.snapshotSpellCritRating
 	} else {
 		critRating = spellEffect.healingCritRating(unit, spell)
 	}
