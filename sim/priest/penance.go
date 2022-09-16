@@ -20,9 +20,8 @@ func (priest *Priest) RegisterPenanceSpell() {
 	penanceDots := make([]*core.Dot, len(priest.Env.AllUnits))
 
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		ThreatMultiplier: 0,
-		OutcomeApplier:   priest.OutcomeFuncMagicHit(),
+		ProcMask:       core.ProcMaskSpellDamage,
+		OutcomeApplier: priest.OutcomeFuncMagicHit(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				dot := penanceDots[spellEffect.Target.UnitIndex]
@@ -60,7 +59,8 @@ func (priest *Priest) RegisterPenanceSpell() {
 			},
 		},
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		ThreatMultiplier: 0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if priest.IsOpponent(target) {
@@ -84,7 +84,6 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit) *core.Dot {
 			IsPeriodic: true,
 
 			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-			ThreatMultiplier: 0,
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(375, .4286),
 			OutcomeApplier: priest.OutcomeFuncMagicHit(),
@@ -98,7 +97,6 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit) *core.Dot {
 			DamageMultiplier: 1 *
 				(1 + .05*float64(priest.Talents.SearingLight)) *
 				(1 + .01*float64(priest.Talents.TwinDisciplines)),
-			ThreatMultiplier: 0,
 
 			BaseDamage:     core.BaseDamageConfigHealing(1484, 1676, .5362),
 			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),

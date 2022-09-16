@@ -38,12 +38,12 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
+		BonusHitRating:   hunter.bonusRangedHit(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskRangedSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
+			ProcMask:       core.ProcMaskRangedSpecial,
+			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					hunter.BlackArrowDot.Apply(sim)
@@ -75,8 +75,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 *
 				(1.0 / 1.06), // Black Arrow is not affected by its own 1.06 aura.
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic: true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 				attackPower := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()

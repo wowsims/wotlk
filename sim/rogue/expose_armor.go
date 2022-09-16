@@ -27,10 +27,12 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ExposeArmorAura.Duration = rogue.exposeArmorDurations[comboPoints]

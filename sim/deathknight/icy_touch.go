@@ -39,12 +39,12 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			},
 		},
 
-		BonusCritRating: dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		ThreatMultiplier: 7.0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: impIcyTouchCoeff,
-			ThreatMultiplier: 7.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -88,12 +88,12 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
 
-		BonusCritRating: dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		ThreatMultiplier: 7.0,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: impIcyTouchCoeff,
-			ThreatMultiplier: 7.0,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

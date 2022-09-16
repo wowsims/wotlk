@@ -29,13 +29,12 @@ func (mage *Mage) registerFireBlastSpell() {
 
 		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass+mage.Talents.Incineration)*2*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.SpellImpact)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagic(925, 1095, 1.5/3.5),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),

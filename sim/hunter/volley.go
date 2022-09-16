@@ -25,8 +25,6 @@ func (hunter *Hunter) registerVolleySpell() {
 			DamageMultiplier: 1 *
 				(1 + 0.04*float64(hunter.Talents.Barrage)),
 
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
@@ -54,8 +52,9 @@ func (hunter *Hunter) registerVolleySpell() {
 			},
 		},
 
-		BonusHitRating:  hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit(),
+		BonusHitRating:   hunter.bonusRangedHit(),
+		BonusCritRating:  hunter.bonusRangedCrit(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			channelDoneAt := sim.CurrentTime + hunter.Volley.CurCast.ChannelTime

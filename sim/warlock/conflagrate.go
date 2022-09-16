@@ -27,7 +27,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		ProcMask: core.ProcMaskSpellDamage,
 
 		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		BaseDamage:      core.BaseDamageConfigMagicNoRoll(0.6*785/5.*float64(warlock.ImmolateDot.NumberOfTicks), 0.6*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
 		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
@@ -64,6 +63,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -81,7 +81,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			IsPeriodic: true,
 
 			DamageMultiplier: baseAdditiveMultiplierDot,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(0.4/3*785/5*float64(warlock.ImmolateDot.NumberOfTicks), 0.4/3*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
 			OutcomeApplier: warlock.OutcomeFuncTick(),

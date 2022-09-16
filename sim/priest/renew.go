@@ -19,7 +19,8 @@ func (priest *Priest) registerRenewSpell() {
 			SpellSchool: core.SpellSchoolHoly,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
-			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
@@ -30,7 +31,6 @@ func (priest *Priest) registerRenewSpell() {
 					priest.renewHealingMultiplier() *
 					.05 * float64(priest.Talents.EmpoweredRenew) *
 					core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
-				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
 				OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
@@ -83,12 +83,9 @@ func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
 			IsHealing:  true,
 
 			DamageMultiplier: priest.renewHealingMultiplier(),
-			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
 			OutcomeApplier: priest.OutcomeFuncTick(),
-			//OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			//},
 		}),
 	})
 }

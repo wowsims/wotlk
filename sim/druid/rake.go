@@ -35,10 +35,11 @@ func (druid *Druid) registerRakeSpell() {
 			IgnoreHaste: true,
 		},
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -77,7 +78,6 @@ func (druid *Druid) registerRakeSpell() {
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),

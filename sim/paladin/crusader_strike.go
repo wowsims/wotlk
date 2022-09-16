@@ -38,14 +38,14 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 			},
 		},
 
-		BonusCritRating: core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			DamageMultiplier: baseMultiplier *
 				(0.75), // base multiplier's .75, can be improved by sanctity (15%), taow (10%) & pvp gloves (5%), stacking additively,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,

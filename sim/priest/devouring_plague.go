@@ -22,7 +22,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		DamageMultiplier: 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague) *
 			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedDevouringPlague)*0.05) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 1.15, 1),
-		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 		BaseDamage: core.WrapBaseDamageConfig(
 			core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
 			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -61,6 +60,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		BonusCritRating: 0 +
 			3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -85,7 +85,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				float64(priest.Talents.TwinDisciplines)*0.01 +
 				float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
 				core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),

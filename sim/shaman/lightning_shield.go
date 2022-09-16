@@ -29,15 +29,17 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49279},
 		SpellSchool: core.SpellSchoolNature,
+
+		ThreatMultiplier: 1, //fix when spirit weapons is fixed
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
 			DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
 				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
 				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
 
-			ThreatMultiplier: 1, //fix when spirit weapons is fixed
-			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHit(),
+			BaseDamage:     core.BaseDamageConfigMagic(380, 380, 0.267),
+			OutcomeApplier: shaman.OutcomeFuncMagicHit(),
 		}),
 	})
 

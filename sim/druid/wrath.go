@@ -19,8 +19,7 @@ func (druid *Druid) registerWrathSpell() {
 	spellCoefficient := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		ThreatMultiplier: 1,
+		ProcMask: core.ProcMaskSpellDamage,
 
 		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
 			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
@@ -72,6 +71,7 @@ func (druid *Druid) registerWrathSpell() {
 		BonusCritRating: 0 +
 			druid.TalentsBonuses.naturesMajestyBonusCrit +
 			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

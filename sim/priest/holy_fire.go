@@ -32,13 +32,13 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			},
 		},
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			BaseDamage:     core.BaseDamageConfigMagic(900, 1140, 0.5711),
 			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
@@ -75,7 +75,6 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			ProcMask: core.ProcMaskPeriodicDamage,
 
 			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(50, 0.024),
 			OutcomeApplier: priest.OutcomeFuncTick(),

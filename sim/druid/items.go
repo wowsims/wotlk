@@ -557,8 +557,9 @@ func (druid *Druid) registerLasherweaveDot() {
 	}
 
 	dotSpell := druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 71023},
-		SpellSchool: core.SpellSchoolNature,
+		ActionID:         core.ActionID{SpellID: 71023},
+		SpellSchool:      core.SpellSchoolNature,
+		ThreatMultiplier: 1,
 	})
 
 	druid.LasherweaveDot = core.NewDot(core.Dot{
@@ -572,7 +573,6 @@ func (druid *Druid) registerLasherweaveDot() {
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

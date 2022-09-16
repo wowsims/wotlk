@@ -16,9 +16,10 @@ var manaMetrics *core.ResourceMetrics
 func (mage *Mage) registerIgniteSpell() {
 	manaMetrics = mage.NewManaMetrics(empoweredFireActionId)
 	mage.Ignite = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    IgniteActionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage | core.SpellFlagIgnoreModifiers,
+		ActionID:         IgniteActionID,
+		SpellSchool:      core.SpellSchoolFire,
+		Flags:            SpellFlagMage | core.SpellFlagIgnoreModifiers,
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 	})
 }
 
@@ -58,7 +59,6 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 	igniteDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
 		ProcMask:         core.ProcMaskPeriodicDamage,
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 		IsPeriodic:       true,
 		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {

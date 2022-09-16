@@ -30,6 +30,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			10*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
@@ -40,7 +41,6 @@ func (rogue *Rogue) registerBackstabSpell() {
 				0.02*float64(rogue.Talents.Aggression) +
 				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) * (1.5 + 0.01*float64(rogue.Talents.SinisterCalling)),
-			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 170, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),

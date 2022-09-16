@@ -53,8 +53,9 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 	if has4pT8 && !isLightningOverload {
 		lbdotDmg := 0.0 // dynamically changing dmg
 		spell := shaman.RegisterSpell(core.SpellConfig{
-			ActionID: core.ActionID{SpellID: 64930},
-			Flags:    core.SpellFlagIgnoreModifiers,
+			ActionID:         core.ActionID{SpellID: 64930},
+			Flags:            core.SpellFlagIgnoreModifiers,
+			ThreatMultiplier: 1,
 		})
 		lbdot = core.NewDot(core.Dot{
 			Spell: spell,
@@ -66,7 +67,6 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			NumberOfTicks: 2,
 			TickEffects: core.TickFuncSnapshot(shaman.CurrentTarget, core.SpellEffect{
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 						return lbdotDmg / 2 //spread dot over 2 ticks

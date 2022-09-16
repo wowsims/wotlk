@@ -224,9 +224,10 @@ func init() {
 					SpellSchool: core.SpellSchoolPhysical,
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
-					BonusHitRating:  hunter.bonusRangedHit(),
-					BonusCritRating: hunter.bonusRangedCrit(),
-					ApplyEffects:    core.ApplyEffectFuncDirectDamage(rangedEffect),
+					BonusHitRating:   hunter.bonusRangedHit(),
+					BonusCritRating:  hunter.bonusRangedCrit(),
+					ThreatMultiplier: 1,
+					ApplyEffects:     core.ApplyEffectFuncDirectDamage(rangedEffect),
 				})
 			}
 

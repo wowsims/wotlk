@@ -55,8 +55,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  121,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -92,6 +90,9 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 				Duration: time.Second*5 - 2*time.Second*time.Duration(warrior.Talents.UnrelentingAssault),
 			},
 		},
+
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  121,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyEffect(sim, target, spell)

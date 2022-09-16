@@ -65,17 +65,17 @@ func (warrior *Warrior) registerDevastateSpell() {
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
+		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  flatThreatBonus,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, dynaThreatBonus)
+		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			DamageMultiplier: weaponMulti,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  flatThreatBonus,
-			DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return warrior.attackPowerMultiplier(spellEffect, spell.Unit, dynaThreatBonus)
-			},
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

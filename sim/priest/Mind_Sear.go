@@ -18,9 +18,8 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	channelTime := time.Second * time.Duration(numTicks)
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
+		ProcMask:       core.ProcMaskEmpty,
+		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -43,9 +42,12 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 				ChannelTime: channelTime,
 			},
 		},
-		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		ApplyEffects:    core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
+
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+
+		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
 	})
 }
 
@@ -54,7 +56,6 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 
 	effect := core.SpellEffect{
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		IsPeriodic:       true,
 		ProcMask:         core.ProcMaskSpellDamage,
 		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),

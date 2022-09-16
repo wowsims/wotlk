@@ -32,11 +32,12 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 
 	fa.Init = func() {
 		fa.Spell = fa.RegisterSpell(SpellConfig{
-			ActionID:        ActionID{SpellID: 42},
-			SpellSchool:     SpellSchoolShadow,
-			Flags:           SpellFlagIgnoreResists,
-			Cast:            CastConfig{},
-			BonusCritRating: 3 * CritRatingPerCritChance,
+			ActionID:         ActionID{SpellID: 42},
+			SpellSchool:      SpellSchoolShadow,
+			Flags:            SpellFlagIgnoreResists,
+			Cast:             CastConfig{},
+			BonusCritRating:  3 * CritRatingPerCritChance,
+			ThreatMultiplier: 1,
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 				ProcMask:       ProcMaskSpellDamage,
 				OutcomeApplier: fa.OutcomeFuncMagicHit(),
@@ -57,7 +58,6 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			AffectedByCastSpeed: true,
 			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
 				ProcMask:         ProcMaskPeriodicDamage,
-				ThreatMultiplier: 1,
 				BaseDamage:       BaseDamageConfigMagicNoRoll(100, 1),
 				DamageMultiplier: 1.5,
 				OutcomeApplier:   fa.OutcomeFuncAlwaysHit(),

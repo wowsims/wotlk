@@ -69,13 +69,13 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		BonusHitRating: hunter.bonusRangedHit(),
 		BonusCritRating: hunter.bonusRangedCrit() +
 			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

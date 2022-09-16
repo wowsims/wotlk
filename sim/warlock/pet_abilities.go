@@ -72,13 +72,15 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			},
 			IgnoreHaste: true,
 		},
-		BonusCritRating: wp.owner.masterDemonologistFireCrit(),
+
+		BonusCritRating:  wp.owner.masterDemonologistFireCrit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: (1.0 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
 				(1.0 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
-			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigMagic(203, 227, 0.571),
 			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(2),
@@ -92,7 +94,6 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 	baseEffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		DamageMultiplier: 1.0,
-		ThreatMultiplier: 1,
 		BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 124, true),
 		OutcomeApplier:   wp.OutcomeFuncMeleeSpecialHitAndCrit(2),
 	}
@@ -123,7 +124,8 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 				Duration: time.Second * 6,
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDamageMultiple(effects),
 	})
 }
 
@@ -147,12 +149,14 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 				Duration: time.Second * (12 - time.Duration(3*wp.owner.Talents.DemonicPower)),
 			},
 		},
-		BonusCritRating: wp.owner.masterDemonologistShadowCrit(),
+
+		BonusCritRating:  wp.owner.masterDemonologistShadowCrit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1,
 
 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
 			BaseDamage:     core.BaseDamageConfigMagic(237, 237, 0.429),
@@ -194,10 +198,12 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 				Duration: time.Second * (6 - time.Duration(2*wp.owner.Talents.ImprovedFelhunter)),
 			},
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1.0 + 0.03*float64(wp.owner.Talents.ShadowMastery),
-			ThreatMultiplier: 1,
 			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagic(97+1, 97+41, 0.429),
 				func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

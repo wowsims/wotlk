@@ -97,11 +97,12 @@ func (warrior *Warrior) applyDamageShield() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -738,6 +739,9 @@ func (warrior *Warrior) RegisterBladestormCD() {
 				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90),
 			},
 		},
+
+		ThreatMultiplier: 1.25,
+
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
 			bladestormDot.TickOnce()
@@ -754,7 +758,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		DamageMultiplier: dm,
-		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
@@ -763,7 +766,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ProcMask: core.ProcMaskMeleeOHSpecial,
 
 		DamageMultiplier: dm * (1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)),
-		ThreatMultiplier: 1.25,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),

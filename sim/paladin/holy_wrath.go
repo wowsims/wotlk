@@ -26,7 +26,6 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 		ProcMask: core.ProcMaskSpellDamage,
 
 		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -91,6 +90,8 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 				Duration: time.Second*30 - core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHolyWrath), time.Second*15, 0),
 			},
 		},
+
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

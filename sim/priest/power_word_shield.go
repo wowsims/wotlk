@@ -32,12 +32,13 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			ActionID:    core.ActionID{ItemID: 42408},
 			SpellSchool: core.SpellSchoolHoly,
 
+			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
 				ProcMask:  core.ProcMaskSpellHealing,
 
 				DamageMultiplier: 0.2 * multiplier,
-				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(2230, coeff),
 				OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
@@ -65,6 +66,8 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			},
 			CD: cd,
 		},
+
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			weakenedSoul := priest.WeakenedSouls[target.UnitIndex]

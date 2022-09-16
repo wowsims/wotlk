@@ -25,12 +25,12 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
+		BonusHitRating:   hunter.bonusRangedHit(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskRangedSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
+			ProcMask:       core.ProcMaskRangedSpecial,
+			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					hunter.ScorpidStingAura.Activate(sim)

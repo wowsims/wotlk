@@ -31,6 +31,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			warlock.masterDemonologistShadowCrit() +
 			3*float64(warlock.Talents.Malediction)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
 		// This messes with final dmg and crit rate metrics.
@@ -62,7 +63,6 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			IsPeriodic: true,
 
 			DamageMultiplier: baseAdditiveMultiplier,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 
 			OutcomeApplier: applier,

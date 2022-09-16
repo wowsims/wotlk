@@ -39,11 +39,11 @@ func (druid *Druid) registerMoonfireSpell() {
 			},
 		},
 
-		BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+		BonusCritRating:  float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage:       core.BaseDamageConfigMagic(406, 476, 0.15),
 			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
@@ -79,7 +79,6 @@ func (druid *Druid) registerMoonfireSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier + moonfireGlyphDotDamageMultiplier) * druid.TalentsBonuses.genesisMultiplier,
-			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
 			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,

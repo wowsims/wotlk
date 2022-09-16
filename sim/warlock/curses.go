@@ -31,12 +31,13 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 			},
 		},
 
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			FlatThreatBonus:  0, // TODO
-			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt:  applyAuraOnLanded(warlock.CurseOfElementsAura),
-			ProcMask:         core.ProcMaskEmpty,
+			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
+			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfElementsAura),
+			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -61,12 +62,14 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
+
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			FlatThreatBonus:  0, // TODO
-			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt:  applyAuraOnLanded(warlock.CurseOfWeaknessAura),
-			ProcMask:         core.ProcMaskEmpty,
+			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
+			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfWeaknessAura),
+			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -93,12 +96,14 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
+
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			FlatThreatBonus:  0, // TODO
-			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt:  applyAuraOnLanded(warlock.CurseOfTonguesAura),
-			ProcMask:         core.ProcMaskEmpty,
+			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
+			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfTonguesAura),
+			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -119,7 +124,6 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 
 	effect := core.SpellEffect{
 		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		IsPeriodic:       true,
@@ -136,10 +140,12 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 				GCD:  core.GCDDefault - core.TernaryDuration(warlock.Talents.AmplifyCurse, 1, 0)*500*time.Millisecond,
 			},
 		},
+
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO : curses flat threat on application
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  0, // TODO : curses flat threat on application
-			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
+			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					warlock.CurseOfDoomDot.Cancel(sim)
@@ -169,7 +175,6 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 
 	target := warlock.CurrentTarget
 	effect := core.SpellEffect{
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		DamageMultiplier: baseAdditiveMultiplier,
 		BaseDamage:       core.BaseDamageConfigMagicNoRoll(7300, 2),
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
@@ -191,10 +196,12 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 				Duration: time.Minute,
 			},
 		},
+
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  0, // TODO
-			OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
+			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					warlock.CurseOfAgonyDot.Cancel(sim)

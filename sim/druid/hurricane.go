@@ -23,7 +23,6 @@ func (druid *Druid) registerHurricaneSpell() {
 		TickEffects: core.TickFuncAOESnapshot(druid.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(206, 0.107),
 			OutcomeApplier:   druid.OutcomeFuncTick(),
 			IsPeriodic:       true,
@@ -49,6 +48,8 @@ func (druid *Druid) registerHurricaneSpell() {
 				Duration: time.Second * 60,
 			},
 		},
+
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDot(hurricaneDot),
 	})

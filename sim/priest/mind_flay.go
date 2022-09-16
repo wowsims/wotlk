@@ -22,9 +22,8 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
+		ProcMask:       core.ProcMaskEmpty,
+		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -65,9 +64,12 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 				}
 			},
 		},
-		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
-		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
+
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
 
@@ -78,7 +80,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		ProcMask:         core.ProcMaskSpellDamage,
 		IsPeriodic:       true,
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

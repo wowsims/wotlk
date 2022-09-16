@@ -289,11 +289,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 			actionID := ActionID{SpellID: 11374}
 			goaProc := character.RegisterSpell(SpellConfig{
-				ActionID: actionID,
+				ActionID:         actionID,
+				ThreatMultiplier: 1,
+				FlatThreatBonus:  90,
 				ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-					ProcMask:         ProcMaskEmpty,
-					ThreatMultiplier: 1,
-					FlatThreatBonus:  90,
+					ProcMask: ProcMaskEmpty,
 
 					OutcomeApplier: character.OutcomeFuncAlwaysHit(),
 					OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
@@ -1057,12 +1057,12 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 		actionID := ActionID{ItemID: 22788}
 
 		flameCapProc := character.RegisterSpell(SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: SpellSchoolFire,
+			ActionID:         actionID,
+			SpellSchool:      SpellSchoolFire,
+			ThreatMultiplier: 1,
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 				ProcMask:         ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     BaseDamageConfigFlat(40),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -1214,13 +1214,13 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		},
 
 		// Explosives always have 1% resist chance, so just give them hit cap.
-		BonusHitRating: 100 * SpellHitRatingPerHitChance,
+		BonusHitRating:   100 * SpellHitRatingPerHitChance,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
 			ProcMask: ProcMaskEmpty,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 
 			BaseDamage:     BaseDamageConfigRoll(minDamage, maxDamage),
 			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(2),

@@ -30,6 +30,9 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 				Duration: time.Second * 45,
 			},
 		},
+
+		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
 			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true)
 		},
@@ -41,7 +44,6 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 		effect := core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 			BaseDamage:       core.BaseDamageConfigMagic(1450, 1656, 0.172),
 			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}

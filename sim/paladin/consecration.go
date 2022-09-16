@@ -27,7 +27,6 @@ func (paladin *Paladin) registerConsecrationSpell() {
 			ProcMask: core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 113 + 0.04*HolP + 0.04*AP
@@ -67,6 +66,8 @@ func (paladin *Paladin) registerConsecrationSpell() {
 				Duration: (time.Second * 8) + core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), time.Second*2, 0),
 			},
 		},
+
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDot(consecrationDot),
 	})

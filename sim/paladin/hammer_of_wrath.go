@@ -48,13 +48,13 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 			},
 		},
 
-		BonusCritRating: (25 * float64(paladin.Talents.SanctifiedWrath)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (25 * float64(paladin.Talents.SanctifiedWrath)) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
