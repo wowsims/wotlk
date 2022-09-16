@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -12,7 +13,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseModifiers := Multiplicative{}
 	baseMultiplier := baseModifiers.Get()
 	numHits := int32(1)
-        glyphedSingleTargetAS := paladin.HasMajorGlyph(41101)
+	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	scaling := hybridScaling{
 		AP: 0.07,

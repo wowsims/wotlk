@@ -52,7 +52,7 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 
 	prot.PaladinAura = protOptions.Options.Aura
 	
-	prot.HasGlyphAS = prot.HasMajorGlyph(41101)
+	prot.HasGlyphAS = prot.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	prot.EnableAutoAttacks(prot, core.AutoAttackOptions{
 		MainHand:       prot.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.
