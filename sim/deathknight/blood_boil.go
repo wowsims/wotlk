@@ -40,7 +40,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06) * dk.RoRTSBonus(hitEffect.Target) * core.TernaryFloat64(dk.DiseasesAreActive(hitEffect.Target), 1.5, 1.0)
 				},
 			},
-			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM()),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.bonusCritMultiplier(dk.Talents.MightOfMograine)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

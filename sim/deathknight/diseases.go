@@ -153,7 +153,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
 	}
 
 	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
@@ -269,7 +269,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.RuneWeapon.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
 	}
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {

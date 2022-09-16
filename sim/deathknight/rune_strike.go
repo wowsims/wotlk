@@ -51,7 +51,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.critMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.DefaultMeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				rs.DoCost(sim)

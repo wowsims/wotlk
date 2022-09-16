@@ -14,7 +14,7 @@ func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
 			if sim.RandomFloat("Fixed Crit Roll") < dk.dndCritSnapshot {
 				spellEffect.Outcome = core.OutcomeCrit
 				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
-				spellEffect.Damage *= dk.spellCritMultiplier()
+				spellEffect.Damage *= dk.DefaultMeleeCritMultiplier()
 			} else {
 				spellEffect.Outcome = core.OutcomeHit
 				spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++

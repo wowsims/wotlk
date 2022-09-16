@@ -60,7 +60,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM())),
+			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend))),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

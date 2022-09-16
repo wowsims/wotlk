@@ -55,10 +55,6 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	}
 }
 
-func (dk *Deathknight) viciousStrikesCritDamageBonus() float64 {
-	return 0.15 * float64(dk.Talents.ViciousStrikes)
-}
-
 func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 	return 3 * float64(dk.Talents.ViciousStrikes)
 }

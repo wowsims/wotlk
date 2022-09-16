@@ -335,7 +335,7 @@ func init() {
 
 				shouldConsume := false
 				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID.SameAction(consumeSpell) {
+					if spell.ActionID.SameActionIgnoreTag(consumeSpell) {
 						shouldConsume = true
 						break
 					}

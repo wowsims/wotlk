@@ -56,7 +56,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier())),
+			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.DefaultMeleeCritMultiplier())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome
@@ -102,7 +102,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
