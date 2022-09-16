@@ -29,10 +29,8 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Bonus stats to be added to the spell.
-	BonusSpellPower  float64
-	BonusAttackPower float64
-	BonusHitRating   float64
-	BonusCritRating  float64
+	BonusHitRating  float64
+	BonusCritRating float64
 
 	// Used only for dot snapshotting. Internal-only.
 	snapshotMeleeCritRating float64
@@ -124,11 +122,11 @@ func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) MeleeAttackPower(unit *Unit) float64 {
-	return unit.stats[stats.AttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
+	return unit.stats[stats.AttackPower] + unit.PseudoStats.MobTypeAttackPower
 }
 
 func (spellEffect *SpellEffect) RangedAttackPower(unit *Unit) float64 {
-	return unit.stats[stats.RangedAttackPower] + unit.PseudoStats.MobTypeAttackPower + spellEffect.BonusAttackPower
+	return unit.stats[stats.RangedAttackPower] + unit.PseudoStats.MobTypeAttackPower
 }
 
 func (spellEffect *SpellEffect) RangedAttackPowerOnTarget() float64 {
@@ -183,7 +181,7 @@ func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) flo
 }
 
 func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
-	return unit.GetStat(stats.SpellPower) + unit.GetStat(spell.SpellSchool.Stat()) + unit.PseudoStats.MobTypeSpellPower + spellEffect.BonusSpellPower
+	return unit.GetStat(stats.SpellPower) + unit.GetStat(spell.SpellSchool.Stat()) + unit.PseudoStats.MobTypeSpellPower
 }
 
 func (spellEffect *SpellEffect) SpellHitChance(spell *Spell) float64 {
@@ -215,7 +213,7 @@ func (spellEffect *SpellEffect) spellCritRating(unit *Unit, spell *Spell) float6
 }
 
 func (spellEffect *SpellEffect) HealingPower(unit *Unit, _ *Spell) float64 {
-	return unit.GetStat(stats.HealingPower) + spellEffect.BonusSpellPower
+	return unit.GetStat(stats.HealingPower)
 }
 func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) float64 {
 	critRating := 0.0

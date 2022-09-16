@@ -72,7 +72,6 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
-			BonusSpellPower:  0.0,
 			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 			ThreatMultiplier: 1.9,
 			BaseDamage: core.BaseDamageConfig{

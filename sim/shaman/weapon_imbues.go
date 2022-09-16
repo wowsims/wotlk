@@ -23,7 +23,6 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 58804}
 
 	baseEffect := core.SpellEffect{
-		BonusAttackPower: apBonus,
 		ProcMask:         core.ProcMaskMelee,
 		DamageMultiplier: 1.0,
 		ThreatMultiplier: 1,
@@ -33,15 +32,13 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	weaponDamageMultiplier := 1 + math.Round(float64(shaman.Talents.ElementalWeapons)*13.33)/100
 	baseEffect.DamageMultiplier *= weaponDamageMultiplier
 	if isMH {
+		bonusApDmg := shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 		actionID.Tag = 1
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true)
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, bonusApDmg, true)
 	} else {
+		bonusApDmg := shaman.AutoAttacks.OH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 		actionID.Tag = 2
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, true)
-
-		// For whatever reason, OH penalty does not apply to the bonus AP from WF OH
-		// hits. Implement this by doubling the AP bonus we provide.
-		baseEffect.BonusAttackPower += apBonus
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, bonusApDmg, true)
 	}
 
 	effects := []core.SpellEffect{
