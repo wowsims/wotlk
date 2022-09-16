@@ -9,9 +9,9 @@ import (
 
 func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseCost := paladin.BaseMana * 0.26
-
 	baseModifiers := Multiplicative{}
 	baseMultiplier := baseModifiers.Get()
+	numHits := int32(1)
 
 	scaling := hybridScaling{
 		AP: 0.07,
@@ -31,6 +31,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 				damage := 1100.0 + deltaDamage*sim.RandomFloat("Damage Roll")
 				damage += hitEffect.SpellPower(spell.Unit, spell) * scaling.SP
 				damage += hitEffect.MeleeAttackPower(spell.Unit) * scaling.AP
+				damage *= core.TernaryFloat64(paladin.HasMajorGlyph(41101), 2, 1)
 				return damage
 			},
 		},
@@ -38,7 +39,10 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
-	numHits := core.MinInt32(3, paladin.Env.GetNumTargets())
+	if !paladin.HasMajorGlyph(41101) {
+		numHits = core.MinInt32(3, paladin.Env.GetNumTargets())
+	}
+	
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
