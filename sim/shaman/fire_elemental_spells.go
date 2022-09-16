@@ -31,10 +31,12 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 			},
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(323, 459, 0.429), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
@@ -67,11 +69,12 @@ func (fireElemental *FireElemental) registerFireNova() {
 			},
 		},
 
+		ThreatMultiplier: 1,
+
 		// TODO is this the right affect should it be Capped?
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(fireElemental.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.0071), // TODO these are approximation, from base SP
 			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),

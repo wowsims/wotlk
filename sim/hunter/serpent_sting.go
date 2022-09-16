@@ -29,11 +29,12 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
+		BonusHitRating:   hunter.bonusRangedHit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskRangedSpecial,
-			BonusHitRating:   hunter.bonusRangedHit(),
-			ThreatMultiplier: 1,
-			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
+			ProcMask:       core.ProcMaskRangedSpecial,
+			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					hunter.SerpentStingDot.Apply(sim)
@@ -84,7 +85,6 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {

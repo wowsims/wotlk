@@ -22,8 +22,6 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
-		BonusCritRating:  1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -65,6 +63,10 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 				Duration: time.Second * 30,
 			},
 		},
+
+		// TODO: Why is this here?
+		BonusCritRating:  1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

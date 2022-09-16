@@ -42,6 +42,9 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 				}
 			},
 		},
+
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 	}
 
 	if shaman.Talents.LightningMastery > 0 {
@@ -67,9 +70,7 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 	}
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
-		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)) * (1.0 + 0.02*float64(shaman.Talents.CallOfFlame)),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 		BaseDamage:       core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+bonusCoeff)),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 			if spellEffect.MagicHitCheck(sim, spell, attackTable) {
@@ -105,7 +106,6 @@ func (shaman *Shaman) newLavaBurstSpell() *core.Spell {
 			NumberOfTicks: 3,
 			TickEffects: core.TickFuncSnapshot(shaman.CurrentTarget, core.SpellEffect{
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 						return lvbdotDmg / 3 //spread dot over 3 ticks

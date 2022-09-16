@@ -142,10 +142,11 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			},
 		},
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier

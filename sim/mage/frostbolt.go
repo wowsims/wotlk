@@ -28,17 +28,16 @@ func (mage *Mage) registerFrostboltSpell() {
 			},
 		},
 
+		BonusCritRating: 0 +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
-			BonusCritRating: 0 +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + .01*float64(mage.Talents.ChilledToTheBone)) *
 				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), 1.05, 1),
-
-			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 			BaseDamage:     core.BaseDamageConfigMagic(799, 861, (3.0/3.5)*0.95+0.05*float64(mage.Talents.EmpoweredFrostbolt)),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCritBinary(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3)),

@@ -22,9 +22,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus() * dk.bloodyStrikesBonus(dk.BloodStrike),
-		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -39,10 +37,12 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine+dk.Talents.GuileOfGorefiend, &effect)
 
 	conf := core.SpellConfig{
-		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:         BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool:      core.SpellSchoolPhysical,
+		Flags:            core.SpellFlagMeleeMetrics,
+		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}
 	if isMH { // offhand doesn't need GCD

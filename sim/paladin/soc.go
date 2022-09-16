@@ -40,14 +40,14 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: judgementMultiplier *
 				(0.19),
-			ThreatMultiplier: 1,
 
-			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,
 				false,
@@ -70,7 +70,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ProcMask: core.ProcMaskEmpty,
 		DamageMultiplier: baseMultiplier *
 			(0.36),
-		ThreatMultiplier: 1,
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,
 			false,
@@ -90,17 +89,19 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 	onSpecialOrSwingActionID := core.ActionID{SpellID: 20424}
 	onSpecialOrSwingProcCleave := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     onSpecialOrSwingActionID, // Seal of Command damage bonus for single target spells.
-		SpellSchool:  core.SpellSchoolHoly,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ActionID:         onSpecialOrSwingActionID, // Seal of Command damage bonus for single target spells.
+		SpellSchool:      core.SpellSchoolHoly,
+		Flags:            core.SpellFlagMeleeMetrics,
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDamageMultiple(effects),
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     onSpecialOrSwingActionID, // Seal of Command damage bonus for cleaves.
-		SpellSchool:  core.SpellSchoolHoly,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(baseEffect),
+		ActionID:         onSpecialOrSwingActionID, // Seal of Command damage bonus for cleaves.
+		SpellSchool:      core.SpellSchoolHoly,
+		Flags:            core.SpellFlagMeleeMetrics,
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(baseEffect),
 	})
 
 	var glyphManaMetrics *core.ResourceMetrics
@@ -163,6 +164,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				GCD:  core.GCDDefault,
 			},
 		},
+
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			if paladin.CurrentSeal != nil {

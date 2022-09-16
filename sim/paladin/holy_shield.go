@@ -18,11 +18,12 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagBinary,
 
+		ThreatMultiplier: 1.35,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
 			// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1.35,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

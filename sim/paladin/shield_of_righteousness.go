@@ -34,12 +34,14 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 			},
 		},
 
+		// TODO: Why is this here?
+		BonusCritRating:  1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
-			BonusCritRating:  1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {

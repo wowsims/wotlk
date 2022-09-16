@@ -20,10 +20,8 @@ func (mage *Mage) registerBlizzardSpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(mage.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
+			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: mage.spellDamageMultiplier,
-
-			ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(352, 0.119),
 			OutcomeApplier: mage.OutcomeFuncTick(),
@@ -47,6 +45,8 @@ func (mage *Mage) registerBlizzardSpell() {
 				ChannelTime: time.Second * 8,
 			},
 		},
+
+		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: core.ApplyEffectFuncDot(blizzardDot),
 	})

@@ -29,23 +29,21 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
+		BonusCritRating: 0 +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
-			BonusCritRating: 0 +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
-				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
-				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + .02*float64(mage.Talents.PiercingIce)) *
 				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)) *
 				(1 + .01*float64(mage.Talents.ChilledToTheBone)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
@@ -78,8 +76,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 						mage.Talents.PiercingIce+
 						core.TernaryInt32(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 1, 0))) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
 			BaseDamage:     core.BaseDamageConfigFlat(90 / 3),
 			OutcomeApplier: mage.OutcomeFuncTick(),

@@ -30,18 +30,20 @@ func (shaman *Shaman) newThunderstormSpell(doDamage bool) *core.Spell {
 				Duration: time.Second * 45,
 			},
 		},
+
+		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
 			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true)
 		},
 	}
 
 	if doDamage {
+		spellConfig.BonusHitRating = float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance
+		spellConfig.BonusCritRating = core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0)
 		effect := core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-			BonusCritRating:  core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
 			DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 			BaseDamage:       core.BaseDamageConfigMagic(1450, 1656, 0.172),
 			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}

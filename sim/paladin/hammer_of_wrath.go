@@ -39,7 +39,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 					(1 - 0.02*float64(paladin.Talents.Benediction)) *
 					core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfWrath), 0, 1),
 
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -48,12 +48,13 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 			},
 		},
 
+		BonusCritRating:  (25 * float64(paladin.Talents.SanctifiedWrath)) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
-			BonusCritRating:  (25 * float64(paladin.Talents.SanctifiedWrath)) * core.CritRatingPerCritChance,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

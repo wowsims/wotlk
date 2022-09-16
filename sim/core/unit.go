@@ -8,6 +8,7 @@ import (
 )
 
 type UnitType int
+type SpellRegisteredHandler func(spell *Spell)
 
 const (
 	PlayerUnit UnitType = iota
@@ -95,7 +96,8 @@ type Unit struct {
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
-	Spellbook []*Spell
+	Spellbook                 []*Spell
+	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
 	Pets []PetAgent
@@ -421,6 +423,8 @@ func (unit *Unit) finalize() {
 	unit.initialStats = unit.ApplyStatDependencies(unit.initialStatsWithoutDeps)
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
+
+	unit.AutoAttacks.finalize()
 
 	for _, spell := range unit.Spellbook {
 		spell.finalize()

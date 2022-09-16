@@ -41,15 +41,14 @@ func (mage *Mage) registerPyroblastSpell() {
 			},
 		},
 
+		BonusCritRating: 0 +
+			float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			BonusCritRating: 0 +
-				float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
-
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage: core.BaseDamageConfigMagic(1210, 1531, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
 			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((1210+1531)/2, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
@@ -78,8 +77,6 @@ func (mage *Mage) registerPyroblastSpell() {
 			ProcMask: core.ProcMaskPeriodicDamage,
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)) *
 				(1 + .04*float64(mage.Talents.TormentTheWeak)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(113, .02),
 			OutcomeApplier: mage.OutcomeFuncTick(),

@@ -263,6 +263,8 @@ func (hunter *Hunter) applyPiercingShots() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			psDot.Apply(sim)
 		},
@@ -312,7 +314,6 @@ func (hunter *Hunter) applyPiercingShots() {
 			psDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:         core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 				IsPeriodic:       true,
 				BaseDamage:       core.BaseDamageConfigFlat(currentTickDmg),
 				OutcomeApplier:   hunter.OutcomeFuncTick(),
@@ -336,12 +337,13 @@ func (hunter *Hunter) applyWildQuiver() {
 		SpellSchool: core.SpellSchoolNature,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
+		BonusHitRating:   hunter.bonusRangedHit(),
+		BonusCritRating:  hunter.bonusRangedCrit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedAuto,
-			BonusHitRating:   hunter.bonusRangedHit(),
-			BonusCritRating:  hunter.bonusRangedCrit(),
 			DamageMultiplier: 0.8,
-			ThreatMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),

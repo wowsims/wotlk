@@ -22,8 +22,6 @@ func (paladin *Paladin) registerDivineStormSpell() {
 
 		DamageMultiplier: baseMultiplier *
 			(1.1), // base 1.1 multiplier, can be further improved by 10% via taow for a grand total of 1.21. NOTE: Unlike cs, ds tooltip IS NOT updated to reflect this.
-		ThreatMultiplier: 1,
-		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,
@@ -63,6 +61,9 @@ func (paladin *Paladin) registerDivineStormSpell() {
 				Duration: time.Second * 10,
 			},
 		},
+
+		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

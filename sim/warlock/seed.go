@@ -32,11 +32,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	baseSeedExplosionEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
-			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		BaseDamage:     core.BaseDamageConfigMagic(1633, 1897, 0.2129),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
@@ -52,9 +48,15 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	actionID.Tag = 1
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
-		Cast:         core.CastConfig{},
+		ActionID:    actionID,
+		SpellSchool: spellSchool,
+		Cast:        core.CastConfig{},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+
 		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects, false),
 	})
 
@@ -82,7 +84,8 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 				CastTime: time.Millisecond * 2000,
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	})
 
 	target := warlock.Env.GetTargetUnit(int32(targetIdx))
@@ -128,7 +131,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 			IsPeriodic: true,
 
 			DamageMultiplier: baseAdditiveMultiplierDot,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
 			OutcomeApplier: warlock.OutcomeFuncTick(),

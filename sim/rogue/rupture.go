@@ -31,10 +31,12 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -86,8 +88,7 @@ func (rogue *Rogue) registerRupture() {
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
 				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 				0.1*float64(rogue.Talents.SerratedBlades),
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic: true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit)

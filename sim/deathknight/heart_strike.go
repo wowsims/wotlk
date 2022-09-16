@@ -24,9 +24,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskMeleeSpecial,
-		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * dk.thassariansPlateDamageBonus() * dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) * dk.bloodyStrikesBonus(dk.HeartStrike),
-		ThreatMultiplier: 1,
 		OutcomeApplier:   outcomeApplier,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -39,9 +37,13 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 	}
 
 	conf := core.SpellConfig{
-		ActionID:     HeartStrikeActionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    HeartStrikeActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}

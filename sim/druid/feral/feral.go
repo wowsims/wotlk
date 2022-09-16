@@ -86,12 +86,11 @@ func (cat *FeralDruid) MissChance() float64 {
 	speffect := core.SpellEffect{
 		ProcMask:         core.ProcMaskMeleeMHSpecial,
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
 		Target:           cat.CurrentTarget,
 	}
 	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
-	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
-	dodge := at.BaseDodgeChance - speffect.ExpertisePercentage(&cat.Druid.Unit) - cat.CurrentTarget.PseudoStats.DodgeReduction
+	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Unit, cat.Shred, at)
+	dodge := at.BaseDodgeChance - speffect.ExpertisePercentage(&cat.Unit) - cat.CurrentTarget.PseudoStats.DodgeReduction
 	return miss + dodge
 }
 

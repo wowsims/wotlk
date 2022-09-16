@@ -88,11 +88,12 @@ func (dk *Deathknight) applyWanderingPlague() {
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(dk.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: wanderingPlagueMultiplier,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
@@ -116,11 +117,12 @@ func (dk *Deathknight) applyNecrosis() {
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: necrosisCoeff,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
@@ -193,11 +195,12 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: procMask,
 
 			DamageMultiplier: weaponMulti,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -305,6 +308,9 @@ func (dk *Deathknight) applyUnholyBlight() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.UnholyBlightDot[dk.CurrentTarget.Index].Apply(sim)
 		},
@@ -327,7 +333,6 @@ func (dk *Deathknight) applyUnholyBlight() {
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:         core.ProcMaskPeriodicDamage,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 				IsPeriodic:       true,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {

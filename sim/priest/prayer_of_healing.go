@@ -16,12 +16,8 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: 0 +
-			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
@@ -46,6 +42,11 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 				CastTime: time.Second * 3,
 			},
 		},
+
+		BonusCritRating: 0 +
+			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
@@ -106,7 +107,6 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 			IsHealing:  true,
 
 			DamageMultiplier: pohEffect.DamageMultiplier * 0.2 / 2,
-			ThreatMultiplier: pohEffect.ThreatMultiplier,
 
 			BaseDamage:     pohEffect.BaseDamage,
 			OutcomeApplier: priest.OutcomeFuncTick(),

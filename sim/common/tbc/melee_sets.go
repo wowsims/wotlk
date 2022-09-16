@@ -17,12 +17,12 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 			character := agent.GetCharacter()
 
 			procSpell := character.RegisterSpell(core.SpellConfig{
-				ActionID:    core.ActionID{SpellID: 41989},
-				SpellSchool: core.SpellSchoolFire,
+				ActionID:         core.ActionID{SpellID: 41989},
+				SpellSchool:      core.SpellSchoolFire,
+				ThreatMultiplier: 1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					ProcMask:         core.ProcMaskEmpty,
 					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
 
 					BaseDamage:     core.BaseDamageConfigRoll(100, 150),
 					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),

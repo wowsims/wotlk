@@ -19,11 +19,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		BaseDamage:     core.BaseDamageConfigMagic(1429.0, 1813.0, spellCoefficient),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
@@ -65,6 +61,11 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 				Duration: time.Second * (12 - 2*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

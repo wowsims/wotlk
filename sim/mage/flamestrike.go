@@ -12,14 +12,9 @@ func (mage *Mage) registerFlamestrikeSpell() {
 	baseCost := .30 * mage.BaseMana
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
-		BonusHitRating: 0,
+		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
-		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
 		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
@@ -43,6 +38,11 @@ func (mage *Mage) registerFlamestrikeSpell() {
 			},
 		},
 
+		BonusCritRating: 0 +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
+		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyAOEDamage(sim, target, spell)
 			mage.FlamestrikeDot.Apply(sim)
@@ -60,8 +60,6 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		TickEffects: core.TickFuncAOESnapshot(mage.Env, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
-
-			ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(780/4, 0.122),
 			OutcomeApplier: mage.OutcomeFuncTick(),

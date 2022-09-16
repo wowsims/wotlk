@@ -237,12 +237,12 @@ func init() {
 		character := agent.GetCharacter()
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{ItemID: 28579},
-			SpellSchool: core.SpellSchoolNature,
+			ActionID:         core.ActionID{ItemID: 28579},
+			SpellSchool:      core.SpellSchoolNature,
+			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigRoll(222, 332),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -382,12 +382,12 @@ func init() {
 		actionID := core.ActionID{ItemID: 31858}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolHoly,
+			ActionID:         actionID,
+			SpellSchool:      core.SpellSchoolHoly,
+			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigRoll(95, 115),
 				OutcomeApplier: character.OutcomeFuncCritFixedChance(0.03, character.DefaultMeleeCritMultiplier()),

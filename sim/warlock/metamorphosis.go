@@ -77,7 +77,6 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 				// adding core.ProcMaskPeriodicDamage should be correct?
 				ProcMask:         core.ProcMaskSpellDamage,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 				BaseDamage:       core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
 				OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
 				IsPeriodic:       false,
@@ -103,6 +102,9 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 				Duration: time.Second * time.Duration(30),
 			},
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDot(warlock.ImmolationAuraDot),
 	})
 	warlock.ImmolationAuraDot.Spell = warlock.ImmolationAura

@@ -35,10 +35,11 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			},
 		},
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -68,7 +69,6 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: 1 * druid.TalentsBonuses.genesisMultiplier * dreamwalkerGrab * glyphMultiplier,
-			ThreatMultiplier: 1,
 			IsPeriodic:       true,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
 			OutcomeApplier:   druid.OutcomeFuncTick(),

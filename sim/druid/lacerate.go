@@ -45,11 +45,12 @@ func (druid *Druid) registerLacerateSpell() {
 			IgnoreHaste: true,
 		},
 
+		ThreatMultiplier: 0.5,
+		FlatThreatBonus:  267,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: lbdm * dwdm,
-			ThreatMultiplier: 0.5,
-			FlatThreatBonus:  267,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -82,12 +83,12 @@ func (druid *Druid) registerLacerateSpell() {
 		}),
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(core.Aura{
+	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:     "Lacerate-" + strconv.Itoa(int(druid.Index)),
 		ActionID:  actionID,
 		MaxStacks: 5,
 		Duration:  time.Second * 15,
-	})
+	}))
 	druid.LacerateDot = core.NewDot(core.Dot{
 		Spell:         druid.Lacerate,
 		Aura:          dotAura,
@@ -96,7 +97,6 @@ func (druid *Druid) registerLacerateSpell() {
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
 			ProcMask:         core.ProcMaskPeriodicDamage,
 			DamageMultiplier: lbdm * t9bonus,
-			ThreatMultiplier: 0.5,
 			IsPeriodic:       true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
 				Calculator:             core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),

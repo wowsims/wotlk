@@ -44,13 +44,13 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: judgementMultiplier,
-			ThreatMultiplier: 1,
 
-			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 1 + 0.2 * AP + 0.32 * HolP
@@ -72,10 +72,14 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 20154}, // Seal of Righteousness damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// weapon_speed * (0.022* AP + 0.044*HolP)

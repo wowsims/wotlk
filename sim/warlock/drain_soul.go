@@ -43,10 +43,11 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			},
 		},
 
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			OutcomeApplier:   warlock.OutcomeFuncMagicHitBinary(),
+			ProcMask:       core.ProcMaskEmpty,
+			OutcomeApplier: warlock.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
@@ -61,7 +62,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 	effect := core.SpellEffect{
 		DamageMultiplier: baseAdditiveMultiplier * executeMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		IsPeriodic:       true,
 		OutcomeApplier:   warlock.OutcomeFuncTick(),
 		ProcMask:         core.ProcMaskPeriodicDamage,
@@ -113,11 +113,14 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				CastTime:    0,
 			},
 		},
+
+		ThreatMultiplier: 1,
+		// TODO: Is this really correct?
+		FlatThreatBonus: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  1,
-			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
+			ProcMask:       core.ProcMaskEmpty,
+			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				warlock.DrainSoulDot.Apply(sim) // TODO: do we want to just refresh and continue ticking with same snapshot or update snapshot?
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)

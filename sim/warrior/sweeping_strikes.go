@@ -21,12 +21,13 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
 			// No proc mask, so it won't proc itself.
 			ProcMask: core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {

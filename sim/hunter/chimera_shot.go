@@ -38,13 +38,14 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			},
 		},
 
+		BonusHitRating:   hunter.bonusRangedHit(),
+		BonusCritRating:  hunter.bonusRangedCrit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating:   hunter.bonusRangedHit(),
-			BonusCritRating:  hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -79,15 +80,16 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		SpellSchool: core.SpellSchoolNature,
 		Flags:       core.SpellFlagMeleeMetrics,
 
+		BonusHitRating:   hunter.bonusRangedHit(),
+		BonusCritRating:  hunter.bonusRangedCrit(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating:  hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit(),
 			DamageMultiplier: 1 *
 				(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
 				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

@@ -24,10 +24,12 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44622},
 			SpellSchool: core.SpellSchoolPhysical,
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigFlat(237),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -69,10 +71,12 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44525},
 			SpellSchool: core.SpellSchoolFire,
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigRoll(185, 215),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -112,10 +116,11 @@ func init() {
 			SpellSchool: core.SpellSchoolPhysical,
 			Flags:       core.SpellFlagBinary,
 
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigRoll(45, 67),
 				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
@@ -274,10 +279,11 @@ func init() {
 				},
 			},
 
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask:         core.ProcMaskEmpty,
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage:     core.BaseDamageConfigRoll(1654, 2020),
 				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
@@ -340,11 +346,12 @@ func init() {
 			ActionID:    core.ActionID{SpellID: 50401},
 			SpellSchool: core.SpellSchoolFrost,
 
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				ProcMask: core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
