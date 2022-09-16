@@ -139,7 +139,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					bloodlust: true,
 					thorns: TristateEffect.TristateEffectImproved,
-					blessingOfMight: TristateEffect.TristateEffectImproved,
 					devotionAura: TristateEffect.TristateEffectImproved,
 					shadowProtection: true,
 				}),
@@ -149,6 +148,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					blessingOfKings: true,
 					blessingOfSanctuary: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
+					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,

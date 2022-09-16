@@ -32,10 +32,6 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 	if prot.GCD.IsReady(sim) {
 	//rotationLoop:
 	
-		if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
-			// AS prio if glyphed.
-			prot.AvengersShield.Cast(sim, target)
-		} else
 		if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
 			// Always cast HoW if ready
 			prot.HammerOfWrath.Cast(sim, target)
@@ -47,6 +43,10 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 		if prot.ShieldOfRighteousness.IsReady(sim) && (prot.HammerOfTheRighteous.TimeToReady(sim) < time.Millisecond * 3100) {
 			// Cast ShoR if ready but only if you've spent a global since HotR
 			prot.ShieldOfRighteousness.Cast(sim, target)
+		} else
+		if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
+			// AS prio if glyphed.
+			prot.AvengersShield.Cast(sim, target)
 		} else
 		if prot.HolyShield.IsReady(sim) {
 			// Top priority 9 is Holy Shield

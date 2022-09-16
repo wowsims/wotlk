@@ -37,7 +37,6 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 		Rotation: *protOptions.Rotation,
 		Options:  *protOptions.Options,
 		Seal:     protOptions.Options.Seal,
-                HasGlyphAS: paladin.HasMajorGlyph(41101),
 	}
 
 	var rotationInput = protOptions.Rotation.CustomRotation
@@ -52,6 +51,8 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 	prot.SelectedRotation = prot.customRotation
 
 	prot.PaladinAura = protOptions.Options.Aura
+	
+	prot.HasGlyphAS = prot.HasMajorGlyph(41101)
 
 	prot.EnableAutoAttacks(prot, core.AutoAttackOptions{
 		MainHand:       prot.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.
@@ -71,7 +72,7 @@ type ProtectionPaladin struct {
 
 	Seal proto.PaladinSeal
 
-        HasGlyphAS bool
+	HasGlyphAS bool
 
 	SelectedRotation func(*core.Simulation)
 	RotationInput    []int32
