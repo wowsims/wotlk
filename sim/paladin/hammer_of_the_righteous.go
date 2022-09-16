@@ -18,7 +18,6 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 
 		DamageMultiplier: baseMultiplier,
 		ThreatMultiplier: 1,
-		BonusCritRating:  1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -57,6 +56,9 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+
+		// TODO: Why is this here?
+		BonusCritRating: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

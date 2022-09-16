@@ -19,7 +19,6 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance + 3*core.SpellHitRatingPerHitChance, //not sure if misery is applying to this bonus spell hit so adding it here
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -44,7 +43,9 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 				ChannelTime: channelTime,
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
+		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
 	})
 }
 
@@ -54,9 +55,7 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 	effect := core.SpellEffect{
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		IsPeriodic:       true,
-		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		ProcMask:         core.ProcMaskSpellDamage,
 		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

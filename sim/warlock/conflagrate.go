@@ -26,10 +26,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
-			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
@@ -63,6 +59,11 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				}
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

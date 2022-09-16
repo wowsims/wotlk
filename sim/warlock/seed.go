@@ -32,9 +32,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	baseSeedExplosionEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
-			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
@@ -52,9 +49,12 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	actionID.Tag = 1
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
-		Cast:         core.CastConfig{},
+		ActionID:    actionID,
+		SpellSchool: spellSchool,
+		Cast:        core.CastConfig{},
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects, false),
 	})
 

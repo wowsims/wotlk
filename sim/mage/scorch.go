@@ -48,13 +48,12 @@ func (mage *Mage) registerScorchSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
+		BonusCritRating: 0 +
+			float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
-			BonusCritRating: 0 +
-				float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + 0.02*float64(mage.Talents.SpellImpact)) *

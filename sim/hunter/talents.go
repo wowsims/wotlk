@@ -336,10 +336,11 @@ func (hunter *Hunter) applyWildQuiver() {
 		SpellSchool: core.SpellSchoolNature,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
+		BonusHitRating:  hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit(),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskRangedAuto,
-			BonusHitRating:   hunter.bonusRangedHit(),
-			BonusCritRating:  hunter.bonusRangedCrit(),
 			DamageMultiplier: 0.8,
 			ThreatMultiplier: 1,
 

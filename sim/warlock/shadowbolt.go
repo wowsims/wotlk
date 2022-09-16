@@ -23,12 +23,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
+		ProcMask:         core.ProcMaskSpellDamage,
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 		MissileSpeed:     20,
@@ -70,6 +65,11 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 				}
 			},
 		},
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

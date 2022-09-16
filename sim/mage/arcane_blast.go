@@ -60,12 +60,13 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			},
 		},
 
+		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
+		BonusCritRating: 0 +
+			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
-			BonusCritRating: 0 +
-				float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
 			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),

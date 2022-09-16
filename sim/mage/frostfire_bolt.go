@@ -29,15 +29,14 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
+		BonusCritRating: 0 +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
 
-			BonusCritRating: 0 +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
-				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
-				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskSpellDamage,
 
 			DamageMultiplier: mage.spellDamageMultiplier *
 				(1 + .02*float64(mage.Talents.PiercingIce)) *

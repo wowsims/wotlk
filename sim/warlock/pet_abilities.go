@@ -72,10 +72,10 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			},
 			IgnoreHaste: true,
 		},
+		BonusCritRating: wp.owner.masterDemonologistFireCrit(),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			BonusCritRating: wp.owner.masterDemonologistFireCrit(),
 			DamageMultiplier: (1.0 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
 				(1.0 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
 			ThreatMultiplier: 1,
@@ -147,10 +147,10 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 				Duration: time.Second * (12 - time.Duration(3*wp.owner.Talents.DemonicPower)),
 			},
 		},
+		BonusCritRating: wp.owner.masterDemonologistShadowCrit(),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			BonusCritRating:  wp.owner.masterDemonologistShadowCrit(),
 			DamageMultiplier: 1.0,
 			ThreatMultiplier: 1,
 

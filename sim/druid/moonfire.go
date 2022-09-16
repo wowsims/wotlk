@@ -39,11 +39,12 @@ func (druid *Druid) registerMoonfireSpell() {
 			},
 		},
 
+		BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
 			ThreatMultiplier: 1,
 
-			BonusCritRating:  float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
 			BaseDamage:       core.BaseDamageConfigMagic(406, 476, 0.15),
 			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
 
@@ -82,11 +83,6 @@ func (druid *Druid) registerMoonfireSpell() {
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
 			OutcomeApplier:   dotOutcomeApplier,
 			IsPeriodic:       true,
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if druid.FaerieFireAura.IsActive() {
-					spellEffect.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire)
-				}
-			},
 		}),
 	})
 }

@@ -12,12 +12,8 @@ func (mage *Mage) registerFlamestrikeSpell() {
 	baseCost := .30 * mage.BaseMana
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
-		BonusHitRating: 0,
+		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.FirePower)),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
@@ -42,6 +38,10 @@ func (mage *Mage) registerFlamestrikeSpell() {
 				CastTime: time.Second * 3,
 			},
 		},
+
+		BonusCritRating: 0 +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyAOEDamage(sim, target, spell)

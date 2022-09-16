@@ -22,6 +22,9 @@ type SpellConfig struct {
 
 	ApplyEffects ApplySpellEffects
 
+	BonusHitRating  float64
+	BonusCritRating float64
+
 	InitialDamageMultiplier float64
 }
 
@@ -89,13 +92,15 @@ type Spell struct {
 	// The current or most recent cast data.
 	CurCast Cast
 
-	CastTimeMultiplier float64 // For dynamic effects. Do not set during initialization.
-	CostMultiplier     float64 // For dynamic effects. Do not set during initialization.
-	DamageMultiplier   float64 // For dynamic effects. Do not set during initialization.
-	BonusCritRating    float64 // For dynamic effects. Do not set during initialization.
+	BonusHitRating     float64
+	BonusCritRating    float64
+	CastTimeMultiplier float64
+	CostMultiplier     float64
+	DamageMultiplier   float64
 
-	initialDamageMultiplier float64
+	initialBonusHitRating   float64
 	initialBonusCritRating  float64
+	initialDamageMultiplier float64
 }
 
 // Registers a new spell to the unit. Returns the newly created spell.
@@ -118,6 +123,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ApplyEffects: config.ApplyEffects,
 
+		BonusHitRating:     config.BonusHitRating,
+		BonusCritRating:    config.BonusCritRating,
 		CastTimeMultiplier: 1,
 		CostMultiplier:     1,
 		DamageMultiplier:   1,
@@ -156,6 +163,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	}
 
 	unit.Spellbook = append(unit.Spellbook, spell)
+
+	if unit.Env != nil && unit.Env.IsFinalized() {
+		spell.finalize()
+	}
 
 	return spell
 }
@@ -203,6 +214,7 @@ func (spell *Spell) finalize() {
 	if spell.CostMultiplier != 1 {
 		panic(spell.ActionID.String() + " has non-default CostMultiplier during finalize!")
 	}
+	spell.initialBonusHitRating = spell.BonusHitRating
 	spell.initialBonusCritRating = spell.BonusCritRating
 }
 
@@ -219,6 +231,7 @@ func (spell *Spell) reset(sim *Simulation) {
 	spell.CastTimeMultiplier = 1
 	spell.CostMultiplier = 1
 	spell.DamageMultiplier = spell.initialDamageMultiplier
+	spell.BonusHitRating = spell.initialBonusHitRating
 	spell.BonusCritRating = spell.initialBonusCritRating
 }
 

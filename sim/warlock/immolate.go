@@ -22,9 +22,6 @@ func (warlock *Warlock) registerImmolateSpell() {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
@@ -50,6 +47,9 @@ func (warlock *Warlock) registerImmolateSpell() {
 				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
 			},
 		},
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 

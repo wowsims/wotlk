@@ -21,7 +21,6 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
@@ -41,10 +40,11 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 	dk.threatOfThassarianProcMasks(isMH, &effect, true, false, dk.killingMachineOutcomeMod)
 
 	conf := core.SpellConfig{
-		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolFrost,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:        FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool:     core.SpellSchoolFrost,
+		Flags:           core.SpellFlagMeleeMetrics,
+		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
 	}
 
 	rs := &RuneSpell{}

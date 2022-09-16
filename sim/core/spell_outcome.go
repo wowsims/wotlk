@@ -28,7 +28,7 @@ func (unit *Unit) OutcomeFuncTickHitAndCrit(critMultiplier float64) OutcomeAppli
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		roll := sim.RandomFloat("Physical Tick Hit")
 		chance := 0.0
-		missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, attackTable)
+		missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, spell, attackTable)
 		chance = MaxFloat(0, missChance)
 		if roll < chance {
 			spellEffect.Outcome = OutcomeHit
@@ -448,7 +448,7 @@ func (spellEffect *SpellEffect) physicalCritRoll(sim *Simulation, spell *Spell, 
 }
 
 func (spellEffect *SpellEffect) applyAttackTableMiss(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
-	missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, attackTable)
+	missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, spell, attackTable)
 	if unit.AutoAttacks.IsDualWielding && !unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
@@ -464,7 +464,7 @@ func (spellEffect *SpellEffect) applyAttackTableMiss(spell *Spell, unit *Unit, a
 }
 
 func (spellEffect *SpellEffect) applyAttackTableMissNoDWPenalty(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
-	missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, attackTable)
+	missChance := attackTable.BaseMissChance - spellEffect.PhysicalHitChance(unit, spell, attackTable)
 	*chance = MaxFloat(0, missChance)
 
 	if roll < *chance {
@@ -623,7 +623,7 @@ func (spellEffect *SpellEffect) applyEnemyAttackTableParry(spell *Spell, unit *U
 }
 
 func (spellEffect *SpellEffect) applyEnemyAttackTableCrit(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
-	critRating := unit.stats[stats.MeleeCrit] + spellEffect.BonusCritRating
+	critRating := unit.stats[stats.MeleeCrit] + spell.BonusCritRating
 	critChance := critRating / (CritRatingPerCritChance * 100)
 	critChance -= spellEffect.Target.stats[stats.Defense] * DefenseRatingToChanceReduction
 	critChance -= spellEffect.Target.stats[stats.Resilience] / ResilienceRatingPerCritReductionChance / 100

@@ -64,11 +64,11 @@ func (druid *Druid) registerRakeSpell() {
 		}),
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(core.Aura{
+	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:    "Rake-" + strconv.Itoa(int(druid.Index)),
 		ActionID: actionID,
 		Duration: time.Second * 9,
-	})
+	}))
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,

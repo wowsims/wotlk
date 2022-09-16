@@ -19,11 +19,12 @@ func (priest *Priest) registerRenewSpell() {
 			SpellSchool: core.SpellSchoolHoly,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
+			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
 				ProcMask:  core.ProcMaskSpellHealing,
 
-				BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 				DamageMultiplier: 1 *
 					float64(priest.renewTicks()) *
 					priest.renewHealingMultiplier() *

@@ -28,10 +28,6 @@ type SpellEffect struct {
 	BaseDamage     BaseDamageConfig // Callback for calculating base damage.
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
-	// Bonus stats to be added to the spell.
-	BonusHitRating  float64
-	BonusCritRating float64
-
 	// Used only for dot snapshotting. Internal-only.
 	snapshotMeleeCritRating float64
 	snapshotSpellCritRating float64
@@ -147,9 +143,9 @@ func (spellEffect *SpellEffect) ExpertisePercentage(unit *Unit) float64 {
 	return math.Floor(expertiseRating/ExpertisePerQuarterPercentReduction) / 400
 }
 
-func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, attackTable *AttackTable) float64 {
+func (spellEffect *SpellEffect) PhysicalHitChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
 	hitRating := unit.stats[stats.MeleeHit] +
-		spellEffect.BonusHitRating +
+		spell.BonusHitRating +
 		spellEffect.Target.PseudoStats.BonusMeleeHitRatingTaken
 	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
@@ -168,7 +164,6 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 }
 func (spellEffect *SpellEffect) physicalCritRating(unit *Unit, spell *Spell) float64 {
 	critRating := unit.stats[stats.MeleeCrit] +
-		spellEffect.BonusCritRating +
 		spell.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken
 
@@ -186,7 +181,7 @@ func (spellEffect *SpellEffect) SpellPower(unit *Unit, spell *Spell) float64 {
 
 func (spellEffect *SpellEffect) SpellHitChance(spell *Spell) float64 {
 	hitRating := spell.Unit.stats[stats.SpellHit] +
-		spellEffect.BonusHitRating +
+		spell.BonusHitRating +
 		spellEffect.Target.PseudoStats.BonusSpellHitRatingTaken
 
 	return hitRating / (SpellHitRatingPerHitChance * 100)
@@ -207,7 +202,6 @@ func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float6
 func (spellEffect *SpellEffect) spellCritRating(unit *Unit, spell *Spell) float64 {
 	return unit.stats[stats.SpellCrit] +
 		spell.BonusCritRating +
-		spellEffect.BonusCritRating +
 		spellEffect.Target.PseudoStats.BonusCritRatingTaken +
 		spellEffect.Target.PseudoStats.BonusSpellCritRatingTaken
 }
@@ -228,9 +222,7 @@ func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) floa
 	return critRating / (CritRatingPerCritChance * 100)
 }
 func (spellEffect *SpellEffect) healingCritRating(unit *Unit, spell *Spell) float64 {
-	return unit.GetStat(stats.SpellCrit) +
-		spellEffect.BonusCritRating +
-		spell.BonusCritRating
+	return unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
 }
 
 func (spellEffect *SpellEffect) init(sim *Simulation, spell *Spell) {

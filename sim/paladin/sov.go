@@ -78,13 +78,13 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 31804}, // Judgement of Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
 			DamageMultiplier: judgementMultiplier,
 			ThreatMultiplier: 1,
 
-			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]

@@ -163,6 +163,10 @@ type AutoAttacks struct {
 	OffhandSwingAt  time.Duration
 	RangedSwingAt   time.Duration
 
+	MHConfig     SpellConfig
+	OHConfig     SpellConfig
+	RangedConfig SpellConfig
+
 	MHEffect     SpellEffect
 	OHEffect     SpellEffect
 	RangedEffect SpellEffect
@@ -208,6 +212,31 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		SyncType:        options.SyncType,
 		ReplaceMHSwing:  options.ReplaceMHSwing,
 		IsDualWielding:  options.MainHand.SwingSpeed != 0 && options.OffHand.SwingSpeed != 0,
+	}
+
+	unit.AutoAttacks.MHConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
+		SpellSchool: unit.AutoAttacks.MH.GetSpellSchool(),
+		Flags:       SpellFlagMeleeMetrics,
+	}
+
+	unit.AutoAttacks.OHConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
+		SpellSchool: unit.AutoAttacks.OH.GetSpellSchool(),
+		Flags:       SpellFlagMeleeMetrics,
+	}
+
+	unit.AutoAttacks.RangedConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
+		SpellSchool: SpellSchoolPhysical,
+		Flags:       SpellFlagMeleeMetrics,
+
+		Cast: CastConfig{
+			IgnoreHaste: true,
+			AfterCast: func(sim *Simulation, spell *Spell) {
+				agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
+			},
+		},
 	}
 
 	if unit.Type == EnemyUnit {
@@ -257,45 +286,28 @@ func (aa *AutoAttacks) IsEnabled() bool {
 // Empty handler so Agents don't have to provide one if they have no logic to add.
 func (unit *Unit) OnAutoAttack(sim *Simulation, spell *Spell) {}
 
+func (aa *AutoAttacks) finalize() {
+	if !aa.IsEnabled() {
+		return
+	}
+
+	aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
+	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
+	aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
+	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
+
+	if aa.RangedEffect.ProcMask != ProcMaskUnknown {
+		aa.RangedConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.RangedEffect)
+		aa.RangedAuto = aa.unit.GetOrRegisterSpell(aa.RangedConfig)
+	}
+}
+
 func (aa *AutoAttacks) reset(sim *Simulation) {
 	if !aa.IsEnabled() {
 		return
 	}
 
 	aa.curSwingSpeed = aa.unit.SwingSpeed()
-
-	aa.MHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
-		SpellSchool: aa.MH.GetSpellSchool(),
-		Flags:       SpellFlagMeleeMetrics,
-
-		ApplyEffects: ApplyEffectFuncDirectDamage(aa.MHEffect),
-	})
-
-	aa.OHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
-		SpellSchool: aa.OH.GetSpellSchool(),
-		Flags:       SpellFlagMeleeMetrics,
-
-		ApplyEffects: ApplyEffectFuncDirectDamage(aa.OHEffect),
-	})
-
-	if aa.RangedEffect.ProcMask != ProcMaskUnknown {
-		aa.RangedAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-			ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
-			SpellSchool: SpellSchoolPhysical,
-			Flags:       SpellFlagMeleeMetrics,
-
-			Cast: CastConfig{
-				IgnoreHaste: true,
-				AfterCast: func(sim *Simulation, spell *Spell) {
-					aa.agent.OnAutoAttack(sim, aa.RangedAuto)
-				},
-			},
-
-			ApplyEffects: ApplyEffectFuncDirectDamage(aa.RangedEffect),
-		})
-	}
 
 	aa.MainhandSwingAt = 0
 	aa.OffhandSwingAt = 0

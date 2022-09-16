@@ -219,11 +219,14 @@ func init() {
 			initSpell := func() {
 				rangedEffect := hunter.AutoAttacks.RangedEffect
 				rangedEffect.DamageMultiplier *= 0.5
-				rangedSpell = hunter.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:     core.ActionID{ItemID: itemID},
-					SpellSchool:  core.SpellSchoolPhysical,
-					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(rangedEffect),
+				rangedSpell = hunter.RegisterSpell(core.SpellConfig{
+					ActionID:    core.ActionID{ItemID: itemID},
+					SpellSchool: core.SpellSchoolPhysical,
+					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+
+					BonusHitRating:  hunter.bonusRangedHit(),
+					BonusCritRating: hunter.bonusRangedCrit(),
+					ApplyEffects:    core.ApplyEffectFuncDirectDamage(rangedEffect),
 				})
 			}
 

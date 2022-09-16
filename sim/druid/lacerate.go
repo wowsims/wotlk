@@ -82,12 +82,12 @@ func (druid *Druid) registerLacerateSpell() {
 		}),
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(core.Aura{
+	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:     "Lacerate-" + strconv.Itoa(int(druid.Index)),
 		ActionID:  actionID,
 		MaxStacks: 5,
 		Duration:  time.Second * 15,
-	})
+	}))
 	druid.LacerateDot = core.NewDot(core.Dot{
 		Spell:         druid.Lacerate,
 		Aura:          dotAura,

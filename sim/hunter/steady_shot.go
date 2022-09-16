@@ -66,12 +66,13 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
 
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,

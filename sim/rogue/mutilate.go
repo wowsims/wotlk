@@ -22,8 +22,6 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
-			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 		DamageMultiplier: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
 			0.02*float64(rogue.Talents.FindWeakness) +
@@ -63,6 +61,9 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

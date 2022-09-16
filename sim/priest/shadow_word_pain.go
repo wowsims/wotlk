@@ -33,9 +33,11 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			},
 		},
 
+		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			OutcomeApplier:   priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -65,8 +67,6 @@ func (priest *Priest) registerShadowWordPainSpell() {
 				float64(priest.Talents.Darkness)*0.02 +
 				float64(priest.Talents.TwinDisciplines)*0.01 +
 				float64(priest.Talents.ImprovedShadowWordPain)*0.03,
-
-			BonusCritRating: float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 
 			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 			IsPeriodic:       true,

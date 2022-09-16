@@ -23,7 +23,6 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * (1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
 		ThreatMultiplier: 1,
 
@@ -45,10 +44,11 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	})
 
 	conf := core.SpellConfig{
-		ActionID:     DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:        DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool:     core.SpellSchoolPhysical,
+		Flags:           core.SpellFlagMeleeMetrics,
+		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
 	}
 
 	rs := &RuneSpell{}
@@ -109,12 +109,12 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 	weaponMulti := 0.75
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
-		ActionID:    DeathStrikeActionID.WithTag(1),
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
+		ActionID:        DeathStrikeActionID.WithTag(1),
+		SpellSchool:     core.SpellSchoolPhysical,
+		Flags:           core.SpellFlagMeleeMetrics,
+		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeSpecial,
-			BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: weaponMulti * dk.improvedDeathStrikeDamageBonus(),
 			ThreatMultiplier: 1,
 			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),

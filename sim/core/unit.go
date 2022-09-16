@@ -422,6 +422,8 @@ func (unit *Unit) finalize() {
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
 
+	unit.AutoAttacks.finalize()
+
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
 	}

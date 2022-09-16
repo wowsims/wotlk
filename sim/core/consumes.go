@@ -1213,10 +1213,11 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 			},
 		},
 
+		// Explosives always have 1% resist chance, so just give them hit cap.
+		BonusHitRating: 100 * SpellHitRatingPerHitChance,
+
 		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
 			ProcMask: ProcMaskEmpty,
-			// Explosives always have 1% resist chance, so just give them hit cap.
-			BonusHitRating: 100 * SpellHitRatingPerHitChance,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

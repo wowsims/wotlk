@@ -14,7 +14,6 @@ func (priest *Priest) registerBindingHealSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		ThreatMultiplier: 0.5 * (1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve]),
@@ -49,6 +48,8 @@ func (priest *Priest) registerBindingHealSpell() {
 				CastTime: time.Millisecond * 1500,
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

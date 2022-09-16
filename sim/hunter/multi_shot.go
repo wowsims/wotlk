@@ -14,9 +14,6 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
-			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
 		ThreatMultiplier: 1,
@@ -66,6 +63,10 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
 			},
 		},
+
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 

@@ -27,6 +27,9 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 				CastTime: time.Millisecond * (1500 - 200*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfUnstableAffliction), 1, 0)),
 			},
 		},
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskEmpty,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
@@ -53,12 +56,9 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 			DamageMultiplier: baseAdditiveMultiplier,
 			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
-			BonusCritRating: 0 +
-				warlock.masterDemonologistShadowCrit() +
-				3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
-			OutcomeApplier: applier,
-			IsPeriodic:     true,
-			ProcMask:       core.ProcMaskPeriodicDamage,
+			OutcomeApplier:   applier,
+			IsPeriodic:       true,
+			ProcMask:         core.ProcMaskPeriodicDamage,
 		}),
 	})
 }

@@ -34,6 +34,28 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
 
+	if druid.Talents.ImprovedFaerieFire > 0 {
+		bonusCrit := core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire)
+		oldOnGain := druid.FaerieFireAura.OnGain
+		oldOnExpire := druid.FaerieFireAura.OnExpire
+		druid.FaerieFireAura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+			oldOnGain(aura, sim)
+			druid.Moonfire.BonusCritRating += bonusCrit
+			druid.Starfall.BonusCritRating += bonusCrit
+			druid.StarfallSplash.BonusCritRating += bonusCrit
+			druid.Starfire.BonusCritRating += bonusCrit
+			druid.Wrath.BonusCritRating += bonusCrit
+		}
+		druid.FaerieFireAura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+			oldOnExpire(aura, sim)
+			druid.Moonfire.BonusCritRating -= bonusCrit
+			druid.Starfall.BonusCritRating -= bonusCrit
+			druid.StarfallSplash.BonusCritRating -= bonusCrit
+			druid.Starfire.BonusCritRating -= bonusCrit
+			druid.Wrath.BonusCritRating -= bonusCrit
+		}
+	}
+
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolNature,

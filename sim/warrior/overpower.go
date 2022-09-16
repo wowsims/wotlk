@@ -34,7 +34,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
 		ThreatMultiplier: 0.75,
-		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(mh)),
@@ -73,6 +72,8 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 				Duration: cooldownDur,
 			},
 		},
+
+		BonusCritRating: 25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			warrior.overpowerValidUntil = 0

@@ -58,10 +58,11 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			},
 		},
 
+		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 
-			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
 			DamageMultiplier: (1.0 + 0.05*float64(warrior.Talents.GagOrder)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1), // TODO: GagOrder might apply differently
 			ThreatMultiplier: 1.3,
 			FlatThreatBonus:  770,

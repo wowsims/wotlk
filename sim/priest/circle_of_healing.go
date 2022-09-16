@@ -19,7 +19,6 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.1, 1),
@@ -54,6 +53,8 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

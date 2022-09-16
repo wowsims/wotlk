@@ -13,8 +13,6 @@ func (priest *Priest) registerMindBlastSpell() {
 
 	effect := core.SpellEffect{
 		ProcMask:         core.ProcMaskSpellDamage,
-		BonusHitRating:   0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
-		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		OutcomeApplier:   priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
@@ -78,6 +76,8 @@ func (priest *Priest) registerMindBlastSpell() {
 				Duration: time.Second*8 - time.Millisecond*500*time.Duration(priest.Talents.ImprovedMindBlast),
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		BonusHitRating:  0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

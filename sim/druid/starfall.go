@@ -41,6 +41,8 @@ func (druid *Druid) registerStarfallSpell() {
 			},
 		},
 
+		BonusCritRating: naturesMajestyCritBonus,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:       core.ProcMaskSpellDamage,
 			OutcomeApplier: druid.OutcomeFuncMagicHit(),
@@ -54,7 +56,8 @@ func (druid *Druid) registerStarfallSpell() {
 	})
 
 	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 53190},
+		ActionID:        core.ActionID{SpellID: 53190},
+		BonusCritRating: naturesMajestyCritBonus,
 	})
 
 	druid.StarfallDot = core.NewDot(core.Dot{
@@ -72,12 +75,6 @@ func (druid *Druid) registerStarfallSpell() {
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-			BonusCritRating:  naturesMajestyCritBonus,
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if druid.FaerieFireAura.IsActive() {
-					spellEffect.BonusCritRating = naturesMajestyCritBonus + core.CritRatingPerCritChance*float64(druid.Talents.ImprovedFaerieFire)
-				}
-			},
 		})),
 	})
 
@@ -96,12 +93,6 @@ func (druid *Druid) registerStarfallSpell() {
 			IsPeriodic:       false,
 			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
 			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-			BonusCritRating:  naturesMajestyCritBonus,
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if druid.FaerieFireAura.IsActive() {
-					spellEffect.BonusCritRating = naturesMajestyCritBonus + core.CritRatingPerCritChance*float64(druid.Talents.ImprovedFaerieFire)
-				}
-			},
 		})),
 	})
 }

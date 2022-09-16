@@ -27,7 +27,6 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)) *
 			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
@@ -85,6 +84,8 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 				Duration: time.Duration(float64(time.Second*10) * (1 - .06*float64(priest.Talents.DivineProvidence))),
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if curTarget != nil {

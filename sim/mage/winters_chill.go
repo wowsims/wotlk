@@ -22,7 +22,6 @@ func (mage *Mage) registerWintersChillSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskEmpty,
-			BonusHitRating:   0,
 			ThreatMultiplier: 1,
 			OutcomeApplier:   mage.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

@@ -12,13 +12,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
 	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
-
-	dmgPerComboPoint := 290.0
-	if druid.Equip[items.ItemSlotRanged].ID == 25667 { // Idol of the Beast
-		dmgPerComboPoint += 14
-	}
-
-	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 25667, 14, 0)
 
 	var excessEnergy float64
 
@@ -37,21 +31,16 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
-					spell.BonusCritRating = 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
-				} else {
-					spell.BonusCritRating = 0
-				}
-
 				druid.ApplyClearcasting(sim, spell, cast)
 				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-cast.Cost, 30)
 				cast.Cost = baseCost + excessEnergy
 			},
 		},
 
+		BonusCritRating: core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskMeleeMHSpecial,
-			BonusCritRating: t9bonus,
+			ProcMask: core.ProcMaskMeleeMHSpecial,
 			DamageMultiplier: (1 + 0.03*float64(druid.Talents.FeralAggression)) *
 				core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0),
 			ThreatMultiplier: 1,

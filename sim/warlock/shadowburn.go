@@ -31,9 +31,6 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
@@ -57,6 +54,9 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 				Duration: time.Second * time.Duration(15),
 			},
 		},
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

@@ -16,9 +16,6 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		BonusCritRating: 0 +
-			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
@@ -46,6 +43,10 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 				CastTime: time.Second * 3,
 			},
 		},
+
+		BonusCritRating: 0 +
+			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)

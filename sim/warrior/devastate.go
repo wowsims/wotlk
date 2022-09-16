@@ -65,10 +65,11 @@ func (warrior *Warrior) registerDevastateSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 
-			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
 			DamageMultiplier: weaponMulti,
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  flatThreatBonus,

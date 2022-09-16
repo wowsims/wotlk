@@ -23,7 +23,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) * dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
 		ThreatMultiplier: 1,
 
@@ -45,10 +44,11 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	})
 
 	conf := core.SpellConfig{
-		ActionID:     ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:        ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool:     core.SpellSchoolPhysical,
+		Flags:           core.SpellFlagMeleeMetrics,
+		BonusCritRating: (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
 	}
 
 	rs := &RuneSpell{}

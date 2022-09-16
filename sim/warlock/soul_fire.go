@@ -15,10 +15,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
-			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: baseAdditiveMultiplier,
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
@@ -49,6 +45,11 @@ func (warlock *Warlock) registerSoulFireSpell() {
 				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier() * warlock.soulFireCastTime())
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

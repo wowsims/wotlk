@@ -21,7 +21,6 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:         core.ProcMaskSpellDamage,
-			BonusCritRating:  -100 * core.CritRatingPerCritChance, // Disable criticals for shadow hit
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
@@ -65,9 +64,10 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 			DamageMultiplier: weaponMulti * outbreakBonus * dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
 			ThreatMultiplier: 1,
 

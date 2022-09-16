@@ -21,7 +21,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff() * dk.thassariansPlateDamageBonus() * dk.bloodyStrikesBonus(dk.BloodStrike),
 		ThreatMultiplier: 1,
 
@@ -39,10 +38,11 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		return outcomeApplier
 	})
 	conf := core.SpellConfig{
-		ActionID:     BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:        BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool:     core.SpellSchoolPhysical,
+		Flags:           core.SpellFlagMeleeMetrics,
+		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		ApplyEffects:    core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}
 	if isMH { // offhand doesnt need GCD

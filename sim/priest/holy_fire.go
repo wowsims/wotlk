@@ -32,10 +32,11 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			},
 		},
 
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
 
-			BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 

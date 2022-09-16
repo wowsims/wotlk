@@ -46,8 +46,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				(0.19),
 			ThreatMultiplier: 1,
 
-			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,
 				false,
@@ -163,6 +161,9 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				GCD:  core.GCDDefault,
 			},
 		},
+
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			if paladin.CurrentSeal != nil {

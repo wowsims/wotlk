@@ -19,7 +19,6 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ProcMask:         core.ProcMaskRangedSpecial,
 		DamageMultiplier: impTCDamageMult,
 		ThreatMultiplier: 1.85,
-		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.12) + 300
@@ -53,6 +52,8 @@ func (warrior *Warrior) registerThunderClapSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+
+		BonusCritRating: float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, baseEffect),
 	})

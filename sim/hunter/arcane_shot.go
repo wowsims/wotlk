@@ -41,11 +41,12 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			},
 		},
 
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+			ProcMask: core.ProcMaskRangedSpecial,
 			DamageMultiplier: 1 *
 				hunter.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,

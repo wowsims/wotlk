@@ -60,6 +60,8 @@ func (priest *Priest) RegisterPenanceSpell() {
 			},
 		},
 
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if priest.IsOpponent(target) {
 				damageEffect(sim, target, spell)
@@ -93,7 +95,6 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit) *core.Dot {
 			IsPeriodic: true,
 			IsHealing:  true,
 
-			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1 *
 				(1 + .05*float64(priest.Talents.SearingLight)) *
 				(1 + .01*float64(priest.Talents.TwinDisciplines)),
