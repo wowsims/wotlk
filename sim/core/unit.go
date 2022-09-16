@@ -8,6 +8,7 @@ import (
 )
 
 type UnitType int
+type SpellRegisteredHandler func(spell *Spell)
 
 const (
 	PlayerUnit UnitType = iota
@@ -95,7 +96,8 @@ type Unit struct {
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
-	Spellbook []*Spell
+	Spellbook                 []*Spell
+	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
 	Pets []PetAgent

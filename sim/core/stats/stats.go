@@ -327,8 +327,7 @@ type PseudoStats struct {
 	BonusMHExpertiseRating float64
 	BonusOHExpertiseRating float64
 
-	ThreatMultiplier          float64 // Modulates the threat generated. Affected by things like salv.
-	HolySpellThreatMultiplier float64 // Righteous Fury
+	ThreatMultiplier float64 // Modulates the threat generated. Affected by things like salv.
 
 	DamageDealtMultiplier       float64 // All damage
 	RangedDamageDealtMultiplier float64
@@ -403,8 +402,7 @@ func NewPseudoStats() PseudoStats {
 		//RangedSpeedMultiplier: 1, // Leave at 0 so we can use this to ignore ranged stuff for non-hunters.
 		SpiritRegenMultiplier: 1,
 
-		ThreatMultiplier:          1,
-		HolySpellThreatMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		DamageDealtMultiplier:       1,
 		RangedDamageDealtMultiplier: 1,

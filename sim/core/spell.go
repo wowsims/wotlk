@@ -118,6 +118,13 @@ type Spell struct {
 	initialThreatMultiplier float64
 }
 
+func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
+	for _, spell := range unit.Spellbook {
+		handler(spell)
+	}
+	unit.spellRegistrationHandlers = append(unit.spellRegistrationHandlers, handler)
+}
+
 // Registers a new spell to the unit. Returns the newly created spell.
 func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	if len(unit.Spellbook) > 100 {
@@ -182,6 +189,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	}
 
 	unit.Spellbook = append(unit.Spellbook, spell)
+
+	for _, handler := range unit.spellRegistrationHandlers {
+		handler(spell)
+	}
 
 	if unit.Env != nil && unit.Env.IsFinalized() {
 		spell.finalize()
@@ -361,7 +372,7 @@ func (spell *Spell) ApplyAOEThreatIgnoreMultipliers(threatAmount float64) {
 	}
 }
 func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
-	spell.ApplyAOEThreatIgnoreMultipliers(threatAmount * spell.TotalThreatMultiplier())
+	spell.ApplyAOEThreatIgnoreMultipliers(threatAmount * spell.Unit.PseudoStats.ThreatMultiplier)
 }
 
 func ApplyEffectFuncDirectDamage(baseEffect SpellEffect) ApplySpellEffects {

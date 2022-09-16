@@ -78,14 +78,6 @@ func (spellEffect *SpellEffect) DidCrit() bool {
 	return spellEffect.Outcome.Matches(OutcomeCrit)
 }
 
-func (spell *Spell) TotalThreatMultiplier() float64 {
-	multiplier := spell.Unit.PseudoStats.ThreatMultiplier
-	if spell.SpellSchool == SpellSchoolHoly {
-		multiplier *= spell.Unit.PseudoStats.HolySpellThreatMultiplier
-	}
-	return multiplier
-}
-
 func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 	if spellEffect.Landed() {
 		flatBonus := 0.0
@@ -96,7 +88,7 @@ func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 			flatBonus += spell.DynamicThreatBonus(spellEffect, spell)
 		}
 
-		return (spellEffect.Damage*spell.ThreatMultiplier + flatBonus) * spell.TotalThreatMultiplier()
+		return (spellEffect.Damage*spell.ThreatMultiplier + flatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
 	} else {
 		return 0
 	}
