@@ -30,40 +30,32 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 	isExecutePhase := sim.IsExecutePhase20()
 
 	if prot.GCD.IsReady(sim) {
-	//rotationLoop:
-	
+
 		if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
 			// Always cast HoW if ready
 			prot.HammerOfWrath.Cast(sim, target)
-		} else
-		if prot.HammerOfTheRighteous.IsReady(sim) {
+		} else if prot.HammerOfTheRighteous.IsReady(sim) {
 			// Always cast HotR if ready
 			prot.HammerOfTheRighteous.Cast(sim, target)
-		} else
-		if prot.ShieldOfRighteousness.IsReady(sim) && (prot.HammerOfTheRighteous.TimeToReady(sim) < time.Millisecond * 3100) {
+		} else if prot.ShieldOfRighteousness.IsReady(sim) && (prot.HammerOfTheRighteous.TimeToReady(sim) < time.Millisecond*3100) {
 			// Cast ShoR if ready but only if you've spent a global since HotR
 			prot.ShieldOfRighteousness.Cast(sim, target)
-		} else
-		if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
+		} else if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
 			// AS prio if glyphed.
 			prot.AvengersShield.Cast(sim, target)
-		} else
-		if prot.HolyShield.IsReady(sim) {
+		} else if prot.HolyShield.IsReady(sim) {
 			// Top priority 9 is Holy Shield
 			prot.HolyShield.Cast(sim, target)
-		} else
-		if prot.JudgementOfWisdom.IsReady(sim) {
+		} else if prot.JudgementOfWisdom.IsReady(sim) {
 			// Lower prio 9, should be last prio for DPS but higher prio for Libram
 			prot.JudgementOfWisdom.Cast(sim, target)
-		} else
-		if prot.Consecration.IsReady(sim) {
+		} else if prot.Consecration.IsReady(sim) {
 			// Lower priority 9, Judgement is better damage but triggers Libram of Obstruction
 			prot.Consecration.Cast(sim, target)
-		}	
+		}
 		// Do not ever cast Exorcism
 		// Do not ever cast Holy Wrath
 		// Do not cast AS unglyphed ... yet ... dropping Judgements TBD optional behavior
-	
 
 	}
 

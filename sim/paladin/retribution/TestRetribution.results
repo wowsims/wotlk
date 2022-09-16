@@ -32,7 +32,7 @@ character_stats_results: {
   final_stats: 2332
   final_stats: 0
   final_stats: 0
-  final_stats: 0
+  final_stats: 667.92
   final_stats: 921.1621
   final_stats: 0
   final_stats: 0
@@ -327,6 +327,13 @@ dps_results: {
  value: {
   dps: 5491.33858
   tps: 4930.40879
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LibramofObstruction-40707"
+ value: {
+  dps: 5462.4505
+  tps: 4907.75757
  }
 }
 dps_results: {

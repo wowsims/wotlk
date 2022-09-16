@@ -95,6 +95,93 @@ var FullDebuffs = &proto.Debuffs{
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
-]}`)
-var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [
-]}`)
+        {
+          "id": 42549,
+          "enchant": 44878,
+          "gems": [
+            41396,
+            40089
+          ]
+        },
+        {
+          "id": 43282
+        },
+        {
+          "id": 37635,
+          "enchant": 44957,
+          "gems": [
+            40089
+          ]
+        },
+        {
+          "id": 44188,
+          "enchant": 55002
+        },
+        {
+          "id": 30991,
+          "enchant": 47766,
+          "gems": [
+            40039,
+            40039,
+            40089
+          ]
+        },
+        {
+          "id": 37682,
+          "enchant": 44944,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 44183,
+          "enchant": 63770,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 37379,
+          "enchant": 54793,
+          "gems": [
+            40022,
+            40008
+          ]
+        },
+        {
+          "id": 37292,
+          "enchant": 38373,
+          "gems": [
+            40089
+          ]
+        },
+        {
+          "id": 44243,
+          "enchant": 44528
+        },
+        {
+          "id": 37186,
+          "enchant": 59636
+        },
+        {
+          "id": 29297,
+          "enchant": 59636
+        },
+        {
+          "id": 40767
+        },
+        {
+          "id": 37220
+        },
+        {
+          "id": 37179,
+          "enchant": 22559
+        },
+        {
+          "id": 43085,
+          "enchant": 44936
+        },
+        {
+          "id": 40707
+        }
+      ]}`)
