@@ -12,6 +12,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseModifiers := Multiplicative{}
 	baseMultiplier := baseModifiers.Get()
 	numHits := int32(1)
+        glyphedSingleTargetAS := paladin.HasMajorGlyph(41101)
 
 	scaling := hybridScaling{
 		AP: 0.07,
@@ -21,7 +22,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: baseMultiplier,
+		DamageMultiplier: baseMultiplier * core.TernaryFloat64(glyphedSingleTargetAS, 2, 1), 
 		ThreatMultiplier: 1,
 		BonusCritRating:  1,
 
@@ -31,7 +32,6 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 				damage := 1100.0 + deltaDamage*sim.RandomFloat("Damage Roll")
 				damage += hitEffect.SpellPower(spell.Unit, spell) * scaling.SP
 				damage += hitEffect.MeleeAttackPower(spell.Unit) * scaling.AP
-				damage *= core.TernaryFloat64(paladin.HasMajorGlyph(41101), 2, 1)
 				return damage
 			},
 		},
@@ -39,7 +39,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
-	if !paladin.HasMajorGlyph(41101) {
+	if !glyphedSingleTargetAS {
 		numHits = core.MinInt32(3, paladin.Env.GetNumTargets())
 	}
 	
