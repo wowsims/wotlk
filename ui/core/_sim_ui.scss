@@ -269,6 +269,10 @@ input, select {
 	background-color: red;
 }
 
+.hide-damage-metrics .damage-metrics {
+	display: none !important;
+}
+
 .hide-threat-metrics .threat-metrics {
 	display: none !important;
 }
