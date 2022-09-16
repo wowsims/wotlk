@@ -29,11 +29,10 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Bonus stats to be added to the spell.
-	BonusSpellPower     float64
-	BonusArmorPenRating float64
-	BonusAttackPower    float64
-	BonusHitRating      float64
-	BonusCritRating     float64
+	BonusSpellPower  float64
+	BonusAttackPower float64
+	BonusHitRating   float64
+	BonusCritRating  float64
 
 	// Used only for dot snapshotting. Internal-only.
 	snapshotMeleeCritRating float64
@@ -405,18 +404,6 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	if spellEffect.IsHealing {
 		spellEffect.Damage *= attacker.PseudoStats.HealingDealtMultiplier
 		return
-	}
-
-	// TODO: This behavior is problematic for spell effects that are reused.
-	// Ideally, the BonusArmorPenRating should be incremented, not assigned.
-	// However, incrementing the value causes a monotonic increase for reused effects.
-	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
-			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusMHArmorPenRating
-		}
-		if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
-			spellEffect.BonusArmorPenRating = attacker.PseudoStats.BonusOHArmorPenRating
-		}
 	}
 
 	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
