@@ -37,6 +37,7 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 		Rotation: *protOptions.Rotation,
 		Options:  *protOptions.Options,
 		Seal:     protOptions.Options.Seal,
+                HasGlyphAS: character.HasMajorGlyph(41101),
 	}
 
 	var rotationInput = protOptions.Rotation.CustomRotation
@@ -69,6 +70,8 @@ type ProtectionPaladin struct {
 	Judgement proto.PaladinJudgement
 
 	Seal proto.PaladinSeal
+
+        HasGlyphAS bool
 
 	SelectedRotation func(*core.Simulation)
 	RotationInput    []int32
