@@ -112,7 +112,6 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if success := spell.Cast(sim, we.CurrentTarget); !success {
-		we.Metrics.MarkOOM(&we.Unit, sim.CurrentTime)
 		we.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }

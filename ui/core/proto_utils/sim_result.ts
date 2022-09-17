@@ -260,6 +260,7 @@ export class UnitMetrics {
     readonly hps: DistributionMetricsProto;
     readonly tps: DistributionMetricsProto;
     readonly dtps: DistributionMetricsProto;
+    readonly tto: DistributionMetricsProto;
     readonly actions: Array<ActionMetrics>;
     readonly auras: Array<AuraMetrics>;
     readonly resources: Array<ResourceMetrics>;
@@ -308,6 +309,7 @@ export class UnitMetrics {
         this.hps = this.metrics.hps!;
         this.tps = this.metrics.threat!;
         this.dtps = this.metrics.dtps!;
+        this.tto = this.metrics.tto!;
         this.actions = actions;
         this.auras = auras;
         this.resources = resources;
@@ -435,7 +437,10 @@ export class UnitMetrics {
         const petActionId = await petIdPromise;
 
         const playerMetrics = new UnitMetrics(player, null, petActionId, metrics, raidIndex, actions, auras, resources, pets, playerLogs, resultData);
-        actions.forEach(action => action.unit = playerMetrics);
+        actions.forEach(action => {
+					action.unit = playerMetrics;
+					action.resources = resources.filter(resourceMetrics => resourceMetrics.actionId.equals(action.actionId));
+				});
         auras.forEach(aura => aura.unit = playerMetrics);
         resources.forEach(resource => resource.unit = playerMetrics);
         return playerMetrics;
@@ -654,6 +659,7 @@ export class ActionMetrics {
     private readonly duration: number;
     private readonly data: ActionMetricsProto;
     private readonly combinedMetrics: TargetedActionMetrics;
+    resources: Array<ResourceMetrics>;
 
     private constructor(unit: UnitMetrics | null, actionId: ActionId, data: ActionMetricsProto, resultData: SimResultData) {
         this.unit = unit;
@@ -666,6 +672,7 @@ export class ActionMetrics {
         this.data = data;
         this.targets = data.targets.map(tam => new TargetedActionMetrics(this.iterations, this.duration, tam));
         this.combinedMetrics = TargetedActionMetrics.merge(this.targets);
+				this.resources = [];
     }
 
     get isMeleeAction() {
@@ -698,6 +705,16 @@ export class ActionMetrics {
 
 		get avgCastTimeMs() {
 			return this.combinedMetrics.avgCastTimeMs;
+		}
+
+		get hpm() {
+			const totalHealing = this.combinedMetrics.hps * this.duration;
+			const manaMetrics = this.resources.find(r => r.type == ResourceType.ResourceTypeMana);
+			if (manaMetrics) {
+				return totalHealing / -manaMetrics.gain;
+			}
+
+			return 0;
 		}
 
 		get healingThroughput() {
@@ -889,7 +906,11 @@ export class TargetedActionMetrics {
 		}
 
 		get healingThroughput() {
-			return this.hps / (this.avgCastTimeMs / 1000);
+			if (this.avgCastTimeMs) {
+				return this.hps / (this.avgCastTimeMs / 1000);
+			} else {
+				return 0;
+			}
 		}
 
 		get timeSpentCastingMs() {

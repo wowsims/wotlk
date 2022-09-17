@@ -75,6 +75,7 @@ type UnitMetrics struct {
 	threat DistributionMetrics
 	dtps   DistributionMetrics
 	hps    DistributionMetrics
+	tto    DistributionMetrics
 
 	CharacterIterationMetrics
 
@@ -96,6 +97,8 @@ type CharacterIterationMetrics struct {
 	BonusManaGained float64 // Only includes amount from mana pots / runes / innervates.
 
 	OOMTime time.Duration // time spent not casting and waiting for regen.
+
+	FirstOOMTimestamp time.Duration // Timestamp at which unit first went OOM.
 }
 
 type ActionMetrics struct {
@@ -163,6 +166,7 @@ func NewUnitMetrics() UnitMetrics {
 		threat:  NewDistributionMetrics(),
 		dtps:    NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
+		tto:     NewDistributionMetrics(),
 		actions: make(map[ActionID]*ActionMetrics),
 	}
 }
@@ -303,9 +307,15 @@ func (unitMetrics *UnitMetrics) AddFinalPetMetrics(petMetrics *UnitMetrics) {
 	unitMetrics.dps.Total += petMetrics.dps.Total
 }
 
-func (unitMetrics *UnitMetrics) MarkOOM(unit *Unit, dur time.Duration) {
+func (unitMetrics *UnitMetrics) AddOOMTime(sim *Simulation, dur time.Duration) {
 	unitMetrics.CharacterIterationMetrics.OOMTime += dur
-	unitMetrics.CharacterIterationMetrics.WentOOM = true
+	unitMetrics.MarkOOM(sim)
+}
+func (unitMetrics *UnitMetrics) MarkOOM(sim *Simulation) {
+	if !unitMetrics.WentOOM {
+		unitMetrics.WentOOM = true
+		unitMetrics.FirstOOMTimestamp = sim.CurrentTime
+	}
 }
 
 func (unitMetrics *UnitMetrics) reset() {
@@ -313,6 +323,7 @@ func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.threat.reset()
 	unitMetrics.dtps.reset()
 	unitMetrics.hps.reset()
+	unitMetrics.tto.reset()
 	unitMetrics.CharacterIterationMetrics = CharacterIterationMetrics{}
 
 	for _, resourceMetrics := range unitMetrics.resources {
@@ -321,12 +332,28 @@ func (unitMetrics *UnitMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (unitMetrics *UnitMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
+func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterDurationSeconds float64) {
+	if unit.HasManaBar() {
+		timeToOOM := unitMetrics.FirstOOMTimestamp
+		if !unitMetrics.WentOOM {
+			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
+			manaSpentPerSecond := (unitMetrics.ManaSpent - unitMetrics.ManaGained) / encounterDurationSeconds
+			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
+			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
+		}
+
+		unitMetrics.tto.Total = timeToOOM.Seconds()
+		// Hack because of the way DistributionMetrics does its calculations.
+		unitMetrics.tto.Total *= encounterDurationSeconds
+	}
+
 	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.hps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.oomTimeSum += float64(unitMetrics.OOMTime.Seconds())
+	unitMetrics.tto.doneIteration(seed, encounterDurationSeconds)
+
+	unitMetrics.oomTimeSum += unitMetrics.OOMTime.Seconds()
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++
 	}
@@ -338,6 +365,7 @@ func (unitMetrics *UnitMetrics) ToProto(numIterations int32) *proto.UnitMetrics 
 		Threat:        unitMetrics.threat.ToProto(numIterations),
 		Dtps:          unitMetrics.dtps.ToProto(numIterations),
 		Hps:           unitMetrics.hps.ToProto(numIterations),
+		Tto:           unitMetrics.tto.ToProto(numIterations),
 		SecondsOomAvg: unitMetrics.oomTimeSum / float64(numIterations),
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / float64(numIterations),
 	}
