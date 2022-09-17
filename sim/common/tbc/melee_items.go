@@ -1076,7 +1076,9 @@ func init() {
 	core.NewItemEffect(12590, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		effectAura := character.NewTemporaryStatsAura("Felstriker Proc", core.ActionID{SpellID: 16551}, stats.Stats{stats.MeleeCrit: 100 * core.CritRatingPerCritChance}, time.Second*3)
-		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMelee)
+		mh, oh := character.GetWeaponHands(12590)
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Felstriker",
@@ -1085,7 +1087,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
 					return
 				}
 				if !ppmm.Proc(sim, spellEffect.ProcMask, "Felstriker") {
