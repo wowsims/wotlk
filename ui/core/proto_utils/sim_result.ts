@@ -696,6 +696,14 @@ export class ActionMetrics {
         return this.combinedMetrics.castsPerMinute;
     }
 
+		get avgCastTimeMs() {
+			return this.combinedMetrics.avgCastTimeMs;
+		}
+
+		get healingThroughput() {
+			return this.combinedMetrics.healingThroughput;
+		}
+
     get avgCast() {
         return this.combinedMetrics.avgCast;
     }
@@ -876,6 +884,18 @@ export class TargetedActionMetrics {
         return this.casts / (this.duration / 60);
     }
 
+		get avgCastTimeMs() {
+			return this.data.castTimeMs / this.iterations / this.casts;
+		}
+
+		get healingThroughput() {
+			return this.hps / (this.avgCastTimeMs / 1000);
+		}
+
+		get timeSpentCastingMs() {
+			return this.data.castTimeMs / this.iterations;
+		}
+
     get avgCast() {
         return (this.data.damage / this.iterations) / (this.casts || 1);
     }
@@ -964,6 +984,7 @@ export class TargetedActionMetrics {
                 threat: sum(actions.map(a => a.data.threat)),
                 healing: sum(actions.map(a => a.data.healing)),
                 shielding: sum(actions.map(a => a.data.shielding)),
+                castTimeMs: sum(actions.map(a => a.data.castTimeMs)),
             }));
     }
 }

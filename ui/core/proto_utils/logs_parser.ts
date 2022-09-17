@@ -42,7 +42,7 @@ export class Entity {
     //   'Target 1' if a target,
     //   'PlayerName (#1)' if a player, or
     //   'PlayerName (#1) - PetName' if a pet.
-    static parseRegex = /\[(Target (\d+))|(([a-zA-Z0-9]+) \(#(\d+)\) - ([a-zA-Z0-9\s]+))|(([a-zA-Z0-9]+) \(#(\d+)\))\]/g;
+    static parseRegex = /\[(Target (\d+))|(([a-zA-Z0-9]+) \(#(\d+)\) - ([a-zA-Z0-9\s]+))|(([a-zA-Z0-9\s]+) \(#(\d+)\))\]/g;
     static parseAll(str: string): Array<Entity> {
         return Array.from(str.matchAll(Entity.parseRegex)).map(match => {
             if (match[1]) {
@@ -214,6 +214,7 @@ export class SimLog {
 
 export class DamageDealtLog extends SimLog {
     readonly amount: number;
+		readonly type: string;
     readonly miss: boolean;
     readonly hit: boolean;
     readonly crit: boolean;
@@ -227,9 +228,10 @@ export class DamageDealtLog extends SimLog {
     readonly partialResist2_4: boolean;
     readonly partialResist3_4: boolean;
 
-    constructor(params: SimLogParams, amount: number, miss: boolean, crit: boolean, crush: boolean, glance: boolean, dodge: boolean, parry: boolean, block: boolean, tick: boolean, partialResist1_4: boolean, partialResist2_4: boolean, partialResist3_4: boolean) {
+    constructor(params: SimLogParams, amount: number, type: string, miss: boolean, crit: boolean, crush: boolean, glance: boolean, dodge: boolean, parry: boolean, block: boolean, tick: boolean, partialResist1_4: boolean, partialResist2_4: boolean, partialResist3_4: boolean) {
         super(params);
         this.amount = amount;
+				this.type = type;
         this.miss = miss;
         this.glance = glance;
         this.dodge = dodge;
@@ -244,8 +246,28 @@ export class DamageDealtLog extends SimLog {
         this.partialResist3_4 = partialResist3_4;
     }
 
+		isDamage(): boolean {
+			return this.type == 'damage';
+		}
+
+		isHealing(): boolean {
+			return this.type == 'healing';
+		}
+
+		isShielding(): boolean {
+			return this.type == 'shielding';
+		}
+
     resultString(): string {
-        let result = this.miss ? 'Miss'
+			let result = '';
+
+				if (this.isHealing()) {
+					result += 'Heal ';
+				} else if (this.isShielding()) {
+					result += 'Shield ';
+				}
+
+        result += this.miss ? 'Miss'
             : this.dodge ? 'Dodge'
                 : this.parry ? 'Parry'
                     : this.glance ? 'Glance'
@@ -254,17 +276,18 @@ export class DamageDealtLog extends SimLog {
                                 : this.crush ? 'Crush'
                                     : this.tick ? 'Tick'
                                         : 'Hit';
+
         result += ' ' + this.target;
         if (!this.miss && !this.dodge && !this.parry) {
-            result += ` for ${this.amount.toFixed(2)}`;
-            if (this.partialResist1_4) {
-                result += ' (25% Resist)';
-            } else if (this.partialResist2_4) {
-                result += ' (50% Resist)';
-            } else if (this.partialResist3_4) {
-                result += ' (75% Resist)';
-            }
-            result += '.'
+					result += ` for ${this.amount.toFixed(2)}`;
+					if (this.partialResist1_4) {
+							result += ' (25% Resist)';
+					} else if (this.partialResist2_4) {
+							result += ' (50% Resist)';
+					} else if (this.partialResist3_4) {
+							result += ' (75% Resist)';
+					}
+					result += '.'
         }
         return result;
     }
@@ -275,19 +298,18 @@ export class DamageDealtLog extends SimLog {
     }
 
     static parse(params: SimLogParams): Promise<DamageDealtLog> | null {
-        const match = params.raw.match(/] (.*?) (tick )?((Miss)|(Hit)|(CriticalBlock)|(Crit)|(Crush)|(Glance)|(Dodge)|(Parry)|(Block))( \((\d+)% Resist\))?( for (\d+\.\d+) damage)?/);
+        const match = params.raw.match(/] (.*?) (tick )?((Miss)|(Hit)|(CriticalBlock)|(Crit)|(Crush)|(Glance)|(Dodge)|(Parry)|(Block))( \((\d+)% Resist\))?( for (\d+\.\d+) ((damage)|(healing)|(shielding)))?/);
         if (match) {
             return ActionId.fromLogString(match[1]).fill(params.source?.index).then(cause => {
                 params.actionId = cause;
 
-                let amount = 0;
-                if (match[16]) {
-                    amount = parseFloat(match[16]);
-                }
+                const amount = match[16] ? parseFloat(match[16]) : 0;
+                const type = match[17] || '';
 
                 return new DamageDealtLog(
                     params,
                     amount,
+										type,
                     match[3] == 'Miss',
                     match[3] == 'Crit' || match[3] == 'CriticalBlock',
                     match[3] == 'Crush',

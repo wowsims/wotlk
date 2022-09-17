@@ -152,6 +152,9 @@ message TargetedActionMetrics {
 
 	// Total shielding done to this target by this action.
 	double shielding = 13;
+
+	// Total time spent casting this action, in milliseconds, either from hard casts, GCD, or channeling.
+	double cast_time_ms = 14;
 }
 
 message AuraMetrics {

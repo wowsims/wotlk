@@ -53,10 +53,12 @@ func (priest *Priest) registerRenewSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.SpellMetrics[target.UnitIndex].Hits++
+			priest.RenewHots[target.UnitIndex].Apply(sim)
+
 			if priest.EmpoweredRenew != nil {
 				priest.EmpoweredRenew.Cast(sim, target)
 			}
-			priest.RenewHots[target.UnitIndex].Apply(sim)
 		},
 	})
 

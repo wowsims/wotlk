@@ -220,7 +220,9 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 		fullCastTime := spell.CurCast.CastTime + spell.CurCast.ChannelTime + spell.CurCast.AfterCastDelay
 
 		if fullCastTime != 0 || gcd != 0 {
-			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+MaxDuration(gcd, fullCastTime))
+			gcdDelay := MaxDuration(gcd, fullCastTime)
+			spell.SpellMetrics[target.UnitIndex].TotalCastTime += gcdDelay
+			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+gcdDelay)
 		}
 
 		onCastComplete(sim, target)

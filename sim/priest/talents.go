@@ -289,10 +289,12 @@ func (priest *Priest) applySerendipity() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == priest.FlashHeal || spell == priest.BindingHeal {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
+			} else if spell == priest.GreaterHeal || spell == priest.PrayerOfHealing {
+				procAura.Deactivate(sim)
 			}
 		},
 	})
