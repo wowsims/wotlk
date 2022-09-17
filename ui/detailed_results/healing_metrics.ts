@@ -52,6 +52,18 @@ export class HealingMetricsTable extends MetricsTable<ActionMetrics> {
 				getDisplayString: (metric: ActionMetrics) => metric.casts.toFixed(1),
 			},
 			{
+				name: 'Cast Time',
+				tooltip: 'Average cast time in seconds',
+				getValue: (metric: ActionMetrics) => metric.avgCastTimeMs,
+				getDisplayString: (metric: ActionMetrics) => (metric.avgCastTimeMs/1000).toFixed(2),
+			},
+			{
+				name: 'HPET',
+				tooltip: 'Healing / Avg Cast Time',
+				getValue: (metric: ActionMetrics) => metric.healingThroughput,
+				getDisplayString: (metric: ActionMetrics) => metric.healingThroughput.toFixed(1),
+			},
+			{
 				name: 'Crit %',
 				tooltip: 'Crits / Hits',
 				getValue: (metric: ActionMetrics) => metric.critPercent,

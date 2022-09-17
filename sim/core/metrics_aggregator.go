@@ -134,24 +134,26 @@ type TargetedActionMetrics struct {
 	Threat    float64
 	Healing   float64
 	Shielding float64
+	CastTime  time.Duration
 }
 
 func (tam *TargetedActionMetrics) ToProto() *proto.TargetedActionMetrics {
 	return &proto.TargetedActionMetrics{
 		UnitIndex: tam.UnitIndex,
 
-		Casts:     tam.Casts,
-		Hits:      tam.Hits,
-		Crits:     tam.Crits,
-		Misses:    tam.Misses,
-		Dodges:    tam.Dodges,
-		Parries:   tam.Parries,
-		Blocks:    tam.Blocks,
-		Glances:   tam.Glances,
-		Damage:    tam.Damage,
-		Threat:    tam.Threat,
-		Healing:   tam.Healing,
-		Shielding: tam.Shielding,
+		Casts:      tam.Casts,
+		Hits:       tam.Hits,
+		Crits:      tam.Crits,
+		Misses:     tam.Misses,
+		Dodges:     tam.Dodges,
+		Parries:    tam.Parries,
+		Blocks:     tam.Blocks,
+		Glances:    tam.Glances,
+		Damage:     tam.Damage,
+		Threat:     tam.Threat,
+		Healing:    tam.Healing,
+		Shielding:  tam.Shielding,
+		CastTimeMs: float64(tam.CastTime.Milliseconds()),
 	}
 }
 
@@ -280,6 +282,7 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 		tam.Threat += spellTargetMetrics.TotalThreat
 		tam.Healing += spellTargetMetrics.TotalHealing
 		tam.Shielding += spellTargetMetrics.TotalShielding
+		tam.CastTime += spellTargetMetrics.TotalCastTime
 
 		target := spell.Unit.AttackTables[i].Defender
 		target.Metrics.dtps.Total += spellTargetMetrics.TotalDamage

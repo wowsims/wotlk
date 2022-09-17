@@ -13,7 +13,6 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 	baseCost := 0.23 * priest.BaseMana
 	coeff := 0.8057 + 0.08*float64(priest.Talents.BorrowedTime)
 
-	// TODO: Account for attacker/target multipliers
 	multiplier := 1 *
 		(1 + .05*float64(priest.Talents.ImprovedPowerWordShield) + .01*float64(priest.Talents.TwinDisciplines)) *
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.05, 1)
