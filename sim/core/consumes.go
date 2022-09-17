@@ -446,12 +446,12 @@ func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 	case proto.PetFood_PetFoodSpicedMammothTreats:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 30,
-			stats.Spirit:   30,
+			stats.Stamina:  30,
 		})
 	case proto.PetFood_PetFoodKiblersBits:
 		pet.AddStats(stats.Stats{
 			stats.Strength: 20,
-			stats.Spirit:   20,
+			stats.Stamina:  20,
 		})
 	}
 
