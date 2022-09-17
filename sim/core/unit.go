@@ -470,9 +470,9 @@ func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim.CurrentTime)
+	unit.doneIterationGCD(sim)
 
-	unit.doneIterationMana()
+	unit.manaBar.doneIteration()
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)
