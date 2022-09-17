@@ -105,9 +105,11 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					unleashedRage: true,
+					icyTalons: true,
+					swiftRetribution: true,
+					sanctifiedRetribution: true,
 				}),
 				partyBuffs: PartyBuffs.create({
-					braidedEterniumChain: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -121,6 +123,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					heartOfTheCrusader: true,
 				}),
 			},
 
