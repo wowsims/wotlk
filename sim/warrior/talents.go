@@ -270,9 +270,7 @@ func (warrior *Warrior) applyBloodsurge() {
 
 			warrior.BloodsurgeAura.Activate(sim)
 			warrior.BloodsurgeAura.AddStack(sim)
-			if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
-				warrior.BloodsurgeAura.AddStack(sim)
-			}
+			warrior.BloodsurgeAura.AddStack(sim)
 			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
 	})
@@ -564,9 +562,7 @@ func (warrior *Warrior) applySuddenDeath() {
 
 			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
 				warrior.SuddenDeathAura.Activate(sim)
-				if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
-					warrior.SuddenDeathAura.AddStack(sim)
-				}
+				warrior.SuddenDeathAura.AddStack(sim)
 			}
 
 			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
