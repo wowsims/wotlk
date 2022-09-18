@@ -41,6 +41,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	}
 
 	cat.maxRipTicks = cat.MaxRipTicks()
+	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -71,6 +72,7 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
+	prepopOoc      bool
 	missChance     float64
 	readyToShift   bool
 	waitingForTick bool
@@ -106,4 +108,8 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
+
+	if cat.prepopOoc && cat.Talents.OmenOfClarity {
+		cat.ClearcastingAura.Activate(sim)
+	}
 }
