@@ -362,10 +362,14 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second) {
 		if sim.CurrentTime < time.Second {
 
-			// Pre-Pull Cast Shadow Bolt
-			warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
-			warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-
+			if warlock.Talents.ChaosBolt {
+				warlock.SpendMana(sim, warlock.ChaosBolt.DefaultCast.Cost, warlock.ChaosBolt.ResourceMetrics)
+				warlock.ChaosBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+			} else {
+				// Pre-Pull Cast Shadow Bolt
+				warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
+				warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+			}
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
 
