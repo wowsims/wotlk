@@ -83,7 +83,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			DamageMultiplier: baseAdditiveMultiplierDot,
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(0.4/3*785/5*float64(warlock.ImmolateDot.NumberOfTicks), 0.4/3*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
-			OutcomeApplier: warlock.OutcomeFuncTick(),
+			OutcomeApplier: warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		}),
 	})
 }
