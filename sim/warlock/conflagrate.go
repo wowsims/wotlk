@@ -71,7 +71,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID,
+			ActionID: actionID.WithTag(1),
 		}),
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 2,

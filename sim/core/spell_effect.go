@@ -47,7 +47,6 @@ type SpellEffect struct {
 	ProcMask ProcMask
 
 	// Callbacks for providing additional custom behavior.
-	OnInit                func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 	OnSpellHitDealt       EffectOnSpellHitDealt
 	OnPeriodicDamageDealt EffectOnPeriodicDamageDealt
 
@@ -198,12 +197,6 @@ func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) floa
 }
 func (spellEffect *SpellEffect) healingCritRating(unit *Unit, spell *Spell) float64 {
 	return unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
-}
-
-func (spellEffect *SpellEffect) init(sim *Simulation, spell *Spell) {
-	if spellEffect.OnInit != nil {
-		spellEffect.OnInit(sim, spell, spellEffect)
-	}
 }
 
 func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spell) float64 {

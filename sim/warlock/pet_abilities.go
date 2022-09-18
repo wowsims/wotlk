@@ -74,8 +74,8 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		},
 
 		BonusCritRating: wp.owner.masterDemonologistFireCrit(),
-		DamageMultiplier: (1.0 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
-			(1.0 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
+		DamageMultiplier: (1 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
+			(1 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -123,7 +123,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 			},
 		},
 
-		DamageMultiplier: 1.0,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
@@ -199,7 +199,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			},
 		},
 
-		DamageMultiplier: 1.0 + 0.03*float64(wp.owner.Talents.ShadowMastery),
+		DamageMultiplier: 1 + 0.03*float64(wp.owner.Talents.ShadowMastery),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -221,7 +221,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 							}
 						}
 
-						return oldCalc(sim, hitEffect, spell) * (1.0 + 0.15*float64(counter))
+						return oldCalc(sim, hitEffect, spell) * (1 + 0.15*float64(counter))
 					}
 				}),
 			OutcomeApplier:  wp.OutcomeFuncMagicHitAndCritBinary(1.5 + 0.1*float64(wp.owner.Talents.Ruin)),

@@ -23,7 +23,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 	}
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
+		ActionID:     actionID.WithTag(1),
 		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -62,7 +62,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Immolate-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID,
+			ActionID: actionID.WithTag(1),
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				warlock.ChaosBolt.DamageMultiplierAdditive += fireAndBrimstoneBonus
 				warlock.Incinerate.DamageMultiplierAdditive += fireAndBrimstoneBonus
