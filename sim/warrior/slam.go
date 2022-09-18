@@ -10,6 +10,7 @@ import (
 func (warrior *Warrior) registerSlamSpell() {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
+	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
@@ -22,7 +23,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     cost,
-				GCD:      core.GCDDefault,
+				GCD:      gcd,
 				CastTime: time.Millisecond*1500 - time.Millisecond*500*time.Duration(warrior.Talents.ImprovedSlam),
 			},
 			IgnoreHaste: true,
