@@ -13,23 +13,26 @@ const FanOfKnivesSpellID int32 = 51723
 func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 	var procMask core.ProcMask
 	var baseDamageConfig core.BaseDamageConfig
-	weaponMultiplier := 0.0
+	var weaponMultiplier float64
 	if isMH {
 		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		procMask = core.ProcMaskMeleeMHSpecial
 		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, false)
-
 	} else {
 		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		weaponMultiplier += 0.1 * float64(rogue.Talents.DualWieldSpecialization)
 		procMask = core.ProcMaskMeleeOHSpecial
 		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, false)
 	}
+
+	baseDamageConfig = core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
+		return func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
+			return oldCalc(sim, effect, spell) * weaponMultiplier
+		}
+	})
+
 	return core.SpellEffect{
-		ProcMask: procMask,
-		DamageMultiplier: (1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0)) * weaponMultiplier,
+		ProcMask:       procMask,
 		BaseDamage:     baseDamageConfig,
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, false)),
 	}
@@ -59,6 +62,9 @@ func (rogue *Rogue) registerFanOfKnives() {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: applyEffects,

@@ -19,18 +19,17 @@ func (priest *Priest) registerRenewSpell() {
 			SpellSchool: core.SpellSchoolHoly,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
-			BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+			DamageMultiplier: 1 *
+				float64(priest.renewTicks()) *
+				priest.renewHealingMultiplier() *
+				.05 * float64(priest.Talents.EmpoweredRenew) *
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
 				ProcMask:  core.ProcMaskSpellHealing,
-
-				DamageMultiplier: 1 *
-					float64(priest.renewTicks()) *
-					priest.renewHealingMultiplier() *
-					.05 * float64(priest.Talents.EmpoweredRenew) *
-					core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
 				OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
@@ -51,6 +50,9 @@ func (priest *Priest) registerRenewSpell() {
 				GCD:  core.GCDDefault,
 			},
 		},
+
+		DamageMultiplier: priest.renewHealingMultiplier(),
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.SpellMetrics[target.UnitIndex].Hits++
@@ -83,8 +85,6 @@ func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
 			ProcMask:   core.ProcMaskPeriodicHealing,
 			IsPeriodic: true,
 			IsHealing:  true,
-
-			DamageMultiplier: priest.renewHealingMultiplier(),
 
 			BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
 			OutcomeApplier: priest.OutcomeFuncTick(),

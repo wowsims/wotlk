@@ -150,7 +150,7 @@ func (priest *Priest) applyGrace() {
 			aura.Activate(sim)
 		},
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.Penance {
+			if spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.PenanceHeal {
 				if procChance == 1 || sim.RandomFloat("Grace") < procChance {
 					aura := auras[spellEffect.Target.UnitIndex]
 					aura.Activate(sim)
@@ -222,7 +222,7 @@ func (priest *Priest) applyInspiration() {
 				spell == priest.PrayerOfMending ||
 				spell == priest.PrayerOfHealing ||
 				spell == priest.CircleOfHealing ||
-				spell == priest.Penance {
+				spell == priest.PenanceHeal {
 				auras[spellEffect.Target.UnitIndex].Activate(sim)
 			}
 		},

@@ -11,7 +11,6 @@ import (
 func (priest *Priest) registerShadowWordDeathSpell() {
 	baseCost := priest.BaseMana * 0.12
 
-	playerMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01)
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfShadowWordDeath) {
 		priest.RegisterResetEffect(func(sim *core.Simulation) {
 			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
@@ -40,13 +39,15 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			},
 		},
 
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating:  float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
+		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
+		DamageMultiplier: 1 +
+			float64(priest.Talents.Darkness)*0.02 +
+			float64(priest.Talents.TwinDisciplines)*0.01,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: playerMod,
+			ProcMask: core.ProcMaskSpellDamage,
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					priest.AddShadowWeavingStack(sim)

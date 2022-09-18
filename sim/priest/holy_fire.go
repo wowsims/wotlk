@@ -33,12 +33,11 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		},
 
 		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
-
-			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
 
 			BaseDamage:     core.BaseDamageConfigMagic(900, 1140, 0.5711),
 			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
@@ -54,7 +53,13 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 
 	target := priest.CurrentTarget
 	priest.HolyFireDot = core.NewDot(core.Dot{
-		Spell: priest.HolyFire,
+		Spell: priest.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolHoly,
+
+			DamageMultiplier: priest.HolyFire.DamageMultiplier,
+			ThreatMultiplier: priest.HolyFire.ThreatMultiplier,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "HolyFire-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,
@@ -72,10 +77,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		NumberOfTicks: 7,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
-			DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-
+			ProcMask:       core.ProcMaskPeriodicDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(50, 0.024),
 			OutcomeApplier: priest.OutcomeFuncTick(),
 			IsPeriodic:     true,
