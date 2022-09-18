@@ -66,6 +66,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 		},
 
 		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
+		DamageMultiplier: weaponMulti,
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  flatThreatBonus,
 		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -74,8 +75,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: weaponMulti,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

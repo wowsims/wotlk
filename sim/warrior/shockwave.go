@@ -33,11 +33,11 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			},
 		},
 
-		ThreatMultiplier: 1.0,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskRanged,
-			DamageMultiplier: 1.0,
+			ProcMask: core.ProcMaskRanged,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

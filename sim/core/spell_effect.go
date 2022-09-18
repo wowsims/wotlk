@@ -26,14 +26,12 @@ type SpellEffect struct {
 	OutcomeApplier OutcomeApplier   // Callback for determining outcome.
 
 	// Used only for dot snapshotting. Internal-only.
-	snapshotMeleeCritRating float64
-	snapshotSpellCritRating float64
+	snapshotDamageMultiplier float64
+	snapshotMeleeCritRating  float64
+	snapshotSpellCritRating  float64
 
 	// Use snapshotted values for crit/damage rather than recomputing them.
 	isSnapshot bool
-
-	// Additional multiplier that is always applied, for damage effects.
-	DamageMultiplier float64
 
 	// Used in determining snapshot based damage from effect details (e.g. snapshot crit and % damage modifiers)
 	IsPeriodic bool
@@ -356,13 +354,13 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
 		// Even when ignoring attacker multipliers we still apply this one, because its
 		// specific to the spell.
-		spellEffect.Damage *= spellEffect.DamageMultiplier
+		spellEffect.Damage *= spell.DamageMultiplier * spell.DamageMultiplierAdditive
 		return
 	}
 
-	// For dot snapshots, everything has already been stored in spellEffect.DamageMultiplier.
+	// For dot snapshots, everything has already been stored in spellEffect.snapshotDamageMultiplier.
 	if spellEffect.isSnapshot {
-		spellEffect.Damage *= spellEffect.DamageMultiplier
+		spellEffect.Damage *= spellEffect.snapshotDamageMultiplier
 		return
 	}
 
@@ -387,7 +385,7 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
 
 	multiplier *= spell.DamageMultiplier
-	multiplier *= spellEffect.DamageMultiplier
+	multiplier *= spell.DamageMultiplierAdditive
 
 	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier

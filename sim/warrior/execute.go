@@ -43,12 +43,11 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1.25,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

@@ -22,13 +22,13 @@ func newProcDamageEffect(config ProcDamageEffect) {
 			ActionID:    core.ActionID{ItemID: config.ID},
 			SpellSchool: config.School,
 
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       config.BaseDamage,
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     config.BaseDamage,
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 

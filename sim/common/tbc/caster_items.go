@@ -85,12 +85,12 @@ func init() {
 		timbalsSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 45055},
 			SpellSchool:      core.SpellSchoolShadow,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(285, 475),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     core.BaseDamageConfigRoll(285, 475),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 
@@ -132,12 +132,12 @@ func init() {
 			scryerSpell = character.RegisterSpell(core.SpellConfig{
 				ActionID:         core.ActionID{SpellID: 45429},
 				SpellSchool:      core.SpellSchoolArcane,
+				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					BaseDamage:       core.BaseDamageConfigRoll(333, 367),
-					OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+					ProcMask:       core.ProcMaskEmpty,
+					BaseDamage:     core.BaseDamageConfigRoll(333, 367),
+					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 				}),
 			})
 		}

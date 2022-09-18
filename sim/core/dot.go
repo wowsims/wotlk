@@ -171,7 +171,7 @@ func NewDot(config Dot) *Dot {
 func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect SpellEffect) {
 	var snapshotDmgMult, snapshotCrit, snapshotSpellCrit float64
 	if dot.isRollover {
-		snapshotDmgMult = dot.snapshotEffect.DamageMultiplier
+		snapshotDmgMult = dot.snapshotEffect.snapshotDamageMultiplier
 		snapshotCrit = dot.snapshotEffect.snapshotMeleeCritRating
 		snapshotSpellCrit = dot.snapshotEffect.snapshotSpellCritRating
 	}
@@ -180,11 +180,11 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 	dot.snapshotEffect.Target = target
 	dot.snapshotEffect.isSnapshot = true
 	if dot.isRollover {
-		dot.snapshotEffect.DamageMultiplier = snapshotDmgMult
+		dot.snapshotEffect.snapshotDamageMultiplier = snapshotDmgMult
 		dot.snapshotEffect.snapshotMeleeCritRating = snapshotCrit
 		dot.snapshotEffect.snapshotSpellCritRating = snapshotSpellCrit
 	} else {
-		dot.snapshotEffect.DamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
+		dot.snapshotEffect.snapshotDamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
 		dot.snapshotEffect.snapshotMeleeCritRating = dot.snapshotEffect.physicalCritRating(dot.Spell.Unit, dot.Spell)
 		dot.snapshotEffect.snapshotSpellCritRating = dot.snapshotEffect.spellCritRating(dot.Spell.Unit, dot.Spell)
 	}

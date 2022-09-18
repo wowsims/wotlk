@@ -32,8 +32,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
-
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(mh)),
 
@@ -73,6 +71,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
+		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
 		ThreatMultiplier: 0.75,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

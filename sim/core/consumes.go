@@ -1057,12 +1057,14 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 		actionID := ActionID{ItemID: 22788}
 
 		flameCapProc := character.RegisterSpell(SpellConfig{
-			ActionID:         actionID,
-			SpellSchool:      SpellSchoolFire,
+			ActionID:    actionID,
+			SpellSchool: SpellSchoolFire,
+
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-				ProcMask:         ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: ProcMaskEmpty,
 
 				BaseDamage:     BaseDamageConfigFlat(40),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -1215,12 +1217,11 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 
 		// Explosives always have 1% resist chance, so just give them hit cap.
 		BonusHitRating:   100 * SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
 			ProcMask: ProcMaskEmpty,
-
-			DamageMultiplier: 1,
 
 			BaseDamage:     BaseDamageConfigRoll(minDamage, maxDamage),
 			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(2),

@@ -28,10 +28,10 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{ItemID: 12632},
 			SpellSchool:      core.SpellSchoolNature,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(3),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -61,10 +61,10 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{ItemID: 17111},
 			SpellSchool:      core.SpellSchoolFire,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(2),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -126,10 +126,10 @@ func init() {
 		singleTargetSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:         procActionID.WithTag(1),
 			SpellSchool:      core.SpellSchoolNature,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 0.5,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(300),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -395,10 +395,10 @@ func init() {
 			ActionID:         actionID,
 			SpellSchool:      core.SpellSchoolPhysical,
 			Flags:            core.SpellFlagIgnoreResists,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(600),
 				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
@@ -446,11 +446,11 @@ func init() {
 				},
 			},
 
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigRoll(513, 567),
 				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
@@ -470,12 +470,12 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 34696},
 			SpellSchool:      core.SpellSchoolShadow,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(285, 315),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     core.BaseDamageConfigRoll(285, 315),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 
@@ -778,12 +778,12 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{ItemID: 31193},
 			SpellSchool:      core.SpellSchoolShadow,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMagic(48, 54, 1),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     core.BaseDamageConfigMagic(48, 54, 1),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 
@@ -922,12 +922,12 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 40291},
 			SpellSchool:      core.SpellSchoolShadow,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigFlat(20),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     core.BaseDamageConfigFlat(20),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 
@@ -1030,11 +1030,11 @@ func init() {
 			scryerSpell = character.RegisterSpell(core.SpellConfig{
 				ActionID:         core.ActionID{SpellID: 45428},
 				SpellSchool:      core.SpellSchoolArcane,
+				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					BaseDamage:       core.BaseDamageConfigRoll(333, 367),
+					ProcMask:   core.ProcMaskEmpty,
+					BaseDamage: core.BaseDamageConfigRoll(333, 367),
 					// TODO: validate this is a melee hit roll
 					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
 				}),
