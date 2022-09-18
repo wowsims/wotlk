@@ -351,20 +351,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestEnhancement-AllItems-Nobundo'sBattlegear"
- value: {
-  dps: 5442.22326
-  tps: 3067.66673
- }
-}
-dps_results: {
- key: "TestEnhancement-AllItems-Nobundo'sRegalia"
- value: {
-  dps: 5009.1912
-  tps: 2848.4055
- }
-}
-dps_results: {
  key: "TestEnhancement-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 5300.43352

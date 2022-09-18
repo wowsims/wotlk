@@ -305,14 +305,6 @@ export class ActionId {
                     name += ' (Off Hand)';
                 }
                 break;
-            case 'Conflagrate':
-            case 'Immolate':
-                if (this.tag == 1) {
-                    name += ' (Direct)';
-                } else if (this.tag == 2) {
-                    name += ' (DoT)';
-                }
-                break;
             case 'Battle Shout':
                 if (this.tag == 1) {
                     name += ' (Snapshot)';

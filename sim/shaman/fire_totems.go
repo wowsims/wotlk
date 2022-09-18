@@ -29,7 +29,8 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			},
 		},
 
-		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			shaman.SearingTotemDot.Apply(sim)
@@ -54,10 +55,9 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		NumberOfTicks: 24,
 		TickLength:    time.Second * 60 / 24,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
-			BaseDamage:       core.BaseDamageConfigMagic(90, 120, 0.167),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			ProcMask:       core.ProcMaskEmpty,
+			BaseDamage:     core.BaseDamageConfigMagic(90, 120, 0.167),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }
@@ -83,7 +83,8 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			},
 		},
 
-		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			shaman.MagmaTotemDot.Apply(sim)
@@ -101,10 +102,9 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(371, 0.1),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			ProcMask:       core.ProcMaskEmpty,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(371, 0.1),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
 	})
 }

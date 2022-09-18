@@ -9,7 +9,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// newLightningBoltSpell returns a precomputed instance of lightning bolt to use for casting.
+func (shaman *Shaman) registerLightningBoltSpell() {
+	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
+	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
+}
+
 func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
 	baseCost := baseMana * 0.1
 	cost := baseCost
@@ -40,11 +44,11 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 
 	effect := shaman.newElectricSpellEffect(719, 819, 0.7143, isLightningOverload)
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningBolt) {
-		effect.DamageMultiplier *= 1.04
+		spellConfig.DamageMultiplier *= 1.04
 	}
 
 	if shaman.HasSetBonus(ItemSetSkyshatterRegalia, 4) {
-		effect.DamageMultiplier *= 1.05
+		spellConfig.DamageMultiplier *= 1.05
 	}
 
 	has4pT8 := shaman.HasSetBonus(ItemSetWorldbreakerGarb, 4)
@@ -55,6 +59,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 		spell := shaman.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 64930},
 			Flags:            core.SpellFlagIgnoreModifiers,
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 		})
 		lbdot = core.NewDot(core.Dot{
@@ -66,7 +71,6 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			TickLength:    time.Second * 2,
 			NumberOfTicks: 2,
 			TickEffects: core.TickFuncSnapshot(shaman.CurrentTarget, core.SpellEffect{
-				DamageMultiplier: 1,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 						return lbdotDmg / 2 //spread dot over 2 ticks

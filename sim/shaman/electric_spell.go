@@ -55,6 +55,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		BonusCritRating: 0 +
 			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
 			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 	}
 
@@ -64,6 +65,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		spell.Cast.DefaultCast.CastTime = 0
 		spell.Cast.DefaultCast.GCD = 0
 		spell.Cast.DefaultCast.Cost = 0
+		spell.DamageMultiplier *= 0.5
 		spell.ThreatMultiplier = 0
 	} else if shaman.Talents.LightningMastery > 0 {
 		// Convection applies against the base cost of the spell.
@@ -76,8 +78,8 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 // Helper for precomputing spell effects.
 func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamage float64, spellCoefficient float64, isLightningOverload bool) core.SpellEffect {
-
-	bonusDamage := 0 + core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
+	bonusDamage := 0 +
+		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfHex, 165, 0)
@@ -87,14 +89,9 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 	spellCoefficient += float64(shaman.Talents.Shamanism) * 0.04
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
-	}
-
-	if isLightningOverload {
-		effect.DamageMultiplier *= 0.5
+		ProcMask:       core.ProcMaskSpellDamage,
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	return effect

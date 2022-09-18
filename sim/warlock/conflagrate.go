@@ -26,7 +26,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	}
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID.WithTag(1),
+		ActionID:     actionID,
 		SpellSchool:  spellSchool,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -63,7 +63,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 	warlock.ConflagrateDot = core.NewDot(core.Dot{
 		Spell: warlock.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID.WithTag(2),
+			ActionID:    actionID,
 			SpellSchool: spellSchool,
 
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
@@ -71,7 +71,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID.WithTag(1),
+			ActionID: actionID,
 		}),
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 2,
