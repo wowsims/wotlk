@@ -8,23 +8,14 @@ import (
 )
 
 func (warlock *Warlock) registerSoulFireSpell() {
+	baseCost := 0.09 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47825}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
-		DamageMultiplier: baseAdditiveMultiplier,
-
+		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-	}
-
-	baseCost := 0.09 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
@@ -35,7 +26,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * costReductionFactor,
+				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},
@@ -49,7 +40,8 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

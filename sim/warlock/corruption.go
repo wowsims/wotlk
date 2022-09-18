@@ -12,7 +12,6 @@ import (
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	baseCost := 0.14 * warlock.BaseMana
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
@@ -31,7 +30,8 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			warlock.masterDemonologistShadowCrit() +
 			3*float64(warlock.Talents.Malediction)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
 		// This messes with final dmg and crit rate metrics.
@@ -59,12 +59,9 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
-			IsPeriodic: true,
-
-			DamageMultiplier: baseAdditiveMultiplier,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
-
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			IsPeriodic:     true,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			OutcomeApplier: applier,
 		}),
 	})

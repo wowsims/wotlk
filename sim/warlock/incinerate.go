@@ -8,33 +8,14 @@ import (
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
-	fireAndBrimstoneBonus := 0.02 * float64(warlock.Talents.FireAndBrimstone)
+	baseCost := 0.14 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47838}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	normalMultiplier := baseAdditiveMultiplier + fireAndBrimstoneBonus
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
-		DamageMultiplier: 1,
-
+		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     warlock.incinerateDamage(),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if warlock.ImmolateDot.IsActive() {
-				spellEffect.DamageMultiplier = normalMultiplier
-			} else {
-				spellEffect.DamageMultiplier = normalMultiplier - fireAndBrimstoneBonus
-			}
-		},
-	}
-
-	baseCost := 0.14 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
 	}
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
@@ -45,7 +26,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * costReductionFactor,
+				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(2500-50*warlock.Talents.Emberstorm),
 			},
@@ -60,7 +41,8 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

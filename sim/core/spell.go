@@ -135,8 +135,12 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic(fmt.Sprintf("Over 100 registered spells when registering %s! There is probably a spell being registered every iteration.", config.ActionID))
 	}
 
+	// Default the other damage multiplier to 1 if only one or the other is set.
 	if config.DamageMultiplier != 0 && config.DamageMultiplierAdditive == 0 {
-		config.DamageMultiplierAdditive = config.DamageMultiplier
+		config.DamageMultiplierAdditive = 1
+	}
+	if config.DamageMultiplierAdditive != 0 && config.DamageMultiplier == 0 {
+		config.DamageMultiplier = 1
 	}
 
 	spell := &Spell{

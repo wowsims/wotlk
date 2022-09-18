@@ -75,11 +75,10 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 			effectsFunc := core.ApplyEffectFuncAOEDamage(warlock.Env, core.SpellEffect{
 				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
 				// adding core.ProcMaskPeriodicDamage should be correct?
-				ProcMask:         core.ProcMaskSpellDamage,
-				DamageMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
-				OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
-				IsPeriodic:       false,
+				ProcMask:       core.ProcMaskSpellDamage,
+				BaseDamage:     core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
+				OutcomeApplier: warlock.OutcomeFuncMagicHit(),
+				IsPeriodic:     false,
 			})
 
 			return func() {
@@ -103,6 +102,7 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDot(warlock.ImmolationAuraDot),
