@@ -355,7 +355,7 @@ func InspirationAura(unit *Unit, points int32) *Aura {
 	})
 }
 
-func applyInspiration(character *Character, uptime float64) {
+func ApplyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
