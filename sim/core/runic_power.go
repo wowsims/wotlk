@@ -441,7 +441,7 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpen
 }
 
 func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
-	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood1 = isSpent
 	if rp.runeStates&unspentBlood1 == 0 {
 		return true
 	} else {
@@ -450,7 +450,7 @@ func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
 }
 
 func (rp *RunicPowerBar) RightBloodRuneReady() bool {
-	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood1 = isSpent
 	const unspentBlood2 = unspentBlood1 << 2
 	if rp.runeStates&unspentBlood2 == 0 {
 		return true

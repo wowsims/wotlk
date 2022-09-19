@@ -214,6 +214,14 @@ export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDe
 	labelTooltip: 'Have sim automatically adjust rotation based on the scenario. This is still in development and currently only works for Unholy.',
 });
 
+export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'desyncRotation',
+	label: 'Use Desync Rotation',
+	labelTooltip: 'Use the Desync Rotation.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 
 export const DeathKnightRotationConfig = {
 	inputs: [
@@ -230,6 +238,7 @@ export const DeathKnightRotationConfig = {
 		UseAMSInput,
 		AvgAMSSuccessRateInput,
 		AvgAMSHitInput,
+		DesyncRotation,
 		//SetDeathAndDecayPrio,
 	],
 };
