@@ -30,7 +30,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
 
 		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID.WithTag(2),
+			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
@@ -56,7 +56,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Whirlwind = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 1680}.WithTag(1),
+		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 

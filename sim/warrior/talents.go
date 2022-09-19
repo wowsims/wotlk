@@ -723,7 +723,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 
-	var ohSpell *core.Spell
 	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
@@ -740,8 +739,8 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}
 		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
 
-		ohSpell = warrior.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID.WithTag(2),
+		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			Flags:       core.SpellFlagMeleeMetrics,
 
@@ -765,9 +764,9 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID.WithTag(1),
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -805,8 +804,8 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			mhDamageEffects(sim, target, spell)
-			if ohSpell != nil {
-				ohDamageEffects(sim, target, ohSpell)
+			if warrior.BladestormOH != nil {
+				ohDamageEffects(sim, target, warrior.BladestormOH)
 			}
 		}),
 	})
