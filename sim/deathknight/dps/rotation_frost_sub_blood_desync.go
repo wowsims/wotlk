@@ -13,19 +13,15 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 	dk.RotationSequence.
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UA_Frost).
+		NewAction(dk.RotationActionCallback_BT).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti_Desync).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_HW).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti_Desync).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_DesyncRotation)
 }
 
@@ -113,8 +109,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_DesyncRotation(si
 		return -1
 	}
 
-	if dk.LeftBloodRuneReady() && dk.SpentBloodRuneReadyAt()-t > dk.SpellGCD() &&
-		(dk.NormalSpentFrostRuneReadyAt(sim)-t > 1500*time.Millisecond && dk.NormalSpentUnholyRuneReadyAt(sim)-t > 1500*time.Millisecond) {
+	if dk.LeftBloodRuneReady() {
 		dk.Pestilence.Cast(sim, target)
 		return -1
 	}
