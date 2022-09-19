@@ -115,8 +115,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 7346.2645
-  tps: 5597.96101
+  dps: 7343.59246
+  tps: 5598.29114
  }
 }
 dps_results: {
@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7437.68957
-  tps: 5605.61075
+  dps: 7428.75042
+  tps: 5589.24465
  }
 }
 dps_results: {
