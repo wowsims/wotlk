@@ -40,6 +40,11 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 		}),
 	})
 
+	icd := core.Cooldown{
+		Timer:    shaman.NewTimer(),
+		Duration: time.Millisecond * 3500,
+	}
+
 	shaman.LightningShieldAura = shaman.RegisterAura(core.Aura{
 		Label:     "Lightning Shield",
 		ActionID:  actionID,
@@ -59,6 +64,20 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 				return
 			}
 			procSpell.Cast(sim, spellEffect.Target)
+			aura.RemoveStack(sim)
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+				return
+			}
+
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			icd.Use(sim)
+
+			procSpell.Cast(sim, spell.Unit)
 			aura.RemoveStack(sim)
 		},
 	})
