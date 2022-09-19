@@ -224,7 +224,22 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	}
 	waitUntil = core.MaxDuration(sim.CurrentTime, waitUntil)
 
+	if !dk.Inputs.IsDps {
+		target := dk.CurrentTarget
+		if dk.IsMainTank() {
+			targetSwingAt := target.AutoAttacks.MainhandSwingAt
+			if target.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
+				targetSwingAt = core.MinDuration(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
+			}
+			waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+		}
+	}
+
 	dk.WaitUntil(sim, waitUntil)
+}
+
+func (dk *Deathknight) IsMainTank() bool {
+	return dk.CurrentTarget.CurrentTarget == &dk.Unit
 }
 
 func (dk *Deathknight) DoRotation(sim *core.Simulation) {
