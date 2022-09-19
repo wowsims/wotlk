@@ -13,9 +13,10 @@ func (mage *Mage) registerPyroblastSpell() {
 	baseCost := .22 * mage.BaseMana
 
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		Flags:        SpellFlagMage,
+		MissileSpeed: 22,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -58,14 +59,19 @@ func (mage *Mage) registerPyroblastSpell() {
 					mage.PyroblastDot.Apply(sim)
 				}
 			},
-
-			MissileSpeed: 22,
 		}),
 	})
 
 	target := mage.CurrentTarget
 	mage.PyroblastDot = core.NewDot(core.Dot{
-		Spell: mage.Pyroblast,
+		Spell: mage.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolFire,
+			Flags:       SpellFlagMage,
+
+			DamageMultiplier: mage.Pyroblast.DamageMultiplier,
+			ThreatMultiplier: mage.Pyroblast.ThreatMultiplier,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Pyroblast-" + strconv.Itoa(int(mage.Index)),
 			ActionID: actionID,

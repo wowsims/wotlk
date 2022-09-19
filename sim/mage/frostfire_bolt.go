@@ -14,9 +14,10 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 	baseCost := .14 * mage.BaseMana
 
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | HotStreakSpells,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
+		Flags:        SpellFlagMage | HotStreakSpells,
+		MissileSpeed: 25,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -52,8 +53,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 					mage.FrostfireDot.Apply(sim)
 				}
 			},
-
-			MissileSpeed: 25,
 		}),
 	})
 

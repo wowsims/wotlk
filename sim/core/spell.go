@@ -16,6 +16,7 @@ type SpellConfig struct {
 	ActionID
 	SpellSchool  SpellSchool
 	Flags        SpellFlag
+	MissileSpeed float64
 	ResourceType stats.Stat
 	BaseCost     float64
 
@@ -67,6 +68,10 @@ type Spell struct {
 
 	// Flags
 	Flags SpellFlag
+
+	// Speed in yards/second. Spell missile speeds can be found in the game data.
+	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
+	MissileSpeed float64
 
 	// Should be stats.Mana, stats.Energy, stats.Rage, or unset.
 	ResourceType      stats.Stat
@@ -148,6 +153,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		Unit:         unit,
 		SpellSchool:  config.SpellSchool,
 		Flags:        config.Flags,
+		MissileSpeed: config.MissileSpeed,
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
 
