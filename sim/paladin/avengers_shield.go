@@ -4,11 +4,13 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseCost := paladin.BaseMana * 0.26
+	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
@@ -26,7 +28,8 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
-	numHits := core.MinInt32(3, paladin.Env.GetNumTargets())
+	// Glyph to single target, OR apply to up to 3 targets
+	numHits := core.TernaryInt32(glyphedSingleTargetAS,1,core.MinInt32(3, paladin.Env.GetNumTargets()));
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
@@ -54,9 +57,9 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			},
 		},
 
+		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
 		// TODO: Why is this here?
 		BonusCritRating:  1,
-		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
