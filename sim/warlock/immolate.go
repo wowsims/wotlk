@@ -57,8 +57,9 @@ func (warlock *Warlock) registerImmolateSpell() {
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
 
+			BonusCritRating:          warlock.Immolate.BonusCritRating,
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-			ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+			ThreatMultiplier:         warlock.Immolate.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Immolate-" + strconv.Itoa(int(warlock.Index)),

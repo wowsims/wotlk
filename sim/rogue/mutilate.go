@@ -57,11 +57,12 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
-		DamageMultiplier: 1 +
+		DamageMultiplierAdditive: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
 			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)*
-				core.TernaryFloat64(!isMH, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1),
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+		DamageMultiplier: 1 *
+			core.TernaryFloat64(!isMH, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

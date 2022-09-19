@@ -38,7 +38,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Add set bonus and talent related modifiers.
 	 *  - Fix expertise rating on glyph application.
 	 */
-	baseMultiplier := paladin.getTalentTwoHandedWeaponSpecializationBonus() * (1 +
+	baseMultiplier := (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) * (1 +
 		paladin.getItemSetLightswornBattlegearBonus4() +
 		paladin.getTalentSealsOfThePureBonus())
 

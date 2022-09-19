@@ -77,7 +77,8 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncAOESnapshot(hunter.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -86,7 +87,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				},
 			},
 			OutcomeApplier: periodicOutcomeFunc,
-			IsPeriodic:     true,
 		}),
 	})
 

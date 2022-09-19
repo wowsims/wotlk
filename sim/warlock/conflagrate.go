@@ -66,8 +66,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
 
+			BonusCritRating:          warlock.Conflagrate.BonusCritRating,
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-			ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+			ThreatMultiplier:         warlock.Conflagrate.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
