@@ -73,8 +73,7 @@ func (druid *Druid) registerStarfallSpell() {
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
-			IsPeriodic:     false,
+			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagic(563, 653, 0.3),
 			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		})),
@@ -89,8 +88,7 @@ func (druid *Druid) registerStarfallSpell() {
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
-			IsPeriodic:     false,
+			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(101, 0.13),
 			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		})),

@@ -75,7 +75,8 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if doSnapshot {
@@ -88,7 +89,6 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.OutcomeDeathAndDecaySpecial(),
-			IsPeriodic:     false,
 		})),
 	})
 	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay.Spell
