@@ -332,8 +332,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofObstruction-40707"
  value: {
-  dps: 5462.4505
-  tps: 4907.75757
+  dps: 5459.19901
+  tps: 5565.82195
  }
 }
 dps_results: {
