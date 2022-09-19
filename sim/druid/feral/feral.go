@@ -84,9 +84,8 @@ func (cat *FeralDruid) GetDruid() *druid.Druid {
 
 func (cat *FeralDruid) MissChance() float64 {
 	speffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeMHSpecial,
-		DamageMultiplier: 1,
-		Target:           cat.CurrentTarget,
+		ProcMask: core.ProcMaskMeleeMHSpecial,
+		Target:   cat.CurrentTarget,
 	}
 	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
 	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Unit, cat.Shred, at)

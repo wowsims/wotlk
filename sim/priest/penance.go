@@ -82,13 +82,13 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	})
 
 	for _, unit := range priest.Env.AllUnits {
-		penanceDots[unit.UnitIndex] = priest.makePenanceDotOrHot(unit, isHeal)
+		penanceDots[unit.UnitIndex] = priest.makePenanceDotOrHot(unit, spell, isHeal)
 	}
 
 	return spell
 }
 
-func (priest *Priest) makePenanceDotOrHot(target *core.Unit, isHeal bool) *core.Dot {
+func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, isHeal bool) *core.Dot {
 	// Return nil if isHeal doesn't match the target heal/damage type.
 	if isHeal == priest.IsOpponent(target) {
 		return nil
@@ -113,10 +113,10 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, isHeal bool) *core.
 	}
 
 	return core.NewDot(core.Dot{
-		Spell: priest.Penance,
+		Spell: spell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Penance-" + strconv.Itoa(int(priest.Index)),
-			ActionID: priest.Penance.ActionID,
+			ActionID: spell.ActionID,
 		}),
 
 		NumberOfTicks:       2,

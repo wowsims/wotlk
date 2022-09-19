@@ -53,6 +53,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			},
 		},
 
+		DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 		ThreatMultiplier: 1.9,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -74,8 +75,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
+			ProcMask: core.ProcMaskPeriodicDamage,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if doSnapshot {

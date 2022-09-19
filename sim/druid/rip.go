@@ -37,12 +37,12 @@ func (druid *Druid) registerRipSpell() {
 		},
 
 		BonusCritRating:  core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+		DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMeleeSpecialHit(),
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.RipDot.NumberOfTicks = ripBaseNumTicks
@@ -65,9 +65,8 @@ func (druid *Druid) registerRipSpell() {
 		NumberOfTicks: ripBaseNumTicks,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
-			IsPeriodic:       true,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := float64(druid.ComboPoints())
 				attackPower := hitEffect.MeleeAttackPower(spell.Unit)

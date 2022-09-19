@@ -15,9 +15,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
 
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(hunter.Talents.TNT)),
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
@@ -47,17 +44,15 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating:   float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
+		BonusHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
+		DamageMultiplierAdditive: 1 +
+			.02*float64(hunter.Talents.TNT),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyAOEDamage(sim, target, spell)
 			hunter.ExplosiveTrapDot.Apply(sim)
 		},
-
-		InitialDamageMultiplier: 1 +
-			.10*float64(hunter.Talents.TrapMastery) +
-			.02*float64(hunter.Talents.TNT),
 	})
 
 	periodicOutcomeFunc := hunter.OutcomeFuncRangedHit()
@@ -66,7 +61,15 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	}
 
 	hunter.ExplosiveTrapDot = core.NewDot(core.Dot{
-		Spell: hunter.ExplosiveTrap,
+		Spell: hunter.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolFire,
+
+			DamageMultiplierAdditive: 1 +
+				.10*float64(hunter.Talents.TrapMastery) +
+				.02*float64(hunter.Talents.TNT),
+			ThreatMultiplier: 1,
+		}),
 		Aura: hunter.RegisterAura(core.Aura{
 			Label:    "Explosive Trap",
 			ActionID: actionID,
@@ -75,8 +78,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncAOESnapshot(hunter.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskPeriodicDamage,
-
-			DamageMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

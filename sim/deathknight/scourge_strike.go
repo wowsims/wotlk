@@ -19,11 +19,11 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagIgnoreResists | core.SpellFlagMeleeMetrics,
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			OutcomeApplier: dk.CurrentTarget.OutcomeFuncAlwaysHit(),
 
@@ -40,8 +40,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, true)
-	weaponMulti := 0.7
-	outbreakBonus := []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak]
 	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
 
@@ -64,12 +62,14 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating:  (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .7 *
+			[]float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
+			dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: weaponMulti * outbreakBonus * dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

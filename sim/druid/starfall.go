@@ -42,6 +42,7 @@ func (druid *Druid) registerStarfallSpell() {
 		},
 
 		BonusCritRating:  naturesMajestyCritBonus,
+		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -59,6 +60,7 @@ func (druid *Druid) registerStarfallSpell() {
 	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 53190},
 		BonusCritRating:  naturesMajestyCritBonus,
+		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
 		ThreatMultiplier: 1,
 	})
 
@@ -71,11 +73,10 @@ func (druid *Druid) registerStarfallSpell() {
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
-			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagic(563, 653, 0.3),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			IsPeriodic:     false,
+			BaseDamage:     core.BaseDamageConfigMagic(563, 653, 0.3),
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		})),
 	})
 
@@ -88,11 +89,10 @@ func (druid *Druid) registerStarfallSpell() {
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
-			IsPeriodic:       false,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(101, 0.13),
-			OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			IsPeriodic:     false,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(101, 0.13),
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		})),
 	})
 }

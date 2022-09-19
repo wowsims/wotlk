@@ -77,10 +77,7 @@ func (spellEffect *SpellEffect) DidCrit() bool {
 
 func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 	if spellEffect.Landed() {
-		flatBonus := 0.0
-		if !spellEffect.IsPeriodic {
-			flatBonus += spell.FlatThreatBonus
-		}
+		flatBonus := spell.FlatThreatBonus
 		if spell.DynamicThreatBonus != nil {
 			flatBonus += spell.DynamicThreatBonus(spellEffect, spell)
 		}

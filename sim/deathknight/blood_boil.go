@@ -28,11 +28,11 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 			},
 		},
 
+		DamageMultiplier: dk.bloodyStrikesBonus(dk.BloodBoil),
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: dk.bloodyStrikesBonus(dk.BloodBoil),
+			ProcMask: core.ProcMaskSpellDamage,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 
