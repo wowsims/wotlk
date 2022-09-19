@@ -350,7 +350,7 @@ class EpWeightsMenu extends Popup {
 		});
 		gear = new Gear(items);
 
-		const allSockets: Array<{itemSlot: ItemSlot, socketIdx: number}> = Object.keys(items).map((itemSlotStr) => {
+		const allSockets: Array<{ itemSlot: ItemSlot, socketIdx: number }> = Object.keys(items).map((itemSlotStr) => {
 			const itemSlot = parseInt(itemSlotStr) as ItemSlot;
 			const item = items[itemSlot];
 			if (!item) {
@@ -359,13 +359,13 @@ class EpWeightsMenu extends Popup {
 
 			const numSockets = item.numSockets(isBlacksmithing);
 			return [...Array(numSockets).keys()]
-			.filter(socketIdx => item.item.gemSockets[socketIdx] != GemColor.GemColorMeta)
-			.map(socketIdx => {
-				return {
-					itemSlot: itemSlot,
-					socketIdx: socketIdx,
-				};
-			});
+				.filter(socketIdx => item.item.gemSockets[socketIdx] != GemColor.GemColorMeta)
+				.map(socketIdx => {
+					return {
+						itemSlot: itemSlot,
+						socketIdx: socketIdx,
+					};
+				});
 		}).flat();
 		const threeSocketCombos = permutations(allSockets, 3);
 		const calculateGearGemsEP = (gear: Gear): number => gear.statsFromGems(isBlacksmithing).computeEP(epWeights);
@@ -491,7 +491,7 @@ class EpWeightsMenu extends Popup {
 				[secondaryColor],
 				[oneColor, twoColor],
 			].map(partialCombo => {
-					return Gems.socketToMatchingColors.get(twoColor)!.map(matchingColor => partialCombo.concat([matchingColor]));
+				return Gems.socketToMatchingColors.get(twoColor)!.map(matchingColor => partialCombo.concat([matchingColor]));
 			}).flat();
 		} else if (condition.isThreeOfAColor()) {
 			const threeColor = Gems.PRIMARY_COLORS[[condition.minRed, condition.minYellow, condition.minBlue].indexOf(3)];

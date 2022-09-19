@@ -37,7 +37,7 @@ addEventListener('message', async (e) => {
 				postMessage({
 					msg: "progress",
 					outputData: result,
-					id: id+"progress",
+					id: id + "progress",
 				});
 			});
 		}],
@@ -47,7 +47,7 @@ addEventListener('message', async (e) => {
 				postMessage({
 					msg: "progress",
 					outputData: result,
-					id: id+"progress",
+					id: id + "progress",
 				});
 			});
 		}],

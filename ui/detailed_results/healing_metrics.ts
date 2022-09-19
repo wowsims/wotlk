@@ -34,7 +34,7 @@ export class HealingMetricsTable extends MetricsTable<ActionMetrics> {
 				name: 'Cast Time',
 				tooltip: 'Average cast time in seconds',
 				getValue: (metric: ActionMetrics) => metric.avgCastTimeMs,
-				getDisplayString: (metric: ActionMetrics) => (metric.avgCastTimeMs/1000).toFixed(2),
+				getDisplayString: (metric: ActionMetrics) => (metric.avgCastTimeMs / 1000).toFixed(2),
 			},
 			{
 				name: 'HPM',
