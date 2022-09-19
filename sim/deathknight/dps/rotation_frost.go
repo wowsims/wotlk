@@ -4,11 +4,14 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/neat"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
 type FrostRotation struct {
 	dk *DpsDeathknight
+
+	genome *neat.Genome
 
 	oblitCount int32
 	oblitDelay time.Duration
@@ -28,6 +31,20 @@ type FrostRotation struct {
 
 func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
+
+	fr.genome = neat.NewGenome()
+
+	in1 := neat.NewNode(neat.NodeKind_Input, 0)
+	in2 := neat.NewNode(neat.NodeKind_Input, 1)
+	o := neat.NewNode(neat.NodeKind_Output, 2)
+
+	fr.genome.AddNode(in1)
+	fr.genome.AddNode(in2)
+	fr.genome.AddNode(o)
+
+	fr.genome.AddConnection(neat.NewConnection(in1.Id, o.Id, 0.5, true, 0))
+
+	fr.genome.Print()
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
