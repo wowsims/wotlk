@@ -34,17 +34,18 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			ModifyCast:  rogue.CastModifier,
 		},
 
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			0.03*float64(rogue.Talents.Aggression) +
+			0.05*float64(rogue.Talents.BladeTwisting) +
+			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				0.03*float64(rogue.Talents.Aggression) +
-				0.05*float64(rogue.Talents.BladeTwisting) +
-				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
-				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
-			ThreatMultiplier: 1,
-			BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
-				[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

@@ -18,7 +18,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		dk.FrostFeverDebuffAura[target.Index] = ffAura
 	}
 
-	impIcyTouchCoeff := 1.0 + 0.05*float64(dk.Talents.ImprovedIcyTouch)
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
 	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
 	baseCost := float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 0, 0))
@@ -39,23 +38,24 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			},
 		},
 
+		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
+		ThreatMultiplier: 7,
+
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
-			DamageMultiplier: impIcyTouchCoeff,
-			ThreatMultiplier: 7.0,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
+					return (roll + 0.1*dk.getImpurityBonus(spell)) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplier())),
+			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.DefaultMeleeCritMultiplier())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome
@@ -80,27 +80,27 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}, nil)
 }
 func (dk *Deathknight) registerDrwIcyTouchSpell() {
-	impIcyTouchCoeff := 1.0 + 0.05*float64(dk.Talents.ImprovedIcyTouch)
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
 
 	dk.RuneWeapon.IcyTouch = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
 
+		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
+		ThreatMultiplier: 7,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
-			DamageMultiplier: impIcyTouchCoeff,
-			ThreatMultiplier: 7.0,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.1)
+					return roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

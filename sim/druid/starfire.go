@@ -26,20 +26,10 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
 	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 
-	bonusCritRating := druid.TalentsBonuses.naturesMajestyBonusCrit +
-		core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
-		core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0) // T7-4P
-
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
-		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-
-		BonusCritRating: bonusCritRating,
-
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		ProcMask:       core.ProcMaskSpellDamage,
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
+		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -61,11 +51,6 @@ func (druid *Druid) registerStarfireSpell() {
 						druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
 					}
 				}
-			}
-		},
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if druid.FaerieFireAura.IsActive() {
-				spellEffect.BonusCritRating = bonusCritRating + (core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire))
 			}
 		},
 	}
@@ -94,6 +79,15 @@ func (druid *Druid) registerStarfireSpell() {
 				}
 			},
 		},
+
+		BonusCritRating: 0 +
+			druid.TalentsBonuses.naturesMajestyBonusCrit +
+			core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
+			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
+			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

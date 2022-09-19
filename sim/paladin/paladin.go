@@ -11,36 +11,6 @@ const (
 	SpellFlagPrimaryJudgement   = core.SpellFlagAgentReserved2
 )
 
-type hybridScaling struct {
-	AP float64
-	SP float64
-}
-
-type Additive []float64
-type Multiplicative []Additive
-
-func (mod *Additive) Get() float64 {
-	sum := 1.0
-	// Combine additive bonuses.
-	for _, value := range *mod {
-		sum += value
-	}
-	return sum
-}
-
-func (mod *Multiplicative) Get() float64 {
-	multiplier := 1.0
-	// Combine multiplicative bonuses.
-	for _, additive := range *mod {
-		multiplier *= additive.Get()
-	}
-	return multiplier
-}
-
-func (mod *Multiplicative) Clone() Multiplicative {
-	return (*mod)[:]
-}
-
 type Paladin struct {
 	core.Character
 

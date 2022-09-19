@@ -28,9 +28,11 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				warrior.Slam,
 				warrior.ThunderClap,
 				warrior.Whirlwind,
+				warrior.WhirlwindOH,
 				warrior.Shockwave,
 				warrior.ConcussionBlow,
 				warrior.Bladestorm,
+				warrior.BladestormOH,
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

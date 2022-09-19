@@ -25,9 +25,6 @@ func (druid *Druid) registerSwipeBearSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: lbdm * thdm * fidm,
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator:             core.BaseDamageFuncMelee(baseDamage, baseDamage, 0.07),
 			TargetSpellCoefficient: 1,
@@ -52,6 +49,9 @@ func (druid *Druid) registerSwipeBearSpell() {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: lbdm * thdm * fidm,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(druid.Env, baseEffect),
 	})
 }
@@ -65,9 +65,6 @@ func (druid *Druid) registerSwipeCatSpell() {
 
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: fidm * weaponMulti,
-		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -94,6 +91,9 @@ func (druid *Druid) registerSwipeCatSpell() {
 			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
+
+		DamageMultiplier: fidm * weaponMulti,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(druid.Env, baseEffect),
 	})

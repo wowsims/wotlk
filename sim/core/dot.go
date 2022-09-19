@@ -171,7 +171,7 @@ func NewDot(config Dot) *Dot {
 func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect SpellEffect) {
 	var snapshotDmgMult, snapshotCrit, snapshotSpellCrit float64
 	if dot.isRollover {
-		snapshotDmgMult = dot.snapshotEffect.DamageMultiplier
+		snapshotDmgMult = dot.snapshotEffect.snapshotDamageMultiplier
 		snapshotCrit = dot.snapshotEffect.snapshotMeleeCritRating
 		snapshotSpellCrit = dot.snapshotEffect.snapshotSpellCritRating
 	}
@@ -180,13 +180,13 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 	dot.snapshotEffect.Target = target
 	dot.snapshotEffect.isSnapshot = true
 	if dot.isRollover {
-		dot.snapshotEffect.DamageMultiplier = snapshotDmgMult
+		dot.snapshotEffect.snapshotDamageMultiplier = snapshotDmgMult
 		dot.snapshotEffect.snapshotMeleeCritRating = snapshotCrit
 		dot.snapshotEffect.snapshotSpellCritRating = snapshotSpellCrit
 	} else {
-		dot.snapshotEffect.DamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
-		dot.snapshotEffect.snapshotMeleeCritRating = dot.snapshotEffect.physicalCritRating(dot.Spell.Unit, dot.Spell)
-		dot.snapshotEffect.snapshotSpellCritRating = dot.snapshotEffect.spellCritRating(dot.Spell.Unit, dot.Spell)
+		dot.snapshotEffect.snapshotDamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
+		dot.snapshotEffect.snapshotMeleeCritRating = dot.Spell.physicalCritRating(target, baseEffect.ProcMask)
+		dot.snapshotEffect.snapshotSpellCritRating = dot.Spell.spellCritRating(target)
 	}
 	//if sim.Log != nil {
 	//	dot.Spell.Unit.Log(sim, "[DEBUG] Snapshot spell crit for spell %s: Rating: %0.02f, Chance: %0.02f, statCrit: %0.02f, spellBonus: %0.02f, effectBonus: %0.02f, target: %0.02f, targetSpell: %0.02f",

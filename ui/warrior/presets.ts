@@ -19,7 +19,7 @@ import {
 	Warrior_Options as WarriorOptions,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
-  Warrior_Rotation_StanceOption as StanceOption,
+	Warrior_Rotation_StanceOption as StanceOption,
 } from '../core/proto/warrior.js';
 
 import * as Gems from '../core/proto_utils/gems.js';
@@ -63,37 +63,37 @@ export const FuryTalents = {
 
 export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
-  useMs: true,
-  useCleave: false,
+	useMs: true,
+	useCleave: false,
 
 	prioritizeWw: true,
 	sunderArmor: SunderArmor.SunderArmorHelpStack,
 
-  msRageThreshold: 40,
+	msRageThreshold: 40,
 	hsRageThreshold: 50,
 	rendRageThresholdBelow: 70,
-  slamRageThreshold: 30,
+	slamRageThreshold: 30,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
 	useSlamOverExecute: true,
-  spamExecute: true,
-  stanceOption: StanceOption.DefaultStance,
+	spamExecute: true,
+	stanceOption: StanceOption.DefaultStance,
 });
 
 export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
-  useCleave: false,
+	useCleave: false,
 	sunderArmor: SunderArmor.SunderArmorHelpStack,
 	msRageThreshold: 40,
-  slamRageThreshold: 30,
+	slamRageThreshold: 30,
 	hsRageThreshold: 50,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	spamExecute: true,
-  stanceOption: StanceOption.DefaultStance,
+	stanceOption: StanceOption.DefaultStance,
 });
 
 export const DefaultOptions = WarriorOptions.create({
@@ -106,7 +106,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
-  prepopPotion:  Potions.IndestructiblePotion,
+	prepopPotion: Potions.IndestructiblePotion,
 });
 
 export const P1_PRERAID_FURY_PRESET = {

@@ -163,12 +163,13 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 				IgnoreHaste: true,
 			},
 
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-				ThreatMultiplier: 1,
-				BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				ProcMask:       core.ProcMaskMeleeMHSpecial,
+				BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
 			}),
 		}),
 	}
@@ -204,21 +205,17 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 	if config.School == core.SpellSchoolPhysical {
 		flags = core.SpellFlagMeleeMetrics
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
-			OnSpellHitDealt:  config.OnSpellHitDealt,
+			ProcMask:        core.ProcMaskSpellDamage,
+			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
+			OutcomeApplier:  hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+			OnSpellHitDealt: config.OnSpellHitDealt,
 		})
 	} else {
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:   hp.OutcomeFuncMagicHitAndCrit(2),
-			OnSpellHitDealt:  config.OnSpellHitDealt,
+			ProcMask:        core.ProcMaskMeleeMHSpecial,
+			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
+			OutcomeApplier:  hp.OutcomeFuncMagicHitAndCrit(2),
+			OnSpellHitDealt: config.OnSpellHitDealt,
 		})
 	}
 
@@ -230,6 +227,9 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 			ActionID:    core.ActionID{SpellID: config.SpellID},
 			SpellSchool: config.School,
 			Flags:       flags,
+
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+			ThreatMultiplier: 1,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -317,12 +317,10 @@ func (hp *HunterPet) newFireBreath() PetAbility {
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigRoll(44/2, 56/2)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigRoll(44/2, 56/2)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -486,10 +484,12 @@ func (hp *HunterPet) newPin() PetAbility {
 					Duration: hp.hunterOwner.applyLongevity(time.Second * 40),
 				},
 			},
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				ThreatMultiplier: 1,
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHit(),
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {
 						dot.Apply(sim)
@@ -509,12 +509,10 @@ func (hp *HunterPet) newPin() PetAbility {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(112/4, 144/4, 0.07)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(112/4, 144/4, 0.07)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -544,10 +542,12 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 					Duration: hp.hunterOwner.applyLongevity(time.Second * 10),
 				},
 			},
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				ThreatMultiplier: 1,
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHit(),
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {
 						dot.Apply(sim)
@@ -567,12 +567,10 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(104/4, 136/4, 0.049/4)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(104/4, 136/4, 0.049/4)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -610,12 +608,10 @@ func (hp *HunterPet) newRake() PetAbility {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(19, 25, 0.0175)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(19, 25, 0.0175)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -663,10 +659,12 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 				Duration: hp.hunterOwner.applyLongevity(time.Second * 60),
 			},
 		},
+
+		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(59, 83, 0.07)),
 			OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
@@ -693,12 +691,10 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 5,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(21, 27, 0.07)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(21, 27, 0.07)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -736,10 +732,12 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 					Duration: hp.hunterOwner.applyLongevity(time.Second * 10),
 				},
 			},
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				ThreatMultiplier: 1,
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHit(),
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {
 						dot.Apply(sim)
@@ -759,12 +757,10 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(100/5, 130/5, 0.07/5)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(100/5, 130/5, 0.07/5)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -828,12 +824,10 @@ func (hp *HunterPet) newSpiritStrike() PetAbility {
 		NumberOfTicks: 1,
 		TickLength:    time.Second * 6,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(49, 65, 0.04)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(49, 65, 0.04)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -886,12 +880,10 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncAOESnapshot(hp.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(22, 28, 0.049/3)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(22, 28, 0.049/3)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 
@@ -985,10 +977,12 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 					Duration: hp.hunterOwner.applyLongevity(time.Second * 40),
 				},
 			},
+
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				ThreatMultiplier: 1,
-				OutcomeApplier:   hp.OutcomeFuncMeleeSpecialHit(),
+				ProcMask:       core.ProcMaskEmpty,
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {
 						dot.Apply(sim)
@@ -1008,12 +1002,10 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-			BaseDamage:       hp.specialDamageMod(core.BaseDamageConfigMelee(46, 46, 0.07)),
-			OutcomeApplier:   hp.OutcomeFuncTick(),
-			IsPeriodic:       true,
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(46, 46, 0.07)),
+			OutcomeApplier: hp.OutcomeFuncTick(),
+			IsPeriodic:     true,
 		}),
 	})
 

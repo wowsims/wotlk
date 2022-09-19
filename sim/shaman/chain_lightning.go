@@ -7,6 +7,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func (shaman *Shaman) registerChainLightningSpell() {
+	numHits := core.MinInt32(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
+	shaman.ChainLightning = shaman.newChainLightningSpell(false)
+	shaman.ChainLightningLOs = []*core.Spell{}
+	for i := int32(0); i < numHits; i++ {
+		shaman.ChainLightningLOs = append(shaman.ChainLightningLOs, shaman.newChainLightningSpell(true))
+	}
+}
+
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {
 	spellConfig := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: 49271},
@@ -14,11 +23,10 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		time.Millisecond*2000,
 		isLightningOverload)
 
-	sefReduction := []time.Duration{0, 750 * time.Millisecond, 1500 * time.Millisecond, 2500 * time.Millisecond}
 	if !isLightningOverload {
 		spellConfig.Cast.CD = core.Cooldown{
 			Timer:    shaman.NewTimer(),
-			Duration: time.Second*6 - sefReduction[shaman.Talents.StormEarthAndFire],
+			Duration: time.Second*6 - []time.Duration{0, 750 * time.Millisecond, 1500 * time.Millisecond, 2500 * time.Millisecond}[shaman.Talents.StormEarthAndFire],
 		}
 	}
 
@@ -58,14 +66,21 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 	effect.OnSpellHitDealt = makeOnSpellHit(0)
 	effects = append(effects, effect)
 
+	bounceMult := 1.0
 	for i := int32(1); i < numHits; i++ {
 		bounceEffect := effects[i-1] // Makes a copy of the previous bounce
 		bounceEffect.Target = shaman.Env.GetTargetUnit(i)
 		if hasTidefury {
-			bounceEffect.DamageMultiplier *= 0.83
+			bounceMult *= 0.83
 		} else {
-			bounceEffect.DamageMultiplier *= 0.7
+			bounceMult *= 0.7
 		}
+		curBounceMult := bounceMult
+		bounceEffect.BaseDamage = core.WrapBaseDamageConfig(bounceEffect.BaseDamage, func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
+			return func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
+				return oldCalc(sim, effect, spell) * curBounceMult
+			}
+		})
 		bounceEffect.OnSpellHitDealt = makeOnSpellHit(i)
 
 		effects = append(effects, bounceEffect)

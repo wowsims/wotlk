@@ -10,38 +10,39 @@ import (
 
 func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffect {
 	var procMask core.ProcMask
-	var baseMultiplier float64
 	var hand core.Hand
 	if isMh {
 		procMask = core.ProcMaskMeleeMHSpecial
-		baseMultiplier = 1
 		hand = core.MainHand
 	} else {
 		procMask = core.ProcMaskMeleeOHSpecial
-		baseMultiplier = 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
 		hand = core.OffHand
 	}
 	return core.SpellEffect{
-		ProcMask: procMask,
-		DamageMultiplier: (1 +
-			0.02*float64(rogue.Talents.FindWeakness)) * baseMultiplier,
-		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMeleeWeapon(hand, true, 0, true),
-		OutcomeApplier:   rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
+		ProcMask:       procMask,
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(hand, true, 0, true),
+		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
 	}
 }
 func (rogue *Rogue) registerKillingSpreeSpell() {
 	mhWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 51690, Tag: 1},
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(true)),
+		ActionID:    core.ActionID{SpellID: 51690, Tag: 1},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+		DamageMultiplier: 1 *
+			(1 + 0.02*float64(rogue.Talents.FindWeakness)),
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(true)),
 	})
 	ohWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 51690, Tag: 2},
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(false)),
+		ActionID:    core.ActionID{SpellID: 51690, Tag: 2},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+		DamageMultiplier: 1 *
+			(1 + 0.02*float64(rogue.Talents.FindWeakness)) *
+			(1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(false)),
 	})
 	rogue.KillingSpreeAura = rogue.RegisterAura(core.Aura{
 		Label:    "Killing Spree",
@@ -86,6 +87,9 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfKillingSpree), time.Second*45, 0),
 			},
 		},
+
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
 			rogue.KillingSpreeAura.Activate(sim)
 		},

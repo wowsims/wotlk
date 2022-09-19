@@ -21,10 +21,6 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  344,
-
 		BaseDamage: core.WrapBaseDamageConfig(
 			core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, true),
 			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -72,6 +68,10 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			},
 			ModifyCast: druid.ApplyClearcasting,
 		},
+
+		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  344,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

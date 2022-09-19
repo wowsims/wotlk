@@ -75,6 +75,13 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 		},
 	})
 
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(war.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
+
 	return war
 }
 

@@ -57,7 +57,6 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			},
 		},
 
-
 		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
 		// TODO: Why is this here?
 		BonusCritRating:  1,

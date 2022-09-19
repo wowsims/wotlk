@@ -11,11 +11,6 @@ import (
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
-	baseModifiers := Multiplicative{
-		Additive{paladin.getTalentSanctityOfBattleBonus(), paladin.getTalentTheArtOfWarBonus(), paladin.getItemSetGladiatorsVindicationBonusGloves()},
-	}
-	baseMultiplier := baseModifiers.Get()
-
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 35395},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -38,13 +33,16 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 			},
 		},
 
+		BonusCritRating: core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		DamageMultiplierAdditive: 1 +
+			paladin.getTalentSanctityOfBattleBonus() +
+			paladin.getTalentTheArtOfWarBonus() +
+			paladin.getItemSetGladiatorsVindicationBonusGloves(),
+		DamageMultiplier: 0.75,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: baseMultiplier *
-				(0.75), // base multiplier's .75, can be improved by sanctity (15%), taow (10%) & pvp gloves (5%), stacking additively,
-			ThreatMultiplier: 1,
-			BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,

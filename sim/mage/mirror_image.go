@@ -142,12 +142,13 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
-			OutcomeApplier:   mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			ProcMask:       core.ProcMaskSpellDamage,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
 		}),
 	})
 }
@@ -173,13 +174,13 @@ func (mi *MirrorImage) registerFireblastSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
-			OutcomeApplier:   mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			ProcMask:       core.ProcMaskSpellDamage,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
 		}),
 	})
-
 }

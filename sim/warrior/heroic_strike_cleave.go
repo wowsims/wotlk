@@ -40,13 +40,13 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			},
 		},
 
+		BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  259,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  259,
-			BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
@@ -73,11 +73,6 @@ func (warrior *Warrior) registerCleaveSpell() {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  225,
-		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
@@ -103,6 +98,11 @@ func (warrior *Warrior) registerCleaveSpell() {
 				Cost: cost,
 			},
 		},
+
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  225,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

@@ -44,22 +44,23 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1.0,
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.2) *
+					return (roll + 0.2*dk.getImpurityBonus(spell)) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM())),
+			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend))),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

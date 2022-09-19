@@ -124,16 +124,16 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const fireElementalBooleanIconInput =  InputHelpers.makeBooleanIconInput<DpsShaman, ShamanTotems, Player<DpsShaman>>({
+	const fireElementalBooleanIconInput = InputHelpers.makeBooleanIconInput<DpsShaman, ShamanTotems, Player<DpsShaman>>({
 		getModObject: (player: Player<DpsShaman>) => player,
-		getValue: (player: Player<DpsShaman>) =>  player.getRotation().totems || ShamanTotems.create(),
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems || ShamanTotems.create(),
 		setValue: (eventID: EventID, player: Player<DpsShaman>, newVal: ShamanTotems) => {
 			const newRotation = player.getRotation();
 			newRotation.totems = newVal;
 			player.setRotation(eventID, newRotation);
 		},
-		changeEmitter: (player: Player<Spec.SpecEnhancementShaman >) => player.rotationChangeEmitter,
-	}, ActionId.fromSpellId(2894),  "useFireElemental");
+		changeEmitter: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
+	}, ActionId.fromSpellId(2894), "useFireElemental");
 
 	new IconPicker(fireElementalInputsContainer, simUI.player, fireElementalBooleanIconInput);
 

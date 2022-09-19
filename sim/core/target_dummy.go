@@ -18,7 +18,6 @@ func NewTargetDummy(dummyIndex int, party *Party, partyIndex int) *TargetDummy {
 			Unit: Unit{
 				Type:        PlayerUnit,
 				Index:       int32(party.Index*5 + partyIndex),
-				Label:       name,
 				Level:       CharacterLevel,
 				PseudoStats: stats.NewPseudoStats(),
 				auraTracker: newAuraTracker(),
@@ -35,6 +34,7 @@ func NewTargetDummy(dummyIndex int, party *Party, partyIndex int) *TargetDummy {
 		},
 	}
 
+	td.Label = fmt.Sprintf("%s (#%d)", td.Name, td.Index+1)
 	td.GCD = td.NewTimer()
 
 	return td

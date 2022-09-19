@@ -42,7 +42,7 @@ export const RogueRotationConfig = {
 			fieldName: 'exposeArmorFrequency',
 			label: 'Expose Armor',
 			labelTooltip: 'Frequency of Expose Armor casts.',
-			values:[
+			values: [
 				{ name: 'Never', value: Frequency.Never },
 				{ name: 'Cast Once', value: Frequency.Once },
 				{ name: 'Maintain', value: Frequency.Maintain },
@@ -58,7 +58,7 @@ export const RogueRotationConfig = {
 			fieldName: 'tricksOfTheTradeFrequency',
 			label: 'Tricks of the Trade',
 			labelTooltip: 'Frequency of Tricks of the Trade usage.',
-			values:[
+			values: [
 				{ name: 'Never', value: Frequency.Never },
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
@@ -67,7 +67,7 @@ export const RogueRotationConfig = {
 			fieldName: 'assassinationFinisherPriority',
 			label: 'Finisher Priority (Assassination)',
 			labelTooltip: 'Priority of Assassination finisher usage.',
-			values:[
+			values: [
 				{ name: 'Envenom > Rupture', value: AssassinationPriority.EnvenomRupture },
 				{ name: 'Rupture > Envenom', value: AssassinationPriority.RuptureEnvenom },
 			],
@@ -77,7 +77,7 @@ export const RogueRotationConfig = {
 			fieldName: 'combatFinisherPriority',
 			label: 'Finisher Priority (Combat)',
 			labelTooltip: 'Priority of Combat finisher usage.',
-			values:[
+			values: [
 				{ name: 'Rupture > Eviscerate', value: CombatPriority.RuptureEviscerate },
 				{ name: 'Eviscerate > Rupture', value: CombatPriority.EviscerateRupture },
 			],
@@ -97,7 +97,7 @@ export const RogueRotationConfig = {
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',
 			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
-			values:[
+			values: [
 				{ name: 'Never', value: Frequency.Never },
 				{ name: 'Once', value: Frequency.Once },
 				{ name: 'Maintain', value: Frequency.Maintain },

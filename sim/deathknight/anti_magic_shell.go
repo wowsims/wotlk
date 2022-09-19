@@ -59,10 +59,10 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 						Cast: core.CastConfig{},
 
+						DamageMultiplier: 1,
+
 						ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 							ProcMask: core.ProcMaskSpellDamage,
-
-							DamageMultiplier: 1,
 
 							BaseDamage:     core.BaseDamageConfigRoll(dk.Inputs.AvgAMSHit*0.9, dk.Inputs.AvgAMSHit*1.1),
 							OutcomeApplier: target.OutcomeFuncAlwaysHit(),

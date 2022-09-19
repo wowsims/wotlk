@@ -1,7 +1,7 @@
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { Spec } from '../core/proto/common.js';
-import { 
+import {
 	ShadowPriest_Options_Armor as Armor,
 	ShadowPriest_Rotation_RotationType as RotationType
 } from '../core/proto/priest.js';

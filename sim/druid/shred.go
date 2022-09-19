@@ -37,10 +37,11 @@ func (druid *Druid) registerShredSpell() {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: 2.25,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 2.25,
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, true),

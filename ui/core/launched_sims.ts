@@ -4,10 +4,10 @@ import { Spec } from './proto/common.js';
 // file until your sim is ready to launch!
 
 export enum LaunchStatus {
-    Unlaunched,
-    Alpha,
-    Beta,
-    Launched,
+	Unlaunched,
+	Alpha,
+	Beta,
+	Launched,
 }
 
 export const raidSimLaunched = false;
@@ -17,7 +17,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Alpha,
 	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
 	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
-	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecFeralDruid]: LaunchStatus.Alpha,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecHunter]: LaunchStatus.Alpha,
 	[Spec.SpecMage]: LaunchStatus.Alpha,
@@ -40,7 +40,7 @@ export const memeSpecs: Array<Spec> = [
 ];
 
 export function getLaunchedSims(): Array<Spec> {
-    return Object.keys(simLaunchStatuses)
-        .map(specStr => parseInt(specStr) as Spec)
-        .filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
+	return Object.keys(simLaunchStatuses)
+		.map(specStr => parseInt(specStr) as Spec)
+		.filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
 }

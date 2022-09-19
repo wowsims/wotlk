@@ -22,11 +22,13 @@ func (warlock *Warlock) registerDarkPactSpell() {
 				GCD: core.GCDDefault,
 			},
 		},
+
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  80,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			FlatThreatBonus:  80,
-			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
+			ProcMask:       core.ProcMaskEmpty,
+			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Glyph activates and applies SP before coef calculations are done
 				if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {

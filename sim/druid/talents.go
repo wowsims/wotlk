@@ -200,6 +200,38 @@ func (druid *Druid) applyPrimalFury() {
 	})
 }
 
+// Modifies the Bleed aura to apply the bonus.
+func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
+	if druid.Talents.RendAndTear == 0 {
+		return aura
+	}
+
+	bonusCrit := 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
+
+	oldOnGain := aura.OnGain
+	oldOnExpire := aura.OnExpire
+	aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+		if oldOnGain != nil {
+			oldOnGain(aura, sim)
+		}
+		if druid.BleedsActive == 0 {
+			druid.FerociousBite.BonusCritRating += bonusCrit
+		}
+		druid.BleedsActive++
+	}
+	aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+		if oldOnExpire != nil {
+			oldOnExpire(aura, sim)
+		}
+		druid.BleedsActive--
+		if druid.BleedsActive == 0 {
+			druid.FerociousBite.BonusCritRating -= bonusCrit
+		}
+	}
+
+	return aura
+}
+
 func (druid *Druid) applyOmenOfClarity() {
 	if !druid.Talents.OmenOfClarity {
 		return

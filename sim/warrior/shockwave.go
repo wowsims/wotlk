@@ -33,14 +33,15 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskRanged,
-			DamageMultiplier: 1.0,
-			ThreatMultiplier: 1.0,
+			ProcMask: core.ProcMaskRanged,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.75)
+					return 0.75 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

@@ -53,13 +53,13 @@ import { WorkerPool } from './worker_pool.js';
 import * as OtherConstants from './constants/other.js';
 
 export type RaidSimData = {
-    request: RaidSimRequest,
-    result: RaidSimResult,
+	request: RaidSimRequest,
+	result: RaidSimResult,
 };
 
 export type StatWeightsData = {
-    request: StatWeightsRequest,
-    result: StatWeightsResult,
+	request: StatWeightsRequest,
+	result: StatWeightsResult,
 };
 
 // Core Sim module which deals only with api types, no UI-related stuff.
@@ -498,7 +498,7 @@ export class Sim {
 		const item = this.items[itemSpec.id];
 		if (!item)
 			return null;
-		
+
 		const enchant = itemSpec.enchant > 0 ? this.enchants.find(e => (e.id == itemSpec.enchant && e.type == item.type)) : null;
 		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
 
@@ -566,10 +566,10 @@ export class Sim {
 }
 
 export class SimError extends Error {
-    readonly errorStr: string;
+	readonly errorStr: string;
 
-    constructor(errorStr: string) {
-        super(errorStr);
-        this.errorStr = errorStr;
-    }
+	constructor(errorStr: string) {
+		super(errorStr);
+		this.errorStr = errorStr;
+	}
 }

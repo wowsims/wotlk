@@ -355,7 +355,7 @@ func InspirationAura(unit *Unit, points int32) *Aura {
 	})
 }
 
-func applyInspiration(character *Character, uptime float64) {
+func ApplyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
@@ -379,10 +379,11 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		SpellSchool: SpellSchoolHoly,
 		Flags:       SpellFlagBinary,
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask:         ProcMaskEmpty,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
+			ProcMask: ProcMaskEmpty,
 
 			BaseDamage:     BaseDamageConfigFlat(damage),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
@@ -412,10 +413,11 @@ func ThornsAura(character *Character, points int32) *Aura {
 		SpellSchool: SpellSchoolNature,
 		Flags:       SpellFlagBinary,
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask:         ProcMaskEmpty,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
+			ProcMask: ProcMaskEmpty,
 
 			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
