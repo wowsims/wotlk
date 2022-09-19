@@ -19,10 +19,9 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 				deltaDamage := 1234.0 - 1050.0
-				damage := 1050.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-				damage += hitEffect.SpellPower(spell.Unit, spell) * 0.07
-				damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.07
-				return damage
+				return 1050.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+					.07*spell.SpellPower() +
+					.07*spell.MeleeAttackPower()
 			},
 		},
 

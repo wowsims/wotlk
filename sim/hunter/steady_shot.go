@@ -81,7 +81,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
+					return 0.1*spell.RangedAttackPower(hitEffect.Target) +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
 						hunter.NormalizedAmmoDamageBonus +
 						252

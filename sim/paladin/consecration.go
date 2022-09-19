@@ -33,8 +33,8 @@ func (paladin *Paladin) registerConsecrationSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 113 + 0.04*HolP + 0.04*AP
 					return 113 +
-						.04*hitEffect.MeleeAttackPower(spell.Unit) +
-						.04*(hitEffect.SpellPower(spell.Unit, spell)+bonusSpellPower)
+						.04*spell.MeleeAttackPower() +
+						.04*(spell.SpellPower()+bonusSpellPower)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHit(),

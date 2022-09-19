@@ -18,7 +18,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ProcMask: core.ProcMaskRangedSpecial,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.12) + 300
+				return 300 + 0.12*spell.MeleeAttackPower()
 			},
 			TargetSpellCoefficient: 1,
 		},

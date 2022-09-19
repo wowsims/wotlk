@@ -51,12 +51,13 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		effects[i].Target = warrior.Env.GetTargetUnit(i)
 	}
 
+	rollMultiplier := 1 + 0.3*float64(warrior.Talents.ImprovedRevenge)
 	applyEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return core.DamageRoll(sim, 1636, 1998)*(1.0+0.3*float64(warrior.Talents.ImprovedRevenge)) + warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.31)
+				return core.DamageRoll(sim, 1636, 1998)*rollMultiplier + 0.31*spell.MeleeAttackPower()
 			},
 			TargetSpellCoefficient: 1,
 		},

@@ -53,7 +53,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 					target := hitEffect.Target
 					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
 					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
-					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
+					return baseDamage*doses + apRatio*doses*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 0,
 			},

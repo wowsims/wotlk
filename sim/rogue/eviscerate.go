@@ -43,8 +43,10 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			ProcMask: core.ProcMaskMeleeMHSpecial,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := sim.RandomFloat("Eviscerate") * 254.0
-					return baseDamage + roll + hitEffect.MeleeAttackPower(spell.Unit)*apRatio + hitEffect.BonusWeaponDamage(spell.Unit)
+					return baseDamage +
+						254.0*sim.RandomFloat("Eviscerate") +
+						apRatio*spell.MeleeAttackPower() +
+						spell.BonusWeaponDamage()
 				},
 				TargetSpellCoefficient: 1,
 			},

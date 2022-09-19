@@ -112,7 +112,7 @@ func (dk *Deathknight) registerFrostFever() {
 						firstTsApply := !flagTs[hitEffect.Target.Index]
 						flagTs[hitEffect.Target.Index] = true
 						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
-						return (29.44 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06325) *
+						return (29.44 + 0.06325*dk.getImpurityBonus(spell)) *
 							core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
@@ -186,7 +186,7 @@ func (dk *Deathknight) registerBloodPlague() {
 						firstRorApply := !flagRor[hitEffect.Target.Index]
 						flagRor[hitEffect.Target.Index] = true
 						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-						return (36.248 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.06325) *
+						return (36.248 + 0.06325*dk.getImpurityBonus(spell)) *
 							core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
 					TargetSpellCoefficient: 1,
@@ -237,7 +237,7 @@ func (dk *Deathknight) registerDrwFrostFever() {
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
-						return (29.44 + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.06325)
+						return 29.44 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
 					},
 					TargetSpellCoefficient: 1,
 				},
@@ -290,7 +290,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-						return (36.248 + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.06325)
+						return 36.248 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
 					},
 					TargetSpellCoefficient: 1,
 				},

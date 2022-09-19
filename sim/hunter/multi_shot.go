@@ -16,10 +16,10 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+				return 0.2*spell.RangedAttackPower(hitEffect.Target) +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 					hunter.AmmoDamageBonus +
-					hitEffect.BonusWeaponDamage(spell.Unit) +
+					spell.BonusWeaponDamage() +
 					408
 			},
 			TargetSpellCoefficient: 1,

@@ -70,7 +70,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  flatThreatBonus,
 		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, dynaThreatBonus)
+			return dynaThreatBonus * spell.MeleeAttackPower()
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
