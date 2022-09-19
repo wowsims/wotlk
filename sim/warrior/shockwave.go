@@ -41,7 +41,7 @@ func (warrior *Warrior) registerShockwaveSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.75)
+					return 0.75 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

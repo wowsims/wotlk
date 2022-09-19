@@ -70,8 +70,8 @@ func (dk *Deathknight) applyImpurity() {
 	dk.bonusCoeffs.impurityBonusCoeff = 1.0 + float64(dk.Talents.Impurity)*0.04
 }
 
-func (dk *Deathknight) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return hitEffect.MeleeAttackPower(unit) * dk.bonusCoeffs.impurityBonusCoeff
+func (dk *Deathknight) getImpurityBonus(spell *core.Spell) float64 {
+	return spell.MeleeAttackPower() * dk.bonusCoeffs.impurityBonusCoeff
 }
 
 func (dk *Deathknight) applyWanderingPlague() {

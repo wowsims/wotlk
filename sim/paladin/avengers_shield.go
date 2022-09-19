@@ -17,8 +17,8 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				damage := 1100.0 +
 					(1344.0-1100.0)*sim.RandomFloat("Damage Roll") +
-					.07*hitEffect.SpellPower(spell.Unit, spell) +
-					.07*hitEffect.MeleeAttackPower(spell.Unit)
+					.07*spell.SpellPower() +
+					.07*spell.MeleeAttackPower()
 				return damage
 			},
 		},

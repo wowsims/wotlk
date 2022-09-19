@@ -48,11 +48,11 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
+					rap := spell.RangedAttackPower(hitEffect.Target)
 					return 1.25 * (rap*0.2 +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit))
+						spell.BonusWeaponDamage())
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -94,8 +94,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
-					return 242 + rap*0.04
+					return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

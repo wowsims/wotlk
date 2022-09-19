@@ -44,7 +44,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (baseDamage + dk.getImpurityBonus(hitEffect, spell.Unit)*0.15) * dk.RoRTSBonus(hitEffect.Target)
+					return (baseDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -80,7 +80,7 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return baseDamage + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.15
+					return baseDamage + 0.15*dk.RuneWeapon.getImpurityBonus(spell)
 				},
 				TargetSpellCoefficient: 1,
 			},

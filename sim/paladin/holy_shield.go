@@ -28,8 +28,8 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: examine this
 					return 274 +
-						0.07*hitEffect.MeleeAttackPower(spell.Unit) +
-						0.11*hitEffect.SpellPower(spell.Unit, spell)
+						0.07*spell.MeleeAttackPower() +
+						0.11*spell.SpellPower()
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHitBinary(),

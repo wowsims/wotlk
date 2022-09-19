@@ -105,7 +105,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	}
 	deadlyPoisonTickBaseDamage := core.BaseDamageConfig{
 		Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return 74 + hitEffect.MeleeAttackPower(spell.Unit)*0.03
+			return 74 + 0.03*spell.MeleeAttackPower()
 		},
 		TargetSpellCoefficient: 1,
 	}
@@ -226,7 +226,7 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 			ProcMask: core.ProcMaskEmpty,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 300 + hitEffect.MeleeAttackPower(spell.Unit)*0.1
+					return 300 + 0.1*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},
@@ -249,7 +249,7 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 			ProcMask: core.ProcMaskEmpty,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 231 + hitEffect.MeleeAttackPower(spell.Unit)*0.04
+					return 231 + 0.04*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

@@ -17,8 +17,8 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
-				return core.DamageRoll(sim, 523, 671) + rap*0.1
+				return core.DamageRoll(sim, 523, 671) +
+					0.1*spell.RangedAttackPower(hitEffect.Target)
 			},
 		},
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
@@ -82,8 +82,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
-					return 90 + rap*0.1
+					return 90 + 0.1*spell.RangedAttackPower(hitEffect.Target)
 				},
 			},
 			OutcomeApplier: periodicOutcomeFunc,

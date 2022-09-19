@@ -69,7 +69,7 @@ func (druid *Druid) registerRipSpell() {
 			IsPeriodic: true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := float64(druid.ComboPoints())
-				attackPower := hitEffect.MeleeAttackPower(spell.Unit)
+				attackPower := spell.MeleeAttackPower()
 
 				bonusTickDamage := 0.0
 				if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows

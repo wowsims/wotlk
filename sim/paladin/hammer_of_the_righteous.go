@@ -15,7 +15,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				damage := spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(hitEffect.MeleeAttackPower(spell.Unit))
+				damage := spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())
 				speed := spell.Unit.AutoAttacks.MH.SwingSpeed
 				return (damage / speed) * 4
 			},

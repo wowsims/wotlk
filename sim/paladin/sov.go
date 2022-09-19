@@ -84,8 +84,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 1 + 0.22 * HolP + 0.14 * AP
 					damage := 1 +
-						.22*hitEffect.SpellPower(spell.Unit, spell) +
-						.14*hitEffect.MeleeAttackPower(spell.Unit)
+						.22*spell.SpellPower() +
+						.14*spell.MeleeAttackPower()
 
 					// i = i * (1 + (0.10 * stacks))
 					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
@@ -226,8 +226,8 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					tickValue := 0 +
-						.013*hitEffect.SpellPower(spell.Unit, spell) +
-						.025*hitEffect.MeleeAttackPower(spell.Unit)
+						.013*spell.SpellPower() +
+						.025*spell.MeleeAttackPower()
 					return tickValue * float64(paladin.SealOfVengeanceDots[hitEffect.Target.Index].GetStacks())
 				},
 			},

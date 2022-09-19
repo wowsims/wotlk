@@ -48,7 +48,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
+					return (roll + 0.1*dk.getImpurityBonus(spell)) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
@@ -96,7 +96,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.1)
+					return roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 				},
 				TargetSpellCoefficient: 1,
 			},

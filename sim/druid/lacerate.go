@@ -54,7 +54,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := initialDamage + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := initialDamage + 0.01*spell.MeleeAttackPower()
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {

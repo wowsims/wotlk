@@ -25,8 +25,7 @@ func (hunter *Hunter) registerVolleySpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
-					return 353 + rap*0.0837
+					return 353 + 0.0837*spell.RangedAttackPower(hitEffect.Target)
 				},
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),

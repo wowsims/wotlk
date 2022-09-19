@@ -49,10 +49,9 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 					deltaDamage := 1257.0 - 1139.0
-					damage := 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-					damage += hitEffect.SpellPower(spell.Unit, spell) * 0.15
-					damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.15
-					return damage
+					return 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+						.15*spell.SpellPower() +
+						.15*spell.MeleeAttackPower()
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialNoBlockDodgeParry(paladin.MeleeCritMultiplier()),

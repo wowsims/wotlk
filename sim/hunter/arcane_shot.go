@@ -56,7 +56,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
+					return 492 + 0.15*spell.RangedAttackPower(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

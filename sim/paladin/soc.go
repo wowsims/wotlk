@@ -162,8 +162,8 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
 					return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						return oldCalculator(sim, hitEffect, spell) +
-							0.08*hitEffect.MeleeAttackPower(spell.Unit) +
-							0.13*hitEffect.SpellPower(spell.Unit, spell)
+							0.08*spell.MeleeAttackPower() +
+							0.13*spell.SpellPower()
 					}
 				}),
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.

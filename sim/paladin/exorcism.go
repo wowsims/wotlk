@@ -52,10 +52,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 					deltaDamage := 1146.0 - 1028.0
-					damage := 1028.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-					damage += hitEffect.SpellPower(spell.Unit, spell) * 0.15
-					damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.15
-					return damage
+					return 1028.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+						.15*spell.SpellPower() +
+						.15*spell.MeleeAttackPower()
 				},
 			},
 

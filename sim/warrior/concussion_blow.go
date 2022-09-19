@@ -43,7 +43,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.38)
+					return 0.38 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},
