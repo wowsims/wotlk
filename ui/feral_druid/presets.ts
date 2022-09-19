@@ -6,14 +6,14 @@ import { Flask } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
-import { 
+import {
 	FeralDruid_Rotation as FeralDruidRotation,
 	FeralDruid_Options as FeralDruidOptions,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
-    FeralDruid_Rotation_BearweaveType,
-    FeralDruid_Rotation_BiteModeType,
- } from '../core/proto/druid.js';
+	FeralDruid_Rotation_BearweaveType,
+	FeralDruid_Rotation_BiteModeType,
+} from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
@@ -27,36 +27,37 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '-503202132322010053120230310511-205503012',
-        glyphs: Glyphs.create({
-            major1: DruidMajorGlyph.GlyphOfRip,
-            major2: DruidMajorGlyph.GlyphOfSavageRoar,
-            major3: DruidMajorGlyph.GlyphOfShred,
-            minor1: DruidMinorGlyph.GlyphOfDash,
-            minor2: DruidMinorGlyph.GlyphOfTheWild,
-            minor3: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
-        }),
+		glyphs: Glyphs.create({
+			major1: DruidMajorGlyph.GlyphOfRip,
+			major2: DruidMajorGlyph.GlyphOfSavageRoar,
+			major3: DruidMajorGlyph.GlyphOfShred,
+			minor1: DruidMinorGlyph.GlyphOfDash,
+			minor2: DruidMinorGlyph.GlyphOfTheWild,
+			minor3: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+		}),
 	}),
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
-  bearWeaveType: FeralDruid_Rotation_BearweaveType.Lacerate,
-  minCombosForRip: 5,
-  minCombosForBite: 5,
+	bearWeaveType: FeralDruid_Rotation_BearweaveType.Lacerate,
+	minCombosForRip: 5,
+	minCombosForBite: 5,
 
-  useRake: true,
-  useBite: false,
-  mangleSpam: false,
-  biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
-  biteTime: 10.0,
-  berserkBiteThresh: 30.0,
-  powerbear: false,
-  maxRoarClip: 10.0,
-  maintainFaerieFire: true,
-  hotUptime: 0.0
+	useRake: true,
+	useBite: false,
+	mangleSpam: false,
+	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
+	biteTime: 10.0,
+	berserkBiteThresh: 30.0,
+	powerbear: false,
+	maxRoarClip: 10.0,
+	maintainFaerieFire: true,
+	hotUptime: 0.0
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
-  latencyMs: 100
+	latencyMs: 100,
+	prepopOoc: false
 });
 
 export const DefaultConsumes = Consumes.create({

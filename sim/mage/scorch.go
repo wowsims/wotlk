@@ -48,18 +48,16 @@ func (mage *Mage) registerScorchSpell() {
 			},
 		},
 
+		BonusCritRating: 0 +
+			float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		DamageMultiplier: mage.spellDamageMultiplier *
+			(1 + 0.02*float64(mage.Talents.SpellImpact)) *
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfScorch), 1.2, 1),
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
-
-			BonusCritRating: 0 +
-				float64(mage.Talents.Incineration+mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
-
-			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(mage.Talents.SpellImpact)) *
-				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfScorch), 1.2, 1),
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
+			ProcMask: core.ProcMaskSpellDamage,
 
 			BaseDamage:      core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
 			OutcomeApplier:  mage.fireSpellOutcomeApplier(mage.bonusCritDamage),

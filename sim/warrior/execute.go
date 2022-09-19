@@ -2,6 +2,7 @@ package warrior
 
 import (
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -19,6 +20,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		cost -= 3
 	}
 	refundAmount := cost * 0.8
+	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	var extraRage float64
 	extraRageBonus := core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution), 10, 0)
@@ -34,7 +36,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD:  gcd,
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -43,11 +45,11 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1.25,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1.25,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

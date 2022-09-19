@@ -17,12 +17,12 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 			character := agent.GetCharacter()
 
 			procSpell := character.RegisterSpell(core.SpellConfig{
-				ActionID:    core.ActionID{SpellID: 41989},
-				SpellSchool: core.SpellSchoolFire,
+				ActionID:         core.ActionID{SpellID: 41989},
+				SpellSchool:      core.SpellSchoolFire,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
+					ProcMask: core.ProcMaskEmpty,
 
 					BaseDamage:     core.BaseDamageConfigRoll(100, 150),
 					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
@@ -57,13 +57,13 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(a core.Agent) {
 			proc := a.GetCharacter().RegisterSpell(core.SpellConfig{
-				ActionID:    core.ActionID{SpellID: 18980},
-				SpellSchool: core.SpellSchoolNature,
+				ActionID:         core.ActionID{SpellID: 18980},
+				SpellSchool:      core.SpellSchoolNature,
+				DamageMultiplier: 1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					BaseDamage:       core.BaseDamageConfigRoll(15, 25),
-					OutcomeApplier:   a.GetCharacter().OutcomeFuncMagicHitAndCrit(a.GetCharacter().DefaultSpellCritMultiplier()),
+					ProcMask:       core.ProcMaskEmpty,
+					BaseDamage:     core.BaseDamageConfigRoll(15, 25),
+					OutcomeApplier: a.GetCharacter().OutcomeFuncMagicHitAndCrit(a.GetCharacter().DefaultSpellCritMultiplier()),
 				}),
 			})
 			a.GetCharacter().RegisterAura(core.Aura{

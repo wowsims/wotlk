@@ -101,42 +101,42 @@ export const BloodTalents = {
 };
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
-  useDeathAndDecay: true,
-  btGhoulFrenzy: true,
+	useDeathAndDecay: true,
+	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
-  useEmpowerRuneWeapon: true,
-  startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
-  bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-  useAms: false,
+	useEmpowerRuneWeapon: true,
+	startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
+	useAms: false,
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: true,
-  precastHornOfWinter: true,
+	precastHornOfWinter: true,
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
 });
 
 export const DefaultFrostRotation = DeathKnightRotation.create({
-  useDeathAndDecay: false,
-  btGhoulFrenzy: false,
+	useDeathAndDecay: false,
+	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
-  useEmpowerRuneWeapon: true,
-  startingPresence: Deathknight_Rotation_StartingPresence.Blood,
-  bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-  useAms: false,
-  avgAmsSuccessRate: 1.0,
-  avgAmsHit: 10000.0,
-  oblitDelayDuration: 0,
+	useEmpowerRuneWeapon: true,
+	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
+	useAms: false,
+	avgAmsSuccessRate: 1.0,
+	avgAmsHit: 10000.0,
+	oblitDelayDuration: 0,
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
-  precastHornOfWinter: true,
+	precastHornOfWinter: true,
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
@@ -144,16 +144,16 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 
 export const DefaultBloodRotation = DeathKnightRotation.create({
 	refreshHornOfWinter: false,
-  useEmpowerRuneWeapon: true,
-  startingPresence: Deathknight_Rotation_StartingPresence.Blood,
-  bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
-  useAms: false,
+	useEmpowerRuneWeapon: true,
+	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
+	useAms: false,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
-  precastHornOfWinter: true,
+	precastHornOfWinter: true,
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
@@ -163,13 +163,13 @@ export const OtherDefaults = {
 };
 
 export const DefaultConsumes = Consumes.create({
-  flask: Flask.FlaskOfEndlessRage,
-  food: Food.FoodDragonfinFilet,
-  defaultPotion: Potions.PotionOfSpeed,
-  petFood: PetFood.PetFoodSpicedMammothTreats,
-  prepopPotion:  Potions.PotionOfSpeed,
-  thermalSapper: true,
-  fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	flask: Flask.FlaskOfEndlessRage,
+	food: Food.FoodDragonfinFilet,
+	defaultPotion: Potions.PotionOfSpeed,
+	petFood: PetFood.PetFoodSpicedMammothTreats,
+	prepopPotion: Potions.PotionOfSpeed,
+	thermalSapper: true,
+	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const P1_UNHOLY_2H_PRERAID_PRESET = {

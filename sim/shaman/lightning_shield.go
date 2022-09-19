@@ -8,17 +8,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
-	actionID := core.ActionID{SpellID: 49281}
-
-	t9Bonus := false
-	if shaman.HasSetBonus(ItemSetThrallsBattlegear, 2) || shaman.HasSetBonus(ItemSetNobundosBattlegear, 2) {
-		t9Bonus = true
+func (shaman *Shaman) registerLightningShieldSpell() {
+	if shaman.SelfBuffs.Shield != proto.ShamanShield_LightningShield {
+		return
 	}
-	var proc = 0.02*float64(shaman.Talents.StaticShock) + core.TernaryFloat64(t9Bonus, 0.03, 0)
+
+	actionID := core.ActionID{SpellID: 49281}
+	procChance := 0.02*float64(shaman.Talents.StaticShock) + core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 2), 0.03, 0)
 
 	dmgMultBonus := 0.0
-
 	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
 	case 26000:
 		fallthrough
@@ -29,15 +27,16 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49279},
 		SpellSchool: core.SpellSchoolNature,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskEmpty,
-			DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
-				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
 
-			ThreatMultiplier: 1, //fix when spirit weapons is fixed
-			BaseDamage:       core.BaseDamageConfigMagic(380, 380, 0.267),
-			OutcomeApplier:   shaman.OutcomeFuncMagicHit(),
+		DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
+			core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
+			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
+		ThreatMultiplier: 1, //fix when spirit weapons is fixed
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask:       core.ProcMaskEmpty,
+			BaseDamage:     core.BaseDamageConfigMagic(380, 380, 0.267),
+			OutcomeApplier: shaman.OutcomeFuncMagicHit(),
 		}),
 	})
 
@@ -56,7 +55,7 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
-			if sim.RandomFloat("Static Shock") > proc {
+			if sim.RandomFloat("Static Shock") > procChance {
 				return
 			}
 			procSpell.Cast(sim, spellEffect.Target)
@@ -75,6 +74,4 @@ func (shaman *Shaman) registerLightningShieldSpell() *core.Spell {
 			shaman.LightningShieldAura.Activate(sim)
 		},
 	})
-
-	return (shaman.LightningShield)
 }

@@ -10,6 +10,7 @@ import (
 func (warrior *Warrior) registerSlamSpell() {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
+	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
@@ -22,18 +23,19 @@ func (warrior *Warrior) registerSlamSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     cost,
-				GCD:      core.GCDDefault,
+				GCD:      gcd,
 				CastTime: time.Millisecond*1500 - time.Millisecond*500*time.Duration(warrior.Talents.ImprovedSlam),
 			},
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 0.1, 0),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  140,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 0.1, 0),
-			ThreatMultiplier: 1,
-			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
-			FlatThreatBonus:  140,
+			ProcMask: core.ProcMaskMeleeMHSpecial,
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 250, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),

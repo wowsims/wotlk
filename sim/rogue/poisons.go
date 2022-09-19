@@ -35,10 +35,14 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	rogue.DeadlyPoison = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    DeadlyPoisonActionID,
 		SpellSchool: core.SpellSchoolNature,
+
+		DamageMultiplier: 1 +
+			[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   rogue.OutcomeFuncMagicHit(),
+			ProcMask:       core.ProcMaskEmpty,
+			OutcomeApplier: rogue.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				target := spellEffect.Target
 				if spellEffect.Landed() {
@@ -115,13 +119,10 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 			TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask: core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1 +
-					[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
-				ThreatMultiplier: 1,
-				IsPeriodic:       false, // hack to get attacker modifiers applied
-				BaseDamage:       core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
-				OutcomeApplier:   rogue.OutcomeFuncTickMagicHit(),
+				ProcMask:       core.ProcMaskPeriodicDamage,
+				IsPeriodic:     false, // hack to get attacker modifiers applied
+				BaseDamage:     core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
+				OutcomeApplier: rogue.OutcomeFuncTickMagicHit(),
 			})),
 		})
 		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
@@ -217,11 +218,12 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 		ActionID:    core.ActionID{SpellID: 57968, Tag: int32(procSource)},
 		SpellSchool: core.SpellSchoolNature,
 
+		DamageMultiplier: 1 +
+			[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
-			DamageMultiplier: 1 +
-				[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 300 + hitEffect.MeleeAttackPower(spell.Unit)*0.1
@@ -238,11 +240,13 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57975, Tag: int32(procSource)},
 		SpellSchool: core.SpellSchoolNature,
+
+		DamageMultiplier: 1 +
+			[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
-			DamageMultiplier: 1 +
-				[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 231 + hitEffect.MeleeAttackPower(spell.Unit)*0.04

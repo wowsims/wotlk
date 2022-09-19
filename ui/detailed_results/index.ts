@@ -63,11 +63,9 @@ Chart.defaults.color = colorSettings.mainTextColor;
 const layoutHTML = `
 <div class="dr-root">
 	<ul class="dr-toolbar nav nav-tabs">
-		<li class="results-filter">
-		</li>
-		<li class="tabs-filler">
-		</li>
-		<li class="dr-tab-tab active"><a data-toggle="tab" href="#damageTab">DAMAGE</a></li>
+		<li class="results-filter"></li>
+		<li class="tabs-filler"></li>
+		<li class="dr-tab-tab damage-metrics active"><a data-toggle="tab" href="#damageTab">DAMAGE</a></li>
 		<li class="dr-tab-tab healing-metrics"><a data-toggle="tab" href="#healingTab">HEALING</a></li>
 		<li class="dr-tab-tab threat-metrics"><a data-toggle="tab" href="#damageTakenTab">DAMAGE TAKEN</a></li>
 		<li class="dr-tab-tab"><a data-toggle="tab" href="#buffsTab">BUFFS</a></li>
@@ -205,6 +203,7 @@ function updateResults() {
 	}
 }
 
+document.body.classList.add('hide-damage-metrics');
 document.body.classList.add('hide-threat-metrics');
 document.body.classList.add('hide-healing-metrics');
 window.addEventListener('message', async event => {
@@ -217,6 +216,21 @@ window.addEventListener('message', async event => {
 			break;
 		case 'settings':
 			const settings = data.data.settings;
+			if (settings.showDamageMetrics) {
+				document.body.classList.remove('hide-damage-metrics');
+			} else {
+				document.body.classList.add('hide-damage-metrics');
+				if (document.getElementById('damageTab')!.classList.contains('active')) {
+					document.getElementById('damageTab')!.classList.remove('active');
+					document.getElementById('damageTab')!.classList.remove('in');
+					document.getElementById('healingTab')!.classList.add('active');
+					document.getElementById('healingTab')!.classList.add('in');
+
+					const toolbar = document.getElementsByClassName('dr-toolbar')[0] as HTMLElement;
+					(toolbar.getElementsByClassName('damage-metrics')[0] as HTMLElement).classList.remove('active');
+					(toolbar.getElementsByClassName('healing-metrics')[0] as HTMLElement).classList.add('active');
+				}
+			}
 			if (settings.showThreatMetrics) {
 				document.body.classList.remove('hide-threat-metrics');
 			} else {

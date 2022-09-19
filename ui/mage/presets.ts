@@ -535,7 +535,7 @@ export const P1_PRERAID_ARCANE_PRESET = {
 		  }
 		]
 	  }`
-	  )
+	)
 }
 
 export const P1_PRERAID_FIRE_PRESET = {
@@ -758,7 +758,8 @@ export const ICC_FFB_Preset = {
 			}
 		]
 		}`
-)}
+	)
+}
 
 
 export const ICC_Fireball_Preset = {
@@ -879,14 +880,15 @@ export const ICC_Fireball_Preset = {
 		  }
 		]
 	  }
-	`)}
+	`)
+}
 
 
-	export const P2_Arcane_Preset = {
-		name: 'Ulduar Arcane rough BiS',
-		tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-		enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
-		gear: EquipmentSpec.fromJsonString(`
+export const P2_Arcane_Preset = {
+	name: 'Ulduar Arcane rough BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	gear: EquipmentSpec.fromJsonString(`
 		{
 			"items": [
 			  {
@@ -998,13 +1000,14 @@ export const ICC_Fireball_Preset = {
 			  }
 			]
 		  }
-		`)}
-	
-	export const P2_Fire_Preset = {
-		name: 'Ulduar Fire rough BiS',
-		tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-		enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		gear: EquipmentSpec.fromJsonString(`
+		`)
+}
+
+export const P2_Fire_Preset = {
+	name: 'Ulduar Fire rough BiS',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	gear: EquipmentSpec.fromJsonString(`
 		{
 			"items": [
 			  {
@@ -1116,4 +1119,5 @@ export const ICC_Fireball_Preset = {
 			  }
 			]
 		  }
-		`)}
+		`)
+}

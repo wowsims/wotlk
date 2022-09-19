@@ -10,7 +10,7 @@ import { formatDeltaTextElem } from '../utils.js';
 declare var tippy: any;
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
-	simUI.addAction('DPS', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
+	simUI.addAction('SIMULATE', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
 		resultsManager.setSimProgress(progress);
 	}));
 
@@ -52,8 +52,11 @@ export class RaidSimResultsManager {
 		if (progress.presimRunning) {
 			this.simUI.resultsViewer.setContent(`
 				<div class="results-sim">
-						<div class="results-sim-dps">
+						<div class="results-sim-dps damage-metrics">
 							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
+						</div>
+						<div class="results-sim-hps healing-metrics">
+							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
 						</div>
 						<div class="">
 							presimulations running
@@ -63,8 +66,11 @@ export class RaidSimResultsManager {
 		} else {
 			this.simUI.resultsViewer.setContent(`
 				<div class="results-sim">
-						<div class="results-sim-dps">
+						<div class="results-sim-dps damage-metrics">
 							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
+						</div>
+						<div class="results-sim-hps healing-metrics">
+							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
 						</div>
 						<div class="">
 							${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
@@ -93,7 +99,9 @@ export class RaidSimResultsManager {
 				<div class="results-sim-reference">
 					<span class="results-sim-set-reference fa fa-map-pin"></span>
 					<div class="results-sim-reference-bar">
-						<span class="results-sim-reference-dps-diff"></span>
+						<span class="results-sim-reference-dps-diff damage-metrics"></span>
+						<span class="results-sim-reference-diff-separator healing-metrics">/</span>
+						<span class="results-sim-reference-tto-diff healing-metrics"></span>
 						<span class="results-sim-reference-diff-separator healing-metrics">/</span>
 						<span class="results-sim-reference-hps-diff healing-metrics"></span>
 						<span class="results-sim-reference-diff-separator threat-metrics">/</span>
@@ -121,6 +129,7 @@ export class RaidSimResultsManager {
 			}
 		};
 		setResultTippy('results-sim-dps', 'Damage Per Second');
+		setResultTippy('results-sim-tto', 'Time To OOM');
 		setResultTippy('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
 		setResultTippy('results-sim-tps', 'Threat Per Second');
 		setResultTippy('results-sim-dtps', 'Damage Taken Per Second');
@@ -208,12 +217,14 @@ export class RaidSimResultsManager {
 		formatDeltaTextElem(simReferenceHpsDiffElem, referenceHpsMetrics.avg, currentHpsMetrics.avg, 2);
 
 		if (this.simUI.isIndividualSim()) {
+			const simReferenceTtoDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tto-diff')[0] as HTMLSpanElement;
 			const simReferenceTpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')[0] as HTMLSpanElement;
 			const simReferenceDtpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')[0] as HTMLSpanElement;
 			const simReferenceCodDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-chanceOfDeath-diff')[0] as HTMLSpanElement;
 
 			const curPlayerMetrics = this.currentData.simResult.getPlayers()[0]!;
 			const refPlayerMetrics = this.referenceData.simResult.getPlayers()[0]!;
+			formatDeltaTextElem(simReferenceTtoDiffElem, refPlayerMetrics.tto.avg, curPlayerMetrics.tto.avg, 2);
 			formatDeltaTextElem(simReferenceTpsDiffElem, refPlayerMetrics.tps.avg, curPlayerMetrics.tps.avg, 2);
 			formatDeltaTextElem(simReferenceDtpsDiffElem, refPlayerMetrics.dtps.avg, curPlayerMetrics.dtps.avg, 2);
 			formatDeltaTextElem(simReferenceCodDiffElem, refPlayerMetrics.chanceOfDeath, curPlayerMetrics.chanceOfDeath, 1);
@@ -270,7 +281,7 @@ export class RaidSimResultsManager {
 				const tpsMetrics = playerMetrics.tps;
 				const dtpsMetrics = playerMetrics.dtps;
 				content += `
-					<div class="results-sim-dps">
+					<div class="results-sim-dps damage-metrics">
 						<span class="topline-result-avg">${dpsMetrics.avg.toFixed(2)}</span>
 						<span class="topline-result-stdev">${dpsMetrics.stdev.toFixed(2)}</span>
 					</div>
@@ -292,7 +303,7 @@ export class RaidSimResultsManager {
 				if (actions.length > 0) {
 					const mergedActions = ActionMetrics.merge(actions);
 					content += `
-						<div class="results-sim-dps">
+						<div class="results-sim-dps damage-metrics">
 							<span class="topline-result-avg">${mergedActions.dps.toFixed(2)}</span>
 						</div>
 						<div class="results-sim-tps threat-metrics">
@@ -311,6 +322,10 @@ export class RaidSimResultsManager {
 			}
 
 			content += `
+				<div class="results-sim-tto healing-metrics">
+					<span class="topline-result-avg">${playerMetrics.tto.avg.toFixed(2)}s</span>
+					<span class="topline-result-stdev">${playerMetrics.tto.stdev.toFixed(2)}s</span>
+				</div>
 				<div class="results-sim-hps healing-metrics">
 					<span class="topline-result-avg">${playerMetrics.hps.avg.toFixed(2)}</span>
 					<span class="topline-result-stdev">${playerMetrics.hps.stdev.toFixed(2)}</span>
@@ -319,7 +334,7 @@ export class RaidSimResultsManager {
 		} else {
 			const dpsMetrics = simResult.raidMetrics.dps;
 			content = `
-				<div class="results-sim-dps">
+				<div class="results-sim-dps damage-metrics">
 					<span class="topline-result-avg">${dpsMetrics.avg.toFixed(2)}</span>
 					<span class="topline-result-stdev">${dpsMetrics.stdev.toFixed(2)}</span>
 				</div>

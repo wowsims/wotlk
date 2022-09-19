@@ -39,15 +39,19 @@ func (druid *Druid) registerMoonfireSpell() {
 			},
 		},
 
+		BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplierAdditive: 1 +
+			improvedMoonfireDamageMultiplier +
+			druid.TalentsBonuses.moonfuryMultiplier -
+			moonfireGlyphBaseDamageMultiplier,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			ThreatMultiplier: 1,
-
-			BonusCritRating:  float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
-			BaseDamage:       core.BaseDamageConfigMagic(406, 476, 0.15),
-			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier - moonfireGlyphBaseDamageMultiplier),
-
+			ProcMask:       core.ProcMaskSpellDamage,
+			BaseDamage:     core.BaseDamageConfigMagic(406, 476, 0.15),
 			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.MoonfireDot.Apply(sim)
@@ -62,7 +66,18 @@ func (druid *Druid) registerMoonfireSpell() {
 
 	target := druid.CurrentTarget
 	druid.MoonfireDot = core.NewDot(core.Dot{
-		Spell: druid.Moonfire,
+		Spell: druid.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 48463},
+			SpellSchool: core.SpellSchoolArcane,
+
+			DamageMultiplierAdditive: 1 +
+				improvedMoonfireDamageMultiplier +
+				druid.TalentsBonuses.moonfuryMultiplier +
+				moonfireGlyphDotDamageMultiplier,
+			DamageMultiplier: 1 *
+				druid.TalentsBonuses.genesisMultiplier,
+			ThreatMultiplier: 1,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Moonfire Dot",
 			ActionID: actionID,
@@ -76,17 +91,10 @@ func (druid *Druid) registerMoonfireSpell() {
 		NumberOfTicks: 4 + core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0) + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * (1 + improvedMoonfireDamageMultiplier + druid.TalentsBonuses.moonfuryMultiplier + moonfireGlyphDotDamageMultiplier) * druid.TalentsBonuses.genesisMultiplier,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(200, 0.13),
-			OutcomeApplier:   dotOutcomeApplier,
-			IsPeriodic:       true,
-			OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if druid.FaerieFireAura.IsActive() {
-					spellEffect.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire)
-				}
-			},
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(200, 0.13),
+			OutcomeApplier: dotOutcomeApplier,
+			IsPeriodic:     true,
 		}),
 	})
 }

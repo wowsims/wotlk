@@ -11,11 +11,11 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	Rogue_Rotation as RogueRotation,
 	Rogue_Options as RogueOptions,
-  Rogue_Options_PoisonImbue as Poison,
-  RogueMajorGlyph,
-  Rogue_Rotation_Frequency,
-  Rogue_Rotation_AssassinationPriority,
-  Rogue_Rotation_CombatPriority,
+	Rogue_Options_PoisonImbue as Poison,
+	RogueMajorGlyph,
+	Rogue_Rotation_Frequency,
+	Rogue_Rotation_AssassinationPriority,
+	Rogue_Rotation_CombatPriority,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -26,11 +26,11 @@ export const CombatTalents = {
 	name: 'Combat',
 	data: SavedTalents.create({
 		talentsString: '00532000523-0252051050035010223100501251',
-    glyphs: Glyphs.create({
-      major1: RogueMajorGlyph.GlyphOfKillingSpree,
-      major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-      major3: RogueMajorGlyph.GlyphOfRupture,
-    })
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfKillingSpree,
+			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
+			major3: RogueMajorGlyph.GlyphOfRupture,
+		})
 	}),
 };
 
@@ -38,33 +38,33 @@ export const AssassinationTalents = {
 	name: 'Assassination',
 	data: SavedTalents.create({
 		talentsString: '005303005352100520103331051-005005003-502',
-    glyphs: Glyphs.create({
-      major1: RogueMajorGlyph.GlyphOfMutilate,
-      major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-      major3: RogueMajorGlyph.GlyphOfHungerForBlood,
-    })
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfMutilate,
+			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
+			major3: RogueMajorGlyph.GlyphOfHungerForBlood,
+		})
 	}),
 };
 
 export const DefaultRotation = RogueRotation.create({
-  exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
-  minimumComboPointsExposeArmor: 4,
-  tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
-  assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
-  combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
-  minimumComboPointsPrimaryFinisher: 3,
-  minimumComboPointsSecondaryFinisher: 2,
+	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
+	minimumComboPointsExposeArmor: 4,
+	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
+	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
+	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+	minimumComboPointsPrimaryFinisher: 3,
+	minimumComboPointsSecondaryFinisher: 2,
 });
 
 export const DefaultOptions = RogueOptions.create({
-  mhImbue: Poison.DeadlyPoison,
-  ohImbue: Poison.InstantPoison,
+	mhImbue: Poison.DeadlyPoison,
+	ohImbue: Poison.InstantPoison,
 });
 
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
-  flask: Flask.FlaskOfEndlessRage,
+	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodMegaMammothMeal,
 });
 

@@ -56,7 +56,7 @@ func (action WaitAction) Cast(sim *core.Simulation) bool {
 			action.unit.Log(sim, "Idling for %s seconds, for no particular reason.", action.GetDuration())
 		}
 	case WaitReasonOOM:
-		action.unit.Metrics.MarkOOM(action.unit, action.GetDuration())
+		action.unit.Metrics.AddOOMTime(sim, action.GetDuration())
 		if sim.Log != nil {
 			action.unit.Log(sim, "Not enough mana to cast, regenerating for %s.", action.GetDuration())
 		}

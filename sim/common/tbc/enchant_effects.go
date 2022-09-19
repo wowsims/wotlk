@@ -233,12 +233,12 @@ func init() {
 		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFrost,
+			ActionID:         actionID,
+			SpellSchool:      core.SpellSchoolFrost,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(150),
 				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),

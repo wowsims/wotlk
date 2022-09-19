@@ -159,7 +159,7 @@ export function makeSpecOptionsNumberInput<SpecType extends Spec>(config: Player
 		const getValue = internalConfig.getValue;
 		internalConfig.getValue = (player: Player<SpecType>) => getValue(player) * 100;
 		const setValue = internalConfig.setValue;
-		internalConfig.setValue = (eventID: EventID, player: Player<SpecType>, newVal: number) => setValue(eventID, player, newVal/100);
+		internalConfig.setValue = (eventID: EventID, player: Player<SpecType>, newVal: number) => setValue(eventID, player, newVal / 100);
 	}
 	return makeWrappedNumberInput<SpecType, Player<SpecType>>(internalConfig);
 }
@@ -185,7 +185,7 @@ export function makeRotationNumberInput<SpecType extends Spec>(config: PlayerNum
 		const getValue = internalConfig.getValue;
 		internalConfig.getValue = (player: Player<SpecType>) => getValue(player) * 100;
 		const setValue = internalConfig.setValue;
-		internalConfig.setValue = (eventID: EventID, player: Player<SpecType>, newVal: number) => setValue(eventID, player, newVal/100);
+		internalConfig.setValue = (eventID: EventID, player: Player<SpecType>, newVal: number) => setValue(eventID, player, newVal / 100);
 	}
 	return makeWrappedNumberInput<SpecType, Player<SpecType>>(internalConfig);
 }
@@ -351,7 +351,7 @@ function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: 
 			const newMessage = config.getValue(modObj);
 			if (multiplier) {
 				const sign = newValue - (newMessage[fieldName] as unknown as number)
-				newValue += (multiplier-1)*sign
+				newValue += (multiplier - 1) * sign
 			}
 			if (newValue < 0) {
 				newValue = 0

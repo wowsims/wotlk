@@ -13,8 +13,6 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 
 	runeStrikeGlyphCritBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneStrike), 10.0, 0.0)
 
-	weaponMulti := 1.5
-
 	baseCost := float64(core.NewRuneCost(20, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
@@ -32,12 +30,13 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating: (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1.5 *
+			dk.darkrunedPlateRuneStrikeDamageBonus(),
+		ThreatMultiplier: 1.75,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: weaponMulti * dk.darkrunedPlateRuneStrikeDamageBonus(),
-			ThreatMultiplier: 1.75,
-			BonusCritRating:  (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -50,7 +49,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.critMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.DefaultMeleeCritMultiplier()),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				rs.DoCost(sim)

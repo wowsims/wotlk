@@ -62,6 +62,10 @@ func (dk *Deathknight) registerFrostFever() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagDisease,
+
+		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			if dk.FrostFeverDisease[unit.Index].IsActive() {
 				isRefreshing[unit.Index] = true
@@ -101,8 +105,6 @@ func (dk *Deathknight) registerFrostFever() {
 			TickLength:    time.Second * 3,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:              core.ProcMaskPeriodicDamage,
-				DamageMultiplier:      core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
-				ThreatMultiplier:      1,
 				IsPeriodic:            true,
 				OnPeriodicDamageDealt: wpWrapper,
 				BaseDamage: core.BaseDamageConfig{
@@ -133,6 +135,10 @@ func (dk *Deathknight) registerBloodPlague() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagDisease,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			if dk.BloodPlagueDisease[unit.Index].IsActive() {
 				isRefreshing[unit.Index] = true
@@ -148,7 +154,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
 	}
 
 	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
@@ -173,8 +179,6 @@ func (dk *Deathknight) registerBloodPlague() {
 
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 				ProcMask:              core.ProcMaskPeriodicDamage,
-				DamageMultiplier:      1,
-				ThreatMultiplier:      1,
 				IsPeriodic:            true,
 				OnPeriodicDamageDealt: wpWrapper,
 				BaseDamage: core.BaseDamageConfig{
@@ -206,6 +210,10 @@ func (dk *Deathknight) registerDrwFrostFever() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagDisease,
+
+		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.RuneWeapon.FrostFeverDisease[unit.Index].Apply(sim)
 		},
@@ -224,10 +232,8 @@ func (dk *Deathknight) registerDrwFrostFever() {
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
+				ProcMask:   core.ProcMaskPeriodicDamage,
+				IsPeriodic: true,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
@@ -250,6 +256,10 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		Flags:       core.SpellFlagDisease,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.RuneWeapon.BloodPlagueDisease[unit.Index].Apply(sim)
 		},
@@ -260,7 +270,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.RuneWeapon.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.spellCritMultiplier())
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
 	}
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
@@ -275,10 +285,8 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 			TickLength:    time.Second * 3,
 
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
+				ProcMask:   core.ProcMaskPeriodicDamage,
+				IsPeriodic: true,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff

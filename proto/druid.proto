@@ -201,6 +201,7 @@ message FeralDruid {
   message Options {
     RaidTarget innervate_target = 1;
     int32 latency_ms = 2;
+    bool prepop_ooc = 3;
   }
   Options options = 3;
 }

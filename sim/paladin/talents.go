@@ -462,10 +462,9 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
 			return func() {
 				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					IsPeriodic:       true,
-					ProcMask:         core.ProcMaskPeriodicDamage,
-					DamageMultiplier: 1,
-					OutcomeApplier:   applier,
+					IsPeriodic:     true,
+					ProcMask:       core.ProcMaskPeriodicDamage,
+					OutcomeApplier: applier,
 					BaseDamage: core.BaseDamageConfig{
 						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 							tick := paladin.RighteousVengeanceDamage[target.Index]
@@ -487,6 +486,9 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 	})
 }
 

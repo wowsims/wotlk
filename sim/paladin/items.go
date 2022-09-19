@@ -469,7 +469,9 @@ func init() {
 		actionID := core.ActionID{ItemID: 32489}
 
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
+			ActionID:         actionID,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 		})
 
 		target := paladin.CurrentTarget
@@ -482,9 +484,7 @@ func init() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 2,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+				ProcMask: core.ProcMaskPeriodicDamage,
 
 				BaseDamage:     core.BaseDamageConfigFlat(480 / 4),
 				OutcomeApplier: paladin.OutcomeFuncTick(),

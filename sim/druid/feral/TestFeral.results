@@ -367,8 +367,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 7023.06346
-  tps: 5358.48531
+  dps: 7083.56468
+  tps: 5406.80581
  }
 }
 dps_results: {
@@ -479,8 +479,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 7023.06346
-  tps: 5358.48531
+  dps: 7083.56468
+  tps: 5406.80581
  }
 }
 dps_results: {

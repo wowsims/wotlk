@@ -74,10 +74,10 @@ func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
 			},
 		},
 
+		DamageMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
 
 			BaseDamage:     core.BaseDamageConfigRoll(79000, 81000),
 			OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),

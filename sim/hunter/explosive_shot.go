@@ -18,13 +18,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	baseCost := 0.07 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
-		ProcMask:       core.ProcMaskRangedSpecial,
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
-			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
-			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
+		ProcMask: core.ProcMaskRangedSpecial,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -64,10 +58,16 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),
-
-		InitialDamageMultiplier: 1 +
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
+			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
+		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),
 	})
 
 	dotEffect := baseEffect

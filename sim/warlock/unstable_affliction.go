@@ -13,7 +13,6 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47843}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
 	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -27,6 +26,13 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 				CastTime: time.Millisecond * (1500 - 200*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfUnstableAffliction), 1, 0)),
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask:        core.ProcMaskEmpty,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
@@ -50,12 +56,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier: baseAdditiveMultiplier,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
-			BonusCritRating: 0 +
-				warlock.masterDemonologistShadowCrit() +
-				3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
 			OutcomeApplier: applier,
 			IsPeriodic:     true,
 			ProcMask:       core.ProcMaskPeriodicDamage,

@@ -16,12 +16,12 @@ import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import { 
+import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
-	Rogue, 
-	Rogue_Rotation as RogueRotation, 
-	Rogue_Options as RogueOptions, 
+	Rogue,
+	Rogue_Rotation as RogueRotation,
+	Rogue_Options as RogueOptions,
 	Rogue_Rotation_Frequency as Frequency,
 } from '../core/proto/rogue.js';
 
@@ -62,8 +62,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 							if (
 								simUI.player.getTalents().mutilate &&
 								(simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger ||
-								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger) 
-							){
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger)
+							) {
 								return '\'Mutilate\' talent selected, but daggers not equipped in both hands!';
 							} else {
 								return '';

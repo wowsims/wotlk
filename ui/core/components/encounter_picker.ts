@@ -35,7 +35,7 @@ export class EncounterPicker extends Component {
 		modEncounter.sim.waitForInit().then(() => {
 			const presetTargets = modEncounter.sim.getAllPresetTargets();
 			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-				extraCssClasses: ['npc-picker'],
+				extraCssClasses: ['damage-metrics', 'npc-picker'],
 				label: 'NPC',
 				labelTooltip: 'Selects a preset NPC configuration.',
 				values: [
@@ -120,7 +120,7 @@ export class EncounterPicker extends Component {
 			}
 
 			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('sim-button', 'advanced-button');
+			advancedButton.classList.add('sim-button', 'advanced-button', 'damage-metrics');
 			advancedButton.textContent = 'ADVANCED';
 			advancedButton.addEventListener('click', () => new AdvancedEncounterPicker(this.rootElem, modEncounter, simUI));
 			this.rootElem.appendChild(advancedButton);

@@ -31,7 +31,7 @@ export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumIconInput<S
 	values: [
 		{ actionId: ActionId.fromSpellId(42463), value: PaladinSeal.Vengeance },
 		{ actionId: ActionId.fromSpellId(20154), value: PaladinSeal.Righteousness },
-		{ 
+		{
 			actionId: ActionId.fromSpellId(20424), value: PaladinSeal.Command,
 			showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getTalents().sealOfCommand,
 		},
@@ -141,8 +141,8 @@ export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotat
 export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin, RotationType>({
 	fieldName: 'type',
 	label: 'Type',
-	labelTooltip: 
-	`<ul>
+	labelTooltip:
+		`<ul>
 		<li>
 			<div>Standard: All-in-one rotation for single target and aoe.</div>
 		</li>

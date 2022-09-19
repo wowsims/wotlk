@@ -31,14 +31,15 @@ func (hunter *Hunter) registerKillShotSpell() {
 			},
 		},
 
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),
-			DamageMultiplier: 1 *
-				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskRangedSpecial,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

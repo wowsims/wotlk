@@ -21,13 +21,7 @@ func (hunter *Hunter) registerVolleySpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
-			ProcMask:        core.ProcMaskRangedSpecial,
-			BonusHitRating:  hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit(),
-			DamageMultiplier: 1 *
-				(1 + 0.04*float64(hunter.Talents.Barrage)),
-
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskRangedSpecial,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -55,6 +49,12 @@ func (hunter *Hunter) registerVolleySpell() {
 				ChannelTime: time.Second * 6,
 			},
 		},
+
+		BonusHitRating:  hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit(),
+		DamageMultiplier: 1 *
+			(1 + 0.04*float64(hunter.Talents.Barrage)),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			channelDoneAt := sim.CurrentTime + hunter.Volley.CurCast.ChannelTime

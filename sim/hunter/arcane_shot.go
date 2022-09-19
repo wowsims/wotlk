@@ -41,14 +41,18 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			},
 		},
 
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+		DamageMultiplierAdditive: 1 +
+			.03*float64(hunter.Talents.FerociousInspiration) +
+			.05*float64(hunter.Talents.ImprovedArcaneShot),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
-			DamageMultiplier: 1 *
-				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskRangedSpecial,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -59,9 +63,5 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
 			OnSpellHitDealt: onSpellHit,
 		}),
-
-		InitialDamageMultiplier: 1 +
-			.03*float64(hunter.Talents.FerociousInspiration) +
-			.05*float64(hunter.Talents.ImprovedArcaneShot),
 	})
 }

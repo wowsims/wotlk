@@ -41,6 +41,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 	}
 
 	cat.maxRipTicks = cat.MaxRipTicks()
+	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -71,6 +72,7 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
+	prepopOoc      bool
 	missChance     float64
 	readyToShift   bool
 	waitingForTick bool
@@ -84,14 +86,12 @@ func (cat *FeralDruid) GetDruid() *druid.Druid {
 
 func (cat *FeralDruid) MissChance() float64 {
 	speffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeMHSpecial,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		Target:           cat.CurrentTarget,
+		ProcMask: core.ProcMaskMeleeMHSpecial,
+		Target:   cat.CurrentTarget,
 	}
 	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
-	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Druid.Unit, at)
-	dodge := at.BaseDodgeChance - speffect.ExpertisePercentage(&cat.Druid.Unit) - cat.CurrentTarget.PseudoStats.DodgeReduction
+	miss := at.BaseMissChance - speffect.PhysicalHitChance(&cat.Unit, cat.Shred, at)
+	dodge := at.BaseDodgeChance - speffect.ExpertisePercentage(&cat.Unit) - cat.CurrentTarget.PseudoStats.DodgeReduction
 	return miss + dodge
 }
 
@@ -107,4 +107,8 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
+
+	if cat.prepopOoc && cat.Talents.OmenOfClarity {
+		cat.ClearcastingAura.Activate(sim)
+	}
 }

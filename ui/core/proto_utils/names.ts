@@ -7,114 +7,114 @@ import { Stat } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 
 export const raceNames: Record<Race, string> = {
-    [Race.RaceUnknown]: 'None',
-    [Race.RaceBloodElf]: 'Blood Elf',
-    [Race.RaceDraenei]: 'Draenei',
-    [Race.RaceDwarf]: 'Dwarf',
-    [Race.RaceGnome]: 'Gnome',
-    [Race.RaceHuman]: 'Human',
-    [Race.RaceNightElf]: 'Night Elf',
-    [Race.RaceOrc]: 'Orc',
-    [Race.RaceTauren]: 'Tauren',
-    [Race.RaceTroll]: 'Troll',
-    [Race.RaceUndead]: 'Undead',
+	[Race.RaceUnknown]: 'None',
+	[Race.RaceBloodElf]: 'Blood Elf',
+	[Race.RaceDraenei]: 'Draenei',
+	[Race.RaceDwarf]: 'Dwarf',
+	[Race.RaceGnome]: 'Gnome',
+	[Race.RaceHuman]: 'Human',
+	[Race.RaceNightElf]: 'Night Elf',
+	[Race.RaceOrc]: 'Orc',
+	[Race.RaceTauren]: 'Tauren',
+	[Race.RaceTroll]: 'Troll',
+	[Race.RaceUndead]: 'Undead',
 };
 
 export function nameToRace(name: string): Race {
-    const normalized = name.toLowerCase().replaceAll(' ', '');
-    for (const key in raceNames) {
-        const race = parseInt(key) as Race;
-        if (raceNames[race].toLowerCase().replaceAll(' ', '') == normalized) {
-            return race;
-        }
-    }
+	const normalized = name.toLowerCase().replaceAll(' ', '');
+	for (const key in raceNames) {
+		const race = parseInt(key) as Race;
+		if (raceNames[race].toLowerCase().replaceAll(' ', '') == normalized) {
+			return race;
+		}
+	}
 
-    return Race.RaceUnknown;
+	return Race.RaceUnknown;
 }
 
 export const classNames: Record<Class, string> = {
-    [Class.ClassUnknown]: 'None',
-    [Class.ClassDruid]: 'Druid',
-    [Class.ClassHunter]: 'Hunter',
-    [Class.ClassMage]: 'Mage',
-    [Class.ClassPaladin]: 'Paladin',
-    [Class.ClassPriest]: 'Priest',
-    [Class.ClassRogue]: 'Rogue',
-    [Class.ClassShaman]: 'Shaman',
-    [Class.ClassWarlock]: 'Warlock',
-    [Class.ClassWarrior]: 'Warrior',
-    [Class.ClassDeathknight]: 'Death Knight',
+	[Class.ClassUnknown]: 'None',
+	[Class.ClassDruid]: 'Druid',
+	[Class.ClassHunter]: 'Hunter',
+	[Class.ClassMage]: 'Mage',
+	[Class.ClassPaladin]: 'Paladin',
+	[Class.ClassPriest]: 'Priest',
+	[Class.ClassRogue]: 'Rogue',
+	[Class.ClassShaman]: 'Shaman',
+	[Class.ClassWarlock]: 'Warlock',
+	[Class.ClassWarrior]: 'Warrior',
+	[Class.ClassDeathknight]: 'Death Knight',
 }
 
 export function nameToClass(name: string): Class {
-    const lower = name.toLowerCase();
-    for (const key in classNames) {
-        const charClass = parseInt(key) as Class;
-        if (classNames[charClass].toLowerCase().replace(/\s+/g, '') == lower) {
-            return charClass;
-        }
-    }
+	const lower = name.toLowerCase();
+	for (const key in classNames) {
+		const charClass = parseInt(key) as Class;
+		if (classNames[charClass].toLowerCase().replace(/\s+/g, '') == lower) {
+			return charClass;
+		}
+	}
 
-    return Class.ClassUnknown;
+	return Class.ClassUnknown;
 }
 
 export const professionNames: Record<Profession, string> = {
-    [Profession.ProfessionUnknown]: 'None',
-    [Profession.Alchemy]: 'Alchemy',
-    [Profession.Blacksmithing]: 'Blacksmithing',
-    [Profession.Enchanting]: 'Enchanting',
-    [Profession.Engineering]: 'Engineering',
-    [Profession.Herbalism]: 'Herbalism',
-    [Profession.Inscription]: 'Inscription',
-    [Profession.Jewelcrafting]: 'Jewelcrafting',
-    [Profession.Leatherworking]: 'Leatherworking',
-    [Profession.Mining]: 'Mining',
-    [Profession.Skinning]: 'Skinning',
-    [Profession.Tailoring]: 'Tailoring',
+	[Profession.ProfessionUnknown]: 'None',
+	[Profession.Alchemy]: 'Alchemy',
+	[Profession.Blacksmithing]: 'Blacksmithing',
+	[Profession.Enchanting]: 'Enchanting',
+	[Profession.Engineering]: 'Engineering',
+	[Profession.Herbalism]: 'Herbalism',
+	[Profession.Inscription]: 'Inscription',
+	[Profession.Jewelcrafting]: 'Jewelcrafting',
+	[Profession.Leatherworking]: 'Leatherworking',
+	[Profession.Mining]: 'Mining',
+	[Profession.Skinning]: 'Skinning',
+	[Profession.Tailoring]: 'Tailoring',
 };
 
 export const statOrder: Array<Stat> = [
-    Stat.StatHealth,
-    Stat.StatArmor,
-    Stat.StatStamina,
-    Stat.StatStrength,
-    Stat.StatAgility,
-    Stat.StatIntellect,
-    Stat.StatSpirit,
-    Stat.StatSpellPower,
-    Stat.StatHealingPower,
-    Stat.StatArcaneSpellPower,
-    Stat.StatFireSpellPower,
-    Stat.StatFrostSpellPower,
-    Stat.StatHolySpellPower,
-    Stat.StatNatureSpellPower,
-    Stat.StatShadowSpellPower,
-    Stat.StatSpellHit,
-    Stat.StatSpellCrit,
-    Stat.StatSpellHaste,
-    Stat.StatSpellPenetration,
-    Stat.StatMP5,
-    Stat.StatAttackPower,
-    Stat.StatRangedAttackPower,
-    Stat.StatMeleeHit,
-    Stat.StatMeleeCrit,
-    Stat.StatMeleeHaste,
-    Stat.StatArmorPenetration,
-    Stat.StatExpertise,
-    Stat.StatMana,
-    Stat.StatEnergy,
-    Stat.StatRage,
-    Stat.StatDefense,
-    Stat.StatBlock,
-    Stat.StatBlockValue,
-    Stat.StatDodge,
-    Stat.StatParry,
-    Stat.StatResilience,
-    Stat.StatArcaneResistance,
-    Stat.StatFireResistance,
-    Stat.StatFrostResistance,
-    Stat.StatNatureResistance,
-    Stat.StatShadowResistance,
+	Stat.StatHealth,
+	Stat.StatArmor,
+	Stat.StatStamina,
+	Stat.StatStrength,
+	Stat.StatAgility,
+	Stat.StatIntellect,
+	Stat.StatSpirit,
+	Stat.StatSpellPower,
+	Stat.StatHealingPower,
+	Stat.StatArcaneSpellPower,
+	Stat.StatFireSpellPower,
+	Stat.StatFrostSpellPower,
+	Stat.StatHolySpellPower,
+	Stat.StatNatureSpellPower,
+	Stat.StatShadowSpellPower,
+	Stat.StatSpellHit,
+	Stat.StatSpellCrit,
+	Stat.StatSpellHaste,
+	Stat.StatSpellPenetration,
+	Stat.StatMP5,
+	Stat.StatAttackPower,
+	Stat.StatRangedAttackPower,
+	Stat.StatMeleeHit,
+	Stat.StatMeleeCrit,
+	Stat.StatMeleeHaste,
+	Stat.StatArmorPenetration,
+	Stat.StatExpertise,
+	Stat.StatMana,
+	Stat.StatEnergy,
+	Stat.StatRage,
+	Stat.StatDefense,
+	Stat.StatBlock,
+	Stat.StatBlockValue,
+	Stat.StatDodge,
+	Stat.StatParry,
+	Stat.StatResilience,
+	Stat.StatArcaneResistance,
+	Stat.StatFireResistance,
+	Stat.StatFrostResistance,
+	Stat.StatNatureResistance,
+	Stat.StatShadowResistance,
 ];
 
 export const statNames: Record<Stat, string> = {
@@ -162,65 +162,65 @@ export const statNames: Record<Stat, string> = {
 };
 
 export const slotNames: Record<ItemSlot, string> = {
-    [ItemSlot.ItemSlotHead]: 'Head',
-    [ItemSlot.ItemSlotNeck]: 'Neck',
-    [ItemSlot.ItemSlotShoulder]: 'Shoulders',
-    [ItemSlot.ItemSlotBack]: 'Back',
-    [ItemSlot.ItemSlotChest]: 'Chest',
-    [ItemSlot.ItemSlotWrist]: 'Wrist',
-    [ItemSlot.ItemSlotHands]: 'Hands',
-    [ItemSlot.ItemSlotWaist]: 'Waist',
-    [ItemSlot.ItemSlotLegs]: 'Legs',
-    [ItemSlot.ItemSlotFeet]: 'Feet',
-    [ItemSlot.ItemSlotFinger1]: 'Finger 1',
-    [ItemSlot.ItemSlotFinger2]: 'Finger 2',
-    [ItemSlot.ItemSlotTrinket1]: 'Trinket 1',
-    [ItemSlot.ItemSlotTrinket2]: 'Trinket 2',
-    [ItemSlot.ItemSlotMainHand]: 'Main Hand',
-    [ItemSlot.ItemSlotOffHand]: 'Off Hand',
-    [ItemSlot.ItemSlotRanged]: 'Ranged',
+	[ItemSlot.ItemSlotHead]: 'Head',
+	[ItemSlot.ItemSlotNeck]: 'Neck',
+	[ItemSlot.ItemSlotShoulder]: 'Shoulders',
+	[ItemSlot.ItemSlotBack]: 'Back',
+	[ItemSlot.ItemSlotChest]: 'Chest',
+	[ItemSlot.ItemSlotWrist]: 'Wrist',
+	[ItemSlot.ItemSlotHands]: 'Hands',
+	[ItemSlot.ItemSlotWaist]: 'Waist',
+	[ItemSlot.ItemSlotLegs]: 'Legs',
+	[ItemSlot.ItemSlotFeet]: 'Feet',
+	[ItemSlot.ItemSlotFinger1]: 'Finger 1',
+	[ItemSlot.ItemSlotFinger2]: 'Finger 2',
+	[ItemSlot.ItemSlotTrinket1]: 'Trinket 1',
+	[ItemSlot.ItemSlotTrinket2]: 'Trinket 2',
+	[ItemSlot.ItemSlotMainHand]: 'Main Hand',
+	[ItemSlot.ItemSlotOffHand]: 'Off Hand',
+	[ItemSlot.ItemSlotRanged]: 'Ranged',
 };
 
 export const resourceNames: Record<ResourceType, string> = {
-    [ResourceType.ResourceTypeNone]: 'None',
-    [ResourceType.ResourceTypeHealth]: 'Health',
-    [ResourceType.ResourceTypeMana]: 'Mana',
-    [ResourceType.ResourceTypeEnergy]: 'Energy',
-    [ResourceType.ResourceTypeRage]: 'Rage',
-    [ResourceType.ResourceTypeComboPoints]: 'Combo Points',
-    [ResourceType.ResourceTypeFocus]: 'Focus',
-    [ResourceType.ResourceTypeRunicPower]: 'Runic Power',
-    [ResourceType.ResourceTypeBloodRune]: 'Blood Rune',
-    [ResourceType.ResourceTypeFrostRune]: 'Frost Rune',
-    [ResourceType.ResourceTypeUnholyRune]: 'Unholy Rune',
-    [ResourceType.ResourceTypeDeathRune]: 'Death Rune',
+	[ResourceType.ResourceTypeNone]: 'None',
+	[ResourceType.ResourceTypeHealth]: 'Health',
+	[ResourceType.ResourceTypeMana]: 'Mana',
+	[ResourceType.ResourceTypeEnergy]: 'Energy',
+	[ResourceType.ResourceTypeRage]: 'Rage',
+	[ResourceType.ResourceTypeComboPoints]: 'Combo Points',
+	[ResourceType.ResourceTypeFocus]: 'Focus',
+	[ResourceType.ResourceTypeRunicPower]: 'Runic Power',
+	[ResourceType.ResourceTypeBloodRune]: 'Blood Rune',
+	[ResourceType.ResourceTypeFrostRune]: 'Frost Rune',
+	[ResourceType.ResourceTypeUnholyRune]: 'Unholy Rune',
+	[ResourceType.ResourceTypeDeathRune]: 'Death Rune',
 };
 
 export const resourceColors: Record<ResourceType, string> = {
-    [ResourceType.ResourceTypeNone]: '#ffffff',
-    [ResourceType.ResourceTypeHealth]: '#22ba00',
-    [ResourceType.ResourceTypeMana]: '#2e93fa',
-    [ResourceType.ResourceTypeEnergy]: '#ffd700',
-    [ResourceType.ResourceTypeRage]: '#ff0000',
-    [ResourceType.ResourceTypeComboPoints]: '#ffa07a',
-    [ResourceType.ResourceTypeFocus]: '#cd853f',
-    [ResourceType.ResourceTypeRunicPower]: '#5b99ee',
-    [ResourceType.ResourceTypeBloodRune]: '#ff0000',
-    [ResourceType.ResourceTypeFrostRune]: '#0000ff',
-    [ResourceType.ResourceTypeUnholyRune]: '#00ff00',
-    [ResourceType.ResourceTypeDeathRune]: '#8b008b',
+	[ResourceType.ResourceTypeNone]: '#ffffff',
+	[ResourceType.ResourceTypeHealth]: '#22ba00',
+	[ResourceType.ResourceTypeMana]: '#2e93fa',
+	[ResourceType.ResourceTypeEnergy]: '#ffd700',
+	[ResourceType.ResourceTypeRage]: '#ff0000',
+	[ResourceType.ResourceTypeComboPoints]: '#ffa07a',
+	[ResourceType.ResourceTypeFocus]: '#cd853f',
+	[ResourceType.ResourceTypeRunicPower]: '#5b99ee',
+	[ResourceType.ResourceTypeBloodRune]: '#ff0000',
+	[ResourceType.ResourceTypeFrostRune]: '#0000ff',
+	[ResourceType.ResourceTypeUnholyRune]: '#00ff00',
+	[ResourceType.ResourceTypeDeathRune]: '#8b008b',
 };
 
 export function stringToResourceType(str: string): ResourceType {
-    for (const [key, val] of Object.entries(resourceNames)) {
-        if (val.toLowerCase() == str.toLowerCase()) {
-            return Number(key) as ResourceType;
-        }
-    }
-    return ResourceType.ResourceTypeNone;
+	for (const [key, val] of Object.entries(resourceNames)) {
+		if (val.toLowerCase() == str.toLowerCase()) {
+			return Number(key) as ResourceType;
+		}
+	}
+	return ResourceType.ResourceTypeNone;
 }
 
 export const shattFactionNames: Record<ShattrathFaction, string> = {
-    [ShattrathFaction.ShattrathFactionAldor]: 'Aldor',
-    [ShattrathFaction.ShattrathFactionScryer]: 'Scryer',
+	[ShattrathFaction.ShattrathFactionAldor]: 'Aldor',
+	[ShattrathFaction.ShattrathFactionScryer]: 'Scryer',
 };

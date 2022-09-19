@@ -25,43 +25,31 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	 *   - CANNOT CRIT.
 	 */
 
-	baseModifiers := Multiplicative{
-		Additive{
-			paladin.getItemSetLightswornBattlegearBonus4(),
-			paladin.getMajorGlyphSealOfRighteousnessBonus(),
-			paladin.getTalentSealsOfThePureBonus(),
-		},
-		Additive{paladin.getTalentTwoHandedWeaponSpecializationBonus()},
-	}
-	baseMultiplier := baseModifiers.Get()
-
-	judgementModifiers := append(baseModifiers.Clone(),
-		Additive{paladin.getMajorGlyphOfJudgementBonus(), paladin.getTalentTheArtOfWarBonus()},
-	)
-	judgementMultiplier := judgementModifiers.Get()
+	baseMultiplierAdditive := 1 +
+		paladin.getItemSetLightswornBattlegearBonus4() +
+		paladin.getMajorGlyphSealOfRighteousnessBonus() +
+		paladin.getTalentSealsOfThePureBonus()
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeOrRangedSpecial,
-			DamageMultiplier: judgementMultiplier,
-			ThreatMultiplier: 1,
 
-			BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-				(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+		DamageMultiplierAdditive: baseMultiplierAdditive +
+			paladin.getMajorGlyphOfJudgementBonus() +
+			paladin.getTalentTheArtOfWarBonus(),
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			ProcMask: core.ProcMaskMeleeOrRangedSpecial,
+
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 1 + 0.2 * AP + 0.32 * HolP
-					scaling := hybridScaling{
-						AP: 0.20,
-						SP: 0.32,
-					}
-
-					damage := 1 + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
-
-					return damage
+					return 1 +
+						.20*hitEffect.MeleeAttackPower(spell.Unit) +
+						.32*hitEffect.SpellPower(spell.Unit, spell)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
@@ -72,21 +60,21 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 20154}, // Seal of Righteousness damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+		DamageMultiplierAdditive: baseMultiplierAdditive,
+		DamageMultiplier:         1,
+		ThreatMultiplier:         1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
+			ProcMask: core.ProcMaskEmpty,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// weapon_speed * (0.022* AP + 0.044*HolP)
-
-					scaling := hybridScaling{
-						AP: 0.022,
-						SP: 0.044,
-					}
-
-					damage := paladin.GetMHWeapon().SwingSpeed * ((scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell)))
-					return damage
+					return paladin.GetMHWeapon().SwingSpeed *
+						(.022*hitEffect.MeleeAttackPower(spell.Unit) +
+							.044*hitEffect.SpellPower(spell.Unit, spell))
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncAlwaysHit(), // can't miss if attack landed

@@ -78,6 +78,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 	threatMult := 2.0735
 	// TODO: Imp def stance
 	impDefStanceMultiplier := 1 - 0.03*float64(warrior.Talents.ImprovedDefensiveStance)
+	tacMasteryThreatMultiplier := 1 + 0.21*float64(warrior.Talents.TacticalMastery)
 
 	if warrior.Talents.ImprovedDefensiveStance > 0 {
 		enrageAura := warrior.GetOrRegisterAura(core.Aura{
@@ -86,9 +87,21 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			Duration: 12 * time.Second,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+				if warrior.Bloodthirst != nil {
+					warrior.Bloodthirst.ThreatMultiplier *= tacMasteryThreatMultiplier
+				}
+				if warrior.MortalStrike != nil {
+					warrior.MortalStrike.ThreatMultiplier *= tacMasteryThreatMultiplier
+				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+				if warrior.Bloodthirst != nil {
+					warrior.Bloodthirst.ThreatMultiplier /= tacMasteryThreatMultiplier
+				}
+				if warrior.MortalStrike != nil {
+					warrior.MortalStrike.ThreatMultiplier /= tacMasteryThreatMultiplier
+				}
 			},
 		})
 

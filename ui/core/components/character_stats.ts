@@ -1,5 +1,5 @@
 import { PlayerStats } from '..//proto/api.js';
-import { Stat, 	Class } from '..//proto/common.js';
+import { Stat, Class } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
 import { statNames, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';

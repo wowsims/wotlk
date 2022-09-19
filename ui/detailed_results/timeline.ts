@@ -204,7 +204,7 @@ export class Timeline extends ResultComponent {
 			} catch (e) {
 				console.log("Failed to update rotation chart: ", e);
 			}
-			
+
 
 			const dpsData = this.addDpsSeries(player, options, '');
 			this.addDpsYAxis(dpsData.maxDps, options);
@@ -469,10 +469,10 @@ export class Timeline extends ResultComponent {
 		const target = targets[0];
 
 		this.clearRotationChart();
-		
+
 		try {
 			this.drawRotationTimeRuler(this.rotationTimeline.getElementsByClassName('rotation-timeline-canvas')[0] as HTMLCanvasElement, duration);
-		} catch (e){
+		} catch (e) {
 			console.log("Failed to draw rotation: ", e);
 		}
 
@@ -770,7 +770,7 @@ export class Timeline extends ResultComponent {
 				const stacksChangeElem = document.createElement('div');
 				stacksChangeElem.classList.add('rotation-timeline-stacks-change');
 				stacksChangeElem.style.left = this.timeToPx(scl.timestamp - aul.timestamp);
-				stacksChangeElem.style.width = this.timeToPx(aul.stacksChange[i+1] ? aul.stacksChange[i+1].timestamp-scl.timestamp : aul.fadedAt - scl.timestamp);
+				stacksChangeElem.style.width = this.timeToPx(aul.stacksChange[i + 1] ? aul.stacksChange[i + 1].timestamp - scl.timestamp : aul.fadedAt - scl.timestamp);
 				stacksChangeElem.textContent = String(scl.newStacks);
 				auraElem.appendChild(stacksChangeElem);
 			});
@@ -995,7 +995,7 @@ const idToCategoryMap: Record<number, number> = {
 	[61006]: MELEE_ACTION_CATEGORY + 0.28, // Kill Shot
 	[34490]: MELEE_ACTION_CATEGORY + 0.29, // Silencing Shot
 	[49001]: MELEE_ACTION_CATEGORY + 0.30, // Serpent Sting
-	[3043]:  MELEE_ACTION_CATEGORY + 0.30, // Scorpid Sting
+	[3043]: MELEE_ACTION_CATEGORY + 0.30, // Scorpid Sting
 	[53238]: MELEE_ACTION_CATEGORY + 0.31, // Piercing Shots
 	[63672]: MELEE_ACTION_CATEGORY + 0.32, // Black Arrow
 	[49067]: MELEE_ACTION_CATEGORY + 0.33, // Explosive Trap
@@ -1005,7 +1005,7 @@ const idToCategoryMap: Record<number, number> = {
 	[27156]: 0.1, // Seal of Righteousness Proc
 	[20182]: 0.2, // Reckoning
 	[27179]: SPELL_ACTION_CATEGORY + 0.1, // Holy Shield
-	
+
 	[35395]: MELEE_ACTION_CATEGORY + 0.10, // Crusader Strike
 	[53385]: MELEE_ACTION_CATEGORY + 0.20, // Divine Storm
 	[53408]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Wisdom
@@ -1105,7 +1105,7 @@ const idToCategoryMap: Record<number, number> = {
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
-	
+
 	// Deathknight
 	[51425]: MELEE_ACTION_CATEGORY + 0.05, // Obliterate
 	[55268]: MELEE_ACTION_CATEGORY + 0.1, // Frost strike

@@ -10,27 +10,15 @@ import (
 func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseCost := paladin.BaseMana * 0.26
 
-	baseModifiers := Multiplicative{}
-	baseMultiplier := baseModifiers.Get()
-
-	scaling := hybridScaling{
-		AP: 0.07,
-		SP: 0.07,
-	}
-
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
-		BonusCritRating:  1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				deltaDamage := 1344.0 - 1100.0
-				damage := 1100.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-				damage += hitEffect.SpellPower(spell.Unit, spell) * scaling.SP
-				damage += hitEffect.MeleeAttackPower(spell.Unit) * scaling.AP
+				damage := 1100.0 +
+					(1344.0-1100.0)*sim.RandomFloat("Damage Roll") +
+					.07*hitEffect.SpellPower(spell.Unit, spell) +
+					.07*hitEffect.MeleeAttackPower(spell.Unit)
 				return damage
 			},
 		},
@@ -65,6 +53,11 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 				Duration: time.Second * 30,
 			},
 		},
+
+		// TODO: Why is this here?
+		BonusCritRating:  1,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})
