@@ -25,7 +25,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
-	rogue.AutoAttacks.OHEffect.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+	rogue.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
 
 	if rogue.Talents.Deadliness > 0 {
 		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
@@ -345,13 +345,12 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
 			// No proc mask, so it won't proc itself.
 			ProcMask: core.ProcMaskEmpty,
-
-			DamageMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {

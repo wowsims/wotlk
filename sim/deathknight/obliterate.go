@@ -18,14 +18,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	}
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
-	weaponMulti := 0.8
-	if !isMH {
-		weaponMulti = 0.8 * dk.nervesOfColdSteelBonus()
-	}
 
 	effect := core.SpellEffect{
-		DamageMultiplier: weaponMulti * core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) * dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
@@ -46,7 +40,11 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusCritRating:  (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating: (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .8 *
+			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
+			core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) *
+			dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

@@ -15,6 +15,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 
 	baseCost := 0.22 * paladin.BaseMana
 	actionID := core.ActionID{SpellID: 48819}
+	bonusSpellPower := 0 +
+		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
+		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
 
 	consecrationDot := core.NewDot(core.Dot{
 		Aura: paladin.RegisterAura(core.Aura{
@@ -26,22 +29,12 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		TickEffects: core.TickFuncAOESnapshot(paladin.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
 
-			DamageMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 113 + 0.04*HolP + 0.04*AP
-					scaling := hybridScaling{
-						AP: 0.04,
-						SP: 0.04,
-					}
-
-					sp := hitEffect.SpellPower(spell.Unit, spell) +
-						core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
-						core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
-
-					damage := 113 + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * sp)
-
-					return damage
+					return 113 +
+						.04*hitEffect.MeleeAttackPower(spell.Unit) +
+						.04*(hitEffect.SpellPower(spell.Unit, spell)+bonusSpellPower)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHit(),
@@ -67,6 +60,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDot(consecrationDot),

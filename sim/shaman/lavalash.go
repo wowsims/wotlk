@@ -18,7 +18,11 @@ const (
 	WrathfulGladiatorsTotemOfIndomitability   = 51507
 )
 
-func (shaman *Shaman) newLavaLashSpell() *core.Spell {
+func (shaman *Shaman) registerLavaLashSpell() {
+	if !shaman.Talents.LavaLash {
+		return
+	}
+
 	manaCost := 0.04 * shaman.BaseMana
 
 	flatDamageBonus := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
@@ -39,7 +43,7 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 		indomitabilityAura = shaman.NewTemporaryStatsAura("Fury of the Gladiator", core.ActionID{SpellID: 60555}, stats.Stats{stats.AttackPower: 204}, time.Second*10)
 	}
 
-	return shaman.RegisterSpell(core.SpellConfig{
+	shaman.LavaLash = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 60103},
 		SpellSchool: core.SpellSchoolFire,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -59,14 +63,13 @@ func (shaman *Shaman) newLavaLashSpell() *core.Spell {
 			},
 		},
 
+		DamageMultiplier: 1 + core.TernaryFloat64(offhandFlametongueImbued,
+			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0)*
+			core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeOHSpecial,
-
-			DamageMultiplier: 1 + core.TernaryFloat64(offhandFlametongueImbued,
-				core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0)*
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, true),
 			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier(0)),

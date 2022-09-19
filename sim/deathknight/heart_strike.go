@@ -12,10 +12,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 736.0+bonusBaseDamage, true)
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
-	weaponMulti := 0.5
-	if !isMainTarget {
-		weaponMulti = 0.25
-	}
 
 	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.bonusCritMultiplier(dk.Talents.MightOfMograine))
 	if isDrw {
@@ -23,9 +19,8 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeSpecial,
-		DamageMultiplier: weaponMulti * dk.thassariansPlateDamageBonus() * dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) * dk.bloodyStrikesBonus(dk.HeartStrike),
-		OutcomeApplier:   outcomeApplier,
+		ProcMask:       core.ProcMaskMeleeSpecial,
+		OutcomeApplier: outcomeApplier,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(hitEffect.Target), dk.dkCountActiveDiseases(hitEffect.Target))
@@ -41,7 +36,12 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .5 *
+			core.TernaryFloat64(isMainTarget, 1, 0.5) *
+			dk.thassariansPlateDamageBonus() *
+			dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) *
+			dk.bloodyStrikesBonus(dk.HeartStrike),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

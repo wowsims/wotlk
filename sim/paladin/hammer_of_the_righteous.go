@@ -10,13 +10,8 @@ import (
 func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 	baseCost := paladin.BaseMana * 0.06
 
-	baseModifiers := Multiplicative{}
-	baseMultiplier := baseModifiers.Get()
-
 	baseEffectMH := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: baseMultiplier,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -58,6 +53,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 
 		// TODO: Why is this here?
 		BonusCritRating:  1,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),

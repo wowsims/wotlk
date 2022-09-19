@@ -44,13 +44,13 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 			ActionID:    core.ActionID{ItemID: config.ID},
 			SpellSchool: config.School,
 
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				BaseDamage:       config.BaseDamage,
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				ProcMask:       core.ProcMaskEmpty,
+				BaseDamage:     config.BaseDamage,
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
 		})
 
@@ -167,22 +167,22 @@ func init() {
 			var ohSpell *core.Spell
 			initSpells := func() {
 				mhEffect := character.AutoAttacks.MHEffect
-				mhEffect.DamageMultiplier *= 0.5
 				mhSpell = character.GetOrRegisterSpell(core.SpellConfig{
 					ActionID:         core.ActionID{ItemID: itemID}.WithTag(1),
 					SpellSchool:      core.SpellSchoolPhysical,
 					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
 					ApplyEffects:     core.ApplyEffectFuncDirectDamage(mhEffect),
 				})
 
 				if character.AutoAttacks.IsDualWielding {
 					ohEffect := character.AutoAttacks.OHEffect
-					ohEffect.DamageMultiplier *= 0.5
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{ItemID: itemID}.WithTag(2),
 						SpellSchool:      core.SpellSchoolPhysical,
 						Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+						DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,
 						ApplyEffects:     core.ApplyEffectFuncDirectDamage(ohEffect),
 					})

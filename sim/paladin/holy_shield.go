@@ -10,7 +10,6 @@ import (
 
 func (paladin *Paladin) registerHolyShieldSpell() {
 	actionID := core.ActionID{SpellID: 48952}
-
 	numCharges := int32(8)
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
@@ -18,24 +17,19 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagBinary,
 
+		// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1.35,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
-			// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
-			DamageMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: examine this
-					scaling := hybridScaling{
-						AP: 0.07,
-						SP: 0.11,
-					}
-
-					damage := 274 + (scaling.AP * hitEffect.MeleeAttackPower(spell.Unit)) + (scaling.SP * hitEffect.SpellPower(spell.Unit, spell))
-
-					return damage
+					return 274 +
+						0.07*hitEffect.MeleeAttackPower(spell.Unit) +
+						0.11*hitEffect.SpellPower(spell.Unit, spell)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHitBinary(),
@@ -58,6 +52,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeBlock) {
+				// TODO: Shouldn't this be spellEffect.Target instead of spell.Unit?
 				procSpell.Cast(sim, spell.Unit)
 				aura.RemoveStack(sim)
 			}

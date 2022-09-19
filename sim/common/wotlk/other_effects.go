@@ -150,11 +150,11 @@ func init() {
 				},
 			},
 
+			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigRoll(1530, 1870),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),

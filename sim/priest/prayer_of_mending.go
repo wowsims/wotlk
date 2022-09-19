@@ -27,11 +27,6 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		IsHealing: true,
 		ProcMask:  core.ProcMaskSpellHealing,
 
-		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)) *
-			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),
-
 		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 
@@ -84,7 +79,11 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 			},
 		},
 
-		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.DivineProvidence)) *
+			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

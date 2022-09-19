@@ -18,14 +18,8 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 	}
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
-	weaponMulti := 0.75
-	if !isMH {
-		weaponMulti = 0.75 * dk.nervesOfColdSteelBonus()
-	}
 
 	effect := core.SpellEffect{
-		DamageMultiplier: weaponMulti * (1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				glyphDmgMultiplier := core.TernaryFloat64(hasGlyph, 1.0+0.01*core.MinFloat(dk.CurrentRunicPower(), 25.0), 1.0)
@@ -45,7 +39,10 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .75 *
+			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
+			(1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -106,7 +103,6 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
-	weaponMulti := 0.75
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(1),
@@ -114,12 +110,12 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .75 * dk.improvedDeathStrikeDamageBonus(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeSpecial,
-			DamageMultiplier: weaponMulti * dk.improvedDeathStrikeDamageBonus(),
-			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
+			ProcMask:       core.ProcMaskMeleeSpecial,
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)

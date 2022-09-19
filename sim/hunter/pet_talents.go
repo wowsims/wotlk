@@ -18,7 +18,7 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.15*float64(talents.CobraReflexes)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SpikedCollar)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
+	hp.AutoAttacks.MHConfig.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
 	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
 	hp.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)

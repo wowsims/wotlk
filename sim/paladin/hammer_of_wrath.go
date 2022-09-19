@@ -12,19 +12,6 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.12
 
-	baseModifiers := Multiplicative{
-		Additive{
-			paladin.getItemSetLightbringerBattlegearBonus4(),
-			paladin.getItemSetAegisBattlegearBonus2(),
-		},
-	}
-	baseMultiplier := baseModifiers.Get()
-
-	scaling := hybridScaling{
-		AP: 0.15,
-		SP: 0.15,
-	}
-
 	paladin.HammerOfWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48806},
 		SpellSchool: core.SpellSchoolHoly,
@@ -48,21 +35,23 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 			},
 		},
 
-		BonusCritRating:  (25 * float64(paladin.Talents.SanctifiedWrath)) * core.CritRatingPerCritChance,
+		BonusCritRating: 25 * float64(paladin.Talents.SanctifiedWrath) * core.CritRatingPerCritChance,
+		DamageMultiplierAdditive: 1 +
+			paladin.getItemSetLightbringerBattlegearBonus4() +
+			paladin.getItemSetAegisBattlegearBonus2(),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskSpellDamage,
-
-			DamageMultiplier: baseMultiplier,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 					deltaDamage := 1257.0 - 1139.0
 					damage := 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-					damage += hitEffect.SpellPower(spell.Unit, spell) * scaling.SP
-					damage += hitEffect.MeleeAttackPower(spell.Unit) * scaling.AP
+					damage += hitEffect.SpellPower(spell.Unit, spell) * 0.15
+					damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.15
 					return damage
 				},
 			},

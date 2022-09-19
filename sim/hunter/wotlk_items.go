@@ -218,7 +218,6 @@ func init() {
 			var rangedSpell *core.Spell
 			initSpell := func() {
 				rangedEffect := hunter.AutoAttacks.RangedEffect
-				rangedEffect.DamageMultiplier *= 0.5
 				rangedSpell = hunter.RegisterSpell(core.SpellConfig{
 					ActionID:    core.ActionID{ItemID: itemID},
 					SpellSchool: core.SpellSchoolPhysical,
@@ -226,6 +225,7 @@ func init() {
 
 					BonusHitRating:   hunter.bonusRangedHit(),
 					BonusCritRating:  hunter.bonusRangedCrit(),
+					DamageMultiplier: 0.5,
 					ThreatMultiplier: 1,
 					ApplyEffects:     core.ApplyEffectFuncDirectDamage(rangedEffect),
 				})

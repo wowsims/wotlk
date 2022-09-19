@@ -32,12 +32,17 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: 1 +
+			0.15*float64(rogue.Talents.BloodSpatter) +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
+			0.1*float64(rogue.Talents.SerratedBlades),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
-			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ruptureDot.Spell = spell
@@ -81,13 +86,7 @@ func (rogue *Rogue) registerRupture() {
 		NumberOfTicks: 0, // Set dynamically
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 +
-				0.15*float64(rogue.Talents.BloodSpatter) +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
-				core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
-				0.1*float64(rogue.Talents.SerratedBlades),
+			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := rogue.ComboPoints()

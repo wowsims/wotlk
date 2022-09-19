@@ -23,6 +23,7 @@ func (priest *Priest) registerStarshardsSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -48,11 +49,10 @@ func (priest *Priest) registerStarshardsSpell() {
 		TickLength:    time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(785/5, 0.167),
-			OutcomeApplier:   priest.OutcomeFuncTick(),
+			ProcMask:       core.ProcMaskPeriodicDamage,
+			IsPeriodic:     true,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, 0.167),
+			OutcomeApplier: priest.OutcomeFuncTick(),
 		}),
 	})
 }

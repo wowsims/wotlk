@@ -16,14 +16,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 125+bonusBaseDamage, true)
 	}
 
-	weaponMulti := 0.55
-	if !isMH {
-		weaponMulti = 0.55 * dk.nervesOfColdSteelBonus()
-	}
-
 	effect := core.SpellEffect{
-		DamageMultiplier: weaponMulti * dk.bloodOfTheNorthCoeff(),
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
@@ -46,7 +39,10 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		SpellSchool: core.SpellSchoolFrost,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .55 *
+			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
+			dk.bloodOfTheNorthCoeff(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

@@ -32,12 +32,15 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 
 	fa.Init = func() {
 		fa.Spell = fa.RegisterSpell(SpellConfig{
-			ActionID:         ActionID{SpellID: 42},
-			SpellSchool:      SpellSchoolShadow,
-			Flags:            SpellFlagIgnoreResists,
-			Cast:             CastConfig{},
+			ActionID:    ActionID{SpellID: 42},
+			SpellSchool: SpellSchoolShadow,
+			Flags:       SpellFlagIgnoreResists,
+			Cast:        CastConfig{},
+
 			BonusCritRating:  3 * CritRatingPerCritChance,
+			DamageMultiplier: 1.5,
 			ThreatMultiplier: 1,
+
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 				ProcMask:       ProcMaskSpellDamage,
 				OutcomeApplier: fa.OutcomeFuncMagicHit(),
@@ -57,11 +60,10 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			TickLength:          time.Second * 3,
 			AffectedByCastSpeed: true,
 			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
-				ProcMask:         ProcMaskPeriodicDamage,
-				BaseDamage:       BaseDamageConfigMagicNoRoll(100, 1),
-				DamageMultiplier: 1.5,
-				OutcomeApplier:   fa.OutcomeFuncAlwaysHit(),
-				IsPeriodic:       true,
+				ProcMask:       ProcMaskPeriodicDamage,
+				BaseDamage:     BaseDamageConfigMagicNoRoll(100, 1),
+				OutcomeApplier: fa.OutcomeFuncAlwaysHit(),
+				IsPeriodic:     true,
 			}),
 		})
 	}
@@ -145,7 +147,7 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	sim := SetupFakeSim()
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 	spell := fa.GetCharacter().Spellbook[0]
-	spell.DamageMultiplier = 2
+	spell.DamageMultiplier *= 2
 
 	fa.Dot.Apply(sim)
 	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2

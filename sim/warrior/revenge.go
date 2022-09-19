@@ -54,8 +54,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	applyEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return core.DamageRoll(sim, 1636, 1998)*(1.0+0.3*float64(warrior.Talents.ImprovedRevenge)) + warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.31)
@@ -91,6 +89,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			},
 		},
 
+		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  121,
 

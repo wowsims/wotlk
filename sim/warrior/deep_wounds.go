@@ -19,6 +19,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
+		DamageMultiplier: 1 * (1 + 0.16*float64(warrior.Talents.DeepWounds)),
 		ThreatMultiplier: 1,
 	})
 
@@ -72,11 +73,10 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
 	deepWoundsDot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		ProcMask:         core.ProcMaskPeriodicDamage,
-		DamageMultiplier: 1 * (1 + 0.16*float64(warrior.Talents.DeepWounds)),
-		IsPeriodic:       true,
-		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier:   warrior.OutcomeFuncTick(),
+		ProcMask:       core.ProcMaskPeriodicDamage,
+		IsPeriodic:     true,
+		BaseDamage:     core.BaseDamageConfigFlat(newTickDamage),
+		OutcomeApplier: warrior.OutcomeFuncTick(),
 	}))
 	deepWoundsDot.Apply(sim)
 }

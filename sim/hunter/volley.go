@@ -22,8 +22,6 @@ func (hunter *Hunter) registerVolleySpell() {
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
 			ProcMask: core.ProcMaskRangedSpecial,
-			DamageMultiplier: 1 *
-				(1 + 0.04*float64(hunter.Talents.Barrage)),
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -52,8 +50,10 @@ func (hunter *Hunter) registerVolleySpell() {
 			},
 		},
 
-		BonusHitRating:   hunter.bonusRangedHit(),
-		BonusCritRating:  hunter.bonusRangedCrit(),
+		BonusHitRating:  hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit(),
+		DamageMultiplier: 1 *
+			(1 + 0.04*float64(hunter.Talents.Barrage)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
