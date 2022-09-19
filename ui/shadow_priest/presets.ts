@@ -13,9 +13,9 @@ import { TristateEffect } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
-import { 
-	ShadowPriest_Rotation as Rotation, 
-	ShadowPriest_Options as Options, 
+import {
+	ShadowPriest_Rotation as Rotation,
+	ShadowPriest_Options as Options,
 	ShadowPriest_Rotation_RotationType,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
@@ -51,15 +51,15 @@ export const DefaultRotation = Rotation.create({
 
 export const DefaultOptions = Options.create({
 	useShadowfiend: true,
-  useMindBlast: true,
-  useShadowWordDeath: true,
+	useMindBlast: true,
+	useShadowWordDeath: true,
 });
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
 	defaultPotion: Potions.PotionOfWildMagic,
-	prepopPotion:  Potions.PotionOfWildMagic,
+	prepopPotion: Potions.PotionOfWildMagic,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({

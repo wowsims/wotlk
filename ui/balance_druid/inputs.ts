@@ -15,19 +15,19 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 // These don't need to be in a separate file but it keeps things cleaner.
 
 export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecBalanceDruid>({
-    fieldName: 'innervateTarget',
-    id: ActionId.fromSpellId(29166),
-    extraCssClasses: [
-        'within-raid-sim-hide',
-    ],
-    getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.targetIndex != NO_TARGET,
-    setValue: (eventID: EventID, player: Player<Spec.SpecBalanceDruid>, newValue: boolean) => {
-        const newOptions = player.getSpecOptions();
-        newOptions.innervateTarget = RaidTarget.create({
-            targetIndex: newValue ? 0 : NO_TARGET,
-        });
-        player.setSpecOptions(eventID, newOptions);
-    },
+	fieldName: 'innervateTarget',
+	id: ActionId.fromSpellId(29166),
+	extraCssClasses: [
+		'within-raid-sim-hide',
+	],
+	getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.targetIndex != NO_TARGET,
+	setValue: (eventID: EventID, player: Player<Spec.SpecBalanceDruid>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.innervateTarget = RaidTarget.create({
+			targetIndex: newValue ? 0 : NO_TARGET,
+		});
+		player.setSpecOptions(eventID, newOptions);
+	},
 });
 
 export const BalanceDruidRotationConfig = {
