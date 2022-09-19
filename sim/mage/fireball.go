@@ -16,9 +16,10 @@ func (mage *Mage) registerFireballSpell() {
 	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
 
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
+		MissileSpeed: 22,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -54,14 +55,19 @@ func (mage *Mage) registerFireballSpell() {
 					mage.FireballDot.Apply(sim)
 				}
 			},
-
-			MissileSpeed: 22,
 		}),
 	})
 
 	target := mage.CurrentTarget
 	mage.FireballDot = core.NewDot(core.Dot{
-		Spell: mage.Fireball,
+		Spell: mage.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolFire,
+			Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
+
+			DamageMultiplier: mage.Fireball.DamageMultiplier,
+			ThreatMultiplier: mage.Fireball.ThreatMultiplier,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Fireball-" + strconv.Itoa(int(mage.Index)),
 			ActionID: actionID,

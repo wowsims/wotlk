@@ -39,10 +39,6 @@ type SpellEffect struct {
 	// Indicates this is a healing spell, rather than a damage spell.
 	IsHealing bool
 
-	// Speed in yards/second. Spell missile speeds can be found in the game data.
-	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
-	MissileSpeed float64
-
 	// Controls which effects can proc from this effect.
 	ProcMask ProcMask
 
@@ -235,14 +231,14 @@ func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spe
 }
 
 func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
-	if spellEffect.MissileSpeed == 0 {
+	if spell.MissileSpeed == 0 {
 		if spellEffect.IsHealing {
 			spellEffect.finalizeHealingInternal(sim, spell)
 		} else {
 			spellEffect.finalizeInternal(sim, spell)
 		}
 	} else {
-		travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spellEffect.MissileSpeed)
+		travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
 
 		// We need to make a copy of this SpellEffect because some spells re-use the effect objects.
 		effectCopy := *spellEffect
