@@ -259,7 +259,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
-			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind {
+			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind && spell != warrior.WhirlwindOH {
 				return
 			}
 
@@ -268,6 +268,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			warrior.BloodsurgeAura.Activate(sim)
+			warrior.BloodsurgeAura.AddStack(sim)
 			warrior.BloodsurgeAura.AddStack(sim)
 			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
@@ -385,7 +386,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					return
 				}
 
-				if spell == warrior.Whirlwind && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial) {
+				if spell == warrior.WhirlwindOH {
 					// OH WW hits cant proc this
 					return
 				}

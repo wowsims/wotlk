@@ -145,6 +145,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			otherInputs: {
 				inputs: [
 					DruidInputs.LatencyMs,
+					DruidInputs.PrepopOoc,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

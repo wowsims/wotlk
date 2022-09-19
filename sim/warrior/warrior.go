@@ -61,6 +61,7 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	WhirlwindOH          *core.Spell
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell

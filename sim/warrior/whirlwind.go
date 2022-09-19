@@ -13,7 +13,6 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 
-	var ohSpell *core.Spell
 	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
@@ -30,10 +29,10 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		}
 		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
 
-		ohSpell = warrior.RegisterSpell(core.SpellConfig{
+		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID.WithTag(2),
 			SpellSchool: core.SpellSchoolPhysical,
-			Flags:       core.SpellFlagMeleeMetrics,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 			DamageMultiplier: 1 *
 				(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)) *
@@ -82,8 +81,8 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			mhDamageEffects(sim, target, spell)
-			if ohSpell != nil {
-				ohDamageEffects(sim, target, ohSpell)
+			if warrior.WhirlwindOH != nil {
+				ohDamageEffects(sim, target, warrior.WhirlwindOH)
 			}
 		},
 	})

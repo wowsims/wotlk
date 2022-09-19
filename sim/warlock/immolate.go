@@ -79,7 +79,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			ProcMask:       core.ProcMaskPeriodicDamage,
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, spellCoefficient),
-			OutcomeApplier: warlock.OutcomeFuncTick(),
+			OutcomeApplier: warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		}),
 	})
 }

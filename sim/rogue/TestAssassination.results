@@ -472,15 +472,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7398.17016
-  tps: 5252.70082
+  dps: 7386.8573
+  tps: 5244.66868
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7419.15581
-  tps: 5267.60062
+  dps: 7405.9058
+  tps: 5258.19312
  }
 }
 dps_results: {
