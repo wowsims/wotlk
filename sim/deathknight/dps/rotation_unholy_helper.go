@@ -143,7 +143,7 @@ func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bo
 }
 
 func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
-	if !dk.Rotation.UseEmpowerRuneWeapon || dk.SummonGargoyle.IsReady(sim) {
+	if !dk.Rotation.UseEmpowerRuneWeapon {
 		return false
 	}
 
