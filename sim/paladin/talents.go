@@ -19,10 +19,9 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
 	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
-	paladin.AddStat(stats.Parry, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
+	paladin.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
 
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
-	paladin.AddStat(stats.Defense, core.DefenseRatingPerDefense*4*float64(paladin.Talents.Anticipation))
 
 	if paladin.Talents.DivineStrength > 0 {
 		paladin.MultiplyStat(stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))
@@ -462,10 +461,9 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
 			return func() {
 				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					IsPeriodic:       true,
-					ProcMask:         core.ProcMaskPeriodicDamage,
-					DamageMultiplier: 1,
-					OutcomeApplier:   applier,
+					IsPeriodic:     true,
+					ProcMask:       core.ProcMaskPeriodicDamage,
+					OutcomeApplier: applier,
 					BaseDamage: core.BaseDamageConfig{
 						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 							tick := paladin.RighteousVengeanceDamage[target.Index]
@@ -487,6 +485,9 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 	})
 }
 

@@ -105,7 +105,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					retributionAura: true,
-					powerWordFortitude: TristateEffect.TristateEffectImproved, 
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,

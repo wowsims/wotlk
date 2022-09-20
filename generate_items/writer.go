@@ -355,9 +355,11 @@ var allowList = map[int]bool{
 	34472: true, // Shard of Contempt
 	37574: true, // Libram of Furious Blows
 	38287: true, // Empty Mug of Direbrew
-	6360:  true, // Steelscale Crushfish
-	8345:  true, // Wolfshead Helm
-	9449:  true, // Manual Crowd Pummeler
+	39208: true, // Sigil of the Dark Rider
+
+	6360: true, // Steelscale Crushfish
+	8345: true, // Wolfshead Helm
+	9449: true, // Manual Crowd Pummeler
 
 	27510: true, // Tidefury Gauntlets
 	27802: true, // Tidefury Shoulderguards
@@ -369,4 +371,26 @@ var allowList = map[int]bool{
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
+
+	// Undead Slaying Sets
+	// Plate
+	43068: true,
+	43069: true,
+	43070: true,
+	43071: true,
+	// Cloth
+	43072: true,
+	43073: true,
+	43074: true,
+	43075: true,
+	// Mail
+	43076: true,
+	43077: true,
+	43078: true,
+	43079: true,
+	//Leather
+	43080: true,
+	43081: true,
+	43082: true,
+	43083: true,
 }

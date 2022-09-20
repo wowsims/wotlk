@@ -13,6 +13,8 @@ type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
 
+	UnholyFrenzyTarget proto.RaidTarget
+
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
 	PrecastHornOfWinter bool
@@ -263,6 +265,8 @@ func (dk *Deathknight) Initialize() {
 	dk.registerArmyOfTheDeadCD()
 	dk.registerDancingRuneWeaponCD()
 	dk.registerDeathPactSpell()
+
+	dk.registerUnholyFrenzyCD()
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {
@@ -381,36 +385,8 @@ func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
 	return dk.FrostFeverDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (dk *Deathknight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
-	secondaryModifier := 0.0
-	if applyGuile {
-		secondaryModifier += 0.15 * float64(dk.Talents.GuileOfGorefiend)
-	}
-	if applyMoM {
-		secondaryModifier += 0.15 * float64(dk.Talents.MightOfMograine)
-	}
-	return secondaryModifier
-}
-
-// TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
-func (dk *Deathknight) spellCritMultiplier() float64 {
-	return dk.MeleeCritMultiplier(1.0, 0)
-}
-
-func (dk *Deathknight) spellCritMultiplierGoGandMoM() float64 {
-	applyGuile := dk.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := dk.Talents.MightOfMograine > 0
-	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
-}
-
-func (dk *Deathknight) critMultiplier() float64 {
-	return dk.MeleeCritMultiplier(1.0, 0)
-}
-
-func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
-	applyGuile := dk.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := dk.Talents.MightOfMograine > 0
-	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
+func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {
+	return dk.MeleeCritMultiplier(1, 0.15*float64(bonusTalentPoints))
 }
 
 func (dk *Deathknight) KM() bool {

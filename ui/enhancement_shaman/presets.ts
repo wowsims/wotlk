@@ -1,4 +1,5 @@
-import { Consumes,
+import {
+	Consumes,
 	Flask,
 	Food,
 	Glyphs,
@@ -6,7 +7,7 @@ import { Consumes,
 	Potions,
 	RaidBuffs,
 	TristateEffect,
-  Debuffs,
+	Debuffs,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -17,10 +18,10 @@ import {
 	FireTotem,
 	WaterTotem,
 	ShamanTotems,
-    ShamanImbue,
-    ShamanSyncType,
-    ShamanMajorGlyph,
-    EnhancementShaman_Rotation_PrimaryShock as PrimaryShock
+	ShamanImbue,
+	ShamanSyncType,
+	ShamanMajorGlyph,
+	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock
 } from '../core/proto/shaman.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -35,12 +36,12 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '053030152-30405003105021333031131031051',
-        glyphs: Glyphs.create({
-            major1: ShamanMajorGlyph.GlyphOfStormstrike,
-            major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
-            major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
-            //minor glyphs dont affect damage done, all convenience/QoL
-        })
+		glyphs: Glyphs.create({
+			major1: ShamanMajorGlyph.GlyphOfStormstrike,
+			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
+			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
+			//minor glyphs dont affect damage done, all convenience/QoL
+		})
 	}),
 };
 
@@ -51,13 +52,14 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		fire: FireTotem.MagmaTotem,
 		water: WaterTotem.ManaSpringTotem,
 	}),
-  maelstromweaponMinStack: 3,
-  lightningboltWeave: true,
-  lavaburstWeave: false,
-  firenovaManaThreshold: 3000,
-  shamanisticRageManaThreshold: 25,
-  primaryShock: PrimaryShock.Earth,
-  weaveFlameShock: true,
+	maelstromweaponMinStack: 3,
+	lightningboltWeave: true,
+	weaveReactionTime: 0,
+	lavaburstWeave: false,
+	firenovaManaThreshold: 3000,
+	shamanisticRageManaThreshold: 25,
+	primaryShock: PrimaryShock.Earth,
+	weaveFlameShock: true,
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
@@ -79,7 +81,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	leaderOfThePack: TristateEffect.TristateEffectImproved,
 	totemOfWrath: true,
-  wrathOfAirTotem: true,
+	wrathOfAirTotem: true,
 	moonkinAura: TristateEffect.TristateEffectImproved,
 	sanctifiedRetribution: true,
 	divineSpirit: true,
@@ -87,22 +89,22 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-  bloodFrenzy: true,
-  sunderArmor: true,
-  curseOfWeakness: TristateEffect.TristateEffectRegular,
-  curseOfElements: true,
-  faerieFire: TristateEffect.TristateEffectImproved,
-  judgementOfWisdom: true,
-  misery: true,
-  totemOfWrath: true,
-  shadowMastery: true,
+	bloodFrenzy: true,
+	sunderArmor: true,
+	curseOfWeakness: TristateEffect.TristateEffectRegular,
+	curseOfElements: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	misery: true,
+	totemOfWrath: true,
+	shadowMastery: true,
 });
 
 
 export const PreRaid_PRESET = {
-    name: 'Preraid Preset',
-    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-    gear: EquipmentSpec.fromJsonString(`{"items": [
+	name: 'Preraid Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
         {
           "id": 43311,
           "enchant": 44879,

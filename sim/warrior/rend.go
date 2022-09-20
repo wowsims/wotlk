@@ -30,15 +30,19 @@ func (warrior *Warrior) registerRendSpell() {
 			},
 			IgnoreHaste: true,
 		},
+
+		// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
+		DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   warrior.OutcomeFuncMeleeSpecialHit(),
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
+			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if sim.GetRemainingDurationPercent() <= 0.75 && isAbove75 {
 						isAbove75 = false
-						warrior.RendDots.Spell.DamageMultiplier /= 1.35
+						warrior.Rend.DamageMultiplier /= 1.35
 					}
 					warrior.RendDots.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15))
@@ -60,11 +64,8 @@ func (warrior *Warrior) registerRendSpell() {
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			// 135% damage multiplier is applied at the begining of the fight and removed when target is at 75% health
-			DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 
 			BaseDamage:     core.BaseDamageConfigFlat(tickDamage),
 			OutcomeApplier: warrior.OutcomeFuncTick(),

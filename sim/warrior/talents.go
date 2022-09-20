@@ -15,7 +15,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
-	warrior.AutoAttacks.OHEffect.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
+	warrior.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 
 	if warrior.Talents.ArmoredToTheTeeth > 0 {
 		coeff := float64(warrior.Talents.ArmoredToTheTeeth)
@@ -97,11 +97,11 @@ func (warrior *Warrior) applyDamageShield() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskEmpty,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -182,6 +182,12 @@ func (warrior *Warrior) applyTasteForBlood() {
 			if sim.RandomFloat("Taste for Blood") > procChance {
 				return
 			}
+
+			// Taste for Blood has 25% chance to not proc due to a bug. The chance is calculated from a controlled test here
+			// https://classic.warcraftlogs.com/reports/2zcDnpNFXGaAPg34/#fight=last&type=damage-done&source=1
+			if sim.RandomFloat("Taste for Blood bug") <= 0.25 {
+				return
+			}
 			icd.Use(sim)
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
 		},
@@ -253,7 +259,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
-			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind {
+			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind && spell != warrior.WhirlwindOH {
 				return
 			}
 
@@ -262,6 +268,7 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			warrior.BloodsurgeAura.Activate(sim)
+			warrior.BloodsurgeAura.AddStack(sim)
 			warrior.BloodsurgeAura.AddStack(sim)
 			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
@@ -379,7 +386,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					return
 				}
 
-				if spell == warrior.Whirlwind && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOHSpecial) {
+				if spell == warrior.WhirlwindOH {
 					// OH WW hits cant proc this
 					return
 				}
@@ -714,11 +721,52 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	var bladestormDot *core.Dot
 	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
+	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+
+	var ohDamageEffects core.ApplySpellEffects
+	if warrior.AutoAttacks.IsDualWielding {
+		baseEffectOH := core.SpellEffect{
+			ProcMask:       core.ProcMaskMeleeOHSpecial,
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
+		}
+
+		effects := make([]core.SpellEffect, 0, numHits)
+		for i := int32(0); i < numHits; i++ {
+			effect := baseEffectOH
+			effect.Target = warrior.Env.GetTargetUnit(i)
+			effects = append(effects, effect)
+		}
+		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
+
+		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolPhysical,
+			Flags:       core.SpellFlagMeleeMetrics,
+
+			DamageMultiplier: 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization),
+			ThreatMultiplier: 1.25,
+		})
+	}
+
+	baseEffectMH := core.SpellEffect{
+		ProcMask:       core.ProcMaskMeleeMHSpecial,
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
+	}
+
+	effects := make([]core.SpellEffect, 0, numHits)
+	for i := int32(0); i < numHits; i++ {
+		effect := baseEffectMH
+		effect.Target = warrior.Env.GetTargetUnit(i)
+		effects = append(effects, effect)
+	}
+	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -732,6 +780,10 @@ func (warrior *Warrior) RegisterBladestormCD() {
 				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90),
 			},
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1.25,
+
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
 			bladestormDot.TickOnce()
@@ -742,46 +794,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		},
 	})
 
-	baseEffectMH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury),
-		ThreatMultiplier: 1.25,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
-	}
-	baseEffectOH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeOHSpecial,
-
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(warrior.Talents.UnendingFury)) *
-			(1 + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
-		ThreatMultiplier: 1.25,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.05*float64(warrior.Talents.DualWieldSpecialization), 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
-	}
-
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
-	numTotalHits := numHits
-	if warrior.AutoAttacks.IsDualWielding {
-		numTotalHits *= 2
-	}
-
-	effects := make([]core.SpellEffect, 0, numTotalHits)
-	for i := int32(0); i < numHits; i++ {
-		mhEffect := baseEffectMH
-		mhEffect.Target = warrior.Env.GetTargetUnit(i)
-		effects = append(effects, mhEffect)
-
-		if warrior.AutoAttacks.IsDualWielding {
-			ohEffect := baseEffectOH
-			ohEffect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, ohEffect)
-		}
-	}
-
 	bladestormDot = core.NewDot(core.Dot{
 		Spell: warrior.Bladestorm,
 		Aura: warrior.RegisterAura(core.Aura{
@@ -790,7 +802,12 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
-		TickEffects:   core.TickFuncApplyEffects(core.ApplyEffectFuncDamageMultiple(effects)),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mhDamageEffects(sim, target, spell)
+			if warrior.BladestormOH != nil {
+				ohDamageEffects(sim, target, warrior.BladestormOH)
+			}
+		}),
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
@@ -803,5 +820,4 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			return true
 		},
 	})
-
 }

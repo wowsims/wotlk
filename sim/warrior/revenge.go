@@ -51,20 +51,17 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		effects[i].Target = warrior.Env.GetTargetUnit(i)
 	}
 
+	rollMultiplier := 1 + 0.3*float64(warrior.Talents.ImprovedRevenge)
 	applyEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  121,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return core.DamageRoll(sim, 1636, 1998)*(1.0+0.3*float64(warrior.Talents.ImprovedRevenge)) + warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.31)
+				return core.DamageRoll(sim, 1636, 1998)*rollMultiplier + 0.31*spell.MeleeAttackPower()
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -92,6 +89,10 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 				Duration: time.Second*5 - 2*time.Second*time.Duration(warrior.Talents.UnrelentingAssault),
 			},
 		},
+
+		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  121,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			applyEffect(sim, target, spell)

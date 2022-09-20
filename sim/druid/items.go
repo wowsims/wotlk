@@ -171,7 +171,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spell != druid.Rake && spell != druid.Rip && spell != druid.Lacerate {
+					if spell != druid.Rake && spell != druid.Rip && spell != druid.LacerateDot.Spell {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -557,8 +557,10 @@ func (druid *Druid) registerLasherweaveDot() {
 	}
 
 	dotSpell := druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 71023},
-		SpellSchool: core.SpellSchoolNature,
+		ActionID:         core.ActionID{SpellID: 71023},
+		SpellSchool:      core.SpellSchoolNature,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 	})
 
 	druid.LasherweaveDot = core.NewDot(core.Dot{
@@ -570,10 +572,8 @@ func (druid *Druid) registerLasherweaveDot() {
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return druid.GetStat(stats.SpellPower) * 0.07

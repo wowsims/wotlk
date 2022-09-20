@@ -47,7 +47,18 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 		Options:  *warOptions.Options,
 	}
 
-	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
+	rbo := core.RageBarOptions{
+		StartingRage:   warOptions.Options.StartingRage,
+		RageMultiplier: core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1),
+	}
+	if mh := war.GetMHWeapon(); mh != nil {
+		rbo.MHSwingSpeed = mh.SwingSpeed
+	}
+	if oh := war.GetOHWeapon(); oh != nil {
+		rbo.OHSwingSpeed = oh.SwingSpeed
+	}
+
+	war.EnableRageBar(rbo, func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
@@ -63,6 +74,13 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 			return war.TryHSOrCleave(sim, mhSwingSpell)
 		},
 	})
+
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(war.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
 
 	return war
 }

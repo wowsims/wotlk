@@ -37,13 +37,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				"ilotp mana regen not implemented"
 			],
 			warnings: [
-				// Warning that a frontal rotation is not implemented.
-				(simUI: IndividualSimUI<Spec.SpecFeralDruid>) => {
-					return {
-						updateOn: simUI.player.inFrontOfTargetChangeEmitter,
-						getContent: () => simUI.player.getInFrontOfTarget() ? 'Frontal rotation (without Shred) is not implemented.' : '',
-					};
-				},
 			],
 
 			// All stats for which EP should be calculated.
@@ -112,9 +105,11 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					unleashedRage: true,
+					icyTalons: true,
+					swiftRetribution: true,
+					sanctifiedRetribution: true,
 				}),
 				partyBuffs: PartyBuffs.create({
-					braidedEterniumChain: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
@@ -128,6 +123,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
+					heartOfTheCrusader: true,
 				}),
 			},
 
@@ -139,8 +135,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			rotationInputs: DruidInputs.FeralDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				Stat.StatIntellect,
-				Stat.StatMP5
+				IconInputs.IntellectBuff,
+				IconInputs.MP5Buff,
+				IconInputs.JudgementOfWisdom,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -148,6 +145,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			otherInputs: {
 				inputs: [
 					DruidInputs.LatencyMs,
+					DruidInputs.PrepopOoc,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

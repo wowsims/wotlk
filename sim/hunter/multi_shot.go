@@ -14,19 +14,12 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskRangedSpecial,
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
-			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
-		DamageMultiplier: 1 *
-			hunter.markedForDeathMultiplier(),
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+				return 0.2*spell.RangedAttackPower(hitEffect.Target) +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 					hunter.AmmoDamageBonus +
-					hitEffect.BonusWeaponDamage(spell.Unit) +
+					spell.BonusWeaponDamage() +
 					408
 			},
 			TargetSpellCoefficient: 1,
@@ -67,10 +60,16 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
-
-		InitialDamageMultiplier: 1 +
+		BonusHitRating: hunter.bonusRangedHit(),
+		BonusCritRating: hunter.bonusRangedCrit() +
+			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
+		DamageMultiplierAdditive: 1 +
 			.04*float64(hunter.Talents.Barrage),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})
 }
 

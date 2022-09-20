@@ -78,6 +78,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombat-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 4917.9888
+  tps: 3491.77205
+ }
+}
+dps_results: {
  key: "TestCombat-AllItems-BonescytheBattlegear"
  value: {
   dps: 5688.24353
@@ -339,15 +346,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 6516.63408
-  tps: 4626.8102
+  dps: 6202.5993
+  tps: 4403.8455
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 6555.64345
-  tps: 4654.50685
+  dps: 6202.5993
+  tps: 4403.8455
  }
 }
 dps_results: {
@@ -472,15 +479,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 6483.99621
-  tps: 4603.63731
+  dps: 6471.23934
+  tps: 4594.57993
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 6545.94758
-  tps: 4647.62278
+  dps: 6530.80604
+  tps: 4636.87229
  }
 }
 dps_results: {
@@ -509,6 +516,13 @@ dps_results: {
  value: {
   dps: 6326.34033
   tps: 4491.70163
+ }
+}
+dps_results: {
+ key: "TestCombat-AllItems-UndeadSlayer'sBlessedArmor"
+ value: {
+  dps: 5209.34316
+  tps: 3698.63365
  }
 }
 dps_results: {

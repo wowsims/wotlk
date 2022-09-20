@@ -5,33 +5,26 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var HeartStrikeActionID = core.ActionID{SpellID: 55050}
+var HeartStrikeActionID = core.ActionID{SpellID: 55262}
 
 func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 1.0, 0.5, true)
-	if !isMainTarget {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250.0, 1.0, 0.25, true)
-	}
+	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 736.0+bonusBaseDamage, true)
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
-	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.critMultiplierGoGandMoM())
+	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.bonusCritMultiplier(dk.Talents.MightOfMograine))
 	if isDrw {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMeleeSpecialHitAndCrit(
-			dk.RuneWeapon.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(dk.Talents.GuileOfGorefiend > 0, dk.Talents.MightOfMograine > 0)))
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMeleeSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier())
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskMeleeSpecial,
-		BonusCritRating:  (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.thassariansPlateDamageBonus() * dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) * dk.bloodyStrikesBonus(dk.HeartStrike),
-		ThreatMultiplier: 1,
-		OutcomeApplier:   outcomeApplier,
+		ProcMask:       core.ProcMaskMeleeSpecial,
+		OutcomeApplier: outcomeApplier,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(hitEffect.Target), dk.dkCountActiveDiseases(hitEffect.Target))
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 + activeDiseases*diseaseMulti)
+				return weaponBaseDamage(sim, hitEffect, spell) * (1.0 + activeDiseases*diseaseMulti)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -39,9 +32,18 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 	}
 
 	conf := core.SpellConfig{
-		ActionID:     HeartStrikeActionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    HeartStrikeActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .5 *
+			core.TernaryFloat64(isMainTarget, 1, 0.5) *
+			dk.thassariansPlateDamageBonus() *
+			dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) *
+			dk.bloodyStrikesBonus(dk.HeartStrike),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}

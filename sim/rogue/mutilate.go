@@ -22,15 +22,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
-			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
-		DamageMultiplier: 1 +
-			0.1*float64(rogue.Talents.Opportunity) +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
-		ThreatMultiplier: 1,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, 1, 1, false),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, false),
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, true)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -43,7 +35,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	}
 	if !isMH {
 		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1, false)
+		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, false)
 	}
 
 	effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -62,6 +54,16 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
+		DamageMultiplierAdditive: 1 +
+			0.1*float64(rogue.Talents.Opportunity) +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+		DamageMultiplier: 1 *
+			core.TernaryFloat64(!isMH, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -94,10 +96,11 @@ func (rogue *Rogue) registerMutilateSpell() {
 			ModifyCast:  rogue.CastModifier,
 		},
 
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHit(),
+			ProcMask:       core.ProcMaskMeleeMHSpecial,
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)

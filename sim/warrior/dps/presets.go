@@ -17,7 +17,7 @@ var PlayerOptionsFury = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
 		Talents:  FuryTalents,
 		Options:  warriorOptions,
-		Rotation: warriorRotation,
+		Rotation: furyRotation,
 	},
 }
 
@@ -30,11 +30,11 @@ var ArmsTalents = &proto.WarriorTalents{
 	Impale:                        2,
 	DeepWounds:                    3,
 	TwoHandedWeaponSpecialization: 3,
+	TasteForBlood:                 3,
 	PoleaxeSpecialization:         5,
-	TasteForBlood:                 0,
-	MaceSpecialization:            0,
-	SwordSpecialization:           0,
-	WeaponMastery:                 0,
+	SweepingStrikes:               true,
+	WeaponMastery:                 1,
+	MortalStrike:                  true,
 	StrengthOfArms:                2,
 	ImprovedSlam:                  2,
 	ImprovedMortalStrike:          3,
@@ -45,12 +45,12 @@ var ArmsTalents = &proto.WarriorTalents{
 	WreckingCrew:                  5,
 	Bladestorm:                    true,
 
-	Cruelty:           5,
 	ArmoredToTheTeeth: 3,
+	Cruelty:           5,
 
 	ImprovedBloodrage:   2,
-	Incite:              3,
 	ImprovedThunderClap: 3,
+	Incite:              3,
 }
 
 var FuryTalents = &proto.WarriorTalents{
@@ -63,21 +63,23 @@ var FuryTalents = &proto.WarriorTalents{
 	DeepWounds:                    3,
 	TwoHandedWeaponSpecialization: 3,
 
-	Cruelty:                 5,
 	ArmoredToTheTeeth:       3,
+	Cruelty:                 5,
 	UnbridledWrath:          2,
 	ImprovedCleave:          3,
 	PiercingHowl:            true,
 	CommandingPresence:      1,
 	DualWieldSpecialization: 5,
-	Enrage:                  4,
+	ImprovedExecute:         2,
 	Precision:               3,
 	DeathWish:               true,
 	ImprovedBerserkerRage:   1,
 	Flurry:                  5,
 	IntensifyRage:           3,
+	Bloodthirst:             true,
 	ImprovedWhirlwind:       2,
 	ImprovedBerserkerStance: 5,
+	Rampage:                 true,
 	Bloodsurge:              3,
 	UnendingFury:            5,
 	TitansGrip:              true,
@@ -88,10 +90,10 @@ var armsRotation = &proto.Warrior_Rotation{
 	UseMs:     true,
 	UseCleave: false,
 
-	HsRageThreshold:   60,
-	MsRageThreshold:   50,
-	SlamRageThreshold: 15,
-	RendCdThreshold:   1,
+	HsRageThreshold:   50,
+	MsRageThreshold:   40,
+	SlamRageThreshold: 30,
+	RendCdThreshold:   0,
 
 	SpamExecute: false,
 
@@ -103,14 +105,14 @@ var armsRotation = &proto.Warrior_Rotation{
 	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
-var warriorRotation = &proto.Warrior_Rotation{
-	UseRend:   true,
+var furyRotation = &proto.Warrior_Rotation{
+	UseRend:   false,
 	UseCleave: false,
 
-	HsRageThreshold:        60,
+	HsRageThreshold:        50,
 	RendRageThresholdBelow: 70,
-	SlamRageThreshold:      15,
-	RendCdThreshold:        1,
+	SlamRageThreshold:      30,
+	RendCdThreshold:        0,
 
 	UseHsDuringExecute: true,
 	UseWwDuringExecute: true,
@@ -120,7 +122,7 @@ var warriorRotation = &proto.Warrior_Rotation{
 	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
 
-	StanceOption: proto.Warrior_Rotation_DefaultStance,
+	StanceOption: proto.Warrior_Rotation_BerserkerStance,
 }
 
 var warriorOptions = &proto.Warrior_Options{
@@ -145,7 +147,7 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion: proto.Potions_IndestructiblePotion,
-	PrepopPotion:  proto.Potions_IndestructiblePotion,
+	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
 }
 

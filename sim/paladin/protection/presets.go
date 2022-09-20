@@ -43,13 +43,23 @@ var DefaultOptions = &proto.Player_ProtectionPaladin{
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:   true,
-	GiftOfTheWild:      proto.TristateEffect_TristateEffectImproved,
-	PowerWordFortitude: proto.TristateEffect_TristateEffectRegular,
-	MoonkinAura:        proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:       true,
-	WrathOfAirTotem:    true,
-	ManaSpringTotem:    proto.TristateEffect_TristateEffectRegular,
+    GiftOfTheWild: proto.TristateEffect_TristateEffectImproved,
+    PowerWordFortitude: proto.TristateEffect_TristateEffectImproved,
+    StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
+    ArcaneBrilliance: true,
+    UnleashedRage: true,
+    LeaderOfThePack: proto.TristateEffect_TristateEffectRegular,
+    IcyTalons: true,
+    TotemOfWrath: true,
+    DemonicPact: 500,
+    SwiftRetribution: true,
+    MoonkinAura: proto.TristateEffect_TristateEffectRegular,
+    SanctifiedRetribution: true,
+    ManaSpringTotem: proto.TristateEffect_TristateEffectRegular,
+    Bloodlust: true,
+    Thorns: proto.TristateEffect_TristateEffectImproved,
+    DevotionAura: proto.TristateEffect_TristateEffectImproved,
+    ShadowProtection: true,
 }
 var FullPartyBuffs = &proto.PartyBuffs{}
 var FullIndividualBuffs = &proto.IndividualBuffs{
@@ -60,115 +70,118 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfBlindingLight,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
+	Flask:           proto.Flask_FlaskOfStoneblood,
+	Food:            proto.Food_FoodDragonfinFilet,
+	DefaultPotion:   proto.Potions_IndestructiblePotion,
+	PrepopPotion:	 proto.Potions_IndestructiblePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
 var FullDebuffs = &proto.Debuffs{
-	Misery:          true,
-	CurseOfElements: true,
-	BloodFrenzy:     true,
-	SunderArmor:     true,
-	FaerieFire:      proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness: proto.TristateEffect_TristateEffectImproved,
+    JudgementOfWisdom: true,
+    JudgementOfLight: true,
+    Misery: true,
+    FaerieFire: proto.TristateEffect_TristateEffectImproved,
+    EbonPlaguebringer: true,
+    TotemOfWrath: true,
+    ShadowMastery: true,
+    BloodFrenzy: true,
+    Mangle: true,
+    ExposeArmor: true,
+    SunderArmor: true,
+    Vindication: true,
+    ThunderClap: proto.TristateEffect_TristateEffectImproved,
+    InsectSwarm: true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
-]}`)
-var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 34401,
-		"enchant": 29191,
-		"gems": [
-			35501,
-			32200
-		]
-	},
-	{
-		"id": 34178
-	},
-	{
-		"id": 30998,
-		"enchant": 23549,
-		"gems": [
-			32200,
-			32196
-		]
-	},
-	{
-		"id": 34190,
-		"enchant": 35756
-	},
-	{
-		"id": 34945,
-		"enchant": 27957,
-		"gems": [
-			32223
-		]
-	},
-	{
-		"id": 34433,
-		"enchant": 22533,
-		"gems": [
-			32200,
-			0
-		]
-	},
-	{
-		"id": 30985,
-		"enchant": 33153,
-		"gems": [
-			32215,
-			0
-		]
-	},
-	{
-		"id": 34488,
-		"gems": [
-			32200,
-			0
-		]
-	},
-	{
-		"id": 34382,
-		"enchant": 24274,
-		"gems": [
-			32200,
-			32200,
-			32215
-		]
-	},
-	{
-		"id": 34947,
-		"gems": [
-			32215
-		]
-	},
-	{
-		"id": 34889,
-		"enchant": 22536
-	},
-	{
-		"id": 34889,
-		"enchant": 22536
-	},
-	{
-		"id": 33829
-	},
-	{
-		"id": 35014,
-		"enchant": 22555
-	},
-	{
-		"id": 34185,
-		"enchant": 28282,
-		"gems": [
-			32215
-		]
-	},
-	{
-		"id": 33504
-	}
-]}`)
+        {
+          "id": 42549,
+          "enchant": 44878,
+          "gems": [
+            41396,
+            40089
+          ]
+        },
+        {
+          "id": 43282
+        },
+        {
+          "id": 37635,
+          "enchant": 44957,
+          "gems": [
+            40089
+          ]
+        },
+        {
+          "id": 44188,
+          "enchant": 55002
+        },
+        {
+          "id": 30991,
+          "enchant": 47766,
+          "gems": [
+            40039,
+            40039,
+            40089
+          ]
+        },
+        {
+          "id": 37682,
+          "enchant": 44944,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 44183,
+          "enchant": 63770,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 37379,
+          "enchant": 54793,
+          "gems": [
+            40022,
+            40008
+          ]
+        },
+        {
+          "id": 37292,
+          "enchant": 38373,
+          "gems": [
+            40089
+          ]
+        },
+        {
+          "id": 44243,
+          "enchant": 44528
+        },
+        {
+          "id": 37186,
+          "enchant": 59636
+        },
+        {
+          "id": 29297,
+          "enchant": 59636
+        },
+        {
+          "id": 40767
+        },
+        {
+          "id": 37220
+        },
+        {
+          "id": 37179,
+          "enchant": 22559
+        },
+        {
+          "id": 43085,
+          "enchant": 44936
+        },
+        {
+          "id": 40707
+        }
+      ]}`)

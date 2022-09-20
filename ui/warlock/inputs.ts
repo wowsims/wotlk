@@ -54,7 +54,7 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
-		{ 
+		{
 			actionId: ActionId.fromSpellId(30146), value: Summon.Felguard,
 			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().summonFelguard,
 		},
@@ -214,8 +214,8 @@ export const WarlockRotationConfig = {
 			label: 'Spell & Talent',
 			labelTooltip: 'Putting it on Automatic will UPDATE talents and spells to defaults.',
 			values: [
-				{name: "Manual", value: RotationPreset.Manual},
-				{name: "Automatic", value: RotationPreset.Automatic},
+				{ name: "Manual", value: RotationPreset.Manual },
+				{ name: "Automatic", value: RotationPreset.Automatic },
 			],
 			changedEvent: (player: Player<Spec.SpecWarlock>) => player.rotationChangeEmitter,
 			getValue: (player: Player<Spec.SpecWarlock>) => player.getRotation().preset,

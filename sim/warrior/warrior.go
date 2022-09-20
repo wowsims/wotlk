@@ -1,6 +1,7 @@
 package warrior
 
 import (
+	"github.com/wowsims/wotlk/sim/core/items"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -60,10 +61,12 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	WhirlwindOH          *core.Spell
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell
 	Bladestorm           *core.Spell
+	BladestormOH         *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -118,8 +121,8 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
-	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
-	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.critMultiplier(false))
+	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(mh))
+	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(oh))
 
 	warrior.Shout = warrior.makeShoutSpell()
 
@@ -193,21 +196,33 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 	return warrior
 }
 
-func (warrior *Warrior) secondaryCritModifier(applyImpale bool) float64 {
-	secondaryModifier := 0.0
-	if applyImpale {
-		secondaryModifier += 0.1 * float64(warrior.Talents.Impale)
-	}
+type hand int8
+
+const (
+	none hand = 0
+	mh   hand = 1
+	oh   hand = 2
+)
+
+func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0)
+}
+
+func primary(warrior *Warrior, hand hand) float64 {
 	if warrior.Talents.PoleaxeSpecialization > 0 {
-		secondaryModifier += 0.01 * float64(warrior.Talents.PoleaxeSpecialization)
+		if (hand == mh && isPoleaxe(warrior.GetMHWeapon())) || (hand == oh && isPoleaxe(warrior.GetOHWeapon())) {
+			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
+		}
 	}
-	return secondaryModifier
+	return 1
 }
-func (warrior *Warrior) critMultiplier(applyImpale bool) float64 {
-	return warrior.MeleeCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
+
+func isPoleaxe(weapon *items.Item) bool {
+	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
 }
-func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
-	return warrior.SpellCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
+
+func (warrior *Warrior) critMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0.1*float64(warrior.Talents.Impale))
 }
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
@@ -218,8 +233,8 @@ func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
 }
 
-func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
-	return hitEffect.MeleeAttackPower(unit) * coeff
+func (warrior *Warrior) attackPowerMultiplier(spell *core.Spell, coeff float64) float64 {
+	return spell.MeleeAttackPower() * coeff
 }
 
 func init() {

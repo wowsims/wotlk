@@ -358,7 +358,7 @@ func InspirationAura(unit *Unit, points int32) *Aura {
 	})
 }
 
-func applyInspiration(character *Character, uptime float64) {
+func ApplyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
@@ -382,10 +382,11 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		SpellSchool: SpellSchoolHoly,
 		Flags:       SpellFlagBinary,
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask:         ProcMaskEmpty,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
+			ProcMask: ProcMaskEmpty,
 
 			BaseDamage:     BaseDamageConfigFlat(damage),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
@@ -415,10 +416,11 @@ func ThornsAura(character *Character, points int32) *Aura {
 		SpellSchool: SpellSchoolNature,
 		Flags:       SpellFlagBinary,
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask:         ProcMaskEmpty,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
+			ProcMask: ProcMaskEmpty,
 
 			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
@@ -793,13 +795,14 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 				NumTicks: ticks,
 				OnAction: func(s *Simulation) {
 					if s.RandomFloat("Revitalize Proc") < 0.15 {
-						if aura.Unit.HasManaBar() {
+						cpb := aura.Unit.GetCurrentPowerBar()
+						if cpb == ManaBar {
 							aura.Unit.AddMana(s, aura.Unit.MaxMana()*0.01, manaMetrics, true)
-						} else if aura.Unit.HasEnergyBar() {
+						} else if cpb == EnergyBar {
 							aura.Unit.AddEnergy(s, 8, energyMetrics)
-						} else if aura.Unit.HasRageBar() {
+						} else if cpb == RageBar {
 							aura.Unit.AddRage(s, 4, rageMetrics)
-						} else if aura.Unit.HasRunicPowerBar() {
+						} else if cpb == RunicPower {
 							aura.Unit.AddRunicPower(s, 16, rpMetrics)
 						}
 					}

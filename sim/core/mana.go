@@ -35,6 +35,7 @@ type manaBar struct {
 // It will then enable mana gain metrics for reporting.
 func (character *Character) EnableManaBar() {
 	character.EnableManaBarWithModifier(1.0)
+	character.Unit.SetCurrentPowerBar(ManaBar)
 }
 
 func (character *Character) EnableManaBarWithModifier(modifier float64) {
@@ -125,14 +126,14 @@ func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMe
 	unit.Metrics.ManaSpent += amount
 }
 
-func (unit *Unit) doneIterationMana() {
-	if !unit.HasManaBar() {
+func (mb *manaBar) doneIteration() {
+	if mb.unit == nil {
 		return
 	}
 
-	manaGainSpell := unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
+	manaGainSpell := mb.unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
 
-	for _, resourceMetrics := range unit.Metrics.resources {
+	for _, resourceMetrics := range mb.unit.Metrics.resources {
 		if resourceMetrics.Type != proto.ResourceType_ResourceTypeMana {
 			continue
 		}

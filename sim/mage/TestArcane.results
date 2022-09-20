@@ -59,8 +59,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 6411.88692
-  tps: 3843.34537
+  dps: 6483.97116
+  tps: 3889.67999
  }
 }
 dps_results: {
@@ -68,6 +68,13 @@ dps_results: {
  value: {
   dps: 6675.462
   tps: 4001.40408
+ }
+}
+dps_results: {
+ key: "TestArcane-AllItems-BlessedRegaliaofUndeadCleansing"
+ value: {
+  dps: 5690.04085
+  tps: 3416.00569
  }
 }
 dps_results: {
@@ -94,43 +101,43 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 6502.96336
-  tps: 3897.9534
+  dps: 6577.84206
+  tps: 3945.87232
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 6553.06881
-  tps: 3952.36725
+  dps: 6596.10092
+  tps: 3977.04026
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 6514.87745
-  tps: 3903.04822
+  dps: 6626.41277
+  tps: 3970.96685
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 6514.87745
-  tps: 3903.04822
+  dps: 6626.41277
+  tps: 3970.96685
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 6555.49737
-  tps: 3923.85242
+  dps: 6610.16479
+  tps: 3958.25816
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-Defender'sCode-40257"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
@@ -178,22 +185,22 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 6498.20523
-  tps: 3894.8
+  dps: 6573.11155
+  tps: 3942.62786
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6686.821
-  tps: 4006.76551
+  dps: 6760.06307
+  tps: 4053.57836
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-ForgeEmber-37660"
  value: {
-  dps: 6631.51222
-  tps: 3974.25005
+  dps: 6715.43469
+  tps: 4027.49962
  }
 }
 dps_results: {
@@ -213,29 +220,29 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-FrostfireGarb"
  value: {
-  dps: 5970.35136
-  tps: 3579.66268
+  dps: 5978.21394
+  tps: 3584.35694
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 6411.88692
-  tps: 3843.34537
+  dps: 6483.97116
+  tps: 3889.67999
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-FuturesightRune-38763"
  value: {
-  dps: 6555.69504
-  tps: 3929.41486
+  dps: 6595.7412
+  tps: 3947.49083
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 6711.73142
-  tps: 4021.48752
+  dps: 6787.63932
+  tps: 4070.08894
  }
 }
 dps_results: {
@@ -255,8 +262,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-IncisorFragment-37723"
  value: {
-  dps: 6469.21503
-  tps: 3878.48189
+  dps: 6580.41602
+  tps: 3943.1859
  }
 }
 dps_results: {
@@ -290,29 +297,29 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 6484.43798
-  tps: 3884.52714
+  dps: 6566.72323
+  tps: 3930.66925
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 6476.24011
-  tps: 3881.73222
+  dps: 6554.96194
+  tps: 3931.83994
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
@@ -346,22 +353,22 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 6411.88692
-  tps: 3843.34537
+  dps: 6483.97116
+  tps: 3889.67999
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 6854.23246
-  tps: 4183.3485
+  dps: 6969.30025
+  tps: 4256.2455
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 6906.14552
-  tps: 4223.89061
+  dps: 7022.82227
+  tps: 4298.21977
  }
 }
 dps_results: {
@@ -381,36 +388,36 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 6411.88692
-  tps: 3843.34537
+  dps: 6483.97116
+  tps: 3889.67999
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 6428.6978
-  tps: 3854.51841
+  dps: 6511.28675
+  tps: 3903.38051
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-SparkofLife-37657"
  value: {
-  dps: 6597.31488
-  tps: 3954.36302
+  dps: 6597.95308
+  tps: 3952.21509
  }
 }
 dps_results: {
@@ -563,22 +570,22 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3912.1524
-  tps: 3557.87407
+  dps: 3928.61132
+  tps: 3566.18621
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3912.1524
-  tps: 2358.98568
+  dps: 3928.61132
+  tps: 2368.59438
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5068.30689
-  tps: 2939.84402
+  dps: 5149.08768
+  tps: 2989.76208
  }
 }
 dps_results: {

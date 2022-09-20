@@ -32,6 +32,12 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			},
 			IgnoreHaste: true,
 		},
+
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  360,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return 0.05 * spell.MeleeAttackPower()
+		},
 	}
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
@@ -43,12 +49,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 	effect := core.SpellEffect{
 		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  360,
-		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, 0.05)
-		},
 
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
@@ -68,12 +68,11 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 	if isDevastateEffect {
 		effect.OutcomeApplier = warrior.OutcomeFuncAlwaysHit()
-		effect.OnInit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			// In wrath sunder from devastate generates no threat
-			spellEffect.ThreatMultiplier = 0
-			spellEffect.FlatThreatBonus = 0
-			spellEffect.DynamicThreatBonus = nil
-		}
+
+		// In wrath sunder from devastate generates no threat
+		config.ThreatMultiplier = 0
+		config.FlatThreatBonus = 0
+		config.DynamicThreatBonus = nil
 	}
 
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)

@@ -75,21 +75,6 @@ func init() {
 		agent.GetCharacter().PseudoStats.BonusDamage += 2
 	})
 
-	newLightningSpeedAura := func(character *core.Character, auraLabel string, actionID core.ActionID) *core.Aura {
-		return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, stats.Stats{stats.Agility: 120}, time.Second*15, func(aura *core.Aura) {
-			oldOnGain := aura.OnGain
-			oldOnExpire := aura.OnExpire
-			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-				oldOnGain(aura, sim)
-				character.MultiplyMeleeSpeed(sim, 1.02)
-			}
-			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-				oldOnExpire(aura, sim)
-				character.MultiplyMeleeSpeed(sim, 1/1.02)
-			}
-		})
-	}
-
 	// ApplyMongooseEffect will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
@@ -101,10 +86,10 @@ func init() {
 			return
 		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
 
-		mhAura := newLightningSpeedAura(character, "Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1})
-		ohAura := newLightningSpeedAura(character, "Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2})
+		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
+		ohAura := character.NewTemporaryStatsAura("Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Mongoose Enchant",
@@ -248,12 +233,12 @@ func init() {
 		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFrost,
+			ActionID:         actionID,
+			SpellSchool:      core.SpellSchoolFrost,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+				ProcMask: core.ProcMaskEmpty,
 
 				BaseDamage:     core.BaseDamageConfigFlat(150),
 				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),

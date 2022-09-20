@@ -54,6 +54,12 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 		Rotation: *dk.Rotation,
 	}
 
+	if dk.Options.UnholyFrenzyTarget != nil {
+		dpsDk.Inputs.UnholyFrenzyTarget = *dk.Options.UnholyFrenzyTarget
+	} else {
+		dpsDk.Inputs.UnholyFrenzyTarget.TargetIndex = -1
+	}
+
 	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
@@ -129,7 +135,11 @@ func (dk *DpsDeathknight) SetupRotations() {
 
 	if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {
-			dk.setupFrostSubBloodERWOpener()
+			if dk.Rotation.DesyncRotation {
+				dk.setupFrostSubBloodDesyncERWOpener()
+			} else {
+				dk.setupFrostSubBloodERWOpener()
+			}
 		} else {
 			dk.setupFrostSubBloodNoERWOpener()
 		}

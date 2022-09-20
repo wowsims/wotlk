@@ -85,8 +85,9 @@ type Shaman struct {
 	LightningBolt   *core.Spell
 	LightningBoltLO *core.Spell
 
-	ChainLightning    *core.Spell
-	ChainLightningLOs []*core.Spell
+	ChainLightning     *core.Spell
+	ChainLightningHits []*core.Spell
+	ChainLightningLOs  []*core.Spell
 
 	LavaBurst   *core.Spell
 	FireNova    *core.Spell
@@ -197,44 +198,22 @@ func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (shaman *Shaman) Initialize() {
-	// Precompute all the spell templates.
-	shaman.registerStormstrikeSpell()
-	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
-	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
-	shaman.LavaBurst = shaman.newLavaBurstSpell()
-	shaman.FireNova = shaman.newFireNovaSpell()
-
-	if shaman.SelfBuffs.Shield == proto.ShamanShield_LightningShield {
-		shaman.registerLightningShieldSpell()
-	}
-
-	shaman.ChainLightning = shaman.newChainLightningSpell(false)
-	numHits := core.MinInt32(3, shaman.Env.GetNumTargets())
-	shaman.ChainLightningLOs = []*core.Spell{}
-	for i := int32(0); i < numHits; i++ {
-		shaman.ChainLightningLOs = append(shaman.ChainLightningLOs, shaman.newChainLightningSpell(true))
-	}
-
-	if shaman.Talents.Thunderstorm {
-		shaman.Thunderstorm = shaman.newThunderstormSpell(shaman.thunderstormInRange)
-	}
-
-	if shaman.Talents.LavaLash {
-		shaman.LavaLash = shaman.newLavaLashSpell()
-	}
-
-	if shaman.Talents.SpiritWeapons {
-		shaman.PseudoStats.ThreatMultiplier -= 0.3
-	}
-
+	shaman.registerChainLightningSpell()
 	shaman.registerFeralSpirit()
 	shaman.registerFireElementalTotem()
-	shaman.registerShocks()
+	shaman.registerFireNovaSpell()
 	shaman.registerGraceOfAirTotemSpell()
+	shaman.registerLavaBurstSpell()
+	shaman.registerLavaLashSpell()
+	shaman.registerLightningBoltSpell()
+	shaman.registerLightningShieldSpell()
 	shaman.registerMagmaTotemSpell()
 	shaman.registerManaSpringTotemSpell()
 	shaman.registerSearingTotemSpell()
+	shaman.registerShocks()
+	shaman.registerStormstrikeSpell()
 	shaman.registerStrengthOfEarthTotemSpell()
+	shaman.registerThunderstormSpell()
 	shaman.registerTotemOfWrathSpell()
 	shaman.registerTranquilAirTotemSpell()
 	shaman.registerTremorTotemSpell()
@@ -242,6 +221,10 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerWrathOfAirTotemSpell()
 
 	shaman.registerBloodlustCD()
+
+	if shaman.Talents.SpiritWeapons {
+		shaman.PseudoStats.ThreatMultiplier -= 0.3
+	}
 }
 
 func (shaman *Shaman) Reset(sim *core.Simulation) {

@@ -12,30 +12,16 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.20
 
-	baseModifiers := Multiplicative{
-		Additive{},
-	}
-	baseMultiplier := baseModifiers.Get()
-
-	scaling := hybridScaling{
-		AP: 0.07,
-		SP: 0.07,
-	}
-
 	baseEffect := core.SpellEffect{
 		ProcMask: core.ProcMaskSpellDamage,
-
-		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
 
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 				deltaDamage := 1234.0 - 1050.0
-				damage := 1050.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-				damage += hitEffect.SpellPower(spell.Unit, spell) * scaling.SP
-				damage += hitEffect.MeleeAttackPower(spell.Unit) * scaling.AP
-				return damage
+				return 1050.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+					.07*spell.SpellPower() +
+					.07*spell.MeleeAttackPower()
 			},
 		},
 
@@ -91,6 +77,9 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 				Duration: time.Second*30 - core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHolyWrath), time.Second*15, 0),
 			},
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

@@ -142,7 +142,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 
 	// Calculate how much Energy we expect to accumulate after Roar expires
 	// but before Rip expires.
-	maxRipDur := time.Duration(float64(cat.maxRipTicks) * float64(cat.RipDot.TickLength))
+	maxRipDur := time.Duration(cat.maxRipTicks) * cat.RipDot.TickLength
 
 	ripDur := cat.RipDot.Aura.StartedAt() + maxRipDur - sim.CurrentTime
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
@@ -153,7 +153,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 		expectedEnergyGain += 60.0
 	}
 	if cat.Talents.OmenOfClarity {
-		expectedEnergyGain += (availableTime / cat.AutoAttacks.MainhandSwingSpeed()).Seconds() * (3.5 / 60. * (1.0 - cat.missChance) * 42.0)
+		expectedEnergyGain += float64(availableTime/cat.AutoAttacks.MainhandSwingSpeed()) * (3.5 / 60. * (1.0 - cat.missChance) * 42.0)
 	}
 
 	if cat.ClearcastingAura.IsActive() {
@@ -163,7 +163,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	expectedEnergyGain += availableTime.Seconds() / cat.Rotation.RevitFreq * 0.15 * 8.0
 
 	// Add current Energy minus cost of Roaring now
-	roarCost := core.TernaryFloat64(cat.BerserkAura.IsActive(), 12.5, 25.0)
+	roarCost := cat.CurrentSavageRoarCost()
 	availableEnergy := cat.CurrentEnergy() - roarCost + expectedEnergyGain
 
 	// Now calculate the effective Energy cost for building back 5 CPs once
@@ -410,7 +410,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	} else if bearweaveNow {
 		cat.readyToShift = true
-	} else if rotation.MangleSpam && !isClearcast {
+	} else if (rotation.MangleSpam && !isClearcast) || cat.PseudoStats.InFrontOfTarget {
 		if excessE >= cat.CurrentMangleCatCost() {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
@@ -469,7 +469,6 @@ type FeralDruidRotation struct {
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
-	hotUptime := 0.75
 	cat.Rotation = FeralDruidRotation{
 		BearweaveType:      rotation.BearWeaveType,
 		MaintainFaerieFire: rotation.MaintainFaerieFire,
@@ -482,8 +481,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
 		MaxRoarClip:        time.Duration(float64(rotation.MaxRoarClip) * float64(time.Second)),
-		RevitFreq:          15.0 / (8 * hotUptime),
+		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 	}
-
 }

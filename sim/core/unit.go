@@ -8,11 +8,21 @@ import (
 )
 
 type UnitType int
+type SpellRegisteredHandler func(spell *Spell)
 
 const (
 	PlayerUnit UnitType = iota
 	EnemyUnit
 	PetUnit
+)
+
+type PowerBarType int
+
+const (
+	ManaBar PowerBarType = iota
+	EnergyBar
+	RageBar
+	RunicPower
 )
 
 type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
@@ -78,6 +88,7 @@ type Unit struct {
 
 	PseudoStats stats.PseudoStats
 
+	currentPowerBar PowerBarType
 	healthBar
 	manaBar
 	rageBar
@@ -85,7 +96,8 @@ type Unit struct {
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
-	Spellbook []*Spell
+	Spellbook                 []*Spell
+	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
 	Pets []PetAgent
@@ -378,6 +390,14 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
+func (unit *Unit) SetCurrentPowerBar(bar PowerBarType) {
+	unit.currentPowerBar = bar
+}
+
+func (unit *Unit) GetCurrentPowerBar() PowerBarType {
+	return unit.currentPowerBar
+}
+
 func (unit *Unit) finalize() {
 	if unit.Env.IsFinalized() {
 		panic("Unit already finalized!")
@@ -403,6 +423,8 @@ func (unit *Unit) finalize() {
 	unit.initialStats = unit.ApplyStatDependencies(unit.initialStatsWithoutDeps)
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
+
+	unit.AutoAttacks.finalize()
 
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
@@ -448,9 +470,9 @@ func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim.CurrentTime)
+	unit.doneIterationGCD(sim)
 
-	unit.doneIterationMana()
+	unit.manaBar.doneIteration()
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)

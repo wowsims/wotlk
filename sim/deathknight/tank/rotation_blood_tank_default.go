@@ -50,7 +50,7 @@ func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *co
 	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
 	fd := dk.CurrentFrostRunes() + dk.CurrentDeathRunes()
 	ud := dk.CurrentUnholyRunes() + dk.CurrentDeathRunes()
-	b, _, _ := dk.NormalCurrentRunes()
+	b, f, u := dk.NormalCurrentRunes()
 
 	if ff <= 0 {
 		dk.IcyTouch.Cast(sim, target)
@@ -67,13 +67,23 @@ func (dk *TankDeathknight) RotationActionCallback_TankBlood_PrioRotation(sim *co
 		return -1
 	}
 
-	if fd > 0 && ud > 0 && dk.CurrentHealthPercent() > 0.5 && dk.CurrentHealth()+dk.AverageDSHeal() <= 1.05*dk.MaxHealth() {
+	if f > 0 && u > 0 && (dk.CurrentHealthPercent() > 0.5 && dk.CurrentHealth()+dk.AverageDSHeal() <= 1.05*dk.MaxHealth()) {
 		dk.DeathStrike.Cast(sim, target)
 		return -1
-	} else if fd > 0 && ud > 0 {
+	} else if f > 1 && u > 1 && !dk.IsMainTank() {
+		dk.DeathStrike.Cast(sim, target)
+		return -1
+	} else if f < 2 && u < 2 && !dk.IsMainTank() {
 		dk.IcyTouch.Cast(sim, target)
 		return -1
+	} else if fd > 0 && ud > 0 && (dk.CurrentHealthPercent() > 0.5 && dk.CurrentHealth()+dk.AverageDSHeal() <= 1.05*dk.MaxHealth()) {
+		dk.DeathStrike.Cast(sim, target)
+		return -1
 	}
+	//else if fd > 0 && ud > 0 {
+	//	dk.IcyTouch.Cast(sim, target)
+	//	return -1
+	//}
 
 	if dk.BloodTap.CanCast(sim) {
 		dk.BloodTap.Cast(sim, target)

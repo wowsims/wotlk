@@ -17,16 +17,9 @@ func (druid *Druid) registerWrathSpell() {
 	actionID := core.ActionID{SpellID: 48461}
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 	spellCoefficient := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
-	bonusCritRating := druid.TalentsBonuses.naturesMajestyBonusCrit +
-		core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0) // T7-4P
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		ThreatMultiplier: 1,
-
-		BonusCritRating: bonusCritRating,
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		ProcMask: core.ProcMaskSpellDamage,
 
 		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -43,11 +36,6 @@ func (druid *Druid) registerWrathSpell() {
 			}
 			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
 				druid.SwiftStarfireAura.Activate(sim)
-			}
-		},
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if druid.FaerieFireAura.IsActive() {
-				spellEffect.BonusCritRating = bonusCritRating + core.CritRatingPerCritChance*float64(druid.Talents.ImprovedFaerieFire)
 			}
 		},
 	}
@@ -76,6 +64,14 @@ func (druid *Druid) registerWrathSpell() {
 				druid.ApplyClearcasting(sim, spell, cast)
 			},
 		},
+
+		BonusCritRating: 0 +
+			druid.TalentsBonuses.naturesMajestyBonusCrit +
+			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
+			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

@@ -14,7 +14,7 @@ func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
 			if sim.RandomFloat("Fixed Crit Roll") < dk.dndCritSnapshot {
 				spellEffect.Outcome = core.OutcomeCrit
 				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
-				spellEffect.Damage *= dk.spellCritMultiplier()
+				spellEffect.Damage *= dk.DefaultMeleeCritMultiplier()
 			} else {
 				spellEffect.Outcome = core.OutcomeHit
 				spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
@@ -52,6 +52,10 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 				Duration: time.Second*30 - time.Second*5*time.Duration(dk.Talents.Morbidity),
 			},
 		},
+
+		DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
+		ThreatMultiplier: 1.9,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			doSnapshot = true
 			dk.dndApSnapshot = 0.0
@@ -71,15 +75,13 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			BonusSpellPower:  0.0,
-			DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
-			ThreatMultiplier: 1.9,
+			ProcMask:   core.ProcMaskPeriodicDamage,
+			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if doSnapshot {
 						dk.dndCritSnapshot = hitEffect.SpellCritChance(spell.Unit, spell)
-						dk.dndApSnapshot = 62.0 + dk.getImpurityBonus(hitEffect, spell.Unit)*0.0475
+						dk.dndApSnapshot = 62.0 + 0.0475*dk.getImpurityBonus(spell)
 						doSnapshot = false
 					}
 					return dk.dndApSnapshot * dk.RoRTSBonus(hitEffect.Target)
@@ -87,7 +89,6 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.OutcomeDeathAndDecaySpecial(),
-			IsPeriodic:     false,
 		})),
 	})
 	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay.Spell

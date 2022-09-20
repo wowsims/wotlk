@@ -163,6 +163,10 @@ type AutoAttacks struct {
 	OffhandSwingAt  time.Duration
 	RangedSwingAt   time.Duration
 
+	MHConfig     SpellConfig
+	OHConfig     SpellConfig
+	RangedConfig SpellConfig
+
 	MHEffect     SpellEffect
 	OHEffect     SpellEffect
 	RangedEffect SpellEffect
@@ -175,6 +179,7 @@ type AutoAttacks struct {
 
 	// The time at which the last MH swing occurred.
 	previousMHSwingAt time.Duration
+	PreviousSwingAt   time.Duration
 
 	// Current melee swing speed, based on haste stat and melee swing multiplier pseudostat.
 	curSwingSpeed float64
@@ -209,42 +214,66 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		IsDualWielding:  options.MainHand.SwingSpeed != 0 && options.OffHand.SwingSpeed != 0,
 	}
 
+	unit.AutoAttacks.MHConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
+		SpellSchool: unit.AutoAttacks.MH.GetSpellSchool(),
+		Flags:       SpellFlagMeleeMetrics,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+	}
+
+	unit.AutoAttacks.OHConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
+		SpellSchool: unit.AutoAttacks.OH.GetSpellSchool(),
+		Flags:       SpellFlagMeleeMetrics,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+	}
+
+	unit.AutoAttacks.RangedConfig = SpellConfig{
+		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
+		SpellSchool: SpellSchoolPhysical,
+		Flags:       SpellFlagMeleeMetrics,
+
+		Cast: CastConfig{
+			IgnoreHaste: true,
+			AfterCast: func(sim *Simulation, spell *Spell) {
+				agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
+			},
+		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+	}
+
 	if unit.Type == EnemyUnit {
 		unit.AutoAttacks.MHEffect = SpellEffect{
-			ProcMask:         ProcMaskMeleeMHAuto,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigEnemyWeapon(MainHand),
-			OutcomeApplier:   unit.OutcomeFuncEnemyMeleeWhite(),
+			ProcMask:       ProcMaskMeleeMHAuto,
+			BaseDamage:     BaseDamageConfigEnemyWeapon(MainHand),
+			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
-			ProcMask:         ProcMaskMeleeOHAuto,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigEnemyWeapon(OffHand),
-			OutcomeApplier:   unit.OutcomeFuncEnemyMeleeWhite(),
+			ProcMask:       ProcMaskMeleeOHAuto,
+			BaseDamage:     BaseDamageConfigEnemyWeapon(OffHand),
+			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
 		}
 	} else {
 		unit.AutoAttacks.MHEffect = SpellEffect{
-			ProcMask:         ProcMaskMeleeMHAuto,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(MainHand, false, 0, 1, 1, true),
-			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
+			ProcMask:       ProcMaskMeleeMHAuto,
+			BaseDamage:     BaseDamageConfigMeleeWeapon(MainHand, false, 0, true),
+			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
-			ProcMask:         ProcMaskMeleeOHAuto,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigMeleeWeapon(OffHand, false, 0, 1, 1, true),
-			OutcomeApplier:   unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
+			ProcMask:       ProcMaskMeleeOHAuto,
+			BaseDamage:     BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
+			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{
-			ProcMask:         ProcMaskRangedAuto,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       BaseDamageConfigRangedWeapon(0),
-			OutcomeApplier:   unit.OutcomeFuncRangedHitAndCrit(options.Ranged.CritMultiplier),
+			ProcMask:       ProcMaskRangedAuto,
+			BaseDamage:     BaseDamageConfigRangedWeapon(0),
+			OutcomeApplier: unit.OutcomeFuncRangedHitAndCrit(options.Ranged.CritMultiplier),
 		}
 	}
 }
@@ -256,6 +285,22 @@ func (aa *AutoAttacks) IsEnabled() bool {
 // Empty handler so Agents don't have to provide one if they have no logic to add.
 func (unit *Unit) OnAutoAttack(sim *Simulation, spell *Spell) {}
 
+func (aa *AutoAttacks) finalize() {
+	if !aa.IsEnabled() {
+		return
+	}
+
+	aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
+	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
+	aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
+	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
+
+	if aa.RangedEffect.ProcMask != ProcMaskUnknown {
+		aa.RangedConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.RangedEffect)
+		aa.RangedAuto = aa.unit.GetOrRegisterSpell(aa.RangedConfig)
+	}
+}
+
 func (aa *AutoAttacks) reset(sim *Simulation) {
 	if !aa.IsEnabled() {
 		return
@@ -263,42 +308,10 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 
 	aa.curSwingSpeed = aa.unit.SwingSpeed()
 
-	aa.MHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
-		SpellSchool: aa.MH.GetSpellSchool(),
-		Flags:       SpellFlagMeleeMetrics,
-
-		ApplyEffects: ApplyEffectFuncDirectDamage(aa.MHEffect),
-	})
-
-	aa.OHAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
-		SpellSchool: aa.OH.GetSpellSchool(),
-		Flags:       SpellFlagMeleeMetrics,
-
-		ApplyEffects: ApplyEffectFuncDirectDamage(aa.OHEffect),
-	})
-
-	if aa.RangedEffect.ProcMask != ProcMaskUnknown {
-		aa.RangedAuto = aa.unit.GetOrRegisterSpell(SpellConfig{
-			ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
-			SpellSchool: SpellSchoolPhysical,
-			Flags:       SpellFlagMeleeMetrics,
-
-			Cast: CastConfig{
-				IgnoreHaste: true,
-				AfterCast: func(sim *Simulation, spell *Spell) {
-					aa.agent.OnAutoAttack(sim, aa.RangedAuto)
-				},
-			},
-
-			ApplyEffects: ApplyEffectFuncDirectDamage(aa.RangedEffect),
-		})
-	}
-
 	aa.MainhandSwingAt = 0
 	aa.OffhandSwingAt = 0
 	aa.RangedSwingAt = 0
+	aa.PreviousSwingAt = 0
 
 	// Apply random delay of 0 - 50% swing time, to one of the weapons if dual wielding
 	if aa.IsDualWielding {
@@ -436,6 +449,7 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	attackSpell.Cast(sim, target)
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	aa.previousMHSwingAt = sim.CurrentTime
+	aa.PreviousSwingAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, attackSpell)
 }
 
@@ -479,6 +493,7 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
+	aa.PreviousSwingAt = sim.CurrentTime
 	aa.agent.OnAutoAttack(sim, aa.OHAuto)
 }
 
@@ -490,6 +505,7 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
+	aa.PreviousSwingAt = sim.CurrentTime
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {

@@ -155,8 +155,9 @@ message BalanceDruid {
 		bool use_mf = 4;
 		float mf_inside_eclipse_threshold = 5;
 		float is_inside_eclipse_threshold = 6;
-		float mcd_inside_lunar_threshold = 7;
-		float mcd_inside_solar_threshold = 8;
+		bool use_smart_cooldowns = 7;
+		float mcd_inside_lunar_threshold = 8;
+		float mcd_inside_solar_threshold = 9;
   }
 
   Rotation rotation = 1;
@@ -192,6 +193,7 @@ message FeralDruid {
 	bool powerbear = 10;
 	float max_roar_clip = 11;
 	BiteModeType bite_mode_type = 12;
+	float hot_uptime = 13;
   }
   Rotation rotation = 1;
 
@@ -200,6 +202,7 @@ message FeralDruid {
   message Options {
     RaidTarget innervate_target = 1;
     int32 latency_ms = 2;
+    bool prepop_ooc = 3;
   }
   Options options = 3;
 }

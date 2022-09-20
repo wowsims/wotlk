@@ -14,7 +14,6 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.CastSpeedMultiplier *= 1 + (float64(druid.Talents.CelestialFocus) * 0.01)
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
-	druid.PseudoStats.ThreatMultiplier *= 1 - 0.04*float64(druid.Talents.Subtlety)
 	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
 	if druid.InForm(Bear) {
@@ -199,6 +198,38 @@ func (druid *Druid) applyPrimalFury() {
 			}
 		},
 	})
+}
+
+// Modifies the Bleed aura to apply the bonus.
+func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
+	if druid.Talents.RendAndTear == 0 {
+		return aura
+	}
+
+	bonusCrit := 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
+
+	oldOnGain := aura.OnGain
+	oldOnExpire := aura.OnExpire
+	aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
+		if oldOnGain != nil {
+			oldOnGain(aura, sim)
+		}
+		if druid.BleedsActive == 0 {
+			druid.FerociousBite.BonusCritRating += bonusCrit
+		}
+		druid.BleedsActive++
+	}
+	aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
+		if oldOnExpire != nil {
+			oldOnExpire(aura, sim)
+		}
+		druid.BleedsActive--
+		if druid.BleedsActive == 0 {
+			druid.FerociousBite.BonusCritRating -= bonusCrit
+		}
+	}
+
+	return aura
 }
 
 func (druid *Druid) applyOmenOfClarity() {

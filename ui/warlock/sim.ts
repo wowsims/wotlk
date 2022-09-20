@@ -1,4 +1,5 @@
-import { RaidBuffs,
+import {
+	RaidBuffs,
 	PartyBuffs,
 	IndividualBuffs,
 	Debuffs,
@@ -118,7 +119,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.SpecSpellInput,
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
-			
+
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.ReplenishmentBuff,
@@ -138,7 +139,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			petConsumeInputs: [
 				IconInputs.SpicedMammothTreats,
 			],
-		// Inputs to include in the 'Other' section on the settings tab.
+			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
 					OtherInputs.DistanceFromTarget,

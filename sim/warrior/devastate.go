@@ -46,10 +46,11 @@ func (warrior *Warrior) registerDevastateSpell() {
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
-	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, 1.2, 1.0, true)
+	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, false)
+	weaponMulti := 1.2
 
 	warrior.Devastate = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 30022},
+		ActionID:    core.ActionID{SpellID: 47498},
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
@@ -64,16 +65,16 @@ func (warrior *Warrior) registerDevastateSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
+		DamageMultiplier: weaponMulti,
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  flatThreatBonus,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return dynaThreatBonus * spell.MeleeAttackPower()
+		},
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  flatThreatBonus,
-			DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return warrior.attackPowerMultiplier(spellEffect, spell.Unit, dynaThreatBonus)
-			},
 
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -88,7 +89,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

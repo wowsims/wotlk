@@ -52,7 +52,18 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 		Options:  *warOptions.Options,
 	}
 
-	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
+	rbo := core.RageBarOptions{
+		StartingRage:   warOptions.Options.StartingRage,
+		RageMultiplier: core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1),
+	}
+	if mh := war.GetMHWeapon(); mh != nil {
+		rbo.MHSwingSpeed = mh.SwingSpeed
+	}
+	if oh := war.GetOHWeapon(); oh != nil {
+		rbo.OHSwingSpeed = oh.SwingSpeed
+	}
+
+	war.EnableRageBar(rbo, func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {

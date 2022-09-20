@@ -1,4 +1,4 @@
-import { Spec } from '../core/proto/common.js';
+import { RaidTarget, Spec } from '../core/proto/common.js';
 
 import {
 	DeathknightTalents as DeathKnightTalents,
@@ -14,10 +14,30 @@ import {
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
-import { TypedEvent } from '../core/typed_event';
+import { EventID, TypedEvent } from '../core/typed_event';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
+
+export const SelfUnholyFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'unholyFrenzyTarget',
+	label: 'Self Unholy Frenzy',
+	labelTooltip: 'Cast Unholy Frenzy on yourself.',
+	extraCssClasses: [
+		'within-raid-sim-hide',
+	],
+	getValue: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().unholyFrenzyTarget?.targetIndex != NO_TARGET,
+	setValue: (eventID: EventID, player: Player<Spec.SpecDeathknight>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.unholyFrenzyTarget = RaidTarget.create({
+			targetIndex: newValue ? 0 : NO_TARGET,
+		});
+		player.setSpecOptions(eventID, newOptions);
+	},
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().hysteria,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
 
 export const StartingRunicPower = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathknight>({
 	fieldName: 'startingRunicPower',
@@ -194,6 +214,14 @@ export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDe
 	labelTooltip: 'Have sim automatically adjust rotation based on the scenario. This is still in development and currently only works for Unholy.',
 });
 
+export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'desyncRotation',
+	label: 'Use Desync Rotation',
+	labelTooltip: 'Use the Desync Rotation.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 
 export const DeathKnightRotationConfig = {
 	inputs: [
@@ -210,6 +238,7 @@ export const DeathKnightRotationConfig = {
 		UseAMSInput,
 		AvgAMSSuccessRateInput,
 		AvgAMSHitInput,
+		DesyncRotation,
 		//SetDeathAndDecayPrio,
 	],
 };
