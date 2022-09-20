@@ -19,6 +19,7 @@ type Druid struct {
 	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
+	AssumeBleedActive bool
 
 	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell

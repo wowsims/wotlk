@@ -57,7 +57,8 @@ export const DefaultRotation = FeralDruidRotation.create({
 
 export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
-	prepopOoc: false
+	prepopOoc: false,
+	assumeBleedActive: false,
 });
 
 export const DefaultConsumes = Consumes.create({
