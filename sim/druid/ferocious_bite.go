@@ -11,10 +11,11 @@ import (
 func (druid *Druid) registerFerociousBiteSpell() {
 	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
-	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
 	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 25667, 14, 0)
 
 	var excessEnergy float64
+	var refundAmount float64 = 0.0
 
 	biteBaseBonusCrit := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
 	if druid.AssumeBleedActive {
@@ -36,9 +37,15 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// Bite refunds based on base cost, which can change based on berserk
+				// It also won't spend 'excess' energy on miss
 				druid.ApplyClearcasting(sim, spell, cast)
-				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-cast.Cost, 30)
-				cast.Cost = baseCost + excessEnergy
+				currentCost := druid.CurrentFerociousBiteCost()
+				if refundPercent > 0.0 {
+					refundAmount = currentCost * refundPercent
+				}
+
+				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-currentCost, 30)
 			},
 		},
 
@@ -66,6 +73,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					druid.SpendEnergy(sim, excessEnergy, spell.ResourceMetrics)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
 				} else if refundAmount > 0 {
 					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
