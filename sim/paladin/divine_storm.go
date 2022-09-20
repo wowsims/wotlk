@@ -12,8 +12,6 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
 	baseEffectMH := core.SpellEffect{ // wait how will this work, something like whirlwind
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,
 			false, // ds is not subject to normalisation
@@ -34,10 +32,10 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	}
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53385},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 53385},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

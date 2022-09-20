@@ -21,12 +21,12 @@ func newProcDamageEffect(config ProcDamageEffect) {
 		damageSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: config.ID},
 			SpellSchool: config.School,
+			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:       core.ProcMaskEmpty,
 				BaseDamage:     config.BaseDamage,
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),

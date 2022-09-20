@@ -18,6 +18,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 	spellConfig := core.SpellConfig{
 		ActionID:     lavaBurstActionID,
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -51,7 +52,6 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)
 
 	effect := core.SpellEffect{
-		ProcMask:   core.ProcMaskSpellDamage,
 		BaseDamage: core.BaseDamageConfigMagic(1192+bonusBase, 1518+bonusBase, 0.5714+(0.05*float64(shaman.Talents.Shamanism)+core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLava), 0.1, 0))),
 		// TODO: does lava flows multiply or add with elemental fury? Only matters if you had <5pts which probably won't happen.
 		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier([]float64{0, 0.06, 0.12, 0.24}[shaman.Talents.LavaFlows] + core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthShatterGarb, 4), 0.1, 0))),
@@ -60,8 +60,9 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 	if shaman.HasSetBonus(ItemSetThrallsRegalia, 4) {
 		lvbdotDmg := 0.0 // dynamically changing dmg
 		spell := shaman.RegisterSpell(core.SpellConfig{
-			Flags:    core.SpellFlagIgnoreModifiers,
 			ActionID: core.ActionID{SpellID: 71824},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagIgnoreModifiers,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -81,7 +82,6 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 					},
 				},
 				IsPeriodic:     true,
-				ProcMask:       core.ProcMaskEmpty,
 				OutcomeApplier: shaman.OutcomeFuncTick(),
 			}),
 		})

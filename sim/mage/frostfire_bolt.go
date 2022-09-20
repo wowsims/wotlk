@@ -16,9 +16,9 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | HotStreakSpells,
 		MissileSpeed: 25,
-
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -43,8 +43,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
 
@@ -74,8 +72,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
 			BaseDamage:     core.BaseDamageConfigFlat(90 / 3),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,

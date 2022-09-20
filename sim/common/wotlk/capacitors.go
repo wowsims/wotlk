@@ -43,12 +43,12 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 		damageSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: config.ID},
 			SpellSchool: config.School,
+			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:       core.ProcMaskEmpty,
 				BaseDamage:     config.BaseDamage,
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -170,6 +170,7 @@ func init() {
 				mhSpell = character.GetOrRegisterSpell(core.SpellConfig{
 					ActionID:         core.ActionID{ItemID: itemID}.WithTag(1),
 					SpellSchool:      core.SpellSchoolPhysical,
+					ProcMask:         core.ProcMaskMeleeMHAuto,
 					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
@@ -181,6 +182,7 @@ func init() {
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{ItemID: itemID}.WithTag(2),
 						SpellSchool:      core.SpellSchoolPhysical,
+						ProcMask:         core.ProcMaskMeleeOHAuto,
 						Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 						DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,

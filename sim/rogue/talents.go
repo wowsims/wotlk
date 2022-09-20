@@ -285,7 +285,7 @@ func (rogue *Rogue) applyCombatPotency() {
 			}
 
 			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				return
 			}
 
@@ -318,11 +318,11 @@ func (rogue *Rogue) applyFocusedAttacks() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
 				return
 			}
 			// Fan of Knives OH hits do not trigger focused attacks
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
 			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
@@ -343,15 +343,14 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    BladeFlurryActionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		// No proc mask, so it won't proc itself.
+		ProcMask: core.ProcMaskEmpty,
+		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-			// No proc mask, so it won't proc itself.
-			ProcMask: core.ProcMaskEmpty,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					return curDmg
@@ -381,11 +380,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			if sim.GetNumTargets() < 2 {
 				return
 			}
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 			// Fan of Knives off-hand hits are not cloned
-			if spell.IsSpellAction(FanOfKnivesSpellID) && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if spell.IsSpellAction(FanOfKnivesSpellID) && spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				return
 			}
 

@@ -165,7 +165,7 @@ func (paladin *Paladin) applyRedoubt() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				if sim.RandomFloat("Redoubt") < 0.1 {
 					procAura.Activate(sim)
 					procAura.SetStacks(sim, 5)
@@ -385,7 +385,7 @@ func (paladin *Paladin) applyArtOfWar() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+			if !spell.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 
@@ -462,7 +462,6 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 			return func() {
 				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					IsPeriodic:     true,
-					ProcMask:       core.ProcMaskPeriodicDamage,
 					OutcomeApplier: applier,
 					BaseDamage: core.BaseDamageConfig{
 						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
@@ -484,6 +483,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 	paladin.RighteousVengeanceSpell = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,

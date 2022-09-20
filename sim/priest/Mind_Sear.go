@@ -18,7 +18,6 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	channelTime := time.Second * time.Duration(numTicks)
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskEmpty,
 		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -31,6 +30,7 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindSearActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -57,7 +57,6 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 
 	effect := core.SpellEffect{
 		IsPeriodic:     true,
-		ProcMask:       core.ProcMaskSpellDamage,
 		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {

@@ -19,15 +19,14 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 	ssHit := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		// No proc mask, so it won't proc itself.
+		ProcMask: core.ProcMaskEmpty,
+		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-			// No proc mask, so it won't proc itself.
-			ProcMask: core.ProcMaskEmpty,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					return curDmg
@@ -46,7 +45,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			aura.SetStacks(sim, 10)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if aura.GetStacks() == 0 || spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if aura.GetStacks() == 0 || spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 

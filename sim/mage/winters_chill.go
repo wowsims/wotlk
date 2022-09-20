@@ -18,12 +18,12 @@ func (mage *Mage) registerWintersChillSpell() {
 	mage.WintersChill = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 28595},
 		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       SpellFlagMage,
 
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: mage.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

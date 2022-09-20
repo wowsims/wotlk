@@ -16,8 +16,10 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 	dk.BloodBoil = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     BloodBoilActionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     float64(baseCost),
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
@@ -32,7 +34,6 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 

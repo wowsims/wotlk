@@ -95,8 +95,8 @@ func (dk *Deathknight) applySpellDeflection() {
 		return
 	}
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
-		if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Soell, spellEffect *core.SpellEffect) {
+		if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
 			if sim.RandomFloat("Spell Deflection Roll") < procChance {
@@ -150,7 +150,7 @@ func (dk *Deathknight) applyScentOfBlood() {
 		},
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -278,7 +278,7 @@ func (dk *Deathknight) applyBloodyVengeance() {
 				return
 			}
 
-			if !spellEffect.ProcMask.Matches(core.ProcMaskDirect) {
+			if !spell.ProcMask.Matches(core.ProcMaskDirect) {
 				return
 			}
 
@@ -384,7 +384,7 @@ func (dk *Deathknight) applyBloodworms() {
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Bloodworms Proc",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 

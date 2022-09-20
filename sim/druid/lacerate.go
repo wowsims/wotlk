@@ -29,10 +29,10 @@ func (druid *Druid) registerLacerateSpell() {
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -50,8 +50,6 @@ func (druid *Druid) registerLacerateSpell() {
 		FlatThreatBonus:  267,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					damage := initialDamage + 0.01*spell.MeleeAttackPower()
@@ -102,7 +100,6 @@ func (druid *Druid) registerLacerateSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
 				Calculator:             core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),

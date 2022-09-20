@@ -22,7 +22,6 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskEmpty,
 		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -42,6 +41,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -78,7 +78,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
 	effect := core.SpellEffect{
-		ProcMask:   core.ProcMaskSpellDamage,
 		IsPeriodic: true,
 
 		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),

@@ -15,7 +15,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -37,6 +36,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 20,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

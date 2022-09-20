@@ -155,6 +155,7 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 			spell := priest.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 70770},
 				SpellSchool: core.SpellSchoolHoly,
+				ProcMask:    core.ProcMaskEmpty,
 				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 				DamageMultiplier: 1,
@@ -174,7 +175,6 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 						NumberOfTicks: 3,
 						TickLength:    time.Second * 3,
 						TickEffects: core.TickFuncSnapshot(unit, core.SpellEffect{
-							ProcMask:   core.ProcMaskPeriodicHealing,
 							IsPeriodic: true,
 							IsHealing:  true,
 

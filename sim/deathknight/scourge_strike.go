@@ -17,14 +17,13 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreResists | core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			OutcomeApplier: dk.CurrentTarget.OutcomeFuncAlwaysHit(),
 
 			BaseDamage: core.BaseDamageConfig{
@@ -48,9 +47,11 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	dk.ScourgeStrike = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     ScourgeStrikeActionID.WithTag(1),
 		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -69,8 +70,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)

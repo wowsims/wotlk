@@ -55,6 +55,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 					targetDummySpell = aura.Unit.CurrentTarget.RegisterSpell(core.SpellConfig{
 						ActionID:    core.ActionID{SpellID: 49375},
 						SpellSchool: core.SpellSchoolMagic,
+						ProcMask:    core.ProcMaskSpellDamage,
 						Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics,
 
 						Cast: core.CastConfig{},
@@ -62,8 +63,6 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 						DamageMultiplier: 1,
 
 						ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-							ProcMask: core.ProcMaskSpellDamage,
-
 							BaseDamage:     core.BaseDamageConfigRoll(dk.Inputs.AvgAMSHit*0.9, dk.Inputs.AvgAMSHit*1.1),
 							OutcomeApplier: target.OutcomeFuncAlwaysHit(),
 						}),

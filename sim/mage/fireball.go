@@ -18,9 +18,9 @@ func (mage *Mage) registerFireballSpell() {
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 22,
-
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -44,8 +44,6 @@ func (mage *Mage) registerFireballSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
 			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
@@ -75,8 +73,6 @@ func (mage *Mage) registerFireballSpell() {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
 			BaseDamage:     core.BaseDamageConfigFlat(116 / 4),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,

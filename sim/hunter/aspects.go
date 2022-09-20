@@ -115,11 +115,11 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 			tickPA = nil
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+			if spell.ProcMask.Matches(core.ProcMaskRanged) {
 				hunter.AddMana(sim, manaPerRangedHit, hunter.AspectOfTheViper.ResourceMetrics, false)
-			} else if spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+			} else if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 				hunter.AddMana(sim, manaPerMHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
-			} else if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			} else if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				hunter.AddMana(sim, manaPerOHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
 			}
 		},

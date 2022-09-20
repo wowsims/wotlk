@@ -95,14 +95,13 @@ func (warrior *Warrior) applyDamageShield() {
 	damageShieldProcSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58874},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskEmpty,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return warrior.GetStat(stats.BlockValue) * 0.1 * float64(warrior.Talents.DamageShield)
@@ -369,6 +368,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 				swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
 					ActionID:    core.ActionID{SpellID: 12281},
 					SpellSchool: core.SpellSchoolPhysical,
+					ProcMask:    core.ProcMaskMeleeMHAuto,
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 					ApplyEffects: core.ApplyEffectFuncDirectDamage(warrior.AutoAttacks.MHEffect),
@@ -382,7 +382,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					return
 				}
 
-				if !spellEffect.ProcMask.Matches(swordSpecMask) {
+				if !spell.ProcMask.Matches(swordSpecMask) {
 					return
 				}
 
@@ -425,11 +425,11 @@ func (warrior *Warrior) applyUnbridledWrath() {
 				return
 			}
 
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "Unbrided Wrath") {
+			if !ppmm.Proc(sim, spell.ProcMask, "Unbrided Wrath") {
 				return
 			}
 
@@ -466,7 +466,7 @@ func (warrior *Warrior) applyFlurry() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -477,7 +477,7 @@ func (warrior *Warrior) applyFlurry() {
 			}
 
 			// Remove a stack.
-			if procAura.IsActive() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if procAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				procAura.RemoveStack(sim)
 			}
 		},
@@ -509,7 +509,7 @@ func (warrior *Warrior) applyWreckingCrew() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -559,7 +559,7 @@ func (warrior *Warrior) applySuddenDeath() {
 				return
 			}
 
-			if spellEffect.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
+			if spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
 				warrior.SuddenDeathAura.Activate(sim)
 				warrior.SuddenDeathAura.AddStack(sim)
 			}
@@ -726,7 +726,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
-			ProcMask:       core.ProcMaskMeleeOHSpecial,
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
 		}
@@ -742,6 +741,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskMeleeOHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics,
 
 			DamageMultiplier: 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization),
@@ -750,7 +750,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	}
 
 	baseEffectMH := core.SpellEffect{
-		ProcMask:       core.ProcMaskMeleeMHSpecial,
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
@@ -766,6 +765,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,

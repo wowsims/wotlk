@@ -13,9 +13,11 @@ func (mage *Mage) registerFireBlastSpell() {
 	mage.FireBlast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42873},
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | HotStreakSpells,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -33,8 +35,6 @@ func (mage *Mage) registerFireBlastSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(925, 1095, 1.5/3.5),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 		}),

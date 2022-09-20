@@ -21,6 +21,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagDisease,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -44,7 +45,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -78,7 +78,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
 			BaseDamage: core.WrapBaseDamageConfig(

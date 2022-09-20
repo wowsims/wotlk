@@ -16,9 +16,9 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	missAura := core.InsectSwarmAura(target)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -36,7 +36,6 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -64,7 +63,6 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		NumberOfTicks: 6 + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(215, 0.2),
 			OutcomeApplier: druid.OutcomeFuncTick(),

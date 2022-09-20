@@ -377,14 +377,13 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolHoly,
+		ProcMask:    ProcMaskEmpty,
 		Flags:       SpellFlagBinary,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask: ProcMaskEmpty,
-
 			BaseDamage:     BaseDamageConfigFlat(damage),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),
@@ -411,14 +410,13 @@ func ThornsAura(character *Character, points int32) *Aura {
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolNature,
+		ProcMask:    ProcMaskEmpty,
 		Flags:       SpellFlagBinary,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask: ProcMaskEmpty,
-
 			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),
