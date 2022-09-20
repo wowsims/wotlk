@@ -27,6 +27,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49279},
 		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskEmpty,
 
 		DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
 			core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
@@ -34,7 +35,6 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 		ThreatMultiplier: 1, //fix when spirit weapons is fixed
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			BaseDamage:     core.BaseDamageConfigMagic(380, 380, 0.267),
 			OutcomeApplier: shaman.OutcomeFuncMagicHit(),
 		}),
@@ -57,7 +57,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 			aura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
 			if sim.RandomFloat("Static Shock") > procChance {
@@ -67,7 +67,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 			aura.RemoveStack(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
 

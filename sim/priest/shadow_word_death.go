@@ -22,9 +22,9 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 	}
 
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48158},
-		SpellSchool: core.SpellSchoolShadow,
-
+		ActionID:     core.ActionID{SpellID: 48158},
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -47,7 +47,6 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					priest.AddShadowWeavingStack(sim)

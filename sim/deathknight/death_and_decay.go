@@ -37,8 +37,10 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
@@ -75,7 +77,6 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

@@ -122,19 +122,18 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 type MeleeDamageCalculator func(attackPower float64, bonusWeaponDamage float64) float64
 
 // Returns whether this hit effect is associated with the main-hand weapon.
-func (ahe *SpellEffect) IsMH() bool {
-	const mhmask = ProcMaskMeleeMH
-	return ahe.ProcMask.Matches(mhmask)
+func (spell *Spell) IsMH() bool {
+	return spell.ProcMask.Matches(ProcMaskMeleeMH)
 }
 
 // Returns whether this hit effect is associated with the off-hand weapon.
-func (ahe *SpellEffect) IsOH() bool {
-	return ahe.ProcMask.Matches(ProcMaskMeleeOH)
+func (spell *Spell) IsOH() bool {
+	return spell.ProcMask.Matches(ProcMaskMeleeOH)
 }
 
 // Returns whether this hit effect is associated with either melee weapon.
-func (ahe *SpellEffect) IsMelee() bool {
-	return ahe.ProcMask.Matches(ProcMaskMelee)
+func (spell *Spell) IsMelee() bool {
+	return spell.ProcMask.Matches(ProcMaskMelee)
 }
 
 type AutoAttacks struct {
@@ -217,6 +216,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	unit.AutoAttacks.MHConfig = SpellConfig{
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
 		SpellSchool: unit.AutoAttacks.MH.GetSpellSchool(),
+		ProcMask:    ProcMaskMeleeMHAuto,
 		Flags:       SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
@@ -226,6 +226,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	unit.AutoAttacks.OHConfig = SpellConfig{
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
 		SpellSchool: unit.AutoAttacks.OH.GetSpellSchool(),
+		ProcMask:    ProcMaskMeleeOHAuto,
 		Flags:       SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
@@ -235,6 +236,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	unit.AutoAttacks.RangedConfig = SpellConfig{
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
 		SpellSchool: SpellSchoolPhysical,
+		ProcMask:    ProcMaskRangedAuto,
 		Flags:       SpellFlagMeleeMetrics,
 
 		Cast: CastConfig{
@@ -250,28 +252,23 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 
 	if unit.Type == EnemyUnit {
 		unit.AutoAttacks.MHEffect = SpellEffect{
-			ProcMask:       ProcMaskMeleeMHAuto,
 			BaseDamage:     BaseDamageConfigEnemyWeapon(MainHand),
 			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
-			ProcMask:       ProcMaskMeleeOHAuto,
 			BaseDamage:     BaseDamageConfigEnemyWeapon(OffHand),
 			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
 		}
 	} else {
 		unit.AutoAttacks.MHEffect = SpellEffect{
-			ProcMask:       ProcMaskMeleeMHAuto,
 			BaseDamage:     BaseDamageConfigMeleeWeapon(MainHand, false, 0, true),
 			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
-			ProcMask:       ProcMaskMeleeOHAuto,
 			BaseDamage:     BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
 			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{
-			ProcMask:       ProcMaskRangedAuto,
 			BaseDamage:     BaseDamageConfigRangedWeapon(0),
 			OutcomeApplier: unit.OutcomeFuncRangedHitAndCrit(options.Ranged.CritMultiplier),
 		}
@@ -295,7 +292,7 @@ func (aa *AutoAttacks) finalize() {
 	aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 
-	if aa.RangedEffect.ProcMask != ProcMaskUnknown {
+	if aa.RangedConfig.ProcMask != ProcMaskUnknown {
 		aa.RangedConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.RangedEffect)
 		aa.RangedAuto = aa.unit.GetOrRegisterSpell(aa.RangedConfig)
 	}

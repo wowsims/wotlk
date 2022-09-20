@@ -25,6 +25,8 @@ func (shaman *Shaman) registerThunderstormSpell() {
 	spellConfig := core.SpellConfig{
 		ActionID:    thunderstormActionID,
 		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
@@ -47,7 +49,6 @@ func (shaman *Shaman) registerThunderstormSpell() {
 
 	if shaman.thunderstormInRange {
 		effect := core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagic(1450, 1656, 0.172),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}

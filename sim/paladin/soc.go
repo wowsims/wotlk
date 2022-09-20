@@ -26,7 +26,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 */
 
 	baseEffect := core.SpellEffect{
-		ProcMask:       core.ProcMaskEmpty,
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
@@ -47,6 +46,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onSpecialOrSwingProcCleave := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    onSpecialOrSwingActionID, // Seal of Command damage bonus for single target spells.
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplierAdditive: baseMultiplierAdditive,
@@ -103,7 +103,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 					onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
 				}
 			} else {
-				if spellEffect.IsMelee() {
+				if spell.IsMelee() {
 					// Temporary check to avoid AOE double procing.
 					if spell.SpellID == paladin.DivineStorm.SpellID {
 						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
@@ -147,6 +147,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onJudgementProc = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		DamageMultiplierAdditive: baseMultiplierAdditive +
@@ -156,7 +157,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeOrRangedSpecial,
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {

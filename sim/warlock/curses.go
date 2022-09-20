@@ -20,6 +20,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 	warlock.CurseOfElements = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47865},
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskEmpty,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -37,7 +38,6 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfElementsAura),
-			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -54,8 +54,10 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 	warlock.CurseOfWeakness = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 50511},
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -69,7 +71,6 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfWeaknessAura),
-			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -88,8 +89,10 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	warlock.CurseOfTongues = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -103,7 +106,6 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfTonguesAura),
-			ProcMask:        core.ProcMaskEmpty,
 		}),
 	})
 }
@@ -125,11 +127,11 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		BaseDamage:     core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
 		OutcomeApplier: warlock.OutcomeFuncTick(),
 		IsPeriodic:     true,
-		ProcMask:       core.ProcMaskPeriodicDamage,
 	}
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -151,7 +153,6 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 					warlock.CurseOfAgonyDot.Apply(sim)
 				}
 			},
-			ProcMask: core.ProcMaskEmpty,
 		}),
 	})
 	warlock.CurseOfAgonyDot = core.NewDot(core.Dot{
@@ -175,14 +176,15 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 	effect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagicNoRoll(7300, 2),
 		OutcomeApplier: warlock.OutcomeFuncTick(),
-		ProcMask:       core.ProcMaskPeriodicDamage,
 	}
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -206,7 +208,6 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 					warlock.CurseOfDoomDot.Apply(sim)
 				}
 			},
-			ProcMask: core.ProcMaskEmpty,
 		}),
 	})
 

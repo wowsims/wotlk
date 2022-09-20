@@ -424,7 +424,7 @@ dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
   dps: 5643.67346
-  tps: 4004.40112
+  tps: 4007.00816
  }
 }
 dps_results: {

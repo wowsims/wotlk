@@ -273,10 +273,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
+			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
 				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 					druid.ClearcastingAura.Activate(sim)
 					if druid.SetBonuses.balance_t10_2 {
@@ -410,7 +410,7 @@ func (druid *Druid) applyImprovedLotp() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if !icd.IsReady(sim) {

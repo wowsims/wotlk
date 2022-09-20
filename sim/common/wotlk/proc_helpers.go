@@ -52,7 +52,7 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 
 	handler := config.Handler
 	callback := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if config.ProcMask != core.ProcMaskUnknown && !spellEffect.ProcMask.Matches(config.ProcMask) {
+		if config.ProcMask != core.ProcMaskUnknown && !spell.ProcMask.Matches(config.ProcMask) {
 			return
 		}
 		if config.Outcome != core.OutcomeEmpty && !spellEffect.Outcome.Matches(config.Outcome) {
@@ -66,7 +66,7 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 		}
 		if config.ProcChance != 1 && sim.RandomFloat(config.Name) > config.ProcChance {
 			return
-		} else if config.PPM != 0 && !ppmm.Proc(sim, spellEffect.ProcMask, config.Name) {
+		} else if config.PPM != 0 && !ppmm.Proc(sim, spell.ProcMask, config.Name) {
 			return
 		}
 

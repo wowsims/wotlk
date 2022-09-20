@@ -21,8 +21,6 @@ func (hunter *Hunter) registerVolleySpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 353 + 0.0837*spell.RangedAttackPower(hitEffect.Target)
@@ -34,10 +32,10 @@ func (hunter *Hunter) registerVolleySpell() {
 	})
 
 	hunter.Volley = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolArcane,
-		Flags:       core.SpellFlagChanneled,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

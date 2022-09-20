@@ -151,7 +151,7 @@ func init() {
 				Duration:  time.Second * 20,
 				MaxStacks: 10,
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+					if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 						aura.AddStack(sim)
 					}
 				},

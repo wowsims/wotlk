@@ -156,7 +156,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			// 	aura.Unit.EnableDynamicStatDep(sim, statDeps[0])
 			// },
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				DemonicFrenzyAura.Activate(sim)

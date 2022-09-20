@@ -65,6 +65,7 @@ func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
 	ai.HatefulStrike = target.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		Cast: core.CastConfig{
@@ -77,8 +78,6 @@ func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
 		DamageMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage:     core.BaseDamageConfigRoll(79000, 81000),
 			OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
 		}),

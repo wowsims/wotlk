@@ -44,10 +44,10 @@ func (shaman *Shaman) registerLavaLashSpell() {
 	}
 
 	shaman.LavaLash = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 60103},
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 60103},
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskMeleeOHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,
 
@@ -69,8 +69,6 @@ func (shaman *Shaman) registerLavaLashSpell() {
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeOHSpecial,
-
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, true),
 			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.ElementalCritMultiplier(0)),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

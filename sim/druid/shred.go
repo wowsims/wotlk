@@ -20,10 +20,10 @@ func (druid *Druid) registerShredSpell() {
 	maxRipTicks := druid.MaxRipTicks()
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48572},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48572},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -40,8 +40,6 @@ func (druid *Druid) registerShredSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, true),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {

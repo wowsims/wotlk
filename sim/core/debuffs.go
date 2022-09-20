@@ -236,12 +236,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.ProcMask.Matches(ProcMaskEmpty) {
+			if spell.ProcMask.Matches(ProcMaskEmpty) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
 			// Melee claim that wisdom can proc on misses.
-			if !spellEffect.ProcMask.Matches(ProcMaskMeleeOrRanged) && !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !spellEffect.Landed() {
 				return
 			}
 
@@ -271,7 +271,7 @@ func JudgementOfLightAura(target *Unit) *Aura {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.ProcMask.Matches(ProcMaskMelee) || !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
 

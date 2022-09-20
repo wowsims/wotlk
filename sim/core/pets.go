@@ -68,6 +68,7 @@ func (gft *GnomishFlameTurret) registerFlameCannonSpell() {
 	gft.FlameCannon = gft.RegisterSpell(SpellConfig{
 		ActionID:    ActionID{SpellID: 30527},
 		SpellSchool: SpellSchoolFire,
+		ProcMask:    ProcMaskSpellDamage,
 
 		Cast: CastConfig{
 			DefaultCast: Cast{
@@ -83,8 +84,6 @@ func (gft *GnomishFlameTurret) registerFlameCannonSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask: ProcMaskSpellDamage,
-
 			BaseDamage:     BaseDamageConfigRoll(31, 36),
 			OutcomeApplier: gft.OutcomeFuncMagicHitAndCrit(gft.DefaultSpellCritMultiplier()),
 		}),

@@ -501,7 +501,7 @@ dps_results: {
  key: "TestFrost-AllItems-StormshroudArmor"
  value: {
   dps: 6072.75045
-  tps: 3602.86267
+  tps: 3604.37117
  }
 }
 dps_results: {

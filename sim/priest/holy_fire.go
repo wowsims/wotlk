@@ -14,9 +14,9 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 	baseCost := .11 * priest.BaseMana
 
 	priest.HolyFire = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -37,8 +37,6 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(900, 1140, 0.5711),
 			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -56,6 +54,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		Spell: priest.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolHoly,
+			ProcMask:     core.ProcMaskSpellDamage,
 
 			DamageMultiplier: priest.HolyFire.DamageMultiplier,
 			ThreatMultiplier: priest.HolyFire.ThreatMultiplier,
@@ -77,7 +76,6 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		NumberOfTicks: 7,
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(50, 0.024),
 			OutcomeApplier: priest.OutcomeFuncTick(),
 			IsPeriodic:     true,

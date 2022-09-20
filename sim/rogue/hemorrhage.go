@@ -43,10 +43,10 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	weaponDamageBonus := core.TernaryFloat64(daggerMH, 1.6, 1.1) + float64(rogue.Talents.SinisterCalling)*0.02
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -66,7 +66,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand, true, 0, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),

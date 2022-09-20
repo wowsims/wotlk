@@ -39,9 +39,6 @@ type SpellEffect struct {
 	// Indicates this is a healing spell, rather than a damage spell.
 	IsHealing bool
 
-	// Controls which effects can proc from this effect.
-	ProcMask ProcMask
-
 	// Callbacks for providing additional custom behavior.
 	OnSpellHitDealt       EffectOnSpellHitDealt
 	OnPeriodicDamageDealt EffectOnPeriodicDamageDealt
@@ -55,12 +52,12 @@ type SpellEffect struct {
 }
 
 func (spellEffect *SpellEffect) Validate() {
-	if spellEffect.ProcMask == ProcMaskUnknown {
-		panic("SpellEffects must set a ProcMask!")
-	}
-	if spellEffect.ProcMask.Matches(ProcMaskEmpty) && spellEffect.ProcMask != ProcMaskEmpty {
-		panic("ProcMaskEmpty must be exclusive!")
-	}
+	//if spell.ProcMask == ProcMaskUnknown {
+	//	panic("SpellEffects must set a ProcMask!")
+	//}
+	//if spell.ProcMask.Matches(ProcMaskEmpty) && spell.ProcMask != ProcMaskEmpty {
+	//	panic("ProcMaskEmpty must be exclusive!")
+	//}
 }
 
 func (spellEffect *SpellEffect) Landed() bool {
@@ -98,11 +95,11 @@ func (spell *Spell) BonusWeaponDamage() float64 {
 	return spell.Unit.PseudoStats.BonusDamage
 }
 
-func (spell *Spell) ExpertisePercentage(procMask ProcMask) float64 {
+func (spell *Spell) ExpertisePercentage() float64 {
 	expertiseRating := spell.Unit.stats[stats.Expertise]
-	if procMask.Matches(ProcMaskMeleeMH) {
+	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
 		expertiseRating += spell.Unit.PseudoStats.BonusMHExpertiseRating
-	} else if procMask.Matches(ProcMaskMeleeOH) {
+	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
 		expertiseRating += spell.Unit.PseudoStats.BonusOHExpertiseRating
 	}
 	return math.Floor(expertiseRating/ExpertisePerQuarterPercentReduction) / 400
@@ -122,19 +119,19 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 		// ignoring units real time crit in this case
 		critRating = spellEffect.snapshotMeleeCritRating
 	} else {
-		critRating = spell.physicalCritRating(spellEffect.Target, spellEffect.ProcMask)
+		critRating = spell.physicalCritRating(spellEffect.Target)
 	}
 
 	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
 }
-func (spell *Spell) physicalCritRating(target *Unit, procMask ProcMask) float64 {
+func (spell *Spell) physicalCritRating(target *Unit) float64 {
 	critRating := spell.Unit.stats[stats.MeleeCrit] +
 		spell.BonusCritRating +
 		target.PseudoStats.BonusCritRatingTaken
 
-	if procMask.Matches(ProcMaskMeleeMH) {
+	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
 		critRating += spell.Unit.PseudoStats.BonusMHCritRating
-	} else if procMask.Matches(ProcMaskMeleeOH) {
+	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
 		critRating += spell.Unit.PseudoStats.BonusOHCritRating
 	}
 	return critRating
@@ -256,8 +253,11 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
+	if spell.ProcMask == ProcMaskUnknown {
+		panic("Unknown proc mask on " + spell.ActionID.String())
+	}
 	for i := range spellEffect.Target.DynamicDamageTakenModifiers {
-		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spellEffect)
+		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spell, spellEffect)
 	}
 
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
@@ -371,7 +371,7 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 	multiplier *= spell.DamageMultiplier
 	multiplier *= spell.DamageMultiplierAdditive
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
+	if spell.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
 	}
 	if spell.Flags.Matches(SpellFlagDisease) {

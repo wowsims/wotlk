@@ -10,10 +10,10 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 	baseCost := .22 * mage.BaseMana
 
 	mage.ArcaneExplosion = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 42921},
-		SpellSchool: core.SpellSchoolArcane,
-		Flags:       SpellFlagMage,
-
+		ActionID:     core.ActionID{SpellID: 42921},
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -31,8 +31,6 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(538, 582, 0.214),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower))),
 		}),

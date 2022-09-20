@@ -501,7 +501,7 @@ dps_results: {
  key: "TestUnholy-AllItems-StormshroudArmor"
  value: {
   dps: 5741.80622
-  tps: 4436.98008
+  tps: 4439.38771
  }
 }
 dps_results: {

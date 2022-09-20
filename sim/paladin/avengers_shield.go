@@ -13,8 +13,6 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	baseEffectMH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				damage := 1100.0 +
@@ -29,7 +27,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	}
 
 	// Glyph to single target, OR apply to up to 3 targets
-	numHits := core.TernaryInt32(glyphedSingleTargetAS,1,core.MinInt32(3, paladin.Env.GetNumTargets()));
+	numHits := core.TernaryInt32(glyphedSingleTargetAS, 1, core.MinInt32(3, paladin.Env.GetNumTargets()))
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
@@ -38,10 +36,10 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	}
 
 	paladin.AvengersShield = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48827},
-		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48827},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

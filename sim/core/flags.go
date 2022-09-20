@@ -52,9 +52,7 @@ const (
 	ProcMaskRangedAuto
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
-	ProcMaskPeriodicDamage
 	ProcMaskSpellHealing
-	ProcMaskPeriodicHealing
 )
 
 const (

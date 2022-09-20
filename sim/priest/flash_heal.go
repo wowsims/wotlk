@@ -12,9 +12,9 @@ func (priest *Priest) registerFlashHealSpell() {
 	baseCost := .18 * priest.BaseMana
 
 	priest.FlashHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48071},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48071},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -35,7 +35,6 @@ func (priest *Priest) registerFlashHealSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			IsHealing: true,
-			ProcMask:  core.ProcMaskSpellHealing,
 
 			BaseDamage:     core.BaseDamageConfigHealing(1896, 2203, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
 			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),

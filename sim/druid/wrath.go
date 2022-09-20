@@ -19,8 +19,6 @@ func (druid *Druid) registerWrathSpell() {
 	spellCoefficient := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
 		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -46,9 +44,9 @@ func (druid *Druid) registerWrathSpell() {
 	effect.BaseDamage = core.BaseDamageConfigMagic(557.0+bonusFlatDamage, 627.0+bonusFlatDamage, spellCoefficient)
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
