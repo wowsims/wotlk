@@ -69,6 +69,7 @@ func (mage *Mage) registerLivingBombSpell() {
 	livingBombDotSpell := mage.RegisterSpell(core.SpellConfig{
 		ActionID:         actionIDDot,
 		SpellSchool:      core.SpellSchoolFire,
+		ProcMask:         core.ProcMaskEmpty,
 		Flags:            SpellFlagMage,
 		Cast:             core.CastConfig{},
 		BonusCritRating:  bonusCrit,

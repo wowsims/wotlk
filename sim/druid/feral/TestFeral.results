@@ -529,7 +529,7 @@ dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
   dps: 5705.12721
-  tps: 4318.4397
+  tps: 4319.54594
  }
 }
 dps_results: {

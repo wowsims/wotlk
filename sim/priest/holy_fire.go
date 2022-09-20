@@ -54,6 +54,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		Spell: priest.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolHoly,
+			ProcMask:     core.ProcMaskSpellDamage,
 
 			DamageMultiplier: priest.HolyFire.DamageMultiplier,
 			ThreatMultiplier: priest.HolyFire.ThreatMultiplier,

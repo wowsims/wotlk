@@ -26,11 +26,12 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, dk.Talents.ViciousStrikes, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.ViciousStrikes, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,

@@ -61,6 +61,7 @@ func (mage *Mage) registerFireballSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
 
 			DamageMultiplier: mage.Fireball.DamageMultiplier,

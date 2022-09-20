@@ -97,6 +97,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+			ProcMask:     core.ProcMaskSpellDamage,
 
 			DamageMultiplier: config.DamageMultiplier *
 				(1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) *

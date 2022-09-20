@@ -59,6 +59,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | HotStreakSpells,
 
 			DamageMultiplier: mage.FrostfireBolt.DamageMultiplier /

@@ -91,6 +91,7 @@ func (druid *Druid) registerLacerateSpell() {
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:     core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics,
 
 			DamageMultiplier: lbdm * t9bonus,

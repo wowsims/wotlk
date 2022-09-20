@@ -65,6 +65,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		Spell: warlock.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 
 			BonusCritRating:          warlock.Conflagrate.BonusCritRating,
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),

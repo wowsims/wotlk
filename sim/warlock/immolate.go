@@ -55,6 +55,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		Spell: warlock.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
+			ProcMask:     core.ProcMaskSpellDamage,
 
 			BonusCritRating:          warlock.Immolate.BonusCritRating,
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),

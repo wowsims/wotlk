@@ -65,6 +65,7 @@ func (mage *Mage) registerPyroblastSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage,
 
 			DamageMultiplier: mage.Pyroblast.DamageMultiplier,
