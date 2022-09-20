@@ -96,8 +96,9 @@ var FrostTalents = &proto.DeathknightTalents{
 var unholyRotation = &proto.Deathknight_Rotation{
 	UseDeathAndDecay:     true,
 	StartingPresence:     proto.Deathknight_Rotation_Unholy,
+	BlPresence:           proto.Deathknight_Rotation_Blood,
 	UseEmpowerRuneWeapon: true,
-	BtGhoulFrenzy:        false,
+	BtGhoulFrenzy:        true,
 	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
 	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,

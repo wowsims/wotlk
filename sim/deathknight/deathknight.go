@@ -9,6 +9,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+type Rotation_FuStrike int32
+
+const (
+	FuStrike_DeathStrike   Rotation_FuStrike = 0
+	FuStrike_ScourgeStrike Rotation_FuStrike = 1
+	FuStrike_Obliterate    Rotation_FuStrike = 2
+)
+
 type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
@@ -27,6 +35,7 @@ type DeathknightInputs struct {
 	UseAMS              bool
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
+	FuStrike            Rotation_FuStrike
 }
 
 type DeathknightCoeffs struct {
