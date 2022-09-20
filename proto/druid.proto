@@ -203,6 +203,7 @@ message FeralDruid {
     RaidTarget innervate_target = 1;
     int32 latency_ms = 2;
     bool prepop_ooc = 3;
+    bool assume_bleed_active = 4;
   }
   Options options = 3;
 }

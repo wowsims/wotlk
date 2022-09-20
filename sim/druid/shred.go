@@ -11,7 +11,6 @@ import (
 
 func (druid *Druid) registerShredSpell() {
 	baseCost := 60.0 - 9*float64(druid.Talents.ShreddingAttacks)
-	refundAmount := baseCost * 0.8
 
 	flatDamageBonus := 666 +
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0) +
@@ -50,7 +49,7 @@ func (druid *Druid) registerShredSpell() {
 						if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
 							modifier += .3
 						}
-						if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+						if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
 							modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 						}
 
@@ -71,7 +70,7 @@ func (druid *Druid) registerShredSpell() {
 						}
 					}
 				} else {
-					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
+					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
 			},
 		}),

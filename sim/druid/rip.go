@@ -13,7 +13,7 @@ import (
 func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10.0, 0.0)
-	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
 
 	ripBaseNumTicks := 6 +
 		core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
@@ -47,8 +47,8 @@ func (druid *Druid) registerRipSpell() {
 					druid.RipDot.NumberOfTicks = ripBaseNumTicks
 					druid.RipDot.Apply(sim)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-				} else if refundAmount > 0 {
-					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
+				} else if refundPercent > 0 {
+					druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),

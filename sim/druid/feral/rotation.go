@@ -231,6 +231,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	curCp := cat.ComboPoints()
 	isClearcast := cat.ClearcastingAura.IsActive()
 	simTimeRemain := sim.GetRemainingDuration()
+	shiftCost := cat.CatForm.DefaultCast.Cost
 
 	endThresh := time.Second * 10
 
@@ -304,6 +305,16 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// apply.
 	lacRemain := core.TernaryDuration(cat.LacerateDot.IsActive(), cat.LacerateDot.RemainingDuration(sim), time.Duration(0))
 	emergencyBearweave := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && (float64(lacRemain) < (2.5+latencySecs)*float64(time.Second)) && (lacRemain < simTimeRemain)
+
+	if bearweaveNow || emergencyBearweave {
+		// oom check, if we arent able to shift into bear and back
+		// then abandon bearweave
+		if cat.CurrentMana() < shiftCost*2.0 {
+			bearweaveNow = false
+			emergencyBearweave = false
+			cat.Metrics.MarkOOM(sim)
+		}
+	}
 
 	floatingEnergy := 0.0
 	previousTime := sim.CurrentTime

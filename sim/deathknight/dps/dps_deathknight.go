@@ -98,6 +98,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy
 			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
 			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
+			dk.Rotation.BlPresence = proto.Deathknight_Rotation_Blood
 
 			mh := dk.GetMHWeapon()
 			oh := dk.GetOHWeapon()
@@ -132,6 +133,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 
 	dk.RotationSequence.Clear()
+
+	dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 
 	if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 		if dk.Rotation.UseEmpowerRuneWeapon {

@@ -49,6 +49,12 @@ export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeral
 	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
+export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
+	fieldName: 'assumeBleedActive',
+	label: 'Assume Bleed Always Active',
+	labelTooltip: 'Assume bleed always exists for "Rend and Tear" calculations. Otherwise will only calculate based on own rip/rake/lacerate.',
+})
+
 export const FeralDruidRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({

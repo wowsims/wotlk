@@ -1,8 +1,9 @@
 package druid
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -12,6 +13,13 @@ import (
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
 const ShootingStar int32 = 40321
+
+func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
+}
 
 func (druid *Druid) registerStarfireSpell() {
 
@@ -71,7 +79,7 @@ func (druid *Druid) registerStarfireSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
-				druid.ApplySwiftStarfireBonus(sim, cast)
+				druid.applySwiftStarfireBonus(sim, cast)
 				if druid.HasActiveAura("Elune's Wrath") {
 					cast.CastTime = 0
 					druid.GetAura("Elune's Wrath").Deactivate(sim)

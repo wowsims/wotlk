@@ -12,7 +12,6 @@ func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
 
 	cost := 40.0 - float64(druid.Talents.Ferocity)
-	refundAmount := cost * 0.8
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
@@ -57,7 +56,7 @@ func (druid *Druid) registerRakeSpell() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.RakeDot.Apply(sim)
 				} else {
-					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
+					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
 			},
 		}),

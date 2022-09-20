@@ -72,7 +72,6 @@ func (druid *Druid) registerMangleCatSpell() {
 	}
 
 	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
-	refundAmount := cost * 0.8
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), 0.1, 0.0)
 
 	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
@@ -104,7 +103,7 @@ func (druid *Druid) registerMangleCatSpell() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.MangleAura.Activate(sim)
 				} else {
-					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
+					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
 			},
 		}),
