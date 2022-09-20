@@ -16,6 +16,7 @@ export interface IconEnumValueConfig<ModObject, T> {
 
 	// Hover tooltip.
 	tooltip?: string,
+	text?: string,
 
 	showWhen?: (obj: ModObject) => boolean,
 }
@@ -83,6 +84,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			option.classList.add('dropdown-option', 'icon-enum-picker-option');
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
+
+			if (valueConfig.text != undefined){
+				const test = document.createElement('div');
+				test.classList.add("icon-enum-text")
+				test.textContent = valueConfig.text
+				option.append(test)
+			}
 
 			if (valueConfig.tooltip) {
 				tippy(option, {

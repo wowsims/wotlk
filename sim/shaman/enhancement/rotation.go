@@ -32,6 +32,11 @@ type Rotation interface {
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
+	// Incase the array is empty
+	if len(rotation.spellPriority) == 0 {
+		enh.DoNothing()
+	}
+
 	//Mana guard, our cheapest spell.
 	if enh.CurrentMana() < enh.LavaBurst.CurCast.Cost {
 		// Lets top off lightning shield stacks before waiting for mana.
@@ -79,14 +84,11 @@ func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simula
 
 }
 
-// The amont of spells in the priority array
-const prioritySize = 10
-
 //Default Priority Order
 const (
 	LightningBolt = iota
 	StormstrikeApplyDebuff
-	Weave
+	WeaveMaelstrom
 	Stormstrike
 	FlameShock
 	EarthShock
@@ -94,11 +96,12 @@ const (
 	LightningShield
 	FireNova
 	LavaLash
+	NumberSpells // Used to get the max number of spells in the prio list, keep at bottoom
 )
 
 type PriorityRotation struct {
 	options       *proto.EnhancementShaman_Rotation
-	spellPriority [prioritySize]Spell
+	spellPriority []Spell
 }
 
 type Cast func(sim *core.Simulation, target *core.Unit) bool
@@ -162,7 +165,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
-	weave := Spell{
+	weaveMaelstrom := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
@@ -185,7 +188,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			//TODO add in check for how much time we have left, IE we don't want to cast a FS with 4 seconds left.
+			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && !enh.FlameShockDot.IsActive() {
+				return true
+			}
+
 			return rotation.options.WeaveFlameShock && !enh.FlameShockDot.IsActive()
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -198,6 +204,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	earthShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
+				return true
+			}
+
 			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Earth
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -210,6 +220,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	frostShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
+				return true
+			}
+
 			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Frost
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -258,18 +272,56 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
-	//This can allow for a custom prio rotation, using a ENUM for default rotation order for now.
-	var spellPriority [prioritySize]Spell
-	spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
-	spellPriority[LightningBolt] = instantLightningBolt
-	spellPriority[Stormstrike] = stormstrike
-	spellPriority[FlameShock] = flameShock
-	spellPriority[EarthShock] = earthShock
-	spellPriority[LightningShield] = lightningShield
-	spellPriority[FireNova] = fireNova
-	spellPriority[LavaLash] = lavaLash
-	spellPriority[Weave] = weave
-	spellPriority[FrostShock] = frostShock
+	//Normal Priority Rotation
+	var spellPriority []Spell
+	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Priority {
+		spellPriority = make([]Spell, NumberSpells)
+		spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
+		spellPriority[LightningBolt] = instantLightningBolt
+		spellPriority[Stormstrike] = stormstrike
+		spellPriority[FlameShock] = flameShock
+		spellPriority[EarthShock] = earthShock
+		spellPriority[LightningShield] = lightningShield
+		spellPriority[FireNova] = fireNova
+		spellPriority[LavaLash] = lavaLash
+		spellPriority[WeaveMaelstrom] = weaveMaelstrom
+		spellPriority[FrostShock] = frostShock
+	}
+
+	//Custom Priority Rotation
+	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
+		spellPriority = make([]Spell, 0, len(rotation.options.CustomRotation.Spells))
+		rotation.options.LightningboltWeave = false
+		rotation.options.LavaburstWeave = false
+		for _, customSpellProto := range rotation.options.CustomRotation.Spells {
+			switch customSpellProto.Spell {
+			case int32(proto.EnhancementShaman_Rotation_StormstrikeDebuffMissing):
+				spellPriority = append(spellPriority, stormstrikeApplyDebuff)
+			case int32(proto.EnhancementShaman_Rotation_LightningBolt):
+				spellPriority = append(spellPriority, instantLightningBolt)
+			case int32(proto.EnhancementShaman_Rotation_LightningBoltWeave):
+				rotation.options.LightningboltWeave = true
+				spellPriority = append(spellPriority, weaveMaelstrom)
+			case int32(proto.EnhancementShaman_Rotation_Stormstrike):
+				spellPriority = append(spellPriority, stormstrike)
+			case int32(proto.EnhancementShaman_Rotation_FlameShock):
+				spellPriority = append(spellPriority, flameShock)
+			case int32(proto.EnhancementShaman_Rotation_FireNova):
+				spellPriority = append(spellPriority, fireNova)
+			case int32(proto.EnhancementShaman_Rotation_LavaLash):
+				spellPriority = append(spellPriority, lavaLash)
+			case int32(proto.EnhancementShaman_Rotation_EarthShock):
+				spellPriority = append(spellPriority, earthShock)
+			case int32(proto.EnhancementShaman_Rotation_LightningShield):
+				spellPriority = append(spellPriority, lightningShield)
+			case int32(proto.EnhancementShaman_Rotation_FrostShock):
+				spellPriority = append(spellPriority, frostShock)
+			case int32(proto.EnhancementShaman_Rotation_LavaBurst):
+				rotation.options.LavaburstWeave = true
+				spellPriority = append(spellPriority, frostShock)
+			}
+		}
+	}
 
 	rotation.spellPriority = spellPriority
 }

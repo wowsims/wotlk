@@ -99,13 +99,17 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'customRotation',
 				numColumns: 2,
 				values: [
-					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt },
+					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt},
+					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltWeave, text: "Weave" },
+					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff"  },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.Stormstrike },
 					{ actionId: ActionId.fromSpellId(49233), value: CustomRotationSpell.FlameShock },
 					{ actionId: ActionId.fromSpellId(49231), value: CustomRotationSpell.EarthShock },
 					{ actionId: ActionId.fromSpellId(61657), value: CustomRotationSpell.FireNova },
 					{ actionId: ActionId.fromSpellId(60103), value: CustomRotationSpell.LavaLash },
 					{ actionId: ActionId.fromSpellId(49281), value: CustomRotationSpell.LightningShield },
+					{ actionId: ActionId.fromSpellId(60043), value: CustomRotationSpell.LavaBurst, text: "Weave" },
+					{ actionId: ActionId.fromSpellId(49236), value: CustomRotationSpell.FrostShock},
 				],
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType == RotationType.Custom,
 			}),
@@ -117,17 +121,20 @@ export const EnhancementShamanRotationConfig = {
 					{ name: 'Earth Shock', value: PrimaryShock.Earth },
 					{ name: 'Frost Shock', value: PrimaryShock.Frost },
 				],
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'weaveFlameShock',
 				label: 'Weave Flame Shock',
 				labelTooltip: 'Use Flame Shock whenever the target does not already have the DoT.',
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'lightningboltWeave',
 				label: 'Enable Weaving Lightning Bolt',
 				labelTooltip: 'Will provide a DPS increase, but is harder to execute',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
 				fieldName: 'maelstromweaponMinStack',
@@ -139,19 +146,20 @@ export const EnhancementShamanRotationConfig = {
 					{ name: '3', value: 3 },
 					{ name: '4', value: 4 },
 				],
-				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave || player.getRotation().rotationType == RotationType.Custom,
 			}),
 			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'weaveReactionTime',
 				label: 'Weaving Reaction Time',
 				labelTooltip: 'The Reaction time to gaining maelstrom stacks after a auto attack in milliseconds',
-				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave || player.getRotation().rotationType == RotationType.Custom,
 			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'lavaburstWeave',
 				label: 'Enable Weaving Lava Burst',
 				labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().lightningboltWeave,
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
 			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'firenovaManaThreshold',
