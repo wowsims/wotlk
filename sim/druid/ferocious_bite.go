@@ -16,6 +16,11 @@ func (druid *Druid) registerFerociousBiteSpell() {
 
 	var excessEnergy float64
 
+	biteBaseBonusCrit := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+	if druid.AssumeBleedActive {
+		biteBaseBonusCrit += (5 * float64(druid.Talents.RendAndTear)) * core.CritRatingPerCritChance
+	}
+
 	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -37,7 +42,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 		},
 
-		BonusCritRating: core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+		BonusCritRating: biteBaseBonusCrit,
 		DamageMultiplier: (1 + 0.03*float64(druid.Talents.FeralAggression)) *
 			core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0),
 		ThreatMultiplier: 1,

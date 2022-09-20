@@ -202,7 +202,7 @@ func (druid *Druid) applyPrimalFury() {
 
 // Modifies the Bleed aura to apply the bonus.
 func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
-	if druid.Talents.RendAndTear == 0 {
+	if druid.Talents.RendAndTear == 0 || druid.AssumeBleedActive {
 		return aura
 	}
 

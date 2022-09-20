@@ -40,6 +40,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
 	}
 
+	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.setupRotation(feralOptions.Rotation)

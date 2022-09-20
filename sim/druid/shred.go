@@ -52,7 +52,7 @@ func (druid *Druid) registerShredSpell() {
 						if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
 							modifier += .3
 						}
-						if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+						if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
 							modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 						}
 
