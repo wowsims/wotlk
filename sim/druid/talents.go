@@ -77,6 +77,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
 	druid.applyEclipse()
+	druid.applyImprovedLotp()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -383,6 +384,40 @@ func (druid *Druid) applyEclipse() {
 				druid.LunarICD.Use(sim)
 				druid.LunarEclipseProcAura.Activate(sim)
 			}
+		},
+	})
+}
+
+func (druid *Druid) applyImprovedLotp() {
+	if druid.Talents.ImprovedLeaderOfThePack == 0 {
+		return
+	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 34300})
+
+	icd := core.Cooldown{
+		Timer:    druid.NewTimer(),
+		Duration: time.Second * 6,
+	}
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Improved Leader of the Pack",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if !icd.IsReady(sim) {
+				return
+			}
+			icd.Use(sim)
+			druid.AddMana(sim, druid.MaxMana()*0.08, manaMetrics, false)
 		},
 	})
 }
