@@ -2,6 +2,7 @@ package balance
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 	"time"
 )
 
@@ -35,8 +36,8 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 		solarIsActive := solarICD > time.Millisecond*15000
 		lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
 		solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
-		canUseCooldownsInLunar := lunarUptime.Seconds() >= float64(rotation.McdInsideLunarThreshold)-0.5 && rotation.McdInsideLunarThreshold > 0
-		canUseCooldownsInSolar := solarUptime.Seconds() >= float64(rotation.McdInsideSolarThreshold)-0.5 && rotation.McdInsideSolarThreshold > 0
+		canUseCooldownsInLunar := lunarUptime.Seconds() >= float64(rotation.McdInsideLunarThreshold)-0.5 && rotation.UseSmartCooldowns
+		canUseCooldownsInSolar := solarUptime.Seconds() >= float64(rotation.McdInsideSolarThreshold)-0.5 && rotation.UseSmartCooldowns
 
 		// "Dispelling" eclipse effects before casting if needed
 		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 && rotation.UseMf {
@@ -101,24 +102,34 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) {
 
 func (moonkin *BalanceDruid) castAllMajorCooldowns(sim *core.Simulation) {
 	target := moonkin.CurrentTarget
-	moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
-	moonkin.castMajorCooldown(moonkin.potionMCD, sim, target)
-	moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-	moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+	for _, v := range moonkin.CooldownsAvailable {
+		moonkin.castMajorCooldown(v, sim, target)
+	}
 }
 
 func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
 	if mcd != nil {
 		isOffensivePotion := mcd.Spell.SameAction(core.ActionID{ItemID: 40211}) || mcd.Spell.SameAction(core.ActionID{ItemID: 40212})
-		shouldUseOffensivePotion := isOffensivePotion && !moonkin.potionUsed
+		willUseOffensivePotion := isOffensivePotion && !moonkin.potionUsed
 
+		lunarIsActive := moonkin.LunarICD.Timer.TimeToReady(sim) > time.Millisecond*15000
+		solarIsActive := moonkin.SolarICD.Timer.TimeToReady(sim) > time.Millisecond*15000
+
+		// Use Cooldown if appropriate Eclipse
+		if lunarIsActive && mcd.Spell.ResourceType == stats.SpellCrit {
+			return
+		}
+		if solarIsActive && mcd.Spell.ResourceType == stats.SpellHaste {
+			return
+		}
+		// Use Potion if we can
 		if isOffensivePotion && moonkin.potionUsed {
 			return
 		}
 
 		if mcd.Spell.IsReady(sim) && moonkin.GCD.IsReady(sim) {
 			mcd.Spell.Cast(sim, target)
-			if shouldUseOffensivePotion {
+			if willUseOffensivePotion {
 				moonkin.potionUsed = true
 			}
 		}
