@@ -13,7 +13,6 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	spellSchool := core.SpellSchoolFire
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(1429, 1813, 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
@@ -23,6 +22,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	warlock.ChaosBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

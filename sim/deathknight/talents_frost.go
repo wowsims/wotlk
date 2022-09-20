@@ -166,7 +166,7 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
 
@@ -228,7 +228,7 @@ func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, bonusTalentPoints int32, effect *core.SpellEffect) {
+func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, bonusTalentPoints int32, spell *core.Spell, effect *core.SpellEffect) {
 	critMultiplier := dk.bonusCritMultiplier(bonusTalentPoints)
 	if isMH {
 		effect.ProcMask = core.ProcMaskMeleeMHSpecial

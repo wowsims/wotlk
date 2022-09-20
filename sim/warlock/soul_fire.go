@@ -13,7 +13,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	spellSchool := core.SpellSchoolFire
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
@@ -21,6 +20,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

@@ -489,7 +489,7 @@ func (spellEffect *SpellEffect) applyAttackTableBlock(spell *Spell, unit *Unit, 
 }
 
 func (spellEffect *SpellEffect) applyAttackTableDodge(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
-	*chance += MaxFloat(0, attackTable.BaseDodgeChance-spell.ExpertisePercentage(spellEffect.ProcMask)-unit.PseudoStats.DodgeReduction)
+	*chance += MaxFloat(0, attackTable.BaseDodgeChance-spell.ExpertisePercentage()-unit.PseudoStats.DodgeReduction)
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeDodge
@@ -501,7 +501,7 @@ func (spellEffect *SpellEffect) applyAttackTableDodge(spell *Spell, unit *Unit, 
 }
 
 func (spellEffect *SpellEffect) applyAttackTableParry(spell *Spell, unit *Unit, attackTable *AttackTable, roll float64, chance *float64) bool {
-	*chance += MaxFloat(0, attackTable.BaseParryChance-spell.ExpertisePercentage(spellEffect.ProcMask))
+	*chance += MaxFloat(0, attackTable.BaseParryChance-spell.ExpertisePercentage())
 
 	if roll < *chance {
 		spellEffect.Outcome = OutcomeParry

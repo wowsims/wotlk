@@ -19,10 +19,10 @@ func (druid *Druid) registerRakeSpell() {
 	t9bonus := core.TernaryInt(druid.HasT9FeralSetBonus(2), 1, 0)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -39,8 +39,6 @@ func (druid *Druid) registerRakeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					damage := 176 + 0.01*spell.MeleeAttackPower()
@@ -76,7 +74,6 @@ func (druid *Druid) registerRakeSpell() {
 		NumberOfTicks: 3 + t9bonus,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),

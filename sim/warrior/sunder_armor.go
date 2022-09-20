@@ -20,6 +20,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	config := core.SpellConfig{
 		ActionID:    SunderArmorActionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -48,8 +49,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

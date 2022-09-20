@@ -143,9 +143,9 @@ func (we *WaterElemental) registerWaterboltSpell() {
 	baseCost := we.BaseMana * 0.1
 
 	we.Waterbolt = we.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31707},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 31707},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -161,7 +161,6 @@ func (we *WaterElemental) registerWaterboltSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagic(256, 328, 3.0/3.5),
 			OutcomeApplier: we.OutcomeFuncMagicHitAndCrit(we.DefaultSpellCritMultiplier()),
 		}),

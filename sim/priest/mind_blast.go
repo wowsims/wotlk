@@ -12,7 +12,6 @@ func (priest *Priest) registerMindBlastSpell() {
 	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -57,9 +56,9 @@ func (priest *Priest) registerMindBlastSpell() {
 	}
 
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48127},
-		SpellSchool: core.SpellSchoolShadow,
-
+		ActionID:     core.ActionID{SpellID: 48127},
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

@@ -27,7 +27,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	spellSchool := core.SpellSchoolShadow
 
 	baseSeedExplosionEffect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(1633, 1897, 0.2129),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
 	}
@@ -42,6 +41,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: spellSchool,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating: 0 +
 			warlock.masterDemonologistShadowCrit() +
@@ -53,7 +53,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	})
 
 	effect := core.SpellEffect{
-		ProcMask:        core.ProcMaskEmpty,
 		OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 		OnSpellHitDealt: applyDotOnLanded(&warlock.SeedDots[targetIdx]),
 	}
@@ -67,8 +66,10 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	warlock.Seeds[targetIdx] = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -122,7 +123,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),

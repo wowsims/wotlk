@@ -18,9 +18,9 @@ func (priest *Priest) registerVampiricTouchSpell() {
 	}
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -38,7 +38,6 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			OutcomeApplier: priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -64,7 +63,6 @@ func (priest *Priest) registerVampiricTouchSpell() {
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic: true,
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagicNoRoll(850/5, 0.4),
 				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {

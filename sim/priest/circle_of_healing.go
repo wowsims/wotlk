@@ -16,9 +16,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	baseCost := .21 * priest.BaseMana
 
 	baseEffect := core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealing(958, 1058, 0.4029),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
@@ -32,9 +30,9 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	}
 
 	priest.CircleOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48089},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48089},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

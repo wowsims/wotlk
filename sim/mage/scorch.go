@@ -33,10 +33,10 @@ func (mage *Mage) registerScorchSpell() {
 	}
 
 	mage.Scorch = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 42859},
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
-
+		ActionID:     core.ActionID{SpellID: 42859},
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -57,8 +57,6 @@ func (mage *Mage) registerScorchSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:      core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
 			OutcomeApplier:  mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 			OnSpellHitDealt: onSpellHitDealt,

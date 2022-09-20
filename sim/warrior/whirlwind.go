@@ -16,7 +16,6 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
-			ProcMask:       core.ProcMaskMeleeOHSpecial,
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(false, true, 0, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
 		}
@@ -32,6 +31,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskMeleeOHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 			DamageMultiplier: 1 *
@@ -42,7 +42,6 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	}
 
 	baseEffectMH := core.SpellEffect{
-		ProcMask:       core.ProcMaskMeleeMHSpecial,
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(true, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
@@ -58,6 +57,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	warrior.Whirlwind = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,

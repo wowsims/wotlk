@@ -21,7 +21,7 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 		}
 
 		// Physical resistance (armor).
-		damageModifier := attackTable.GetArmorDamageModifier(spellEffect)
+		damageModifier := attackTable.GetArmorDamageModifier(spell)
 		spellEffect.Damage *= damageModifier
 	} else if !spell.Flags.Matches(SpellFlagBinary) {
 		// Magical resistance.
@@ -57,14 +57,14 @@ func (at *AttackTable) UpdateArmorDamageReduction() {
 	at.ArmorDamageModifier = 1 - effectiveArmor/(effectiveArmor+armorConstant)
 }
 
-func (at *AttackTable) GetArmorDamageModifier(spellEffect *SpellEffect) float64 {
+func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	defenderArmor := at.Defender.Armor()
 	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
 
 	armorPenRating := at.Attacker.stats[stats.ArmorPenetration]
-	if spellEffect.ProcMask.Matches(ProcMaskMeleeMH) {
+	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
 		armorPenRating += at.Attacker.PseudoStats.BonusMHArmorPenRating
-	} else if spellEffect.ProcMask.Matches(ProcMaskMeleeOH) {
+	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
 		armorPenRating += at.Attacker.PseudoStats.BonusOHArmorPenRating
 	}
 

@@ -168,7 +168,7 @@ func init() {
 				}
 
 				// https://wotlk.wowhead.com/spell=37173/armor-penetration, proc mask = 16.
-				if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
 					return
 				}
 

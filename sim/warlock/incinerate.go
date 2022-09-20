@@ -13,7 +13,6 @@ func (warlock *Warlock) registerIncinerateSpell() {
 	spellSchool := core.SpellSchoolFire
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     warlock.incinerateDamage(),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
@@ -21,6 +20,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

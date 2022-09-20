@@ -28,6 +28,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47471},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -49,8 +50,6 @@ func (warrior *Warrior) registerExecuteSpell() {
 		ThreatMultiplier: 1.25,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)

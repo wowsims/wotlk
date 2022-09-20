@@ -132,7 +132,7 @@ func (dk *Deathknight) applyNecrosis() {
 		Label: "Necrosis",
 		// ActionID: core.ActionID{SpellID: 51465}, // hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
@@ -155,12 +155,12 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 		Label: "Blood-Caked Blade",
 		// ActionID: core.ActionID{SpellID: 49628}, // Hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < procChance {
-				isMh := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				isMh := spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
 				if isMh {
 					bloodCakedBladeHitMh.Cast(sim, spellEffect.Target)
 				} else {

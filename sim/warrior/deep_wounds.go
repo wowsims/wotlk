@@ -17,6 +17,7 @@ func (warrior *Warrior) applyDeepWounds() {
 	warrior.DeepWounds = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    DeepWoundsActionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskPeriodicDamage,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1 * (1 + 0.16*float64(warrior.Talents.DeepWounds)),
@@ -30,12 +31,12 @@ func (warrior *Warrior) applyDeepWounds() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskEmpty) {
+			if spell.ProcMask.Matches(core.ProcMaskEmpty) {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				warrior.DeepWounds.Cast(sim, nil)
-				warrior.procDeepWounds(sim, spellEffect.Target, spellEffect.IsMH())
+				warrior.procDeepWounds(sim, spellEffect.Target, spell.IsMH())
 				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
 			}
 		},
@@ -73,7 +74,6 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
 	deepWoundsDot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		ProcMask:       core.ProcMaskPeriodicDamage,
 		IsPeriodic:     true,
 		BaseDamage:     core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier: warrior.OutcomeFuncTick(),

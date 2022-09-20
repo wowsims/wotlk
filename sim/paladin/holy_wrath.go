@@ -13,8 +13,6 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 	baseCost := paladin.BaseMana * 0.20
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
@@ -61,9 +59,9 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 	}
 
 	paladin.HolyWrath = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48817},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48817},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

@@ -27,6 +27,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -45,7 +46,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: warlock.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
@@ -62,7 +62,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	effect := core.SpellEffect{
 		IsPeriodic:     true,
 		OutcomeApplier: warlock.OutcomeFuncTick(),
-		ProcMask:       core.ProcMaskPeriodicDamage,
 		BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagicNoRoll(142, 0.429),
 			func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
 				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
@@ -103,7 +102,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		ProcMask: core.ProcMaskEmpty,
 		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
@@ -117,7 +118,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		FlatThreatBonus: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				warlock.DrainSoulDot.Apply(sim) // TODO: do we want to just refresh and continue ticking with same snapshot or update snapshot?
