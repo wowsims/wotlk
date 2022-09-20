@@ -32,11 +32,12 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,

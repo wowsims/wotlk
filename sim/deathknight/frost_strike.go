@@ -30,13 +30,13 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, dk.Talents.GuileOfGorefiend, &effect)
-
+	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.GuileOfGorefiend, &effect)
 	effect.OutcomeApplier = dk.killingMachineOutcomeMod(effect.OutcomeApplier)
 
 	conf := core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,

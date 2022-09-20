@@ -16,7 +16,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskRangedSpecial,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

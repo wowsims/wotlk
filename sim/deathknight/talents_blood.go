@@ -95,7 +95,7 @@ func (dk *Deathknight) applySpellDeflection() {
 		return
 	}
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Soell, spellEffect *core.SpellEffect) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
@@ -118,7 +118,7 @@ func (dk *Deathknight) applyWillOfTheNecropolis() {
 		Duration: core.NeverExpires,
 	})
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
 		if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
 			spellEffect.Damage *= 0.85
 			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {

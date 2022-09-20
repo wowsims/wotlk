@@ -75,7 +75,7 @@ func (warrior *Warrior) applyCriticalBlock() {
 		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 	})
 
-	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
 		if spellEffect.Outcome.Matches(core.OutcomeBlock) && !spellEffect.Outcome.Matches(core.OutcomeMiss) && !spellEffect.Outcome.Matches(core.OutcomeParry) && !spellEffect.Outcome.Matches(core.OutcomeDodge) {
 			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
 			if sim.RandomFloat("Critical Block Roll") <= procChance {

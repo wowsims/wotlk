@@ -109,7 +109,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spell.ProcMask.Matches(core.ProcMaskPeriodicDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Outcome.Matches(core.OutcomeMiss) {

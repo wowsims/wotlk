@@ -75,6 +75,8 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 			effectsFunc := core.ApplyEffectFuncAOEDamage(warlock.Env, core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
 				OutcomeApplier: warlock.OutcomeFuncMagicHit(),
+				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
+				// adding IsPeriodic should be correct?
 				IsPeriodic:     false,
 			})
 
@@ -87,8 +89,6 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: spellSchool,
-		// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
-		// adding core.ProcMaskPeriodicDamage should be correct?
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
