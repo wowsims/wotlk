@@ -108,6 +108,18 @@ export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.S
 	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation,
 });
 
+export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'blPresence',
+	label: 'Bloodlust Presence',
+	labelTooltip: 'Presence during bloodlust.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'btGhoulFrenzy',
 	label: 'BT Ghoul Frenzy',
@@ -232,6 +244,7 @@ export const DeathKnightRotationConfig = {
 		ArmyOfTheDeadInput,
 		FirstDiseaseInput,
 		StartingPresenceInput,
+		BloodlustPresence,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
 		OblitDelayDurationInput,
