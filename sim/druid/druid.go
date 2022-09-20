@@ -259,6 +259,8 @@ func (druid *Druid) Reset(sim *core.Simulation) {
 	druid.form = druid.StartingForm
 	druid.disabledMCDs = []*core.MajorCooldown{}
 	druid.RebirthUsed = false
+	druid.LunarICD.Timer.Reset()
+	druid.SolarICD.Timer.Reset()
 }
 
 func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto.DruidTalents) *Druid {

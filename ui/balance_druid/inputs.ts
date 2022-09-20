@@ -59,13 +59,16 @@ export const BalanceDruidRotationConfig = {
 			fieldName: 'mfInsideEclipseThreshold',
 			label: 'Moonfire inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useMf,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'isInsideEclipseThreshold',
 			label: 'Insect Swarm inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useIs,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useSmartCooldowns',
+			label: 'Smart Cooldowns usage',
+			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'mcdInsideLunarThreshold',
