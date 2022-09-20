@@ -615,6 +615,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
+			{ item: IconInputs.FocusMagic, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
 			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
