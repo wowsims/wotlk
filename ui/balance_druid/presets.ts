@@ -44,12 +44,15 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
-	type: RotationType.Adaptive,
-	useBattleRes: true,
-	isInsideEclipseThreshold: 15,
-	mfInsideEclipseThreshold: 14,
-	useIs: false,
-	useMf: true,
+    type: RotationType.Adaptive,
+    useBattleRes: false,
+    useIs: true,
+    useMf: false,
+    isInsideEclipseThreshold: 14,
+    mfInsideEclipseThreshold: 0,
+    useSmartCooldowns : true,
+    mcdInsideLunarThreshold: 15,
+    mcdInsideSolarThreshold: 15
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
@@ -59,11 +62,11 @@ export const DefaultOptions = BalanceDruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
-	prepopPotion: Potions.PotionOfSpeed,
-	thermalSapper: true,
+    defaultPotion: Potions.PotionOfSpeed,
+    flask: Flask.FlaskOfTheFrostWyrm,
+    food: Food.FoodFishFeast,
+    prepopPotion: Potions.PotionOfWildMagic,
+    thermalSapper: true,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -104,15 +107,15 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-         {
+    name: 'P1 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
           "id": 40467,
           "enchant": 44877,
           "gems": [
             41285,
-            39998
+            42144
           ]
         },
         {
@@ -125,19 +128,22 @@ export const P1_PRESET = {
           "id": 40470,
           "enchant": 44874,
           "gems": [
-            39998
+            42144
           ]
         },
         {
-          "id": 40405,
-          "enchant": 44472
+          "id": 44005,
+          "enchant": 63765,
+          "gems": [
+            40026
+          ]
         },
         {
           "id": 40469,
           "enchant": 44489,
           "gems": [
-            39998,
-            40026
+            42144,
+            39998
           ]
         },
         {
@@ -168,7 +174,7 @@ export const P1_PRESET = {
           "enchant": 41602
         },
         {
-          "id": 40558,
+          "id": 40519,
           "enchant": 55016
         },
         {
@@ -193,19 +199,19 @@ export const P1_PRESET = {
         {
           "id": 40321
         }
-    ]}`),
+      ]}`),
 };
 
 export const PRE_RAID_PRESET = {
-	name: 'Pre-raid Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-          {
+    name: 'Pre-raid Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{   "items": [
+        {
           "id": 42554,
           "enchant": 44877,
           "gems": [
             41285,
-            40048
+            40049
           ]
         },
         {
@@ -215,23 +221,23 @@ export const PRE_RAID_PRESET = {
           "id": 37673,
           "enchant": 44874,
           "gems": [
-            39998
+            42144
           ]
         },
         {
           "id": 41610,
-          "enchant": 44472
+          "enchant": 63765
         },
         {
           "id": 39547,
           "enchant": 44489,
           "gems": [
-            39998,
+            42144,
             40026
           ]
         },
         {
-          "id": 37696,
+          "id": 37884,
           "enchant": 44498,
           "gems": [
             0
@@ -241,7 +247,7 @@ export const PRE_RAID_PRESET = {
           "id": 39544,
           "enchant": 54999,
           "gems": [
-            39998,
+            42144,
             0
           ]
         },
@@ -249,12 +255,12 @@ export const PRE_RAID_PRESET = {
           "id": 40696,
           "enchant": 54793,
           "gems": [
-            40048,
+            40014,
             39998
           ]
         },
         {
-          "id": 37791,
+          "id": 37854,
           "enchant": 41602
         },
         {
@@ -277,7 +283,7 @@ export const PRE_RAID_PRESET = {
           "id": 37873
         },
         {
-          "id": 42987
+          "id": 40682
         },
         {
           "id": 45085,
@@ -287,8 +293,9 @@ export const PRE_RAID_PRESET = {
           "id": 40698
         },
         {
-          "id": 32387
+          "id": 40712
         }
-    ]}`),
+      ]
+    }`),
 };
 
