@@ -16,6 +16,7 @@ export interface IconEnumValueConfig<ModObject, T> {
 
 	// Hover tooltip.
 	tooltip?: string,
+	// Text to be displayed on the icon.
 	text?: string,
 
 	showWhen?: (obj: ModObject) => boolean,
@@ -43,6 +44,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 	private currentValue: T;
 
 	private readonly buttonElem: HTMLAnchorElement;
+	private readonly buttonText: HTMLElement;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconEnumPickerConfig<ModObject, T>) {
 		super(parent, 'icon-enum-picker-root', modObj, config);
@@ -51,12 +53,15 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.rootElem.classList.add('dropdown-root');
 
 		this.rootElem.innerHTML = `
-			<a class="dropdown-button icon-enum-picker-button"></a>
+			<a class="dropdown-button icon-enum-picker-button">
+				<div class='icon-enum-text'></div>
+			</a>
 			<div class="dropdown-panel icon-enum-picker-dropdown"></div>
     `;
 
 		this.buttonElem = this.rootElem.getElementsByClassName('icon-enum-picker-button')[0] as HTMLAnchorElement;
 		const dropdownElem = this.rootElem.getElementsByClassName('icon-enum-picker-dropdown')[0] as HTMLElement;
+		this.buttonText	= this.rootElem.getElementsByClassName('icon-enum-text')[0] as HTMLElement;
 
 		this.buttonElem.addEventListener('click', event => {
 			event.preventDefault();
@@ -86,10 +91,10 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			this.setImage(option, valueConfig);
 
 			if (valueConfig.text != undefined){
-				const test = document.createElement('div');
-				test.classList.add("icon-enum-text")
-				test.textContent = valueConfig.text
-				option.append(test)
+				const optionText = document.createElement('div');
+				optionText.classList.add("icon-enum-text")
+				optionText.textContent = valueConfig.text
+				option.append(optionText)
 			}
 
 			if (valueConfig.tooltip) {
@@ -167,6 +172,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		const valueConfig = this.config.values.find(valueConfig => this.config.equals(valueConfig.value, this.currentValue))!;
 		if (valueConfig) {
 			this.setImage(this.buttonElem, valueConfig);
+			if (valueConfig.text != undefined){
+				this.buttonText.textContent = valueConfig.text
+			}
 		} else if (this.config.backupIconUrl) {
 			const backupId = this.config.backupIconUrl(this.currentValue);
 			this.setActionImage(this.buttonElem, backupId);

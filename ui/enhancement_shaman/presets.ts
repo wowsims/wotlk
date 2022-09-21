@@ -21,7 +21,8 @@ import {
 	ShamanImbue,
 	ShamanSyncType,
 	ShamanMajorGlyph,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock
+	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
+  EnhancementShaman_Rotation_RotationType as RotationType,
 } from '../core/proto/shaman.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -60,6 +61,7 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	shamanisticRageManaThreshold: 25,
 	primaryShock: PrimaryShock.Earth,
 	weaveFlameShock: true,
+  rotationType: RotationType.Priority
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
