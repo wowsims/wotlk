@@ -195,7 +195,7 @@ func (paladin *Paladin) applyReckoning() {
 				ActionID:    actionID,
 				SpellSchool: core.SpellSchoolPhysical,
 				Flags:       core.SpellFlagMeleeMetrics,
-
+				ProcMask:    core.ProcMaskMeleeMH,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
 			})
 		},
