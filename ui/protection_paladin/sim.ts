@@ -199,7 +199,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P0_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

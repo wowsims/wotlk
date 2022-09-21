@@ -76,7 +76,7 @@ export const DefaultConsumes = Consumes.create({
 	prepopPotion:  Potions.IndestructiblePotion,
 });
 
-export const P0_PRESET = {
+export const PRERAID_PRESET = {
 	name: 'Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecProtectionPaladin>) => true,
