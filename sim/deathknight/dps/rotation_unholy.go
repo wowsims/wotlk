@@ -52,11 +52,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		}
 	}
 
-	if dk.uhEmpoweredRuneWeapon(sim, target) {
+	if dk.uhBloodTap(sim, target) {
 		return sim.CurrentTime
 	}
 
-	if dk.uhBloodTap(sim, target) {
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -168,11 +168,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		}
 	}
 
-	if dk.uhEmpoweredRuneWeapon(sim, target) {
+	if dk.uhBloodTap(sim, target) {
 		return sim.CurrentTime
 	}
 
-	if dk.uhBloodTap(sim, target) {
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -272,12 +272,6 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 				didErw = true
 			}
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
-		} else {
-			// If no runes soon cast ERW
-			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 && dk.AnyRuneReadyAt(sim)-sim.CurrentTime > 2*time.Second {
-				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
-				didErw = true
-			}
 		}
 
 		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) {
