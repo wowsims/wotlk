@@ -153,9 +153,18 @@ func init() {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
+	
+	// Apply for Wisdom to Cloak (itemid) but NOT for Enchant Gloves Precision (spellid)
 	core.NewItemEffect(44488, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		character.PseudoStats.ThreatMultiplier *= 0.98
+		if character.Equip[proto.ItemSlot_ItemSlotBack].Enchant.ID == 44488 {
+			if character.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 44488 {
+				// If someone has both of these enchants for some reason, this will get called twice.
+				character.PseudoStats.ThreatMultiplier *= 0.98995
+			} else {
+				character.PseudoStats.ThreatMultiplier *= 0.98
+			}
+		}
 	})
 
 	core.NewItemEffect(44492, func(agent core.Agent) {
