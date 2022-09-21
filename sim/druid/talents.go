@@ -77,6 +77,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
 	druid.applyEclipse()
+	druid.applyImprovedLotp()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -202,7 +203,7 @@ func (druid *Druid) applyPrimalFury() {
 
 // Modifies the Bleed aura to apply the bonus.
 func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
-	if druid.Talents.RendAndTear == 0 {
+	if druid.Talents.RendAndTear == 0 || druid.AssumeBleedActive {
 		return aura
 	}
 
@@ -272,10 +273,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spellEffect.ProcMask, "Omen of Clarity") { // Melee
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			}
-			if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
+			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
 				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 					druid.ClearcastingAura.Activate(sim)
 					if druid.SetBonuses.balance_t10_2 {
@@ -387,9 +388,36 @@ func (druid *Druid) applyEclipse() {
 	})
 }
 
-func (druid *Druid) ApplySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
-	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
-		cast.CastTime -= 1500 * time.Millisecond
-		druid.SwiftStarfireAura.Deactivate(sim)
+func (druid *Druid) applyImprovedLotp() {
+	if druid.Talents.ImprovedLeaderOfThePack == 0 {
+		return
 	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 34300})
+
+	icd := core.Cooldown{
+		Timer:    druid.NewTimer(),
+		Duration: time.Second * 6,
+	}
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Improved Leader of the Pack",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+			if !icd.IsReady(sim) {
+				return
+			}
+			icd.Use(sim)
+			druid.AddMana(sim, druid.MaxMana()*0.08, manaMetrics, false)
+		},
+	})
 }

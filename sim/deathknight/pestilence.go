@@ -14,8 +14,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 50842},
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -30,8 +32,6 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		ThreatMultiplier: 0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			// Zero damage spell with a Hit mechanic, thanks blizz!
 			BaseDamage:     core.BaseDamageConfigFlat(0),
 			OutcomeApplier: dk.OutcomeFuncMagicHit(),

@@ -74,7 +74,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !icd.IsReady(sim) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -100,7 +100,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Outcome.Matches(core.OutcomeMiss) {
@@ -109,7 +109,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskPeriodicDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Outcome.Matches(core.OutcomeMiss) {
@@ -136,7 +136,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Outcome.Matches(core.OutcomeCrit) || !icd.IsReady(sim) {
@@ -189,11 +189,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					apAura.Activate(sim)
 					apAura.AddStack(sim)
 					apAura.Refresh(sim)
-				} else if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					if !spellEffect.Landed() {
 						return
 					}

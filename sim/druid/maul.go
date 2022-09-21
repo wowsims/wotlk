@@ -19,8 +19,6 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	}
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage: core.WrapBaseDamageConfig(
 			core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, true),
 			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
@@ -30,7 +28,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 					if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
 						modifier += .3
 					}
-					if druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+					if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
 						modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 					}
 
@@ -55,10 +53,10 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	}
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26996},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
-
+		ActionID:     core.ActionID{SpellID: 26996},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 

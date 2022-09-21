@@ -15,7 +15,6 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	warrior.ThunderClapAura = core.ThunderClapAura(warrior.CurrentTarget, warrior.Talents.ImprovedThunderClap)
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskRangedSpecial,
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return 300 + 0.12*spell.MeleeAttackPower()
@@ -33,6 +32,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47502},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagBinary,
 
 		ResourceType: stats.Rage,

@@ -24,8 +24,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
 		ActionID:     HowlingBlastActionID,
 		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
@@ -48,8 +50,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0

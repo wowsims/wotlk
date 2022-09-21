@@ -11,9 +11,7 @@ func (priest *Priest) registerBindingHealSpell() {
 	baseCost := .27 * priest.BaseMana
 
 	baseEffect := core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealing(1959, 2516, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
@@ -30,9 +28,9 @@ func (priest *Priest) registerBindingHealSpell() {
 	}
 
 	priest.BindingHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48120},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48120},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

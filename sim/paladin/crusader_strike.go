@@ -12,10 +12,10 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
 
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 35395},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 35395},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -42,8 +42,6 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand,
 				true, // cs is subject to normalisation

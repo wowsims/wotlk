@@ -15,6 +15,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagBinary,
 
 		// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
@@ -22,8 +23,6 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskEmpty,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// Beta testing shows wowhead coeffs are probably correct

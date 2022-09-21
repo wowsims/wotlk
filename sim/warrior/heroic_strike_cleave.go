@@ -19,6 +19,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		ResourceType: stats.Rage,
@@ -46,8 +47,6 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 		FlatThreatBonus:  259,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 
@@ -71,8 +70,6 @@ func (warrior *Warrior) registerCleaveSpell() {
 
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
@@ -88,6 +85,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,

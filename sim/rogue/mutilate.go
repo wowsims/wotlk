@@ -19,8 +19,8 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		actionID = core.ActionID{SpellID: 48664}
 	}
 
+	procMask := core.ProcMaskMeleeMHSpecial
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, false),
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, true)),
@@ -34,7 +34,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		},
 	}
 	if !isMH {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		procMask = core.ProcMaskMeleeOHSpecial
 		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 181, false)
 	}
 
@@ -53,6 +53,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
@@ -80,10 +81,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 	refundAmount := baseCost * 0.8
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: MutilateSpellID},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-
+		ActionID:     core.ActionID{SpellID: MutilateSpellID},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -99,7 +100,6 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskMeleeMHSpecial,
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {

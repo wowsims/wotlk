@@ -39,9 +39,6 @@ type SpellEffect struct {
 	// Indicates this is a healing spell, rather than a damage spell.
 	IsHealing bool
 
-	// Controls which effects can proc from this effect.
-	ProcMask ProcMask
-
 	// Callbacks for providing additional custom behavior.
 	OnSpellHitDealt       EffectOnSpellHitDealt
 	OnPeriodicDamageDealt EffectOnPeriodicDamageDealt
@@ -55,12 +52,12 @@ type SpellEffect struct {
 }
 
 func (spellEffect *SpellEffect) Validate() {
-	if spellEffect.ProcMask == ProcMaskUnknown {
-		panic("SpellEffects must set a ProcMask!")
-	}
-	if spellEffect.ProcMask.Matches(ProcMaskEmpty) && spellEffect.ProcMask != ProcMaskEmpty {
-		panic("ProcMaskEmpty must be exclusive!")
-	}
+	//if spell.ProcMask == ProcMaskUnknown {
+	//	panic("SpellEffects must set a ProcMask!")
+	//}
+	//if spell.ProcMask.Matches(ProcMaskEmpty) && spell.ProcMask != ProcMaskEmpty {
+	//	panic("ProcMaskEmpty must be exclusive!")
+	//}
 }
 
 func (spellEffect *SpellEffect) Landed() bool {
@@ -98,11 +95,11 @@ func (spell *Spell) BonusWeaponDamage() float64 {
 	return spell.Unit.PseudoStats.BonusDamage
 }
 
-func (spell *Spell) ExpertisePercentage(procMask ProcMask) float64 {
+func (spell *Spell) ExpertisePercentage() float64 {
 	expertiseRating := spell.Unit.stats[stats.Expertise]
-	if procMask.Matches(ProcMaskMeleeMH) {
+	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
 		expertiseRating += spell.Unit.PseudoStats.BonusMHExpertiseRating
-	} else if procMask.Matches(ProcMaskMeleeOH) {
+	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
 		expertiseRating += spell.Unit.PseudoStats.BonusOHExpertiseRating
 	}
 	return math.Floor(expertiseRating/ExpertisePerQuarterPercentReduction) / 400
@@ -122,19 +119,19 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 		// ignoring units real time crit in this case
 		critRating = spellEffect.snapshotMeleeCritRating
 	} else {
-		critRating = spell.physicalCritRating(spellEffect.Target, spellEffect.ProcMask)
+		critRating = spell.physicalCritRating(spellEffect.Target)
 	}
 
 	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
 }
-func (spell *Spell) physicalCritRating(target *Unit, procMask ProcMask) float64 {
+func (spell *Spell) physicalCritRating(target *Unit) float64 {
 	critRating := spell.Unit.stats[stats.MeleeCrit] +
 		spell.BonusCritRating +
 		target.PseudoStats.BonusCritRatingTaken
 
-	if procMask.Matches(ProcMaskMeleeMH) {
+	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
 		critRating += spell.Unit.PseudoStats.BonusMHCritRating
-	} else if procMask.Matches(ProcMaskMeleeOH) {
+	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
 		critRating += spell.Unit.PseudoStats.BonusOHCritRating
 	}
 	return critRating
@@ -256,9 +253,13 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
-	for i := range spellEffect.Target.DynamicDamageTakenModifiers {
-		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spellEffect)
+	if spell.ProcMask == ProcMaskUnknown {
+		panic("Unknown proc mask on " + spell.ActionID.String())
 	}
+	for i := range spellEffect.Target.DynamicDamageTakenModifiers {
+		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spell, spellEffect)
+	}
+	spellEffect.Damage = MaxFloat(0, spellEffect.Damage)
 
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)
@@ -355,23 +356,21 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 		return
 	}
 
-	spellEffect.Damage *= spellEffect.snapshotAttackModifiers(spell)
+	spellEffect.Damage *= spell.CasterDamageMultiplier()
 }
 
 // Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
-func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
+func (spell *Spell) CasterDamageMultiplier() float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
 		return 1.0
 	}
 
 	attacker := spell.Unit
-
 	multiplier := attacker.PseudoStats.DamageDealtMultiplier
-
 	multiplier *= spell.DamageMultiplier
 	multiplier *= spell.DamageMultiplierAdditive
 
-	if spellEffect.ProcMask.Matches(ProcMaskRanged) {
+	if spell.ProcMask.Matches(ProcMaskRanged) {
 		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
 	}
 	if spell.Flags.Matches(SpellFlagDisease) {
@@ -398,49 +397,51 @@ func (spellEffect *SpellEffect) snapshotAttackModifiers(spell *Spell) float64 {
 }
 
 func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {
+	if spellEffect.IsHealing && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		spellEffect.Damage *= attackTable.Defender.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
+		return
+	}
+
+	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, sim, attackTable, spellEffect.IsPeriodic, spellEffect.BaseDamage.TargetSpellCoefficient > 0)
+}
+func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attackTable *AttackTable, isPeriodic bool, includeTargetBonus bool) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		return
+		return damage
 	}
 
-	target := spellEffect.Target
-
-	if spellEffect.IsHealing {
-		spellEffect.Damage *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
-		return
-	}
-
-	spellEffect.Damage *= attackTable.DamageDealtMultiplier
-	spellEffect.Damage *= target.PseudoStats.DamageTakenMultiplier
-	spellEffect.Damage = MaxFloat(0, spellEffect.Damage+target.PseudoStats.BonusDamageTaken)
+	target := attackTable.Defender
+	damage *= attackTable.DamageDealtMultiplier
+	damage *= target.PseudoStats.DamageTakenMultiplier
 
 	if spell.Flags.Matches(SpellFlagDisease) {
-		spellEffect.Damage *= target.PseudoStats.DiseaseDamageTakenMultiplier
+		damage *= target.PseudoStats.DiseaseDamageTakenMultiplier
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		if spellEffect.IsPeriodic {
-			spellEffect.Damage *= target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+		if includeTargetBonus {
+			damage += target.PseudoStats.BonusPhysicalDamageTaken
 		}
-		if spellEffect.BaseDamage.TargetSpellCoefficient > 0 {
-			spellEffect.Damage += target.PseudoStats.BonusPhysicalDamageTaken
+		if isPeriodic {
+			damage *= target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 		}
-		spellEffect.Damage *= target.PseudoStats.PhysicalDamageTakenMultiplier
+		damage *= target.PseudoStats.PhysicalDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		spellEffect.Damage *= target.PseudoStats.ArcaneDamageTakenMultiplier
+		damage *= target.PseudoStats.ArcaneDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		spellEffect.Damage *= target.PseudoStats.FireDamageTakenMultiplier
+		damage *= target.PseudoStats.FireDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		spellEffect.Damage *= target.PseudoStats.FrostDamageTakenMultiplier
+		damage *= target.PseudoStats.FrostDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		spellEffect.Damage += target.PseudoStats.BonusHolyDamageTaken * spellEffect.BaseDamage.TargetSpellCoefficient
-		spellEffect.Damage *= target.PseudoStats.HolyDamageTakenMultiplier
+		damage *= target.PseudoStats.HolyDamageTakenMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		spellEffect.Damage *= target.PseudoStats.NatureDamageTakenMultiplier
-		spellEffect.Damage *= attackTable.NatureDamageDealtMultiplier
+		damage *= target.PseudoStats.NatureDamageTakenMultiplier
+		damage *= attackTable.NatureDamageDealtMultiplier
 	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		spellEffect.Damage *= target.PseudoStats.ShadowDamageTakenMultiplier
-		if spellEffect.IsPeriodic {
-			spellEffect.Damage *= attackTable.PeriodicShadowDamageDealtMultiplier
+		damage *= target.PseudoStats.ShadowDamageTakenMultiplier
+		if isPeriodic {
+			damage *= attackTable.PeriodicShadowDamageDealtMultiplier
 		}
 	}
+
+	return damage
 }

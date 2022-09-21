@@ -289,6 +289,9 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	if partyBuffs.ChainOfTheTwilightOwl {
 		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
+	if individualBuffs.FocusMagic {
+		character.AddStats(stats.Stats{stats.SpellCrit: 3 * CritRatingPerCritChance})
+	}
 }
 
 // Applies buffs to pets.
@@ -377,14 +380,13 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolHoly,
+		ProcMask:    ProcMaskEmpty,
 		Flags:       SpellFlagBinary,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask: ProcMaskEmpty,
-
 			BaseDamage:     BaseDamageConfigFlat(damage),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),
@@ -411,14 +413,13 @@ func ThornsAura(character *Character, points int32) *Aura {
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolNature,
+		ProcMask:    ProcMaskEmpty,
 		Flags:       SpellFlagBinary,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			ProcMask: ProcMaskEmpty,
-
 			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
 			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
 		}),

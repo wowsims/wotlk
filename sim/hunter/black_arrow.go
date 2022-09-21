@@ -17,10 +17,10 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.BlackArrow = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -47,7 +47,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
 			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -73,7 +72,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {

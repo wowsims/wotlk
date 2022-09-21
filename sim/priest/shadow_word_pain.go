@@ -22,6 +22,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -42,7 +43,6 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			OutcomeApplier: priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -66,8 +66,6 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		TickLength: time.Second * 3,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
 			IsPeriodic: true,
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagicNoRoll(1380/6, 0.1833),

@@ -17,8 +17,10 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -34,7 +36,6 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskEmpty,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAfflictionDot),
 		}),
@@ -59,7 +60,6 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
 			OutcomeApplier: applier,
 			IsPeriodic:     true,
-			ProcMask:       core.ProcMaskPeriodicDamage,
 		}),
 	})
 }

@@ -12,9 +12,9 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 	baseCost := float64(core.NewRuneCost(40, 0, 0, 0, 0))
 	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:    DeathCoilActionID,
-		SpellSchool: core.SpellSchoolShadow,
-
+		ActionID:     DeathCoilActionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
 
@@ -40,8 +40,6 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return (baseDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(hitEffect.Target)
@@ -68,6 +66,7 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 	dk.RuneWeapon.DeathCoil = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
@@ -76,8 +75,6 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return baseDamage + 0.15*dk.RuneWeapon.getImpurityBonus(spell)

@@ -11,9 +11,9 @@ func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 	baseCost := .15 * priest.BaseMana
 
 	priest.Smite = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48123},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48123},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -32,8 +32,6 @@ func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(713, 799, 0.7143),
 			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
 		}),

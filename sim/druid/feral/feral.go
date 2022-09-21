@@ -40,6 +40,7 @@ func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
 		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
 	}
 
+	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.setupRotation(feralOptions.Rotation)
@@ -87,7 +88,7 @@ func (cat *FeralDruid) GetDruid() *druid.Druid {
 func (cat *FeralDruid) MissChance() float64 {
 	at := cat.AttackTables[cat.CurrentTarget.UnitIndex]
 	miss := at.BaseMissChance - cat.Shred.PhysicalHitChance(cat.CurrentTarget)
-	dodge := at.BaseDodgeChance - cat.Shred.ExpertisePercentage(core.ProcMaskMeleeMHSpecial) - cat.CurrentTarget.PseudoStats.DodgeReduction
+	dodge := at.BaseDodgeChance - cat.Shred.ExpertisePercentage() - cat.CurrentTarget.PseudoStats.DodgeReduction
 	return miss + dodge
 }
 

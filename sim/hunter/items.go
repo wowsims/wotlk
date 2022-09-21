@@ -32,7 +32,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
 					return
 				}
 				hunter.AddMana(sim, manaGain, manaMetrics, false)

@@ -13,6 +13,11 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		dk.Rotation.BloodTap = proto.Deathknight_Rotation_IcyTouch
 	}
 
+	dk.Inputs.FuStrike = deathknight.FuStrike_ScourgeStrike
+	if dk.Talents.Annihilation > 0 {
+		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
+	}
+
 	dk.setupGargoyleCooldowns()
 
 	dk.RotationSequence.Clear().
@@ -177,7 +182,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		fuStrike := dk.ScourgeStrike
-		if dk.Talents.Annihilation > 0 {
+		if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
 			fuStrike = dk.Obliterate
 		}
 		if dk.uhDiseaseCheck(sim, target, fuStrike, true, 1) {
@@ -275,7 +280,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			}
 		}
 
-		if !dk.PresenceMatches(deathknight.BloodPresence) {
+		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) {
 			if didErw || dk.CurrentBloodRunes() > 0 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
 			} else if !didErw && !dk.Rotation.BtGhoulFrenzy && dk.BloodTap.IsReady(sim) {

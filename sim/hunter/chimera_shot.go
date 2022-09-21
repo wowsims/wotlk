@@ -17,10 +17,10 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	ssProcSpell := hunter.chimeraShotSerpentStingSpell()
 
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53209},
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 53209},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -44,8 +44,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					rap := spell.RangedAttackPower(hitEffect.Target)
@@ -77,6 +75,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 	return hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53353},
 		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusHitRating:  hunter.bonusRangedHit(),
@@ -90,8 +89,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)

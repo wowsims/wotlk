@@ -13,8 +13,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	baseCost := 0.19 * hunter.BaseMana
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return core.DamageRoll(sim, 523, 671) +
@@ -25,9 +23,9 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	})
 
 	hunter.ExplosiveTrap = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -64,6 +62,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		Spell: hunter.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplierAdditive: 1 +
 				.10*float64(hunter.Talents.TrapMastery) +
@@ -77,7 +76,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncAOESnapshot(hunter.Env, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
 			BaseDamage: core.BaseDamageConfig{

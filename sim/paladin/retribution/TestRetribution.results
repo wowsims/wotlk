@@ -515,7 +515,7 @@ dps_results: {
  key: "TestRetribution-AllItems-StormshroudArmor"
  value: {
   dps: 4211.22103
-  tps: 4311.3512
+  tps: 4312.27931
  }
 }
 dps_results: {

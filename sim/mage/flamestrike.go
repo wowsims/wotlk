@@ -12,17 +12,15 @@ func (mage *Mage) registerFlamestrikeSpell() {
 	baseCost := .30 * mage.BaseMana
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
 		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
 		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
 	})
 
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -57,8 +55,6 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncAOESnapshot(mage.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(780/4, 0.122),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,

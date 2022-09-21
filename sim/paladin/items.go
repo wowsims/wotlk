@@ -24,7 +24,7 @@ var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
@@ -125,7 +125,7 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 						return
 					}
 					if sim.RandomFloat("lightsworn 2pc") > 0.4 {
@@ -488,6 +488,7 @@ func init() {
 
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
 			ActionID:         actionID,
+			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 		})
@@ -502,8 +503,6 @@ func init() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 2,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask: core.ProcMaskPeriodicDamage,
-
 				BaseDamage:     core.BaseDamageConfigFlat(480 / 4),
 				OutcomeApplier: paladin.OutcomeFuncTick(),
 				IsPeriodic:     true,

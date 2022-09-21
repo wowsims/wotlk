@@ -265,6 +265,7 @@ export class ActionId {
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
 			case 'Innervate':
+      			case 'Focus Magic':
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
 				if (this.tag != NO_TARGET) {

@@ -473,7 +473,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-StormshroudArmor"
  value: {
   dps: 4013.32856
-  tps: 2238.97727
+  tps: 2240.22769
  }
 }
 dps_results: {
