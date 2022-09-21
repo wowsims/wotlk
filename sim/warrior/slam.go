@@ -61,6 +61,11 @@ func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
 	if warrior.BloodsurgeAura.IsActive() {
 		warrior.Slam.DefaultCast.CastTime = 0
 	}
-	warrior.AutoAttacks.DelayMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+
+	warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	if warrior.AutoAttacks.IsDualWielding {
+		warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	}
+
 	return warrior.Slam.Cast(sim, target)
 }
