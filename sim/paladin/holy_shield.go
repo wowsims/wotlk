@@ -20,15 +20,15 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 
 		// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1.35,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// TODO: examine this
+					// Beta testing shows wowhead coeffs are probably correct
 					return 274 +
-						0.07*spell.MeleeAttackPower() +
-						0.11*spell.SpellPower()
+						0.0732*spell.MeleeAttackPower() +
+						0.117*spell.SpellPower()
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHitBinary(),

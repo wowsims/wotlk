@@ -38,7 +38,7 @@ func (paladin *Paladin) ApplyTalents() {
 
 	if paladin.Talents.TouchedByTheLight > 0 {
 		percentage := 0.20 * float64(paladin.Talents.TouchedByTheLight)
-		paladin.AddStatDependency(stats.Strength, stats.SpellPower, 1.0+percentage)
+		paladin.AddStatDependency(stats.Strength, stats.SpellPower, percentage)
 	}
 
 	// if paladin.Talents.ShieldSpecialization > 0 {
@@ -194,8 +194,8 @@ func (paladin *Paladin) applyReckoning() {
 			reckoningSpell = paladin.GetOrRegisterSpell(core.SpellConfig{
 				ActionID:    actionID,
 				SpellSchool: core.SpellSchoolPhysical,
+				ProcMask:    core.ProcMaskMeleeMH,
 				Flags:       core.SpellFlagMeleeMetrics,
-
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
 			})
 		},
@@ -213,7 +213,7 @@ func (paladin *Paladin) applyReckoning() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if sim.RandomFloat("Redoubt") < procChance {
+			if spellEffect.Landed() && sim.RandomFloat("Reckoning") < procChance {
 				procAura.Activate(sim)
 				procAura.SetStacks(sim, 4)
 			}
