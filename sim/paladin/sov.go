@@ -148,11 +148,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				return
 			}
 
-			// Only white hits can trigger this. (SoV dot)
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-				onSwingProc.Cast(sim, spellEffect.Target)
-			}
-
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
@@ -168,6 +163,11 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
 					}
 				}
+			}
+
+			// Only white hits can trigger this. (SoV dot)
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+				onSwingProc.Cast(sim, spellEffect.Target)
 			}
 		},
 	})
