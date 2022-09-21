@@ -554,6 +554,38 @@ func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
 	}
 }
 
+// Delays only mainhand swing timers until the specified time.
+func (aa *AutoAttacks) DelayMainhandMeleeUntil(sim *Simulation, readyAt time.Duration) {
+	autoChanged := false
+
+	if readyAt > aa.MainhandSwingAt {
+		aa.MainhandSwingAt = readyAt
+		if aa.AutoSwingMelee {
+			autoChanged = true
+		}
+	}
+
+	if autoChanged {
+		aa.resetAutoSwing(sim)
+	}
+}
+
+// Delays only offhand swing timers until the specified time.
+func (aa *AutoAttacks) DelayOffhandMeleeUntil(sim *Simulation, readyAt time.Duration) {
+	autoChanged := false
+
+	if readyAt > aa.OffhandSwingAt {
+		aa.OffhandSwingAt = readyAt
+		if aa.AutoSwingMelee {
+			autoChanged = true
+		}
+	}
+
+	if autoChanged {
+		aa.resetAutoSwing(sim)
+	}
+}
+
 func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) {
 	if readyAt > aa.RangedSwingAt {
 		aa.RangedSwingAt = readyAt
