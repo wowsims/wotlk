@@ -529,7 +529,7 @@ dps_results: {
  key: "TestProtection-AllItems-StormshroudArmor"
  value: {
   dps: 1185.11057
-  tps: 2695.03414
+  tps: 2695.92007
  }
 }
 dps_results: {
