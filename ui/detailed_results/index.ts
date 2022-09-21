@@ -203,7 +203,6 @@ function updateResults() {
 	}
 }
 
-document.body.classList.add('hide-damage-metrics');
 document.body.classList.add('hide-threat-metrics');
 document.body.classList.add('hide-healing-metrics');
 window.addEventListener('message', async event => {

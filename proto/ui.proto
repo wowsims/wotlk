@@ -46,6 +46,7 @@ message SavedSettings {
 	Consumes consumes = 4;
 	Race race = 5;
 	Cooldowns cooldowns = 6;
+	string rotation_json = 8;
 }
 
 message SavedTalents {
