@@ -41,6 +41,10 @@ func (druid *Druid) registerFerociousBiteSpell() {
 				// It also won't spend 'excess' energy on miss
 				druid.ApplyClearcasting(sim, spell, cast)
 				currentCost := druid.CurrentFerociousBiteCost()
+				// fixup currentCost, will account for berserk but not clearcasting
+				if cast.Cost == 0 {
+					currentCost = 0
+				}
 				if refundPercent > 0.0 {
 					refundAmount = currentCost * refundPercent
 				}
