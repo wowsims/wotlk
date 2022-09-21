@@ -17,12 +17,12 @@ func init() {
 			Label:    "Essence of Gossamer",
 			ActionID: actionID,
 			Duration: time.Second * 10,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusDamageTaken -= 140
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusDamageTaken += 140
-			},
+		})
+
+		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if procAura.IsActive() {
+				spellEffect.Damage = core.MaxFloat(0, spellEffect.Damage-140)
+			}
 		})
 
 		MakeProcTriggerAura(&character.Unit, ProcTrigger{

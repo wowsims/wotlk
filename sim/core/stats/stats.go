@@ -363,9 +363,7 @@ type PseudoStats struct {
 	BonusMeleeHitRatingTaken    float64 //
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
-	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
-	BonusHolyDamageTaken     float64 // Judgement of the Crusader
 
 	DamageTakenMultiplier float64 // All damage
 

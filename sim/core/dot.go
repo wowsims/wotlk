@@ -184,7 +184,7 @@ func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect S
 		dot.snapshotEffect.snapshotMeleeCritRating = snapshotCrit
 		dot.snapshotEffect.snapshotSpellCritRating = snapshotSpellCrit
 	} else {
-		dot.snapshotEffect.snapshotDamageMultiplier = dot.snapshotEffect.snapshotAttackModifiers(dot.Spell)
+		dot.snapshotEffect.snapshotDamageMultiplier = dot.Spell.CasterDamageMultiplier()
 		dot.snapshotEffect.snapshotMeleeCritRating = dot.Spell.physicalCritRating(target)
 		dot.snapshotEffect.snapshotSpellCritRating = dot.Spell.spellCritRating(target)
 	}
