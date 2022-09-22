@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -21,7 +22,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
-	numHits := core.MinInt32(3, paladin.Env.GetNumTargets())
+	numHits := core.MinInt32(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous),4,3), paladin.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
@@ -49,9 +50,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 			},
 		},
 
-		// TODO: Why is this here?
-		BonusCritRating:  1,
-		DamageMultiplier: 1,
+		DamageMultiplierAdditive: 1 + paladin.getItemSetRedemptionPlateBonus2() + paladin.getItemSetT9PlateBonus2() + paladin.getItemSetLightswornPlateBonus2(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
