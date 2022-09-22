@@ -8,6 +8,8 @@ import {
 	RaidBuffs,
 	TristateEffect,
 	Debuffs,
+  CustomRotation,
+  CustomSpell,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -21,7 +23,9 @@ import {
 	ShamanImbue,
 	ShamanSyncType,
 	ShamanMajorGlyph,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock
+	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
+  EnhancementShaman_Rotation_RotationType as RotationType,
+  EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
 } from '../core/proto/shaman.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -60,6 +64,20 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	shamanisticRageManaThreshold: 25,
 	primaryShock: PrimaryShock.Earth,
 	weaveFlameShock: true,
+  rotationType: RotationType.Priority,
+  customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: CustomRotationSpell.LightningBolt }),
+			CustomSpell.create({ spell: CustomRotationSpell.StormstrikeDebuffMissing }),
+			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltWeave }),
+			CustomSpell.create({ spell: CustomRotationSpell.Stormstrike }),
+			CustomSpell.create({ spell: CustomRotationSpell.FlameShock }),
+			CustomSpell.create({ spell: CustomRotationSpell.EarthShock }),
+      CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
+      CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
+      CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
+		],
+	}),
 });
 
 export const DefaultOptions = EnhancementShamanOptions.create({
