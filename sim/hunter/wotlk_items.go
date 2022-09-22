@@ -110,7 +110,7 @@ var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskRanged) {
+					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -221,6 +221,7 @@ func init() {
 				rangedSpell = hunter.RegisterSpell(core.SpellConfig{
 					ActionID:    core.ActionID{ItemID: itemID},
 					SpellSchool: core.SpellSchoolPhysical,
+					ProcMask:     core.ProcMaskRangedAuto,
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 					BonusHitRating:   hunter.bonusRangedHit(),

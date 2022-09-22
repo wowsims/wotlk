@@ -13,9 +13,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 	baseCost := paladin.BaseMana * 0.08
 
 	paladin.Exorcism = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48801},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48801},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -46,16 +46,13 @@ func (paladin *Paladin) registerExorcismSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 					deltaDamage := 1146.0 - 1028.0
-					damage := 1028.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-					damage += hitEffect.SpellPower(spell.Unit, spell) * 0.15
-					damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.15
-					return damage
+					return 1028.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+						.15*spell.SpellPower() +
+						.15*spell.MeleeAttackPower()
 				},
 			},
 

@@ -26,9 +26,9 @@ func (druid *Druid) registerMoonfireSpell() {
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48463},
-		SpellSchool: core.SpellSchoolArcane,
-
+		ActionID:     core.ActionID{SpellID: 48463},
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -48,7 +48,6 @@ func (druid *Druid) registerMoonfireSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagic(406, 476, 0.15),
 			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 
@@ -69,6 +68,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 48463},
 			SpellSchool: core.SpellSchoolArcane,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplierAdditive: 1 +
 				improvedMoonfireDamageMultiplier +
@@ -91,7 +91,6 @@ func (druid *Druid) registerMoonfireSpell() {
 		NumberOfTicks: 4 + core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0) + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(200, 0.13),
 			OutcomeApplier: dotOutcomeApplier,
 			IsPeriodic:     true,

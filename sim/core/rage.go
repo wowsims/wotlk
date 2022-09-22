@@ -43,18 +43,18 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			if spellEffect.Outcome.Matches(OutcomeMiss) {
 				return
 			}
-			if !spellEffect.ProcMask.Matches(ProcMaskWhiteHit) {
+			if !spell.ProcMask.Matches(ProcMaskWhiteHit) {
 				return
 			}
 
 			// Need separate check to exclude auto replacers (e.g. Heroic Strike and Cleave).
-			if spellEffect.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
+			if spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
 				return
 			}
 
 			var hitFactor float64
 			var speed float64
-			if spellEffect.IsMH() {
+			if spell.IsMH() {
 				hitFactor = 3.5
 				speed = options.MHSwingSpeed
 			} else {

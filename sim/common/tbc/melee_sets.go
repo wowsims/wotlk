@@ -17,13 +17,14 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 			character := agent.GetCharacter()
 
 			procSpell := character.RegisterSpell(core.SpellConfig{
-				ActionID:         core.ActionID{SpellID: 41989},
-				SpellSchool:      core.SpellSchoolFire,
+				ActionID:    core.ActionID{SpellID: 41989},
+				SpellSchool: core.SpellSchoolFire,
+				ProcMask:    core.ProcMaskEmpty,
+
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask: core.ProcMaskEmpty,
 
+				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					BaseDamage:     core.BaseDamageConfigRoll(100, 150),
 					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 				}),
@@ -38,10 +39,10 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
-					if !ppmm.Proc(sim, spellEffect.ProcMask, "The Fists of Fury") {
+					if !ppmm.Proc(sim, spell.ProcMask, "The Fists of Fury") {
 						return
 					}
 
@@ -56,17 +57,21 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 	Name: "Stormshroud Armor",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(a core.Agent) {
-			proc := a.GetCharacter().RegisterSpell(core.SpellConfig{
-				ActionID:         core.ActionID{SpellID: 18980},
-				SpellSchool:      core.SpellSchoolNature,
+			char := a.GetCharacter()
+			proc := char.RegisterSpell(core.SpellConfig{
+				ActionID:    core.ActionID{SpellID: 18980},
+				SpellSchool: core.SpellSchoolNature,
+				ProcMask:    core.ProcMaskEmpty,
+
 				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:       core.ProcMaskEmpty,
 					BaseDamage:     core.BaseDamageConfigRoll(15, 25),
-					OutcomeApplier: a.GetCharacter().OutcomeFuncMagicHitAndCrit(a.GetCharacter().DefaultSpellCritMultiplier()),
+					OutcomeApplier: char.OutcomeFuncMagicHitAndCrit(char.DefaultSpellCritMultiplier()),
 				}),
 			})
-			a.GetCharacter().RegisterAura(core.Aura{
+			char.RegisterAura(core.Aura{
 				Label:    "Stormshround Armor 2pc",
 				ActionID: core.ActionID{SpellID: 18979},
 				Duration: core.NeverExpires,
@@ -74,7 +79,7 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					chance := 0.05
@@ -86,18 +91,19 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 			})
 		},
 		3: func(a core.Agent) {
-			if !a.GetCharacter().HasEnergyBar() {
+			char := a.GetCharacter()
+			if !char.HasEnergyBar() {
 				return
 			}
-			metrics := a.GetCharacter().NewEnergyMetrics(core.ActionID{SpellID: 23863})
-			proc := a.GetCharacter().RegisterSpell(core.SpellConfig{
+			metrics := char.NewEnergyMetrics(core.ActionID{SpellID: 23863})
+			proc := char.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 23864},
 				SpellSchool: core.SpellSchoolNature,
 				ApplyEffects: func(sim *core.Simulation, u *core.Unit, spell *core.Spell) {
-					a.GetCharacter().AddEnergy(sim, 30, metrics)
+					char.AddEnergy(sim, 30, metrics)
 				},
 			})
-			a.GetCharacter().RegisterAura(core.Aura{
+			char.RegisterAura(core.Aura{
 				Label:    "Stormshround Armor 3pc",
 				ActionID: core.ActionID{SpellID: 18979},
 				Duration: core.NeverExpires,
@@ -105,7 +111,7 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					chance := 0.02
@@ -152,7 +158,7 @@ var ItemSetTwinBladesOfAzzinoth = core.NewItemSet(core.ItemSet{
 					}
 
 					// https://wotlk.wowhead.com/spell=41434/the-twin-blades-of-azzinoth, proc mask = 20.
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 
@@ -160,7 +166,7 @@ var ItemSetTwinBladesOfAzzinoth = core.NewItemSet(core.ItemSet{
 						return
 					}
 
-					if !ppmm.Proc(sim, spellEffect.ProcMask, "Twin Blades of Azzinoth") {
+					if !ppmm.Proc(sim, spell.ProcMask, "Twin Blades of Azzinoth") {
 						return
 					}
 					icd.Use(sim)

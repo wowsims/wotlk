@@ -12,10 +12,10 @@ func (rogue *Rogue) registerBackstabSpell() {
 	refundAmount := baseCost * 0.8
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26863},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-
+		ActionID:     core.ActionID{SpellID: 26863},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -42,7 +42,6 @@ func (rogue *Rogue) registerBackstabSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskMeleeMHSpecial,
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 170, true),
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
 

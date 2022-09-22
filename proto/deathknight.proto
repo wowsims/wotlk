@@ -201,6 +201,10 @@ message Deathknight {
 		double avg_ams_hit = 15;
 
 		bool auto_rotation = 16;
+
+		bool desync_rotation = 17;
+
+		StartingPresence bl_presence = 18;
 	}
 	Rotation rotation = 1;
 

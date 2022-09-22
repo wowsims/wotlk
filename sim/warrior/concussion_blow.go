@@ -18,6 +18,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 	warrior.ConcussionBlow = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 12809},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -39,11 +40,9 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 		ThreatMultiplier: 2,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.38)
+					return 0.38 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

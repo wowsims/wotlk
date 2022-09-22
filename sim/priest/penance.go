@@ -28,7 +28,9 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	penanceDots := make([]*core.Dot, len(priest.Env.AllUnits))
 
 	var applyEffects core.ApplySpellEffects
+	var procMask core.ProcMask
 	if isHeal {
+		procMask = core.ProcMaskSpellHealing
 		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			hot := penanceDots[target.UnitIndex]
 			hot.Apply(sim)
@@ -36,8 +38,8 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			hot.TickOnce()
 		}
 	} else {
+		procMask = core.ProcMaskSpellDamage
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			OutcomeApplier: priest.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -53,6 +55,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	spell := priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     procMask,
 		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -97,14 +100,12 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 	var effect core.SpellEffect
 	if priest.IsOpponent(target) {
 		effect = core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(375, .4286),
 			OutcomeApplier: priest.OutcomeFuncMagicHit(),
 		}
 	} else {
 		effect = core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicHealing,
 			IsPeriodic:     true,
 			IsHealing:      true,
 			BaseDamage:     core.BaseDamageConfigHealing(1484, 1676, .5362),

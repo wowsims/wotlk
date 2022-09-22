@@ -13,10 +13,10 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
 	paladin.HammerOfWrath = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48806},
-		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48806},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -43,16 +43,13 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
 					deltaDamage := 1257.0 - 1139.0
-					damage := 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll")
-					damage += hitEffect.SpellPower(spell.Unit, spell) * 0.15
-					damage += hitEffect.MeleeAttackPower(spell.Unit) * 0.15
-					return damage
+					return 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
+						.15*spell.SpellPower() +
+						.15*spell.MeleeAttackPower()
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialNoBlockDodgeParry(paladin.MeleeCritMultiplier()),

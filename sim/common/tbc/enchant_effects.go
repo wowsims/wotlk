@@ -56,12 +56,12 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Crusader") {
-					if spellEffect.IsMH() {
+				if ppmm.Proc(sim, spell.ProcMask, "Crusader") {
+					if spell.IsMH() {
 						mhAura.Activate(sim)
 					} else {
 						ohAura.Activate(sim)
@@ -86,10 +86,10 @@ func init() {
 			return
 		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
 
-		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0}, time.Second*15)
-		ohAura := character.NewTemporaryStatsAura("Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2}, stats.Stats{stats.MeleeHaste: 30.0}, time.Second*15)
+		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
+		ohAura := character.NewTemporaryStatsAura("Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Mongoose Enchant",
@@ -98,12 +98,12 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "mongoose") {
-					if spellEffect.IsMH() {
+				if ppmm.Proc(sim, spell.ProcMask, "mongoose") {
+					if spell.IsMH() {
 						mhAura.Activate(sim)
 					} else {
 						ohAura.Activate(sim)
@@ -147,11 +147,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Executioner") {
+				if ppmm.Proc(sim, spell.ProcMask, "Executioner") {
 					procAura.Activate(sim)
 				}
 			},
@@ -184,12 +184,12 @@ func init() {
 					return
 				}
 
-				if spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
-					if !ppmm.Proc(sim, spellEffect.ProcMask, "Deathfrost") {
+				if spell.ProcMask.Matches(core.ProcMaskMelee) {
+					if !ppmm.Proc(sim, spell.ProcMask, "Deathfrost") {
 						return
 					}
 					procSpell.Cast(sim, spellEffect.Target)
-				} else if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					if !icd.IsReady(sim) || sim.RandomFloat("Deathfrost") > 0.5 {
 						return
 					}
@@ -233,13 +233,14 @@ func init() {
 		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:         actionID,
-			SpellSchool:      core.SpellSchoolFrost,
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolFrost,
+			ProcMask:    core.ProcMaskEmpty,
+
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask: core.ProcMaskEmpty,
 
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(150),
 				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
 

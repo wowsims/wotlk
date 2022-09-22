@@ -212,7 +212,8 @@ message RetributionPaladin {
 
 message ProtectionPaladin {
 	message Rotation {
-		bool prioritize_holy_shield = 1;
+		bool hammer_first = 1;
+		bool use_custom_prio = 2;
 
 		enum SpellOption {
 			NoSpell = 0;
@@ -224,8 +225,9 @@ message ProtectionPaladin {
 			ShieldOfRighteousness = 6;
 			AvengersShield = 7;
 			HammerOfTheRighteous = 8;
+			HolyShield = 9;
 		}
-		CustomRotation custom_rotation = 2;
+		CustomRotation custom_rotation = 3;
 	}
 	Rotation rotation = 1;
 

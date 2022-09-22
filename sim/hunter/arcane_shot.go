@@ -22,10 +22,10 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 	}
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49045},
-		SpellSchool: core.SpellSchoolArcane,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 49045},
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -52,11 +52,9 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.15 + 492
+					return 492 + 0.15*spell.RangedAttackPower(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},

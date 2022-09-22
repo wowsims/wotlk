@@ -13,6 +13,11 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		dk.Rotation.BloodTap = proto.Deathknight_Rotation_IcyTouch
 	}
 
+	dk.Inputs.FuStrike = deathknight.FuStrike_ScourgeStrike
+	if dk.Talents.Annihilation > 0 {
+		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
+	}
+
 	dk.setupGargoyleCooldowns()
 
 	dk.RotationSequence.Clear().
@@ -47,11 +52,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		}
 	}
 
-	if dk.uhEmpoweredRuneWeapon(sim, target) {
+	if dk.uhBloodTap(sim, target) {
 		return sim.CurrentTime
 	}
 
-	if dk.uhBloodTap(sim, target) {
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -163,11 +168,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		}
 	}
 
-	if dk.uhEmpoweredRuneWeapon(sim, target) {
+	if dk.uhBloodTap(sim, target) {
 		return sim.CurrentTime
 	}
 
-	if dk.uhBloodTap(sim, target) {
+	if dk.uhEmpoweredRuneWeapon(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -177,7 +182,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
 	if !casted {
 		fuStrike := dk.ScourgeStrike
-		if dk.Talents.Annihilation > 0 {
+		if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
 			fuStrike = dk.Obliterate
 		}
 		if dk.uhDiseaseCheck(sim, target, fuStrike, true, 1) {
@@ -267,15 +272,9 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 				didErw = true
 			}
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
-		} else {
-			// If no runes soon cast ERW
-			if dk.CurrentBloodRunes() < 1 && dk.CurrentFrostRunes() < 1 && dk.CurrentUnholyRunes() < 1 && dk.AnyRuneReadyAt(sim)-sim.CurrentTime > 2*time.Second {
-				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
-				didErw = true
-			}
 		}
 
-		if !dk.PresenceMatches(deathknight.BloodPresence) {
+		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) {
 			if didErw || dk.CurrentBloodRunes() > 0 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
 			} else if !didErw && !dk.Rotation.BtGhoulFrenzy && dk.BloodTap.IsReady(sim) {

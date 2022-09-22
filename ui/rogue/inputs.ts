@@ -93,6 +93,12 @@ export const RogueRotationConfig = {
 			label: 'Minimum CP (Filler)',
 			labelTooltip: 'Secondary finisher/filler will not be cast with less than this many combo points.\nSet the value to > 5 to prevent fillers.',
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomPoolAmount',
+			label: 'Energy Pooled (Envenom)',
+			labelTooltip: 'Amount of energy to pool before casting Envenom (beyond the cost).',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',

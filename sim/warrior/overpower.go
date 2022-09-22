@@ -30,8 +30,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	refundAmount := cost * 0.8
 
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(mh)),
 
@@ -53,6 +51,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 7384},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,

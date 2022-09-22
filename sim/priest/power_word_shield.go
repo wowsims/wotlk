@@ -30,13 +30,13 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		glyphHeal = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: 42408},
 			SpellSchool: core.SpellSchoolHoly,
+			ProcMask:    core.ProcMaskSpellHealing,
 
 			DamageMultiplier: 0.2 * multiplier,
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
-				ProcMask:  core.ProcMaskSpellHealing,
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(2230, coeff),
 				OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
@@ -49,9 +49,9 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		core.TernaryDuration(priest.HasSetBonus(ItemSetGladiatorsRaiment, 4), time.Second*2, 0)
 
 	priest.PowerWordShield = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

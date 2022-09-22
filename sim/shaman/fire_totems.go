@@ -13,10 +13,10 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 	baseCost := baseMana * 0.07
 
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagTotem,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskEmpty,
+		Flags:        SpellFlagTotem,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -55,7 +55,6 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		NumberOfTicks: 24,
 		TickLength:    time.Second * 60 / 24,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			BaseDamage:     core.BaseDamageConfigMagic(90, 120, 0.167),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),
@@ -67,10 +66,10 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 	baseCost := baseMana * 0.27
 
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagTotem,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskEmpty,
+		Flags:        SpellFlagTotem,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -102,7 +101,6 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(371, 0.1),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		})),

@@ -16,6 +16,7 @@ func (warrior *Warrior) registerShockwaveSpell() {
 	warrior.Shockwave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 46968},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskRanged,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -37,11 +38,9 @@ func (warrior *Warrior) registerShockwaveSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskRanged,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.75)
+					return 0.75 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

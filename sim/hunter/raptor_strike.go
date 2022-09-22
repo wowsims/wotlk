@@ -12,10 +12,10 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 	baseCost := 0.04 * hunter.BaseMana
 
 	hunter.RaptorStrike = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48996},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48996},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -34,8 +34,6 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 335, true),
 			OutcomeApplier: hunter.OutcomeFuncMeleeSpecialHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
 		}),

@@ -34,6 +34,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47488},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -64,8 +65,6 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		FlatThreatBonus:  770,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					sbv := warrior.GetStat(stats.BlockValue)

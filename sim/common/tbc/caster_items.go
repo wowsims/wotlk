@@ -31,7 +31,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !spellEffect.Landed() {
@@ -64,7 +64,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !spellEffect.Landed() {
@@ -83,12 +83,14 @@ func init() {
 		character := agent.GetCharacter()
 
 		timbalsSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:         core.ActionID{SpellID: 45055},
-			SpellSchool:      core.SpellSchoolShadow,
+			ActionID:    core.ActionID{SpellID: 45055},
+			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:       core.ProcMaskEmpty,
 				BaseDamage:     core.BaseDamageConfigRoll(285, 475),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -130,12 +132,14 @@ func init() {
 			aldorAura = character.NewTemporaryStatsAura("Light's Wrath", core.ActionID{SpellID: 45479}, stats.Stats{stats.SpellPower: 120}, time.Second*10)
 		} else if character.ShattFaction == proto.ShattrathFaction_ShattrathFactionScryer {
 			scryerSpell = character.RegisterSpell(core.SpellConfig{
-				ActionID:         core.ActionID{SpellID: 45429},
-				SpellSchool:      core.SpellSchoolArcane,
+				ActionID:    core.ActionID{SpellID: 45429},
+				SpellSchool: core.SpellSchoolArcane,
+				ProcMask:    core.ProcMaskEmpty,
+
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
+
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:       core.ProcMaskEmpty,
 					BaseDamage:     core.BaseDamageConfigRoll(333, 367),
 					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 				}),
@@ -155,7 +159,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Landed() {

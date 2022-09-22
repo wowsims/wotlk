@@ -361,7 +361,7 @@ func (mage *Mage) applyMasterOfElements() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {

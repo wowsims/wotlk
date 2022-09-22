@@ -25,7 +25,7 @@ const (
 	RunicPower
 )
 
-type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
+type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
@@ -230,12 +230,6 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
 	}
-	if bonus[stats.Armor] != 0 {
-		unit.updateArmor()
-	}
-	if bonus[stats.ArmorPenetration] != 0 {
-		unit.updateArmorPen()
-	}
 	if bonus[stats.SpellPenetration] != 0 {
 		unit.updateSpellPen()
 	}
@@ -285,20 +279,6 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	}
 }
 
-func (unit *Unit) updateArmor() {
-	for _, table := range unit.DefenseTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
-func (unit *Unit) updateArmorPen() {
-	for _, table := range unit.AttackTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
 func (unit *Unit) updateResistances() {
 	for _, table := range unit.DefenseTables {
 		if table != nil {

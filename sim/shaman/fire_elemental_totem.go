@@ -57,7 +57,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.FireElementalTotem,
-		Priority: core.CooldownPriorityDrums + 1, // TODO needs to be altered due to snap shotting.
+		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
 		Type:     core.CooldownTypeDPS,
 	})
 }

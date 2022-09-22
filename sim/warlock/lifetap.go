@@ -22,14 +22,17 @@ func (warlock *Warlock) registerLifeTapSpell() {
 	warlock.LifeTap = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskEmpty,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
 		},
+
 		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Life tap adds 0.5*sp to mana restore

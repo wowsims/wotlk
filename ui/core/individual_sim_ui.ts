@@ -615,6 +615,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
+			{ item: IconInputs.FocusMagic, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
 			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
@@ -932,14 +933,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			label: 'Settings',
 			storageKey: this.getSavedSettingsStorageKey(),
 			getData: (simUI: IndividualSimUI<any>) => {
+				const player = simUI.player;
 				return SavedSettings.create({
 					raidBuffs: simUI.sim.raid.getBuffs(),
-					partyBuffs: simUI.player.getParty()?.getBuffs() || PartyBuffs.create(),
-					playerBuffs: simUI.player.getBuffs(),
+					partyBuffs: player.getParty()?.getBuffs() || PartyBuffs.create(),
+					playerBuffs: player.getBuffs(),
 					debuffs: simUI.sim.raid.getDebuffs(),
-					consumes: simUI.player.getConsumes(),
-					race: simUI.player.getRace(),
-					cooldowns: simUI.player.getCooldowns(),
+					consumes: player.getConsumes(),
+					race: player.getRace(),
+					cooldowns: player.getCooldowns(),
+					rotationJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
 				});
 			},
 			setData: (eventID: EventID, simUI: IndividualSimUI<any>, newSettings: SavedSettings) => {
@@ -954,6 +957,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
+					if (newSettings.rotationJson) {
+						simUI.player.setRotation(eventID, simUI.player.specTypeFunctions.rotationFromJson(JSON.parse(newSettings.rotationJson)));
+					}
 				});
 			},
 			changeEmitters: [
@@ -964,6 +970,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.player.consumesChangeEmitter,
 				this.player.raceChangeEmitter,
 				this.player.cooldownsChangeEmitter,
+				this.player.rotationChangeEmitter,
 			],
 			equals: (a: SavedSettings, b: SavedSettings) => SavedSettings.equals(a, b),
 			toJson: (a: SavedSettings) => SavedSettings.toJson(a),
@@ -1229,9 +1236,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			if (!settings.player) {
 				return;
 			}
-			if (settings.settings) {
-				this.sim.fromProto(eventID, settings.settings);
-			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {
 				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
@@ -1248,6 +1252,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
+
+			if (settings.settings) {
+				this.sim.fromProto(eventID, settings.settings);
+			} else {
+				const tankSpec = isTankSpec(this.player.spec);
+				const healingSpec = isHealingSpec(this.player.spec);
+				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
+			}
 
 			// Needed because of new proto field addition. Can remove on 2022/11/14 (2 months).
 			if (!isHealingSpec(this.player.spec)) {

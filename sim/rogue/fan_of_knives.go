@@ -10,7 +10,7 @@ import (
 
 const FanOfKnivesSpellID int32 = 51723
 
-func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
+func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.SpellEffect) {
 	var procMask core.ProcMask
 	var baseDamageConfig core.BaseDamageConfig
 	var weaponMultiplier float64
@@ -31,28 +31,38 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitEffect(isMH bool) core.SpellEffect {
 		}
 	})
 
-	return core.SpellEffect{
-		ProcMask:       procMask,
+	effect := core.SpellEffect{
 		BaseDamage:     baseDamageConfig,
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, false)),
 	}
 
+	spell := rogue.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
+		ThreatMultiplier: 1,
+	})
+
+	return spell, effect
 }
 
 func (rogue *Rogue) registerFanOfKnives() {
 	energyCost := 50.0
-	mhHit := rogue.makeFanOfKnivesWeaponHitEffect(true)
-	ohHit := rogue.makeFanOfKnivesWeaponHitEffect(false)
-	applyEffects := func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-		core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, ohHit)(sim, unit, spell)
-		core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, mhHit)(sim, unit, spell)
-	}
+	mhSpell, mhHit := rogue.makeFanOfKnivesWeaponHitSpell(true)
+	ohSpell, ohHit := rogue.makeFanOfKnivesWeaponHitSpell(false)
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: FanOfKnivesSpellID},
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
 		ResourceType: stats.Energy,
 		BaseCost:     energyCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: energyCost,
@@ -62,11 +72,9 @@ func (rogue *Rogue) registerFanOfKnives() {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: 1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
-		ThreatMultiplier: 1,
-
-		ApplyEffects: applyEffects,
+		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, ohHit)(sim, unit, ohSpell)
+			core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, mhHit)(sim, unit, mhSpell)
+		},
 	})
 }

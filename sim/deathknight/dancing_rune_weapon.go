@@ -87,8 +87,8 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 	}, nil)
 }
 
-func (runeWeapon *RuneWeaponPet) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return hitEffect.MeleeAttackPower(unit)
+func (runeWeapon *RuneWeaponPet) getImpurityBonus(spell *core.Spell) float64 {
+	return spell.MeleeAttackPower()
 }
 
 type RuneWeaponPet struct {

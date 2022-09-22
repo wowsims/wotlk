@@ -24,12 +24,12 @@ func init() {
 		choasBaneSpell := player.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 71904},
 			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty, // not sure if this can proc things.
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{ // simulate this as hitting single target for now.
-				ProcMask:       core.ProcMaskEmpty, // not sure if this can proc things.
 				BaseDamage:     core.BaseDamageConfigMagic(1900, 2100, 0),
 				OutcomeApplier: player.OutcomeFuncMagicHit(), // can miss, can't crit
 			})})
@@ -47,7 +47,7 @@ func init() {
 		core.MakePermanent(player.GetOrRegisterAura(core.Aura{
 			Label: "Shadowmourne",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 

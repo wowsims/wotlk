@@ -17,6 +17,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -36,7 +37,6 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
 		// This messes with final dmg and crit rate metrics.
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskSpellDamage,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyDotOnLanded(&warlock.CorruptionDot),
 		}),
@@ -59,7 +59,6 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
 			OutcomeApplier: applier,

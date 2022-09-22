@@ -33,11 +33,12 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, dk.Talents.GuileOfGorefiend, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.GuileOfGorefiend, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,

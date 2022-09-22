@@ -12,14 +12,12 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskRangedSpecial,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+				return 0.2*spell.RangedAttackPower(hitEffect.Target) +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 					hunter.AmmoDamageBonus +
-					hitEffect.BonusWeaponDamage(spell.Unit) +
+					spell.BonusWeaponDamage() +
 					408
 			},
 			TargetSpellCoefficient: 1,
@@ -35,10 +33,10 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	}
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49048},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 49048},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

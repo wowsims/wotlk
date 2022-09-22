@@ -19,10 +19,10 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 	cost := baseCost
 
 	return core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: spellSchool,
-			Flags:       SpellFlagShock,
-
+			ActionID:     actionID,
+			SpellSchool:  spellSchool,
+			ProcMask:     core.ProcMaskSpellDamage,
+			Flags:        SpellFlagShock,
 			ResourceType: stats.Mana,
 			BaseCost:     cost,
 
@@ -49,9 +49,7 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 				(1 + 0.01*float64(shaman.Talents.Concussion)) *
 				core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 4), 1.25, 1),
 			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-		}, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-		}
+		}, core.SpellEffect{}
 }
 
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
@@ -99,6 +97,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+			ProcMask:     core.ProcMaskSpellDamage,
 
 			DamageMultiplier: config.DamageMultiplier *
 				(1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) *
@@ -123,7 +122,6 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
 			OutcomeApplier: shaman.OutcomeFuncMagicCrit(critMultiplier),
 			IsPeriodic:     true,
-			ProcMask:       core.ProcMaskPeriodicDamage,
 		}),
 	})
 
