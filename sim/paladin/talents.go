@@ -58,6 +58,8 @@ func (paladin *Paladin) ApplyTalents() {
 
 	if paladin.Talents.CombatExpertise > 0 {
 		paladin.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(paladin.Talents.CombatExpertise))
+		paladin.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2*float64(paladin.Talents.CombatExpertise))
+		paladin.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*2*float64(paladin.Talents.CombatExpertise))
 		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.CombatExpertise))
 	}
 
@@ -547,7 +549,7 @@ func (paladin *Paladin) applyGuardedByTheLight() {
 	paladin.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
 
 	paladin.RegisterAura(core.Aura{
-		Label:    "Touched By The Light",
+		Label:    "Guarded By The Light",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
