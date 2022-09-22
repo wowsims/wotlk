@@ -105,6 +105,10 @@ func init() {
 		character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
 	})
 
+	core.NewItemEffect(41167, func(agent core.Agent) {
+		agent.GetCharacter().AddBonusRangedCritRating(40)
+	})
+
 	core.NewItemEffect(42500, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 42500}
@@ -150,7 +154,7 @@ func init() {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
-	
+
 	// Apply for Wisdom to Cloak (itemid) but NOT for Enchant Gloves Precision (spellid)
 	core.NewItemEffect(44488, func(agent core.Agent) {
 		character := agent.GetCharacter()

@@ -37,7 +37,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
 		DamageMultiplierAdditive: 1 +
 			.10*float64(hunter.Talents.TrapMastery) +
 			.02*float64(hunter.Talents.TNT),

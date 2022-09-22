@@ -47,8 +47,6 @@ func (hunter *Hunter) registerVolleySpell() {
 			},
 		},
 
-		BonusHitRating:  hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit(),
 		DamageMultiplier: 1 *
 			(1 + 0.04*float64(hunter.Talents.Barrage)),
 		ThreatMultiplier: 1,
