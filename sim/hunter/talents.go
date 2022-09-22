@@ -586,7 +586,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell != hunter.BlackArrow && spell != hunter.ExplosiveTrap {
+			if spell != hunter.BlackArrow && spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
 
@@ -678,7 +678,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrap {
+			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
 

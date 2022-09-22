@@ -1238,6 +1238,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {
+				// Correction for removal of healing power and arcane/fire/etc power.
+				// TODO: Remove this after 2 months (2022/11/22).
+				if (settings.epWeights.length > 37) {
+					settings.epWeights.splice(6, 7);
+				}
 				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
 			} else {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);

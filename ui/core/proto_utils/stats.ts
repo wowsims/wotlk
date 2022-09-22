@@ -12,11 +12,6 @@ export class Stats {
 	private readonly stats: Array<number>;
 
 	constructor(stats?: Array<number>) {
-		// Correction for removal of healing power and arcane/fire/etc power.
-		// TODO: Remove this after 2 months (2022/11/22).
-		if (stats && stats.length > 37) {
-			stats.splice(6, 7);
-		}
 		this.stats = stats?.slice(0, STATS_LEN) || [];
 
 		if (this.stats.length < STATS_LEN) {
