@@ -487,6 +487,7 @@ func (hp *HunterPet) newPin() PetAbility {
 				},
 			},
 
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -544,6 +545,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 				},
 			},
 
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -730,6 +732,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 				},
 			},
 
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -844,6 +847,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 		Spell: hp.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolNature,
+			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       core.SpellFlagIgnoreResists,
 
 			Cast: core.CastConfig{
@@ -856,6 +860,10 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 					Duration: hp.hunterOwner.applyLongevity(time.Second * 10),
 				},
 			},
+
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 				dot.Apply(sim)
 				for _, debuff := range debuffs {
@@ -972,6 +980,7 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 				},
 			},
 
+			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

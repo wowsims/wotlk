@@ -52,6 +52,7 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.registerRoarOfRecoveryCD()
 	hp.registerRabidCD()
 	hp.registerCallOfTheWildCD()
+	hp.registerWolverineBite()
 }
 
 func (hp *HunterPet) applyOwlsFocus() {
@@ -315,6 +316,68 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return hp.IsEnabled()
+		},
+	})
+}
+
+func (hp *HunterPet) registerWolverineBite() {
+	if !hp.Talents().WolverineBite {
+		return
+	}
+
+	hunter := hp.hunterOwner
+	actionID := core.ActionID{SpellID: 53508}
+
+	var wbValidUntil time.Duration
+	hp.RegisterAura(core.Aura{
+		Label:    "Wolverine Bite Trigger",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			wbValidUntil = 0
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if spellEffect.DidCrit() {
+				wbValidUntil = sim.CurrentTime + time.Second*5
+			}
+		},
+	})
+
+	wbSpell := hp.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer:    hp.NewTimer(),
+				Duration: hunter.applyLongevity(time.Second * 10),
+			},
+		},
+
+		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(5*80, 5*80, .07)),
+			OutcomeApplier: hp.OutcomeFuncMeleeSpecialNoBlockDodgeParry(2),
+
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				wbValidUntil = 0
+			},
+		}),
+	})
+
+	hp.AddMajorCooldown(core.MajorCooldown{
+		Spell: wbSpell,
+		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return hp.IsEnabled() && wbSpell.IsReady(sim) && wbValidUntil > sim.CurrentTime
 		},
 	})
 }
