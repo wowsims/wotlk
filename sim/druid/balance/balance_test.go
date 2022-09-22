@@ -27,6 +27,7 @@ func TestBalance(t *testing.T) {
 		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
 		Debuffs:     FullDebuffs,
+		Glyphs:      StandardGlyphs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -34,6 +35,7 @@ func TestBalance(t *testing.T) {
 				proto.WeaponType_WeaponTypeMace,
 				proto.WeaponType_WeaponTypeOffHand,
 				proto.WeaponType_WeaponTypeStaff,
+				proto.WeaponType_WeaponTypePolearm,
 			},
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
