@@ -383,6 +383,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		cat.readyToShift = true
 	} else if berserkNow {
 		cat.Berserk.Cast(sim, nil)
+		cat.UpdateMajorCooldowns()
 		return
 	} else if roarNow {
 		if cat.CanSavageRoar() {
