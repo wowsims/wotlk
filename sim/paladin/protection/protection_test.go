@@ -21,7 +21,39 @@ func TestProtection(t *testing.T) {
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin", SpecOptions: DefaultOptions},
+		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin SOV", SpecOptions: DefaultOptions},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{
+				Label: "Protection Paladin SOC",
+				SpecOptions: &proto.Player_ProtectionPaladin{
+					ProtectionPaladin: &proto.ProtectionPaladin{
+						Talents: defaultProtTalents,
+						Options: &proto.ProtectionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Command,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultProtRotation,
+					},
+				},
+			},
+			{
+				Label: "Protection Paladin SOR",
+				SpecOptions: &proto.Player_ProtectionPaladin{
+					ProtectionPaladin: &proto.ProtectionPaladin{
+						Talents: defaultProtTalents,
+						Options: &proto.ProtectionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Righteousness,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultProtRotation,
+					},
+				},
+			},
+		},
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,

@@ -21,8 +21,40 @@ func TestRetribution(t *testing.T) {
 
 		GearSet: core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin", SpecOptions: DefaultOptions},
-		Glyphs:      defaultRetGlyphs,
+		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin SOV", SpecOptions: DefaultOptions},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{
+				Label: "Retribution Paladin SOC",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Command,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultRetRotation,
+					},
+				},
+			},
+			{
+				Label: "Retribution Paladin SOR",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Righteousness,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultRetRotation,
+					},
+				},
+			},
+		},
+		Glyphs: defaultRetGlyphs,
 
 		RaidBuffs:   FullRaidBuffs,
 		PartyBuffs:  FullPartyBuffs,
