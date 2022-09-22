@@ -144,7 +144,7 @@ wowsimwotlk: binary_dist devserver
 devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
 	@if go build -o wowsimwotlk ./sim/web/main.go; then \
-		printf "\033[1;32mBuild Completed Succeessfully\033[0m\n"; \
+		printf "\033[1;32mBuild Completed Successfully\033[0m\n"; \
 	else \
 		printf "\033[1;31mBUILD FAILED\033[0m\n"; \
 		exit 1; \
