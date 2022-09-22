@@ -25,7 +25,6 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
-		BonusHitRating:   hunter.bonusRangedHit(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

@@ -22,6 +22,13 @@ func init() {
 		w.BaseDamageMax += 5
 	})
 
+	core.NewItemEffect(18283, func(agent core.Agent) {
+		agent.GetCharacter().AddBonusRangedHitRating(30)
+	})
+	core.NewItemEffect(23766, func(agent core.Agent) {
+		agent.GetCharacter().AddBonusRangedCritRating(28)
+	})
+
 	core.AddWeaponEffect(22552, func(agent core.Agent, slot proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.MH
 		if slot == proto.ItemSlot_ItemSlotOffHand {

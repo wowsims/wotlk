@@ -32,8 +32,6 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 			},
 		},
 
-		BonusHitRating:  hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit(),
 		DamageMultiplier: 0.5 *
 			hunter.markedForDeathMultiplier(),
 		ThreatMultiplier: 1,

@@ -221,11 +221,9 @@ func init() {
 				rangedSpell = hunter.RegisterSpell(core.SpellConfig{
 					ActionID:    core.ActionID{ItemID: itemID},
 					SpellSchool: core.SpellSchoolPhysical,
-					ProcMask:     core.ProcMaskRangedAuto,
+					ProcMask:    core.ProcMaskRangedAuto,
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
-					BonusHitRating:   hunter.bonusRangedHit(),
-					BonusCritRating:  hunter.bonusRangedCrit(),
 					DamageMultiplier: 0.5,
 					ThreatMultiplier: 1,
 					ApplyEffects:     core.ApplyEffectFuncDirectDamage(rangedEffect),

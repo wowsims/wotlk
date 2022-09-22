@@ -367,9 +367,6 @@ func (spell *Spell) CasterDamageMultiplier() float64 {
 	multiplier *= spell.DamageMultiplier
 	multiplier *= spell.DamageMultiplierAdditive
 
-	if spell.ProcMask.Matches(ProcMaskRanged) {
-		multiplier *= attacker.PseudoStats.RangedDamageDealtMultiplier
-	}
 	if spell.Flags.Matches(SpellFlagDisease) {
 		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
 	}

@@ -20,7 +20,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -38,7 +37,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
 		DamageMultiplierAdditive: 1 +
 			.10*float64(hunter.Talents.TrapMastery) +
 			.02*float64(hunter.Talents.TNT),

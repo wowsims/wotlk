@@ -31,8 +31,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
+		BonusCritRating: 0 +
 			5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),

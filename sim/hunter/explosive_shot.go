@@ -55,8 +55,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
+		BonusCritRating: 0 +
 			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
 			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +

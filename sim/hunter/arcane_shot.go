@@ -41,8 +41,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
+		BonusCritRating: 0 +
 			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
 		DamageMultiplierAdditive: 1 +
 			.03*float64(hunter.Talents.FerociousInspiration) +

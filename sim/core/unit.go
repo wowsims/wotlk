@@ -370,6 +370,21 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
+func (unit *Unit) AddBonusRangedHitRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusHitRating += amount
+		}
+	})
+}
+func (unit *Unit) AddBonusRangedCritRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusCritRating += amount
+		}
+	})
+}
+
 func (unit *Unit) SetCurrentPowerBar(bar PowerBarType) {
 	unit.currentPowerBar = bar
 }

@@ -36,8 +36,7 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit() +
+		BonusCritRating: 0 +
 			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
 			core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +

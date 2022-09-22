@@ -38,8 +38,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			},
 		},
 
-		BonusHitRating:   hunter.bonusRangedHit(),
-		BonusCritRating:  hunter.bonusRangedCrit(),
 		DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -78,8 +76,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusHitRating:  hunter.bonusRangedHit(),
-		BonusCritRating: hunter.bonusRangedCrit(),
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(hunter.Talents.ImprovedStings) +
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),

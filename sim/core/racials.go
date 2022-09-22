@@ -65,7 +65,10 @@ func applyRaceEffects(agent Agent) {
 	case proto.Race_RaceDwarf:
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
-		// Gun specialization (+1% ranged crit when using a gun) handled in hunter code.
+		// Gun specialization (+1% ranged crit when using a gun).
+		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
+			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
+		}
 
 		applyWeaponSpecialization(
 			character,
@@ -164,7 +167,10 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
 	case proto.Race_RaceTroll:
-		// Bow specialization (+1% ranged crit when using a bow) handled in hunter code.
+		// Bow specialization (+1% ranged crit when using a bow).
+		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
+			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
+		}
 
 		// Beast Slaying (+5% damage to beasts)
 		if character.CurrentTarget.MobType == proto.MobType_MobTypeBeast {
