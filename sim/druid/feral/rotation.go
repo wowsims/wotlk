@@ -196,16 +196,20 @@ func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Du
 
 func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 	// Handle tigers fury
+	if !cat.TigersFury.IsReady(sim) {
+		return
+	}
+
 	gcdTimeToRdy := cat.GCD.TimeToReady(sim)
-	leewayTime := core.MaxFloat(gcdTimeToRdy.Seconds(), cat.latency.Seconds())
-	tfEnergyThresh := 40.0 - 10.0*(leewayTime+core.TernaryFloat64(cat.ClearcastingAura.IsActive(), 1.0, 0))
-	tfNow := (cat.CurrentEnergy() < tfEnergyThresh) && cat.TigersFury.IsReady(sim) && !cat.BerserkAura.IsActive()
+	leewayTime := core.MaxDuration(gcdTimeToRdy, cat.latency)
+	tfEnergyThresh := 40.0 - 10.0*(leewayTime+core.TernaryDuration(cat.ClearcastingAura.IsActive(), 1*time.Second, 0)).Seconds()
+	tfNow := (cat.CurrentEnergy() < tfEnergyThresh) && !cat.BerserkAura.IsActive()
 
 	if tfNow {
 		cat.TigersFury.Cast(sim, nil)
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+time.Duration(leewayTime*float64(time.Second)))
+		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy)
 	}
 }
 
