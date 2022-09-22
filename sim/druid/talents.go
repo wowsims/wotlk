@@ -273,14 +273,15 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
+			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
-			}
-			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
-				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
-					druid.ClearcastingAura.Activate(sim)
-					if druid.SetBonuses.balance_t10_2 {
-						lasherweave2P.Activate(sim)
+			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
+				if spell == druid.Starfire || spell == druid.Wrath {
+					if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
+						druid.ClearcastingAura.Activate(sim)
+						if druid.SetBonuses.balance_t10_2 {
+							lasherweave2P.Activate(sim)
+						}
 					}
 				}
 			}
