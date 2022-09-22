@@ -106,11 +106,8 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			} else {
 				if spell.IsMelee() {
 					// Temporary check to avoid AOE double procing.
-					if spell.SpellID == paladin.DivineStorm.SpellID {
+					if spell.SpellID == paladin.HammerOfTheRighteous.SpellID || spell.SpellID == paladin.DivineStorm.SpellID {
 						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
-					} else if spell.SpellID == paladin.HammerOfTheRighteous.SpellID && spellEffect.Target == paladin.Env.GetTargetUnit(1) {
-						// HotR is implemented as cloning itself, but only the primary should proc SoC cleave
-						onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
 					} else {
 						onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
 					}
@@ -165,12 +162,11 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 0.19*core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true).Calculator(sim, hitEffect, spell) +
-							0.08*spell.MeleeAttackPower() +
-							0.13*spell.SpellPower()
+						0.08*spell.MeleeAttackPower() +
+						0.13*spell.SpellPower()
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
 		}),
-		
 	})
 }
