@@ -50,7 +50,7 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 		druid.PseudoStats.ReducedCritTakenChance += 0.02 * float64(druid.Talents.SurvivalOfTheFittest)
 		if druid.InForm(Bear) {
-			druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.33/3)*float64(druid.Talents.ThickHide))
+			druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.33/3)*float64(druid.Talents.SurvivalOfTheFittest))
 		}
 	}
 
