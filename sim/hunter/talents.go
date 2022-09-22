@@ -679,6 +679,19 @@ func (hunter *Hunter) applyExposeWeakness() {
 				procAura.Activate(sim)
 			}
 		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrap {
+				return
+			}
+
+			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				return
+			}
+
+			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
+				procAura.Activate(sim)
+			}
+		},
 	})
 }
 

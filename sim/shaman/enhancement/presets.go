@@ -71,6 +71,7 @@ var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
 		Fire:             proto.FireTotem_MagmaTotem,
 		UseFireElemental: true,
 	},
+	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
 }
@@ -82,6 +83,7 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
+	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
 	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,

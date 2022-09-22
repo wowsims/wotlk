@@ -88,7 +88,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*50 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
 				dk.uhGhoulFrenzySequence(sim, true)
 				return true
@@ -116,7 +116,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 }
 
 func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bool {
-	if !dk.GCD.IsReady(sim) || dk.SummonGargoyle.IsReady(sim) {
+	if !dk.GCD.IsReady(sim) {
 		return false
 	}
 
@@ -151,7 +151,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 		return false
 	}
 
-	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 {
+	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 || dk.CurrentDeathRunes() > 0 {
 		return false
 	}
 

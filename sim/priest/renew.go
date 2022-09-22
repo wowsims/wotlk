@@ -40,6 +40,7 @@ func (priest *Priest) registerRenewSpell() {
 	priest.Renew = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

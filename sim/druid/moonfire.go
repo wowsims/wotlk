@@ -68,6 +68,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 48463},
 			SpellSchool: core.SpellSchoolArcane,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplierAdditive: 1 +
 				improvedMoonfireDamageMultiplier +
