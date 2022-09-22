@@ -11,7 +11,8 @@ import (
 type FrostRotation struct {
 	dk *DpsDeathknight
 
-	genome *neat.Genome
+	genome    *neat.Genome
+	spellBook []*deathknight.RuneSpell
 
 	oblitCount int32
 	oblitDelay time.Duration
@@ -30,21 +31,89 @@ type FrostRotation struct {
 }
 
 func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
+	fr.dk = dk
 	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 
-	fr.genome = neat.NewGenome()
+	// Relevant inputs 17
+	// RP                          1
+	// NB NF NU D                  4
+	// ff - t, bp - t              2
+	// KM, Rime	                   2
 
-	in1 := neat.NewNode(neat.NodeKind_Input, 0)
-	in2 := neat.NewNode(neat.NodeKind_Input, 1)
-	o := neat.NewNode(neat.NodeKind_Output, 2)
+	// Relevant outputs 8
+	// Icy Touch
+	// Plague Strike
+	// Obliterate
+	// Blood Strike
+	// Howling Blast
+	// Frost Strike
+	// Horn Of Winter
+	// Wait Percent of 1 second
 
-	fr.genome.AddNode(in1)
-	fr.genome.AddNode(in2)
-	fr.genome.AddNode(o)
+	if fr.genome = neat.NewGenomeFromFile("assets/neat/frost_dk_genome1.neat"); fr.genome == nil {
+		fr.genome = neat.NewGenome()
 
-	fr.genome.AddConnection(neat.NewConnection(in1.Id, o.Id, 0.5, true, 0))
+		var inNodes [9]*neat.Node
+		for i := 0; i < 17; i++ {
+			inNodes[i] = neat.NewNode(neat.NodeKind_Input, i)
+			fr.genome.AddNode(inNodes[i])
+		}
 
-	fr.genome.Print()
+		var hidNodes [2]*neat.Node
+		for i := 0; i < 2; i++ {
+			hidNodes[i] = neat.NewNode(neat.NodeKind_Output, i)
+			fr.genome.AddNode(hidNodes[i])
+		}
+
+		var outNodes [8]*neat.Node
+		for i := 0; i < len(outNodes); i++ {
+			outNodes[i] = neat.NewNode(neat.NodeKind_Hidden, i)
+			fr.genome.AddNode(outNodes[i])
+		}
+
+		fr.genome.NumInputs = 9
+		fr.genome.NumOutputs = 8
+
+		fr.genome.AddConnection(neat.NewConnection(inNodes[2].Id, hidNodes[0].Id, 0.333, true, 0))
+	}
+
+	fr.spellBook = []*deathknight.RuneSpell{
+		dk.IcyTouch,
+		dk.PlagueStrike,
+		dk.Obliterate,
+		dk.BloodStrike,
+		dk.HowlingBlast,
+		dk.FrostStrike,
+		dk.HornOfWinter,
+	}
+}
+
+func (fr *FrostRotation) EvaluateGenome(sim *core.Simulation, target *core.Unit) (*deathknight.RuneSpell, time.Duration) {
+	// Grab inputs
+	dk := fr.dk
+
+	inputs := []float64{
+		dk.CurrentRunicPower(),
+		float64(dk.NormalCurrentBloodRunes()),
+		float64(dk.NormalCurrentFrostRunes()),
+		float64(dk.NormalCurrentUnholyRunes()),
+		float64(dk.CurrentDeathRunes()),
+		float64(dk.FrostFeverDisease[target.Index].ExpiresAt()-sim.CurrentTime) / float64(time.Second),
+		float64(dk.BloodPlagueDisease[target.Index].ExpiresAt()-sim.CurrentTime) / float64(time.Second),
+		core.TernaryFloat64(dk.KM(), 1.0, 0.0),
+		core.TernaryFloat64(dk.Rime(), 1.0, 0.0),
+	}
+
+	inputs = neat.Regularize(inputs)
+
+	// Proliferate network
+	maxIdx, outputs := fr.genome.Evaluate(inputs)
+
+	if maxIdx < len(outputs)-1 {
+		return fr.spellBook[maxIdx], -1
+	} else {
+		return nil, time.Duration(float64(time.Second) * outputs[maxIdx])
+	}
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {

@@ -1,9 +1,13 @@
 package neat
 
 import (
+	"bufio"
 	"math"
 	"math/rand"
+	"os"
 	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
@@ -11,6 +15,9 @@ import (
 type Genome struct {
 	Connections map[int]*Connection
 	Nodes       map[int]*Node
+
+	NumInputs  int
+	NumOutputs int
 }
 
 func NewGenome() *Genome {
@@ -20,16 +27,102 @@ func NewGenome() *Genome {
 	return g
 }
 
+func NewGenomeFromFile(path string) *Genome {
+	file, err := os.Open(path)
+	if err == nil {
+		g := NewGenome()
+
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+
+		var nodeKey int = 0
+		for scanner.Scan() {
+			var nodes []*Node = make([]*Node, 0)
+			var nodeDecl bool = false
+			var nodeKind NodeKind
+			var connectionDecl bool = false
+			var connectionDataIdx int = 0
+			var connectionData [4]float64
+			var connectionExpressed bool = false
+			for _, token := range strings.Fields(scanner.Text()) {
+				if strings.Contains(token, "in") {
+					nodeDecl = true
+					connectionDecl = false
+					nodeKind = NodeKind_Input
+				} else if strings.Contains(token, "hidden") {
+					nodeDecl = true
+					connectionDecl = false
+					nodeKind = NodeKind_Hidden
+				} else if strings.Contains(token, "out") {
+					nodeDecl = true
+					connectionDecl = false
+					nodeKind = NodeKind_Output
+				} else if strings.Contains(token, "connection") {
+					connectionDecl = true
+					connectionDataIdx = 0
+					nodeDecl = false
+				} else if strings.Contains(token, "t") {
+					connectionExpressed = true
+				} else if strings.Contains(token, "f") {
+					connectionExpressed = false
+				} else if val, err := strconv.Atoi(token); err == nil {
+					if nodeDecl {
+						switch nodeKind {
+						case NodeKind_Input:
+							for i := 0; i < val; i++ {
+								n := NewNode(NodeKind_Input, i+nodeKey)
+								nodes = append(nodes, n)
+								g.AddNode(n)
+							}
+							g.NumInputs = val
+							nodeKey += val
+						case NodeKind_Hidden:
+							for i := 0; i < val; i++ {
+								n := NewNode(NodeKind_Hidden, i+nodeKey)
+								nodes = append(nodes, n)
+								g.AddNode(n)
+							}
+							nodeKey += val
+						case NodeKind_Output:
+							for i := 0; i < val; i++ {
+								n := NewNode(NodeKind_Output, i+nodeKey)
+								nodes = append(nodes, n)
+								g.AddNode(n)
+							}
+							g.NumOutputs = val
+							nodeKey += val
+						}
+
+						nodeDecl = false
+					} else if connectionDecl {
+						connectionData[connectionDataIdx] = float64(val)
+						connectionDataIdx++
+					}
+				} else if val, err := strconv.ParseFloat(token, 32); err == nil {
+					if connectionDecl {
+						connectionData[connectionDataIdx] = val
+						connectionDataIdx++
+					}
+				}
+			}
+
+			if connectionDecl {
+				g.AddConnection(NewConnection(int(connectionData[0]), int(connectionData[1]), connectionData[2], connectionExpressed, int(connectionData[3])))
+			}
+		}
+
+		return g
+	}
+
+	return nil
+}
+
 func (g *Genome) AddConnection(c *Connection) {
 	g.Connections[c.Innovation] = c
 }
 
 func (g *Genome) AddNode(n *Node) {
 	g.Nodes[n.Id] = n
-}
-
-func (g *Genome) AddConnection(c *Connection) {
-	g.Connections[c.Innovation] = c
 }
 
 func (g *Genome) Mutation() {
@@ -230,6 +323,58 @@ func CompatibilityDistance(g1 *Genome, g2 *Genome, c1 float64, c2 float64, c3 fl
 	disjointGenes := CountDisjointGenes(g1, g2)
 	averageWeightDiff := AverageWeightDiff(g1, g2)
 	return float64(excessGenes)*c1 + float64(disjointGenes)*c2 + averageWeightDiff*c3
+}
+
+func Activation(value float64) float64 {
+	return 1.0 / (1.0 + math.Exp(-value))
+}
+
+func (g *Genome) Evaluate(inputs []float64) (int, []float64) {
+	for i, in := range inputs {
+		g.Nodes[i].Output = in
+	}
+
+	for _, n := range g.Nodes {
+		if n.IsInput() {
+			continue
+		}
+
+		s := 0.0
+		for _, c := range g.Connections {
+			if c.Out == n.Id && c.Expressed {
+				s += c.Weight * g.Nodes[c.In].Output
+			}
+		}
+		n.Output = Activation(s)
+	}
+
+	outIndicesIdx := 0
+	outIndices := make([]int, g.NumOutputs)
+	for _, n := range g.Nodes {
+		if n.IsOutput() {
+			outIndices[outIndicesIdx] = n.Id
+			outIndicesIdx++
+		}
+	}
+
+	sort.Ints(outIndices)
+
+	outMax := 0.0
+	outMaxIdx := 0
+	outIndicesIdx = 0
+	out := make([]float64, g.NumOutputs)
+	for _, i := range outIndices {
+		out[outIndicesIdx] = g.Nodes[i].Output
+
+		if out[outIndicesIdx] >= outMax {
+			outMax = out[outIndicesIdx]
+			outMaxIdx = outIndicesIdx
+		}
+
+		outIndicesIdx++
+	}
+
+	return outMaxIdx, out
 }
 
 func (g *Genome) Print() {

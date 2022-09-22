@@ -1,0 +1,7 @@
+in 9
+hidden 1
+out 8
+connection 2 9 0.333 t 0 
+connection 9 10 0.8 t 1
+connection 3 9 0.4 t 2
+connection 9 11 0.4 t 3

@@ -164,6 +164,7 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 	})
 }
 
+/*
 func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimOptions {
 	healingModel := playerConfig.HealingModel
 	if healingModel == nil || healingModel.Hps != 0 {
@@ -183,3 +184,4 @@ func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimO
 		},
 	}
 }
+*/

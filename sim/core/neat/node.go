@@ -13,12 +13,15 @@ const (
 type Node struct {
 	Id   int
 	Kind NodeKind
+
+	Output float64
 }
 
 func NewNode(kind NodeKind, id int) *Node {
 	return &Node{
-		Id:   id,
-		Kind: kind,
+		Id:     id,
+		Kind:   kind,
+		Output: 0.0,
 	}
 }
 

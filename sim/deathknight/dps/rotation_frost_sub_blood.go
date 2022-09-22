@@ -32,6 +32,16 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime t
 	}
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_NEAT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	spell, waitTime := dk.fr.EvaluateGenome(sim, target)
+
+	if spell != nil {
+		spell.Cast(sim, target)
+	}
+
+	return waitTime
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
@@ -379,7 +389,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+		NewAction(dk.RotationActionCallback_NEAT)
 }
 
 func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {
