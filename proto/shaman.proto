@@ -2,6 +2,7 @@ syntax = "proto3";
 package proto;
 
 option go_package = "./proto";
+import "common.proto";
 
 message ShamanTalents {
 	// Elemental
@@ -256,21 +257,24 @@ message EnhancementShaman {
             EarthShock = 6;
             LavaLash = 7;
             LavaBurst = 8;
-            LightningShieldSpell = 9;
+            LightningShield = 9;
             FireNova = 10;
             ChainLightning = 11;
+			FrostShock = 12;
             //fire totems as well maybe?
         }
 
+		CustomRotation custom_rotation = 3;
+
         //weaving options
-        bool lavaburst_weave = 3;
-        bool lightningbolt_weave = 4;
-        int32 maelstromweapon_min_stack = 5;
-		double weave_reaction_time = 6;
+        bool lavaburst_weave = 4;
+        bool lightningbolt_weave = 5;
+        int32 maelstromweapon_min_stack = 6;
+		double weave_reaction_time = 7;
 
         //other general rotation config options
-        double firenova_mana_threshold = 7;
-        double shamanistic_rage_mana_threshold = 8;
+        double firenova_mana_threshold = 8;
+        double shamanistic_rage_mana_threshold = 9;
 
 		enum PrimaryShock {
 			None = 0;
@@ -278,8 +282,8 @@ message EnhancementShaman {
 			Frost = 2;
     	}
 
-		bool weave_flame_shock = 9;
-		PrimaryShock primary_shock = 10;
+		bool weave_flame_shock = 10;
+		PrimaryShock primary_shock = 11;
 
     }
 
