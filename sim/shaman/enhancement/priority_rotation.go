@@ -11,7 +11,8 @@ import (
 const (
 	LightningBolt = iota
 	StormstrikeApplyDebuff
-	WeaveMaelstrom
+	WeaveLavaBurst
+	WeaveLightningBolt
 	Stormstrike
 	FlameShock
 	EarthShock
@@ -40,13 +41,13 @@ type Spell struct {
 }
 
 func NewPriorityRotation(enh *EnhancementShaman, options *proto.EnhancementShaman_Rotation) *PriorityRotation {
-	rotation := PriorityRotation{
+	rotation := &PriorityRotation{
 		options: options,
 	}
 
 	rotation.buildPriorityRotation(enh)
 
-	return &rotation
+	return rotation
 }
 
 func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) {
@@ -88,21 +89,26 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
-	weaveMaelstrom := Spell{
+	weaveLightningBolt := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
-			if rotation.options.LavaburstWeave && enh.LavaBurst.IsReady(sim) && enh.CastLavaBurstWeave(sim, reactionTime) {
-				return true
-			}
+			return rotation.options.LightningboltWeave && enh.CastLightningBoltWeave(sim, reactionTime)
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
 
-			if rotation.options.LightningboltWeave && enh.CastLightningBoltWeave(sim, reactionTime) {
-				return true
-			}
-
-			return false
+	weaveLavaBurst := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
+			return rotation.options.LavaburstWeave && enh.LavaBurst.IsReady(sim) && enh.CastLavaBurstWeave(sim, reactionTime)
 		},
 		readyAt: func() time.Duration {
 			return 0
@@ -207,13 +213,16 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		spellPriority[LightningShield] = lightningShield
 		spellPriority[FireNova] = fireNova
 		spellPriority[LavaLash] = lavaLash
-		spellPriority[WeaveMaelstrom] = weaveMaelstrom
+		spellPriority[WeaveLightningBolt] = weaveLightningBolt
 		spellPriority[FrostShock] = frostShock
+		spellPriority[WeaveLavaBurst] = weaveLavaBurst
 	}
 
 	//Custom Priority Rotation
-	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
+	if rotation.options.CustomRotation != nil && rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
 		spellPriority = make([]Spell, 0, len(rotation.options.CustomRotation.Spells))
+
+		// Turn weaving off, will enable them if they have been added.
 		rotation.options.LightningboltWeave = false
 		rotation.options.LavaburstWeave = false
 		for _, customSpellProto := range rotation.options.CustomRotation.Spells {
@@ -224,7 +233,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 				spellPriority = append(spellPriority, instantLightningBolt)
 			case int32(proto.EnhancementShaman_Rotation_LightningBoltWeave):
 				rotation.options.LightningboltWeave = true
-				spellPriority = append(spellPriority, weaveMaelstrom)
+				spellPriority = append(spellPriority, weaveLightningBolt)
 			case int32(proto.EnhancementShaman_Rotation_Stormstrike):
 				spellPriority = append(spellPriority, stormstrike)
 			case int32(proto.EnhancementShaman_Rotation_FlameShock):
@@ -241,7 +250,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 				spellPriority = append(spellPriority, frostShock)
 			case int32(proto.EnhancementShaman_Rotation_LavaBurst):
 				rotation.options.LavaburstWeave = true
-				spellPriority = append(spellPriority, frostShock)
+				spellPriority = append(spellPriority, weaveLavaBurst)
 			}
 		}
 	}
