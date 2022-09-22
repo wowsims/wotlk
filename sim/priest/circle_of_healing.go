@@ -16,15 +16,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	baseCost := .21 * priest.BaseMana
 
 	baseEffect := core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)) *
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.1, 1),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealing(958, 1058, 0.4029),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
@@ -38,9 +30,9 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	}
 
 	priest.CircleOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48089},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48089},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -54,6 +46,12 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.DivineProvidence)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.1, 1),
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

@@ -24,16 +24,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	var curTarget *core.Unit
 	var remainingJumps int
 	priest.ProcPrayerOfMending = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)) *
-			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 
@@ -67,9 +58,9 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	})
 
 	priest.PrayerOfMending = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -85,6 +76,13 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 				Duration: time.Duration(float64(time.Second*10) * (1 - .06*float64(priest.Talents.DivineProvidence))),
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.DivineProvidence)) *
+			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if curTarget != nil {

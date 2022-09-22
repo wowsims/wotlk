@@ -60,8 +60,8 @@ func (shaman *Shaman) ApplyTalents() {
 
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.CanParry = true
-		shaman.AutoAttacks.MHEffect.ThreatMultiplier *= 0.7
-		shaman.AutoAttacks.OHEffect.ThreatMultiplier *= 0.7
+		shaman.AutoAttacks.MHConfig.ThreatMultiplier *= 0.7
+		shaman.AutoAttacks.OHConfig.ThreatMultiplier *= 0.7
 	}
 
 	shaman.applyElementalFocus()
@@ -144,7 +144,7 @@ func (shaman *Shaman) applyElementalDevastation() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -325,7 +325,7 @@ func (shaman *Shaman) applyFlurry() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -337,7 +337,7 @@ func (shaman *Shaman) applyFlurry() {
 			}
 
 			// Remove a stack.
-			if procAura.IsActive() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
+			if procAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				procAura.RemoveStack(sim)
 			}
@@ -405,10 +405,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "Maelstrom Weapon") {
+			if !ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {
 				return
 			}
 			procAura.Activate(sim)

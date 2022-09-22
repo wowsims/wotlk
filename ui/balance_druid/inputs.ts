@@ -15,19 +15,19 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 // These don't need to be in a separate file but it keeps things cleaner.
 
 export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecBalanceDruid>({
-    fieldName: 'innervateTarget',
-    id: ActionId.fromSpellId(29166),
-    extraCssClasses: [
-        'within-raid-sim-hide',
-    ],
-    getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.targetIndex != NO_TARGET,
-    setValue: (eventID: EventID, player: Player<Spec.SpecBalanceDruid>, newValue: boolean) => {
-        const newOptions = player.getSpecOptions();
-        newOptions.innervateTarget = RaidTarget.create({
-            targetIndex: newValue ? 0 : NO_TARGET,
-        });
-        player.setSpecOptions(eventID, newOptions);
-    },
+	fieldName: 'innervateTarget',
+	id: ActionId.fromSpellId(29166),
+	extraCssClasses: [
+		'within-raid-sim-hide',
+	],
+	getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.targetIndex != NO_TARGET,
+	setValue: (eventID: EventID, player: Player<Spec.SpecBalanceDruid>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		newOptions.innervateTarget = RaidTarget.create({
+			targetIndex: newValue ? 0 : NO_TARGET,
+		});
+		player.setSpecOptions(eventID, newOptions);
+	},
 });
 
 export const BalanceDruidRotationConfig = {
@@ -59,13 +59,16 @@ export const BalanceDruidRotationConfig = {
 			fieldName: 'mfInsideEclipseThreshold',
 			label: 'Moonfire inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useMf,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'isInsideEclipseThreshold',
 			label: 'Insect Swarm inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
-			enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().useIs,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useSmartCooldowns',
+			label: 'Smart Cooldowns usage',
+			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'mcdInsideLunarThreshold',

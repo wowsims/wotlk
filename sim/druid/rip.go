@@ -13,18 +13,17 @@ import (
 func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10.0, 0.0)
-	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
 
-	t7bonus := core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
-	glyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
-	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
-	ripBaseNumTicks := 6 + glyphBonus + t7bonus
+	ripBaseNumTicks := 6 +
+		core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
+		core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -37,19 +36,19 @@ func (druid *Druid) registerRipSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating:  core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+		DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BonusCritRating:  t9bonus,
-			OutcomeApplier:   druid.OutcomeFuncMeleeSpecialHit(),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.RipDot.NumberOfTicks = ripBaseNumTicks
 					druid.RipDot.Apply(sim)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-				} else if refundAmount > 0 {
-					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
+				} else if refundPercent > 0 {
+					druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
 				}
 			},
 		}),
@@ -58,20 +57,17 @@ func (druid *Druid) registerRipSpell() {
 	target := druid.CurrentTarget
 	druid.RipDot = core.NewDot(core.Dot{
 		Spell: druid.Rip,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: target.RegisterAura(druid.applyRendAndTear(core.Aura{
 			Label:    "Rip-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
-		}),
+		})),
 		NumberOfTicks: ripBaseNumTicks,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic: true,
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				comboPoints := float64(druid.ComboPoints())
-				attackPower := hitEffect.MeleeAttackPower(spell.Unit)
+				attackPower := spell.MeleeAttackPower()
 
 				bonusTickDamage := 0.0
 				if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows

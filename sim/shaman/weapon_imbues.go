@@ -23,25 +23,16 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 58804}
 
 	baseEffect := core.SpellEffect{
-		BonusAttackPower: apBonus,
-		ProcMask:         core.ProcMaskMelee,
-		DamageMultiplier: 1.0,
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),
+		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),
 	}
-
-	weaponDamageMultiplier := 1 + math.Round(float64(shaman.Talents.ElementalWeapons)*13.33)/100
-	baseEffect.DamageMultiplier *= weaponDamageMultiplier
 	if isMH {
+		bonusApDmg := shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 		actionID.Tag = 1
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true)
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, bonusApDmg, true)
 	} else {
+		bonusApDmg := shaman.AutoAttacks.OH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 		actionID.Tag = 2
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, true)
-
-		// For whatever reason, OH penalty does not apply to the bonus AP from WF OH
-		// hits. Implement this by doubling the AP bonus we provide.
-		baseEffect.BonusAttackPower += apBonus
+		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, bonusApDmg, true)
 	}
 
 	effects := []core.SpellEffect{
@@ -52,7 +43,11 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMelee,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		DamageMultiplier: 1 + math.Round(float64(shaman.Talents.ElementalWeapons)*13.33)/100,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultipleTargeted(effects),
 	})
@@ -87,11 +82,11 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			// ProcMask: 20
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			isMHHit := spellEffect.IsMH()
+			isMHHit := spell.IsMH()
 			if (!mh && isMHHit) || (!oh && !isMHHit) {
 				return // cant proc if not enchanted
 			}
@@ -114,11 +109,7 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -134,9 +125,13 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 58790},
-		SpellSchool:  core.SpellSchoolFire,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:         core.ActionID{SpellID: 58790},
+		SpellSchool:      core.SpellSchoolFire,
+		ProcMask:         core.ProcMaskEmpty,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
 
@@ -171,11 +166,11 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			isMHHit := spellEffect.IsMH()
+			isMHHit := spell.IsMH()
 			if (isMHHit && !mh) || (!isMHHit && !oh) {
 				return // cant proc if not enchanted
 			}
@@ -195,11 +190,7 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	if isMH {
@@ -215,9 +206,13 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 58789},
-		SpellSchool:  core.SpellSchoolFire,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ActionID:         core.ActionID{SpellID: 58789},
+		SpellSchool:      core.SpellSchoolFire,
+		ProcMask:         core.ProcMaskEmpty,
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
 
@@ -252,11 +247,11 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			isMHHit := spellEffect.IsMH()
+			isMHHit := spell.IsMH()
 			if (isMHHit && !mh) || (!isMHHit && !oh) {
 				return // cant proc if not enchanted
 			}
@@ -297,14 +292,13 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},
 		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskEmpty,
+
+		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
-			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
 			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}),
@@ -328,15 +322,15 @@ func (shaman *Shaman) ApplyFrostbrandImbue(mh bool, oh bool) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 
-			if !ppmm.Proc(sim, spellEffect.ProcMask, "Frostbrand Weapon") {
+			if !ppmm.Proc(sim, spell.ProcMask, "Frostbrand Weapon") {
 				return
 			}
 
-			if spellEffect.IsMH() {
+			if spell.IsMH() {
 				mhSpell.Cast(sim, spellEffect.Target)
 			} else {
 				ohSpell.Cast(sim, spellEffect.Target)

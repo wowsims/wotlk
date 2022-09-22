@@ -11,7 +11,10 @@ import (
 // Consider adding moonkin shapeshift spell / form tracking to balance rotation instead
 // Then we can properly incur Rebirth cost through additional Moonkin form spell cast
 func (druid *Druid) registerRebirthSpell() {
-	baseCost := 1611 + (521.4 * (1 - (float64(druid.Talents.NaturalShapeshifter) * 0.1)))
+	baseCost := druid.BaseMana * 0.68
+	if druid.InForm(Moonkin) {
+		baseCost += ((druid.BaseMana * 0.13) * (1 - (float64(druid.Talents.NaturalShapeshifter) * 0.1)))
+	}
 
 	druid.Rebirth = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48477},

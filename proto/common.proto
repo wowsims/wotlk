@@ -472,7 +472,6 @@ message IndividualBuffs {
 	bool blessing_of_sanctuary = 4;
 	bool vigilance = 5;
 	bool renewed_hope = 6;
-
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
 
@@ -495,6 +494,7 @@ message IndividualBuffs {
 	bool judgements_of_the_wise = 16;
 	bool improved_soul_leech = 17;
 	bool enduring_winter = 18;
+	bool focus_magic = 22;
 }
 
 message Consumes {
@@ -801,6 +801,10 @@ message HealingModel {
 
 	// How often healing is applied.
 	double cadence_seconds = 2;
+
+	
+	
+	double inspiration_uptime = 3;
 }
 
 message CustomRotation {

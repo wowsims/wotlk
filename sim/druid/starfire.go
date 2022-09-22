@@ -1,8 +1,9 @@
 package druid
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -12,6 +13,13 @@ import (
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
 const ShootingStar int32 = 40321
+
+func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
+}
 
 func (druid *Druid) registerStarfireSpell() {
 
@@ -26,20 +34,9 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoefficient, 0)
 	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 
-	bonusCritRating := druid.TalentsBonuses.naturesMajestyBonusCrit +
-		core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
-		core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0) // T7-4P
-
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
-		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
-
-		BonusCritRating: bonusCritRating,
-
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
+		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -63,17 +60,12 @@ func (druid *Druid) registerStarfireSpell() {
 				}
 			}
 		},
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if druid.FaerieFireAura.IsActive() {
-				spellEffect.BonusCritRating = bonusCritRating + (core.CritRatingPerCritChance * float64(druid.Talents.ImprovedFaerieFire))
-			}
-		},
 	}
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolArcane,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -87,13 +79,22 @@ func (druid *Druid) registerStarfireSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
-				druid.ApplySwiftStarfireBonus(sim, cast)
+				druid.applySwiftStarfireBonus(sim, cast)
 				if druid.HasActiveAura("Elune's Wrath") {
 					cast.CastTime = 0
 					druid.GetAura("Elune's Wrath").Deactivate(sim)
 				}
 			},
 		},
+
+		BonusCritRating: 0 +
+			druid.TalentsBonuses.naturesMajestyBonusCrit +
+			core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
+			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
+			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

@@ -12,11 +12,9 @@ import (
 const (
 	StormfuryTotem           = 31031
 	TotemOfAncestralGuidance = 32330
-	TotemOfImpact            = 27947
 	TotemOfStorms            = 23199
 	TotemOfThePulsingEarth   = 29389
 	TotemOfTheVoid           = 28248
-	TotemOfRage              = 22395
 	TotemOfHex               = 40267
 	VentureCoLightningRod    = 38361
 	ThunderfallTotem         = 45255
@@ -41,6 +39,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 	spell := core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagElectric | SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -52,6 +51,13 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 				GCD:      core.GCDDefault,
 			},
 		},
+
+		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+		BonusCritRating: 0 +
+			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
+			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 	}
 
 	if isLightningOverload {
@@ -60,6 +66,8 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		spell.Cast.DefaultCast.CastTime = 0
 		spell.Cast.DefaultCast.GCD = 0
 		spell.Cast.DefaultCast.Cost = 0
+		spell.DamageMultiplier *= 0.5
+		spell.ThreatMultiplier = 0
 	} else if shaman.Talents.LightningMastery > 0 {
 		// Convection applies against the base cost of the spell.
 		spell.Cast.DefaultCast.Cost -= baseCost * float64(shaman.Talents.Convection) * 0.02
@@ -71,8 +79,8 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 // Helper for precomputing spell effects.
 func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamage float64, spellCoefficient float64, isLightningOverload bool) core.SpellEffect {
-
-	bonusDamage := 0 + core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
+	bonusDamage := 0 +
+		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0) +
 		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfHex, 165, 0)
@@ -82,21 +90,8 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 	spellCoefficient += float64(shaman.Talents.Shamanism) * 0.04
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
-		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-		BonusCritRating: 0 +
-			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
-			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
-		BonusSpellPower:  0,
-		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
-		OutcomeApplier:   shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
-	}
-
-	if isLightningOverload {
-		effect.DamageMultiplier *= 0.5
-		effect.ThreatMultiplier = 0
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}
 
 	return effect

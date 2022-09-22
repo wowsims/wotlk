@@ -3,7 +3,7 @@ import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID } from '../core/typed_event.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -40,6 +40,20 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 	label: 'Latency',
 	labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions that cannot be spell queued.',
 });
+
+export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
+	fieldName: 'prepopOoc',
+	label: 'Pre-pop Clearcasting',
+	labelTooltip: 'Start fight with clearcasting active',
+	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
+	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
+	fieldName: 'assumeBleedActive',
+	label: 'Assume Bleed Always Active',
+	labelTooltip: 'Assume bleed always exists for "Rend and Tear" calculations. Otherwise will only calculate based on own rip/rake/lacerate.',
+})
 
 export const FeralDruidRotationConfig = {
 	inputs: [

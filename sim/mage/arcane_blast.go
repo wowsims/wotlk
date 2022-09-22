@@ -30,10 +30,10 @@ func (mage *Mage) registerArcaneBlastSpell() {
 	totalDiscount := 1 - .01*float64(mage.Talents.ArcaneFocus+mage.Talents.Precision)
 
 	mage.ArcaneBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolArcane,
-		Flags:       SpellFlagMage | BarrageSpells,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage | BarrageSpells,
 		ResourceType: stats.Mana,
 		BaseCost:     ArcaneBlastBaseManaCost,
 
@@ -60,16 +60,14 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			},
 		},
 
+		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
+		BonusCritRating: 0 +
+			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
+		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
-			BonusCritRating: 0 +
-				float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
-
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)) * (1 + .02*float64(mage.Talents.SpellImpact)),
-			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
-
 			BaseDamage:     core.BaseDamageConfigMagic(1185, 1377, (2.5/3.5)+.03*float64(mage.Talents.ArcaneEmpowerment)),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, mage.bonusCritDamage)),
 		}),

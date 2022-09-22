@@ -15,16 +15,10 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
 
-	// T7-2P
-	dreamwalkerGrab := core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0)
-
-	// Glyph of Insect Swarm
-	glyphMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 1.3, 1.0)
-
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -35,11 +29,14 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			},
 		},
 
+		DamageMultiplier: 1 *
+			druid.TalentsBonuses.genesisMultiplier *
+			core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0) *
+			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 1.3, 1.0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   druid.OutcomeFuncMagicHit(),
+			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.InsectSwarmDot.Apply(sim)
@@ -66,12 +63,9 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		NumberOfTicks: 6 + druid.TalentsBonuses.naturesSplendorTick,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 * druid.TalentsBonuses.genesisMultiplier * dreamwalkerGrab * glyphMultiplier,
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(215, 0.2),
-			OutcomeApplier:   druid.OutcomeFuncTick(),
+			IsPeriodic:     true,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(215, 0.2),
+			OutcomeApplier: druid.OutcomeFuncTick(),
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.SetBonuses.balance_t8_4 {
 					tierProc := druid.GetOrRegisterAura(core.Aura{

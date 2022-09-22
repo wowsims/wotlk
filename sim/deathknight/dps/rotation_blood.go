@@ -8,11 +8,16 @@ import (
 )
 
 func (dk *DpsDeathknight) setupBloodRotations() {
+	dk.Inputs.FuStrike = deathknight.FuStrike_DeathStrike
+	if dk.Talents.Annihilation > 0 {
+		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
+	}
+
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_DS).
+		NewAction(dk.RotationActionCallback_FU).
 		NewAction(dk.RotationActionCallback_HS).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_DRW).
@@ -33,6 +38,11 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 		casted = dk.DancingRuneWeapon.Cast(sim, target)
 	}
 
+	fuStrike := dk.DeathStrike
+	if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
+		fuStrike = dk.Obliterate
+	}
+
 	if !casted {
 		if dk.blDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
 			if dk.shShouldSpreadDisease(sim) {
@@ -49,8 +59,8 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 			return sim.CurrentTime
 		}
 		if !casted {
-			if dk.blDiseaseCheck(sim, target, dk.DeathStrike, true, 1) {
-				casted = dk.DeathStrike.Cast(sim, target)
+			if dk.blDiseaseCheck(sim, target, fuStrike, true, 1) {
+				casted = fuStrike.Cast(sim, target)
 			} else {
 				dk.blRecastDiseasesSequence(sim)
 				return sim.CurrentTime
@@ -70,11 +80,27 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 }
 
 func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
-	dk.RotationSequence.Clear().
-		NewAction(dk.RotationActionBL_FF_ClipCheck).
-		NewAction(dk.RotationActionBL_IT_Custom).
-		NewAction(dk.RotationActionBL_BP_ClipCheck).
-		NewAction(dk.RotationActionBL_PS_Custom).
+	dk.RotationSequence.Clear()
+
+	// If we have glyph of Disease and both dots active try to refresh with pesti
+	didPesti := false
+	if dk.ur.hasGod {
+		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+			didPesti = true
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
+		}
+	}
+
+	// If we did not pesti queue normal dot refresh
+	if !didPesti {
+		dk.RotationSequence.
+			NewAction(dk.RotationActionBL_FF_ClipCheck).
+			NewAction(dk.RotationActionBL_IT_Custom).
+			NewAction(dk.RotationActionBL_BP_ClipCheck).
+			NewAction(dk.RotationActionBL_PS_Custom)
+	}
+
+	dk.RotationSequence.
 		NewAction(dk.RotationAction_ResetToBloodMain)
 }
 
@@ -83,6 +109,19 @@ func (dk *DpsDeathknight) RotationAction_ResetToBloodMain(sim *core.Simulation, 
 		NewAction(dk.RotationActionCallback_BloodRotation)
 
 	return sim.CurrentTime
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FU(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := false
+	if dk.Inputs.FuStrike == deathknight.FuStrike_DeathStrike {
+		casted = dk.DeathStrike.Cast(sim, target)
+	} else if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
+		casted = dk.Obliterate.Cast(sim, target)
+	}
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
 }
 
 // Custom PS callback for tracking recasts for pestilence disease sync

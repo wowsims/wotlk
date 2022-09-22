@@ -13,7 +13,6 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 	baseCost := 0.23 * priest.BaseMana
 	coeff := 0.8057 + 0.08*float64(priest.Talents.BorrowedTime)
 
-	// TODO: Account for attacker/target multipliers
 	multiplier := 1 *
 		(1 + .05*float64(priest.Talents.ImprovedPowerWordShield) + .01*float64(priest.Talents.TwinDisciplines)) *
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.05, 1)
@@ -31,13 +30,13 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		glyphHeal = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: 42408},
 			SpellSchool: core.SpellSchoolHoly,
+			ProcMask:    core.ProcMaskSpellHealing,
+
+			DamageMultiplier: 0.2 * multiplier,
+			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
-				ProcMask:  core.ProcMaskSpellHealing,
-
-				DamageMultiplier: 0.2 * multiplier,
-				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(2230, coeff),
 				OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
@@ -50,9 +49,9 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		core.TernaryDuration(priest.HasSetBonus(ItemSetGladiatorsRaiment, 4), time.Second*2, 0)
 
 	priest.PowerWordShield = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -65,6 +64,9 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			},
 			CD: cd,
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			weakenedSoul := priest.WeakenedSouls[target.UnitIndex]

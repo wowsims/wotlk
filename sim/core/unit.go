@@ -8,6 +8,7 @@ import (
 )
 
 type UnitType int
+type SpellRegisteredHandler func(spell *Spell)
 
 const (
 	PlayerUnit UnitType = iota
@@ -24,7 +25,7 @@ const (
 	RunicPower
 )
 
-type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
+type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
@@ -95,7 +96,8 @@ type Unit struct {
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
-	Spellbook []*Spell
+	Spellbook                 []*Spell
+	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
 	Pets []PetAgent
@@ -228,12 +230,6 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
 	}
-	if bonus[stats.Armor] != 0 {
-		unit.updateArmor()
-	}
-	if bonus[stats.ArmorPenetration] != 0 {
-		unit.updateArmorPen()
-	}
 	if bonus[stats.SpellPenetration] != 0 {
 		unit.updateSpellPen()
 	}
@@ -283,20 +279,6 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	}
 }
 
-func (unit *Unit) updateArmor() {
-	for _, table := range unit.DefenseTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
-func (unit *Unit) updateArmorPen() {
-	for _, table := range unit.AttackTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
 func (unit *Unit) updateResistances() {
 	for _, table := range unit.DefenseTables {
 		if table != nil {
@@ -388,6 +370,21 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
+func (unit *Unit) AddBonusRangedHitRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusHitRating += amount
+		}
+	})
+}
+func (unit *Unit) AddBonusRangedCritRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusCritRating += amount
+		}
+	})
+}
+
 func (unit *Unit) SetCurrentPowerBar(bar PowerBarType) {
 	unit.currentPowerBar = bar
 }
@@ -421,6 +418,8 @@ func (unit *Unit) finalize() {
 	unit.initialStats = unit.ApplyStatDependencies(unit.initialStatsWithoutDeps)
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
+
+	unit.AutoAttacks.finalize()
 
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
@@ -466,9 +465,9 @@ func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim.CurrentTime)
+	unit.doneIterationGCD(sim)
 
-	unit.doneIterationMana()
+	unit.manaBar.doneIteration()
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)

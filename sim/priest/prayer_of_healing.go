@@ -14,14 +14,6 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 	baseEffect := core.SpellEffect{
 		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
-		BonusCritRating: 0 +
-			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
@@ -31,9 +23,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 	var applyPartyEffects []core.ApplySpellEffects
 
 	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48072},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48072},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -46,6 +38,13 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 				CastTime: time.Second * 3,
 			},
 		},
+
+		BonusCritRating: 0 +
+			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.DivineProvidence)),
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
@@ -90,10 +89,14 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 	spell := priest.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{ItemID: 42409},
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+
+		DamageMultiplier: priest.PrayerOfHealing.DamageMultiplier * 0.2 / 2,
+		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 	})
 
 	return core.NewDot(core.Dot{
-		Spell: priest.PrayerOfHealing,
+		Spell: spell,
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "PoH Glyph" + strconv.Itoa(int(priest.Index)),
 			ActionID: spell.ActionID,
@@ -101,12 +104,8 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicHealing,
 			IsPeriodic: true,
 			IsHealing:  true,
-
-			DamageMultiplier: pohEffect.DamageMultiplier * 0.2 / 2,
-			ThreatMultiplier: pohEffect.ThreatMultiplier,
 
 			BaseDamage:     pohEffect.BaseDamage,
 			OutcomeApplier: priest.OutcomeFuncTick(),

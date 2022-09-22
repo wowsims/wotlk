@@ -4,63 +4,56 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// Modifies damage based on Armor or Magic resistances, depending on the damage type.
 func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, attackTable *AttackTable) {
-	if spell.Flags.Matches(SpellFlagIgnoreResists) {
-		return
-	}
-
 	if spellEffect.IsHealing {
 		return
 	}
 
+	resistanceMult := spell.ResistanceMultiplier(sim, spellEffect.IsPeriodic, attackTable)
+	spellEffect.Damage *= resistanceMult
+}
+
+// Modifies damage based on Armor or Magic resistances, depending on the damage type.
+func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable) float64 {
+	if spell.Flags.Matches(SpellFlagIgnoreResists) {
+		return 1
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		// All physical dots (Bleeds) ignore armor.
-		if spellEffect.IsPeriodic && !spell.Flags.Matches(SpellFlagApplyArmorReduction) {
-			return
+		if isPeriodic && !spell.Flags.Matches(SpellFlagApplyArmorReduction) {
+			return 1
 		}
 
 		// Physical resistance (armor).
-		damageModifier := attackTable.GetArmorDamageModifier(spellEffect)
-		spellEffect.Damage *= damageModifier
+		return attackTable.GetArmorDamageModifier(spell)
 	} else if !spell.Flags.Matches(SpellFlagBinary) {
 		// Magical resistance.
-
-		resistanceRoll := sim.RandomFloat("Partial Resist")
-
 		threshold00, threshold25, threshold50 := attackTable.GetPartialResistThresholds(spell.SpellSchool)
+		resistanceRoll := sim.RandomFloat("Partial Resist")
 		//if sim.Log != nil {
 		//	sim.Log("Resist thresholds: %0.04f, %0.04f, %0.04f", threshold00, threshold25, threshold50)
 		//}
 
 		if resistanceRoll > threshold00 {
-			// No partial resist.
+			return 1
 		} else if resistanceRoll > threshold25 {
-			spellEffect.Outcome |= OutcomePartial1_4
-			spellEffect.Damage *= 0.75
+			return 0.75
 		} else if resistanceRoll > threshold50 {
-			spellEffect.Outcome |= OutcomePartial2_4
-			spellEffect.Damage *= 0.5
+			return 0.5
 		} else {
-			spellEffect.Outcome |= OutcomePartial3_4
-			spellEffect.Damage *= 0.25
+			return 0.25
 		}
+	} else {
+		return 1
 	}
 }
 
-// ArmorDamageReduction currently assumes a level 80 attacker
-func (at *AttackTable) UpdateArmorDamageReduction() {
+func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	defenderArmor := at.Defender.Armor()
 	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
-	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(at.Attacker.stats[stats.ArmorPenetration])
-	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
-	at.ArmorDamageModifier = 1 - effectiveArmor/(effectiveArmor+armorConstant)
-}
 
-func (at *AttackTable) GetArmorDamageModifier(spellEffect *SpellEffect) float64 {
-	defenderArmor := at.Defender.Armor()
-	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
-	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spellEffect.BonusArmorPenRating
+	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spell.BonusArmorPenRating
 	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(armorPenRating)
 	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
 	return 1 - effectiveArmor/(effectiveArmor+armorConstant)

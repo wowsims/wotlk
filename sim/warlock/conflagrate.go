@@ -11,28 +11,14 @@ import (
 
 func (warlock *Warlock) registerConflagrateSpell() {
 	baseCost := 0.16 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
-	}
 	spellCoefficient := 0.2
 
 	actionID := core.ActionID{SpellID: 17962}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	baseAdditiveMultiplierDot := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 	target := warlock.CurrentTarget
+	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskSpellDamage,
-
-		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
-			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
-			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
-		DamageMultiplier: baseAdditiveMultiplier,
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-
 		BaseDamage:      core.BaseDamageConfigMagicNoRoll(0.6*785/5.*float64(warlock.ImmolateDot.NumberOfTicks), 0.6*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
 		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		OnSpellHitDealt: applyDotOnLanded(&warlock.ConflagrateDot),
@@ -41,12 +27,13 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * costReductionFactor,
+				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -57,18 +44,33 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				if !warlock.ImmolateDot.IsActive() {
 					panic("Conflagrate spell is cast while Immolate is not active.")
 				}
-				if !warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate) {
+				if !hasGlyphOfConflag {
 					warlock.ImmolateDot.Deactivate(sim)
 					//warlock.ShadowflameDot.Deactivate(sim)
 				}
 			},
 		},
 
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
+			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 
 	warlock.ConflagrateDot = core.NewDot(core.Dot{
-		Spell: warlock.Conflagrate,
+		Spell: warlock.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
+
+			BonusCritRating:          warlock.Conflagrate.BonusCritRating,
+			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+			ThreatMultiplier:         warlock.Conflagrate.ThreatMultiplier,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
@@ -76,14 +78,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
-			IsPeriodic: true,
-
-			DamageMultiplier: baseAdditiveMultiplierDot,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
-
+			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(0.4/3*785/5*float64(warlock.ImmolateDot.NumberOfTicks), 0.4/3*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
-			OutcomeApplier: warlock.OutcomeFuncTick(),
+			OutcomeApplier: warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 		}),
 	})
 }

@@ -17,22 +17,22 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			ActionID: core.ActionID{SpellID: 53220},
 			Duration: time.Second * 12,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AimedShot.DamageMultiplier += .15
+				hunter.AimedShot.DamageMultiplierAdditive += .15
 				hunter.AimedShot.CostMultiplier -= 0.2
-				hunter.ArcaneShot.DamageMultiplier += .15
+				hunter.ArcaneShot.DamageMultiplierAdditive += .15
 				hunter.ArcaneShot.CostMultiplier -= 0.2
 				if hunter.ChimeraShot != nil {
-					hunter.ChimeraShot.DamageMultiplier += .15
+					hunter.ChimeraShot.DamageMultiplierAdditive += .15
 					hunter.ChimeraShot.CostMultiplier -= 0.2
 				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AimedShot.DamageMultiplier -= .15
+				hunter.AimedShot.DamageMultiplierAdditive -= .15
 				hunter.AimedShot.CostMultiplier += 0.2
-				hunter.ArcaneShot.DamageMultiplier -= .15
+				hunter.ArcaneShot.DamageMultiplierAdditive -= .15
 				hunter.ArcaneShot.CostMultiplier += 0.2
 				if hunter.ChimeraShot != nil {
-					hunter.ChimeraShot.DamageMultiplier -= .15
+					hunter.ChimeraShot.DamageMultiplierAdditive -= .15
 					hunter.ChimeraShot.CostMultiplier += 0.2
 				}
 			},
@@ -45,10 +45,10 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 	}
 
 	hunter.SteadyShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49052},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 49052},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -66,19 +66,19 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
+		BonusCritRating: 0 +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
+		DamageMultiplierAdditive: 1 +
+			.03*float64(hunter.Talents.FerociousInspiration) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), .1, 0),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
-			BonusHitRating: hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit() +
-				2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
-			DamageMultiplier: 1 *
-				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.1 +
+					return 0.1*spell.RangedAttackPower(hitEffect.Target) +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
 						hunter.NormalizedAmmoDamageBonus +
 						252
@@ -93,10 +93,6 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				}
 			},
 		}),
-
-		InitialDamageMultiplier: 1 +
-			.03*float64(hunter.Talents.FerociousInspiration) +
-			core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), .1, 0),
 	})
 }
 

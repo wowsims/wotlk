@@ -16,10 +16,10 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	cost := 35.0
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: 57993, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -41,18 +41,18 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					target := hitEffect.Target
 					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
 					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
-					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
+					return baseDamage*doses + apRatio*doses*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 0,
 			},

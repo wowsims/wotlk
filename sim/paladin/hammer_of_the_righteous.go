@@ -10,19 +10,10 @@ import (
 func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 	baseCost := paladin.BaseMana * 0.06
 
-	baseModifiers := Multiplicative{}
-	baseMultiplier := baseModifiers.Get()
-
 	baseEffectMH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
-		BonusCritRating:  1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				damage := spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(hitEffect.MeleeAttackPower(spell.Unit))
+				damage := spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())
 				speed := spell.Unit.AutoAttacks.MH.SwingSpeed
 				return (damage / speed) * 4
 			},
@@ -39,10 +30,10 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 	}
 
 	paladin.HammerOfTheRighteous = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53595},
-		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 53595},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -57,6 +48,11 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+
+		// TODO: Why is this here?
+		BonusCritRating:  1,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

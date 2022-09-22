@@ -9,6 +9,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+type Rotation_FuStrike int32
+
+const (
+	FuStrike_DeathStrike   Rotation_FuStrike = 0
+	FuStrike_ScourgeStrike Rotation_FuStrike = 1
+	FuStrike_Obliterate    Rotation_FuStrike = 2
+)
+
 type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
@@ -27,6 +35,7 @@ type DeathknightInputs struct {
 	UseAMS              bool
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
+	FuStrike            Rotation_FuStrike
 }
 
 type DeathknightCoeffs struct {
@@ -385,36 +394,8 @@ func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
 	return dk.FrostFeverDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].IsActive()
 }
 
-func (dk *Deathknight) secondaryCritModifier(applyGuile bool, applyMoM bool) float64 {
-	secondaryModifier := 0.0
-	if applyGuile {
-		secondaryModifier += 0.15 * float64(dk.Talents.GuileOfGorefiend)
-	}
-	if applyMoM {
-		secondaryModifier += 0.15 * float64(dk.Talents.MightOfMograine)
-	}
-	return secondaryModifier
-}
-
-// TODO: DKs have x2 modifier on spell crit as a passive. Is this the best way to do it?
-func (dk *Deathknight) spellCritMultiplier() float64 {
-	return dk.MeleeCritMultiplier(1.0, 0)
-}
-
-func (dk *Deathknight) spellCritMultiplierGoGandMoM() float64 {
-	applyGuile := dk.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := dk.Talents.MightOfMograine > 0
-	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
-}
-
-func (dk *Deathknight) critMultiplier() float64 {
-	return dk.MeleeCritMultiplier(1.0, 0)
-}
-
-func (dk *Deathknight) critMultiplierGoGandMoM() float64 {
-	applyGuile := dk.Talents.GuileOfGorefiend > 0
-	applyMightOfMograine := dk.Talents.MightOfMograine > 0
-	return dk.MeleeCritMultiplier(1.0, dk.secondaryCritModifier(applyGuile, applyMightOfMograine))
+func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {
+	return dk.MeleeCritMultiplier(1, 0.15*float64(bonusTalentPoints))
 }
 
 func (dk *Deathknight) KM() bool {

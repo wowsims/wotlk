@@ -25,7 +25,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
-	rogue.AutoAttacks.OHEffect.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+	rogue.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
 
 	if rogue.Talents.Deadliness > 0 {
 		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
@@ -245,9 +245,17 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
 			hackAndSlashMask |= core.ProcMaskMeleeMH
 		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+				}
+			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+				}
+			})
 		}
 	}
 	if ohWeapon != nil && ohWeapon.ID != 0 {
@@ -255,9 +263,17 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
 			hackAndSlashMask |= core.ProcMaskMeleeOH
 		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+				}
+			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+				}
+			})
 		}
 	}
 
@@ -285,7 +301,7 @@ func (rogue *Rogue) applyCombatPotency() {
 			}
 
 			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				return
 			}
 
@@ -318,11 +334,11 @@ func (rogue *Rogue) applyFocusedAttacks() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
 				return
 			}
 			// Fan of Knives OH hits do not trigger focused attacks
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
 			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
@@ -343,15 +359,14 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    BladeFlurryActionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		// No proc mask, so it won't proc itself.
+		ProcMask: core.ProcMaskEmpty,
+		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-			// No proc mask, so it won't proc itself.
-			ProcMask: core.ProcMaskEmpty,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					return curDmg
@@ -381,16 +396,16 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			if sim.GetNumTargets() < 2 {
 				return
 			}
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 			// Fan of Knives off-hand hits are not cloned
-			if spell.IsSpellAction(FanOfKnivesSpellID) && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if spell.IsSpellAction(FanOfKnivesSpellID) && spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 				return
 			}
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].ArmorDamageModifier
+			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].GetArmorDamageModifier(spell)
 
 			bfHit.Cast(sim, rogue.Env.NextTargetUnit(spellEffect.Target))
 			bfHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--

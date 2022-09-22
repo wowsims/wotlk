@@ -61,10 +61,12 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	WhirlwindOH          *core.Spell
 	DeepWounds           *core.Spell
 	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell
 	Bladestorm           *core.Spell
+	BladestormOH         *core.Spell
 
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
@@ -231,8 +233,8 @@ func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
 }
 
-func (warrior *Warrior) attackPowerMultiplier(hitEffect *core.SpellEffect, unit *core.Unit, coeff float64) float64 {
-	return hitEffect.MeleeAttackPower(unit) * coeff
+func (warrior *Warrior) attackPowerMultiplier(spell *core.Spell, coeff float64) float64 {
+	return spell.MeleeAttackPower() * coeff
 }
 
 func init() {

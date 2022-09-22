@@ -8,6 +8,7 @@ import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
+import { Player } from '../core/player.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
@@ -32,7 +33,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const BeastMasteryTalents = {
 	name: 'Beast Mastery',
 	data: SavedTalents.create({
-		talentsString: '51200201505112243120531251-00530513',
+		talentsString: '51200201515012233110531351-005305-5',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfBestialWrath,
 			major2: MajorGlyph.GlyphOfSteadyShot,
@@ -47,11 +48,11 @@ export const BeastMasteryTalents = {
 export const MarksmanTalents = {
 	name: 'Marksman',
 	data: SavedTalents.create({
-		talentsString: '502-035305101230013233135031351-5000002',
+		talentsString: '502-035335131030013233035031051-5000002',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfSerpentSting,
 			major2: MajorGlyph.GlyphOfSteadyShot,
-			major3: MajorGlyph.GlyphOfKillShot,
+			major3: MajorGlyph.GlyphOfChimeraShot,
 			minor1: MinorGlyph.GlyphOfFeignDeath,
 			minor2: MinorGlyph.GlyphOfRevivePet,
 			minor3: MinorGlyph.GlyphOfMendPet,
@@ -62,7 +63,7 @@ export const MarksmanTalents = {
 export const SurvivalTalents = {
 	name: 'Survival',
 	data: SavedTalents.create({
-		talentsString: '-025305101-5000032500033330522135301311',
+		talentsString: '-015305101-5000032500033330532135301311',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfSerpentSting,
 			major2: MajorGlyph.GlyphOfExplosiveShot,
@@ -120,59 +121,56 @@ export const DefaultConsumes = Consumes.create({
 	petFood: PetFood.PetFoodSpicedMammothTreats,
 });
 
-export const PRERAID_PRESET = {
-	name: 'Preraid Preset',
+export const MM_PRERAID_PRESET = {
+	name: 'MM Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	//enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42551,
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40044
-			]
-		},
-		{
-			"id": 42645,
-			"gems": [
 				42143
 			]
 		},
 		{
-			"id": 37679,
-			"enchant": 44871,
-			"gems": [
-				42143
-			]
+			"id": 40678
+		},
+		{
+			"id": 37373,
+			"enchant": 44871
 		},
 		{
 			"id": 43566,
 			"enchant": 55002
 		},
 		{
-			"id": 37144,
+			"id": 39579,
 			"enchant": 44489,
 			"gems": [
-				40088
+				39997,
+				49110
 			]
 		},
 		{
 			"id": 37170,
-			"enchant": 60616,
+			"enchant": 44484,
 			"gems": [
 				0
 			]
 		},
 		{
-			"id": 37886,
+			"id": 39582,
 			"enchant": 54999,
 			"gems": [
+				40014,
 				0
 			]
 		},
 		{
 			"id": 37407,
+			"enchant": 54793,
 			"gems": [
 				42143
 			]
@@ -185,7 +183,196 @@ export const PRERAID_PRESET = {
 			"id": 37167,
 			"enchant": 55016,
 			"gems": [
+				42143,
+				39997
+			]
+		},
+		{
+			"id": 37685
+		},
+		{
+			"id": 42642,
+			"gems": [
+				40044
+			]
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 44249,
+			"enchant": 44483
+		},
+		{},
+		{
+			"id": 37191,
+			"enchant": 41167
+		}
+	]}`),
+};
+
+export const MM_P1_PRESET = {
+	name: 'MM P1 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40543,
+			"enchant": 44879,
+			"gems": [
+				41398,
+				42143
+			]
+		},
+		{
+			"id": 44664,
+			"gems": [
+				42143
+			]
+		},
+		{
+			"id": 40507,
+			"enchant": 44871,
+			"gems": [
+				39997
+			]
+		},
+		{
+			"id": 40403,
+			"enchant": 55002
+		},
+		{
+			"id": 43998,
+			"enchant": 44489,
+			"gems": [
+				42143,
+				39997
+			]
+		},
+		{
+			"id": 40282,
+			"enchant": 44484,
+			"gems": [
 				39997,
+				0
+			]
+		},
+		{
+			"id": 40541,
+			"enchant": 54999,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40275,
+			"enchant": 54793,
+			"gems": [
+				39997
+			]
+		},
+		{
+			"id": 40506,
+			"enchant": 38374,
+			"gems": [
+				39997,
+				49110
+			]
+		},
+		{
+			"id": 40549,
+			"enchant": 55016
+		},
+		{
+			"id": 40074
+		},
+		{
+			"id": 40474
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 40388,
+			"enchant": 44483
+		},
+		{},
+		{
+			"id": 40385,
+			"enchant": 41167
+		}
+	]}`),
+};
+
+export const SV_PRERAID_PRESET = {
+	name: 'SV Preraid Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 1,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 42551,
+			"enchant": 44879,
+			"gems": [
+				41398,
+				42143
+			]
+		},
+		{
+			"id": 40678
+		},
+		{
+			"id": 37373,
+			"enchant": 44871
+		},
+		{
+			"id": 43406,
+			"enchant": 55002
+		},
+		{
+			"id": 39579,
+			"enchant": 44489,
+			"gems": [
+				39997,
+				49110
+			]
+		},
+		{
+			"id": 37170,
+			"enchant": 44484,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39582,
+			"enchant": 54999,
+			"gems": [
+				39997,
+				0
+			]
+		},
+		{
+			"id": 37407,
+			"enchant": 54793,
+			"gems": [
+				42143
+			]
+		},
+		{
+			"id": 37669,
+			"enchant": 38374
+		},
+		{
+			"id": 37167,
+			"enchant": 55016,
+			"gems": [
+				42143,
 				39997
 			]
 		},
@@ -210,23 +397,23 @@ export const PRERAID_PRESET = {
 		},
 		{},
 		{
-			"id": 43284,
+			"id": 37191,
 			"enchant": 41167
 		}
 	]}`),
 };
 
-export const P1_PRESET = {
-	name: 'P1 Preset',
+export const SV_P1_PRESET = {
+	name: 'SV P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	//enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40505,
 			"enchant": 44879,
 			"gems": [
 				41398,
-				40088
+				42143
 			]
 		},
 		{
@@ -239,7 +426,7 @@ export const P1_PRESET = {
 			"id": 40507,
 			"enchant": 44871,
 			"gems": [
-				42143
+				39997
 			]
 		},
 		{
@@ -256,7 +443,7 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40282,
-			"enchant": 60616,
+			"enchant": 44484,
 			"gems": [
 				39997,
 				0
@@ -271,6 +458,7 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 39762,
+			"enchant": 54793,
 			"gems": [
 				39997
 			]
@@ -280,7 +468,7 @@ export const P1_PRESET = {
 			"enchant": 38374,
 			"gems": [
 				39997,
-				39997
+				49110
 			]
 		},
 		{
@@ -294,7 +482,7 @@ export const P1_PRESET = {
 			"id": 40474
 		},
 		{
-			"id": 40431
+			"id": 40684
 		},
 		{
 			"id": 44253

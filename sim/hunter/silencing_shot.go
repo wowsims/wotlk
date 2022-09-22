@@ -14,10 +14,10 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.SilencingShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 34490},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 34490},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -32,14 +32,11 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskRangedSpecial,
-			BonusHitRating:  hunter.bonusRangedHit(),
-			BonusCritRating: hunter.bonusRangedCrit(),
-			DamageMultiplier: 0.5 *
-				hunter.markedForDeathMultiplier(),
-			ThreatMultiplier: 1,
+		DamageMultiplier: 0.5 *
+			hunter.markedForDeathMultiplier(),
+		ThreatMultiplier: 1,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(hunter.AmmoDamageBonus),
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
 

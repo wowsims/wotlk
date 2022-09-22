@@ -24,7 +24,7 @@ var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
@@ -125,7 +125,7 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 						return
 					}
 					if sim.RandomFloat("lightsworn 2pc") > 0.4 {
@@ -419,10 +419,28 @@ func init() {
 
 	core.NewItemEffect(32368, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Tome of the Lightbringer Proc", core.ActionID{SpellID: 41042}, stats.Stats{stats.BlockValue: 186}, time.Second*5)
+		procAura := paladin.NewTemporaryStatsAura("Tome of the Lightbringer Proc", core.ActionID{SpellID: 41042}, stats.Stats{stats.BlockValue: 186}, time.Second*10)
 
 		paladin.RegisterAura(core.Aura{
 			Label:    "Tome of the Lightbringer",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(40707, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram of Obstruction Proc", core.ActionID{SpellID: 60794}, stats.Stats{stats.BlockValue: 352}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram of Obstruction",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
@@ -469,7 +487,10 @@ func init() {
 		actionID := core.ActionID{ItemID: 32489}
 
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
+			ActionID:         actionID,
+			ProcMask:         core.ProcMaskEmpty,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 		})
 
 		target := paladin.CurrentTarget
@@ -482,10 +503,6 @@ func init() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 2,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-
 				BaseDamage:     core.BaseDamageConfigFlat(480 / 4),
 				OutcomeApplier: paladin.OutcomeFuncTick(),
 				IsPeriodic:     true,

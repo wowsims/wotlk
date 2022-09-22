@@ -28,9 +28,11 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				warrior.Slam,
 				warrior.ThunderClap,
 				warrior.Whirlwind,
+				warrior.WhirlwindOH,
 				warrior.Shockwave,
 				warrior.ConcussionBlow,
 				warrior.Bladestorm,
+				warrior.BladestormOH,
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -50,7 +52,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
 				return
 			}
 			aura.RemoveStack(sim)

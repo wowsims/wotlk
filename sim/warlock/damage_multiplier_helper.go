@@ -62,11 +62,11 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 		additiveDamageMultiplier += 0.02 * float64(warlock.Talents.ImprovedCorruption)
 	}
 
-	if actionID == actionID_Immolate || actionID == actionID_Conflagrate {
+	if actionID.SameActionIgnoreTag(actionID_Immolate) || actionID.SameActionIgnoreTag(actionID_Conflagrate) {
 		additiveDamageMultiplier += 0.1 * float64(warlock.Talents.ImprovedImmolate)
 	}
 
-	if (actionID == actionID_Immolate && IsPeriodic) || actionID == actionID_Conflagrate {
+	if (actionID.SameActionIgnoreTag(actionID_Immolate) && IsPeriodic) || actionID.SameActionIgnoreTag(actionID_Conflagrate) {
 		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.Aftermath)
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate) {
 			additiveDamageMultiplier += 0.1
@@ -81,7 +81,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if warlock.HasSetBonus(ItemSetDeathbringerGarb, 2) {
-		if actionID == actionID_Immolate {
+		if actionID.SameActionIgnoreTag(actionID_Immolate) {
 			additiveDamageMultiplier += 0.1
 		}
 		if actionID == actionID_UnstableAffliction {
@@ -90,7 +90,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 	}
 
 	if warlock.HasSetBonus(ItemSetGuldansRegalia, 4) {
-		if actionID == actionID_Immolate || actionID == actionID_Corruption || actionID == actionID_UnstableAffliction {
+		if actionID.SameActionIgnoreTag(actionID_Immolate) || actionID == actionID_Corruption || actionID == actionID_UnstableAffliction {
 			additiveDamageMultiplier += 0.1
 		}
 	}

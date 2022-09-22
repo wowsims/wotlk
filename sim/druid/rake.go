@@ -12,17 +12,16 @@ func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
 
 	cost := 40.0 - float64(druid.Talents.Ferocity)
-	refundAmount := cost * 0.8
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
 	t9bonus := core.TernaryInt(druid.HasT9FeralSetBonus(2), 1, 0)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -35,14 +34,13 @@ func (druid *Druid) registerRakeSpell() {
 			IgnoreHaste: true,
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-			ThreatMultiplier: 1,
+		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
+		ThreatMultiplier: 1,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 176 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := 176 + 0.01*spell.MeleeAttackPower()
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -58,27 +56,24 @@ func (druid *Druid) registerRakeSpell() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.RakeDot.Apply(sim)
 				} else {
-					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
+					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
 			},
 		}),
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(core.Aura{
+	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:    "Rake-" + strconv.Itoa(int(druid.Index)),
 		ActionID: actionID,
 		Duration: time.Second * 9,
-	})
+	}))
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
 		NumberOfTicks: 3 + t9bonus,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),
 				TargetSpellCoefficient: 0,

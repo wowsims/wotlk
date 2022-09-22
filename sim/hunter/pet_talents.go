@@ -18,7 +18,7 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.15*float64(talents.CobraReflexes)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SpikedCollar)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
-	hp.AutoAttacks.MHEffect.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
+	hp.AutoAttacks.MHConfig.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
 	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
 	hp.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
@@ -72,7 +72,7 @@ func (hp *HunterPet) applyOwlsFocus() {
 			hp.PseudoStats.NoCost = false
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskSpecial) {
+			if spell.ProcMask.Matches(core.ProcMaskSpecial) {
 				aura.Deactivate(sim)
 			}
 		},
@@ -85,7 +85,7 @@ func (hp *HunterPet) applyOwlsFocus() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskSpecial) && sim.RandomFloat("Owls Focus") < procChance {
+			if spell.ProcMask.Matches(core.ProcMaskSpecial) && sim.RandomFloat("Owls Focus") < procChance {
 				procAura.Activate(sim)
 			}
 		},
@@ -225,7 +225,7 @@ func (hp *HunterPet) registerRabidCD() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 			if sim.RandomFloat("Rabid") > procChance {

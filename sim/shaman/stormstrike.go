@@ -43,9 +43,7 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 
 func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		DamageMultiplier: core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
-		ThreatMultiplier: 1,
-		OutcomeApplier:   shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
+		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialCritOnly(shaman.DefaultMeleeCritMultiplier()),
 	}
 
 	var flatDamageBonus float64 = 0
@@ -53,18 +51,23 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 		flatDamageBonus += 155
 	}
 
+	var procMask core.ProcMask
 	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
+		procMask = core.ProcMaskMeleeMHSpecial
 		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true)
 	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
+		procMask = core.ProcMaskMeleeOHSpecial
 		effect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, true)
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    StormstrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		DamageMultiplier: core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -96,10 +99,10 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	cooldownTime := time.Duration(core.TernaryFloat64(shaman.HasSetBonus(ItemSetGladiatorsEarthshaker, 4), 6, 8))
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    StormstrikeActionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     StormstrikeActionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -115,10 +118,9 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			ThreatMultiplier: 1,
+		ThreatMultiplier: 1,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

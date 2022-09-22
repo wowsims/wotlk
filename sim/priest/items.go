@@ -155,7 +155,11 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 			spell := priest.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 70770},
 				SpellSchool: core.SpellSchoolHoly,
+				ProcMask:    core.ProcMaskEmpty,
 				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 			})
 
 			hots := make([]*core.Dot, len(priest.Env.AllUnits))
@@ -171,12 +175,8 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 						NumberOfTicks: 3,
 						TickLength:    time.Second * 3,
 						TickEffects: core.TickFuncSnapshot(unit, core.SpellEffect{
-							ProcMask:   core.ProcMaskPeriodicHealing,
 							IsPeriodic: true,
 							IsHealing:  true,
-
-							DamageMultiplier: 1,
-							ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 							BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 								return curAmount * 0.33

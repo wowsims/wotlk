@@ -11,14 +11,7 @@ func (priest *Priest) registerBindingHealSpell() {
 	baseCost := .27 * priest.BaseMana
 
 	baseEffect := core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + .02*float64(priest.Talents.DivineProvidence)),
-		ThreatMultiplier: 0.5 * (1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve]),
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealing(1959, 2516, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 	}
@@ -35,9 +28,9 @@ func (priest *Priest) registerBindingHealSpell() {
 	}
 
 	priest.BindingHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48120},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48120},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -49,6 +42,11 @@ func (priest *Priest) registerBindingHealSpell() {
 				CastTime: time.Millisecond * 1500,
 			},
 		},
+
+		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.DivineProvidence)),
+		ThreatMultiplier: 0.5 * (1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve]),
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

@@ -451,28 +451,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Sequence_Pesti(si
 	bpActive := dk.BloodPlagueDisease[target.Index].IsActive()
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
-	km := dk.KM()
-	rime := dk.Rime()
-	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
-		if dk.FrostStrike.CanCast(sim) && km {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && km && rime {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && rime {
-			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim) {
-			casted = dk.HornOfWinter.Cast(sim, target)
-		} else {
-			waitUntil = -1
-		}
-
-		return core.TernaryDuration(casted, -1, waitUntil)
+	if dk.RotationActionCallback_LastSecondsCast(sim, target) {
+		return -1
 	}
 
 	if !ffActive || !bpActive {

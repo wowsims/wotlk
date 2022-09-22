@@ -76,10 +76,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			// dk.RuneWeapon.PseudoStats.ShadowDamageDealtMultiplier = dk.PseudoStats.ShadowDamageDealtMultiplier
 			// dk.RuneWeapon.PseudoStats.FrostDamageDealtMultiplier = dk.PseudoStats.FrostDamageDealtMultiplier
 
-			// dk.RuneWeapon.PseudoStats.BonusMHArmorPenRating = dk.PseudoStats.BonusMHArmorPenRating
-			// dk.RuneWeapon.PseudoStats.BonusMHCritRating = dk.PseudoStats.BonusMHCritRating
-			// dk.RuneWeapon.PseudoStats.BonusMHExpertiseRating = dk.PseudoStats.BonusMHExpertiseRating
-
 			dancingRuneWeaponAura.Activate(sim)
 		},
 	}, func(sim *core.Simulation) bool {
@@ -87,8 +83,8 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 	}, nil)
 }
 
-func (runeWeapon *RuneWeaponPet) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return hitEffect.MeleeAttackPower(unit)
+func (runeWeapon *RuneWeaponPet) getImpurityBonus(spell *core.Spell) float64 {
+	return spell.MeleeAttackPower()
 }
 
 type RuneWeaponPet struct {

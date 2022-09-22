@@ -54,6 +54,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 	shadowfiend.Shadowcrawl = shadowfiend.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolMagic,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoLogs,
 
 		Cast: core.CastConfig{
@@ -63,7 +64,6 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 		},
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				shadowfiend.ShadowcrawlAura.Activate(sim)

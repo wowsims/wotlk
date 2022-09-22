@@ -14,6 +14,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 	warrior.Bloodthirst = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 23881},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -31,22 +32,14 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			},
 		},
 
+		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 0.05, 0),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 0.05, 0),
-			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
-			ThreatMultiplier: 1,
-			DynamicThreatMultiplier: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				if warrior.StanceMatches(DefensiveStance) {
-					return 1 + 0.21*float64(warrior.Talents.TacticalMastery)
-				}
-				return 1.0
-			},
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.attackPowerMultiplier(hitEffect, spell.Unit, 0.5)
+					return 0.5 * spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 1,
 			},

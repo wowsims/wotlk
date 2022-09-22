@@ -27,6 +27,7 @@ export const ProtectionPaladinRotationPriorityConfig = InputHelpers.makeCustomRo
 		{ actionId: ActionId.fromSpellId(61411), value: SpellOption.ShieldOfRighteousness },
 		{ actionId: ActionId.fromSpellId(48827), value: SpellOption.AvengersShield },
 		{ actionId: ActionId.fromSpellId(53595), value: SpellOption.HammerOfTheRighteous },
+		{ actionId: ActionId.fromSpellId(48952), value: SpellOption.HolyShield },
 	],
 });
 
@@ -34,10 +35,15 @@ export const ProtectionPaladinRotationPriorityConfig = InputHelpers.makeCustomRo
 // These don't need to be in a separate file but it keeps things cleaner.
 export const ProtectionPaladinRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationNumberInput<Spec.SpecProtectionPaladin>({
-			fieldName: 'prioritizeHolyShield',
-			label: 'Prio Holy Shield',
-			labelTooltip: 'Uses Holy Shield as the highest priority spell. This is usually done when tanking a boss that can crush.',
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
+			fieldName: 'hammerFirst',
+			label: 'Open with HotR',
+			labelTooltip: 'Open with Hammer of the Righteous instead of Shield of Righteousness. Recommended for AoE.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
+			fieldName: 'useCustomPrio',
+			label: 'Use custom priority',
+			labelTooltip: 'Deviates from the standard 96969 rotation, using the priority configured below. Will still attempt to keep a filler GCD between Hammer and Shield.',
 		}),
 		ProtectionPaladinRotationPriorityConfig
 	],

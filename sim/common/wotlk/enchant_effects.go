@@ -24,11 +24,12 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44622},
 			SpellSchool: core.SpellSchoolPhysical,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			ProcMask:    core.ProcMaskEmpty,
 
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(237),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -41,7 +42,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -49,7 +50,7 @@ func init() {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Giant Slayer") {
+				if ppmm.Proc(sim, spell.ProcMask, "Giant Slayer") {
 					procSpell.Cast(sim, spellEffect.Target)
 				}
 			},
@@ -69,11 +70,12 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44525},
 			SpellSchool: core.SpellSchoolFire,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			ProcMask:    core.ProcMaskEmpty,
 
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(185, 215),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -86,11 +88,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Icebreaker") {
+				if ppmm.Proc(sim, spell.ProcMask, "Icebreaker") {
 					procSpell.Cast(sim, spellEffect.Target)
 				}
 			},
@@ -103,6 +105,10 @@ func init() {
 		character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
 	})
 
+	core.NewItemEffect(41167, func(agent core.Agent) {
+		agent.GetCharacter().AddBonusRangedCritRating(40)
+	})
+
 	core.NewItemEffect(42500, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 42500}
@@ -110,13 +116,13 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagBinary,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(45, 67),
 				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
 			}),
@@ -148,9 +154,18 @@ func init() {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
+
+	// Apply for Wisdom to Cloak (itemid) but NOT for Enchant Gloves Precision (spellid)
 	core.NewItemEffect(44488, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		character.PseudoStats.ThreatMultiplier *= 0.98
+		if character.Equip[proto.ItemSlot_ItemSlotBack].Enchant.ID == 44488 {
+			if character.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 44488 {
+				// If someone has both of these enchants for some reason, this will get called twice.
+				character.PseudoStats.ThreatMultiplier *= 0.98995
+			} else {
+				character.PseudoStats.ThreatMultiplier *= 0.98
+			}
+		}
 	})
 
 	core.NewItemEffect(44492, func(agent core.Agent) {
@@ -174,12 +189,12 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Berserking") {
-					if spellEffect.IsMH() {
+				if ppmm.Proc(sim, spell.ProcMask, "Berserking") {
+					if spell.IsMH() {
 						procAuraMH.Activate(sim)
 					} else {
 						procAuraOH.Activate(sim)
@@ -209,11 +224,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Lifeward") {
+				if ppmm.Proc(sim, spell.ProcMask, "Lifeward") {
 					character.GainHealth(sim, 300, healthMetrics)
 				}
 			},
@@ -236,7 +251,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 
@@ -261,6 +276,7 @@ func init() {
 		spell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagNoOnCastComplete,
 
 			Cast: core.CastConfig{
@@ -274,11 +290,10 @@ func init() {
 				},
 			},
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(1654, 2020),
 				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -339,13 +354,12 @@ func init() {
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 50401},
 			SpellSchool: core.SpellSchoolFrost,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask: core.ProcMaskEmpty,
-
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 						return dmg
@@ -389,27 +403,27 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}
 
 				vulnAura.Activate(sim)
-				isMH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH)
+				isMH := spell.ProcMask.Matches(core.ProcMaskMeleeMH)
 				if isMH {
 					mhRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
 				}
 
-				isOH := spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH)
+				isOH := spell.ProcMask.Matches(core.ProcMaskMeleeOH)
 				if isOH {
 					ohRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
@@ -466,20 +480,20 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of the fallen crusader") {
+				if ppmm.Proc(sim, spell.ProcMask, "rune of the fallen crusader") {
 					rfcAura.Activate(sim)
 				}
 			},
@@ -581,7 +595,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 

@@ -26,10 +26,10 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	// bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.CritRatingPerCritChance
 
 	mage.ArcaneMissiles = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolArcane,
-		Flags:       SpellFlagMage | core.SpellFlagChanneled,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -51,12 +51,12 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 		},
 
+		BonusHitRating:   float64(mage.Talents.ArcaneFocus+FrostTalents.Precision) * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  bonusCrit,
+		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
+		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
-			BonusHitRating: float64(mage.Talents.ArcaneFocus+FrostTalents.Precision) * core.SpellHitRatingPerHitChance,
-
-			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
-
 			OutcomeApplier: mage.OutcomeFuncMagicHit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -100,13 +100,6 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		AffectedByCastSpeed: true,
 
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskSpellDamage,
-			BonusHitRating:  float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
-			BonusCritRating: bonusCrit,
-
-			DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
-			ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
-
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(362, 1/3.5+0.03*float64(mage.Talents.ArcaneEmpowerment)),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, bonusCritDamage)),
 		})),

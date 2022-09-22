@@ -13,7 +13,7 @@ import {
 	ProtectionWarrior_Rotation_DemoShoutChoice as DemoShoutChoice,
 	ProtectionWarrior_Rotation_ThunderClapChoice as ThunderClapChoice,
 	ProtectionWarrior_Options as ProtectionWarriorOptions,
-  ProtectionWarrior_Rotation_SpellOption as SpellOption,
+	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 } from '../core/proto/warrior.js';
@@ -57,7 +57,7 @@ export const UATalents = {
 };
 
 export const DefaultRotation = ProtectionWarriorRotation.create({
-  customRotation: CustomRotation.create({
+	customRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: SpellOption.ShieldSlam }),
 			CustomSpell.create({ spell: SpellOption.Revenge }),
@@ -86,13 +86,13 @@ export const DefaultOptions = ProtectionWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-  battleElixir: BattleElixir.ElixirOfExpertise,
-  guardianElixir: GuardianElixir.ElixirOfProtection,
+	battleElixir: BattleElixir.ElixirOfExpertise,
+	guardianElixir: GuardianElixir.ElixirOfProtection,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
-  prepopPotion: Potions.IndestructiblePotion,
-  thermalSapper: true,
-  fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	prepopPotion: Potions.IndestructiblePotion,
+	thermalSapper: true,
+	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const P1_BALANCED_PRESET = {

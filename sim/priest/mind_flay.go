@@ -22,10 +22,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		BonusHitRating:   float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance + 3*core.SpellHitRatingPerHitChance, //not sure if misery is applying to this bonus spell hit so adding it here
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		OutcomeApplier:   priest.OutcomeFuncMagicHitBinary(),
+		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -44,6 +41,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -66,6 +64,12 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 				}
 			},
 		},
+
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }
@@ -74,12 +78,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		IsPeriodic:       true,
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating:  float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		IsPeriodic: true,
 
 		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

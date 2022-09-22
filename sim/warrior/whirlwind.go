@@ -9,52 +9,55 @@ import (
 )
 
 func (warrior *Warrior) registerWhirlwindSpell() {
+	actionID := core.ActionID{SpellID: 1680}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
-	cd := core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfWhirlwind), time.Second*8, time.Second*10)
+	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 
-	dm := 1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)
+	var ohDamageEffects core.ApplySpellEffects
+	if warrior.AutoAttacks.IsDualWielding {
+		baseEffectOH := core.SpellEffect{
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(false, true, 0, true),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
+		}
+
+		effects := make([]core.SpellEffect, 0, numHits)
+		for i := int32(0); i < numHits; i++ {
+			effect := baseEffectOH
+			effect.Target = warrior.Env.GetTargetUnit(i)
+			effects = append(effects, effect)
+		}
+		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
+
+		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskMeleeOHSpecial,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+
+			DamageMultiplier: 1 *
+				(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)) *
+				(1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)),
+			ThreatMultiplier: 1.25,
+		})
+	}
 
 	baseEffectMH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: dm,
-		ThreatMultiplier: 1.25,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(true, true, 0, true),
 		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 	}
-	baseEffectOH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeOHSpecial,
 
-		DamageMultiplier: dm * (1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)),
-		ThreatMultiplier: 1.25,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
-	}
-
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
-	numTotalHits := numHits
-	if warrior.AutoAttacks.IsDualWielding {
-		numTotalHits *= 2
-	}
-
-	effects := make([]core.SpellEffect, 0, numTotalHits)
+	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
-		mhEffect := baseEffectMH
-		mhEffect.Target = warrior.Env.GetTargetUnit(i)
-		effects = append(effects, mhEffect)
-
-		if warrior.AutoAttacks.IsDualWielding {
-			ohEffect := baseEffectOH
-			ohEffect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, ohEffect)
-		}
+		effect := baseEffectMH
+		effect.Target = warrior.Env.GetTargetUnit(i)
+		effects = append(effects, effect)
 	}
+	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Whirlwind = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -68,11 +71,20 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cd,
+				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfWhirlwind), time.Second*8, time.Second*10),
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		DamageMultiplier: 1 *
+			(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
+		ThreatMultiplier: 1.25,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mhDamageEffects(sim, target, spell)
+			if warrior.WhirlwindOH != nil {
+				ohDamageEffects(sim, target, warrior.WhirlwindOH)
+			}
+		},
 	})
 }
 

@@ -335,7 +335,7 @@ func init() {
 
 				shouldConsume := false
 				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID.SameAction(consumeSpell) {
+					if spell.ActionID.SameActionIgnoreTag(consumeSpell) {
 						shouldConsume = true
 						break
 					}
@@ -355,20 +355,20 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of cinderglacier") {
+				if ppmm.Proc(sim, spell.ProcMask, "rune of cinderglacier") {
 					cinderProcAura.Activate(sim)
 				}
 			},

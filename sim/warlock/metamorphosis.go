@@ -73,14 +73,11 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		// TODO: obey the AoE cap
 		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
 			effectsFunc := core.ApplyEffectFuncAOEDamage(warlock.Env, core.SpellEffect{
+				BaseDamage:     core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
+				OutcomeApplier: warlock.OutcomeFuncMagicHit(),
 				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
-				// adding core.ProcMaskPeriodicDamage should be correct?
-				ProcMask:         core.ProcMaskSpellDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
-				OutcomeApplier:   warlock.OutcomeFuncMagicHit(),
-				IsPeriodic:       false,
+				// adding IsPeriodic should be correct?
+				IsPeriodic:     false,
 			})
 
 			return func() {
@@ -90,8 +87,9 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	})
 
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		ActionID:    actionID,
+		SpellSchool: spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -103,6 +101,10 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 				Duration: time.Second * time.Duration(30),
 			},
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDot(warlock.ImmolationAuraDot),
 	})
 	warlock.ImmolationAuraDot.Spell = warlock.ImmolationAura

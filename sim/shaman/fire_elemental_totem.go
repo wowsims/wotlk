@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -37,7 +38,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Minute * 10,
+				Duration: time.Minute * time.Duration(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireElementalTotem), 5, 10)),
 			},
 		},
 
@@ -56,7 +57,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.FireElementalTotem,
-		Priority: core.CooldownPriorityDrums + 1, // TODO needs to be altered due to snap shotting.
+		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
 		Type:     core.CooldownTypeDPS,
 	})
 }

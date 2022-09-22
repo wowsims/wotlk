@@ -311,11 +311,6 @@ type PseudoStats struct {
 	//  This includes almost all "(Normalized) Weapon Damage", but also some "School Damage (Physical)" abilities.
 	BonusDamage float64 // Comes from '+X Weapon Damage' effects
 
-	BonusMHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
-	BonusOHCritRating     float64 // Talents, e.g. Rogue Dagger specialization
-	BonusMHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
-	BonusOHArmorPenRating float64 // Talents, e.g. Rogue Mace specialization
-
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
 	DodgeReduction       float64 // Used by Warrior talent 'Weapon Mastery' and SWP boss auras.
@@ -323,16 +318,9 @@ type PseudoStats struct {
 	MobTypeAttackPower float64 // Bonus AP against mobs of the current type.
 	MobTypeSpellPower  float64 // Bonus SP against mobs of the current type.
 
-	// For Human and Orc weapon racials
-	BonusMHExpertiseRating float64
-	BonusOHExpertiseRating float64
+	ThreatMultiplier float64 // Modulates the threat generated. Affected by things like salv.
 
-	ThreatMultiplier          float64 // Modulates the threat generated. Affected by things like salv.
-	HolySpellThreatMultiplier float64 // Righteous Fury
-
-	DamageDealtMultiplier       float64 // All damage
-	RangedDamageDealtMultiplier float64
-
+	DamageDealtMultiplier         float64 // All damage
 	PhysicalDamageDealtMultiplier float64
 	ArcaneDamageDealtMultiplier   float64
 	FireDamageDealtMultiplier     float64
@@ -364,9 +352,7 @@ type PseudoStats struct {
 	BonusMeleeHitRatingTaken    float64 //
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
-	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
-	BonusHolyDamageTaken     float64 // Judgement of the Crusader
 
 	DamageTakenMultiplier float64 // All damage
 
@@ -398,17 +384,14 @@ func NewPseudoStats() PseudoStats {
 	return PseudoStats{
 		CostMultiplier: 1,
 
-		CastSpeedMultiplier:  1,
-		MeleeSpeedMultiplier: 1,
-		//RangedSpeedMultiplier: 1, // Leave at 0 so we can use this to ignore ranged stuff for non-hunters.
+		CastSpeedMultiplier:   1,
+		MeleeSpeedMultiplier:  1,
+		RangedSpeedMultiplier: 1,
 		SpiritRegenMultiplier: 1,
 
-		ThreatMultiplier:          1,
-		HolySpellThreatMultiplier: 1,
+		ThreatMultiplier: 1,
 
-		DamageDealtMultiplier:       1,
-		RangedDamageDealtMultiplier: 1,
-
+		DamageDealtMultiplier:         1,
 		PhysicalDamageDealtMultiplier: 1,
 		ArcaneDamageDealtMultiplier:   1,
 		FireDamageDealtMultiplier:     1,

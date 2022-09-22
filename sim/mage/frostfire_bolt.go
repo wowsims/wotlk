@@ -14,10 +14,11 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 	baseCost := .14 * mage.BaseMana
 
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | HotStreakSpells,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage | HotStreakSpells,
+		MissileSpeed: 25,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -29,24 +30,19 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			},
 		},
 
+		BonusCritRating: 0 +
+			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
+			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+		DamageMultiplier: mage.spellDamageMultiplier *
+			(1 + .02*float64(mage.Talents.PiercingIce)) *
+			(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
+			(1 + .04*float64(mage.Talents.TormentTheWeak)) *
+			(1 + .01*float64(mage.Talents.ChilledToTheBone)),
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
-			BonusHitRating: 0,
-
-			BonusCritRating: 0 +
-				core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
-				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
-				float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-				float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
-
-			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + .02*float64(mage.Talents.PiercingIce)) *
-				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
-				(1 + .04*float64(mage.Talents.TormentTheWeak)) *
-				(1 + .01*float64(mage.Talents.ChilledToTheBone)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
-
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
 
@@ -55,14 +51,21 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 					mage.FrostfireDot.Apply(sim)
 				}
 			},
-
-			MissileSpeed: 25,
 		}),
 	})
 
 	target := mage.CurrentTarget
 	mage.FrostfireDot = core.NewDot(core.Dot{
-		Spell: mage.FrostfireBolt,
+		Spell: mage.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
+			Flags:       SpellFlagMage | HotStreakSpells,
+
+			DamageMultiplier: mage.FrostfireBolt.DamageMultiplier /
+				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)),
+			ThreatMultiplier: mage.FrostfireBolt.ThreatMultiplier,
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "FrostfireBolt-" + strconv.Itoa(int(mage.Index)),
 			ActionID: actionID,
@@ -70,17 +73,6 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
-			DamageMultiplier: mage.spellDamageMultiplier *
-				(1 + 0.02*float64(
-					mage.Talents.FirePower+
-						mage.Talents.PiercingIce+
-						core.TernaryInt32(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 1, 0))) *
-				(1 + .04*float64(mage.Talents.TormentTheWeak)),
-
-			ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
-
 			BaseDamage:     core.BaseDamageConfigFlat(90 / 3),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,

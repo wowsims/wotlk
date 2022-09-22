@@ -19,7 +19,7 @@ func TestProtection(t *testing.T) {
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "P4", GearSet: Phase4Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 
 		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin", SpecOptions: DefaultOptions},
 
@@ -53,7 +53,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceBloodElf,
 				Class:     proto.Class_ClassPaladin,
-				Equipment: Phase4Gear,
+				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
 				Buffs:     FullIndividualBuffs,

@@ -14,6 +14,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 	fireElemental.FireBlast = fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 13339},
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,
 
@@ -31,12 +32,13 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
 			},
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(323, 459, 0.429), // TODO these are approximation, from base SP
-			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagic(323, 459, 0.429), // TODO these are approximation, from base SP
+			OutcomeApplier: fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
 
@@ -48,6 +50,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 	fireElemental.FireNova = fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 12470},
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,
 
@@ -67,13 +70,13 @@ func (fireElemental *FireElemental) registerFireNova() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		// TODO is this the right affect should it be Capped?
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(fireElemental.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(1, 150, 1.0071), // TODO these are approximation, from base SP
-			OutcomeApplier:   fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagic(1, 150, 1.0071), // TODO these are approximation, from base SP
+			OutcomeApplier: fireElemental.OutcomeFuncMagicHitAndCrit(fireElemental.DefaultSpellCritMultiplier()),
 		}),
 	})
 
@@ -86,11 +89,16 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 	spell := fireElemental.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: 0,
 			},
 		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 	})
 
 	target := fireElemental.CurrentTarget
@@ -106,10 +114,8 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 
 		// TODO is this the right affect should it be Capped?
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(fireElemental.Env, core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			DamageMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP
-			OutcomeApplier:   fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP
+			OutcomeApplier: fireElemental.OutcomeFuncMagicCrit(fireElemental.DefaultSpellCritMultiplier()),
 		})),
 	})
 

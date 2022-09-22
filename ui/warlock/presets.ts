@@ -1,7 +1,8 @@
-import { Consumes,
+import {
+	Consumes,
 	Flask,
 	Food,
-  PetFood,
+	PetFood,
 	Glyphs,
 	EquipmentSpec,
 	Potions,
@@ -9,7 +10,7 @@ import { Consumes,
 	IndividualBuffs,
 	Debuffs,
 	TristateEffect,
-  Spec,
+	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
@@ -21,7 +22,7 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
-  Warlock_Rotation_Type as RotationType,
+	Warlock_Rotation_Type as RotationType,
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
@@ -80,12 +81,12 @@ export const DestructionTalents = {
 };
 
 export const AfflictionRotation = WarlockRotation.create({
-		primarySpell: PrimarySpell.ShadowBolt,
-		secondaryDot: SecondaryDot.UnstableAffliction,
-		specSpell: SpecSpell.Haunt,
-		curse: Curse.Agony,
-		corruption: true,
-		detonateSeed: true,
+	primarySpell: PrimarySpell.ShadowBolt,
+	secondaryDot: SecondaryDot.UnstableAffliction,
+	specSpell: SpecSpell.Haunt,
+	curse: Curse.Agony,
+	corruption: true,
+	detonateSeed: true,
 });
 
 export const DemonologyRotation = WarlockRotation.create({
@@ -129,7 +130,7 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFishFeast,
 	petFood: PetFood.PetFoodSpicedMammothTreats,
 	defaultPotion: Potions.PotionOfWildMagic,
-	prepopPotion:  Potions.PotionOfWildMagic,
+	prepopPotion: Potions.PotionOfWildMagic,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -149,16 +150,16 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-  blessingOfKings: true,
-  blessingOfWisdom: TristateEffect.TristateEffectImproved,
-  blessingOfMight: TristateEffect.TristateEffectImproved,
-  vampiricTouch: true,
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	vampiricTouch: true,
 });
 
 export const DestroIndividualBuffs = IndividualBuffs.create({
-  blessingOfKings: true,
-  blessingOfWisdom: TristateEffect.TristateEffectImproved,
-  blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfKings: true,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
@@ -171,13 +172,13 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const DestroDebuffs = Debuffs.create({
-  sunderArmor: true,
-  faerieFire: TristateEffect.TristateEffectImproved,
-  bloodFrenzy: true,
-  ebonPlaguebringer: true,
-  heartOfTheCrusader: true,
-  judgementOfWisdom: true,
-  shadowMastery: true,
+	sunderArmor: true,
+	faerieFire: TristateEffect.TristateEffectImproved,
+	bloodFrenzy: true,
+	ebonPlaguebringer: true,
+	heartOfTheCrusader: true,
+	judgementOfWisdom: true,
+	shadowMastery: true,
 });
 
 export const OtherDefaults = {
@@ -296,7 +297,7 @@ export const SWP_BIS = {
 export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -404,10 +405,10 @@ export const P1_PreBiS_11 = {
   `),
 }
 export const P1_Preset_Demo_Destro = {
-  name: 'P1 Preset Demo / Destro',
-  tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-  gear: EquipmentSpec.fromJsonString(`
+	name: 'P1 Preset Demo / Destro',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
         {
@@ -508,7 +509,7 @@ export const P1_Preset_Demo_Destro = {
 export const P1_Preset_Affliction = {
 	name: 'P1 Affliction Preset',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
@@ -607,10 +608,10 @@ export const P1_Preset_Affliction = {
 
 
 export const P1_PreBiS_14 = {
-  name: 'Pre-Raid Preset',
-  tooltip: WarlockTooltips.BIS_TOOLTIP,
-  enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-  gear: EquipmentSpec.fromJsonString(`
+	name: 'Pre-Raid Preset',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
         {
@@ -718,8 +719,8 @@ export const P1_PreBiS_14 = {
 }
 
 export const Naked = {
-  name: 'The Naked Bolt',
-  gear: EquipmentSpec.fromJsonString(`
+	name: 'The Naked Bolt',
+	gear: EquipmentSpec.fromJsonString(`
     {"items":
       [
         {},
@@ -743,4 +744,4 @@ export const Naked = {
     }
   `),
 }
-  
+
