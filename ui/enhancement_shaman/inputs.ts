@@ -47,8 +47,8 @@ export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	values: [
 		{ color: 'grey', value: ShamanImbue.NoImbue },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
-		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon },
-		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank },
+		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
+		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},
 		{ actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
 	],
 });
@@ -58,8 +58,8 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	values: [
 		{ color: 'grey', value: ShamanImbue.NoImbue },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
-		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon },
-		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank },
+		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
+		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},
 		{ actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
 	],
 });
