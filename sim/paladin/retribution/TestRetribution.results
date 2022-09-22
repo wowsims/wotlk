@@ -57,6 +57,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-AegisPlate"
+ value: {
+  dps: 4568.45563
+  tps: 4667.13318
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-AshtongueTalismanofZeal-32489"
  value: {
   dps: 5354.67997
@@ -323,6 +330,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-Liadrin'sPlate"
+ value: {
+  dps: 4634.85432
+  tps: 4734.15394
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-LibramofFuriousBlows-37574"
  value: {
   dps: 5488.05766
@@ -358,6 +372,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-LibramoftheSacredShield-45145"
+ value: {
+  dps: 5459.19901
+  tps: 5565.82195
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-LightbringerBattlegear"
  value: {
   dps: 4073.42791
@@ -369,6 +390,13 @@ dps_results: {
  value: {
   dps: 6039.96041
   tps: 6143.36777
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LightswornPlate"
+ value: {
+  dps: 4774.45624
+  tps: 4873.20628
  }
 }
 dps_results: {
@@ -432,6 +460,13 @@ dps_results: {
  value: {
   dps: 4748.19641
   tps: 4853.11111
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-RedemptionPlate"
+ value: {
+  dps: 4406.73528
+  tps: 4505.58284
  }
 }
 dps_results: {
@@ -600,6 +635,13 @@ dps_results: {
  value: {
   dps: 5406.4201
   tps: 5507.72996
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Turalyon'sPlate"
+ value: {
+  dps: 4634.85432
+  tps: 4734.15394
  }
 }
 dps_results: {
