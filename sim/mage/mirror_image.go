@@ -128,9 +128,9 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 	baseCost := 90.0
 
 	mi.Frostbolt = mi.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59638},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 59638},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -146,7 +146,6 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
 			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
 		}),
@@ -157,9 +156,9 @@ func (mi *MirrorImage) registerFireblastSpell() {
 	baseCost := 120.0
 
 	mi.Fireblast = mi.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59637},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 59637},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -178,7 +177,6 @@ func (mi *MirrorImage) registerFireblastSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
 			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
 		}),

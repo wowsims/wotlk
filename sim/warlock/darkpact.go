@@ -17,6 +17,8 @@ func (warlock *Warlock) registerDarkPactSpell() {
 	warlock.DarkPact = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskEmpty,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
@@ -27,7 +29,6 @@ func (warlock *Warlock) registerDarkPactSpell() {
 		FlatThreatBonus:  80,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskEmpty,
 			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Glyph activates and applies SP before coef calculations are done

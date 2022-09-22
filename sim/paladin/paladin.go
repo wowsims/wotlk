@@ -205,6 +205,9 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
 	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
+	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
+
+
 	return paladin
 }
 

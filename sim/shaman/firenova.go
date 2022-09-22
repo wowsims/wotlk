@@ -16,10 +16,10 @@ func (shaman *Shaman) registerFireNovaSpell() {
 	fireNovaCooldown := 10 - fireNovaGlyphCDReduction - impFireNovaCDReduction
 
 	shaman.FireNova = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 61657},
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagFocusable,
-
+		ActionID:     core.ActionID{SpellID: 61657},
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,
 
@@ -42,8 +42,6 @@ func (shaman *Shaman) registerFireNovaSpell() {
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamage(shaman.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(893, 997, 0.2142), // FIXME: double check spell coefficients
 			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 		}),

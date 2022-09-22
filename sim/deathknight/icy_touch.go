@@ -26,8 +26,10 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     IcyTouchActionID,
 		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -43,12 +45,10 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		ThreatMultiplier: 7,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.1) *
+					return (roll + 0.1*dk.getImpurityBonus(spell)) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
@@ -85,18 +85,17 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 	dk.RuneWeapon.IcyTouch = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
 		ThreatMultiplier: 7,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return (roll + dk.RuneWeapon.getImpurityBonus(hitEffect, spell.Unit)*0.1)
+					return roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 				},
 				TargetSpellCoefficient: 1,
 			},

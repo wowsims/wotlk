@@ -24,9 +24,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	var curTarget *core.Unit
 	var remainingJumps int
 	priest.ProcPrayerOfMending = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
-
+		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
 
@@ -60,9 +58,9 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	})
 
 	priest.PrayerOfMending = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

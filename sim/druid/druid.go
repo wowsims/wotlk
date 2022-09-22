@@ -19,6 +19,7 @@ type Druid struct {
 	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
+	AssumeBleedActive bool
 
 	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
@@ -259,6 +260,8 @@ func (druid *Druid) Reset(sim *core.Simulation) {
 	druid.form = druid.StartingForm
 	druid.disabledMCDs = []*core.MajorCooldown{}
 	druid.RebirthUsed = false
+	druid.LunarICD.Timer.Reset()
+	druid.SolarICD.Timer.Reset()
 }
 
 func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto.DruidTalents) *Druid {

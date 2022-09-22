@@ -23,6 +23,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 			hackAndSlashSpell = rogue.GetOrRegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 13964},
 				SpellSchool: core.SpellSchoolPhysical,
+				ProcMask:    core.ProcMaskMeleeMHAuto,
 				Flags:       core.SpellFlagMeleeMetrics,
 
 				DamageMultiplier: rogue.AutoAttacks.MHConfig.DamageMultiplier,
@@ -38,7 +39,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 			if !spellEffect.Landed() {
 				return
 			}
-			if !spellEffect.ProcMask.Matches(mask) {
+			if !spell.ProcMask.Matches(mask) {
 				return
 			}
 			if !icd.IsReady(sim) {

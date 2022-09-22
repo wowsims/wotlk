@@ -27,14 +27,12 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		NumberOfTicks: 8 + core.TernaryInt(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
 		TickLength:    time.Second * 1,
 		TickEffects: core.TickFuncAOESnapshot(paladin.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskEmpty,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					// i = 113 + 0.04*HolP + 0.04*AP
 					return 113 +
-						.04*hitEffect.MeleeAttackPower(spell.Unit) +
-						.04*(hitEffect.SpellPower(spell.Unit, spell)+bonusSpellPower)
+						.04*spell.MeleeAttackPower() +
+						.04*(spell.SpellPower()+bonusSpellPower)
 				},
 			},
 			OutcomeApplier: paladin.OutcomeFuncMagicHit(),
@@ -43,9 +41,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 	})
 
 	paladin.Consecration = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

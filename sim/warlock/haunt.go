@@ -36,6 +36,7 @@ func (warlock *Warlock) registerHauntSpell() {
 	warlock.Haunt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 20,
 
 		ResourceType: stats.Mana,
@@ -59,8 +60,6 @@ func (warlock *Warlock) registerHauntSpell() {
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
 			OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0))),
 

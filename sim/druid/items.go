@@ -266,7 +266,7 @@ func init() {
 				}
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("Living Root of the Wildheart") > 0.03 {
@@ -559,6 +559,7 @@ func (druid *Druid) registerLasherweaveDot() {
 	dotSpell := druid.RegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 71023},
 		SpellSchool:      core.SpellSchoolNature,
+		ProcMask:         core.ProcMaskEmpty,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 	})
@@ -572,7 +573,6 @@ func (druid *Druid) registerLasherweaveDot() {
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {

@@ -11,16 +11,22 @@ import (
 func (druid *Druid) registerFerociousBiteSpell() {
 	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
-	refundAmount := baseCost * (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
 	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 25667, 14, 0)
 
 	var excessEnergy float64
+	var refundAmount float64 = 0.0
+
+	biteBaseBonusCrit := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
+	if druid.AssumeBleedActive {
+		biteBaseBonusCrit += (5 * float64(druid.Talents.RendAndTear)) * core.CritRatingPerCritChance
+	}
 
 	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -31,25 +37,29 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// Bite refunds based on base cost, which can change based on berserk
+				// It also won't spend 'excess' energy on miss
 				druid.ApplyClearcasting(sim, spell, cast)
-				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-cast.Cost, 30)
-				cast.Cost = baseCost + excessEnergy
+				currentCost := druid.CurrentFerociousBiteCost()
+				if refundPercent > 0.0 {
+					refundAmount = currentCost * refundPercent
+				}
+
+				excessEnergy = core.MinFloat(spell.Unit.CurrentEnergy()-currentCost, 30)
 			},
 		},
 
-		BonusCritRating: core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+		BonusCritRating: biteBaseBonusCrit,
 		DamageMultiplier: (1 + 0.03*float64(druid.Talents.FeralAggression)) *
 			core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					comboPoints := float64(druid.ComboPoints())
 
-					attackPower := hitEffect.MeleeAttackPower(spell.Unit)
+					attackPower := spell.MeleeAttackPower()
 					bonusDmg := excessEnergy * (9.4 + attackPower/410)
 					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
 					roll := sim.RandomFloat("Ferocious Bite") * 140.0
@@ -61,6 +71,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
+					druid.SpendEnergy(sim, excessEnergy, spell.ResourceMetrics)
 					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
 				} else if refundAmount > 0 {
 					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)

@@ -39,6 +39,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 	spell := core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagElectric | SpellFlagFocusable,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -89,7 +90,6 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 	spellCoefficient += float64(shaman.Talents.Shamanism) * 0.04
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
 		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
 	}

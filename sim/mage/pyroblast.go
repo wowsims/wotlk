@@ -15,9 +15,9 @@ func (mage *Mage) registerPyroblastSpell() {
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage,
 		MissileSpeed: 22,
-
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -48,8 +48,6 @@ func (mage *Mage) registerPyroblastSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage: core.BaseDamageConfigMagic(1210, 1531, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
 			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((1210+1531)/2, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
 			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
@@ -67,6 +65,7 @@ func (mage *Mage) registerPyroblastSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage,
 
 			DamageMultiplier: mage.Pyroblast.DamageMultiplier,
@@ -79,7 +78,6 @@ func (mage *Mage) registerPyroblastSpell() {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:       core.ProcMaskPeriodicDamage,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(113, .02),
 			OutcomeApplier: mage.OutcomeFuncTick(),
 			IsPeriodic:     true,

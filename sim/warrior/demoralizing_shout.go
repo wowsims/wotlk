@@ -11,7 +11,6 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	cost := 10.0 - float64(warrior.Talents.FocusedRage)
 
 	baseEffect := core.SpellEffect{
-		ProcMask:       core.ProcMaskEmpty,
 		OutcomeApplier: warrior.OutcomeFuncMagicHit(),
 	}
 
@@ -36,6 +35,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	warrior.DemoralizingShout = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 25203},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskEmpty,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

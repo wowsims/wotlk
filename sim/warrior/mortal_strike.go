@@ -15,6 +15,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	warrior.MortalStrike = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47486},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -40,8 +41,6 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 380, true),
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
 

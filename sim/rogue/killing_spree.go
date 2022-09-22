@@ -9,17 +9,13 @@ import (
 )
 
 func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffect {
-	var procMask core.ProcMask
 	var hand core.Hand
 	if isMh {
-		procMask = core.ProcMaskMeleeMHSpecial
 		hand = core.MainHand
 	} else {
-		procMask = core.ProcMaskMeleeOHSpecial
 		hand = core.OffHand
 	}
 	return core.SpellEffect{
-		ProcMask:       procMask,
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(hand, true, 0, true),
 		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
 	}
@@ -28,6 +24,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	mhWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51690, Tag: 1},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)),
@@ -37,6 +34,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	ohWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51690, Tag: 2},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeOHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)) *
@@ -77,6 +75,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	})
 	killingSpreeSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 51690},
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: time.Second,
@@ -87,8 +86,6 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfKillingSpree), time.Second*45, 0),
 			},
 		},
-
-		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
 			rogue.KillingSpreeAura.Activate(sim)

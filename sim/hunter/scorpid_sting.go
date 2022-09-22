@@ -11,9 +11,9 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.ScorpidSting = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 3043},
-		SpellSchool: core.SpellSchoolNature,
-
+		ActionID:     core.ActionID{SpellID: 3043},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskRangedSpecial,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -29,7 +29,6 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
 			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

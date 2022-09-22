@@ -42,8 +42,10 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 	}
 
 	dotSpell := character.RegisterSpell(core.SpellConfig{
-		ActionID:         actionID,
-		SpellSchool:      core.SpellSchoolFire,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 	})
@@ -58,8 +60,6 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-
 			BaseDamage:     core.BaseDamageConfigFlat(tickAmount),
 			OutcomeApplier: character.OutcomeFuncTick(),
 			IsPeriodic:     true,

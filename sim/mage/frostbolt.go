@@ -12,10 +12,10 @@ func (mage *Mage) registerFrostboltSpell() {
 	baseCost := .11 * mage.BaseMana
 
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 42842},
-		SpellSchool: core.SpellSchoolFrost,
-		Flags:       SpellFlagMage | BarrageSpells,
-
+		ActionID:     core.ActionID{SpellID: 42842},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagMage | BarrageSpells,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -36,8 +36,6 @@ func (mage *Mage) registerFrostboltSpell() {
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
 			BaseDamage:     core.BaseDamageConfigMagic(799, 861, (3.0/3.5)*0.95+0.05*float64(mage.Talents.EmpoweredFrostbolt)),
 			OutcomeApplier: mage.OutcomeFuncMagicHitAndCritBinary(mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3)),
 		}),

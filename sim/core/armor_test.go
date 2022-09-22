@@ -190,89 +190,81 @@ func TestDamageReductionFromArmor(t *testing.T) {
 		Type:  PlayerUnit,
 		Level: 80,
 	}
+	spell := &Spell{}
 	target.stats = target.initialStats
 	expectedDamageReduction := 0.41132
 	attackTable := NewAttackTable(&attacker, &target)
 	tolerance := 0.0001
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected no armor modifiers to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected no armor modifiers to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Major
 	acidSpitAura := AcidSpitAura(&target, 2)
 	acidSpitAura.Activate(&sim)
 	expectedDamageReduction = 0.3585
-	attackTable.UpdateArmorDamageReduction()
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Major + Minor
 	faerieFireAura := FaerieFireAura(&target, true)
 	faerieFireAura.Activate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Major + Minor + Spore
 	sporeCloudAura := SporeCloudAura(&target)
 	sporeCloudAura.Activate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Major + Minor + Spore + Throw
 	shatteringThrowAura := ShatteringThrowAura(&target)
 	shatteringThrowAura.Activate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.2981
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Just Major minor again; testing Deactivate
 	sporeCloudAura.Deactivate(&sim)
 	shatteringThrowAura.Deactivate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.3468
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Cap armor pen
 	attacker.stats[stats.ArmorPenetration] = 1400
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.02026
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Verify going past Cap doesn't help
 	attacker.stats[stats.ArmorPenetration] = 1600
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.02026
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Add spore back
 	sporeCloudAura.Activate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.02026
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 	// Fully debuffs
 	shatteringThrowAura.Activate(&sim)
-	attackTable.UpdateArmorDamageReduction()
 	expectedDamageReduction = 0.0
-	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.ArmorDamageModifier, tolerance) {
-		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.ArmorDamageModifier)
+	if !WithinToleranceFloat64(1-expectedDamageReduction, attackTable.GetArmorDamageModifier(spell), tolerance) {
+		t.Fatalf("Expected major & minor armor modifier to result in %f damage reduction got %f", expectedDamageReduction, 1-attackTable.GetArmorDamageModifier(spell))
 	}
 
 }

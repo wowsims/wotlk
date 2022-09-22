@@ -16,10 +16,10 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 	baseCost := float64(core.NewRuneCost(20, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
 
@@ -36,11 +36,9 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 		ThreatMultiplier: 1.75,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					bonusDmg := 0.15 * hitEffect.MeleeAttackPower(spell.Unit)
+					bonusDmg := 0.15 * spell.MeleeAttackPower()
 					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, bonusDmg, true)
 
 					return weaponBaseDamage(sim, hitEffect, spell) *

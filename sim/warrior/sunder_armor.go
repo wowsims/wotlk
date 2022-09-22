@@ -20,6 +20,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	config := core.SpellConfig{
 		ActionID:    SunderArmorActionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -36,7 +37,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
 		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return warrior.attackPowerMultiplier(spellEffect, spell.Unit, 0.05)
+			return 0.05 * spell.MeleeAttackPower()
 		},
 	}
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
@@ -48,8 +49,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

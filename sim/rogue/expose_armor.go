@@ -16,9 +16,11 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     ExposeArmorActionID.WithTag(comboPoints),
 		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -31,7 +33,6 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskMeleeMHSpecial,
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

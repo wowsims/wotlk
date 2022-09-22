@@ -24,7 +24,6 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	}
 
 	effect := core.SpellEffect{
-		ProcMask:       core.ProcMaskSpellDamage,
 		BaseDamage:     core.BaseDamageConfigMagic(775.0, 865.0, 0.429*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
 		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
 	}
@@ -32,6 +31,7 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

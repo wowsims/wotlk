@@ -4,21 +4,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseCost := paladin.BaseMana * 0.26
+	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	baseEffectMH := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				damage := 1100.0 +
 					(1344.0-1100.0)*sim.RandomFloat("Damage Roll") +
-					.07*hitEffect.SpellPower(spell.Unit, spell) +
-					.07*hitEffect.MeleeAttackPower(spell.Unit)
+					.07*spell.SpellPower() +
+					.07*spell.MeleeAttackPower()
 				return damage
 			},
 		},
@@ -26,7 +26,8 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
 	}
 
-	numHits := core.MinInt32(3, paladin.Env.GetNumTargets())
+	// Glyph to single target, OR apply to up to 3 targets
+	numHits := core.TernaryInt32(glyphedSingleTargetAS, 1, core.MinInt32(3, paladin.Env.GetNumTargets()))
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
@@ -35,10 +36,10 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	}
 
 	paladin.AvengersShield = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48827},
-		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48827},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -54,9 +55,9 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			},
 		},
 
+		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
 		// TODO: Why is this here?
 		BonusCritRating:  1,
-		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),

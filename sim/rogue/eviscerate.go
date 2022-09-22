@@ -15,10 +15,10 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48668, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: 48668, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -40,11 +40,12 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := sim.RandomFloat("Eviscerate") * 254.0
-					return baseDamage + roll + hitEffect.MeleeAttackPower(spell.Unit)*apRatio + hitEffect.BonusWeaponDamage(spell.Unit)
+					return baseDamage +
+						254.0*sim.RandomFloat("Eviscerate") +
+						apRatio*spell.MeleeAttackPower() +
+						spell.BonusWeaponDamage()
 				},
 				TargetSpellCoefficient: 1,
 			},

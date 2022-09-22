@@ -14,7 +14,6 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 	baseEffect := core.SpellEffect{
 		IsHealing: true,
-		ProcMask:  core.ProcMaskSpellHealing,
 
 		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
 		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
@@ -24,9 +23,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 	var applyPartyEffects []core.ApplySpellEffects
 
 	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48072},
-		SpellSchool: core.SpellSchoolHoly,
-
+		ActionID:     core.ActionID{SpellID: 48072},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskSpellHealing,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -90,6 +89,7 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 	spell := priest.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{ItemID: 42409},
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
 
 		DamageMultiplier: priest.PrayerOfHealing.DamageMultiplier * 0.2 / 2,
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
@@ -104,7 +104,6 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicHealing,
 			IsPeriodic: true,
 			IsHealing:  true,
 

@@ -57,9 +57,9 @@ func (druid *Druid) registerFaerieFireSpell() {
 	}
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: resourceType,
 		BaseCost:     baseCost,
 
@@ -76,7 +76,6 @@ func (druid *Druid) registerFaerieFireSpell() {
 		FlatThreatBonus:  66 * 2,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskSpellDamage,
 			BaseDamage:     baseDamage,
 			OutcomeApplier: druid.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

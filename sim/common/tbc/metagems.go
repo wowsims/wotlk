@@ -82,13 +82,13 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// Mask 68, melee or ranged auto attacks.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskWhiteHit) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskWhiteHit) {
 					return
 				}
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Thundering Skyfire Diamond") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Thundering Skyfire Diamond") {
 					return
 				}
 				icd.Use(sim)

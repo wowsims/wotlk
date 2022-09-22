@@ -14,10 +14,9 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -36,7 +35,6 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:       core.ProcMaskRangedSpecial,
 			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -82,12 +80,10 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				rap := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 242 + rap*0.04
+				return 242 + 0.04*spell.RangedAttackPower(spellEffect.Target)
 			}, 0),
 			OutcomeApplier: dotOutcome,
 		}),

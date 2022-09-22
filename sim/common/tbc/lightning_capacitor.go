@@ -12,13 +12,14 @@ func init() {
 		character := agent.GetCharacter()
 
 		tlcSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:         core.ActionID{ItemID: core.ItemIDTheLightningCapacitor},
-			SpellSchool:      core.SpellSchoolNature,
+			ActionID:    core.ActionID{ItemID: core.ItemIDTheLightningCapacitor},
+			SpellSchool: core.SpellSchoolNature,
+			ProcMask:    core.ProcMaskEmpty,
+
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask: core.ProcMaskEmpty,
 
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(694, 807),
 				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
 			}),
@@ -42,7 +43,7 @@ func init() {
 					return
 				}
 
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 

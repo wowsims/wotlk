@@ -15,6 +15,7 @@ type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
 	ActionID
 	SpellSchool  SpellSchool
+	ProcMask     ProcMask
 	Flags        SpellFlag
 	MissileSpeed float64
 	ResourceType stats.Stat
@@ -65,6 +66,9 @@ type Spell struct {
 
 	// Fire, Frost, Shadow, etc.
 	SpellSchool SpellSchool
+
+	// Controls which effects can proc from this spell.
+	ProcMask ProcMask
 
 	// Flags
 	Flags SpellFlag
@@ -152,6 +156,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ActionID:     config.ActionID,
 		Unit:         unit,
 		SpellSchool:  config.SpellSchool,
+		ProcMask:     config.ProcMask,
 		Flags:        config.Flags,
 		MissileSpeed: config.MissileSpeed,
 		ResourceType: config.ResourceType,
@@ -173,6 +178,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ThreatMultiplier:   config.ThreatMultiplier,
 		FlatThreatBonus:    config.FlatThreatBonus,
 		DynamicThreatBonus: config.DynamicThreatBonus,
+	}
+
+	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
+		panic("Unknown proc mask on " + spell.ActionID.String())
 	}
 
 	switch spell.ResourceType {
