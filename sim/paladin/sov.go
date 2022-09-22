@@ -152,11 +152,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				return
 			}
 
-			// Only white hits and HotR can trigger this. (SoV dot)
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell.SpellID == paladin.HammerOfTheRighteous.SpellID {
-				onSwingProc.Cast(sim, spellEffect.Target)
-			}
-
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, spellEffect.Target)
@@ -173,6 +168,12 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 					}
 				}
 			}
+
+			// Only white hits and HotR can trigger this. (SoV dot)
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell.SpellID == paladin.HammerOfTheRighteous.SpellID {
+				onSwingProc.Cast(sim, spellEffect.Target)
+			}
+
 		},
 	})
 
