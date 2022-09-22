@@ -25,8 +25,10 @@ type SpellConfig struct {
 
 	ApplyEffects ApplySpellEffects
 
-	BonusHitRating  float64
-	BonusCritRating float64
+	BonusHitRating       float64
+	BonusCritRating      float64
+	BonusExpertiseRating float64
+	BonusArmorPenRating  float64
 
 	DamageMultiplier         float64
 	DamageMultiplierAdditive float64
@@ -110,6 +112,8 @@ type Spell struct {
 
 	BonusHitRating           float64
 	BonusCritRating          float64
+	BonusExpertiseRating     float64
+	BonusArmorPenRating      float64
 	CastTimeMultiplier       float64
 	CostMultiplier           float64
 	DamageMultiplier         float64
@@ -129,6 +133,7 @@ type Spell struct {
 	initialDamageMultiplier         float64
 	initialDamageMultiplierAdditive float64
 	initialThreatMultiplier         float64
+	// Note that bonus expertise and armor pen are static, so we don't bother resetting them.
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -170,6 +175,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		BonusHitRating:           config.BonusHitRating,
 		BonusCritRating:          config.BonusCritRating,
+		BonusExpertiseRating:     config.BonusExpertiseRating,
+		BonusArmorPenRating:      config.BonusArmorPenRating,
 		CastTimeMultiplier:       1,
 		CostMultiplier:           1,
 		DamageMultiplier:         config.DamageMultiplier,
