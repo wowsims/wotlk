@@ -63,7 +63,6 @@ func (druid *Druid) registerBerserkCD() {
 			return druid.InForm(Cat | Bear)
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			//druid.TigersFury.CD.TimeToReady(sim) > (druid.BerserkAura.Duration)
 			// Manually handled in Feral Rotation
 			return false
 		},
