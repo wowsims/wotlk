@@ -81,7 +81,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Forge Ember",
 		ID:         37660,
-		Bonus:      stats.Stats{stats.SpellPower: 512, stats.HealingPower: 512},
+		Bonus:      stats.Stats{stats.SpellPower: 512},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -126,7 +126,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Dying Curse",
 		ID:         40255,
-		Bonus:      stats.Stats{stats.SpellPower: 765, stats.HealingPower: 765},
+		Bonus:      stats.Stats{stats.SpellPower: 765},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -148,7 +148,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sundial of the Exiled",
 		ID:         40682,
-		Bonus:      stats.Stats{stats.SpellPower: 590, stats.HealingPower: 590},
+		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -225,7 +225,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Flow of Knowledge",
 		ID:         44912,
-		Bonus:      stats.Stats{stats.SpellPower: 590, stats.HealingPower: 590},
+		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   OnCastComplete,
 		ProcChance: 0.10,
@@ -277,7 +277,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Pandora's Plea",
 		ID:         45490,
-		Bonus:      stats.Stats{stats.SpellPower: 751, stats.HealingPower: 751},
+		Bonus:      stats.Stats{stats.SpellPower: 751},
 		Duration:   time.Second * 10,
 		Callback:   OnCastComplete,
 		ProcChance: 0.1,
@@ -297,7 +297,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Flare of the Heavens",
 		ID:         45518,
-		Bonus:      stats.Stats{stats.SpellPower: 850, stats.HealingPower: 850},
+		Bonus:      stats.Stats{stats.SpellPower: 850},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -370,7 +370,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Abyssal Rune",
 		ID:         47213,
-		Bonus:      stats.Stats{stats.SpellPower: 590, stats.HealingPower: 590},
+		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -414,7 +414,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Mithril Pocketwatch",
 		ID:         49076,
-		Bonus:      stats.Stats{stats.SpellPower: 590, stats.HealingPower: 590},
+		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -467,7 +467,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Phylactery of the Nameless Lich",
 		ID:         50360,
-		Bonus:      stats.Stats{stats.SpellPower: 1074, stats.HealingPower: 1074},
+		Bonus:      stats.Stats{stats.SpellPower: 1074},
 		Duration:   time.Second * 20,
 		Callback:   OnPeriodicDamageDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -477,7 +477,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Phylactery of the Nameless Lich H",
 		ID:         50365,
-		Bonus:      stats.Stats{stats.SpellPower: 1207, stats.HealingPower: 1207},
+		Bonus:      stats.Stats{stats.SpellPower: 1207},
 		Duration:   time.Second * 20,
 		Callback:   OnPeriodicDamageDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -487,7 +487,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Ashen Band of Unmatched Destruction",
 		ID:         50397,
-		Bonus:      stats.Stats{stats.SpellPower: 285, stats.HealingPower: 285},
+		Bonus:      stats.Stats{stats.SpellPower: 285},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -498,7 +498,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Ashen Band of Endless Destruction",
 		ID:         50398,
-		Bonus:      stats.Stats{stats.SpellPower: 285, stats.HealingPower: 285},
+		Bonus:      stats.Stats{stats.SpellPower: 285},
 		Duration:   time.Second * 10,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -595,7 +595,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Charred Twilight Scale",
 		ID:         54572,
-		Bonus:      stats.Stats{stats.SpellPower: 763, stats.HealingPower: 763},
+		Bonus:      stats.Stats{stats.SpellPower: 763},
 		Duration:   time.Second * 15,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -605,7 +605,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Charred Twilight Scale H",
 		ID:         54588,
-		Bonus:      stats.Stats{stats.SpellPower: 861, stats.HealingPower: 861},
+		Bonus:      stats.Stats{stats.SpellPower: 861},
 		Duration:   time.Second * 15,
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,

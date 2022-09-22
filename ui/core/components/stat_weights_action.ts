@@ -121,7 +121,6 @@ class EpWeightsMenu extends Popup {
 			this.resultsViewer.hideAll();
 			this.simUI.prevEpIterations = iterations;
 			this.simUI.prevEpSimResult = result;
-			this.preprocessResults(result);
 			this.updateTable(iterations, result);
 		});
 
@@ -188,27 +187,6 @@ class EpWeightsMenu extends Popup {
 			</div>
   </div>
 `);
-	}
-
-	private preprocessResults(result: StatWeightsResult) {
-		// Values for a school's power should never exceed the value for regular spell power.
-		result.dps!.epValues.forEach((value, index) => {
-			if (index == Stat.StatArcaneSpellPower ||
-				index == Stat.StatFireSpellPower ||
-				index == Stat.StatFrostSpellPower ||
-				index == Stat.StatHolySpellPower ||
-				index == Stat.StatNatureSpellPower ||
-				index == Stat.StatShadowSpellPower) {
-				if (value > result.dps!.epValues[Stat.StatSpellPower]) {
-					const diff = value - result.dps!.epValues[Stat.StatSpellPower];
-					result.dps!.epValues[index] = result.dps!.epValues[Stat.StatSpellPower];
-					result.dps!.epValuesStdev[index] -= diff;
-					const wdiff = result.dps!.weights[index] - result.dps!.weights[Stat.StatSpellPower];
-					result.dps!.weights[index] = result.dps!.weights[Stat.StatSpellPower];
-					result.dps!.weightsStdev[index] -= wdiff;
-				}
-			}
-		});
 	}
 
 	private updateTable(iterations: number, result: StatWeightsResult) {

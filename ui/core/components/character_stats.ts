@@ -12,15 +12,6 @@ import { Component } from './component.js';
 
 declare var tippy: any;
 
-const spellPowerTypeStats = [
-	Stat.StatArcaneSpellPower,
-	Stat.StatFireSpellPower,
-	Stat.StatFrostSpellPower,
-	Stat.StatHolySpellPower,
-	Stat.StatNatureSpellPower,
-	Stat.StatShadowSpellPower,
-];
-
 export type StatMods = { talents: Stats };
 
 export class CharacterStats extends Component {
@@ -130,10 +121,7 @@ export class CharacterStats extends Component {
 	}
 
 	static statDisplayString(player: Player<any>, stats: Stats, stat: Stat): string {
-		let rawValue = stats.getStat(stat);
-		if (spellPowerTypeStats.includes(stat)) {
-			rawValue = rawValue + stats.getStat(Stat.StatSpellPower);
-		}
+		const rawValue = stats.getStat(stat);
 		let displayStr = String(Math.round(rawValue));
 
 		if (stat == Stat.StatMeleeHit) {

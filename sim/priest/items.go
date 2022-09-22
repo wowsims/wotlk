@@ -90,7 +90,7 @@ var ItemSetSanctificationRegalia = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			priest := agent.(PriestAgent).GetPriest()
-			procAura := priest.NewTemporaryStatsAura("Sanctification Reglia 4pc", core.ActionID{SpellID: 64912}, stats.Stats{stats.SpellPower: 250, stats.HealingPower: 250}, time.Second*5)
+			procAura := priest.NewTemporaryStatsAura("Sanctification Reglia 4pc", core.ActionID{SpellID: 64912}, stats.Stats{stats.SpellPower: 250}, time.Second*5)
 
 			priest.RegisterAura(core.Aura{
 				Label:    "Sancitifcation Reglia 4pc",
@@ -216,11 +216,9 @@ var ItemSetGladiatorsInvestiture = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			agent.GetCharacter().AddStat(stats.Resilience, 100)
 			agent.GetCharacter().AddStat(stats.SpellPower, 29)
-			agent.GetCharacter().AddStat(stats.HealingPower, 29)
 		},
 		4: func(agent core.Agent) {
 			agent.GetCharacter().AddStat(stats.SpellPower, 88)
-			agent.GetCharacter().AddStat(stats.HealingPower, 88)
 		},
 	},
 })
@@ -230,11 +228,9 @@ var ItemSetGladiatorsRaiment = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			agent.GetCharacter().AddStat(stats.Resilience, 100)
 			agent.GetCharacter().AddStat(stats.SpellPower, 29)
-			agent.GetCharacter().AddStat(stats.HealingPower, 29)
 		},
 		4: func(agent core.Agent) {
 			agent.GetCharacter().AddStat(stats.SpellPower, 88)
-			agent.GetCharacter().AddStat(stats.HealingPower, 88)
 		},
 	},
 })

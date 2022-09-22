@@ -62,14 +62,6 @@ var wotlkdbStaminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
 var wotlkdbSpellPowerRegex = regexp.MustCompile("Equip: Increases spell power by ([0-9]+)")
 var wotlkdbSpellPowerRegex2 = regexp.MustCompile("Equip: Increases spell power by <!--rtg45-->([0-9]+)")
 
-// Not sure these exist anymore?
-var wotlkdbArcaneSpellPowerRegex = regexp.MustCompile("Increases Arcane power by ([0-9]+)")
-var wotlkdbFireSpellPowerRegex = regexp.MustCompile("Increases Fire power by ([0-9]+)")
-var wotlkdbFrostSpellPowerRegex = regexp.MustCompile("Increases Frost power by ([0-9]+)")
-var wotlkdbHolySpellPowerRegex = regexp.MustCompile("Increases Holy power by ([0-9]+)")
-var wotlkdbNatureSpellPowerRegex = regexp.MustCompile("Increases Nature power by ([0-9]+)")
-var wotlkdbShadowSpellPowerRegex = regexp.MustCompile("Increases Shadow power by ([0-9]+)")
-
 var wotlkdbHitRegex = regexp.MustCompile("Improves hit rating by <!--rtg31-->([0-9]+)")
 var wotlkdbCritRegex = regexp.MustCompile("Improves critical strike rating by <!--rtg32-->([0-9]+)")
 var wotlkdbHasteRegex = regexp.MustCompile("Increases your haste rating by <!--rtg36-->([0-9]+)")
@@ -110,13 +102,6 @@ func (item WotlkItemResponse) GetStats() Stats {
 		proto.Stat_StatIntellect:         float64(item.GetIntValue(wotlkdbIntellectRegex)),
 		proto.Stat_StatSpirit:            float64(item.GetIntValue(wotlkdbSpiritRegex)),
 		proto.Stat_StatSpellPower:        sp,
-		proto.Stat_StatHealingPower:      sp,
-		proto.Stat_StatArcaneSpellPower:  float64(item.GetIntValue(wotlkdbArcaneSpellPowerRegex)),
-		proto.Stat_StatFireSpellPower:    float64(item.GetIntValue(wotlkdbFireSpellPowerRegex)),
-		proto.Stat_StatFrostSpellPower:   float64(item.GetIntValue(wotlkdbFrostSpellPowerRegex)),
-		proto.Stat_StatHolySpellPower:    float64(item.GetIntValue(wotlkdbHolySpellPowerRegex)),
-		proto.Stat_StatNatureSpellPower:  float64(item.GetIntValue(wotlkdbNatureSpellPowerRegex)),
-		proto.Stat_StatShadowSpellPower:  float64(item.GetIntValue(wotlkdbShadowSpellPowerRegex)),
 		proto.Stat_StatSpellHit:          float64(item.GetIntValue(wotlkdbHitRegex)),
 		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(wotlkdbHitRegex)),
 		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(wotlkdbCritRegex)),
@@ -384,7 +369,6 @@ func (item WotlkItemResponse) GetSocketBonus() Stats {
 		proto.Stat_StatSpirit:            float64(GetBestRegexIntValue(bonusStr, spiritSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellHaste:        float64(GetBestRegexIntValue(bonusStr, hasteSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(bonusStr, spellPowerSocketBonusRegexes, 1)),
-		proto.Stat_StatHealingPower:      float64(GetBestRegexIntValue(bonusStr, spellPowerSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
 		proto.Stat_StatMeleeHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellCrit:         float64(GetBestRegexIntValue(bonusStr, spellCritSocketBonusRegexes, 1)),
@@ -431,7 +415,6 @@ func (item WotlkItemResponse) GetGemStats() Stats {
 		proto.Stat_StatMeleeHaste: float64(GetBestRegexIntValue(item.Tooltip, hasteGemStatRegexes, 1)),
 
 		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
-		proto.Stat_StatHealingPower:      float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
 		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(item.Tooltip, armorPenetrationGemStatRegexes, 1)),

@@ -7,13 +7,6 @@ character_stats_results: {
   final_stats: 1151.7
   final_stats: 745.8
   final_stats: 2433
-  final_stats: 2313
-  final_stats: 0
-  final_stats: 80
-  final_stats: 80
-  final_stats: 0
-  final_stats: 0
-  final_stats: 80
   final_stats: 128
   final_stats: 285
   final_stats: 875.72568
@@ -640,22 +633,22 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3609.93403
-  tps: 3319.84941
+  dps: 3606.33569
+  tps: 3315.85187
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3609.93403
-  tps: 2744.69478
+  dps: 3606.33569
+  tps: 2742.01868
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5895.09116
-  tps: 4255.79615
+  dps: 5902.10115
+  tps: 4260.53977
  }
 }
 dps_results: {
@@ -780,8 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5896.57667
-  tps: 4254.97098
+  dps: 5902.09539
+  tps: 4258.34667
  }
 }
 dps_results: {
@@ -906,8 +899,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Undead-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5896.57667
-  tps: 4254.84039
+  dps: 5902.09539
+  tps: 4258.21585
  }
 }
 dps_results: {

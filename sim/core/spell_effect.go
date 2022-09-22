@@ -127,7 +127,7 @@ func (spell *Spell) physicalCritRating(target *Unit) float64 {
 
 func (spell *Spell) SpellPower() float64 {
 	return spell.Unit.GetStat(stats.SpellPower) +
-		spell.Unit.GetStat(spell.SpellSchool.Stat()) +
+		spell.BonusSpellPower +
 		spell.Unit.PseudoStats.MobTypeSpellPower
 }
 
@@ -159,7 +159,7 @@ func (spell *Spell) spellCritRating(target *Unit) float64 {
 }
 
 func (spell *Spell) HealingPower() float64 {
-	return spell.Unit.GetStat(stats.HealingPower)
+	return spell.SpellPower()
 }
 func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) float64 {
 	critRating := 0.0

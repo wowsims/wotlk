@@ -132,10 +132,9 @@ var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 		stats.Stamina:   0.2238,
 		stats.Intellect: 0.01,
 
-		stats.SpellPower:      0.333,
-		stats.FrostSpellPower: 0.333,
-		stats.SpellHit:        0.01,
-		stats.SpellCrit:       0.01,
+		stats.SpellPower: 0.333,
+		stats.SpellHit:   0.01,
+		stats.SpellCrit:  0.01,
 	})
 }
 

@@ -36,7 +36,7 @@ func (warlock *Warlock) registerDarkPactSpell() {
 					warlock.GlyphOfLifeTapAura.Activate(sim)
 				}
 
-				maxDrain := baseRestore + (warlock.GetStat(stats.SpellPower)+warlock.GetStat(stats.ShadowSpellPower))*0.96
+				maxDrain := baseRestore + 0.96*warlock.GetStat(stats.SpellPower)
 				actualDrain := math.Min(maxDrain, warlock.Pet.CurrentMana())
 
 				warlock.Pet.SpendMana(sim, actualDrain, petManaMetrics)

@@ -63,7 +63,7 @@ func init() {
 	newAttackPowerActive(47734, 1024, time.Second*20, time.Minute*2) // Mark of Supremacy
 
 	newSpellPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
-		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.SpellPower: bonus, stats.HealingPower: bonus}, duration, cooldown)
+		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.SpellPower: bonus}, duration, cooldown)
 	})
 	newSpellPowerActive(35935, 178, time.Second*20, time.Minute*2) // Infused Coldstone Rune
 	newSpellPowerActive(36872, 173, time.Second*20, time.Minute*2) // Mender of the Oncoming Dawn

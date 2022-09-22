@@ -256,13 +256,12 @@ var ItemSetGladiatorsWartide = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
-			shaman.AddStat(stats.HealingPower, 29)
+			shaman.AddStat(stats.SpellPower, 29)
 			shaman.AddStat(stats.Resilience, 100)
 		},
 		4: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
 			shaman.AddStat(stats.SpellPower, 88)
-			shaman.AddStat(stats.HealingPower, 88)
 		},
 	},
 })
