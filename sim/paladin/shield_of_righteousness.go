@@ -31,20 +31,20 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 			},
 		},
 
-		// TODO: Why is this here?
-		BonusCritRating:  1,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					// TODO: Confirm this is an accurate calculation.
-					bv := 2760.0
-					if paladin.GetStat(stats.BlockValue) < bv {
-						bv = paladin.GetStat(stats.BlockValue)
+					// TODO: Derive or find accurate source for DR curve
+					bv := paladin.GetStat(stats.BlockValue)
+					if bv <= 2400.0 {
+						return 520.0 + bv
+					} else {
+						bv = 2400.0 + (bv - 2400.0)/2;
+						return 520.0 + core.TernaryFloat64(bv > 2760.0, 2760.0, bv)
 					}
-					return 390 + bv
 				},
 				TargetSpellCoefficient: 1,
 			},
