@@ -59,6 +59,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    onSpecialOrSwingActionID, // Seal of Command damage bonus for cleaves.
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplierAdditive: baseMultiplierAdditive,
@@ -120,6 +121,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	paladin.SealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Command self buff.
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

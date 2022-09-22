@@ -56,9 +56,10 @@ func (rogue *Rogue) registerFanOfKnives() {
 	mhSpell, mhHit := rogue.makeFanOfKnivesWeaponHitSpell(true)
 	ohSpell, ohHit := rogue.makeFanOfKnivesWeaponHitSpell(false)
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: FanOfKnivesSpellID},
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
+		SpellSchool: core.SpellSchoolPhysical,
+		Flags:       core.SpellFlagMeleeMetrics,
+
 		ResourceType: stats.Energy,
 		BaseCost:     energyCost,
 
@@ -70,11 +71,6 @@ func (rogue *Rogue) registerFanOfKnives() {
 			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
-
-		DamageMultiplier: 1 +
-			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
-		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, ohHit)(sim, unit, ohSpell)

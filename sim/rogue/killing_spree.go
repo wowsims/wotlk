@@ -75,6 +75,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	})
 	killingSpreeSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 51690},
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: time.Second,
@@ -85,8 +86,6 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 				Duration: time.Minute*2 - core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfKillingSpree), time.Second*45, 0),
 			},
 		},
-
-		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
 			rogue.KillingSpreeAura.Activate(sim)

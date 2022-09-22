@@ -253,9 +253,6 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
-	if spell.ProcMask == ProcMaskUnknown {
-		panic("Unknown proc mask on " + spell.ActionID.String())
-	}
 	for i := range spellEffect.Target.DynamicDamageTakenModifiers {
 		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spell, spellEffect)
 	}

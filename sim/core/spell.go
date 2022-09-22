@@ -180,6 +180,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		DynamicThreatBonus: config.DynamicThreatBonus,
 	}
 
+	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
+		panic("Unknown proc mask on " + spell.ActionID.String())
+	}
+
 	switch spell.ResourceType {
 	case stats.Mana:
 		spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)

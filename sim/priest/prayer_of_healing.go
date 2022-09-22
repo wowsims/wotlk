@@ -89,6 +89,7 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 	spell := priest.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{ItemID: 42409},
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
 
 		DamageMultiplier: priest.PrayerOfHealing.DamageMultiplier * 0.2 / 2,
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
