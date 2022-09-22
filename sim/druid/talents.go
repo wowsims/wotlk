@@ -184,14 +184,14 @@ func (druid *Druid) applyPrimalFury() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if druid.InForm(Bear) {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
+					if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
 						druid.AddRage(sim, 5, rageMetrics)
 					}
 				}
 			} else if druid.InForm(Cat) {
 				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
 					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
+						if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
 							druid.AddComboPoints(sim, 1, cpMetrics)
 						}
 					}
