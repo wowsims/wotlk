@@ -23,13 +23,6 @@ const (
 	Intellect
 	Spirit
 	SpellPower
-	HealingPower
-	ArcaneSpellPower
-	FireSpellPower
-	FrostSpellPower
-	HolySpellPower
-	NatureSpellPower
-	ShadowSpellPower
 	MP5
 	SpellHit
 	SpellCrit
@@ -91,8 +84,6 @@ func (s Stat) StatName() string {
 		return "SpellCrit"
 	case SpellHit:
 		return "SpellHit"
-	case HealingPower:
-		return "HealingPower"
 	case SpellPower:
 		return "SpellPower"
 	case SpellHaste:
@@ -101,18 +92,6 @@ func (s Stat) StatName() string {
 		return "MP5"
 	case SpellPenetration:
 		return "SpellPenetration"
-	case FireSpellPower:
-		return "FireSpellPower"
-	case NatureSpellPower:
-		return "NatureSpellPower"
-	case FrostSpellPower:
-		return "FrostSpellPower"
-	case ShadowSpellPower:
-		return "ShadowSpellPower"
-	case HolySpellPower:
-		return "HolySpellPower"
-	case ArcaneSpellPower:
-		return "ArcaneSpellPower"
 	case AttackPower:
 		return "AttackPower"
 	case MeleeHit:

@@ -531,7 +531,7 @@ func init() {
 	core.NewItemEffect(55642, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := character.NewTemporaryStatsAura("Lightweave Embroidery Proc", core.ActionID{SpellID: 55637}, stats.Stats{stats.SpellPower: 295, stats.HealingPower: 295}, time.Second*15)
+		procAura := character.NewTemporaryStatsAura("Lightweave Embroidery Proc", core.ActionID{SpellID: 55637}, stats.Stats{stats.SpellPower: 295}, time.Second*15)
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 60,

@@ -15,7 +15,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type Stats [42]float64
+type Stats [34]float64
 
 type ItemResponse interface {
 	GetName() string
@@ -179,13 +179,6 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatIntellect:         float64(item.GetIntValue(intellectRegex)),
 		proto.Stat_StatSpirit:            float64(item.GetIntValue(spiritRegex)),
 		proto.Stat_StatSpellPower:        sp,
-		proto.Stat_StatHealingPower:      sp,
-		proto.Stat_StatArcaneSpellPower:  float64(item.GetIntValue(arcaneSpellPowerRegex)),
-		proto.Stat_StatFireSpellPower:    float64(item.GetIntValue(fireSpellPowerRegex)),
-		proto.Stat_StatFrostSpellPower:   float64(item.GetIntValue(frostSpellPowerRegex)),
-		proto.Stat_StatHolySpellPower:    float64(item.GetIntValue(holySpellPowerRegex)),
-		proto.Stat_StatNatureSpellPower:  float64(item.GetIntValue(natureSpellPowerRegex)),
-		proto.Stat_StatShadowSpellPower:  float64(item.GetIntValue(shadowSpellPowerRegex)),
 		proto.Stat_StatSpellHit:          float64(item.GetIntValue(hitRegex)),
 		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(hitRegex)),
 		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(critRegex)),
@@ -543,7 +536,6 @@ func (item WowheadItemResponse) GetSocketBonus() Stats {
 		proto.Stat_StatSpirit:            float64(GetBestRegexIntValue(bonusStr, spiritSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellHaste:        float64(GetBestRegexIntValue(bonusStr, hasteSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(bonusStr, spellPowerSocketBonusRegexes, 1)),
-		proto.Stat_StatHealingPower:      float64(GetBestRegexIntValue(bonusStr, spellPowerSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
 		proto.Stat_StatMeleeHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
 		proto.Stat_StatSpellCrit:         float64(GetBestRegexIntValue(bonusStr, spellCritSocketBonusRegexes, 1)),
@@ -631,7 +623,6 @@ func (item WowheadItemResponse) GetGemStats() Stats {
 		proto.Stat_StatMeleeHaste: float64(GetBestRegexIntValue(item.Tooltip, hasteGemStatRegexes, 1)),
 
 		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
-		proto.Stat_StatHealingPower:      float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
 		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
 		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(item.Tooltip, armorPenetrationGemStatRegexes, 1)),

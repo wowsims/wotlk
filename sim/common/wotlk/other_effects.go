@@ -325,7 +325,7 @@ func init() {
 					Duration:  time.Second * 20,
 					MaxStacks: 10,
 				},
-				BonusPerStack: stats.Stats{stats.SpellPower: amount, stats.HealingPower: amount},
+				BonusPerStack: stats.Stats{stats.SpellPower: amount},
 			})
 
 			MakeProcTriggerAura(&character.Unit, ProcTrigger{

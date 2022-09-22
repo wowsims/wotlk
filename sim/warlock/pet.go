@@ -222,17 +222,14 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
-		highestSP := core.MaxFloat(ownerStats[stats.ArcaneSpellPower],
-			core.MaxFloat(ownerStats[stats.FireSpellPower], core.MaxFloat(ownerStats[stats.FrostSpellPower],
-				core.MaxFloat(ownerStats[stats.HolySpellPower], core.MaxFloat(ownerStats[stats.NatureSpellPower],
-					ownerStats[stats.ShadowSpellPower])))))
 
+		// TODO: Account for sunfire/soulfrost
 		return stats.Stats{
 			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
 			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
 			stats.Armor:            ownerStats[stats.Armor] * 0.35,
-			stats.AttackPower:      (ownerStats[stats.SpellPower] + highestSP) * 0.57,
-			stats.SpellPower:       (ownerStats[stats.SpellPower] + highestSP) * 0.15,
+			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
+			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
 			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
 			stats.SpellCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
 			stats.MeleeCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],

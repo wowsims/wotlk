@@ -15,7 +15,7 @@ var ItemSetPurifiedShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Name: "Purified Shard of the Gods",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 222, stats.HealingPower: 222})
+			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 222})
 			applyShardOfTheGods(agent.GetCharacter(), false)
 		},
 	},
@@ -25,7 +25,7 @@ var ItemSetShinyShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Name: "Shiny Shard of the Gods",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 250, stats.HealingPower: 250})
+			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 250})
 			applyShardOfTheGods(agent.GetCharacter(), true)
 		},
 	},

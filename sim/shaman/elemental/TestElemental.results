@@ -7,13 +7,6 @@ character_stats_results: {
   final_stats: 1138.5
   final_stats: 267.3
   final_stats: 2512
-  final_stats: 2301
-  final_stats: 80
-  final_stats: 0
-  final_stats: 0
-  final_stats: 80
-  final_stats: 80
-  final_stats: 0
   final_stats: 372.62
   final_stats: 209
   final_stats: 1285.1632
@@ -58,13 +51,6 @@ stat_weights_results: {
   weights: 1.72175
   weights: 0
   weights: 0.80815
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0
   weights: 0
   weights: 2.7039
   weights: 0.94989
@@ -341,8 +327,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Gladiator'sWartide"
  value: {
-  dps: 2964.07788
-  tps: 2306.3088
+  dps: 2983.63137
+  tps: 2321.23082
  }
 }
 dps_results: {

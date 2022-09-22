@@ -74,7 +74,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 				panic("Cannot cast PWS on target with Weakened Soul!")
 			}
 
-			shieldAmount := (2230.0 + priest.GetStat(stats.HealingPower)*coeff) * multiplier
+			shieldAmount := (2230.0 + spell.HealingPower()*coeff) * multiplier
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
 

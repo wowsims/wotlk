@@ -7,13 +7,6 @@ character_stats_results: {
   final_stats: 831.6
   final_stats: 232.1
   final_stats: 2653.15556
-  final_stats: 525
-  final_stats: 0
-  final_stats: 0
-  final_stats: 0
-  final_stats: 0
-  final_stats: 0
-  final_stats: 0
   final_stats: 109
   final_stats: 374
   final_stats: 1218.62453
@@ -290,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sWartide"
  value: {
-  dps: 4251.38782
-  tps: 2401.68186
+  dps: 4265.84665
+  tps: 2410.62472
  }
 }
 dps_results: {

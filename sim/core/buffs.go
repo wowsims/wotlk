@@ -214,8 +214,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 	}
 	if spBonus > 0 {
 		character.AddStats(stats.Stats{
-			stats.SpellPower:   spBonus,
-			stats.HealingPower: spBonus,
+			stats.SpellPower: spBonus,
 		})
 	}
 	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
@@ -276,8 +275,7 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 		stats.SpellCrit: 28 * float64(partyBuffs.AtieshMage),
 	})
 	character.AddStats(stats.Stats{
-		stats.SpellPower:   33 * float64(partyBuffs.AtieshWarlock),
-		stats.HealingPower: 33 * float64(partyBuffs.AtieshWarlock),
+		stats.SpellPower: 33 * float64(partyBuffs.AtieshWarlock),
 	})
 
 	if partyBuffs.BraidedEterniumChain {
@@ -1179,8 +1177,7 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 			}
 
 			character.AddStatsDynamic(sim, stats.Stats{
-				stats.SpellPower:   newSPbonus,
-				stats.HealingPower: newSPbonus,
+				stats.SpellPower: newSPbonus,
 			})
 
 			aura.SetStacks(sim, int32(aura.Priority))
@@ -1198,8 +1195,7 @@ func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
 			}
 
 			character.AddStatsDynamic(sim, stats.Stats{
-				stats.SpellPower:   -newSPbonus,
-				stats.HealingPower: -newSPbonus,
+				stats.SpellPower: -newSPbonus,
 			})
 		},
 	})

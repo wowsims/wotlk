@@ -29,6 +29,23 @@ func init() {
 		agent.GetCharacter().AddBonusRangedCritRating(28)
 	})
 
+	core.NewItemEffect(22560, func(agent core.Agent) {
+		// Sunfire
+		agent.GetCharacter().OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellSchool.Matches(core.SpellSchoolArcane | core.SpellSchoolFire) {
+				spell.BonusSpellPower += 50
+			}
+		})
+	})
+	core.NewItemEffect(22561, func(agent core.Agent) {
+		// Soulfrost
+		agent.GetCharacter().OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellSchool.Matches(core.SpellSchoolFrost | core.SpellSchoolShadow) {
+				spell.BonusSpellPower += 54
+			}
+		})
+	})
+
 	core.AddWeaponEffect(22552, func(agent core.Agent, slot proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.MH
 		if slot == proto.ItemSlot_ItemSlotOffHand {
