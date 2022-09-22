@@ -710,7 +710,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.getClass() == Class.ClassRogue ? { item: Conjured.ConjuredRogueThistleTea, stats: [] } : null,
 			{ item: Conjured.ConjuredHealthstone, stats: [Stat.StatStamina] },
 			{ item: Conjured.ConjuredDarkRune, stats: [Stat.StatIntellect] },
-			{ item: Conjured.ConjuredFlameCap, stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatFireSpellPower] },
+			{ item: Conjured.ConjuredFlameCap, stats: [] },
 		]);
 		if (conjuredOptions.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-conjured')[0] as HTMLElement;

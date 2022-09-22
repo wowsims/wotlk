@@ -49,7 +49,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			epStats: [
 				Stat.StatIntellect,
 				Stat.StatSpellPower,
-				Stat.StatNatureSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -64,7 +63,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpellPower,
-				Stat.StatNatureSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -87,7 +85,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.17,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatNatureSpellPower]: 1,
 					[Stat.StatSpellCrit]: 1,
 					[Stat.StatSpellHaste]: 1,
 					[Stat.StatMP5]: 0.08,

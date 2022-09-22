@@ -75,7 +75,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 					[Stat.StatIntellect]: 0.05,
 					[Stat.StatSpirit]: 0.11,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatShadowSpellPower]: 1,
 					[Stat.StatSpellCrit]: 0.163,
 					[Stat.StatSpellHaste]: 1.0, // tricky because SP is tricky
 					[Stat.StatMP5]: 0.00,

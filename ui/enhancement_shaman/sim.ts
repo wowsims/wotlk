@@ -66,7 +66,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
-				Stat.StatNatureSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,

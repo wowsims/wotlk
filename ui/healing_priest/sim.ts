@@ -42,13 +42,13 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			epStats: [
 				Stat.StatIntellect,
 				Stat.StatSpirit,
-				Stat.StatHealingPower,
+				Stat.StatSpellPower,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
-			epReferenceStat: Stat.StatHealingPower,
+			epReferenceStat: Stat.StatSpellPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
@@ -56,7 +56,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
-				Stat.StatHealingPower,
+				Stat.StatSpellPower,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
@@ -69,7 +69,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 1.38,
 					[Stat.StatSpirit]: 1.18,
-					[Stat.StatHealingPower]: 1,
+					[Stat.StatSpellPower]: 1,
 					[Stat.StatSpellCrit]: 0.44,
 					[Stat.StatSpellHaste]: 0.28,
 					[Stat.StatMP5]: 2.05,
