@@ -329,9 +329,7 @@ type PseudoStats struct {
 
 	ThreatMultiplier float64 // Modulates the threat generated. Affected by things like salv.
 
-	DamageDealtMultiplier       float64 // All damage
-	RangedDamageDealtMultiplier float64
-
+	DamageDealtMultiplier         float64 // All damage
 	PhysicalDamageDealtMultiplier float64
 	ArcaneDamageDealtMultiplier   float64
 	FireDamageDealtMultiplier     float64
@@ -402,9 +400,7 @@ func NewPseudoStats() PseudoStats {
 
 		ThreatMultiplier: 1,
 
-		DamageDealtMultiplier:       1,
-		RangedDamageDealtMultiplier: 1,
-
+		DamageDealtMultiplier:         1,
 		PhysicalDamageDealtMultiplier: 1,
 		ArcaneDamageDealtMultiplier:   1,
 		FireDamageDealtMultiplier:     1,
