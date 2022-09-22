@@ -38,9 +38,12 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Add set bonus and talent related modifiers.
 	 *  - Fix expertise rating on glyph application.
 	 */
-	baseMultiplier := (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) * (1 +
-		paladin.getItemSetLightswornBattlegearBonus4() +
-		paladin.getTalentSealsOfThePureBonus())
+	baseMultiplier := (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+		(1 + paladin.getItemSetLightswornBattlegearBonus4() +
+		paladin.getTalentSealsOfThePureBonus() +
+		paladin.getItemSetAegisPlateBonus2())
+	// TODO: Test whether T8 Prot 2pc also affects Judgement, once available
+	// TODO: Verify whether these bonuses should indeed be additive with similar
 
 	onSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803, Tag: 1}, // Holy Vengeance.
@@ -76,7 +79,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		DamageMultiplierAdditive: 1 +
 			paladin.getMajorGlyphOfJudgementBonus() +
 			paladin.getTalentTheArtOfWarBonus(),
-		DamageMultiplier: baseMultiplier,
+		DamageMultiplier: (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getTalentSealsOfThePureBonus()),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -165,10 +169,11 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				}
 			}
 
-			// Only white hits can trigger this. (SoV dot)
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			// Only white hits and HotR can trigger this. (SoV dot)
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell.SpellID == paladin.HammerOfTheRighteous.SpellID {
 				onSwingProc.Cast(sim, spellEffect.Target)
 			}
+
 		},
 	})
 
@@ -206,9 +211,10 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 			SpellSchool: core.SpellSchoolHoly,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			DamageMultiplierAdditive: 1 +
+			DamageMultiplierAdditive: 1 + 
 				paladin.getItemSetLightswornBattlegearBonus4() +
-				paladin.getTalentSealsOfThePureBonus(),
+				paladin.getTalentSealsOfThePureBonus() +
+				paladin.getItemSetAegisPlateBonus2(),
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 		}),
