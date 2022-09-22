@@ -42,7 +42,6 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			},
 		},
 
-		BonusHitRating: float64(hunter.Talents.SurvivalTactics) * 2 * core.SpellHitRatingPerHitChance,
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
 		ThreatMultiplier: 1,

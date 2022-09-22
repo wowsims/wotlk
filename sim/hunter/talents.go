@@ -37,6 +37,9 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(hunter.Talents.SurvivalInstincts)
 	hunter.AutoAttacks.RangedConfig.DamageMultiplier *= hunter.markedForDeathMultiplier()
 
+	if hunter.Talents.LethalShots > 0 {
+		hunter.AddBonusRangedCritRating(1 * float64(hunter.Talents.LethalShots) * core.CritRatingPerCritChance)
+	}
 	if hunter.Talents.RangedWeaponSpecialization > 0 {
 		mult := 1 + []float64{0, .01, .03, .05}[hunter.Talents.RangedWeaponSpecialization]
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
@@ -115,17 +118,6 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.registerReadinessCD()
 }
 
-func (hunter *Hunter) bonusRangedHit() float64 {
-	return core.TernaryFloat64(hunter.Equip[proto.ItemSlot_ItemSlotRanged].Enchant.ID == 18283, 30, 0)
-}
-func (hunter *Hunter) bonusRangedCrit() float64 {
-	return 0 +
-		1*float64(hunter.Talents.LethalShots)*core.CritRatingPerCritChance +
-		core.TernaryFloat64(hunter.Equip[proto.ItemSlot_ItemSlotRanged].Enchant.ID == 23766, 28, 0) +
-		core.TernaryFloat64(hunter.Equip[proto.ItemSlot_ItemSlotRanged].Enchant.ID == 41167, 40, 0) +
-		core.TernaryFloat64(hunter.Race == proto.Race_RaceDwarf && hunter.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun, core.CritRatingPerCritChance, 0) +
-		core.TernaryFloat64(hunter.Race == proto.Race_RaceTroll && hunter.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow, core.CritRatingPerCritChance, 0)
-}
 func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, target *core.Unit) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
@@ -346,8 +338,6 @@ func (hunter *Hunter) applyWildQuiver() {
 		ProcMask:    core.ProcMaskRangedAuto,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
-		BonusHitRating:   hunter.bonusRangedHit(),
-		BonusCritRating:  hunter.bonusRangedCrit(),
 		DamageMultiplier: 0.8,
 		ThreatMultiplier: 1,
 
