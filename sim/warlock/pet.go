@@ -120,16 +120,14 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
 	switch summonChoice {
 	case proto.Warlock_Options_Felguard:
-		talentMultiplier := 1. + 0.1*float64(warlock.Talents.DemonicBrutality)
-		glyphMultiplier := 1.
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
-			glyphMultiplier *= 1.2
+			wp.MultiplyStat(stats.AttackPower, 1.2)
 		}
-		wp.MultiplyStat(stats.AttackPower, talentMultiplier*glyphMultiplier)
 
 		statDeps := []*stats.StatDependency{nil}
-		for i := 0; i <= 10; i++ {
-			statDeps = append(statDeps, wp.NewDynamicMultiplyStat(stats.AttackPower, (1+0.1*float64(warlock.Talents.DemonicBrutality)+0.05*float64(i))/talentMultiplier))
+		for i := 1; i <= 10; i++ {
+			statDeps = append(statDeps, wp.NewDynamicMultiplyStat(stats.AttackPower,
+				1+float64(i)*(0.05+0.01*float64(warlock.Talents.DemonicBrutality))))
 		}
 
 		DemonicFrenzyAura := wp.RegisterAura(core.Aura{
@@ -152,9 +150,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			// OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// 	aura.Unit.EnableDynamicStatDep(sim, statDeps[0])
-			// },
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return

@@ -96,9 +96,9 @@ type StatDependency struct {
 
 func (sd StatDependency) String() string {
 	if sd.src == sd.dst {
-		return fmt.Sprintf("%s *= %0.1f", sd.src.StatName(), sd.amount)
+		return fmt.Sprintf("%s *= %0.2f", sd.src.StatName(), sd.amount)
 	} else {
-		return fmt.Sprintf("%s += %s * %0.1f", sd.dst.StatName(), sd.src.StatName(), sd.amount)
+		return fmt.Sprintf("%s += %s * %0.2f", sd.dst.StatName(), sd.src.StatName(), sd.amount)
 	}
 }
 
