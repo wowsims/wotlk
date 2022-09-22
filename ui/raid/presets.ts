@@ -275,10 +275,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.SV_P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.SV_P1_PRESET.gear,
 			},
 		},
 		tooltip: 'BM Hunter',
@@ -299,10 +299,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.MM_P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.MM_P1_PRESET.gear,
 			},
 		},
 		tooltip: 'MM Hunter',
@@ -323,10 +323,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.SV_P1_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.P1_PRESET.gear,
+				1: HunterPresets.SV_P1_PRESET.gear,
 			},
 		},
 		tooltip: 'SV Hunter',

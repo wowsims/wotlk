@@ -20,7 +20,6 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
