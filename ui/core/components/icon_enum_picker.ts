@@ -169,10 +169,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			this.rootElem.classList.remove('active');
 		}
 
+		this.buttonText.textContent = ''
+		this.buttonText.style.display = 'none'
 		const valueConfig = this.config.values.find(valueConfig => this.config.equals(valueConfig.value, this.currentValue))!;
 		if (valueConfig) {
 			this.setImage(this.buttonElem, valueConfig);
 			if (valueConfig.text != undefined){
+				this.buttonText.style.display = 'block'
 				this.buttonText.textContent = valueConfig.text
 			}
 		} else if (this.config.backupIconUrl) {
