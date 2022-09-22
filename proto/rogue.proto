@@ -175,6 +175,8 @@ message Rogue {
 		Frequency MultiTargetSliceFrequency = 8;
 
 		int32 minimum_combo_points_multi_target_slice = 9;
+
+		int32 envenom_pool_amount = 10;
 	}
 	Rotation rotation = 1;
 
