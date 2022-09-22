@@ -336,18 +336,34 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 	swordSpecMask := core.ProcMaskUnknown
 	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
-			warrior.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
+				}
+			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			warrior.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
+				}
+			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeMH
 		}
 	}
 	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
-			warrior.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
+				}
+			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			warrior.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
+				}
+			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeOH
 		}

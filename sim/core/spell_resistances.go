@@ -53,13 +53,7 @@ func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	defenderArmor := at.Defender.Armor()
 	reducibleArmor := MinFloat((defenderArmor+ReducibleArmorConstant)/3, defenderArmor)
 
-	armorPenRating := at.Attacker.stats[stats.ArmorPenetration]
-	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
-		armorPenRating += at.Attacker.PseudoStats.BonusMHArmorPenRating
-	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
-		armorPenRating += at.Attacker.PseudoStats.BonusOHArmorPenRating
-	}
-
+	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spell.BonusArmorPenRating
 	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(armorPenRating)
 	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
 	return 1 - effectiveArmor/(effectiveArmor+armorConstant)

@@ -96,12 +96,7 @@ func (spell *Spell) BonusWeaponDamage() float64 {
 }
 
 func (spell *Spell) ExpertisePercentage() float64 {
-	expertiseRating := spell.Unit.stats[stats.Expertise]
-	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
-		expertiseRating += spell.Unit.PseudoStats.BonusMHExpertiseRating
-	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
-		expertiseRating += spell.Unit.PseudoStats.BonusOHExpertiseRating
-	}
+	expertiseRating := spell.Unit.stats[stats.Expertise] + spell.BonusExpertiseRating
 	return math.Floor(expertiseRating/ExpertisePerQuarterPercentReduction) / 400
 }
 
@@ -125,20 +120,15 @@ func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, att
 	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
 }
 func (spell *Spell) physicalCritRating(target *Unit) float64 {
-	critRating := spell.Unit.stats[stats.MeleeCrit] +
+	return spell.Unit.stats[stats.MeleeCrit] +
 		spell.BonusCritRating +
 		target.PseudoStats.BonusCritRatingTaken
-
-	if spell.ProcMask.Matches(ProcMaskMeleeMH) {
-		critRating += spell.Unit.PseudoStats.BonusMHCritRating
-	} else if spell.ProcMask.Matches(ProcMaskMeleeOH) {
-		critRating += spell.Unit.PseudoStats.BonusOHCritRating
-	}
-	return critRating
 }
 
 func (spell *Spell) SpellPower() float64 {
-	return spell.Unit.GetStat(stats.SpellPower) + spell.Unit.GetStat(spell.SpellSchool.Stat()) + spell.Unit.PseudoStats.MobTypeSpellPower
+	return spell.Unit.GetStat(stats.SpellPower) +
+		spell.Unit.GetStat(spell.SpellSchool.Stat()) +
+		spell.Unit.PseudoStats.MobTypeSpellPower
 }
 
 func (spell *Spell) SpellHitChance(target *Unit) float64 {

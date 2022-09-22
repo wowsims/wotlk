@@ -76,10 +76,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			// dk.RuneWeapon.PseudoStats.ShadowDamageDealtMultiplier = dk.PseudoStats.ShadowDamageDealtMultiplier
 			// dk.RuneWeapon.PseudoStats.FrostDamageDealtMultiplier = dk.PseudoStats.FrostDamageDealtMultiplier
 
-			// dk.RuneWeapon.PseudoStats.BonusMHArmorPenRating = dk.PseudoStats.BonusMHArmorPenRating
-			// dk.RuneWeapon.PseudoStats.BonusMHCritRating = dk.PseudoStats.BonusMHCritRating
-			// dk.RuneWeapon.PseudoStats.BonusMHExpertiseRating = dk.PseudoStats.BonusMHExpertiseRating
-
 			dancingRuneWeaponAura.Activate(sim)
 		},
 	}, func(sim *core.Simulation) bool {

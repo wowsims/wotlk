@@ -245,9 +245,17 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
 			hackAndSlashMask |= core.ProcMaskMeleeMH
 		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.PseudoStats.BonusMHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+				}
+			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.PseudoStats.BonusMHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+				}
+			})
 		}
 	}
 	if ohWeapon != nil && ohWeapon.ID != 0 {
@@ -255,9 +263,17 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
 			hackAndSlashMask |= core.ProcMaskMeleeOH
 		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.PseudoStats.BonusOHCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
+				}
+			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.PseudoStats.BonusOHArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
+				}
+			})
 		}
 	}
 

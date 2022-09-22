@@ -181,7 +181,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	hunter.PseudoStats.CanParry = true
 
 	rangedWeapon := hunter.WeaponFromRanged(0)
-	hunter.PseudoStats.RangedSpeedMultiplier = 1
 
 	// Passive bonus (used to be from quiver).
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1.15

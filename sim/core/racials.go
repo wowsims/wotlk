@@ -242,10 +242,18 @@ func applyWeaponSpecialization(character *Character, expertiseBonus float64, wea
 		character.AddStat(stats.Expertise, expertiseBonus)
 	} else {
 		if mh {
-			character.PseudoStats.BonusMHExpertiseRating += expertiseBonus
+			character.OnSpellRegistered(func(spell *Spell) {
+				if spell.ProcMask.Matches(ProcMaskMeleeMH) {
+					spell.BonusExpertiseRating += expertiseBonus
+				}
+			})
 		}
 		if oh {
-			character.PseudoStats.BonusOHExpertiseRating += expertiseBonus
+			character.OnSpellRegistered(func(spell *Spell) {
+				if spell.ProcMask.Matches(ProcMaskMeleeOH) {
+					spell.BonusExpertiseRating += expertiseBonus
+				}
+			})
 		}
 	}
 }
