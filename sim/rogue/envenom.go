@@ -51,8 +51,9 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					target := hitEffect.Target
 					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
-					return baseDamage*doses + apRatio*doses*spell.MeleeAttackPower()
+					// Despite the tool-tip, doses are not currently used in the calculation
+					// doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
+					return baseDamage*float64(deadlyPoisonStacks) + apRatio*float64(comboPoints)*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 0,
 			},
