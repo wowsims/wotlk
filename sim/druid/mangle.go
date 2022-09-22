@@ -18,7 +18,7 @@ func (druid *Druid) registerMangleBearSpell() {
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), 0.1, 0.0)
+	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleBear = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48564},
@@ -41,7 +41,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			},
 		},
 
-		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury) + glyphBonus) * 1.15,
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15 * glyphBonus,
 		ThreatMultiplier: (1.5 / 1.15) *
 			core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
@@ -72,7 +72,7 @@ func (druid *Druid) registerMangleCatSpell() {
 	}
 
 	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), 0.1, 0.0)
+	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48566},
@@ -91,7 +91,7 @@ func (druid *Druid) registerMangleCatSpell() {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury) + glyphBonus) * 2.0,
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0 * glyphBonus,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
