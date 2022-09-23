@@ -184,14 +184,14 @@ func (druid *Druid) applyPrimalFury() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if druid.InForm(Bear) {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
+					if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
 						druid.AddRage(sim, 5, rageMetrics)
 					}
 				}
 			} else if druid.InForm(Cat) {
 				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
 					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						if procChance == 1 || sim.RandomFloat("Primal Fury") < procChance {
+						if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
 							druid.AddComboPoints(sim, 1, cpMetrics)
 						}
 					}
@@ -273,14 +273,15 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !spellEffect.Landed() {
 				return
 			}
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
+			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
-			}
-			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && (spell == druid.Starfire || spell == druid.Wrath) { // Spells
-				if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
-					druid.ClearcastingAura.Activate(sim)
-					if druid.SetBonuses.balance_t10_2 {
-						lasherweave2P.Activate(sim)
+			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
+				if spell == druid.Starfire || spell == druid.Wrath {
+					if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
+						druid.ClearcastingAura.Activate(sim)
+						if druid.SetBonuses.balance_t10_2 {
+							lasherweave2P.Activate(sim)
+						}
 					}
 				}
 			}

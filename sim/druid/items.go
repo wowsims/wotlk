@@ -171,7 +171,8 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spell != druid.Rake && spell != druid.Rip && spell != druid.LacerateDot.Spell {
+					isLacerate := druid.LacerateDot != nil && druid.LacerateDot.Spell == spell
+					if spell != druid.Rake && spell != druid.Rip && !isLacerate {
 						return
 					}
 					if !icd.IsReady(sim) {

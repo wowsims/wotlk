@@ -37,6 +37,13 @@ var StandardTalents = &proto.DruidTalents{
 	OmenOfClarity:         true,
 }
 
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfFocus),
+	Major2: int32(proto.DruidMajorGlyph_GlyphOfInsectSwarm),
+	Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfall),
+	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTyphoon),
+}
+
 var FullRaidBuffs = &proto.RaidBuffs{
 	ArcaneBrilliance: true,
 	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
@@ -69,7 +76,14 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Adaptive,
+			Type:                     proto.BalanceDruid_Rotation_Adaptive,
+			UseMf:                    true,
+			UseIs:                    true,
+			UseBattleRes:             true,
+			IsInsideEclipseThreshold: 14.0,
+			UseSmartCooldowns:        true,
+			McdInsideLunarThreshold:  15.0,
+			McdInsideSolarThreshold:  15.0,
 		},
 	},
 }
