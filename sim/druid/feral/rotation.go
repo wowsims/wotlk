@@ -260,7 +260,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
 	ripRefreshPending := false
-	pendingActions := []pendingAction{}
+	pendingActions := make([]pendingAction, 0, 4)
 
 	if cat.RipDot.IsActive() && (cat.RipDot.RemainingDuration(sim) < simTimeRemain-endThresh) {
 		ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.RipDot.ExpiresAt()), 15.0, 30.0)
@@ -283,7 +283,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		pendingActions = append(pendingActions, pendingAction{cat.SavageRoarAura.ExpiresAt(), roarCost})
 	}
 
-	sort.SliceStable(pendingActions, func(i, j int) bool {
+	sort.Slice(pendingActions, func(i, j int) bool {
 		return pendingActions[i].refreshTime < pendingActions[j].refreshTime
 	})
 
