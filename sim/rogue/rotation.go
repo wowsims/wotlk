@@ -134,7 +134,7 @@ func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64
 			}
 		}
 		// Overcap CP with builder
-		if rogue.timeToBuild(sim, 1, rogue.BuilderPoints, eps, 0) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+		if rogue.timeToBuild(sim, 1, rogue.BuilderPoints, eps, prio.EnergyCost+prio.PoolAmount) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
 			return ShouldBuild
 		}
 	} else if comboPoints < prio.MinimumComboPoints { // Need CP
@@ -143,13 +143,13 @@ func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64
 		} else {
 			return ShouldWait
 		}
-	} else { // TODO: Optionally build more CP
-		if currentEnergy >= (prio.EnergyCost+prio.PoolAmount) && tte < time.Second*1 {
+	} else { // Between MinimumComboPoints and MaximumComboPoints
+		if currentEnergy >= prio.EnergyCost+prio.PoolAmount && tte <= timeUntilNextGCD {
 			return ShouldCast
-		} else if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+		}
+		ttb := rogue.timeToBuild(sim, 1, 2, eps, prio.EnergyCost+prio.PoolAmount-currentEnergy)
+		if currentEnergy >= rogue.Builder.DefaultCast.Cost && tte > ttb {
 			return ShouldBuild
-		} else {
-			return ShouldWait
 		}
 	}
 	return ShouldWait
@@ -455,9 +455,6 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 	case ShouldWait:
 		desiredEnergy := 100.0
 		if rogue.ComboPoints() == 5 {
-			if rogue.CurrentEnergy() >= 100 {
-				panic("Rotation is capped on energy and cp")
-			}
 			desiredEnergy = prio.EnergyCost
 		} else {
 			if rogue.CurrentEnergy() < prio.EnergyCost && rogue.ComboPoints() >= prio.MinimumComboPoints {
