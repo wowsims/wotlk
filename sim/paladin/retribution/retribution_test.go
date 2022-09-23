@@ -53,6 +53,28 @@ func TestRetribution(t *testing.T) {
 					},
 				},
 			},
+			{
+				Label: "Retribution Paladin SOV 2 Target Swapping",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Vengeance,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: &proto.RetributionPaladin_Rotation{
+							ConsSlack:            500,
+							ExoSlack:             500,
+							UseDivinePlea:        true,
+							DivinePleaPercentage: 0.75,
+							HolyWrathThreshold:   4,
+							SovTargets:           2,
+						},
+					},
+				},
+			},
 		},
 		Glyphs: defaultRetGlyphs,
 
