@@ -171,8 +171,8 @@ sim/core/proto/api.pb.go: proto/*.proto
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go
 
-sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto,*.go)
-	go run generate_items/*.go -outDir=sim/core/items
+sim/core/items/all_items.go: tools/generate_items/*.go $(call rwildcard,sim/core/proto,*.go)
+	go run tools/generate_items/*.go -outDir=sim/core/items
 	gofmt -w ./sim/core/items
 
 .PHONY: test
@@ -187,7 +187,7 @@ update-tests:
 .PHONY: fmt
 fmt: tsfmt
 	gofmt -w ./sim
-	gofmt -w ./generate_items
+	gofmt -w ./tools
 
 .PHONY: tsfmt
 tsfmt:
