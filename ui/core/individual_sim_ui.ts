@@ -1256,6 +1256,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
 			}
 
+			if (settings.encounter) {
+				// Correction for removal of healing power and arcane/fire/etc power.
+				// TODO: Remove this after 2 months (2022/11/22).
+				settings.encounter.targets.forEach(target => {
+					if (target.stats.length > 37) {
+						target.stats.splice(6, 7);
+					}
+				});
+			}
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 
 			if (settings.settings) {
