@@ -143,8 +143,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Defender'sCode-40257"
  value: {
-  dps: 5191.52653
-  tps: 4287.77973
+  dps: 5183.9032
+  tps: 4276.56281
  }
 }
 dps_results: {
@@ -241,8 +241,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-FuturesightRune-38763"
  value: {
-  dps: 5185.71488
-  tps: 4288.05328
+  dps: 5170.88529
+  tps: 4271.99945
  }
 }
 dps_results: {
@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-IncisorFragment-37723"
  value: {
-  dps: 5318.59545
-  tps: 4391.96251
+  dps: 5299.71396
+  tps: 4377.46011
  }
 }
 dps_results: {
@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 5183.04354
-  tps: 4277.23672
+  dps: 5170.88529
+  tps: 4271.99945
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 5180.0528
-  tps: 4275.42804
+  dps: 5193.71416
+  tps: 4289.19365
  }
 }
 dps_results: {
@@ -402,15 +402,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 5183.03725
-  tps: 4277.23043
+  dps: 5170.88529
+  tps: 4271.99945
  }
 }
 dps_results: {
  key: "TestArms-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 5179.53194
-  tps: 4277.6304
+  dps: 5165.93849
+  tps: 4264.90417
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 5185.71488
-  tps: 4288.05328
+  dps: 5170.88529
+  tps: 4271.99945
  }
 }
 dps_results: {
