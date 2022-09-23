@@ -124,7 +124,7 @@ export const DefaultConsumes = Consumes.create({
 export const MM_PRERAID_PRESET = {
 	name: 'MM Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42551,
@@ -217,7 +217,7 @@ export const MM_PRERAID_PRESET = {
 export const MM_P1_PRESET = {
 	name: 'MM P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40543,
@@ -313,7 +313,7 @@ export const MM_P1_PRESET = {
 export const SV_PRERAID_PRESET = {
 	name: 'SV Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 1,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42551,
@@ -406,7 +406,7 @@ export const SV_PRERAID_PRESET = {
 export const SV_P1_PRESET = {
 	name: 'SV P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 1,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40505,
