@@ -43,12 +43,13 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 
 		BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  259,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if sim.CurrentTime < warrior.disableHsCleaveUntil {
@@ -71,7 +72,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 	baseEffect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
@@ -99,6 +100,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  225,
 

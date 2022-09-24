@@ -17,7 +17,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(false, true, 0, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 		}
 
 		effects := make([]core.SpellEffect, 0, numHits)
@@ -37,13 +37,14 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			DamageMultiplier: 1 *
 				(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)) *
 				(1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)),
+			CritMultiplier:   warrior.critMultiplier(oh),
 			ThreatMultiplier: 1.25,
 		})
 	}
 
 	baseEffectMH := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(true, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 
 	effects := make([]core.SpellEffect, 0, numHits)
@@ -77,6 +78,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)),
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1.25,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

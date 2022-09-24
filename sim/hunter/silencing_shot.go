@@ -34,11 +34,12 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 
 		DamageMultiplier: 0.5 *
 			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(hunter.AmmoDamageBonus),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 
 			// Add a check for later so we use ASAP when it comes off CD.
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

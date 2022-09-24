@@ -34,6 +34,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 
 		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 0.05, 0),
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -43,7 +44,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(mh)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {

@@ -31,13 +31,14 @@ func (priest *Priest) registerFlashHealSpell() {
 
 		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			IsHealing: true,
 
 			BaseDamage:     core.BaseDamageConfigHealing(1896, 2203, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
-			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
+			OutcomeApplier: priest.OutcomeFuncHealingCrit(),
 		}),
 	})
 }

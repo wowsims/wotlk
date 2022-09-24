@@ -20,7 +20,7 @@ func (druid *Druid) registerMoonfireSpell() {
 	// T9-2P
 	dotOutcomeApplier := druid.OutcomeFuncTick()
 	if druid.SetBonuses.balance_t9_2 {
-		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier))
+		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit()
 	}
 
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
@@ -45,11 +45,12 @@ func (druid *Druid) registerMoonfireSpell() {
 			druid.TalentsBonuses.moonfuryMultiplier -
 			moonfireGlyphBaseDamageMultiplier,
 		DamageMultiplier: 1,
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagic(406, 476, 0.15),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -76,6 +77,7 @@ func (druid *Druid) registerMoonfireSpell() {
 				moonfireGlyphDotDamageMultiplier,
 			DamageMultiplier: 1 *
 				druid.TalentsBonuses.genesisMultiplier,
+			CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 			ThreatMultiplier: 1,
 		}),
 		Aura: target.RegisterAura(core.Aura{

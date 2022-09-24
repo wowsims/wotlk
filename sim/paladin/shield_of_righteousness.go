@@ -32,6 +32,7 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -42,13 +43,13 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 					if bv <= 2400.0 {
 						return 520.0 + bv
 					} else {
-						bv = 2400.0 + (bv - 2400.0)/2;
+						bv = 2400.0 + (bv-2400.0)/2
 						return 520.0 + core.TernaryFloat64(bv > 2760.0, 2760.0, bv)
 					}
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),
 	})
 }

@@ -39,11 +39,12 @@ func (rogue *Rogue) registerBackstabSpell() {
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 		DamageMultiplier: 1 *
 			(1.5 + 0.01*float64(rogue.Talents.SinisterCalling)),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 170, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

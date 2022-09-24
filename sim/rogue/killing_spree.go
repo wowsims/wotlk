@@ -17,7 +17,7 @@ func (rogue *Rogue) makeKillingSpreedWeaponSwingEffect(isMh bool) core.SpellEffe
 	}
 	return core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(hand, true, 0, true),
-		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMh, false)),
+		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 }
 func (rogue *Rogue) registerKillingSpreeSpell() {
@@ -28,6 +28,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		Flags:       core.SpellFlagMeleeMetrics,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
 		ThreatMultiplier: 1,
 		ApplyEffects:     core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(true)),
 	})
@@ -39,6 +40,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)) *
 			(1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),
+		CritMultiplier:   rogue.MeleeCritMultiplier(false, false),
 		ThreatMultiplier: 1,
 		ApplyEffects:     core.ApplyEffectFuncDirectDamage(rogue.makeKillingSpreedWeaponSwingEffect(false)),
 	})

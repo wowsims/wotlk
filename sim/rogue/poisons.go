@@ -220,6 +220,7 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 
 		DamageMultiplier: 1 +
 			[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+		CritMultiplier:   rogue.SpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -229,7 +230,7 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
+			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 
@@ -243,6 +244,7 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 
 		DamageMultiplier: 1 +
 			[]float64{0.0, 0.07, 0.14, 0.20}[rogue.Talents.VilePoisons],
+		CritMultiplier:   rogue.SpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -252,7 +254,7 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(rogue.SpellCritMultiplier()),
+			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return

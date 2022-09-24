@@ -35,6 +35,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 			5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -49,7 +50,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 		}),
 	})
 }

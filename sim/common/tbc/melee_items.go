@@ -31,11 +31,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(3),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -65,11 +66,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(2),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -131,11 +133,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 0.5,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(300),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -403,11 +406,12 @@ func init() {
 			Flags:       core.SpellFlagIgnoreResists,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(600),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		})
 
@@ -454,11 +458,12 @@ func init() {
 			},
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(513, 567),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		})
 
@@ -478,11 +483,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(285, 315),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -788,11 +794,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigMagic(48, 54, 1),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -935,11 +942,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(20),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -1045,12 +1053,13 @@ func init() {
 				ProcMask:    core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 				ThreatMultiplier: 1,
 
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					BaseDamage: core.BaseDamageConfigRoll(333, 367),
 					// TODO: validate this is a melee hit roll
-					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 				}),
 			})
 		}

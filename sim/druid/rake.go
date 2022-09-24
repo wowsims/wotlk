@@ -35,6 +35,7 @@ func (druid *Druid) registerRakeSpell() {
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
+		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -49,7 +50,7 @@ func (druid *Druid) registerRakeSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -78,7 +79,7 @@ func (druid *Druid) registerRakeSpell() {
 				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier()), druid.OutcomeFuncTick()),
+			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(), druid.OutcomeFuncTick()),
 		})),
 	})
 }

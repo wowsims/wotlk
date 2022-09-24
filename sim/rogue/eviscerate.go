@@ -37,6 +37,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			0.03*float64(rogue.Talents.Aggression),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -49,7 +50,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)

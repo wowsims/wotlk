@@ -88,11 +88,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(285, 475),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -137,11 +138,12 @@ func init() {
 				ProcMask:    core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					BaseDamage:     core.BaseDamageConfigRoll(333, 367),
-					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 				}),
 			})
 		}

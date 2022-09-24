@@ -22,11 +22,12 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 				ProcMask:    core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					BaseDamage:     core.BaseDamageConfigRoll(100, 150),
-					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 				}),
 			})
 
@@ -64,11 +65,12 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 				ProcMask:    core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
+				CritMultiplier:   char.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 					BaseDamage:     core.BaseDamageConfigRoll(15, 25),
-					OutcomeApplier: char.OutcomeFuncMagicHitAndCrit(char.DefaultSpellCritMultiplier()),
+					OutcomeApplier: char.OutcomeFuncMagicHitAndCrit(),
 				}),
 			})
 			char.RegisterAura(core.Aura{

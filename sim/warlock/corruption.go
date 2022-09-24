@@ -32,6 +32,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 			3*float64(warlock.Talents.Malediction)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, 1),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
@@ -46,7 +47,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 	spellCoefficient := 0.2 + 0.12*float64(warlock.Talents.EmpoweredCorruption)/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	applier := warlock.OutcomeFuncTick()
 	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+		applier = warlock.OutcomeFuncMagicCrit()
 	}
 
 	warlock.CorruptionDot = core.NewDot(core.Dot{

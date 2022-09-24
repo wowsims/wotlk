@@ -24,11 +24,12 @@ func newProcDamageEffect(config ProcDamageEffect) {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     config.BaseDamage,
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 

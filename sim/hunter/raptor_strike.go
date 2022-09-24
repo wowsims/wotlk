@@ -31,11 +31,12 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 
 		BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 335, true),
-			OutcomeApplier: hunter.OutcomeFuncMeleeSpecialHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),
 	})
 }

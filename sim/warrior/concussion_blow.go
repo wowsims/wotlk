@@ -37,6 +37,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 2,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -46,7 +47,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(mh)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {

@@ -33,7 +33,7 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.
 
 	effect := core.SpellEffect{
 		BaseDamage:     baseDamageConfig,
-		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, false)),
+		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	spell := rogue.RegisterSpell(core.SpellConfig{
@@ -45,6 +45,7 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.
 		DamageMultiplier: 1 +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFanOfKnives), 0.2, 0.0),
+		CritMultiplier:   rogue.MeleeCritMultiplier(isMH, false),
 		ThreatMultiplier: 1,
 	})
 

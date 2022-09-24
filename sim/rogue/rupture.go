@@ -40,6 +40,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
 			0.1*float64(rogue.Talents.SerratedBlades),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -94,7 +95,7 @@ func (rogue *Rogue) registerRupture() {
 					18*float64(comboPoints) +
 					[]float64{0.0, 0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints]*spell.MeleeAttackPower()
 			}, 0),
-			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
+			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(),
 		}),
 	})
 }

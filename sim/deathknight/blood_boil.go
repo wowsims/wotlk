@@ -31,6 +31,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		},
 
 		DamageMultiplier: dk.bloodyStrikesBonus(dk.BloodBoil),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
@@ -41,7 +42,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 					return (roll + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(hitEffect.Target) * core.TernaryFloat64(dk.DiseasesAreActive(hitEffect.Target), 1.5, 1.0)
 				},
 			},
-			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(dk.bonusCritMultiplier(dk.Talents.MightOfMograine)),
+			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

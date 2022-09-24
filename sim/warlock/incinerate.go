@@ -14,7 +14,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 
 	effect := core.SpellEffect{
 		BaseDamage:     warlock.incinerateDamage(),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
@@ -42,6 +42,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

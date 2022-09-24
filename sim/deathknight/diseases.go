@@ -138,6 +138,7 @@ func (dk *Deathknight) registerBloodPlague() {
 		Flags:       core.SpellFlagDisease,
 
 		DamageMultiplier: 1,
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -155,7 +156,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
+		outcomeApplier = dk.OutcomeFuncMagicCrit()
 	}
 
 	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
@@ -259,6 +260,8 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 		Flags:       core.SpellFlagDisease,
 
 		DamageMultiplier: 1,
+		// TODO: Shouldn't this be dk.RuneWeapon?
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -271,7 +274,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 	// Tier9 4Piece
 	outcomeApplier := dk.RuneWeapon.OutcomeFuncAlwaysHit()
 	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit(dk.DefaultMeleeCritMultiplier())
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit()
 	}
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {

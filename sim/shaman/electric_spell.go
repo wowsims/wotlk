@@ -57,6 +57,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
 			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 	}
 
@@ -91,7 +92,7 @@ func (shaman *Shaman) newElectricSpellEffect(minBaseDamage float64, maxBaseDamag
 
 	effect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusDamage, maxBaseDamage+bonusDamage, spellCoefficient),
-		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	return effect

@@ -36,7 +36,7 @@ func (druid *Druid) registerStarfireSpell() {
 
 	effect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
-		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -93,6 +93,7 @@ func (druid *Druid) registerStarfireSpell() {
 			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
 		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
 			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

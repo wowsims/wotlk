@@ -14,7 +14,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 	effect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
@@ -41,6 +41,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

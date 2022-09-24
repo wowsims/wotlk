@@ -262,11 +262,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(150),
-				OutcomeApplier: character.OutcomeFuncMagicCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicCrit(),
 
 				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() {

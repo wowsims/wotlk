@@ -40,6 +40,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 			paladin.getItemSetLightbringerBattlegearBonus4() +
 			paladin.getItemSetAegisBattlegearBonus2(),
 		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -52,7 +53,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 						.15*spell.MeleeAttackPower()
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialNoBlockDodgeParry(paladin.MeleeCritMultiplier()),
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
 		}),
 	})
 }

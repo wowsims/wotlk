@@ -33,6 +33,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 		BonusCritRating: (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1.5 *
 			dk.darkrunedPlateRuneStrikeDamageBonus(),
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1.75,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -47,7 +48,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(dk.DefaultMeleeCritMultiplier()),
+			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				rs.DoCost(sim)

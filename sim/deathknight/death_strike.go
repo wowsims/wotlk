@@ -32,7 +32,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		OnSpellHitDealt: onhit,
 	}
 
-	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -44,6 +44,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		DamageMultiplier: .75 *
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			(1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -113,10 +114,11 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 * dk.improvedDeathStrikeDamageBonus(),
+		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)

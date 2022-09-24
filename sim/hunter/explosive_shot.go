@@ -25,7 +25,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}
 
 	initialEffect := baseEffect
@@ -61,6 +61,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
 		DamageMultiplier: 1,
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),

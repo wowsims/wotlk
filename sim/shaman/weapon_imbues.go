@@ -23,7 +23,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 58804}
 
 	baseEffect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(shaman.DefaultMeleeCritMultiplier()),
+		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 	if isMH {
 		bonusApDmg := shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
@@ -47,6 +47,7 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 + math.Round(float64(shaman.Talents.ElementalWeapons)*13.33)/100,
+		CritMultiplier:   shaman.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultipleTargeted(effects),
@@ -109,7 +110,7 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	if isMH {
@@ -130,6 +131,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 		ProcMask:         core.ProcMaskEmpty,
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
 		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -190,7 +192,7 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 
 func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	if isMH {
@@ -211,6 +213,7 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 		ProcMask:         core.ProcMaskEmpty,
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
 		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
 	})
@@ -296,11 +299,12 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier(0)),
+			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

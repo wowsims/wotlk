@@ -73,6 +73,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), .1, 0),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -85,7 +86,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() && impSSProcChance > 0 && sim.RandomFloat("Imp Steady Shot") < impSSProcChance {

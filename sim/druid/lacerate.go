@@ -46,6 +46,7 @@ func (druid *Druid) registerLacerateSpell() {
 		},
 
 		DamageMultiplier: lbdm * dwdm,
+		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 0.5,
 		FlatThreatBonus:  267,
 
@@ -61,7 +62,7 @@ func (druid *Druid) registerLacerateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -91,10 +92,11 @@ func (druid *Druid) registerLacerateSpell() {
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
-			ProcMask:     core.ProcMaskMeleeMHSpecial,
+			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics,
 
 			DamageMultiplier: lbdm * t9bonus,
+			CritMultiplier:   druid.MeleeCritMultiplier(),
 			ThreatMultiplier: 0.5,
 		}),
 		Aura:          dotAura,

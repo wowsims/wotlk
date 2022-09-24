@@ -21,7 +21,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: warrior.OutcomeFuncRangedHitAndCrit(warrior.critMultiplier(none)),
+		OutcomeApplier: warrior.OutcomeFuncRangedHitAndCrit(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				core.ThunderClapAura(spellEffect.Target, warrior.Talents.ImprovedThunderClap).Activate(sim)
@@ -52,6 +52,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier: []float64{1.0, 1.1, 1.2, 1.3}[warrior.Talents.ImprovedThunderClap],
+		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1.85,
 
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, baseEffect),

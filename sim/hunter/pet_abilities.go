@@ -165,11 +165,12 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 			},
 
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+			CritMultiplier:   2,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		}),
 	}
@@ -208,14 +209,14 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 		procMask = core.ProcMaskSpellDamage
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:  hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+			OutcomeApplier:  hp.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: config.OnSpellHitDealt,
 		})
 	} else {
 		procMask = core.ProcMaskMeleeMHSpecial
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:  hp.OutcomeFuncMagicHitAndCrit(2),
+			OutcomeApplier:  hp.OutcomeFuncMagicHitAndCrit(),
 			OnSpellHitDealt: config.OnSpellHitDealt,
 		})
 	}
@@ -231,6 +232,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 			Flags:       flags,
 
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+			CritMultiplier:   2,
 			ThreatMultiplier: 1,
 
 			Cast: core.CastConfig{
@@ -662,11 +664,12 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		},
 
 		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(59, 83, 0.07)),
-			OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+			OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				hp.SpendFocus(sim, cost, actionID)

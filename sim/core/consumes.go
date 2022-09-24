@@ -1043,11 +1043,12 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 			SpellSchool: SpellSchoolFire,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 				BaseDamage:     BaseDamageConfigFlat(40),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -1221,11 +1222,12 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		// Explosives always have 1% resist chance, so just give them hit cap.
 		BonusHitRating:   100 * SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
+		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
 			BaseDamage:     BaseDamageConfigRoll(minDamage, maxDamage),
-			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(2),
+			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			// TODO: Deal self-damage
 			//OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
 			//},

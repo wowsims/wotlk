@@ -26,7 +26,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		OnSpellHitDealt: onhit,
 	}
 
-	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.ViciousStrikes, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -39,6 +39,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			(1.0 + 0.1*float64(dk.Talents.Outbreak)) *
 			core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfPlagueStrike), 1.2, 1.0),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -100,10 +101,11 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.5 *
 			(1.0 + 0.1*float64(dk.Talents.Outbreak)),
+		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier()),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell)

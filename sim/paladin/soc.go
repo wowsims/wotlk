@@ -27,7 +27,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 	baseEffect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
@@ -51,6 +51,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 		DamageMultiplierAdditive: baseMultiplierAdditive,
 		DamageMultiplier:         0.36,
+		CritMultiplier:           paladin.MeleeCritMultiplier(),
 		ThreatMultiplier:         1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
@@ -64,6 +65,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 		DamageMultiplierAdditive: baseMultiplierAdditive,
 		DamageMultiplier:         0.36,
+		CritMultiplier:           paladin.MeleeCritMultiplier(),
 		ThreatMultiplier:         1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(baseEffect),
@@ -156,6 +158,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			paladin.getMajorGlyphOfJudgementBonus() +
 			paladin.getTalentTheArtOfWarBonus(),
 		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -166,7 +169,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 						0.13*spell.SpellPower()
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
 		}),
 	})
 }

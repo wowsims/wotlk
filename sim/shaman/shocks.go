@@ -19,37 +19,38 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 	cost := baseCost
 
 	return core.SpellConfig{
-			ActionID:     actionID,
-			SpellSchool:  spellSchool,
-			ProcMask:     core.ProcMaskSpellDamage,
-			Flags:        SpellFlagShock,
-			ResourceType: stats.Mana,
-			BaseCost:     cost,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagShock,
+		ResourceType: stats.Mana,
+		BaseCost:     cost,
 
-			Cast: core.CastConfig{
-				DefaultCast: core.Cast{
-					Cost: cost -
-						baseCost*(core.TernaryFloat64(shaman.Talents.ShamanisticFocus, 0.45, 0)+
-							float64(shaman.Talents.Convection)*0.02+
-							float64(shaman.Talents.MentalQuickness)*0.02+
-							core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), 0.1, 0)),
-					GCD: core.GCDDefault,
-				},
-				ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-					shaman.modifyCastClearcasting(spell, cast)
-				},
-				CD: core.Cooldown{
-					Timer:    shockTimer,
-					Duration: shaman.ShockCD(),
-				},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: cost -
+					baseCost*(core.TernaryFloat64(shaman.Talents.ShamanisticFocus, 0.45, 0)+
+						float64(shaman.Talents.Convection)*0.02+
+						float64(shaman.Talents.MentalQuickness)*0.02+
+						core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), 0.1, 0)),
+				GCD: core.GCDDefault,
 			},
+			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				shaman.modifyCastClearcasting(spell, cast)
+			},
+			CD: core.Cooldown{
+				Timer:    shockTimer,
+				Duration: shaman.ShockCD(),
+			},
+		},
 
-			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-			DamageMultiplier: 1 *
-				(1 + 0.01*float64(shaman.Talents.Concussion)) *
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 4), 1.25, 1),
-			ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
-		}, core.SpellEffect{}
+		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
+		DamageMultiplier: 1 *
+			(1 + 0.01*float64(shaman.Talents.Concussion)) *
+			core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 4), 1.25, 1),
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
+		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+	}, core.SpellEffect{}
 }
 
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
@@ -57,7 +58,7 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	config.Flags |= core.SpellFlagBinary
 
 	effect.BaseDamage = core.BaseDamageConfigMagic(854, 900, 0.386)
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier(0))
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary()
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 
 	shaman.EarthShock = shaman.RegisterSpell(config)
@@ -72,8 +73,8 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 
 	effect.BaseDamage = core.BaseDamageConfigMagic(500, 500, 0.214)
 
-	critMultiplier := shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit(critMultiplier)
+	config.CritMultiplier = shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit()
 	if effect.OnSpellHitDealt == nil {
 		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
@@ -97,11 +98,12 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		Spell: shaman.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
-			ProcMask:     core.ProcMaskSpellDamage,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: config.DamageMultiplier *
 				(1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) *
 				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2), 1.2, 1),
+			CritMultiplier:   config.CritMultiplier,
 			ThreatMultiplier: config.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
@@ -120,7 +122,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		AffectedByCastSpeed: true,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicCrit(critMultiplier),
+			OutcomeApplier: shaman.OutcomeFuncMagicCrit(),
 			IsPeriodic:     true,
 		}),
 	})
@@ -138,7 +140,7 @@ func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config.ThreatMultiplier *= 2
 
 	effect.BaseDamage = core.BaseDamageConfigMagic(812, 858, 0.386)
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary(shaman.ElementalCritMultiplier(0))
+	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCritBinary()
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 
 	shaman.FrostShock = shaman.RegisterSpell(config)

@@ -194,10 +194,10 @@ func (paladin *Paladin) applyReckoning() {
 		MaxStacks: 4,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			reckoningSpell = paladin.GetOrRegisterSpell(core.SpellConfig{
-				ActionID:    actionID,
-				SpellSchool: core.SpellSchoolPhysical,
-				ProcMask:    core.ProcMaskMeleeMH,
-				Flags:       core.SpellFlagMeleeMetrics,
+				ActionID:     actionID,
+				SpellSchool:  core.SpellSchoolPhysical,
+				ProcMask:     core.ProcMaskMeleeMH,
+				Flags:        core.SpellFlagMeleeMetrics,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
 			})
 		},
@@ -443,7 +443,7 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 
 	if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
 		// Crits using melee crit.
-		applier = paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier())
+		applier = paladin.OutcomeFuncMeleeSpecialCritOnly()
 	} else {
 		applier = paladin.OutcomeFuncAlwaysHit()
 	}
@@ -489,6 +489,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 	})
 }

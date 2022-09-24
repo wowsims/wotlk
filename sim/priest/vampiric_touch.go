@@ -14,7 +14,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {
-		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
+		applier = priest.OutcomeFuncMagicCrit()
 	}
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
@@ -35,6 +35,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  float64(priest.Talents.MindMelt)*3*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + float64(priest.Talents.Darkness)*0.02,
+		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

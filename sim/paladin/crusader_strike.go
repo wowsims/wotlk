@@ -39,6 +39,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 			paladin.getTalentTheArtOfWarBonus() +
 			paladin.getItemSetGladiatorsVindicationBonusGloves(),
 		DamageMultiplier: 0.75,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -49,7 +50,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 					core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40191, 79, 0), // Libram of Radiance
 				true,
 			),
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),
 	})
 }

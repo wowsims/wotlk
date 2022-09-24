@@ -30,7 +30,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		OnSpellHitDealt: onhit,
 	}
 
-	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.GuileOfGorefiend, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 	effect.OutcomeApplier = dk.killingMachineOutcomeMod(effect.OutcomeApplier)
 
 	conf := core.SpellConfig{
@@ -43,6 +43,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		DamageMultiplier: .55 *
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			dk.bloodOfTheNorthCoeff(),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

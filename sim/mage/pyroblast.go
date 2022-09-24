@@ -45,12 +45,13 @@ func (mage *Mage) registerPyroblastSpell() {
 		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfigMagic(1210, 1531, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
 			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((1210+1531)/2, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
-			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -65,7 +66,7 @@ func (mage *Mage) registerPyroblastSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
+			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage,
 
 			DamageMultiplier: mage.Pyroblast.DamageMultiplier,

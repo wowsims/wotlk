@@ -16,7 +16,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 
 	effect := core.SpellEffect{
 		BaseDamage:      core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
-		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(),
 		OnSpellHitDealt: applyDotOnLanded(&warlock.ImmolateDot),
 	}
 
@@ -43,6 +43,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
@@ -55,10 +56,11 @@ func (warlock *Warlock) registerImmolateSpell() {
 		Spell: warlock.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: spellSchool,
-			ProcMask:     core.ProcMaskSpellDamage,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			BonusCritRating:          warlock.Immolate.BonusCritRating,
 			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+			CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 			ThreatMultiplier:         warlock.Immolate.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
@@ -78,7 +80,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, spellCoefficient),
-			OutcomeApplier: warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
+			OutcomeApplier: warlock.OutcomeFuncMagicCrit(),
 		}),
 	})
 }

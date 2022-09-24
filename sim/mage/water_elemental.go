@@ -157,11 +157,12 @@ func (we *WaterElemental) registerWaterboltSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   we.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagic(256, 328, 3.0/3.5),
-			OutcomeApplier: we.OutcomeFuncMagicHitAndCrit(we.DefaultSpellCritMultiplier()),
+			OutcomeApplier: we.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

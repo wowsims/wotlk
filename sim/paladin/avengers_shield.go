@@ -23,7 +23,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			},
 		},
 		// TODO: Check if it uses spellhit/crit or something crazy (probably not!)
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	// Glyph to single target, OR apply to up to 3 targets
@@ -56,6 +56,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		},
 
 		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		// TODO: Why is this here?
 		BonusCritRating:  1,
 		ThreatMultiplier: 1,

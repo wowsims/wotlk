@@ -31,6 +31,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(hunter.Talents.ImprovedStings) +
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
+		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -45,7 +46,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 	dotOutcome := hunter.OutcomeFuncTick()
 	if hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2) {
-		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly()
 	}
 
 	noxiousStingsMultiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)

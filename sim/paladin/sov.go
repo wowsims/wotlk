@@ -40,8 +40,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 */
 	baseMultiplier := (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
 		(1 + paladin.getItemSetLightswornBattlegearBonus4() +
-		paladin.getTalentSealsOfThePureBonus() +
-		paladin.getItemSetAegisPlateBonus2())
+			paladin.getTalentSealsOfThePureBonus() +
+			paladin.getItemSetAegisPlateBonus2())
 	// TODO: Test whether T8 Prot 2pc also affects Judgement, once available
 	// TODO: Verify whether these bonuses should indeed be additive with similar
 
@@ -81,6 +81,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			paladin.getTalentTheArtOfWarBonus(),
 		DamageMultiplier: (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getTalentSealsOfThePureBonus()),
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -98,7 +99,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 					return damage
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
 		}),
 	})
 
@@ -110,6 +111,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 		// (baseMult * weaponScaling / stacks)
 		DamageMultiplier: baseMultiplier * .33 / 5,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -119,7 +121,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 					return core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, false), dot.Aura).Calculator(sim, hitEffect, spell)
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // can't miss if melee swing landed, but can crit
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // can't miss if melee swing landed, but can crit
 		}),
 	})
 
@@ -211,7 +213,7 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 			SpellSchool: core.SpellSchoolHoly,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			DamageMultiplierAdditive: 1 + 
+			DamageMultiplierAdditive: 1 +
 				paladin.getItemSetLightswornBattlegearBonus4() +
 				paladin.getTalentSealsOfThePureBonus() +
 				paladin.getItemSetAegisPlateBonus2(),

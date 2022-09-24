@@ -28,7 +28,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 
 	baseSeedExplosionEffect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagic(1633, 1897, 0.2129),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(warlock.DefaultSpellCritMultiplier()),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	// Use a custom aoe effect list that does not include the seeded target.
@@ -47,6 +47,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 			warlock.masterDemonologistShadowCrit() +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		CritMultiplier:           warlock.DefaultSpellCritMultiplier(),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects, false),

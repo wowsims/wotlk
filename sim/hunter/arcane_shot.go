@@ -48,6 +48,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			.05*float64(hunter.Talents.ImprovedArcaneShot),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -57,7 +58,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(),
 			OnSpellHitDealt: onSpellHit,
 		}),
 	})

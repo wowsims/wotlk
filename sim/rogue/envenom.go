@@ -44,6 +44,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		DamageMultiplier: 1 +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -57,7 +58,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				target := spellEffect.Target
 				if spellEffect.Landed() {

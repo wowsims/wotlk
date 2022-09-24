@@ -76,11 +76,12 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		BonusCritRating: wp.owner.masterDemonologistFireCrit(),
 		DamageMultiplier: (1 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
 			(1 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
+		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagic(203, 227, 0.571),
-			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(2),
+			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }
@@ -90,7 +91,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 
 	baseEffect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 124, true),
-		OutcomeApplier: wp.OutcomeFuncMeleeSpecialHitAndCrit(2),
+		OutcomeApplier: wp.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
@@ -121,6 +122,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
@@ -150,12 +152,13 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 
 		BonusCritRating:  wp.owner.masterDemonologistShadowCrit(),
 		DamageMultiplier: 1,
+		CritMultiplier:   1.5,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
 			BaseDamage:     core.BaseDamageConfigMagic(237, 237, 0.429),
-			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(1.5),
+			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }
@@ -195,6 +198,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 		},
 
 		DamageMultiplier: 1 + 0.03*float64(wp.owner.Talents.ShadowMastery),
+		CritMultiplier:   1.5 + 0.1*float64(wp.owner.Talents.Ruin),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -218,7 +222,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 						return oldCalc(sim, hitEffect, spell) * (1 + 0.15*float64(counter))
 					}
 				}),
-			OutcomeApplier:  wp.OutcomeFuncMagicHitAndCritBinary(1.5 + 0.1*float64(wp.owner.Talents.Ruin)),
+			OutcomeApplier:  wp.OutcomeFuncMagicHitAndCritBinary(),
 			OnSpellHitDealt: onSpellHitDealt,
 		}),
 	})
