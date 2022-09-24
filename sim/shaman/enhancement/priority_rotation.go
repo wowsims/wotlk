@@ -117,11 +117,11 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && !enh.FlameShockDot.IsActive() {
+			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && enh.FlameShockDot.RemainingDuration(sim) <= time.Duration(rotation.options.FlameShockClipTicks)*enh.FlameShockDot.TickLength {
 				return true
 			}
 
-			return rotation.options.WeaveFlameShock && !enh.FlameShockDot.IsActive()
+			return rotation.options.WeaveFlameShock && enh.FlameShockDot.RemainingDuration(sim) <= time.Duration(rotation.options.FlameShockClipTicks)*enh.FlameShockDot.TickLength
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.FlameShock.IsReady(sim) && enh.FlameShock.Cast(sim, target)

@@ -284,6 +284,7 @@ message EnhancementShaman {
 
 		bool weave_flame_shock = 10;
 		PrimaryShock primary_shock = 11;
+        int32 flame_shock_clip_ticks = 12;
 
     }
 

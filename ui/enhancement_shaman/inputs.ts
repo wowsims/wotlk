@@ -129,6 +129,13 @@ export const EnhancementShamanRotationConfig = {
 				labelTooltip: 'Use Flame Shock whenever the target does not already have the DoT.',
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
+            InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+                fieldName:  'flameShockClipTicks',
+                label:  'Refresh Flame Shock at ticks remaining',
+                labelTooltip: 'Set to 0 to require the debuff be missing. A tick is 3s, affected by spell haste',
+                enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weaveFlameShock,
+                showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weaveFlameShock
+            }),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'lightningboltWeave',
 				label: 'Enable Weaving Lightning Bolt',
