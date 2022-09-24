@@ -23,8 +23,8 @@ func addThaddius25(bossPrefix string) {
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       2.0,
-			MinBaseDamage:    14135,
+			SwingSpeed:       1.25,
+			MinBaseDamage:    25315,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

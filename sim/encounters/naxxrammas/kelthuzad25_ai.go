@@ -23,8 +23,8 @@ func addKelThuzad25(bossPrefix string) {
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       2.5,
-			MinBaseDamage:    14135,
+			SwingSpeed:       2.3,
+			MinBaseDamage:    28767,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
