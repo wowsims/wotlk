@@ -67,6 +67,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		DamageMultiplier: .7 *
 			[]float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
 			dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
@@ -77,7 +78,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				TargetSpellCoefficient: 1,
 			},
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.bonusCritMultiplier(dk.Talents.ViciousStrikes)),
+			OutcomeApplier: dk.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome

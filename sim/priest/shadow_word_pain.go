@@ -16,7 +16,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 	glyphManaMetric := priest.NewManaMetrics(core.ActionID{SpellID: 56172})
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {
-		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
+		applier = priest.OutcomeFuncMagicCrit()
 	}
 
 	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
@@ -40,6 +40,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			float64(priest.Talents.Darkness)*0.02 +
 			float64(priest.Talents.TwinDisciplines)*0.01 +
 			float64(priest.Talents.ImprovedShadowWordPain)*0.03,
+		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

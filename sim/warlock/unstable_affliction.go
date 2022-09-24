@@ -33,6 +33,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 			warlock.masterDemonologistShadowCrit() +
 			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, 1),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -45,7 +46,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	spellCoefficient := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	applier := warlock.OutcomeFuncTick()
 	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+		applier = warlock.OutcomeFuncMagicCrit()
 	}
 
 	warlock.UnstableAfflictionDot = core.NewDot(core.Dot{

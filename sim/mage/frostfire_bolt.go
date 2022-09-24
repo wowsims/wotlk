@@ -40,11 +40,12 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
 			(1 + .04*float64(mage.Talents.TormentTheWeak)) *
 			(1 + .01*float64(mage.Talents.ChilledToTheBone)),
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
-			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage + float64(mage.Talents.IceShards)/3),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -59,7 +60,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire | core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
+			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | HotStreakSpells,
 
 			DamageMultiplier: mage.FrostfireBolt.DamageMultiplier /

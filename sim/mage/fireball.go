@@ -41,12 +41,13 @@ func (mage *Mage) registerFireballSpell() {
 		DamageMultiplier: mage.spellDamageMultiplier *
 			(1 + 0.02*float64(mage.Talents.SpellImpact)) *
 			(1 + .04*float64(mage.Talents.TormentTheWeak)),
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
 			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
-			OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() && !hasGlyph {
@@ -61,7 +62,7 @@ func (mage *Mage) registerFireballSpell() {
 		Spell: mage.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
+			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
 
 			DamageMultiplier: mage.Fireball.DamageMultiplier,

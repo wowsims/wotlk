@@ -20,7 +20,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 			// (much akin to what stuff like hs or ms have intrinsically)
 			true,
 		),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
@@ -57,6 +57,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 			paladin.getTalentTheArtOfWarBonus() +
 			paladin.getItemSetRedemptionBattlegearBonus2(),
 		DamageMultiplier: 1.1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),

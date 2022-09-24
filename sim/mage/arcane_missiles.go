@@ -54,6 +54,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		BonusHitRating:   float64(mage.Talents.ArcaneFocus+FrostTalents.Precision) * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  bonusCrit,
 		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles), .25, 0)),
 		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -73,10 +74,6 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		}),
 	})
 
-	bonusCritDamage := mage.bonusCritDamage
-	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles) {
-		bonusCritDamage += .25
-	}
 	target := mage.CurrentTarget
 	mage.ArcaneMissilesDot = core.NewDot(core.Dot{
 		Spell: mage.ArcaneMissiles,
@@ -101,7 +98,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(362, 1/3.5+0.03*float64(mage.Talents.ArcaneEmpowerment)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(mage.SpellCritMultiplier(1, bonusCritDamage)),
+			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
 		})),
 	})
 }

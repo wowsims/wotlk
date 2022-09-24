@@ -220,6 +220,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		Flags:       SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
+		CritMultiplier:   options.MainHand.CritMultiplier,
 		ThreatMultiplier: 1,
 	}
 
@@ -230,6 +231,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		Flags:       SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
+		CritMultiplier:   options.OffHand.CritMultiplier,
 		ThreatMultiplier: 1,
 	}
 
@@ -247,6 +249,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   options.Ranged.CritMultiplier,
 		ThreatMultiplier: 1,
 	}
 
@@ -262,15 +265,15 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	} else {
 		unit.AutoAttacks.MHEffect = SpellEffect{
 			BaseDamage:     BaseDamageConfigMeleeWeapon(MainHand, false, 0, true),
-			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.MainHand.CritMultiplier),
+			OutcomeApplier: unit.OutcomeFuncMeleeWhite(),
 		}
 		unit.AutoAttacks.OHEffect = SpellEffect{
 			BaseDamage:     BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
-			OutcomeApplier: unit.OutcomeFuncMeleeWhite(options.OffHand.CritMultiplier),
+			OutcomeApplier: unit.OutcomeFuncMeleeWhite(),
 		}
 		unit.AutoAttacks.RangedEffect = SpellEffect{
 			BaseDamage:     BaseDamageConfigRangedWeapon(0),
-			OutcomeApplier: unit.OutcomeFuncRangedHitAndCrit(options.Ranged.CritMultiplier),
+			OutcomeApplier: unit.OutcomeFuncRangedHitAndCrit(),
 		}
 	}
 }

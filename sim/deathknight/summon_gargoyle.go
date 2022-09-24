@@ -144,6 +144,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   1.5,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -154,7 +155,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05, 1.5),
+			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05),
 		}),
 	})
 }

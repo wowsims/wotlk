@@ -26,7 +26,7 @@ func (hunter *Hunter) registerVolleySpell() {
 					return 353 + 0.0837*spell.RangedAttackPower(hitEffect.Target)
 				},
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 			IsPeriodic:     true,
 		}),
 	})
@@ -49,6 +49,7 @@ func (hunter *Hunter) registerVolleySpell() {
 
 		DamageMultiplier: 1 *
 			(1 + 0.04*float64(hunter.Talents.Barrage)),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

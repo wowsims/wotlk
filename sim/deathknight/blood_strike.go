@@ -28,7 +28,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		OnSpellHitDealt: onhit,
 	}
 
-	procMask := dk.threatOfThassarianProcMasks(isMH, dk.Talents.MightOfMograine+dk.Talents.GuileOfGorefiend, &effect)
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
@@ -42,6 +42,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 			dk.bloodOfTheNorthCoeff() *
 			dk.thassariansPlateDamageBonus() *
 			dk.bloodyStrikesBonus(dk.BloodStrike),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

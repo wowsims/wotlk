@@ -178,7 +178,7 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 func (druid *Druid) PrimalGoreOutcomeFuncTick() core.OutcomeApplier {
 	if druid.Talents.PrimalGore {
-		return druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier())
+		return druid.OutcomeFuncTickHitAndCrit()
 	} else {
 		return druid.OutcomeFuncTick()
 	}

@@ -19,7 +19,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 					0.1*spell.RangedAttackPower(hitEffect.Target)
 			},
 		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	})
 
 	hunter.ExplosiveTrap = hunter.RegisterSpell(core.SpellConfig{
@@ -44,6 +44,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
+		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -54,7 +55,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 	periodicOutcomeFunc := hunter.OutcomeFuncRangedHit()
 	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveTrap) {
-		periodicOutcomeFunc = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+		periodicOutcomeFunc = hunter.OutcomeFuncRangedHitAndCrit()
 	}
 
 	hunter.ExplosiveTrapDot = core.NewDot(core.Dot{
@@ -66,6 +67,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			DamageMultiplierAdditive: 1 +
 				.10*float64(hunter.Talents.TrapMastery) +
 				.02*float64(hunter.Talents.TNT),
+			CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 			ThreatMultiplier: 1,
 		}),
 		Aura: hunter.RegisterAura(core.Aura{

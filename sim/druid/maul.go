@@ -35,7 +35,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 					return normalDamage * modifier
 				}
 			}),
-		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -68,6 +68,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
+		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  344,
 

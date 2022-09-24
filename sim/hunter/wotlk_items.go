@@ -225,6 +225,7 @@ func init() {
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 					DamageMultiplier: 0.5,
+					CritMultiplier:   hunter.AutoAttacks.RangedConfig.CritMultiplier,
 					ThreatMultiplier: 1,
 					ApplyEffects:     core.ApplyEffectFuncDirectDamage(rangedEffect),
 				})

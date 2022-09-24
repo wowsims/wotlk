@@ -16,7 +16,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		IsHealing: true,
 
 		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
+		OutcomeApplier: priest.OutcomeFuncHealingCrit(),
 	}
 
 	// Separate ApplyEffects functions for each party.
@@ -44,6 +44,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
+		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

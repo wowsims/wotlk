@@ -743,7 +743,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	if warrior.AutoAttacks.IsDualWielding {
 		baseEffectOH := core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(oh)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 		}
 
 		effects := make([]core.SpellEffect, 0, numHits)
@@ -761,13 +761,14 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			Flags:       core.SpellFlagMeleeMetrics,
 
 			DamageMultiplier: 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization),
+			CritMultiplier:   warrior.critMultiplier(oh),
 			ThreatMultiplier: 1.25,
 		})
 	}
 
 	baseEffectMH := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(mh)),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 
 	effects := make([]core.SpellEffect, 0, numHits)
@@ -798,6 +799,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1.25,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

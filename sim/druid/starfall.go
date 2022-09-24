@@ -43,6 +43,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		BonusCritRating:  naturesMajestyCritBonus,
 		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -61,6 +62,7 @@ func (druid *Druid) registerStarfallSpell() {
 		ProcMask:         core.ProcMaskSpellDamage,
 		BonusCritRating:  naturesMajestyCritBonus,
 		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 	})
 
@@ -74,7 +76,7 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagic(563, 653, 0.3),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
 		})),
 	})
 
@@ -88,7 +90,7 @@ func (druid *Druid) registerStarfallSpell() {
 		TickLength:    tickLength,
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(101, 0.13),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier)),
+			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
 		})),
 	})
 }

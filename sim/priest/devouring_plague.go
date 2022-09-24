@@ -15,7 +15,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {
-		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
+		applier = priest.OutcomeFuncMagicCrit()
 	}
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
@@ -42,6 +42,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			float64(priest.Talents.TwinDisciplines)*0.01 +
 			float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
+		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -56,7 +57,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 						return dmg * baseMod * swMod
 					}
 				}),
-			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					priest.AddShadowWeavingStack(sim)
@@ -67,7 +68,24 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	})
 
 	priest.DevouringPlagueDot = core.NewDot(core.Dot{
-		Spell: priest.DevouringPlague,
+		Spell: priest.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskSpellDamage,
+			Flags:       core.SpellFlagDisease,
+
+			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+			BonusCritRating: 0 +
+				3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+			DamageMultiplier: 1 +
+				float64(priest.Talents.Darkness)*0.02 +
+				float64(priest.Talents.TwinDisciplines)*0.01 +
+				float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
+			CritMultiplier:   priest.SpellCritMultiplier(1, 1),
+			ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "DevouringPlague-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,

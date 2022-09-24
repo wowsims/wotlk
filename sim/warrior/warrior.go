@@ -121,8 +121,8 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
-	warrior.AutoAttacks.MHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(mh))
-	warrior.AutoAttacks.OHEffect.OutcomeApplier = warrior.OutcomeFuncMeleeWhite(warrior.autoCritMultiplier(oh))
+	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
+	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
 
 	warrior.Shout = warrior.makeShoutSpell()
 

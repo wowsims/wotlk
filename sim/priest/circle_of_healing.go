@@ -18,7 +18,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 	baseEffect := core.SpellEffect{
 		IsHealing:      true,
 		BaseDamage:     core.BaseDamageConfigHealing(958, 1058, 0.4029),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
+		OutcomeApplier: priest.OutcomeFuncHealingCrit(),
 	}
 
 	var effects []core.SpellEffect
@@ -51,6 +51,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		DamageMultiplier: 1 *
 			(1 + .02*float64(priest.Talents.DivineProvidence)) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.1, 1),
+		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),

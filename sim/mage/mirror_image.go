@@ -143,11 +143,12 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
-			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }
@@ -174,11 +175,12 @@ func (mi *MirrorImage) registerFireblastSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
-			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

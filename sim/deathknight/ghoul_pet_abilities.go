@@ -68,11 +68,12 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 			},
 
 			DamageMultiplier: 1.5,
+			CritMultiplier:   2,
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
-				OutcomeApplier: ghoulPet.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				OutcomeApplier: ghoulPet.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		}),
 	}

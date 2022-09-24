@@ -26,13 +26,14 @@ func (priest *Priest) registerRenewSpell() {
 				priest.renewHealingMultiplier() *
 				.05 * float64(priest.Talents.EmpoweredRenew) *
 				core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
+			CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				IsHealing: true,
 
 				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
-				OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
+				OutcomeApplier: priest.OutcomeFuncHealingCrit(),
 			}),
 		})
 	}

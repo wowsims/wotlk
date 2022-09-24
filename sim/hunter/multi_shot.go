@@ -22,7 +22,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
@@ -64,6 +64,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			.04*float64(hunter.Talents.Barrage),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),

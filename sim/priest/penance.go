@@ -78,7 +78,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		DamageMultiplier: 1 *
 			(1 + .05*float64(priest.Talents.SearingLight)) *
 			core.TernaryFloat64(isHeal, 1+.01*float64(priest.Talents.TwinDisciplines), 1),
-
+		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 0,
 
 		ApplyEffects: applyEffects,
@@ -109,7 +109,7 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 			IsPeriodic:     true,
 			IsHealing:      true,
 			BaseDamage:     core.BaseDamageConfigHealing(1484, 1676, .5362),
-			OutcomeApplier: priest.OutcomeFuncHealingCrit(priest.DefaultHealingCritMultiplier()),
+			OutcomeApplier: priest.OutcomeFuncHealingCrit(),
 		}
 	}
 

@@ -19,10 +19,10 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 				return (damage / speed) * 4
 			},
 		},
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
-	numHits := core.MinInt32(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous),4,3), paladin.Env.GetNumTargets())
+	numHits := core.MinInt32(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous), 4, 3), paladin.Env.GetNumTargets())
 	effects := make([]core.SpellEffect, 0, numHits)
 	for i := int32(0); i < numHits; i++ {
 		mhEffect := baseEffectMH
@@ -51,7 +51,8 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 		},
 
 		DamageMultiplierAdditive: 1 + paladin.getItemSetRedemptionPlateBonus2() + paladin.getItemSetT9PlateBonus2() + paladin.getItemSetLightswornPlateBonus2(),
-		ThreatMultiplier: 1,
+		CritMultiplier:           paladin.MeleeCritMultiplier(),
+		ThreatMultiplier:         1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

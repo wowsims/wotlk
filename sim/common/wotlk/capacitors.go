@@ -46,11 +46,12 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     config.BaseDamage,
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -173,6 +174,7 @@ func init() {
 					ProcMask:         core.ProcMaskMeleeMHAuto,
 					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
+					CritMultiplier:   character.AutoAttacks.MHConfig.CritMultiplier,
 					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
 					ApplyEffects:     core.ApplyEffectFuncDirectDamage(mhEffect),
 				})
@@ -185,6 +187,7 @@ func init() {
 						ProcMask:         core.ProcMaskMeleeOHAuto,
 						Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 						DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
+						CritMultiplier:   character.AutoAttacks.OHConfig.CritMultiplier,
 						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,
 						ApplyEffects:     core.ApplyEffectFuncDirectDamage(ohEffect),
 					})

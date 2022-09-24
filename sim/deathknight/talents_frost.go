@@ -228,15 +228,14 @@ func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, bonusTalentPoints int32, effect *core.SpellEffect) core.ProcMask {
-	critMultiplier := dk.bonusCritMultiplier(bonusTalentPoints)
+func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect) core.ProcMask {
 	var procMask core.ProcMask
 	if isMH {
 		procMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier)
+		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialHitAndCrit()
 	} else {
 		procMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialCritOnly(critMultiplier)
+		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialCritOnly()
 	}
 	return procMask
 }

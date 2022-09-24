@@ -44,6 +44,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		DamageMultiplier: 1 +
 			float64(priest.Talents.Darkness)*0.02 +
 			float64(priest.Talents.TwinDisciplines)*0.01,
+		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -68,7 +69,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 						return dmg * swMod
 					}
 				}),
-			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5)),
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

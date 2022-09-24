@@ -40,6 +40,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 			paladin.getMajorGlyphOfJudgementBonus() +
 			paladin.getTalentTheArtOfWarBonus(),
 		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -51,7 +52,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 						.32*spell.SpellPower()
 				},
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(paladin.MeleeCritMultiplier()), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
 		}),
 	})
 

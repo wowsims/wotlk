@@ -81,11 +81,12 @@ func (gft *GnomishFlameTurret) registerFlameCannonSpell() {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   gft.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
 			BaseDamage:     BaseDamageConfigRoll(31, 36),
-			OutcomeApplier: gft.OutcomeFuncMagicHitAndCrit(gft.DefaultSpellCritMultiplier()),
+			OutcomeApplier: gft.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

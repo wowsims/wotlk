@@ -13,7 +13,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 
 	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
-		OutcomeApplier: mage.fireSpellOutcomeApplier(mage.bonusCritDamage),
+		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
 	})
 
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{
@@ -38,6 +38,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
 		DamageMultiplier: mage.spellDamageMultiplier,
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

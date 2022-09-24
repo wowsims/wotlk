@@ -361,11 +361,12 @@ func (hp *HunterPet) registerWolverineBite() {
 		},
 
 		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
+		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(5*80, 5*80, .07)),
-			OutcomeApplier: hp.OutcomeFuncMeleeSpecialNoBlockDodgeParry(2),
+			OutcomeApplier: hp.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				wbValidUntil = 0

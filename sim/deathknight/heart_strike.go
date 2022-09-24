@@ -13,9 +13,11 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
-	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit(dk.bonusCritMultiplier(dk.Talents.MightOfMograine))
+	critMultiplier := dk.bonusCritMultiplier(dk.Talents.MightOfMograine)
+	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit()
 	if isDrw {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMeleeSpecialHitAndCrit(dk.RuneWeapon.DefaultMeleeCritMultiplier())
+		critMultiplier = dk.RuneWeapon.DefaultMeleeCritMultiplier()
+		outcomeApplier = dk.RuneWeapon.OutcomeFuncMeleeSpecialHitAndCrit()
 	}
 
 	effect := core.SpellEffect{
@@ -42,6 +44,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 			dk.thassariansPlateDamageBonus() *
 			dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) *
 			dk.bloodyStrikesBonus(dk.HeartStrike),
+		CritMultiplier:   critMultiplier,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),

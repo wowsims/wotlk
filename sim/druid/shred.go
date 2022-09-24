@@ -37,6 +37,7 @@ func (druid *Druid) registerShredSpell() {
 		},
 
 		DamageMultiplier: 2.25,
+		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -56,7 +57,7 @@ func (druid *Druid) registerShredSpell() {
 						return normalDamage * modifier
 					}
 				}),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

@@ -112,7 +112,7 @@ func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (paladin *Paladin) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	paladin.AutoAttacks.MHEffect.OutcomeApplier = paladin.OutcomeFuncMeleeWhite(paladin.MeleeCritMultiplier())
+	paladin.AutoAttacks.MHConfig.CritMultiplier = paladin.MeleeCritMultiplier()
 
 	paladin.registerSealOfVengeanceSpellAndAura()
 	paladin.registerSealOfRighteousnessSpellAndAura()
@@ -206,7 +206,6 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
 	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
-
 
 	return paladin
 }

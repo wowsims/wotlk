@@ -81,6 +81,10 @@ func init() {
 					ProcMask:     core.ProcMaskMeleeMHAuto,
 					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
+
+					DamageMultiplier: 1,
+					CritMultiplier:   character.DefaultMeleeCritMultiplier(),
+					ThreatMultiplier: 1,
 				})
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -243,11 +247,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(222, 332),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -389,11 +394,12 @@ func init() {
 			ProcMask:    core.ProcMaskEmpty,
 
 			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(95, 115),
-				OutcomeApplier: character.OutcomeFuncCritFixedChance(0.03, character.DefaultMeleeCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncCritFixedChance(0.03),
 			}),
 		})
 

@@ -23,7 +23,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	effect := core.SpellEffect{
 
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, false),
-		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(isMH, true)),
+		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if isMH {
@@ -64,6 +64,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
 		DamageMultiplier: 1 *
 			core.TernaryFloat64(!isMH, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1),
+		CritMultiplier:   rogue.MeleeCritMultiplier(isMH, true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
