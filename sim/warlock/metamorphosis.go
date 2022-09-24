@@ -77,7 +77,7 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 				OutcomeApplier: warlock.OutcomeFuncMagicHit(),
 				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
 				// adding IsPeriodic should be correct?
-				IsPeriodic:     false,
+				IsPeriodic: false,
 			})
 
 			return func() {
@@ -87,8 +87,8 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	})
 
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: spellSchool,
+		ActionID:     actionID,
+		SpellSchool:  spellSchool,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

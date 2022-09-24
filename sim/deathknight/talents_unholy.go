@@ -84,7 +84,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask: core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
@@ -110,7 +110,7 @@ func (dk *Deathknight) applyNecrosis() {
 	necrosisHit := dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
-			ProcMask: core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		DamageMultiplier: 0.04 * float64(dk.Talents.Necrosis),
@@ -181,7 +181,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
-			ProcMask: procMask,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
@@ -294,7 +294,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
 		DamageMultiplier: 1,
