@@ -258,6 +258,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
+	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 

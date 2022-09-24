@@ -57,14 +57,6 @@ func (mage *Mage) ApplyTalents() {
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
 
-	if mage.Talents.SpellPower > 0 {
-		mage.bonusCritDamage += .25 * float64(mage.Talents.SpellPower)
-	}
-
-	if mage.Talents.Burnout > 0 {
-		mage.bonusCritDamage += .1 * float64(mage.Talents.Burnout)
-	}
-
 	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	mage.PseudoStats.CostMultiplier *= 1 - .01*float64(mage.Talents.Precision)
 
@@ -374,20 +366,6 @@ func (mage *Mage) applyMasterOfElements() {
 		},
 	})
 }
-
-//func (mage *Mage) fireSpellOutcomeApplier(secondaryCritMultiplier float64) core.OutcomeApplier {
-//	critMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier)
-//	combMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier+.5)
-//
-//	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-//		if mage.CombustionAura.IsActive() {
-//			mage.OutcomeFuncMagicHitAndCrit(combMult)(sim, spell, spellEffect, attackTable)
-//		} else {
-//			mage.OutcomeFuncMagicHitAndCrit(critMult)(sim, spell, spellEffect, attackTable)
-//		}
-//	}
-//
-//}
 
 func (mage *Mage) registerCombustionCD() {
 	if !mage.Talents.Combustion {
