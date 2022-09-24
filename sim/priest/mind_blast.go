@@ -52,7 +52,6 @@ func (priest *Priest) registerMindBlastSpell() {
 			}
 			return dmg * shadowWeavingMod
 		},
-		TargetSpellCoefficient: 0.0,
 	}
 
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{

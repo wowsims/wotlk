@@ -15,7 +15,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 		ActionID:     core.ActionID{SpellID: 61006},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -48,7 +48,6 @@ func (hunter *Hunter) registerKillShotSpell() {
 						spell.BonusWeaponDamage() +
 						325)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 		}),

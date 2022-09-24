@@ -79,7 +79,7 @@ func init() {
 					ActionID:     core.ActionID{ItemID: 11815},
 					SpellSchool:  core.SpellSchoolPhysical,
 					ProcMask:     core.ProcMaskMeleeMHAuto,
-					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
 
 					DamageMultiplier: 1,

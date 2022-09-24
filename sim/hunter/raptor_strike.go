@@ -15,7 +15,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 		ActionID:     core.ActionID{SpellID: 48996},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

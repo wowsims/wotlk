@@ -171,19 +171,20 @@ func (se SpellFlag) Matches(other SpellFlag) bool {
 }
 
 const (
-	SpellFlagNone                    SpellFlag = 0
-	SpellFlagIgnoreResists           SpellFlag = 1 << iota // skip spell resist/armor
-	SpellFlagIgnoreTargetModifiers                         // skip target damage modifiers
-	SpellFlagIgnoreAttackerModifiers                       // skip attacker damage modifiers
-	SpellFlagApplyArmorReduction                           // Forces damage reduction from armor to apply, even if it otherwise wouldn't.
-	SpellFlagCannotBeDodged                                // Ignores dodge in physical hit rolls
-	SpellFlagBinary                                        // Does not do partial resists and could need a different hit roll.
-	SpellFlagChanneled                                     // Spell is channeled
-	SpellFlagDisease                                       // Spell is categorized as disease
-	SpellFlagMeleeMetrics                                  // Marks a spell as a melee ability for metrics.
-	SpellFlagNoOnCastComplete                              // Disables OnCastComplete callbacks.
-	SpellFlagNoMetrics                                     // Disables metrics for a spell.
-	SpellFlagNoLogs                                        // Disables logs for a spell.
+	SpellFlagNone                     SpellFlag = 0
+	SpellFlagIgnoreResists            SpellFlag = 1 << iota // skip spell resist/armor
+	SpellFlagIgnoreTargetModifiers                          // skip target damage modifiers
+	SpellFlagIgnoreAttackerModifiers                        // skip attacker damage modifiers
+	SpellFlagApplyArmorReduction                            // Forces damage reduction from armor to apply, even if it otherwise wouldn't.
+	SpellFlagCannotBeDodged                                 // Ignores dodge in physical hit rolls
+	SpellFlagIncludeTargetBonusDamage                       // Spell benefits from Gift of Arthas and Hemorrhage.
+	SpellFlagBinary                                         // Does not do partial resists and could need a different hit roll.
+	SpellFlagChanneled                                      // Spell is channeled
+	SpellFlagDisease                                        // Spell is categorized as disease
+	SpellFlagMeleeMetrics                                   // Marks a spell as a melee ability for metrics.
+	SpellFlagNoOnCastComplete                               // Disables OnCastComplete callbacks.
+	SpellFlagNoMetrics                                      // Disables metrics for a spell.
+	SpellFlagNoLogs                                         // Disables logs for a spell.
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

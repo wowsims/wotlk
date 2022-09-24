@@ -19,7 +19,6 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return 300 + 0.12*spell.MeleeAttackPower()
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OutcomeApplier: warrior.OutcomeFuncRangedHitAndCrit(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -33,7 +32,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ActionID:    core.ActionID{SpellID: 47502},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagBinary,
+		Flags:       core.SpellFlagBinary | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

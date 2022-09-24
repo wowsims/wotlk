@@ -473,7 +473,6 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 							paladin.RighteousVengeancePools[target.Index] -= tick
 							return tick
 						},
-						TargetSpellCoefficient: 1,
 					},
 				})(sim, target, dot.Spell)
 			}

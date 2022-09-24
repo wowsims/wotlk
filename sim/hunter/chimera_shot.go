@@ -51,7 +51,6 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 						hunter.AmmoDamageBonus +
 						spell.BonusWeaponDamage())
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -91,7 +90,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(),
 		}),

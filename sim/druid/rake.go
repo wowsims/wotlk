@@ -48,7 +48,6 @@ func (druid *Druid) registerRakeSpell() {
 						return damage
 					}
 				},
-				TargetSpellCoefficient: 0,
 			},
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
@@ -76,8 +75,7 @@ func (druid *Druid) registerRakeSpell() {
 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
-				Calculator:             core.BaseDamageFuncMelee(358, 358, 0.06),
-				TargetSpellCoefficient: 0,
+				Calculator: core.BaseDamageFuncMelee(358, 358, 0.06),
 			},
 			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(), druid.OutcomeFuncTick()),
 		})),

@@ -23,7 +23,7 @@ func (druid *Druid) registerShredSpell() {
 		ActionID:     core.ActionID{SpellID: 48572},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 

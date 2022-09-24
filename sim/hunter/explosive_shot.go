@@ -23,7 +23,6 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 				return core.DamageRoll(sim, 386, 464) +
 					0.14*spell.RangedAttackPower(hitEffect.Target)
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}

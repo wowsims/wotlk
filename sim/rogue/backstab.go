@@ -15,7 +15,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 		ActionID:     core.ActionID{SpellID: 26863},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 

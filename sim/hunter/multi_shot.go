@@ -20,7 +20,6 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 					spell.BonusWeaponDamage() +
 					408
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}
@@ -36,7 +35,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		ActionID:     core.ActionID{SpellID: 49048},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

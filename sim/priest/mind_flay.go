@@ -122,7 +122,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			}
 			return dmg * shadowWeavingMod
 		},
-		TargetSpellCoefficient: 0.0,
 	}
 
 	var mfReducTime time.Duration

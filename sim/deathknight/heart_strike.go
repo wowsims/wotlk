@@ -27,7 +27,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 				activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(hitEffect.Target), dk.dkCountActiveDiseases(hitEffect.Target))
 				return weaponBaseDamage(sim, hitEffect, spell) * (1.0 + activeDiseases*diseaseMulti)
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OnSpellHitDealt: onhit,
 	}
@@ -36,7 +35,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 		ActionID:    HeartStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .5 *

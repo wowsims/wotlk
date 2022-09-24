@@ -59,7 +59,7 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 			ActionID:    core.ActionID{SpellID: ClawSpellID},
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{

@@ -78,7 +78,7 @@ func (druid *Druid) registerRipSpell() {
 				}
 
 				return (36.0 + 93.0*comboPoints + 0.01*comboPoints*attackPower) + bonusTickDamage
-			}, 0),
+			}),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),
 	})

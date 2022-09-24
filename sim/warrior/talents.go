@@ -385,7 +385,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					ActionID:    core.ActionID{SpellID: 12281},
 					SpellSchool: core.SpellSchoolPhysical,
 					ProcMask:    core.ProcMaskMeleeMHAuto,
-					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 					ApplyEffects: core.ApplyEffectFuncDirectDamage(warrior.AutoAttacks.MHEffect),
 				})
@@ -758,7 +758,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskMeleeOHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 			DamageMultiplier: 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization),
 			CritMultiplier:   warrior.critMultiplier(oh),
@@ -783,7 +783,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

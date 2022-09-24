@@ -26,7 +26,6 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 
 				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target) * glyphDmgMultiplier
 			},
-			TargetSpellCoefficient: 1,
 		},
 
 		OnSpellHitDealt: onhit,
@@ -38,7 +37,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 *
@@ -110,7 +109,7 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 		ActionID:    DeathStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 * dk.improvedDeathStrikeDamageBonus(),
@@ -124,7 +123,6 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)
 					return weaponBaseDamage(sim, hitEffect, spell) * bonusDamage
 				},
-				TargetSpellCoefficient: 1,
 			},
 		}),
 	})

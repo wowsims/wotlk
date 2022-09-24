@@ -59,7 +59,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

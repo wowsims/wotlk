@@ -32,7 +32,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskMeleeOHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 			DamageMultiplier: 1 *
 				(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)) *
@@ -59,7 +59,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

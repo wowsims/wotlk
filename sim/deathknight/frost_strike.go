@@ -24,7 +24,6 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
-			TargetSpellCoefficient: 1,
 		},
 
 		OnSpellHitDealt: onhit,

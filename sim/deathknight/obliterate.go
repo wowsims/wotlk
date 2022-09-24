@@ -27,7 +27,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 					dk.RoRTSBonus(hitEffect.Target) *
 					dk.mercilessCombatBonus(sim)
 			},
-			TargetSpellCoefficient: 1,
 		},
 
 		OnSpellHitDealt: onhit,
@@ -39,7 +38,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 		ActionID:    ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .8 *

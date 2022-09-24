@@ -23,7 +23,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 				return weaponBaseDamage(sim, hitEffect, spell) *
 					(1.0 + dk.dkCountActiveDiseases(hitEffect.Target)*diseaseMulti) * dk.RoRTSBonus(hitEffect.Target)
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OnSpellHitDealt: onhit,
 	}
@@ -34,7 +33,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		ActionID:    BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.4 *

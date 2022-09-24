@@ -48,7 +48,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		ActionID:     core.ActionID{SpellID: 49052},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -84,7 +84,6 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 						hunter.NormalizedAmmoDamageBonus +
 						252
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 

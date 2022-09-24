@@ -180,7 +180,7 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 
 							BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 								return curAmount * 0.33
-							}, 0),
+							}),
 							OutcomeApplier: priest.OutcomeFuncTick(),
 						}),
 					})

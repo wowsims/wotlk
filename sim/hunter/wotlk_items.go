@@ -222,7 +222,7 @@ func init() {
 					ActionID:    core.ActionID{ItemID: itemID},
 					SpellSchool: core.SpellSchoolPhysical,
 					ProcMask:    core.ProcMaskRangedAuto,
-					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 					DamageMultiplier: 0.5,
 					CritMultiplier:   hunter.AutoAttacks.RangedConfig.CritMultiplier,

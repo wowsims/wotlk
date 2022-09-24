@@ -24,8 +24,7 @@ func (druid *Druid) registerSwipeBearSpell() {
 
 	baseEffect := core.SpellEffect{
 		BaseDamage: core.BaseDamageConfig{
-			Calculator:             core.BaseDamageFuncMelee(baseDamage, baseDamage, 0.07),
-			TargetSpellCoefficient: 1,
+			Calculator: core.BaseDamageFuncMelee(baseDamage, baseDamage, 0.07),
 		},
 		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
@@ -34,7 +33,7 @@ func (druid *Druid) registerSwipeBearSpell() {
 		ActionID:     core.ActionID{SpellID: 48562},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -67,7 +66,6 @@ func (druid *Druid) registerSwipeCatSpell() {
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell)
 			},
-			TargetSpellCoefficient: 1,
 		},
 		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
@@ -76,7 +74,7 @@ func (druid *Druid) registerSwipeCatSpell() {
 		ActionID:     core.ActionID{SpellID: 62078},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 

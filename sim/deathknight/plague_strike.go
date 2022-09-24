@@ -20,7 +20,6 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
-			TargetSpellCoefficient: 1,
 		},
 
 		OnSpellHitDealt: onhit,
@@ -32,7 +31,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .5 *
@@ -96,7 +95,7 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 		ActionID:    PlagueStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.5 *
@@ -110,7 +109,6 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {

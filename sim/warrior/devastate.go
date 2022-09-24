@@ -87,7 +87,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 
 					return normalBaseDamage(sim, hitEffect, spell) + sunderBonus
 				},
-				TargetSpellCoefficient: 0,
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 

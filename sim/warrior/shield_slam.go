@@ -35,7 +35,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		ActionID:    core.ActionID{SpellID: 47488},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -72,7 +72,6 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 					sbvBonus := sbv //core.TernaryFloat64(sbv <= 1960.0, sbv, 0.0) + core.TernaryFloat64(sbv > 1960.0 && sbv <= 3160.0, 0.09333333333*sbv+1777.06666667, 0.0) + core.TernaryFloat64(sbv > 3160.0, 2072.0, 0.0)
 					return damageRollFunc(sim) + sbvBonus
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 

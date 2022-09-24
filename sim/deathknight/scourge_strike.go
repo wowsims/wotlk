@@ -48,7 +48,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ActionID:     ScourgeStrikeActionID.WithTag(1),
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
 
@@ -75,7 +75,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 
 			OutcomeApplier: dk.OutcomeFuncMeleeSpecialHitAndCrit(),

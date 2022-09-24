@@ -52,7 +52,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 7384},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

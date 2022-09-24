@@ -386,9 +386,9 @@ func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spe
 		return
 	}
 
-	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, sim, attackTable, spellEffect.IsPeriodic, spellEffect.BaseDamage.TargetSpellCoefficient > 0)
+	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, sim, attackTable, spellEffect.IsPeriodic)
 }
-func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attackTable *AttackTable, isPeriodic bool, includeTargetBonus bool) float64 {
+func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attackTable *AttackTable, isPeriodic bool) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
 		return damage
 	}
@@ -402,7 +402,7 @@ func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attack
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		if includeTargetBonus {
+		if spell.Flags.Matches(SpellFlagIncludeTargetBonusDamage) {
 			damage += target.PseudoStats.BonusPhysicalDamageTaken
 		}
 		if isPeriodic {

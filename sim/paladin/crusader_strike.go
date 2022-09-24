@@ -15,7 +15,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 		ActionID:     core.ActionID{SpellID: 35395},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
