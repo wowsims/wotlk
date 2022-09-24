@@ -14,13 +14,11 @@ func init() {
 
 func TestProtection(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassPaladin,
-
+		Class:      proto.Class_ClassPaladin,
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{
@@ -55,12 +53,7 @@ func TestProtection(t *testing.T) {
 			},
 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
-
+		Consumes:        FullConsumes,
 		IsTank:          true,
 		InFrontOfTarget: true,
 
@@ -88,11 +81,11 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

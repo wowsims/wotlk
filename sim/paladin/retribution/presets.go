@@ -66,44 +66,12 @@ var DefaultOptions = &proto.Player_RetributionPaladin{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	DivineSpirit:         true,
-	Bloodlust:            true,
-	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-
-var FullPartyBuffs = &proto.PartyBuffs{
-	BraidedEterniumChain: true,
-}
-
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 	Food:            proto.Food_FoodRoastedClefthoof,
 	ThermalSapper:   true,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	JudgementOfLight:  true,
-	Misery:            true,
-	CurseOfElements:   true,
-	BloodFrenzy:       true,
-	SunderArmor:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }
 
 var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [

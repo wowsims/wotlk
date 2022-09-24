@@ -15,19 +15,13 @@ func init() {
 func TestBalance(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassDruid,
+		Race:  proto.Race_RaceTauren,
 
-		Race: proto.Race_RaceTauren,
-
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Starfire", SpecOptions: PlayerOptionsAdaptive},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
-		Glyphs:      StandardGlyphs,
+		Consumes: FullConsumes,
+		Glyphs:   StandardGlyphs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

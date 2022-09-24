@@ -24,11 +24,7 @@ func TestCombat(t *testing.T) {
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsCombatII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsCombatDD},
 		},
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullConsumes,
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -52,11 +48,7 @@ func TestAssassination(t *testing.T) {
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsAssassinationII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsAssassinationDD},
 		},
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullConsumes,
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -82,11 +74,7 @@ func TestRotation(t *testing.T) {
 		GearSet:          core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions:      specOptions[0],
 		OtherSpecOptions: specOptions[1:],
-		RaidBuffs:        FullRaidBuffs,
-		PartyBuffs:       FullPartyBuffs,
-		PlayerBuffs:      FullIndividualBuffs,
 		Consumes:         FullConsumes,
-		Debuffs:          FullDebuffs,
 	}))
 }
 
@@ -176,11 +164,11 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsCombatDI,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

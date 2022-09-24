@@ -98,31 +98,8 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	FerociousInspiration: true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	TrueshotAura:         true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:       true,
-	SunderArmor:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom: true,
-	Misery:            true,
 }
 
 var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [

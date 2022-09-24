@@ -44,29 +44,12 @@ var StandardGlyphs = &proto.Glyphs{
 	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTyphoon),
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	MoonkinAura:      proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfBlindingLight,
 	Food:            proto.Food_FoodBlackenedBasilisk,
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	PrepopPotion:    proto.Potions_DestructionPotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	Misery:            true,
-	CurseOfElements:   true,
 }
 
 var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{

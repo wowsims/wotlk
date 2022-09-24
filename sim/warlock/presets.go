@@ -171,45 +171,11 @@ var defaultDemonologyRotation = &proto.Warlock_Rotation{
 
 // ---------------------------------------------------------
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         2,
-	PowerWordFortitude:    2,
-	StrengthOfEarthTotem:  2,
-	ArcaneBrilliance:      true,
-	DivineSpirit:          true,
-	TrueshotAura:          true,
-	LeaderOfThePack:       2,
-	IcyTalons:             true,
-	TotemOfWrath:          true,
-	MoonkinAura:           2,
-	WrathOfAirTotem:       true,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-}
-
-var FullPartyBuffs = &proto.PartyBuffs{}
-
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: 2,
-	BlessingOfMight:  2,
-	VampiricTouch:    true,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
 	DefaultPotion: proto.Potions_PotionOfWildMagic,
 	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 	Food:          proto.Food_FoodFishFeast,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	SunderArmor:        true,
-	FaerieFire:         2,
-	BloodFrenzy:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
-	JudgementOfWisdom:  true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`

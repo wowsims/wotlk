@@ -113,40 +113,11 @@ var deathKnightOptions = &proto.Deathknight_Options{
 	PrecastHornOfWinter: true,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         proto.TristateEffect_TristateEffectImproved,
-	SwiftRetribution:      true,
-	StrengthOfEarthTotem:  proto.TristateEffect_TristateEffectImproved,
-	IcyTalons:             true,
-	AbominationsMight:     true,
-	LeaderOfThePack:       proto.TristateEffect_TristateEffectImproved,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	HeroicPresence: true,
-}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion: proto.Potions_PotionOfSpeed,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:        true,
-	FaerieFire:         proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom:  true,
-	Misery:             true,
-	SunderArmor:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
 }
 
 var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [

@@ -456,11 +456,7 @@ type CharacterSuiteConfig struct {
 	SpecOptions SpecOptionsCombo
 	Glyphs      *proto.Glyphs
 
-	RaidBuffs   *proto.RaidBuffs
-	PartyBuffs  *proto.PartyBuffs
-	PlayerBuffs *proto.IndividualBuffs
-	Consumes    *proto.Consumes
-	Debuffs     *proto.Debuffs
+	Consumes *proto.Consumes
 
 	IsHealer        bool
 	IsTank          bool
@@ -487,7 +483,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Race:        config.Race,
 			Equipment:   config.GearSet.GearSet,
 			Consumes:    config.Consumes,
-			Buffs:       config.PlayerBuffs,
+			Buffs:       FullIndividualBuffs,
 			Glyphs:      config.Glyphs,
 			Profession1: proto.Profession_Engineering,
 
@@ -495,7 +491,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 		},
 		config.SpecOptions.SpecOptions)
 
-	defaultRaid := SinglePlayerRaidProto(defaultPlayer, config.PartyBuffs, config.RaidBuffs, config.Debuffs)
+	defaultRaid := SinglePlayerRaidProto(defaultPlayer, FullPartyBuffs, FullRaidBuffs, FullDebuffs)
 	if config.IsTank {
 		defaultRaid.Tanks = append(defaultRaid.Tanks, &proto.RaidTarget{TargetIndex: 0})
 	}
@@ -527,15 +523,15 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 						},
 						BuffsCombo{
 							Label:    "FullBuffs",
-							Raid:     config.RaidBuffs,
-							Party:    config.PartyBuffs,
-							Debuffs:  config.Debuffs,
-							Player:   config.PlayerBuffs,
+							Raid:     FullRaidBuffs,
+							Party:    FullPartyBuffs,
+							Debuffs:  FullDebuffs,
+							Player:   FullIndividualBuffs,
 							Consumes: config.Consumes,
 						},
 					},
 					IsHealer:   config.IsHealer,
-					Encounters: MakeDefaultEncounterCombos(config.Debuffs),
+					Encounters: MakeDefaultEncounterCombos(),
 					SimOptions: DefaultSimTestOptions,
 				},
 			},
@@ -543,9 +539,9 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 				name: "AllItems",
 				generator: &ItemsTestGenerator{
 					Player:     defaultPlayer,
-					RaidBuffs:  config.RaidBuffs,
-					PartyBuffs: config.PartyBuffs,
-					Debuffs:    config.Debuffs,
+					RaidBuffs:  FullRaidBuffs,
+					PartyBuffs: FullPartyBuffs,
+					Debuffs:    FullDebuffs,
 					Encounter:  MakeSingleTargetEncounter(0),
 					SimOptions: DefaultSimTestOptions,
 					ItemFilter: config.ItemFilter,
@@ -577,9 +573,9 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 				Name: "Default",
 				Request: &proto.StatWeightsRequest{
 					Player:     defaultPlayer,
-					RaidBuffs:  config.RaidBuffs,
-					PartyBuffs: config.PartyBuffs,
-					Debuffs:    config.Debuffs,
+					RaidBuffs:  FullRaidBuffs,
+					PartyBuffs: FullPartyBuffs,
+					Debuffs:    FullDebuffs,
 					Encounter:  MakeSingleTargetEncounter(0),
 					SimOptions: StatWeightsDefaultSimTestOptions,
 					Tanks:      defaultRaid.Tanks,
@@ -615,10 +611,10 @@ func MakeDefaultBuffCombos(config CharacterSuiteConfig) []BuffsCombo {
 		},
 		{
 			Label:    "Full Buffs",
-			Raid:     config.RaidBuffs,
-			Party:    config.PartyBuffs,
-			Debuffs:  config.Debuffs,
-			Player:   config.PlayerBuffs,
+			Raid:     FullRaidBuffs,
+			Party:    FullPartyBuffs,
+			Debuffs:  FullDebuffs,
+			Player:   FullIndividualBuffs,
 			Consumes: config.Consumes,
 		},
 	}
@@ -632,7 +628,7 @@ func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 		Race:            config.Race,
 		Equipment:       config.GearSet.GearSet,
 		Consumes:        config.Consumes,
-		Buffs:           config.PlayerBuffs,
+		Buffs:           FullIndividualBuffs,
 		Glyphs:          config.Glyphs,
 		Profession1:     proto.Profession_Engineering,
 		InFrontOfTarget: config.InFrontOfTarget,
@@ -645,9 +641,9 @@ func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 		name: "Casts",
 		generator: &RotationCastsTestGenerator{
 			Player:      defaultPlayer,
-			PartyBuffs:  config.PartyBuffs,
-			RaidBuffs:   config.RaidBuffs,
-			Debuffs:     config.Debuffs,
+			PartyBuffs:  FullPartyBuffs,
+			RaidBuffs:   FullRaidBuffs,
+			Debuffs:     FullDebuffs,
 			SpecOptions: allSpecOptions,
 			Encounter:   MakeSingleTargetEncounter(5),
 			SimOptions: &proto.SimOptions{

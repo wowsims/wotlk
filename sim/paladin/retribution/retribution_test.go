@@ -14,13 +14,11 @@ func init() {
 
 func TestRetribution(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassPaladin,
-
+		Class:      proto.Class_ClassPaladin,
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceDraenei, proto.Race_RaceDwarf},
 
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{
@@ -76,13 +74,8 @@ func TestRetribution(t *testing.T) {
 				},
 			},
 		},
-		Glyphs: defaultRetGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Glyphs:   defaultRetGlyphs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -109,11 +102,11 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: Phase1Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

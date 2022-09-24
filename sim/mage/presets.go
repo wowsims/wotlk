@@ -173,31 +173,6 @@ var PlayerOptionsArcaneAOE = &proto.Player_Mage{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:     proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:         true,
-	MoonkinAura:       proto.TristateEffect_TristateEffectRegular,
-	ManaSpringTotem:   proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:      true,
-	WrathOfAirTotem:   true,
-	ArcaneBrilliance:  true,
-	ArcaneEmpowerment: true,
-	SwiftRetribution:  true,
-	DivineSpirit:      true,
-}
-var FullFirePartyBuffs = &proto.PartyBuffs{}
-var FullFrostPartyBuffs = FullFirePartyBuffs
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:     true,
-	BlessingOfWisdom:    proto.TristateEffect_TristateEffectImproved,
-	JudgementsOfTheWise: true,
-}
-
-var FullArcanePartyBuffs = &proto.PartyBuffs{
-	ManaTideTotems: 1,
-}
-var FullArcaneIndividualBuffs = FullIndividualBuffs
-
 var FullFireConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
 	Food:          proto.Food_FoodFirecrackerSalmon,
@@ -207,13 +182,6 @@ var FullFireConsumes = &proto.Consumes{
 var FullFrostConsumes = FullFireConsumes
 
 var FullArcaneConsumes = FullFireConsumes
-
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	EarthAndMoon:      true,
-	Misery:            true,
-	ImprovedScorch:    true,
-}
 
 var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
