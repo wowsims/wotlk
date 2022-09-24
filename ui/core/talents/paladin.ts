@@ -487,7 +487,7 @@ export const paladinTalentsConfig: TalentsConfig<PaladinTalents> = newTalentsCon
 				},
 				prereqLocation: {
 					rowIdx: 8,
-					colIdx: 2,
+					colIdx: 1,
 				},
 				spellIds: [53709],
 				maxPoints: 3,
