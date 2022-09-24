@@ -24,7 +24,7 @@ const DefenseRatingPerDefense = 4.92
 const DodgeRatingPerDodgeChance = 45.25
 const ParryRatingPerParryChance = 45.25
 const BlockRatingPerBlockChance = 16.39
-const MissDodgeParryBlockCritChancePerDefense = 0.0325 // TODO: verify this.
+const MissDodgeParryBlockCritChancePerDefense = 0.04
 
 const DefenseRatingToChanceReduction = (1.0 / DefenseRatingPerDefense) * MissDodgeParryBlockCritChancePerDefense / 100
 
