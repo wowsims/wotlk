@@ -75,7 +75,6 @@ type Rogue struct {
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
-	DeathmantleProcAura  *core.Aura
 	VanCleefsProcAura    *core.Aura
 	EnvenomAura          *core.Aura
 	ExposeArmorAura      *core.Aura
@@ -130,8 +129,8 @@ func (rogue *Rogue) HasMinorGlyph(glyph proto.RogueMinorGlyph) bool {
 
 func (rogue *Rogue) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	rogue.AutoAttacks.MHEffect.OutcomeApplier = rogue.OutcomeFuncMeleeWhite(rogue.MeleeCritMultiplier(true, false))
-	rogue.AutoAttacks.OHEffect.OutcomeApplier = rogue.OutcomeFuncMeleeWhite(rogue.MeleeCritMultiplier(false, false))
+	rogue.AutoAttacks.MHConfig.CritMultiplier = rogue.MeleeCritMultiplier(true, false)
+	rogue.AutoAttacks.OHConfig.CritMultiplier = rogue.MeleeCritMultiplier(false, false)
 
 	if rogue.Talents.QuickRecovery > 0 {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})

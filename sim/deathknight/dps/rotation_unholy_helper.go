@@ -88,7 +88,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.AllBloodRunesSpent() && dk.AllUnholySpent() && dk.SummonGargoyle.CD.TimeToReady(sim) > time.Second*55 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
 				dk.uhGhoulFrenzySequence(sim, true)
 				return true
@@ -116,7 +116,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 }
 
 func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bool {
-	if !dk.GCD.IsReady(sim) || dk.SummonGargoyle.IsReady(sim) {
+	if !dk.GCD.IsReady(sim) {
 		return false
 	}
 
@@ -143,7 +143,7 @@ func (dk *DpsDeathknight) uhBloodTap(sim *core.Simulation, target *core.Unit) bo
 }
 
 func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *core.Unit) bool {
-	if !dk.Rotation.UseEmpowerRuneWeapon || dk.SummonGargoyle.IsReady(sim) {
+	if !dk.Rotation.UseEmpowerRuneWeapon {
 		return false
 	}
 
@@ -151,7 +151,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 		return false
 	}
 
-	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 {
+	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 || dk.CurrentDeathRunes() > 0 {
 		return false
 	}
 
@@ -173,7 +173,13 @@ func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
 func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
 	if dk.uhGargoyleCanCast(sim, castTime) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
-			dk.BloodTap.Cast(sim, dk.CurrentTarget)
+			if dk.CurrentUnholyRunes() == 0 {
+				if dk.BloodTap.IsReady(sim) {
+					dk.BloodTap.Cast(sim, dk.CurrentTarget)
+				} else {
+					return false
+				}
+			}
 			dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
 		}
 
@@ -191,8 +197,16 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		}
 	}
 
+	// Go back to Blood Presence after Bloodlust
+	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		return dk.BloodPresence.Cast(sim, target)
+	}
+
 	// Go back to Blood Presence after gargoyle cast
-	if dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
+	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
@@ -210,7 +224,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
-	if !dk.PresenceMatches(deathknight.UnholyPresence) && !dk.BloodTap.CanCast(sim) {
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim) && dk.CurrentUnholyRunes() == 0) {
 		return false
 	}
 	if dk.GargoyleProcCheck(sim, castTime) {
@@ -218,33 +232,6 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	}
 
 	return true
-}
-
-func (dk *DpsDeathknight) setupGargoyleCooldowns() {
-	dk.ur.majorCds = make([]*core.MajorCooldown, 0)
-
-	// hyperspeed accelerators
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
-
-	// berserking (troll)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
-
-	// blood fury (orc)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
-
-	// potion of speed
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
-}
-
-func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
-		dk.ur.majorCds = append(dk.ur.majorCds, majorCd)
-
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
-		}
-	}
 }
 
 func logMessage(sim *core.Simulation, message string) {

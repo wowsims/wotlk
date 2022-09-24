@@ -112,7 +112,6 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if success := spell.Cast(sim, we.CurrentTarget); !success {
-		we.Metrics.MarkOOM(&we.Unit, sim.CurrentTime)
 		we.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }
@@ -133,10 +132,9 @@ var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 		stats.Stamina:   0.2238,
 		stats.Intellect: 0.01,
 
-		stats.SpellPower:      0.333,
-		stats.FrostSpellPower: 0.333,
-		stats.SpellHit:        0.01,
-		stats.SpellCrit:       0.01,
+		stats.SpellPower: 0.333,
+		stats.SpellHit:   0.01,
+		stats.SpellCrit:  0.01,
 	})
 }
 
@@ -144,9 +142,9 @@ func (we *WaterElemental) registerWaterboltSpell() {
 	baseCost := we.BaseMana * 0.1
 
 	we.Waterbolt = we.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31707},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 31707},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -158,12 +156,13 @@ func (we *WaterElemental) registerWaterboltSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   we.DefaultSpellCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagic(256, 328, 3.0/3.5),
-			OutcomeApplier:   we.OutcomeFuncMagicHitAndCrit(we.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagic(256, 328, 3.0/3.5),
+			OutcomeApplier: we.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }

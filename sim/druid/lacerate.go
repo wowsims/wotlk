@@ -16,20 +16,23 @@ func (druid *Druid) registerLacerateSpell() {
 	refundAmount := cost * 0.8
 
 	tickDamage := 320.0 / 5
-	if druid.HasSetBonus(ItemSetNordrassilHarness, 4) {
-		tickDamage += 15
-	}
+	initialDamage := 88.0
 	if druid.Equip[items.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
 		tickDamage += 8
+		initialDamage += 8
 	}
+
+	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
+	dwdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1.0)
+	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(2), 1.05, 1.0)
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -42,15 +45,15 @@ func (druid *Druid) registerLacerateSpell() {
 			IgnoreHaste: true,
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 0.5,
-			FlatThreatBonus:  267,
+		DamageMultiplier: lbdm * dwdm,
+		CritMultiplier:   druid.MeleeCritMultiplier(),
+		ThreatMultiplier: 0.5,
+		FlatThreatBonus:  267,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 88 + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
+					damage := initialDamage + 0.01*spell.MeleeAttackPower()
 					if mangleAura.IsActive() {
 						return damage * 1.3
 					} else {
@@ -59,16 +62,18 @@ func (druid *Druid) registerLacerateSpell() {
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					if druid.LacerateDot.IsActive() {
 						druid.LacerateDot.Refresh(sim)
 						druid.LacerateDot.AddStack(sim)
+						druid.LacerateDot.TakeSnapshot(sim, true)
 					} else {
 						druid.LacerateDot.Activate(sim)
 						druid.LacerateDot.SetStacks(sim, 1)
+						druid.LacerateDot.TakeSnapshot(sim, true)
 					}
 				} else {
 					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
@@ -77,30 +82,34 @@ func (druid *Druid) registerLacerateSpell() {
 		}),
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(core.Aura{
+	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:     "Lacerate-" + strconv.Itoa(int(druid.Index)),
 		ActionID:  actionID,
 		MaxStacks: 5,
 		Duration:  time.Second * 15,
-	})
+	}))
 	druid.LacerateDot = core.NewDot(core.Dot{
-		Spell:         druid.Lacerate,
+		Spell: druid.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskMeleeMHSpecial,
+			Flags:       core.SpellFlagMeleeMetrics,
+
+			DamageMultiplier: lbdm * t9bonus,
+			CritMultiplier:   druid.MeleeCritMultiplier(),
+			ThreatMultiplier: 0.5,
+		}),
 		Aura:          dotAura,
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 0.5,
-			IsPeriodic:       true,
+		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
+			IsPeriodic: true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return tickDamage + 0.01*hitEffect.MeleeAttackPower(spell.Unit)
-				},
+				Calculator:             core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),
 				TargetSpellCoefficient: 0,
 			}, dotAura),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
-		})),
+		}),
 	})
 }
 

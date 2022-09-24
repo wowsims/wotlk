@@ -1,4 +1,5 @@
-import { RaidBuffs,
+import {
+	RaidBuffs,
 	PartyBuffs,
 	IndividualBuffs,
 	Debuffs,
@@ -45,8 +46,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatShadowSpellPower,
-				Stat.StatFireSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -59,8 +58,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatShadowSpellPower,
-				Stat.StatFireSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -76,8 +73,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					[Stat.StatIntellect]: 0.2,
 					[Stat.StatSpirit]: 0.42,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatShadowSpellPower]: 1,
-					[Stat.StatFireSpellPower]: 0,
 					[Stat.StatSpellHit]: 0.93,
 					[Stat.StatSpellCrit]: 0.52,
 					[Stat.StatSpellHaste]: 0.77,
@@ -118,7 +113,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.SpecSpellInput,
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
-			
+
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.ReplenishmentBuff,
@@ -130,6 +125,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				IconInputs.MP5Buff,
 				IconInputs.AttackPowerPercentBuff,
 				IconInputs.AttackPowerBuff,
+				IconInputs.StrengthAndAgilityBuff,
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
@@ -137,7 +133,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			petConsumeInputs: [
 				IconInputs.SpicedMammothTreats,
 			],
-		// Inputs to include in the 'Other' section on the settings tab.
+			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
 					OtherInputs.DistanceFromTarget,

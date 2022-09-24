@@ -128,9 +128,9 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 	baseCost := 90.0
 
 	mi.Frostbolt = mi.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59638},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 59638},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -142,12 +142,13 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
-			OutcomeApplier:   mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
 }
@@ -156,9 +157,9 @@ func (mi *MirrorImage) registerFireblastSpell() {
 	baseCost := 120.0
 
 	mi.Fireblast = mi.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 59637},
-		SpellSchool: core.SpellSchoolFrost,
-
+		ActionID:     core.ActionID{SpellID: 59637},
+		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -173,13 +174,13 @@ func (mi *MirrorImage) registerFireblastSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
-			OutcomeApplier:   mi.OutcomeFuncMagicHitAndCrit(mi.DefaultSpellCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
+			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
 		}),
 	})
-
 }

@@ -178,7 +178,7 @@ func AcidSpitPeriodicActionOptions(aura *Aura) PeriodicActionOptions {
 
 func ExposeArmorPeriodicActonOptions(aura *Aura) PeriodicActionOptions {
 	return PeriodicActionOptions{
-		Period:   time.Second * 10,
+		Period:   time.Second * 3,
 		NumTicks: 1,
 		OnAction: func(sim *Simulation) {
 			aura.Activate(sim)
@@ -236,12 +236,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.ProcMask.Matches(ProcMaskEmpty) {
+			if spell.ProcMask.Matches(ProcMaskEmpty) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
 			// Melee claim that wisdom can proc on misses.
-			if !spellEffect.ProcMask.Matches(ProcMaskMeleeOrRanged) && !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !spellEffect.Landed() {
 				return
 			}
 
@@ -271,7 +271,7 @@ func JudgementOfLightAura(target *Unit) *Aura {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.ProcMask.Matches(ProcMaskMelee) || !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(ProcMaskMelee) || !spellEffect.Landed() {
 				return
 			}
 
@@ -580,14 +580,12 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 			if imp {
 				secondaryAura.Activate(sim)
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 			if imp && secondaryAura.IsActive() {
 				secondaryAura.Deactivate(sim)
 			}
@@ -617,7 +615,6 @@ func SunderArmorAura(target *Unit, startingStacks int32) *Aura {
 			oldMultiplier := 1.0 - float64(oldStacks)*armorReductionPerStack
 			newMultiplier := 1.0 - float64(newStacks)*armorReductionPerStack
 			aura.Unit.PseudoStats.ArmorMultiplier *= newMultiplier / oldMultiplier
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -642,7 +639,6 @@ func AcidSpitAura(target *Unit, startingStacks int32) *Aura {
 			oldMultiplier := 1.0 - float64(oldStacks)*armorReductionPerStack
 			newMultiplier := 1.0 - float64(newStacks)*armorReductionPerStack
 			aura.Unit.PseudoStats.ArmorMultiplier *= newMultiplier / oldMultiplier
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -661,11 +657,9 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 		Priority: armorReduction,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
-			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -684,12 +678,10 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)
 			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -705,11 +697,9 @@ func StingAura(target *Unit) *Aura {
 		Duration: time.Second * 20,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -725,11 +715,9 @@ func SporeCloudAura(target *Unit) *Aura {
 		Duration: time.Second * 9,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
-			aura.Unit.updateArmor()
 		},
 	})
 }
@@ -748,14 +736,14 @@ func ShatteringThrowAura(target *Unit) *Aura {
 		Duration: ShatteringThrowDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 - armorReduction)
-			aura.Unit.updateArmor()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= (1.0 / (1.0 - armorReduction))
-			aura.Unit.updateArmor()
 		},
 	})
 }
+
+var HuntersMarkAuraTag = "HuntersMark"
 
 func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 	bonus := 500.0 * (1 + 0.1*float64(points))
@@ -768,7 +756,7 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "HuntersMark-" + strconv.Itoa(int(priority)),
-		Tag:      "HuntersMark",
+		Tag:      HuntersMarkAuraTag,
 		ActionID: ActionID{SpellID: 53338},
 		Duration: NeverExpires,
 		Priority: priority,

@@ -9,20 +9,16 @@ import (
 )
 
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
-	baseDamage := 127.0 +
-		(370+core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0))*float64(comboPoints)
+	baseDamage := 127.0 + 370*float64(comboPoints)
 	apRatio := 0.05 * float64(comboPoints)
 	cost := 35.0
-	if rogue.HasSetBonus(ItemSetAssassination, 4) {
-		cost -= 10
-	}
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48668, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: 48668, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -35,23 +31,26 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating: core.TernaryFloat64(
+			rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfEviscerate), 10*core.CritRatingPerCritChance, 0.0),
+		DamageMultiplier: 1 +
+			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			0.03*float64(rogue.Talents.Aggression),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				0.03*float64(rogue.Talents.Aggression),
-			ThreatMultiplier: 1,
-			BonusCritRating: core.TernaryFloat64(
-				rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfEviscerate), 10*core.CritRatingPerCritChance, 0.0),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := sim.RandomFloat("Eviscerate") * 254.0
-					return baseDamage + roll + hitEffect.MeleeAttackPower(spell.Unit)*apRatio + hitEffect.BonusWeaponDamage(spell.Unit)
+					return baseDamage +
+						254.0*sim.RandomFloat("Eviscerate") +
+						apRatio*spell.MeleeAttackPower() +
+						spell.BonusWeaponDamage()
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)

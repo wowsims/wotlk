@@ -2,8 +2,8 @@ OUT_DIR := dist/wotlk
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)
 ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
-# Recursive wildcard function
-rwildcard := $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+# Recursive wildcard function. Needs to be '=' instead of ':=' because of recursion.
+rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 GOROOT := $(shell go env GOROOT)
 UI_SRC := $(shell find ui -name '*.ts' -o -name '*.scss' -o -name '*.html')
 HTML_INDECIES := ui/balance_druid/index.html \
@@ -157,9 +157,13 @@ rundevserver: devserver
 	./wowsimwotlk --usefs=true --launch=false
 
 release: wowsimwotlk
-	GOOS=windows GOARCH=amd64 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=darwin GOARCH=amd64 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)'" ./sim/web/main.go
+	GOOS=windows GOARCH=amd64 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=darwin GOARCH=amd64 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+# Now compress into a zip because the files are getting large.
+	zip wowsimwotlk-windows.exe.zip wowsimwotlk-windows.exe
+	zip wowsimwotlk-amd64-darwin.zip wowsimwotlk-amd64-darwin
+	zip wowsimwotlk-amd64-linux.zip wowsimwotlk-amd64-linux
 
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
@@ -167,8 +171,8 @@ sim/core/proto/api.pb.go: proto/*.proto
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go
 
-sim/core/items/all_items.go: generate_items/*.go $(call rwildcard,sim/core/proto,*.go)
-	go run generate_items/*.go -outDir=sim/core/items
+sim/core/items/all_items.go: tools/generate_items/*.go $(call rwildcard,sim/core/proto,*.go)
+	go run tools/generate_items/*.go -outDir=sim/core/items
 	gofmt -w ./sim/core/items
 
 .PHONY: test
@@ -183,7 +187,7 @@ update-tests:
 .PHONY: fmt
 fmt: tsfmt
 	gofmt -w ./sim
-	gofmt -w ./generate_items
+	gofmt -w ./tools
 
 .PHONY: tsfmt
 tsfmt:

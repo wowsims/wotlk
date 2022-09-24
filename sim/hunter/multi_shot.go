@@ -12,25 +12,17 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseCost := 0.09 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskRangedSpecial,
-
-		BonusCritRating: 4 * core.CritRatingPerCritChance * float64(hunter.Talents.ImprovedBarrage),
-		DamageMultiplier: 1 *
-			(1 + 0.04*float64(hunter.Talents.Barrage)) *
-			(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+				return 0.2*spell.RangedAttackPower(hitEffect.Target) +
 					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 					hunter.AmmoDamageBonus +
-					hitEffect.BonusWeaponDamage(spell.Unit) +
+					spell.BonusWeaponDamage() +
 					408
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
@@ -41,18 +33,17 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	}
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49048},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 49048},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost *
-					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-					core.TernaryFloat64(hunter.HasSetBonus(ItemSetDemonStalker, 4), 0.9, 1),
+					(1 - 0.03*float64(hunter.Talents.Efficiency)),
 
 				GCD:      core.GCDDefault,
 				CastTime: 1, // Dummy value so core doesn't optimize the cast away
@@ -66,6 +57,15 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfMultiShot), time.Second*1, 0),
 			},
 		},
+
+		BonusCritRating: 0 +
+			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage),
+		DamageMultiplierAdditive: 1 +
+			.04*float64(hunter.Talents.Barrage),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

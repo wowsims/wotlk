@@ -5,6 +5,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var FrostDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDisease),
+	// No interesting minor glyphs.
+}
+
+var UnholyDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfTheGhoul),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfDarkDeath),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay),
+	// No interesting minor glyphs.
+}
+
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Talents:  UnholyTalents,
@@ -82,8 +96,9 @@ var FrostTalents = &proto.DeathknightTalents{
 var unholyRotation = &proto.Deathknight_Rotation{
 	UseDeathAndDecay:     true,
 	StartingPresence:     proto.Deathknight_Rotation_Unholy,
+	BlPresence:           proto.Deathknight_Rotation_Blood,
 	UseEmpowerRuneWeapon: true,
-	BtGhoulFrenzy:        false,
+	BtGhoulFrenzy:        true,
 	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
 	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
@@ -98,40 +113,11 @@ var deathKnightOptions = &proto.Deathknight_Options{
 	PrecastHornOfWinter: true,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         proto.TristateEffect_TristateEffectImproved,
-	SwiftRetribution:      true,
-	StrengthOfEarthTotem:  proto.TristateEffect_TristateEffectImproved,
-	IcyTalons:             true,
-	AbominationsMight:     true,
-	LeaderOfThePack:       proto.TristateEffect_TristateEffectImproved,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	HeroicPresence: true,
-}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion: proto.Potions_PotionOfSpeed,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:        true,
-	FaerieFire:         proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom:  true,
-	Misery:             true,
-	SunderArmor:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
 }
 
 var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [

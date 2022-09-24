@@ -31,6 +31,14 @@ var BasicTotems = &proto.ShamanTotems{
 	Fire:  proto.FireTotem_TotemOfWrath,
 }
 
+var FireElementalBasicTotems = &proto.ShamanTotems{
+	Earth:            proto.EarthTotem_TremorTotem,
+	Air:              proto.AirTotem_WrathOfAirTotem,
+	Water:            proto.WaterTotem_ManaSpringTotem,
+	Fire:             proto.FireTotem_TotemOfWrath,
+	UseFireElemental: true,
+}
+
 var eleShamOptions = &proto.ElementalShaman_Options{
 	Shield:    proto.ShamanShield_WaterShield,
 	Bloodlust: true,
@@ -46,15 +54,15 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	MoonkinAura:      proto.TristateEffect_TristateEffectRegular,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
+var PlayerOptionsAdaptiveFireElemental = &proto.Player_ElementalShaman{
+	ElementalShaman: &proto.ElementalShaman{
+		Talents: StandardTalents,
+		Options: eleShamOptions,
+		Rotation: &proto.ElementalShaman_Rotation{
+			Totems: FireElementalBasicTotems,
+			Type:   proto.ElementalShaman_Rotation_Adaptive,
+		},
+	},
 }
 
 var FullConsumes = &proto.Consumes{
@@ -63,11 +71,6 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	PrepopPotion:    proto.Potions_DestructionPotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{

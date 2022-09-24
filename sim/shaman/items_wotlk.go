@@ -17,12 +17,9 @@ var itemSetT9Bonuses = map[int32]core.ApplyEffect{
 }
 
 var ItemSetThrallsRegalia = core.NewItemSet(core.ItemSet{
-	Name:    "Thrall's Regalia",
-	Bonuses: itemSetT9Bonuses,
-})
-var ItemSetNobundosRegalia = core.NewItemSet(core.ItemSet{
-	Name:    "Nobundo's Regalia",
-	Bonuses: itemSetT9Bonuses,
+	Name:            "Thrall's Regalia",
+	AlternativeName: "Nobundo's Regalia",
+	Bonuses:         itemSetT9Bonuses,
 })
 
 var ItemSetEarthShatterGarb = core.NewItemSet(core.ItemSet{
@@ -213,22 +210,17 @@ var ItemSetWorldbreakerBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var itemSetEnhanceT9Bonuses = map[int32]core.ApplyEffect{
-	2: func(agent core.Agent) {
-		// +3% increase to static shock proc rate
-	},
-	4: func(agent core.Agent) {
-		// +25% shock damage
-	},
-}
-
 var ItemSetThrallsBattlegear = core.NewItemSet(core.ItemSet{
-	Name:    "Thrall's Battlegear",
-	Bonuses: itemSetEnhanceT9Bonuses,
-})
-var ItemSetNobundosBattlegear = core.NewItemSet(core.ItemSet{
-	Name:    "Nobundo's Battlegear",
-	Bonuses: itemSetEnhanceT9Bonuses,
+	Name:            "Thrall's Battlegear",
+	AlternativeName: "Nobundo's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// +3% increase to static shock proc rate
+		},
+		4: func(agent core.Agent) {
+			// +25% shock damage
+		},
+	},
 })
 
 var ItemSetFrostWitchBattlegear = core.NewItemSet(core.ItemSet{
@@ -264,13 +256,12 @@ var ItemSetGladiatorsWartide = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
-			shaman.AddStat(stats.HealingPower, 29)
+			shaman.AddStat(stats.SpellPower, 29)
 			shaman.AddStat(stats.Resilience, 100)
 		},
 		4: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
 			shaman.AddStat(stats.SpellPower, 88)
-			shaman.AddStat(stats.HealingPower, 88)
 		},
 	},
 })

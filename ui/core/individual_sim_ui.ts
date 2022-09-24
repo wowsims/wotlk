@@ -1,5 +1,5 @@
 import { ActionId } from './proto_utils/action_id.js';
-import { BattleElixir } from './proto/common.js';
+import { BattleElixir, HandType } from './proto/common.js';
 import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
@@ -79,7 +79,7 @@ import { newIndividualImporters } from './components/importers.js';
 import { newGlyphsPicker } from './talents/factory.js';
 import { newTalentsPicker } from './talents/factory.js';
 import { professionNames, raceNames } from './proto_utils/names.js';
-import { isTankSpec } from './proto_utils/utils.js';
+import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
 import { specNames } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { specToLocalStorageKey } from './proto_utils/utils.js';
@@ -271,6 +271,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 			},
 		});
+		this.addWarning({
+			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.talentsChangeEmitter]),
+			getContent: () => {
+				if (!this.player.canDualWield2H() &&
+					(this.player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.handType == HandType.HandTypeTwoHand &&
+						this.player.getEquippedItem(ItemSlot.ItemSlotOffHand) != null ||
+						this.player.getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.handType == HandType.HandTypeTwoHand)) {
+					return "Dual wielding two-handed weapon(s) without Titan's Grip spec."
+				} else {
+					return '';
+				}
+			},
+		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
 
 		if (!this.isWithinRaidSim) {
@@ -451,7 +464,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					<fieldset class="settings-section buffs-section">
 						<legend>Raid Buffs</legend>
 					</fieldset>
-					<fieldset class="settings-section debuffs-section">
+					<fieldset class="settings-section debuffs-section damage-metrics">
 						<legend>Debuffs</legend>
 					</fieldset>
 				</div>
@@ -481,7 +494,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 								<div class="consumes-food"></div>
 							</div>
 						</div>
-						<div class="consumes-row">
+						<div class="consumes-row damage-metrics">
 							<span>Eng</span>
 							<div class="consumes-row-inputs consumes-trade">
 							</div>
@@ -602,6 +615,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit] },
+			{ item: IconInputs.FocusMagic, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
 			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
@@ -696,7 +710,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.getClass() == Class.ClassRogue ? { item: Conjured.ConjuredRogueThistleTea, stats: [] } : null,
 			{ item: Conjured.ConjuredHealthstone, stats: [Stat.StatStamina] },
 			{ item: Conjured.ConjuredDarkRune, stats: [Stat.StatIntellect] },
-			{ item: Conjured.ConjuredFlameCap, stats: [Stat.StatStrength, Stat.StatAgility, Stat.StatFireSpellPower] },
+			{ item: Conjured.ConjuredFlameCap, stats: [] },
 		]);
 		if (conjuredOptions.length) {
 			const elem = this.rootElem.getElementsByClassName('consumes-conjured')[0] as HTMLElement;
@@ -919,14 +933,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			label: 'Settings',
 			storageKey: this.getSavedSettingsStorageKey(),
 			getData: (simUI: IndividualSimUI<any>) => {
+				const player = simUI.player;
 				return SavedSettings.create({
 					raidBuffs: simUI.sim.raid.getBuffs(),
-					partyBuffs: simUI.player.getParty()?.getBuffs() || PartyBuffs.create(),
-					playerBuffs: simUI.player.getBuffs(),
+					partyBuffs: player.getParty()?.getBuffs() || PartyBuffs.create(),
+					playerBuffs: player.getBuffs(),
 					debuffs: simUI.sim.raid.getDebuffs(),
-					consumes: simUI.player.getConsumes(),
-					race: simUI.player.getRace(),
-					cooldowns: simUI.player.getCooldowns(),
+					consumes: player.getConsumes(),
+					race: player.getRace(),
+					cooldowns: player.getCooldowns(),
+					rotationJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
 				});
 			},
 			setData: (eventID: EventID, simUI: IndividualSimUI<any>, newSettings: SavedSettings) => {
@@ -941,6 +957,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
+					if (newSettings.rotationJson) {
+						simUI.player.setRotation(eventID, simUI.player.specTypeFunctions.rotationFromJson(JSON.parse(newSettings.rotationJson)));
+					}
 				});
 			},
 			changeEmitters: [
@@ -951,6 +970,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.player.consumesChangeEmitter,
 				this.player.raceChangeEmitter,
 				this.player.cooldownsChangeEmitter,
+				this.player.rotationChangeEmitter,
 			],
 			equals: (a: SavedSettings, b: SavedSettings) => SavedSettings.equals(a, b),
 			toJson: (a: SavedSettings) => SavedSettings.toJson(a),
@@ -1117,6 +1137,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			const tankSpec = isTankSpec(this.player.spec);
+			const healingSpec = isHealingSpec(this.player.spec);
 
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
@@ -1134,10 +1155,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 
-			if (!this.isWithinRaidSim) {
+			if (this.isWithinRaidSim) {
+				this.sim.raid.setTargetDummies(eventID, 0);
+			} else {
+				this.sim.raid.setTargetDummies(eventID, healingSpec ? 9 : 0);
 				this.sim.encounter.applyDefaults(eventID);
 				this.sim.raid.setDebuffs(eventID, this.individualConfig.defaults.debuffs);
-				this.sim.applyDefaults(eventID, tankSpec);
+				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
 
 				if (tankSpec) {
 					this.sim.raid.setTanks(eventID, [this.player.makeRaidTarget()]);
@@ -1188,6 +1212,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
 			epWeights: this.player.getEpWeights().asArray(),
+			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
 
@@ -1211,11 +1236,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			if (!settings.player) {
 				return;
 			}
-			if (settings.settings) {
-				this.sim.fromProto(eventID, settings.settings);
-			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {
+				// Correction for removal of healing power and arcane/fire/etc power.
+				// TODO: Remove this after 2 months (2022/11/22).
+				if (settings.epWeights.length > 37) {
+					settings.epWeights.splice(6, 7);
+				}
 				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
 			} else {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
@@ -1223,12 +1250,35 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
 			this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
 			this.sim.raid.setTanks(eventID, settings.tanks || []);
+			this.sim.raid.setTargetDummies(eventID, settings.targetDummies);
 			const party = this.player.getParty();
 			if (party) {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
 			}
 
+			if (settings.encounter) {
+				// Correction for removal of healing power and arcane/fire/etc power.
+				// TODO: Remove this after 2 months (2022/11/22).
+				settings.encounter.targets.forEach(target => {
+					if (target.stats.length > 37) {
+						target.stats.splice(6, 7);
+					}
+				});
+			}
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
+
+			if (settings.settings) {
+				this.sim.fromProto(eventID, settings.settings);
+			} else {
+				const tankSpec = isTankSpec(this.player.spec);
+				const healingSpec = isHealingSpec(this.player.spec);
+				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
+			}
+
+			// Needed because of new proto field addition. Can remove on 2022/11/14 (2 months).
+			if (!isHealingSpec(this.player.spec)) {
+				this.sim.setShowDamageMetrics(eventID, true);
+			}
 		});
 	}
 

@@ -45,13 +45,79 @@ var DefaultTargetProto = proto.Target{
 	ParryHaste:    true,
 }
 
+var FullRaidBuffs = &proto.RaidBuffs{
+	AbominationsMight:     true,
+	ArcaneBrilliance:      true,
+	ArcaneEmpowerment:     true,
+	BattleShout:           proto.TristateEffect_TristateEffectImproved,
+	Bloodlust:             true,
+	DemonicPact:           500,
+	DevotionAura:          proto.TristateEffect_TristateEffectImproved,
+	DivineSpirit:          true,
+	ElementalOath:         true,
+	FerociousInspiration:  true,
+	GiftOfTheWild:         proto.TristateEffect_TristateEffectImproved,
+	IcyTalons:             true,
+	LeaderOfThePack:       proto.TristateEffect_TristateEffectImproved,
+	ManaSpringTotem:       proto.TristateEffect_TristateEffectRegular,
+	MoonkinAura:           proto.TristateEffect_TristateEffectImproved,
+	PowerWordFortitude:    proto.TristateEffect_TristateEffectImproved,
+	SanctifiedRetribution: true,
+	ShadowProtection:      true,
+	StrengthOfEarthTotem:  proto.TristateEffect_TristateEffectImproved,
+	SwiftRetribution:      true,
+	Thorns:                proto.TristateEffect_TristateEffectImproved,
+	TotemOfWrath:          true,
+	TrueshotAura:          true,
+	UnleashedRage:         true,
+	WindfuryTotem:         proto.TristateEffect_TristateEffectImproved,
+	WrathOfAirTotem:       true,
+}
+var FullPartyBuffs = &proto.PartyBuffs{
+	//BraidedEterniumChain: true,
+	ManaTideTotems: 1,
+}
+var FullIndividualBuffs = &proto.IndividualBuffs{
+	BlessingOfKings:     true,
+	BlessingOfMight:     proto.TristateEffect_TristateEffectImproved,
+	BlessingOfSanctuary: true,
+	BlessingOfWisdom:    proto.TristateEffect_TristateEffectImproved,
+	JudgementsOfTheWise: true,
+	VampiricTouch:       true,
+}
+
+var FullDebuffs = &proto.Debuffs{
+	BloodFrenzy:        true,
+	CurseOfElements:    true,
+	CurseOfWeakness:    proto.TristateEffect_TristateEffectImproved,
+	EarthAndMoon:       true,
+	EbonPlaguebringer:  true,
+	ExposeArmor:        true,
+	FaerieFire:         proto.TristateEffect_TristateEffectImproved,
+	GiftOfArthas:       true,
+	HeartOfTheCrusader: true,
+	ImprovedScorch:     true,
+	InsectSwarm:        true,
+	JudgementOfLight:   true,
+	JudgementOfWisdom:  true,
+	Mangle:             true,
+	Misery:             true,
+	ScorpidSting:       true,
+	ShadowEmbrace:      true,
+	ShadowMastery:      true,
+	SunderArmor:        true,
+	ThunderClap:        proto.TristateEffect_TristateEffectImproved,
+	TotemOfWrath:       true,
+	Vindication:        true,
+}
+
 func NewDefaultTarget() *proto.Target {
 	var target = &proto.Target{}
 	*target = DefaultTargetProto
 	return target
 }
 
-func MakeDefaultEncounterCombos(debuffs *proto.Debuffs) []EncounterCombo {
+func MakeDefaultEncounterCombos() []EncounterCombo {
 	var DefaultTarget = NewDefaultTarget()
 
 	multipleTargets := []*proto.Target{}

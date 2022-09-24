@@ -22,4 +22,22 @@
 
 .icon-enum-picker-option {
   background-size: cover;
+  position: relative;
+}
+
+.icon-enum-text {
+  @include vertical-bottom;
+  @include horizontal-right;
+  margin: 3px;
+  overflow: hidden;
+  font-weight: 900;
+  font-size: x-small;
+  background-color: black;
+  color: lawngreen;
+  border: none;
+  width: auto;
+  max-width: 40px;
+  height: auto;
+	padding: 0 2px;
+  white-space: nowrap;
 }

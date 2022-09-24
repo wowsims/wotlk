@@ -172,35 +172,11 @@ var basicOptions = &proto.Hunter_Options{
 	UseHuntersMark:       true,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfRelentlessAssault,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 	PetFood:         proto.PetFood_PetFoodKiblersBits,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom: true,
-	Misery:            true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

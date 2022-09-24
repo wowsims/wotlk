@@ -1,6 +1,7 @@
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig } from '../components/icon_enum_picker.js';
+import { IconPicker } from '../components/icon_picker.js';
 import { IconPickerConfig } from '../components/icon_picker.js';
 import {
 	AirTotem,
@@ -15,6 +16,9 @@ import { Player } from '../player.js';
 import { Sim } from '../sim.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
+import * as InputHelpers from '../components/input_helpers.js';
+import { SimUI } from '../sim_ui.js';
+import { SpecRotation } from '../proto_utils/utils.js';
 
 export type DpsShaman = Spec.SpecEnhancementShaman | Spec.SpecElementalShaman;
 
@@ -22,9 +26,11 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 	parentElem.innerHTML = `
 		<div class="totem-dropdowns-container"></div>
 		<div class="totem-inputs-container"></div>
+		<div class="fire-elemental-inputs-container"></div>
 	`;
 	const totemDropdownsContainer = parentElem.getElementsByClassName('totem-dropdowns-container')[0] as HTMLElement;
 	const totemInputsContainer = parentElem.getElementsByClassName('totem-inputs-container')[0] as HTMLElement;
+	const fireElementalInputsContainer = parentElem.getElementsByClassName("fire-elemental-inputs-container")[0] as HTMLElement
 
 	const earthTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
 		extraCssClasses: [
@@ -117,6 +123,19 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 			player.setRotation(eventID, newRotation);
 		},
 	});
+
+	const fireElementalBooleanIconInput = InputHelpers.makeBooleanIconInput<DpsShaman, ShamanTotems, Player<DpsShaman>>({
+		getModObject: (player: Player<DpsShaman>) => player,
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems || ShamanTotems.create(),
+		setValue: (eventID: EventID, player: Player<DpsShaman>, newVal: ShamanTotems) => {
+			const newRotation = player.getRotation();
+			newRotation.totems = newVal;
+			player.setRotation(eventID, newRotation);
+		},
+		changeEmitter: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
+	}, ActionId.fromSpellId(2894), "useFireElemental");
+
+	new IconPicker(fireElementalInputsContainer, simUI.player, fireElementalBooleanIconInput);
 
 	return 'Totems';
 }

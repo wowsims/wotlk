@@ -13,6 +13,9 @@ import (
 )
 
 func (dk *Deathknight) ApplyUnholyTalents() {
+	// Anticipation
+	dk.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(dk.Talents.Anticipation))
+
 	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
 
@@ -52,10 +55,6 @@ func (dk *Deathknight) ApplyUnholyTalents() {
 	}
 }
 
-func (dk *Deathknight) viciousStrikesCritDamageBonus() float64 {
-	return 0.15 * float64(dk.Talents.ViciousStrikes)
-}
-
 func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 	return 3 * float64(dk.Talents.ViciousStrikes)
 }
@@ -71,8 +70,8 @@ func (dk *Deathknight) applyImpurity() {
 	dk.bonusCoeffs.impurityBonusCoeff = 1.0 + float64(dk.Talents.Impurity)*0.04
 }
 
-func (dk *Deathknight) getImpurityBonus(hitEffect *core.SpellEffect, unit *core.Unit) float64 {
-	return (hitEffect.MeleeAttackPower(unit) + hitEffect.MeleeAttackPowerOnTarget()) * dk.bonusCoeffs.impurityBonusCoeff
+func (dk *Deathknight) getImpurityBonus(spell *core.Spell) float64 {
+	return spell.MeleeAttackPower() * dk.bonusCoeffs.impurityBonusCoeff
 }
 
 func (dk *Deathknight) applyWanderingPlague() {
@@ -82,19 +81,16 @@ func (dk *Deathknight) applyWanderingPlague() {
 
 	actionID := core.ActionID{SpellID: 49655}
 
-	wanderingPlagueMultiplier := []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague]
-
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
+		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(dk.Env, core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
-			DamageMultiplier: wanderingPlagueMultiplier,
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					return dk.LastDiseaseDamage
@@ -111,18 +107,16 @@ func (dk *Deathknight) applyNecrosis() {
 	}
 
 	var curDmg float64
-	necrosisCoeff := 0.04 * float64(dk.Talents.Necrosis)
 	necrosisHit := dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
+		DamageMultiplier: 0.04 * float64(dk.Talents.Necrosis),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskSpellDamage,
-
-			DamageMultiplier: necrosisCoeff,
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
 					return curDmg
@@ -136,7 +130,7 @@ func (dk *Deathknight) applyNecrosis() {
 		Label: "Necrosis",
 		// ActionID: core.ActionID{SpellID: 51465}, // hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
@@ -159,12 +153,12 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 		Label: "Blood-Caked Blade",
 		// ActionID: core.ActionID{SpellID: 49628}, // Hide from metrics
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < procChance {
-				isMh := spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
+				isMh := spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
 				if isMh {
 					bloodCakedBladeHitMh.Cast(sim, spellEffect.Target)
 				} else {
@@ -176,8 +170,8 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 }
 
 func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
-	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, 1.0, 1.0, true)
-	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), 1.0, true)
+	mhBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, 0, true)
+	ohBaseDamage := core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, true)
 
 	procMask := core.ProcMaskMeleeOHSpecial
 	if isMh {
@@ -187,14 +181,14 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics,
 
+		DamageMultiplier: 1 *
+			core.TernaryFloat64(isMh, 1, dk.nervesOfColdSteelBonus()),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: procMask,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 					diseaseMultiplier := (0.25 + dk.dkCountActiveDiseases(spellEffect.Target)*0.125)
@@ -300,7 +294,12 @@ func (dk *Deathknight) applyUnholyBlight() {
 	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.UnholyBlightDot[dk.CurrentTarget.Index].Apply(sim)
 		},
@@ -321,10 +320,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				IsPeriodic:       true,
+				IsPeriodic: true,
 				BaseDamage: core.BaseDamageConfig{
 					Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {
 						return dk.UnholyBlightTickDamage[se.Target.Index] * glyphDmgBonus

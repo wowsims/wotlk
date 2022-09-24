@@ -105,7 +105,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 					moonkinAura: TristateEffect.TristateEffectRegular,
 					wrathOfAirTotem: true,
-					powerWordFortitude: TristateEffect.TristateEffectImproved, 
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,
@@ -146,12 +146,13 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.SelfUnholyFrenzy,
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
-					
+
 					DeathKnightInputs.PrecastGhoulFrenzy,
 					DeathKnightInputs.PrecastHornOfWinter,
-					
+
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

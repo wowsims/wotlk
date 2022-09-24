@@ -31,7 +31,11 @@ type Priest struct {
 
 	SurgeOfLightProcAura *core.Aura
 
+	BindingHeal     *core.Spell
+	CircleOfHealing *core.Spell
 	DevouringPlague *core.Spell
+	FlashHeal       *core.Spell
+	GreaterHeal     *core.Spell
 	HolyFire        *core.Spell
 	InnerFocus      *core.Spell
 	ShadowWordPain  *core.Spell
@@ -39,6 +43,12 @@ type Priest struct {
 	MindFlay        []*core.Spell
 	MindSear        []*core.Spell
 	Penance         *core.Spell
+	PenanceHeal     *core.Spell
+	PowerWordShield *core.Spell
+	PrayerOfHealing *core.Spell
+	PrayerOfMending *core.Spell
+	Renew           *core.Spell
+	EmpoweredRenew  *core.Spell
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
@@ -53,6 +63,12 @@ type Priest struct {
 	MindSearDot        []*core.Dot
 	StarshardsDot      *core.Dot
 	VampiricTouchDot   *core.Dot
+
+	RenewHots     []*core.Dot
+	PWSShields    []*core.Shield
+	WeakenedSouls []*core.Aura
+
+	ProcPrayerOfMending core.ApplySpellEffects
 
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
@@ -152,7 +168,18 @@ func (priest *Priest) Initialize() {
 		priest.newMindSearDot(4),
 		priest.newMindSearDot(5),
 	}
+}
 
+func (priest *Priest) RegisterHealingSpells() {
+	priest.registerPenanceHealSpell()
+	priest.registerBindingHealSpell()
+	priest.registerCircleOfHealingSpell()
+	priest.registerFlashHealSpell()
+	priest.registerGreaterHealSpell()
+	priest.registerPowerWordShieldSpell()
+	priest.registerPrayerOfHealingSpell()
+	priest.registerPrayerOfMendingSpell()
+	priest.registerRenewSpell()
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {

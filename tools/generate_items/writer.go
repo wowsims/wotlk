@@ -52,9 +52,9 @@ var Gems = []Gem{
 			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
 			}
-			if gemData.Response.GetPhase() == 0 {
-				continue
-			}
+			// if gemData.Response.GetPhase() == 0 {
+			// 	continue
+			// }
 		}
 		file.WriteString(fmt.Sprintf("\t%s,\n", gemToGoString(gemData.Declaration, gemData.Response)))
 	}
@@ -92,10 +92,10 @@ var Items = []Item{
 		if itemData.Response == nil {
 			continue
 		}
-		itemLevel := itemData.Response.GetItemLevel()
 		if itemData.Declaration.Filter {
 			continue
 		}
+
 		deny := false
 		for _, pattern := range denyListNameRegexes {
 			if pattern.MatchString(itemData.Response.GetName()) {
@@ -106,28 +106,35 @@ var Items = []Item{
 		if deny {
 			continue
 		}
+
 		if !itemData.Response.IsEquippable() {
 			continue
 		}
+
+		itemLevel := itemData.Response.GetItemLevel()
 		allow := allowList[itemData.Declaration.ID]
 		if !allow {
-			if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
+			qual := itemData.Response.GetQuality()
+			if qual < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
-			} else if itemData.Response.GetQuality() > int(proto.ItemQuality_ItemQualityLegendary) {
+			} else if qual > int(proto.ItemQuality_ItemQualityLegendary) {
 				continue
-			} else if itemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityEpic) {
-				if itemLevel < 105 {
+			} else if qual < int(proto.ItemQuality_ItemQualityEpic) {
+				if itemLevel < 145 {
+					continue
+				}
+				if itemLevel < 149 && itemData.Response.GetItemSetName() == "" {
 					continue
 				}
 			} else {
 				// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-				if itemLevel < 75 {
+				if itemLevel < 140 {
 					continue
 				}
 			}
 		}
 		if itemLevel == 0 {
-			fmt.Printf("Missing ilvl: %s", itemData.Response.GetName())
+			fmt.Printf("Missing ilvl: %s\n", itemData.Response.GetName())
 		}
 
 		file.WriteString(fmt.Sprintf("\t%s,\n", itemToGoString(itemData)))
@@ -309,13 +316,14 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
-	9449:  true, // Manual Crowd Pummeler
 	11815: true, // Hand of Justice
+	12590: true, // Felstriker
 	12632: true, // Storm Gauntlets
 	15808: true, // Fine Light Crossbow (for hunter testing).
 	17111: true, // Blazefury Medallion
 	17112: true, // Empyrean Demolisher
 	19808: true, // Rockhide Strongfish
+	20837: true, // Sunstrider Axe
 	20966: true, // Jade Pendant of Blasting
 	22395: true, // Totem of Rage
 	23198: true, // Idol of Brutality
@@ -323,21 +331,66 @@ var allowList = map[int]bool{
 	23836: true, // Goblin Rocket Launcher
 	24114: true, // Braided Eternium Chain
 	27947: true, // Totem of Impact
+	28032: true, // Delicate Green Poncho
 	28041: true, // Bladefist's Breadth
+	28785: true, // The Lightning Capacitor
+	28830: true, // Dragonspine Trophy
+	29383: true, // Bloodlust Brooch
+	29996: true, // Rod of the Sun King
+	30032: true, // Red Belt of Battle
 	31139: true, // Fist of Reckoning
 	31149: true, // Gloves of Pandemonium
 	31193: true, // Blade of Unquenched Thirst
+	32387: true, // Idol of the Raven Goddess
 	32508: true, // Necklace of the Deep
+	32658: true, // Badge of Tenacity
+	33122: true, // Cloak of Darkness
 	33135: true, // Falling Star
 	33140: true, // Blood of Amber
 	33143: true, // Stone of Blades
 	33144: true, // Facet of Eternity
-	6360:  true, // Steelscale Crushfish
-	8345:  true, // Wolfshead Helm
-	28032: true, // Delicate Green Poncho
-	12590: true, // Felstriker
+	33504: true, // Libram of Divine Purpose
+	33829: true, // Hex Shrunken Head
+	33831: true, // Berserkers Call
+	34472: true, // Shard of Contempt
+	37574: true, // Libram of Furious Blows
+	38287: true, // Empty Mug of Direbrew
+	39208: true, // Sigil of the Dark Rider
+
+	6360: true, // Steelscale Crushfish
+	8345: true, // Wolfshead Helm
+	9449: true, // Manual Crowd Pummeler
+
+	27510: true, // Tidefury Gauntlets
+	27802: true, // Tidefury Shoulderguards
+	27909: true, // Tidefury Kilt
+	28231: true, // Tidefury Chestpiece
+	28349: true, // Tidefury Helm
+
 	15056: true, // Stormshroud Armor
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
+
+	// Undead Slaying Sets
+	// Plate
+	43068: true,
+	43069: true,
+	43070: true,
+	43071: true,
+	// Cloth
+	43072: true,
+	43073: true,
+	43074: true,
+	43075: true,
+	// Mail
+	43076: true,
+	43077: true,
+	43078: true,
+	43079: true,
+	//Leather
+	43080: true,
+	43081: true,
+	43082: true,
+	43083: true,
 }

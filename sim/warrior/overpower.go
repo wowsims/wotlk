@@ -30,14 +30,8 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	refundAmount := cost * 0.8
 
 	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: 1 + float64(warrior.Talents.UnrelentingAssault)*0.01,
-		ThreatMultiplier: 0.75,
-		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 35, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
@@ -46,14 +40,18 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 	})
 	cooldownDur := time.Second * 5
+	gcdDur := core.GCDDefault
+
 	if warrior.Talents.UnrelentingAssault == 1 {
 		cooldownDur -= time.Second * 2
 	} else if warrior.Talents.UnrelentingAssault == 2 {
 		cooldownDur -= time.Second * 4
+		gcdDur -= time.Millisecond * 500
 	}
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 11585},
+		ActionID:    core.ActionID{SpellID: 7384},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -62,7 +60,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD:  gcdDur,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -70,6 +68,11 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 				Duration: cooldownDur,
 			},
 		},
+
+		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
+		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
+		CritMultiplier:   warrior.critMultiplier(mh),
+		ThreatMultiplier: 0.75,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			warrior.overpowerValidUntil = 0

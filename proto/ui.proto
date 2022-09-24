@@ -11,7 +11,9 @@ message SimSettings {
 	int32 iterations = 1;
 	int32 phase = 2;
 	int64 fixed_rng_seed = 3;
+	bool show_damage_metrics = 8;
 	bool show_threat_metrics = 4;
+	bool show_healing_metrics = 7;
 	bool show_experimental = 5;
 	Faction faction = 6;
 }
@@ -26,6 +28,7 @@ message IndividualSimSettings {
 	Player player = 3;
 	Encounter encounter = 4;
 	repeated double ep_weights = 6;
+	int32 target_dummies = 9;
 }
 
 // Local storage data for gear settings.
@@ -43,6 +46,7 @@ message SavedSettings {
 	Consumes consumes = 4;
 	Race race = 5;
 	Cooldowns cooldowns = 6;
+	string rotation_json = 8;
 }
 
 message SavedTalents {
@@ -64,6 +68,8 @@ message BuffBot {
 	RaidTarget power_infusion_assignment = 4;
 
 	RaidTarget tricks_of_the_trade_assignment = 5;
+
+	RaidTarget unholy_frenzy_assignment = 6;
 }
 
 message BlessingsAssignment {

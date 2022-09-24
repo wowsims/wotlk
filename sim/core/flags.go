@@ -52,7 +52,7 @@ const (
 	ProcMaskRangedAuto
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
-	ProcMaskPeriodicDamage
+	ProcMaskSpellHealing
 )
 
 const (
@@ -212,27 +212,6 @@ const (
 // Returns whether there is any overlap between the given masks.
 func (ss SpellSchool) Matches(other SpellSchool) bool {
 	return (ss & other) != 0
-}
-
-func (ss SpellSchool) Stat() stats.Stat {
-	switch ss {
-	case SpellSchoolArcane:
-		return stats.ArcaneSpellPower
-	case SpellSchoolFire:
-		return stats.FireSpellPower
-	case SpellSchoolFrost:
-		return stats.FrostSpellPower
-	case SpellSchoolHoly:
-		return stats.HolySpellPower
-	case SpellSchoolNature:
-		return stats.NatureSpellPower
-	case SpellSchoolShadow:
-		return stats.ShadowSpellPower
-	case SpellSchoolPhysical:
-		return 0 // should be weapon damage (mod_damage_done (physical))
-	}
-
-	return 0
 }
 
 func (ss SpellSchool) ResistanceStat() stats.Stat {

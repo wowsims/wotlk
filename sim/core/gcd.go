@@ -7,20 +7,25 @@ import (
 
 // Note that this is only used when the hardcast and GCD actions
 func (unit *Unit) newHardcastAction(sim *Simulation) {
-	if unit.hardcastAction != nil {
+	if unit.hardcastAction != nil && !unit.hardcastAction.consumed {
 		unit.hardcastAction.Cancel(sim)
+		unit.hardcastAction = nil
 	}
 
-	pa := &PendingAction{
-		NextActionAt: unit.Hardcast.Expires,
-		OnAction: func(sim *Simulation) {
-			// Don't need to do anything, the Advance() call will take care of the hardcast.
-			unit.hardcastAction = nil
-		},
+	if unit.hardcastAction == nil {
+		pa := &PendingAction{
+			NextActionAt: unit.Hardcast.Expires,
+			OnAction: func(sim *Simulation) {
+				// Don't need to do anything, the Advance() call will take care of the hardcast.
+			},
+		}
+		unit.hardcastAction = pa
+	} else {
+		unit.hardcastAction.cancelled = false
+		unit.hardcastAction.NextActionAt = unit.Hardcast.Expires
 	}
 
-	unit.hardcastAction = pa
-	sim.AddPendingAction(pa)
+	sim.AddPendingAction(unit.hardcastAction)
 }
 
 func (unit *Unit) NextGCDAt() time.Duration {
@@ -65,7 +70,7 @@ func (unit *Unit) IsWaitingForEnergy() bool {
 // Assumes that IsWaitingForMana() == true
 func (unit *Unit) DoneWaitingForMana(sim *Simulation) bool {
 	if unit.CurrentMana() >= unit.waitingForMana {
-		unit.Metrics.MarkOOM(unit, sim.CurrentTime-unit.waitStartTime)
+		unit.Metrics.AddOOMTime(sim, sim.CurrentTime-unit.waitStartTime)
 		unit.waitStartTime = 0
 		unit.waitingForMana = 0
 		return true
@@ -104,7 +109,7 @@ func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
 }
 
 func (unit *Unit) HardcastWaitUntil(sim *Simulation, readyTime time.Duration, onComplete CastFunc) {
-	if unit.Hardcast.Expires >= sim.CurrentTime {
+	if unit.Hardcast.Expires >= sim.CurrentTime && sim.CurrentTime != 0 {
 		fmt.Printf("Sim current time: %0.2f\n", sim.CurrentTime.Seconds())
 		panic(fmt.Sprintf("Hardcast already in use, will finish at: %0.2f", unit.Hardcast.Expires.Seconds()))
 	}
@@ -119,6 +124,7 @@ func (unit *Unit) WaitForMana(sim *Simulation, desiredMana float64) {
 		unit.waitStartTime = sim.CurrentTime
 	}
 	unit.waitingForMana = desiredMana
+	unit.Metrics.MarkOOM(sim)
 	if sim.Log != nil {
 		unit.Log(sim, "Not enough mana to cast, pausing GCD until mana >= %0.01f.", desiredMana)
 	}
@@ -134,9 +140,9 @@ func (unit *Unit) WaitForEnergy(sim *Simulation, desiredEnergy float64) {
 	}
 }
 
-func (unit *Unit) doneIterationGCD(simDuration time.Duration) {
+func (unit *Unit) doneIterationGCD(sim *Simulation) {
 	if unit.IsWaitingForMana() {
-		unit.Metrics.MarkOOM(unit, simDuration-unit.waitStartTime)
+		unit.Metrics.AddOOMTime(sim, sim.CurrentTime-unit.waitStartTime)
 		unit.waitStartTime = 0
 		unit.waitingForMana = 0
 	} else if unit.IsWaitingForEnergy() {

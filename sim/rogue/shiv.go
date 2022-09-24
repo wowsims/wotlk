@@ -15,10 +15,10 @@ func (rogue *Rogue) registerShivSpell() {
 	}
 
 	rogue.Shiv = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 5938},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | core.SpellFlagCannotBeDodged,
-
+		ActionID:     core.ActionID{SpellID: 5938},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeOHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder | core.SpellFlagCannotBeDodged,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -31,14 +31,15 @@ func (rogue *Rogue) registerShivSpell() {
 			ModifyCast:  rogue.CastModifier,
 		},
 
+		DamageMultiplier: (1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0)) * (1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),
+		CritMultiplier:   rogue.MeleeCritMultiplier(false, true),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeOHSpecial,
-			DamageMultiplier: 1 +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0),
-			ThreatMultiplier: 1,
-			BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, 1+0.1*float64(rogue.Talents.DualWieldSpecialization), 1, false),
-			OutcomeApplier:   rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(false, true)),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, false),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())

@@ -1,8 +1,9 @@
 package druid
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -11,7 +12,14 @@ import (
 
 // Idol IDs
 const IvoryMoongoddess int32 = 27518
-const ShootingStar int32 = 60775
+const ShootingStar int32 = 40321
+
+func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
+	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+		cast.CastTime -= 1500 * time.Millisecond
+		druid.SwiftStarfireAura.Deactivate(sim)
+	}
+}
 
 func (druid *Druid) registerStarfireSpell() {
 
@@ -27,45 +35,21 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoefficient, 0)
 
 	effect := core.SpellEffect{
-		ProcMask:         core.ProcMaskSpellDamage,
-		DamageMultiplier: 1 + 0.02*float64(druid.Talents.Moonfury),
-		ThreatMultiplier: 1,
-		BaseDamage:       core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
-		OutcomeApplier:   druid.OutcomeFuncMagicHitAndCrit(druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			spellEffect.BonusSpellCritRating = 0
-			// Improved Insect Swarm
-			if druid.MoonfireDot.IsActive() {
-				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
-			}
-			// T6-4P
-			if druid.SetBonuses.balance_t6_2 {
-				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
-			}
-			// T7-4P
-			if druid.SetBonuses.balance_t7_4 {
-				spellEffect.BonusSpellCritRating += 5 * core.CritRatingPerCritChance
-			}
-			// Improved Faerie Fire
-			if druid.CurrentTarget.HasAura("Improved Faerie Fire") {
-				spellEffect.BonusSpellCritRating += float64(druid.Talents.ImprovedFaerieFire) * 1 * core.CritRatingPerCritChance
-			}
-			// Lunar eclipse buff
-			if druid.HasAura("Lunar Eclipse proc") {
-				spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 40
-				// T8-2P
-				if druid.SetBonuses.balance_t8_2 {
-					spellEffect.BonusSpellCritRating += core.CritRatingPerCritChance * 7
-				}
-			}
-			// Nature's Majesty
-			spellEffect.BonusSpellCritRating += 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance
-		},
+		BaseDamage:     core.BaseDamageConfigMagic(minBaseDamage+bonusFlatDamage, maxBaseDamage+bonusFlatDamage, spellCoefficient),
+		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
+
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
 					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
 					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+					if druid.SetBonuses.balance_t10_4 {
+						if druid.LasherweaveDot.IsActive() {
+							druid.LasherweaveDot.Refresh(sim)
+						} else {
+							druid.LasherweaveDot.Apply(sim)
+						}
+					}
 				}
 				if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
 					maxMoonfireTicks := druid.maxMoonfireTicks()
@@ -78,45 +62,40 @@ func (druid *Druid) registerStarfireSpell() {
 		},
 	}
 
-	if druid.HasSetBonus(ItemSetNordrassilRegalia, 4) {
-		effect.BaseDamage = core.WrapBaseDamageConfig(effect.BaseDamage, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-			return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				normalDamage := oldCalculator(sim, hitEffect, spell)
-
-				// Check if moonfire/insectswarm is ticking on the target.
-				// TODO: in a raid simulator we need to be able to see which dots are ticking from other druids.
-				if druid.MoonfireDot.IsActive() || druid.InsectSwarmDot.IsActive() {
-					return normalDamage * 1.1
-				} else {
-					return normalDamage
-				}
-			}
-		})
-	}
-
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolArcane,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolArcane,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
+				Cost:     baseCost * druid.TalentsBonuses.moonglowMultiplier,
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*3500 - (time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath)),
+				CastTime: time.Millisecond*3500 - druid.TalentsBonuses.starlightWrathModifier,
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				druid.applyNaturesSwiftness(cast)
 				druid.ApplyClearcasting(sim, spell, cast)
+				druid.applySwiftStarfireBonus(sim, cast)
 				if druid.HasActiveAura("Elune's Wrath") {
 					cast.CastTime = 0
 					druid.GetAura("Elune's Wrath").Deactivate(sim)
 				}
 			},
 		},
+
+		BonusCritRating: 0 +
+			druid.TalentsBonuses.naturesMajestyBonusCrit +
+			core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
+			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
+			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 }

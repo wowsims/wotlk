@@ -703,11 +703,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	} else if spell == spriest.VampiricTouch {
 		spriest.VTstatpH = spriest.PseudoStats.CastSpeedMultiplier
 		spriest.VTstatH = spriest.GetStat(stats.SpellHaste)
-		spriest.VTstatSp = spriest.GetStat(stats.SpellPower) + spriest.GetStat(stats.ShadowSpellPower)
+		spriest.VTstatSp = spriest.GetStat(stats.SpellPower)
 	} else if spell == spriest.DevouringPlague {
 		spriest.DPstatpH = spriest.PseudoStats.CastSpeedMultiplier
 		spriest.DPstatH = spriest.GetStat(stats.SpellHaste)
-		spriest.DPstatSp = spriest.GetStat(stats.SpellPower) + spriest.GetStat(stats.ShadowSpellPower)
+		spriest.DPstatSp = spriest.GetStat(stats.SpellPower)
 	}
 }
 

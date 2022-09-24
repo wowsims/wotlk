@@ -71,8 +71,10 @@ class EpWeightsMenu extends Popup {
 					<tbody id="ep-tbody">
 						<tr>
 							<th>Stat</th>
-							<th class="type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
+							<th class="damage-metrics type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
+							<th class="damage-metrics type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
+							<th class="healing-metrics type-weight"><span>HPS Weight</span><span class="col-action fa fa-copy"></span></th>
+							<th class="healing-metrics type-ep"><span>HPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-weight"><span>TPS Weight</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-ep"><span>TPS EP</span><span class="col-action fa fa-copy"></span></th>
 							<th class="threat-metrics type-weight"><span>DTPS Weight</span><span class="col-action fa fa-copy"></span></th>
@@ -119,7 +121,6 @@ class EpWeightsMenu extends Popup {
 			this.resultsViewer.hideAll();
 			this.simUI.prevEpIterations = iterations;
 			this.simUI.prevEpSimResult = result;
-			this.preprocessResults(result);
 			this.updateTable(iterations, result);
 		});
 
@@ -139,11 +140,13 @@ class EpWeightsMenu extends Popup {
 		};
 		makeUpdateWeights(colActionButtons[0], 'Per-point increase in DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.weights);
 		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
-		makeUpdateWeights(colActionButtons[2], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
-		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
-		makeUpdateWeights(colActionButtons[4], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
-		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${statNames[Stat.StatArmor]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
-		makeUpdateWeights(colActionButtons[6], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
+		makeUpdateWeights(colActionButtons[2], 'Per-point increase in HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.weights);
+		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
+		makeUpdateWeights(colActionButtons[4], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
+		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
+		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
+		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${statNames[Stat.StatArmor]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
+		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
@@ -186,27 +189,6 @@ class EpWeightsMenu extends Popup {
 `);
 	}
 
-	private preprocessResults(result: StatWeightsResult) {
-		// Values for a school's power should never exceed the value for regular spell power.
-		result.dps!.epValues.forEach((value, index) => {
-			if (index == Stat.StatArcaneSpellPower ||
-				index == Stat.StatFireSpellPower ||
-				index == Stat.StatFrostSpellPower ||
-				index == Stat.StatHolySpellPower ||
-				index == Stat.StatNatureSpellPower ||
-				index == Stat.StatShadowSpellPower) {
-				if (value > result.dps!.epValues[Stat.StatSpellPower]) {
-					const diff = value - result.dps!.epValues[Stat.StatSpellPower];
-					result.dps!.epValues[index] = result.dps!.epValues[Stat.StatSpellPower];
-					result.dps!.epValuesStdev[index] -= diff;
-					const wdiff = result.dps!.weights[index] - result.dps!.weights[Stat.StatSpellPower];
-					result.dps!.weights[index] = result.dps!.weights[Stat.StatSpellPower];
-					result.dps!.weightsStdev[index] -= wdiff;
-				}
-			}
-		});
-	}
-
 	private updateTable(iterations: number, result: StatWeightsResult) {
 		this.tableHeader.remove();
 		this.tableBody.innerHTML = '';
@@ -228,8 +210,8 @@ class EpWeightsMenu extends Popup {
 		const row = document.createElement('tr');
 		row.innerHTML = `
 			<td>${statNames[stat]}</td>
-			<td class="stdev-cell type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
@@ -346,7 +328,7 @@ class EpWeightsMenu extends Popup {
 		});
 		gear = new Gear(items);
 
-		const allSockets: Array<{itemSlot: ItemSlot, socketIdx: number}> = Object.keys(items).map((itemSlotStr) => {
+		const allSockets: Array<{ itemSlot: ItemSlot, socketIdx: number }> = Object.keys(items).map((itemSlotStr) => {
 			const itemSlot = parseInt(itemSlotStr) as ItemSlot;
 			const item = items[itemSlot];
 			if (!item) {
@@ -355,13 +337,13 @@ class EpWeightsMenu extends Popup {
 
 			const numSockets = item.numSockets(isBlacksmithing);
 			return [...Array(numSockets).keys()]
-			.filter(socketIdx => item.item.gemSockets[socketIdx] != GemColor.GemColorMeta)
-			.map(socketIdx => {
-				return {
-					itemSlot: itemSlot,
-					socketIdx: socketIdx,
-				};
-			});
+				.filter(socketIdx => item.item.gemSockets[socketIdx] != GemColor.GemColorMeta)
+				.map(socketIdx => {
+					return {
+						itemSlot: itemSlot,
+						socketIdx: socketIdx,
+					};
+				});
 		}).flat();
 		const threeSocketCombos = permutations(allSockets, 3);
 		const calculateGearGemsEP = (gear: Gear): number => gear.statsFromGems(isBlacksmithing).computeEP(epWeights);
@@ -487,7 +469,7 @@ class EpWeightsMenu extends Popup {
 				[secondaryColor],
 				[oneColor, twoColor],
 			].map(partialCombo => {
-					return Gems.socketToMatchingColors.get(twoColor)!.map(matchingColor => partialCombo.concat([matchingColor]));
+				return Gems.socketToMatchingColors.get(twoColor)!.map(matchingColor => partialCombo.concat([matchingColor]));
 			}).flat();
 		} else if (condition.isThreeOfAColor()) {
 			const threeColor = Gems.PRIMARY_COLORS[[condition.minRed, condition.minYellow, condition.minBlue].indexOf(3)];

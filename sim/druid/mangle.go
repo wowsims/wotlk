@@ -18,13 +18,13 @@ func (druid *Druid) registerMangleBearSpell() {
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), 0.1, 0.0)
+	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleBear = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48564},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48564},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -41,15 +41,14 @@ func (druid *Druid) registerMangleBearSpell() {
 			},
 		},
 
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15 * glyphBonus,
+		CritMultiplier:   druid.MeleeCritMultiplier(),
+		ThreatMultiplier: (1.5 / 1.15) *
+			core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury) + glyphBonus,
-			ThreatMultiplier: (1.5 / 1.15) *
-				core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
-
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 299/1.15, 1.0, 1.15, true),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 299/1.15, true),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
@@ -74,14 +73,13 @@ func (druid *Druid) registerMangleCatSpell() {
 	}
 
 	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
-	refundAmount := cost * 0.8
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), 0.1, 0.0)
+	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48566},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 48566},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -94,21 +92,20 @@ func (druid *Druid) registerMangleCatSpell() {
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0 * glyphBonus,
+		CritMultiplier:   druid.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury) + glyphBonus,
-			ThreatMultiplier: 1,
-
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 566/2.0, 1.0, 2.0, true),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(druid.MeleeCritMultiplier()),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 566/2.0, true),
+			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 					druid.MangleAura.Activate(sim)
 				} else {
-					druid.AddEnergy(sim, refundAmount, druid.EnergyRefundMetrics)
+					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
 			},
 		}),
@@ -120,7 +117,11 @@ func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
 }
 
 func (druid *Druid) CanMangleCat() bool {
-	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.MangleCat.DefaultCast.Cost || druid.ClearcastingAura.IsActive())
+	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentMangleCatCost() || druid.ClearcastingAura.IsActive())
+}
+
+func (druid *Druid) CurrentMangleCatCost() float64 {
+	return druid.MangleCat.ApplyCostModifiers(druid.MangleCat.BaseCost)
 }
 
 func (druid *Druid) IsMangle(spell *core.Spell) bool {

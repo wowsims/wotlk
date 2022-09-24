@@ -41,8 +41,10 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	// TODO: Implemented outside
 
 	// Dark Conviction
-	dk.PseudoStats.BonusMeleeCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
-	dk.PseudoStats.BonusSpellCritRating += core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction)
+	dk.AddStats(stats.Stats{
+		stats.MeleeCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+		stats.SpellCrit: core.CritRatingPerCritChance * float64(dk.Talents.DarkConviction),
+	})
 
 	// Death Rune Mastery
 	// TODO: Implemented outside
@@ -93,11 +95,11 @@ func (dk *Deathknight) applySpellDeflection() {
 		return
 	}
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
-		if spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
-			if -1 < procChance {
+			if sim.RandomFloat("Spell Deflection Roll") < procChance {
 				spellEffect.Damage *= dmgMult
 			}
 		}
@@ -116,7 +118,7 @@ func (dk *Deathknight) applyWillOfTheNecropolis() {
 		Duration: core.NeverExpires,
 	})
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spellEffect *core.SpellEffect) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
 		if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
 			spellEffect.Damage *= 0.85
 			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
@@ -148,7 +150,7 @@ func (dk *Deathknight) applyScentOfBlood() {
 		},
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -217,7 +219,7 @@ func (dk *Deathknight) applyBladeBarrier() {
 	})
 
 	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
-		if dk.AllBloodRunesSpent() {
+		if dk.CurrentBloodRunes() == 0 {
 			dk.BladeBarrierAura.Activate(sim)
 		}
 	}
@@ -276,7 +278,7 @@ func (dk *Deathknight) applyBloodyVengeance() {
 				return
 			}
 
-			if !spellEffect.ProcMask.Matches(core.ProcMaskDirect) {
+			if !spell.ProcMask.Matches(core.ProcMaskDirect) {
 				return
 			}
 
@@ -382,7 +384,7 @@ func (dk *Deathknight) applyBloodworms() {
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Bloodworms Proc",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 

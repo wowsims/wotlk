@@ -31,8 +31,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssClass: 'enhancement-shaman-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-                "Fire Elemental is not yet implemented",
-                "Some things regarding weapon imbues need further testing and changes",
+				"Fire Elemental is in a alpha state",
+				"Some things regarding weapon imbues need further testing and changes",
 			],
 
 			// All stats for which EP should be calculated.
@@ -66,7 +66,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				Stat.StatExpertise,
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
-				Stat.StatNatureSpellPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -81,8 +80,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					[Stat.StatAgility]: 1.561,
 					[Stat.StatStrength]: 1.1,
 					[Stat.StatSpellPower]: 1.117,
-                    [Stat.StatSpellHit]: 0, //default EP assumes cap
-                    [Stat.StatSpellCrit]: 0.897,
+					[Stat.StatSpellHit]: 0, //default EP assumes cap
+					[Stat.StatSpellCrit]: 0.897,
 					[Stat.StatAttackPower]: 1.0,
 					[Stat.StatMeleeHit]: 1.42,
 					[Stat.StatMeleeCrit]: 0.805, //double check how this works with spell crit
@@ -115,11 +114,11 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			playerIconInputs: [
 				ShamanInputs.ShamanShieldInput,
 				ShamanInputs.Bloodlust,
-                ShamanInputs.ShamanImbueMH,
-                ShamanInputs.ShamanImbueOH,
+				ShamanInputs.ShamanImbueMH,
+				ShamanInputs.ShamanImbueOH,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig, 
+			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.ReplenishmentBuff,
@@ -153,7 +152,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-                    Presets.PreRaid_PRESET,
+					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
 				],
 			},

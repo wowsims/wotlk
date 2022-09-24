@@ -18,20 +18,14 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	baseCost := 0.07 * hunter.BaseMana
 
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskRangedSpecial,
-		BonusCritRating: 2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
-			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: 1 *
-			(1 + 0.02*float64(hunter.Talents.TNT)),
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.14 + 492
+				return core.DamageRoll(sim, 386, 464) +
+					0.14*spell.RangedAttackPower(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 	}
 
 	initialEffect := baseEffect
@@ -42,10 +36,10 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	}
 
 	hunter.ExplosiveShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolFire,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -61,12 +55,20 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			},
 		},
 
+		BonusCritRating: 0 +
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
+			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
+		DamageMultiplierAdditive: 1 +
+			.02*float64(hunter.Talents.TNT),
+		DamageMultiplier: 1,
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),
 	})
 
 	dotEffect := baseEffect
 	dotEffect.IsPeriodic = true
-	dotEffect.ProcMask = core.ProcMaskPeriodicDamage
 
 	target := hunter.CurrentTarget
 	hunter.ExplosiveShotDot = core.NewDot(core.Dot{

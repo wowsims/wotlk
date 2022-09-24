@@ -16,8 +16,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Toughness
 	if dk.Talents.Toughness > 0 {
-		armorCoeff := 0.02 * float64(dk.Talents.Toughness)
-		dk.MultiplyStat(stats.Armor, 1.0+armorCoeff)
+		dk.AddStat(stats.Armor, dk.Equip.Stats()[stats.Armor]*0.02*float64(dk.Talents.Toughness))
 	}
 
 	// Icy Reach
@@ -30,7 +29,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Nerves Of Cold Steel
 	if dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {
 		dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
-		dk.AutoAttacks.OHEffect.BaseDamage.Calculator = core.BaseDamageFuncMeleeWeapon(core.OffHand, false, 0, dk.nervesOfColdSteelBonus(), 1.0, true)
+		dk.AutoAttacks.OHConfig.DamageMultiplier *= dk.nervesOfColdSteelBonus()
 	}
 
 	// Icy Talons
@@ -146,7 +145,12 @@ func (dk *Deathknight) applyKillingMachine() {
 	}
 
 	actionID := core.ActionID{SpellID: 51130}
-	attackSpeed := core.TernaryFloat64(dk.HasMHWeapon(), dk.GetMHWeapon().SwingSpeed, 2.0)
+
+	attackSpeed := 2.0
+	if dk.HasMHWeapon() {
+		attackSpeed = dk.GetMHWeapon().SwingSpeed
+	}
+
 	procChance := attackSpeed * float64(dk.Talents.KillingMachine) / 60.0
 
 	dk.KillingMachineAura = dk.RegisterAura(core.Aura{
@@ -162,7 +166,7 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
 
@@ -214,26 +218,30 @@ func (dk *Deathknight) applyThreatOfThassarian() {
 }
 
 func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
-	return sim.RandomFloat("Threat of Thassarian") <= dk.bonusCoeffs.threatOfThassarianChance
+	switch dk.bonusCoeffs.threatOfThassarianChance {
+	case 0.0:
+		return false
+	case 1.0:
+		return true
+	default:
+		return sim.RandomFloat("Threat of Thassarian") < dk.bonusCoeffs.threatOfThassarianChance
+	}
 }
 
-func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect, isGuileOfGorefiendStrike bool, isMightOfMograineStrike bool, wrapper func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier) {
-	critMultiplier := dk.critMultiplier()
-	if isGuileOfGorefiendStrike || isMightOfMograineStrike {
-		critMultiplier = dk.critMultiplierGoGandMoM()
-	}
-
+func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect) core.ProcMask {
+	var procMask core.ProcMask
 	if isMH {
-		effect.ProcMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = wrapper(dk.OutcomeFuncMeleeSpecialHitAndCrit(critMultiplier))
+		procMask = core.ProcMaskMeleeMHSpecial
+		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialHitAndCrit()
 	} else {
-		effect.ProcMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = wrapper(dk.OutcomeFuncMeleeSpecialCritOnly(critMultiplier))
+		procMask = core.ProcMaskMeleeOHSpecial
+		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialCritOnly()
 	}
+	return procMask
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, mhSpell *RuneSpell, ohSpell *RuneSpell) {
-	if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, ohSpell *RuneSpell) {
+	if dk.threatOfThassarianWillProc(sim) && dk.GetOHWeapon() != nil {
 		ohSpell.Cast(sim, spellEffect.Target)
 	}
 }

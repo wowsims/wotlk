@@ -1,25 +1,20 @@
-import { FeralDruid_Rotation_FinishingMove as FinishingMove } from '../core/proto/druid.js';
-import { FeralDruid_Options as DruidOptions } from '../core/proto/druid.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
-import { getEnumValues } from '../core/utils.js';
-import { ItemSlot } from '../core/proto/common.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
-// Helper function for identifying whether 2pT6 is equipped, which impacts allowed rotation options
-function numThunderheartPieces(player: Player<Spec.SpecFeralDruid>): number {
-	const gear = player.getGear();
-	const itemIds = [31048, 31042, 31034, 31044, 31039, 34556, 34444, 34573];
-	return gear.asArray().map(equippedItem => equippedItem?.item.id).filter(id => itemIds.includes(id!)).length
-}
+import {
+	FeralDruid,
+	FeralDruid_Rotation as DruidRotation,
+	FeralDruid_Rotation_BearweaveType as BearweaveType,
+	FeralDruid_Rotation_BiteModeType as BiteModeType,
+	FeralDruid_Options as DruidOptions,
+	FeralDruid_Rotation_BiteModeType
+} from '../core/proto/druid.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -46,65 +41,66 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 	labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions that cannot be spell queued.',
 });
 
+export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
+	fieldName: 'prepopOoc',
+	label: 'Pre-pop Clearcasting',
+	labelTooltip: 'Start fight with clearcasting active',
+	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
+	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
+	fieldName: 'assumeBleedActive',
+	label: 'Assume Bleed Always Active',
+	labelTooltip: 'Assume bleed always exists for "Rend and Tear" calculations. Otherwise will only calculate based on own rip/rake/lacerate.',
+})
+
 export const FeralDruidRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, FinishingMove>({
-			fieldName: 'finishingMove',
-			label: 'Finishing Move',
-			labelTooltip: 'Specify whether Rip or Ferocious Bite should be used as the primary finisher in the DPS rotation.',
-			values: [
-				{ name: 'Rip', value: FinishingMove.Rip },
-				{ name: 'Ferocious Bite', value: FinishingMove.Bite },
-				{ name: 'None', value: FinishingMove.None },
-			],
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'biteweave',
-			label: 'Enable Bite-weaving',
-			labelTooltip: 'Spend Combo Points on Ferocious Bite when Rip is already applied on the target.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().finishingMove == FinishingMove.Rip,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'ripweave',
-			label: 'Enable Rip-weaving',
-			labelTooltip: 'Spend Combo Points on Rip when at 52 Energy or above.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().finishingMove == FinishingMove.Bite,
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, number>({
-			fieldName: 'ripMinComboPoints',
-			label: 'Rip CP Threshold',
-			labelTooltip: 'Minimum Combo Points to accumulate before casting Rip as a finisher.',
-			values: [
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
-			],
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => (player.getRotation().finishingMove == FinishingMove.Rip) || (player.getRotation().ripweave && (player.getRotation().finishingMove != FinishingMove.None)),
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, number>({
-			fieldName: 'biteMinComboPoints',
-			label: 'Bite CP Threshold',
-			labelTooltip: 'Minimum Combo Points to accumulate before casting Ferocious Bite as a finisher.',
-			values: [
-				{ name: '4', value: 4 },
-				{ name: '5', value: 5 },
-			],
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => (player.getRotation().finishingMove == FinishingMove.Bite) || (player.getRotation().biteweave && (player.getRotation().finishingMove != FinishingMove.None)),
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'mangleTrick',
-			label: 'Use Mangle trick',
-			labelTooltip: 'Cast Mangle rather than Shred when between 50-56 Energy with 2pT6, or 60-61 Energy without 2pT6, and with less than 1 second remaining until the next Energy tick.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'rakeTrick',
-			label: 'Use Rake/Bite tricks',
-			labelTooltip: 'Cast Rake or Ferocious Bite rather than powershifting when between 35-39 Energy without 2pT6, and with more than 1 second remaining until the next Energy tick.',
-			enableWhen: (player: Player<Spec.SpecFeralDruid>) => numThunderheartPieces(player) < 2,
-		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'maintainFaerieFire',
 			label: 'Maintain Faerie Fire',
 			labelTooltip: 'Use Faerie Fire whenever it is not active on the target.',
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BearweaveType>({
+			fieldName: 'bearWeaveType',
+			label: 'Bearweaving',
+			values: [
+				{ name: 'None', value: BearweaveType.None },
+				{ name: 'Mangle', value: BearweaveType.Mangle },
+				{ name: 'Lacerate', value: BearweaveType.Lacerate },
+			],
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'hotUptime',
+			label: 'Revitalize Hot Uptime',
+			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
+			percent: true
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'maxRoarClip',
+			label: 'Roar Clip',
+			labelTooltip: 'Max seconds to clip roar',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'useBite',
+			label: 'Bite during rotation',
+			labelTooltip: 'Use bite during rotation rather than just at end',
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
+			fieldName: 'biteModeType',
+			label: 'Bite Mode',
+			labelTooltip: 'Underlying "Bite logic" to use',
+			values: [
+				{ name: 'Emperical', value: BiteModeType.Emperical },
+			],
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'biteTime',
+			label: 'Bite Time',
+			labelTooltip: 'Min seconds on Rip/Roar to bite',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+		})
 	],
 };

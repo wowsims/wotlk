@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -14,7 +15,7 @@ var ItemSetPurifiedShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Name: "Purified Shard of the Gods",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 222, stats.HealingPower: 222})
+			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 222})
 			applyShardOfTheGods(agent.GetCharacter(), false)
 		},
 	},
@@ -24,7 +25,7 @@ var ItemSetShinyShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Name: "Shiny Shard of the Gods",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 250, stats.HealingPower: 250})
+			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 250})
 			applyShardOfTheGods(agent.GetCharacter(), true)
 		},
 	},
@@ -43,6 +44,10 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 	dotSpell := character.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 	})
 
 	target := character.CurrentTarget
@@ -55,10 +60,6 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:         core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
 			BaseDamage:     core.BaseDamageConfigFlat(tickAmount),
 			OutcomeApplier: character.OutcomeFuncTick(),
 			IsPeriodic:     true,
@@ -77,3 +78,34 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		},
 	})
 }
+
+func makeUndeadSet(setName string) *core.ItemSet {
+	return core.NewItemSet(core.ItemSet{
+		Name: setName,
+		Bonuses: map[int32]core.ApplyEffect{
+			2: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.01
+				}
+			},
+			3: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.02 / 1.01
+				}
+			},
+			4: func(agent core.Agent) {
+				character := agent.GetCharacter()
+				if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+					character.PseudoStats.DamageDealtMultiplier *= 1.03 / 1.02
+				}
+			},
+		},
+	})
+}
+
+var ItemSetBlessedBattlegearOfUndeadSlaying = makeUndeadSet("Blessed Battlegear of Undead Slaying")
+var ItemSetBlessedRegaliaOfUndeadCleansing = makeUndeadSet("Blessed Regalia of Undead Cleansing")
+var ItemSetBlessedGarbOfTheUndeadSlayer = makeUndeadSet("Blessed Garb of the Undead Slayer")
+var ItemSetUndeadSlayersBlessedArmor = makeUndeadSet("Undead Slayer's Blessed Armor")

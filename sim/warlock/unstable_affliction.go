@@ -13,13 +13,14 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47843}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
 
 	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
@@ -27,8 +28,15 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 				CastTime: time.Millisecond * (1500 - 200*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfUnstableAffliction), 1, 0)),
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistShadowCrit() +
+			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, 1),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:        core.ProcMaskEmpty,
 			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAfflictionDot),
 		}),
@@ -38,7 +46,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	spellCoefficient := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	applier := warlock.OutcomeFuncTick()
 	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit(warlock.SpellCritMultiplier(1, 1))
+		applier = warlock.OutcomeFuncMagicCrit()
 	}
 
 	warlock.UnstableAfflictionDot = core.NewDot(core.Dot{
@@ -50,13 +58,9 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			DamageMultiplier:     baseAdditiveMultiplier,
-			ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			BaseDamage:           core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
-			BonusSpellCritRating: 3 * core.CritRatingPerCritChance * float64(warlock.Talents.Malediction),
-			OutcomeApplier:       applier,
-			IsPeriodic:           true,
-			ProcMask:             core.ProcMaskPeriodicDamage,
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
+			OutcomeApplier: applier,
+			IsPeriodic:     true,
 		}),
 	})
 }

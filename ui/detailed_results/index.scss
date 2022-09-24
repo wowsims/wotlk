@@ -36,11 +36,20 @@ body.new-tab {
 }
 
 .dr-root {
-	margin: 10px;
+	display: flex;
+	height: 100%;
+	flex-direction: column;
 }
 
 .dr-row {
-	padding: 10px;
+	padding-right: 10px
+}
+
+.dr-root > .tab-content {
+	flex-grow: 1;
+	height: 100%;
+	overflow: auto;
+	padding: 10px 0px 0 10px;
 }
 
 .table-container {
@@ -49,6 +58,7 @@ body.new-tab {
 
 .dr-toolbar {
 	display: flex;
+	background-color: #1112187d;
 }
 
 .nav-tabs {
@@ -85,6 +95,10 @@ body.new-tab {
 }
 
 .topline-results {
+}
+
+.damage-content {
+	padding-right: 10px;
 }
 
 .metrics-table {

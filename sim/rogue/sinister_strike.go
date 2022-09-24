@@ -15,12 +15,13 @@ func (rogue *Rogue) SinisterStrikeEnergyCost() float64 {
 func (rogue *Rogue) registerSinisterStrikeSpell() {
 	energyCost := rogue.SinisterStrikeEnergyCost()
 	refundAmount := energyCost * 0.8
+	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
 
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48638},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-
+		ActionID:     core.ActionID{SpellID: 48638},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     energyCost,
 
@@ -33,28 +34,29 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			ModifyCast:  rogue.CastModifier,
 		},
 
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			0.03*float64(rogue.Talents.Aggression) +
+			0.05*float64(rogue.Talents.BladeTwisting) +
+			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, true),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				0.03*float64(rogue.Talents.Aggression) +
-				0.05*float64(rogue.Talents.BladeTwisting) +
-				core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
-				core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
-			ThreatMultiplier: 1,
-			BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
-				[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, 1, 1, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, true)),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					points := 1
-					if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
+					points := int32(1)
+					if hasGlyphOfSinisterStrike && spellEffect.DidCrit() {
 						if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
 							points += 1
 						}
 					}
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+					rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
 				} else {
 					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 				}

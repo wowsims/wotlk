@@ -43,7 +43,7 @@ func (warlock *Warlock) corruptionTracker() float64 {
 	// Damage multipler (looking for TotT)
 	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
 	// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)
-	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.PseudoStats.BonusSpellCritRating + warlock.PseudoStats.BonusShadowCritRating +
+	CurrentCritBonus := warlock.GetStat(stats.SpellCrit) + warlock.Corruption.BonusCritRating +
 		warlock.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken
 	CurrentCritMult := 1 + CurrentCritBonus/core.CritRatingPerCritChance/100*core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)
 	// Combination of all multipliers
@@ -351,8 +351,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DemonicEmpowerment.Cast(sim, target)
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
-		warlock.ImmolationAura.IsReady(sim) {
-		warlock.ImmolationAura.Cast(sim, target)
+		warlock.ImmolationAura.IsReady(sim) && warlock.ImmolationAura.Cast(sim, target) {
+		return
 	}
 
 	// ------------------------------------------
@@ -362,10 +362,18 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second) {
 		if sim.CurrentTime < time.Second {
 
-			// Pre-Pull Cast Shadow Bolt
-			warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
-			warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-
+			if warlock.Talents.ChaosBolt { // probably want to add a ui selection for precast later. Doing soul fire because nets the highets dps for destro
+				//warlock.SpendMana(sim, warlock.ChaosBolt.DefaultCast.Cost, warlock.ChaosBolt.ResourceMetrics)
+				//warlock.ChaosBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+				warlock.SpendMana(sim, warlock.SoulFire.DefaultCast.Cost, warlock.SoulFire.ResourceMetrics)
+				warlock.SoulFire.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+				//warlock.SpendMana(sim, warlock.Incinerate.DefaultCast.Cost, warlock.Incinerate.ResourceMetrics)
+				//warlock.Incinerate.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+			} else {
+				// Pre-Pull Cast Shadow Bolt
+				warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
+				warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
+			}
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
 

@@ -18,27 +18,36 @@ type manaBar struct {
 
 	BaseMana float64
 
+	currentMana           float64
 	manaCastingMetrics    *ResourceMetrics
 	manaNotCastingMetrics *ResourceMetrics
 	JowManaMetrics        *ResourceMetrics
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
 	PleaManaMetrics       *ResourceMetrics
+
+	replenishmentDep  *stats.StatDependency
+	ReplenishmentAura *Aura
 }
 
 // EnableManaBar will setup caster stat dependencies (int->mana and int->spellcrit)
 // as well as enable the mana gain action to regenerate mana.
 // It will then enable mana gain metrics for reporting.
 func (character *Character) EnableManaBar() {
+	character.EnableManaBarWithModifier(1.0)
+	character.Unit.SetCurrentPowerBar(ManaBar)
+}
+
+func (character *Character) EnableManaBarWithModifier(modifier float64) {
 	// Assumes all units have >= 20 intellect.
 	// See https://wowwiki-archive.fandom.com/wiki/Base_mana.
 	// Subtract out the non-linear part of the formula separately, so that weird
 	// mana values are not included when using the stat dependency manager.
-	character.AddStat(stats.Mana, 20-15*20)
-	character.AddStatDependency(stats.Intellect, stats.Mana, 15)
+	character.AddStat(stats.Mana, 20-15*20*modifier)
+	character.AddStatDependency(stats.Intellect, stats.Mana, 15*modifier)
 
 	// This conversion is now universal for
-	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.16)
+	character.AddStatDependency(stats.Intellect, stats.SpellCrit, CritRatingPerCritChance/166.66667)
 
 	// Not a real spell, just holds metrics from mana gain threat.
 	character.RegisterSpell(SpellConfig{
@@ -69,11 +78,13 @@ func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulat
 func (unit *Unit) HasManaBar() bool {
 	return unit.manaBar.unit != nil
 }
+
+// Gets the Maxiumum mana including bonus and temporary affects that would increase your mana pool.
 func (unit *Unit) MaxMana() float64 {
-	return unit.GetInitialStat(stats.Mana)
+	return unit.stats[stats.Mana]
 }
 func (unit *Unit) CurrentMana() float64 {
-	return unit.stats[stats.Mana]
+	return unit.currentMana
 }
 func (unit *Unit) CurrentManaPercent() float64 {
 	return unit.CurrentMana() / unit.MaxMana()
@@ -92,7 +103,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 		unit.Log(sim, "Gained %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, oldMana, newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaGained += newMana - oldMana
 	if isBonusMana {
 		unit.Metrics.BonusManaGained += newMana - oldMana
@@ -111,18 +122,18 @@ func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMe
 		unit.Log(sim, "Spent %0.3f mana from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, unit.CurrentMana(), newMana)
 	}
 
-	unit.stats[stats.Mana] = newMana
+	unit.currentMana = newMana
 	unit.Metrics.ManaSpent += amount
 }
 
-func (unit *Unit) doneIterationMana() {
-	if !unit.HasManaBar() {
+func (mb *manaBar) doneIteration() {
+	if mb.unit == nil {
 		return
 	}
 
-	manaGainSpell := unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
+	manaGainSpell := mb.unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
 
-	for _, resourceMetrics := range unit.Metrics.resources {
+	for _, resourceMetrics := range mb.unit.Metrics.resources {
 		if resourceMetrics.Type != proto.ResourceType_ResourceTypeMana {
 			continue
 		}
@@ -274,4 +285,12 @@ func (sim *Simulation) initManaTickAction() {
 		sim.AddPendingAction(pa)
 	}
 	sim.AddPendingAction(pa)
+}
+
+func (mb *manaBar) reset() {
+	if mb.unit == nil {
+		return
+	}
+
+	mb.currentMana = mb.unit.MaxMana()
 }

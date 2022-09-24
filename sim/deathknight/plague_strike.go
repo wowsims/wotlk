@@ -9,22 +9,16 @@ import (
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 
 func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 1.0, 0.5, true)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 378.0, dk.nervesOfColdSteelBonus(), 0.5, true)
+		// SpellID 66992
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 189, true)
 	}
 
-	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
-	glyphDmgBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfPlagueStrike), 1.2, 1.0)
-
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: outbreakBonus,
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target) * glyphDmgBonus
+				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
 			},
 			TargetSpellCoefficient: 1,
 		},
@@ -32,14 +26,22 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, &effect, false, false, func(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-		return outcomeApplier
-	})
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
-		ActionID:     PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolPhysical,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    procMask,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .5 *
+			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
+			(1.0 + 0.1*float64(dk.Talents.Outbreak)) *
+			core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfPlagueStrike), 1.2, 1.0),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	}
 	rs := &RuneSpell{}
@@ -71,11 +73,10 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Talents.ThreatOfThassarian > 0 && dk.GetOHWeapon() != nil && dk.threatOfThassarianWillProc(sim) {
-			dk.PlagueStrikeOhHit.Cast(sim, spellEffect.Target)
-		}
+		dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeOhHit)
 		dk.LastOutcome = spellEffect.Outcome
-		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
+		if spellEffect.Landed() {
+			dk.BloodPlagueExtended[spellEffect.Target.Index] = 0
 			dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
 			if dk.Talents.CryptFever > 0 {
 				dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
@@ -89,19 +90,22 @@ func (dk *Deathknight) registerPlagueStrikeSpell() {
 	dk.PlagueStrike = dk.PlagueStrikeMhHit
 }
 func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, 1.0, 0.5, true)
-	outbreakBonus := 1.0 + 0.1*float64(dk.Talents.Outbreak)
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
 
 	dk.RuneWeapon.PlagueStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: 0.5 *
+			(1.0 + 0.1*float64(dk.Talents.Outbreak)),
+		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskMeleeMHSpecial,
-			BonusCritRating:  (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
-			DamageMultiplier: outbreakBonus,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(dk.RuneWeapon.MeleeCritMultiplier(1.0, 0.0)),
+			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return weaponBaseDamage(sim, hitEffect, spell)

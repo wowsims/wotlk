@@ -14,10 +14,9 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagIgnoreResists,
-
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -29,10 +28,14 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
+		DamageMultiplierAdditive: 1 +
+			0.1*float64(hunter.Talents.ImprovedStings) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
+		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskRangedSpecial,
-			ThreatMultiplier: 1,
-			OutcomeApplier:   hunter.OutcomeFuncRangedHit(),
+			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					hunter.SerpentStingDot.Apply(sim)
@@ -43,7 +46,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 
 	dotOutcome := hunter.OutcomeFuncTick()
 	if hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2) {
-		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly()
 	}
 
 	noxiousStingsMultiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
@@ -61,7 +64,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				// Check for 1 because this aura will always be active inside OnGain.
 				if aura.Unit.NumActiveAurasWithTag("SerpentSting") == 1 {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-						otherHunter.SteadyShot.DamageMultiplier *= 1.1
+						otherHunter.SteadyShot.DamageMultiplierAdditive += .1
 					}
 				}
 			},
@@ -69,7 +72,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier /= noxiousStingsMultiplier
 				if !aura.Unit.HasActiveAuraWithTag("SerpentSting") {
 					for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-						otherHunter.SteadyShot.DamageMultiplier /= 1.1
+						otherHunter.SteadyShot.DamageMultiplierAdditive -= .1
 					}
 				}
 			},
@@ -77,16 +80,10 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask: core.ProcMaskPeriodicDamage,
-			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1),
-			ThreatMultiplier: 1,
-			IsPeriodic:       true,
+			IsPeriodic: true,
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				rap := spellEffect.RangedAttackPower(spell.Unit) + spellEffect.RangedAttackPowerOnTarget()
-				return 242 + rap*0.04
+				return 242 + 0.04*spell.RangedAttackPower(spellEffect.Target)
 			}, 0),
 			OutcomeApplier: dotOutcome,
 		}),

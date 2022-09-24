@@ -42,24 +42,6 @@ var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	BraidedEterniumChain: true,
-}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
 	Food:            proto.Food_FoodGrilledMudfish,
@@ -67,89 +49,98 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	BloodFrenzy:       true,
-	GiftOfArthas:      true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	SunderArmor:       true,
-	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-}
-
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 29098,
-		"enchant": 29192,
+		"id": 34404,
+		"enchant": 29193,
 		"gems": [
-			24067,
-			32409
+			32212,
+			25896
 		]
 	},
 	{
-		"id": 28509
+		"id": 34178
 	},
 	{
-		"id": 29100,
+		"id": 34392,
 		"enchant": 28911,
 		"gems": [
-			24033,
-			24033
+			32200,
+			32200
 		]
 	},
 	{
-		"id": 28660,
+		"id": 34190,
 		"enchant": 34004
 	},
 	{
-		"id": 29096,
+		"id": 34211,
 		"enchant": 24003,
 		"gems": [
-			24067,
-			24055,
-			24055
+			32200,
+			32200,
+			32200
 		]
 	},
 	{
-		"id": 28978,
+		"id": 34444,
 		"enchant": 22533,
 		"gems": [
-			24033
+			32200,
+			0
 		]
 	},
 	{
-		"id": 29097,
-		"enchant": 33153
+		"id": 34408,
+		"enchant": 33153,
+		"gems": [
+			32200,
+			32200,
+			0
+		]
 	},
 	{
-		"id": 28986
+		"id": 35156,
+		"gems": [
+			0
+		]
 	},
 	{
-		"id": 29099,
-		"enchant": 29536
+		"id": 34385,
+		"enchant": 29536,
+		"gems": [
+			32200,
+			32200,
+			32200
+		]
 	},
 	{
-		"id": 30674,
-		"enchant": 35297
+		"id": 34573,
+		"enchant": 35297,
+		"gems": [
+			32200
+		]
 	},
 	{
-		"id": 29279,
-		"enchant": 22535
+		"id": 34213,
+		"enchant": 22538
 	},
 	{
-		"id": 28792,
-		"enchant": 22535
+		"id": 34361,
+		"enchant": 22538
 	},
 	{
-		"id": 28830
+		"id": 32501
 	},
 	{
-		"id": 23836
+		"id": 32658
 	},
 	{
-		"id": 28476,
+		"id": 30883,
 		"enchant": 22556
 	},
+	{},
 	{
-		"id": 23198
+		"id": 32387
 	}
 ]}`)

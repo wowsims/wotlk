@@ -1,4 +1,4 @@
-package encounters
+package naxxrammas
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
@@ -6,23 +6,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func registerNaxxramas10() {
-	const bossPrefix = "Naxxrammas 10"
-
+func addThaddius25(bossPrefix string) {
 	core.AddPresetTarget(core.PresetTarget{
 		PathPrefix: bossPrefix,
 		Config: proto.Target{
-			Id:        16028,
-			Name:      "Patchwerk",
+			Id:        15990,
+			Name:      "Thaddius 25",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
 
 			Stats: stats.Stats{
-				stats.Health:      5_691_835,
+				stats.Health:      39_520_129,
 				stats.Armor:       10643,
 				stats.AttackPower: 640,
-				stats.BlockValue:  54,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
@@ -30,14 +27,30 @@ func registerNaxxramas10() {
 			MinBaseDamage:    14135,
 			SuppressDodge:    false,
 			ParryHaste:       false,
-			DualWield:        true,
+			DualWield:        false,
 			DualWieldPenalty: false,
 		},
-		AI: NewDefaultAI([]TargetAbility{
-			PatchwerkHatefulStrike,
-		}),
+		AI: NewThaddius25AI(),
 	})
-	core.AddPresetEncounter("Patchwerk", []string{
-		bossPrefix + "/Patchwerk",
+	core.AddPresetEncounter("Thaddius 25", []string{
+		bossPrefix + "/Thaddius 25",
 	})
+}
+
+type Thaddius25AI struct {
+	Target *core.Target
+}
+
+func NewThaddius25AI() core.AIFactory {
+	return func() core.TargetAI {
+		return &Thaddius25AI{}
+	}
+}
+
+func (ai *Thaddius25AI) Initialize(target *core.Target) {
+	ai.Target = target
+}
+
+func (ai *Thaddius25AI) DoAction(sim *core.Simulation) {
+	ai.Target.DoNothing()
 }

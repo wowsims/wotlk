@@ -14,8 +14,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 50842},
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
@@ -26,12 +28,10 @@ func (dk *Deathknight) registerPestilenceSpell() {
 			},
 		},
 
-		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     0.0,
-			ThreatMultiplier:     0.0,
+		DamageMultiplier: 0,
+		ThreatMultiplier: 0,
 
+		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			// Zero damage spell with a Hit mechanic, thanks blizz!
 			BaseDamage:     core.BaseDamageConfigFlat(0),
 			OutcomeApplier: dk.OutcomeFuncMagicHit(),
@@ -62,10 +62,12 @@ func (dk *Deathknight) registerPestilenceSpell() {
 						applyCryptEbon := false
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.FrostFeverExtended[unitHit.Index] = 0
 							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
 							applyCryptEbon = true
 						}
 						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.BloodPlagueExtended[unitHit.Index] = 0
 							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
 							applyCryptEbon = true
 						}

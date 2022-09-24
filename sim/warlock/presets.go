@@ -36,7 +36,7 @@ var defaultDestroTalents = &proto.WarlockTalents{
 }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
-	Type:					proto.Warlock_Rotation_Destruction,
+	Type:         proto.Warlock_Rotation_Destruction,
 	PrimarySpell: proto.Warlock_Rotation_Incinerate,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,
 	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
@@ -82,7 +82,6 @@ var defaultAfflictionTalents = &proto.WarlockTalents{
 	ShadowMastery:         5,
 	Eradication:           3,
 	Contagion:             5,
-	DarkPact:              true,
 	DeathsEmbrace:         3,
 	UnstableAffliction:    true,
 	Pandemic:              true,
@@ -92,6 +91,7 @@ var defaultAfflictionTalents = &proto.WarlockTalents{
 	ImprovedShadowBolt: 5,
 	Bane:               5,
 	Ruin:               5,
+	Intensity:          1,
 }
 
 var defaultAfflictionOptions = &proto.Warlock_Options{
@@ -101,7 +101,7 @@ var defaultAfflictionOptions = &proto.Warlock_Options{
 }
 
 var defaultAfflictionRotation = &proto.Warlock_Rotation{
-	Type:					proto.Warlock_Rotation_Affliction,
+	Type:         proto.Warlock_Rotation_Affliction,
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_UnstableAffliction,
 	SpecSpell:    proto.Warlock_Rotation_Haunt,
@@ -161,7 +161,7 @@ var defaultDemonologyOptions = &proto.Warlock_Options{
 }
 
 var defaultDemonologyRotation = &proto.Warlock_Rotation{
-	Type:					proto.Warlock_Rotation_Demonology,
+	Type:         proto.Warlock_Rotation_Demonology,
 	PrimarySpell: proto.Warlock_Rotation_ShadowBolt,
 	SecondaryDot: proto.Warlock_Rotation_Immolate,
 	Curse:        proto.Warlock_Rotation_Doom,
@@ -171,45 +171,11 @@ var defaultDemonologyRotation = &proto.Warlock_Rotation{
 
 // ---------------------------------------------------------
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         2,
-	PowerWordFortitude:    2,
-	StrengthOfEarthTotem:  2,
-	ArcaneBrilliance:      true,
-	DivineSpirit:          true,
-	TrueshotAura:          true,
-	LeaderOfThePack:       2,
-	IcyTalons:             true,
-	TotemOfWrath:          true,
-	MoonkinAura:           2,
-	WrathOfAirTotem:       true,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-}
-
-var FullPartyBuffs = &proto.PartyBuffs{}
-
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: 2,
-	BlessingOfMight:  2,
-	VampiricTouch:    true,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
 	DefaultPotion: proto.Potions_PotionOfWildMagic,
 	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 	Food:          proto.Food_FoodFishFeast,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	SunderArmor:        true,
-	FaerieFire:         2,
-	BloodFrenzy:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
-	JudgementOfWisdom:  true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`

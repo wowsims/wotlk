@@ -11,7 +11,7 @@ import (
 var SunderArmorActionID = core.ActionID{SpellID: 47467}
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
-	cost := 15.0 - float64(warrior.Talents.ImprovedSunderArmor) - float64(warrior.Talents.FocusedRage)
+	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
 	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget, 0)
 	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, false)
@@ -20,6 +20,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	config := core.SpellConfig{
 		ActionID:    SunderArmorActionID,
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -32,6 +33,12 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			},
 			IgnoreHaste: true,
 		},
+
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  360,
+		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+			return 0.05 * spell.MeleeAttackPower()
+		},
 	}
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
@@ -42,11 +49,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 
 	effect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  301.5,
-
 		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
@@ -65,12 +67,11 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 	if isDevastateEffect {
 		effect.OutcomeApplier = warrior.OutcomeFuncAlwaysHit()
-		effect.OnInit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if warrior.SunderArmorAura.GetStacks() == 5 {
-				spellEffect.ThreatMultiplier = 0
-				spellEffect.FlatThreatBonus = 0
-			}
-		}
+
+		// In wrath sunder from devastate generates no threat
+		config.ThreatMultiplier = 0
+		config.FlatThreatBonus = 0
+		config.DynamicThreatBonus = nil
 	}
 
 	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)

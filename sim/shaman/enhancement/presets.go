@@ -55,6 +55,27 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	},
 }
 
+var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
+	EnhancementShaman: &proto.EnhancementShaman{
+		Talents:  StandardTalents,
+		Options:  enhShamOptions,
+		Rotation: enhShamRotationFireElemental,
+	},
+}
+
+var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
+	Totems: &proto.ShamanTotems{
+		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
+		Air:              proto.AirTotem_WindfuryTotem,
+		Water:            proto.WaterTotem_ManaSpringTotem,
+		Fire:             proto.FireTotem_MagmaTotem,
+		UseFireElemental: true,
+	},
+	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
+}
+
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	Totems: &proto.ShamanTotems{
 		Earth: proto.EarthTotem_StrengthOfEarthTotem,
@@ -62,8 +83,11 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 		Water: proto.WaterTotem_ManaSpringTotem,
 		Fire:  proto.FireTotem_MagmaTotem,
 	},
+	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
+	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
+	WeaveFlameShock:              true,
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{
@@ -74,31 +98,8 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	FerociousInspiration: true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	TrueshotAura:         true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:       true,
-	SunderArmor:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom: true,
-	Misery:            true,
 }
 
 var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [

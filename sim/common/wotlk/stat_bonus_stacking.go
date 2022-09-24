@@ -151,7 +151,7 @@ func init() {
 				Duration:  time.Second * 20,
 				MaxStacks: 10,
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() && spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+					if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 						aura.AddStack(sim)
 					}
 				},
@@ -195,7 +195,7 @@ func init() {
 		ID:        40432,
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
-		Bonus:     stats.Stats{stats.SpellPower: 20, stats.HealingPower: 20},
+		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  OnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -213,7 +213,7 @@ func init() {
 		ID:        45308,
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
-		Bonus:     stats.Stats{stats.SpellPower: 25, stats.HealingPower: 25},
+		Bonus:     stats.Stats{stats.SpellPower: 25},
 		Callback:  OnCastComplete,
 	})
 
@@ -256,7 +256,7 @@ func init() {
 		ID:        50340,
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
-		Bonus:     stats.Stats{stats.SpellPower: 18, stats.HealingPower: 18},
+		Bonus:     stats.Stats{stats.SpellPower: 18},
 		Callback:  OnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Harmful:   true,
@@ -288,7 +288,7 @@ func init() {
 		ID:        50345,
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
-		Bonus:     stats.Stats{stats.SpellPower: 20, stats.HealingPower: 20},
+		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  OnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Harmful:   true,

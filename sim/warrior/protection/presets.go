@@ -45,10 +45,14 @@ var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	},
 }
 
+var DefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarriorMajorGlyph_GlyphOfBlocking),
+	Major2: int32(proto.WarriorMajorGlyph_GlyphOfDevastate),
+	Major3: int32(proto.WarriorMajorGlyph_GlyphOfVigilance),
+	// No interesting minor glyphs.
+}
+
 var warriorRotation = &proto.ProtectionWarrior_Rotation{
-	DemoShout:       proto.ProtectionWarrior_Rotation_DemoShoutMaintain,
-	ThunderClap:     proto.ProtectionWarrior_Rotation_ThunderClapMaintain,
-	UseShieldBlock:  true,
 	HsRageThreshold: 30,
 }
 
@@ -61,127 +65,101 @@ var warriorOptions = &proto.ProtectionWarrior_Options{
 	StartingRage: 0,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Thorns:               proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	BattleElixir:   proto.BattleElixir_ElixirOfMastery,
 	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
 }
 
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:   true,
-	FaerieFire:    proto.TristateEffect_TristateEffectImproved,
-	Misery:        true,
-	ShadowEmbrace: true,
-	ScorpidSting:  true,
-}
-
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 29011,
-		"enchant": 29192,
+		"id": 40546,
+		"enchant": 44878,
 		"gems": [
-			25896,
-			24033
+			41380,
+			40034
 		]
 	},
 	{
-		"id": 28244,
+		"id": 40387
+	},
+	{
+		"id": 39704,
+		"enchant": 44957,
 		"gems": [
-			33782
+			40008
 		]
 	},
 	{
-		"id": 29023,
-		"enchant": 28911,
+		"id": 40252,
+		"enchant": 55002
+	},
+	{
+		"id": 40544,
+		"enchant": 44489,
 		"gems": [
-			24033,
-			24033
+			40008,
+			40008
 		]
 	},
 	{
-		"id": 28672,
-		"enchant": 34004
-	},
-	{
-		"id": 29012,
-		"enchant": 24003,
+		"id": 39764,
+		"enchant": 44944,
 		"gems": [
-			24033,
-			24033,
-			24033
+			0
 		]
 	},
 	{
-		"id": 28996,
-		"enchant": 22533,
+		"id": 40545,
+		"enchant": 63770,
 		"gems": [
-			33782
+			49110,
+			0
 		]
 	},
 	{
-		"id": 30644,
-		"enchant": 33153
-	},
-	{
-		"id": 28995
-	},
-	{
-		"id": 28621,
-		"enchant": 29536,
+		"id": 39759,
+		"enchant": 54793,
 		"gems": [
-			24033,
-			24033,
-			24033
+			40008,
+			36767
 		]
 	},
 	{
-		"id": 28747,
-		"enchant": 35297,
+		"id": 40589,
+		"enchant": 38373
+	},
+	{
+		"id": 40297,
+		"enchant": 44491
+	},
+	{
+		"id": 40370
+	},
+	{
+		"id": 40718
+	},
+	{
+		"id": 40257
+	},
+	{
+		"id": 44063,
 		"gems": [
-			24033,
-			24033
+			36767,
+			40089
 		]
 	},
 	{
-		"id": 30834
-	},
-	{
-		"id": 29279
-	},
-	{
-		"id": 28121
-	},
-	{
-		"id": 29387
-	},
-	{
-		"id": 28749,
+		"id": 40402,
 		"enchant": 22559
 	},
 	{
-		"id": 28825,
-		"enchant": 28282,
-		"gems": [
-			24033
-		]
+		"id": 40400,
+		"enchant": 44936
 	},
 	{
-		"id": 28826
+		"id": 41168,
+		"gems": [
+			36767
+		]
 	}
 ]}`)

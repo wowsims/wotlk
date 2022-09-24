@@ -23,13 +23,6 @@ const (
 	Intellect
 	Spirit
 	SpellPower
-	HealingPower
-	ArcaneSpellPower
-	FireSpellPower
-	FrostSpellPower
-	HolySpellPower
-	NatureSpellPower
-	ShadowSpellPower
 	MP5
 	SpellHit
 	SpellCrit
@@ -91,8 +84,6 @@ func (s Stat) StatName() string {
 		return "SpellCrit"
 	case SpellHit:
 		return "SpellHit"
-	case HealingPower:
-		return "HealingPower"
 	case SpellPower:
 		return "SpellPower"
 	case SpellHaste:
@@ -101,18 +92,6 @@ func (s Stat) StatName() string {
 		return "MP5"
 	case SpellPenetration:
 		return "SpellPenetration"
-	case FireSpellPower:
-		return "FireSpellPower"
-	case NatureSpellPower:
-		return "NatureSpellPower"
-	case FrostSpellPower:
-		return "FrostSpellPower"
-	case ShadowSpellPower:
-		return "ShadowSpellPower"
-	case HolySpellPower:
-		return "HolySpellPower"
-	case ArcaneSpellPower:
-		return "ArcaneSpellPower"
 	case AttackPower:
 		return "AttackPower"
 	case MeleeHit:
@@ -311,18 +290,6 @@ type PseudoStats struct {
 	//  This includes almost all "(Normalized) Weapon Damage", but also some "School Damage (Physical)" abilities.
 	BonusDamage float64 // Comes from '+X Weapon Damage' effects
 
-	BonusRangedHitRating      float64 // Hit rating for ranged only.
-	BonusMeleeCritRating      float64 // Crit rating for melee only (not ranged).
-	BonusRangedCritRating     float64 // Crit rating for ranged only.
-	BonusFireCritRating       float64 // Crit rating for fire spells only.
-	BonusShadowCritRating     float64 // Crit rating for shadow spells only. Warlock stuff. You wouldn't understand.
-	BonusMHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
-	BonusOHCritRating         float64 // Talents, e.g. Rogue Dagger specialization
-	BonusMeleeSpellCritRating float64 // Crit rating for melee special attacks, used for Warrior Recklessness
-	BonusMHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
-	BonusOHArmorPenRating     float64 // Talents, e.g. Rogue Mace specialization
-	BonusSpellCritRating      float64 // Crit rating bonus to spells
-
 	DisableDWMissPenalty bool    // Used by Heroic Strike and Cleave
 	IncreasedMissChance  float64 // Insect Swarm and Scorpid Sting
 	DodgeReduction       float64 // Used by Warrior talent 'Weapon Mastery' and SWP boss auras.
@@ -330,16 +297,9 @@ type PseudoStats struct {
 	MobTypeAttackPower float64 // Bonus AP against mobs of the current type.
 	MobTypeSpellPower  float64 // Bonus SP against mobs of the current type.
 
-	// For Human and Orc weapon racials
-	BonusMHExpertiseRating float64
-	BonusOHExpertiseRating float64
+	ThreatMultiplier float64 // Modulates the threat generated. Affected by things like salv.
 
-	ThreatMultiplier          float64 // Modulates the threat generated. Affected by things like salv.
-	HolySpellThreatMultiplier float64 // Righteous Fury
-
-	DamageDealtMultiplier       float64 // All damage
-	RangedDamageDealtMultiplier float64
-
+	DamageDealtMultiplier         float64 // All damage
 	PhysicalDamageDealtMultiplier float64
 	ArcaneDamageDealtMultiplier   float64
 	FireDamageDealtMultiplier     float64
@@ -348,10 +308,6 @@ type PseudoStats struct {
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
 	DiseaseDamageDealtMultiplier  float64
-
-	// Modifiers for spells with the SpellFlagAgentReserved1 flag set.
-	BonusCritRatingAgentReserved1       float64
-	AgentReserved1DamageDealtMultiplier float64
 
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
@@ -369,16 +325,13 @@ type PseudoStats struct {
 
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
-	BonusMeleeAttackPowerTaken  float64 // Imp Hunters mark, EW
-	BonusRangedAttackPowerTaken float64 // Hunters mark, EW
+	BonusRangedAttackPowerTaken float64 // Hunters mark
 	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
 	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
 	BonusMeleeHitRatingTaken    float64 //
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
-	BonusDamageTaken         float64 // Blessing of Sanctuary
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
-	BonusHolyDamageTaken     float64 // Judgement of the Crusader
 
 	DamageTakenMultiplier float64 // All damage
 
@@ -410,26 +363,22 @@ func NewPseudoStats() PseudoStats {
 	return PseudoStats{
 		CostMultiplier: 1,
 
-		CastSpeedMultiplier:  1,
-		MeleeSpeedMultiplier: 1,
-		//RangedSpeedMultiplier: 1, // Leave at 0 so we can use this to ignore ranged stuff for non-hunters.
+		CastSpeedMultiplier:   1,
+		MeleeSpeedMultiplier:  1,
+		RangedSpeedMultiplier: 1,
 		SpiritRegenMultiplier: 1,
 
-		ThreatMultiplier:          1,
-		HolySpellThreatMultiplier: 1,
+		ThreatMultiplier: 1,
 
-		DamageDealtMultiplier:       1,
-		RangedDamageDealtMultiplier: 1,
-
-		PhysicalDamageDealtMultiplier:       1,
-		ArcaneDamageDealtMultiplier:         1,
-		FireDamageDealtMultiplier:           1,
-		FrostDamageDealtMultiplier:          1,
-		HolyDamageDealtMultiplier:           1,
-		NatureDamageDealtMultiplier:         1,
-		ShadowDamageDealtMultiplier:         1,
-		DiseaseDamageDealtMultiplier:        1,
-		AgentReserved1DamageDealtMultiplier: 1,
+		DamageDealtMultiplier:         1,
+		PhysicalDamageDealtMultiplier: 1,
+		ArcaneDamageDealtMultiplier:   1,
+		FireDamageDealtMultiplier:     1,
+		FrostDamageDealtMultiplier:    1,
+		HolyDamageDealtMultiplier:     1,
+		NatureDamageDealtMultiplier:   1,
+		ShadowDamageDealtMultiplier:   1,
+		DiseaseDamageDealtMultiplier:  1,
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 

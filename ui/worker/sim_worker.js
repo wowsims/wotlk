@@ -27,14 +27,17 @@ addEventListener('message', async (e) => {
 
 	[
 		['computeStats', computeStats],
+		['computeStatsJson', computeStatsJson],
 		['gearList', gearList],
+		['gearListJson', gearListJson],
 		['raidSim', raidSim],
+		['raidSimJson', raidSimJson],
 		['raidSimAsync', (data) => {
 			return raidSimAsync(data, (result) => {
 				postMessage({
 					msg: "progress",
 					outputData: result,
-					id: id+"progress",
+					id: id + "progress",
 				});
 			});
 		}],
@@ -44,7 +47,7 @@ addEventListener('message', async (e) => {
 				postMessage({
 					msg: "progress",
 					outputData: result,
-					id: id+"progress",
+					id: id + "progress",
 				});
 			});
 		}],

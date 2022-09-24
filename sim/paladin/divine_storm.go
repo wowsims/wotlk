@@ -11,30 +11,16 @@ import (
 func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
 
-	baseModifiers := Multiplicative{
-		Additive{paladin.getTalentTheArtOfWarBonus()},
-		Additive{paladin.getItemSetRedemptionBattlegearBonus2()},
-	}
-	baseMultiplier := baseModifiers.Get()
-
 	baseEffectMH := core.SpellEffect{ // wait how will this work, something like whirlwind
-		ProcMask: core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: baseMultiplier,
-		ThreatMultiplier: 1,
-		BonusCritRating:  core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
-
 		BaseDamage: core.BaseDamageConfigMeleeWeapon(
 			core.MainHand,
 			false, // ds is not subject to normalisation
 			core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0)+ // Libram of Discord
 				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0), // Venture Co. Libram of Retribution
 			// (much akin to what stuff like hs or ms have intrinsically)
-			1.0,
-			(1.1), // base 1.1 multiplier, can be further improved by 10% via taow for a grand total of 1.21. NOTE: Unlike cs, ds tooltip IS NOT updated to reflect this.
 			true,
 		),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 	}
 
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
@@ -46,10 +32,10 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	}
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53385},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 53385},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -64,6 +50,15 @@ func (paladin *Paladin) registerDivineStormSpell() {
 				Duration: time.Second * 10,
 			},
 		},
+
+		BonusCritRating: core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		// base 1.1 multiplier, can be further improved by 10% via taow for a grand total of 1.21. NOTE: Unlike cs, ds tooltip IS NOT updated to reflect this.
+		DamageMultiplierAdditive: 1 +
+			paladin.getTalentTheArtOfWarBonus() +
+			paladin.getItemSetRedemptionBattlegearBonus2(),
+		DamageMultiplier: 1.1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

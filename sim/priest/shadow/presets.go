@@ -23,27 +23,6 @@ var StandardTalents = &proto.PriestTalents{
 	VampiricTouch:          true,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         2,
-	PowerWordFortitude:    2,
-	StrengthOfEarthTotem:  2,
-	ArcaneBrilliance:      true,
-	DivineSpirit:          true,
-	TrueshotAura:          true,
-	LeaderOfThePack:       2,
-	IcyTalons:             true,
-	TotemOfWrath:          true,
-	MoonkinAura:           2,
-	WrathOfAirTotem:       true,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-}
-
 var DefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
@@ -57,15 +36,6 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	PrepopPotion:    proto.Potions_PotionOfWildMagic,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	SunderArmor:        true,
-	FaerieFire:         2,
-	BloodFrenzy:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
-	JudgementOfWisdom:  true,
 }
 
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{
@@ -112,184 +82,91 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 24266,
-		"enchant": 29191,
+		"id": 40562,
+		"enchant": 44877,
 		"gems": [
-			28118,
-			24030,
-			24030
+			41285,
+			39998
 		]
 	},
 	{
-		"id": 30666
-	},
-	{
-		"id": 21869,
-		"enchant": 28886,
+		"id": 44661,
 		"gems": [
-			24030,
-			24030
+			40026
 		]
 	},
 	{
-		"id": 28570,
-		"enchant": 33150
-	},
-	{
-		"id": 21871,
-		"enchant": 24003,
+		"id": 40459,
+		"enchant": 44874,
 		"gems": [
-			24030,
-			24030
+			39998
 		]
 	},
 	{
-		"id": 24250,
-		"enchant": 22534,
+		"id": 44005,
+		"enchant": 55642,
 		"gems": [
-			24030
+			40026
 		]
 	},
 	{
-		"id": 28507,
-		"enchant": 28272,
+		"id": 44002,
+		"enchant": 33990,
 		"gems": [
-			24030,
-			24030
+			39998,
+			39998
 		]
 	},
 	{
-		"id": 28799,
+		"id": 44008,
+		"enchant": 44498,
 		"gems": [
-			24030,
-			24030
+			39998,
+			0
 		]
 	},
 	{
-		"id": 24262,
-		"enchant": 24274,
+		"id": 40454,
+		"enchant": 54999,
 		"gems": [
-			24030,
-			24030,
-			24030
+			40049,
+			0
 		]
 	},
 	{
-		"id": 21870,
-		"enchant": 35297,
+		"id": 40561,
 		"gems": [
-			24030,
-			24030
+			39998
 		]
 	},
 	{
-		"id": 29352,
-		"enchant": 22536
+		"id": 40560,
+		"enchant": 41602
 	},
 	{
-		"id": 28793,
-		"enchant": 22536
+		"id": 40558,
+		"enchant": 55016
 	},
 	{
-		"id": 28789
+		"id": 40719
 	},
 	{
-		"id": 29370
+		"id": 40399
 	},
 	{
-		"id": 28770,
-		"enchant": 22561
+		"id": 40255
 	},
 	{
-		"id": 29272
+		"id": 40432
 	},
 	{
-		"id": 29350
-	}
-]}`)
-var P3Gear = items.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 31064,
-		"enchant": 29191,
-		"gems": [
-			25893,
-			32215
-		]
+		"id": 40395,
+		"enchant": 44487
 	},
 	{
-		"id": 30666
+		"id": 40273
 	},
 	{
-		"id": 31070,
-		"enchant": 28886,
-		"gems": [
-			32196,
-			32196
-		]
-	},
-	{
-		"id": 32590,
-		"enchant": 33150
-	},
-	{
-		"id": 31065,
-		"enchant": 24003,
-		"gems": [
-			32196,
-			32196,
-			32196
-		]
-	},
-	{
-		"id": 32586,
-		"enchant": 22534
-	},
-	{
-		"id": 31061,
-		"enchant": 28272,
-		"gems": [
-			32196
-		]
-	},
-	{
-		"id": 32256
-	},
-	{
-		"id": 30916,
-		"enchant": 24274,
-		"gems": [
-			32196,
-			32196,
-			32196
-		]
-	},
-	{
-		"id": 32239,
-		"enchant": 35297,
-		"gems": [
-			32196,
-			32196
-		]
-	},
-	{
-		"id": 32527,
-		"enchant": 22536
-	},
-	{
-		"id": 32527,
-		"enchant": 22536
-	},
-	{
-		"id": 32483
-	},
-	{
-		"id": 29370
-	},
-	{
-		"id": 32374,
-		"enchant": 22561
-	},
-	{
-		"id": 29982
+		"id": 39712
 	}
 ]}`)

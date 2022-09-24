@@ -15,53 +15,77 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 	applier := priest.OutcomeFuncTick()
 	if priest.Talents.Shadowform {
-		applier = priest.OutcomeFuncMagicCrit(priest.SpellCritMultiplier(1, 1))
-	}
-
-	effect := core.SpellEffect{
-		DamageMultiplier: 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague) *
-			(1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 + float64(priest.Talents.ImprovedDevouringPlague)*0.05) *
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 1.15, 1),
-		BonusSpellHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		ThreatMultiplier:    1 - 0.05*float64(priest.Talents.ShadowAffinity),
-		BaseDamage: core.WrapBaseDamageConfig(
-			core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
-			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-				return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-					dmg := oldCalculator(sim, spellEffect, spell)
-
-					return dmg * swMod
-				}
-			}),
-		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(priest.DefaultSpellCritMultiplier()),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				priest.AddShadowWeavingStack(sim)
-				priest.DevouringPlagueDot.Apply(sim)
-			}
-		},
-		ProcMask: core.ProcMaskSpellDamage,
+		applier = priest.OutcomeFuncMagicCrit()
 	}
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagDisease,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(priest.Talents.MentalAgility)),
+				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
 				GCD:  core.GCDDefault,
 			},
 		},
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+
+		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: 0 +
+			3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+		DamageMultiplier: 1 +
+			float64(priest.Talents.Darkness)*0.02 +
+			float64(priest.Talents.TwinDisciplines)*0.01 +
+			float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
+		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
+		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
+
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+			BaseDamage: core.WrapBaseDamageConfig(
+				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
+				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
+					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+						dmg := oldCalculator(sim, spellEffect, spell)
+						baseMod := 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
+						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+
+						return dmg * baseMod * swMod
+					}
+				}),
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
+			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					priest.AddShadowWeavingStack(sim)
+					priest.DevouringPlagueDot.Apply(sim)
+				}
+			},
+		}),
 	})
 
 	priest.DevouringPlagueDot = core.NewDot(core.Dot{
-		Spell: priest.DevouringPlague,
+		Spell: priest.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskSpellDamage,
+			Flags:       core.SpellFlagDisease,
+
+			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+			BonusCritRating: 0 +
+				3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+			DamageMultiplier: 1 +
+				float64(priest.Talents.Darkness)*0.02 +
+				float64(priest.Talents.TwinDisciplines)*0.01 +
+				float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
+			CritMultiplier:   priest.SpellCritMultiplier(1, 1),
+			ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
+		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "DevouringPlague-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,
@@ -72,19 +96,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			ProcMask:   core.ProcMaskPeriodicDamage,
 			IsPeriodic: true,
-
-			BonusSpellCritRating: 0 +
-				3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
-				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
-
-			DamageMultiplier: 1 +
-				float64(priest.Talents.Darkness)*0.02 +
-				float64(priest.Talents.TwinDisciplines)*0.01 +
-				float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
-				core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
-			ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 			BaseDamage: core.WrapBaseDamageConfig(
 				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),

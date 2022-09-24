@@ -15,10 +15,10 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 	baseCost := 0.08 * hunter.BaseMana
 
 	hunter.AimedShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 49050},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 49050},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -36,26 +36,28 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-			BonusCritRating: 4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
-				core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
-			DamageMultiplier: 1 *
-				(1 + 0.04*float64(hunter.Talents.Barrage)) *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
-			ThreatMultiplier: 1,
+		BonusCritRating: 0 +
+			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
+			core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
+		DamageMultiplierAdditive: 1 +
+			.04*float64(hunter.Talents.Barrage),
+		DamageMultiplier: 1 *
+			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget())*0.2 +
+					return 0.2*spell.RangedAttackPower(hitEffect.Target) +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit) +
+						spell.BonusWeaponDamage() +
 						408
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 		}),
 	})
 }

@@ -22,9 +22,17 @@ type rageBar struct {
 	RageRefundMetrics *ResourceMetrics
 }
 
-func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, onRageGain OnRageGain) {
+type RageBarOptions struct {
+	StartingRage   float64
+	RageMultiplier float64
+	MHSwingSpeed   float64
+	OHSwingSpeed   float64
+}
+
+func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 	rageFromDamageTakenMetrics := unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken})
 
+	unit.SetCurrentPowerBar(RageBar)
 	unit.RegisterAura(Aura{
 		Label:    "RageBar",
 		Duration: NeverExpires,
@@ -35,25 +43,27 @@ func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, on
 			if spellEffect.Outcome.Matches(OutcomeMiss) {
 				return
 			}
-			if !spellEffect.ProcMask.Matches(ProcMaskWhiteHit) {
+			if !spell.ProcMask.Matches(ProcMaskWhiteHit) {
 				return
 			}
 
 			// Need separate check to exclude auto replacers (e.g. Heroic Strike and Cleave).
-			if spellEffect.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
+			if spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
 				return
 			}
 
-			var HitFactor float64
-
-			if spellEffect.IsMH() {
-				HitFactor = 3.5
+			var hitFactor float64
+			var speed float64
+			if spell.IsMH() {
+				hitFactor = 3.5
+				speed = options.MHSwingSpeed
 			} else {
-				HitFactor = 1.75
+				hitFactor = 1.75
+				speed = options.OHSwingSpeed
 			}
 
 			if spellEffect.Outcome.Matches(OutcomeCrit) {
-				HitFactor *= 2
+				hitFactor *= 2
 			}
 
 			damage := spellEffect.Damage
@@ -62,9 +72,10 @@ func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, on
 				damage = spellEffect.PreoutcomeDamage
 			}
 
-			generatedRage := MinFloat((damage*7.5/RageFactor+HitFactor)/2, damage*15/RageFactor)
-			// In practice this cap isn't reached so no need to compute it.
-			//generatedRage = MinFloat(generatedRage, damage * (15/RageFactor))
+			// generatedRage is capped for very low damage swings
+			generatedRage := MinFloat((damage*7.5/RageFactor+hitFactor*speed)/2, damage*15/RageFactor)
+
+			generatedRage *= options.RageMultiplier
 
 			if spell.ResourceMetrics == nil {
 				spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
@@ -84,7 +95,7 @@ func (unit *Unit) EnableRageBar(startingRage float64, rageMultiplier float64, on
 
 	unit.rageBar = rageBar{
 		unit:         unit,
-		startingRage: MaxFloat(0, MinFloat(startingRage, MaxRage)),
+		startingRage: MaxFloat(0, MinFloat(options.StartingRage, MaxRage)),
 		onRageGain:   onRageGain,
 
 		RageRefundMetrics: unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),

@@ -100,8 +100,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatAgility,
-				Stat.StatStrength,
-				Stat.StatAttackPower,
 				Stat.StatRangedAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -116,9 +114,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatHealth,
 				Stat.StatStamina,
 				Stat.StatAgility,
-				Stat.StatStrength,
 				Stat.StatIntellect,
-				Stat.StatAttackPower,
 				Stat.StatRangedAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -137,18 +133,17 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.SV_P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.7,
-					[Stat.StatAgility]: 3.2,
-					[Stat.StatStrength]: 0.05,
-					[Stat.StatAttackPower]: 0.05,
+					[Stat.StatStamina]: 0.5,
+					[Stat.StatAgility]: 2.76,
+					[Stat.StatIntellect]: 1,
 					[Stat.StatRangedAttackPower]: 1.0,
 					[Stat.StatMeleeHit]: 3,
-					[Stat.StatMeleeCrit]: 1.2,
-					[Stat.StatMeleeHaste]: 2.4,
-					[Stat.StatArmorPenetration]: 0.4,
+					[Stat.StatMeleeCrit]: 1.7,
+					[Stat.StatMeleeHaste]: 0.9,
+					[Stat.StatArmorPenetration]: 1.33,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -231,8 +226,10 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
+					Presets.MM_PRERAID_PRESET,
+					Presets.MM_P1_PRESET,
+					Presets.SV_PRERAID_PRESET,
+					Presets.SV_P1_PRESET,
 				],
 			},
 		});

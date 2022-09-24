@@ -32,12 +32,23 @@ func (druid *Druid) registerBerserkCD() {
 		},
 	})
 
-	spell := druid.RegisterSpell(core.SpellConfig{
+	druid.Berserk = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionId,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
 				Duration: time.Second * 180.0,
+			},
+			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if druid.InForm(Cat) {
+					cast.GCD = time.Second
+				} else {
+					cast.GCD = core.GCDDefault
+				}
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -46,8 +57,15 @@ func (druid *Druid) registerBerserkCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: druid.Berserk,
 		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return druid.InForm(Cat | Bear)
+		},
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			// Manually handled in Feral Rotation
+			return false
+		},
 	})
 
 }

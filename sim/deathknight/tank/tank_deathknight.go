@@ -44,6 +44,12 @@ func NewTankDeathknight(character core.Character, options proto.Player) *TankDea
 		Options:  *dkOptions.Options,
 	}
 
+	if dkOptions.Options.UnholyFrenzyTarget != nil {
+		tankDk.Inputs.UnholyFrenzyTarget = *dkOptions.Options.UnholyFrenzyTarget
+	} else {
+		tankDk.Inputs.UnholyFrenzyTarget.TargetIndex = -1
+	}
+
 	tankDk.EnableAutoAttacks(tankDk, core.AutoAttackOptions{
 		MainHand:       tankDk.WeaponFromMainHand(tankDk.DefaultMeleeCritMultiplier()),
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
@@ -71,7 +77,7 @@ func (dk *TankDeathknight) Initialize() {
 func (dk *TankDeathknight) SetupRotations() {
 	dk.RotationSequence.Clear()
 
-	dk.setupBloodTankERWOpener()
+	dk.setupBloodTankERWThreatOpener()
 }
 
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {

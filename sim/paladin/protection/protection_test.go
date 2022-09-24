@@ -14,21 +14,46 @@ func init() {
 
 func TestProtection(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassPaladin,
-
+		Class:      proto.Class_ClassPaladin,
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "P4", GearSet: Phase4Gear},
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin SOV", SpecOptions: DefaultOptions},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{
+				Label: "Protection Paladin SOC",
+				SpecOptions: &proto.Player_ProtectionPaladin{
+					ProtectionPaladin: &proto.ProtectionPaladin{
+						Talents: defaultProtTalents,
+						Options: &proto.ProtectionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Command,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultProtRotation,
+					},
+				},
+			},
+			{
+				Label: "Protection Paladin SOR",
+				SpecOptions: &proto.Player_ProtectionPaladin{
+					ProtectionPaladin: &proto.ProtectionPaladin{
+						Talents: defaultProtTalents,
+						Options: &proto.ProtectionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Righteousness,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultProtRotation,
+					},
+				},
+			},
+		},
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin", SpecOptions: DefaultOptions},
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
-
+		Consumes:        FullConsumes,
 		IsTank:          true,
 		InFrontOfTarget: true,
 
@@ -53,14 +78,14 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceBloodElf,
 				Class:     proto.Class_ClassPaladin,
-				Equipment: Phase4Gear,
+				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

@@ -14,20 +14,15 @@ func init() {
 
 func TestProtectionWarrior(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassWarrior,
-
+		Class:      proto.Class_ClassWarrior,
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Glyphs:   DefaultGlyphs,
+		Consumes: FullConsumes,
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -65,13 +60,13 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsBasic,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 
 				InFrontOfTarget: true,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

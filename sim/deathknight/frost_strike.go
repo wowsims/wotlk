@@ -9,17 +9,14 @@ import (
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	baseDamage := 250.0 + dk.sigilOfTheVengefulHeartFrostStrike()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, baseDamage, 1.0, 0.55, true)
+	bonusBaseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
+	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250+bonusBaseDamage, true)
 	if !isMH {
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, baseDamage, dk.nervesOfColdSteelBonus(), 0.55, true)
+		// SpellID 66962
+		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 125+bonusBaseDamage, true)
 	}
 
 	effect := core.SpellEffect{
-		BonusCritRating:  (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: dk.bloodOfTheNorthCoeff(),
-		ThreatMultiplier: 1,
-
 		BaseDamage: core.BaseDamageConfig{
 			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return weaponBaseDamage(sim, hitEffect, spell) *
@@ -33,12 +30,22 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		OnSpellHitDealt: onhit,
 	}
 
-	dk.threatOfThassarianProcMasks(isMH, &effect, true, false, dk.killingMachineOutcomeMod)
+	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
+	effect.OutcomeApplier = dk.killingMachineOutcomeMod(effect.OutcomeApplier)
 
 	conf := core.SpellConfig{
-		ActionID:     FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
-		SpellSchool:  core.SpellSchoolFrost,
-		Flags:        core.SpellFlagMeleeMetrics,
+		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    procMask,
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: .55 *
+			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
+			dk.bloodOfTheNorthCoeff(),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	}
 
@@ -74,7 +81,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 func (dk *Deathknight) registerFrostStrikeSpell() {
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
-		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeMhHit, dk.FrostStrikeOhHit)
+		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeOhHit)
 
 		// KM Consume after OH
 		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {

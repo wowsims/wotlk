@@ -9,20 +9,17 @@ import (
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	baseDamage := 215 + core.TernaryFloat64(rogue.HasSetBonus(ItemSetDeathmantle, 2), 40, 0)
+	baseDamage := 215.0
 	apRatio := 0.09
 	chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
 
 	cost := 35.0
-	if rogue.HasSetBonus(ItemSetAssassination, 4) {
-		cost -= 10
-	}
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-
+		ActionID:     core.ActionID{SpellID: 57993, Tag: comboPoints},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -31,38 +28,45 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// The envenom aura is actived even if the attack fails to land
+				// This aura is also applied before the hit effect
+				// See: https://github.com/where-fore/rogue-wotlk/issues/32
+				deadlyPoisonStacks := rogue.deadlyPoisonDots[rogue.CurrentTarget.Index].GetStacks()
+				doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
+				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
+				rogue.EnvenomAura.Activate(sim)
+				rogue.CastModifier(sim, spell, cast)
+			},
 			IgnoreHaste: true,
 		},
 
+		DamageMultiplier: 1 +
+			0.02*float64(rogue.Talents.FindWeakness) +
+			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
+		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-			DamageMultiplier: 1 +
-				0.02*float64(rogue.Talents.FindWeakness) +
-				[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					target := hitEffect.Target
 					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
-					return baseDamage*doses + apRatio*doses*hitEffect.MeleeAttackPower(spell.Unit)
+					// Despite the tool-tip, doses are not currently used in the calculation
+					// doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
+					return baseDamage*float64(deadlyPoisonStacks) + apRatio*float64(comboPoints)*spell.MeleeAttackPower()
 				},
 				TargetSpellCoefficient: 0,
 			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(rogue.MeleeCritMultiplier(true, false)),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				target := spellEffect.Target
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
 					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
 						rogue.deadlyPoisonDots[target.Index].Cancel(sim)
 					}
-					rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
-					rogue.EnvenomAura.Activate(sim)
 				} else {
 					if refundAmount > 0 {
 						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)

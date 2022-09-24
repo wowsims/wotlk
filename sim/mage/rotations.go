@@ -27,10 +27,7 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 		spell = mage.doAoeRotation(sim)
 	}
 
-	if success := spell.Cast(sim, mage.CurrentTarget); success {
-		return
-	} else {
-		mage.Metrics.MarkOOM(&mage.Unit, sim.CurrentTime)
+	if success := spell.Cast(sim, mage.CurrentTarget); !success {
 		mage.WaitForMana(sim, spell.CurCast.Cost)
 	}
 }

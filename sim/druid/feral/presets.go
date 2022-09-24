@@ -7,25 +7,42 @@ import (
 
 var StandardTalents = &proto.DruidTalents{
 	Ferocity:                5,
+	FeralInstinct:           3,
+	SavageFury:              2,
+	FeralSwiftness:          2,
+	SurvivalInstincts:       true,
 	SharpenedClaws:          3,
 	ShreddingAttacks:        2,
 	PredatoryStrikes:        3,
 	PrimalFury:              2,
-	SavageFury:              2,
+	PrimalPrecision:         2,
 	HeartOfTheWild:          5,
 	SurvivalOfTheFittest:    3,
 	LeaderOfThePack:         true,
 	ImprovedLeaderOfThePack: 2,
+	ProtectorOfThePack:      2,
 	PredatoryInstincts:      5,
+	KingOfTheJungle:         3,
 	Mangle:                  true,
+	RendAndTear:             5,
+	PrimalGore:              true,
+	Berserk:                 true,
+	ImprovedMarkOfTheWild:   2,
 	Furor:                   5,
 	Naturalist:              5,
 	NaturalShapeshifter:     3,
-	Intensity:               3,
+	MasterShapeshifter:      2,
 	OmenOfClarity:           true,
 }
 
-var PlayerOptionsBiteweave = &proto.Player_FeralDruid{
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfRip),
+	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
+	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
+	// No interesting minor glyphs.
+}
+
+var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
 		Talents: StandardTalents,
 		Options: &proto.FeralDruid_Options{
@@ -33,35 +50,16 @@ var PlayerOptionsBiteweave = &proto.Player_FeralDruid{
 			LatencyMs:       100,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
-			FinishingMove:      proto.FeralDruid_Rotation_Rip,
-			MangleTrick:        true,
-			Biteweave:          true,
-			RipMinComboPoints:  5,
-			BiteMinComboPoints: 5,
-			RakeTrick:          false,
-			Ripweave:           false,
+			BearWeaveType:      proto.FeralDruid_Rotation_Lacerate,
+			UseRake:            true,
+			MinCombosForRip:    5,
+			MinCombosForBite:   5,
+			BiteTime:           10.0,
 			MaintainFaerieFire: true,
+			BerserkBiteThresh:  30.0,
+			MaxRoarClip:        10.0,
 		},
 	},
-}
-
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	BraidedEterniumChain: true,
-}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
 }
 
 var FullConsumes = &proto.Consumes{
@@ -72,99 +70,93 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	BloodFrenzy:       true,
-	GiftOfArthas:      true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	SunderArmor:       true,
-	Mangle:            true,
-	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-}
-
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 8345,
-		"enchant": 29192
-	},
-	{
-		"id": 29381
-	},
-	{
-		"id": 29100,
-		"enchant": 28888,
+		"id": 40473,
+		"enchant": 44879,
 		"gems": [
-			24028,
-			24028
+			41398,
+			39996
 		]
 	},
 	{
-		"id": 28672,
-		"enchant": 34004
-	},
-	{
-		"id": 29096,
-		"enchant": 24003,
+		"id": 44664,
 		"gems": [
-			24028,
-			24028,
-			24028
+			39996
 		]
 	},
 	{
-		"id": 29246,
-		"enchant": 27899
-	},
-	{
-		"id": 28506,
+		"id": 40494,
+		"enchant": 44871,
 		"gems": [
-			24028,
-			24028
+			39996
 		]
 	},
 	{
-		"id": 28750,
+		"id": 40403,
+		"enchant": 55002
+	},
+	{
+		"id": 40539,
+		"enchant": 44489,
 		"gems": [
-			24028,
-			24028
+			39996
 		]
 	},
 	{
-		"id": 28741,
-		"enchant": 29535,
+		"id": 39765,
+		"enchant": 44484,
 		"gems": [
-			24028,
-			24028,
-			24028
+			39996,
+			0
 		]
 	},
 	{
-		"id": 28545,
-		"enchant": 28279,
+		"id": 40541,
+		"enchant": 54999,
 		"gems": [
-			24028,
-			24028
+			0
 		]
 	},
 	{
-		"id": 28649,
-		"enchant": 22535
+		"id": 40205,
+		"gems": [
+			39996
+		]
 	},
 	{
-		"id": 30834,
-		"enchant": 22535
+		"id": 44011,
+		"enchant": 38374,
+		"gems": [
+			39996,
+			49110
+		]
 	},
 	{
-		"id": 28830
+		"id": 40243,
+		"enchant": 55016,
+		"gems": [
+			40014
+		]
 	},
 	{
-		"id": 29383
+		"id": 40474
 	},
 	{
-		"id": 28658,
-		"enchant": 22556
+		"id": 40717
 	},
 	{
-		"id": 29390
+		"id": 42987
+	},
+	{
+		"id": 40256
+	},
+	{
+		"id": 40388,
+		"enchant": 44492
+	},
+	{},
+	{
+		"id": 39757
 	}
 ]}`)

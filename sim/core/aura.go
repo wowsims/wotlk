@@ -49,6 +49,7 @@ type Aura struct {
 	active                     bool
 	activeIndex                int32 // Position of this aura's index in the activeAuras array.
 	onCastCompleteIndex        int32 // Position of this aura's index in the onCastCompleteAuras array.
+	afterCastIndex             int32 // Position of this aura's index in the afterCastAuras array.
 	onSpellHitDealtIndex       int32 // Position of this aura's index in the onSpellHitAuras array.
 	onSpellHitTakenIndex       int32 // Position of this aura's index in the onSpellHitAuras array.
 	onPeriodicDamageDealtIndex int32 // Position of this aura's index in the onPeriodicDamageAuras array.
@@ -77,6 +78,7 @@ type Aura struct {
 	OnStatsChange   OnStatsChange  // Invoked when the stats of this aura owner changes.
 
 	OnCastComplete        OnCastComplete   // Invoked when a spell cast completes casting, before results are calculated.
+	AfterCast             AfterCast        // Invoked when a spell cast completes casting, after results are calculated.
 	OnSpellHitDealt       OnSpellHit       // Invoked when a spell hits and this unit is the caster.
 	OnSpellHitTaken       OnSpellHit       // Invoked when a spell hits and this unit is the target.
 	OnPeriodicDamageDealt OnPeriodicDamage // Invoked when a dot tick occurs and this unit is the caster.
@@ -205,6 +207,10 @@ func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
 	}
 }
 
+func (aura *Aura) StartedAt() time.Duration {
+	return aura.startTime
+}
+
 func (aura *Aura) ExpiresAt() time.Duration {
 	return aura.expires
 }
@@ -236,6 +242,7 @@ type auraTracker struct {
 
 	// Auras that have a non-nil XXX function set and are currently active.
 	onCastCompleteAuras        []*Aura
+	afterCastAuras             []*Aura
 	onSpellHitDealtAuras       []*Aura
 	onSpellHitTakenAuras       []*Aura
 	onPeriodicDamageDealtAuras []*Aura
@@ -251,6 +258,7 @@ func newAuraTracker() auraTracker {
 		resetEffects:               []ResetEffect{},
 		activeAuras:                make([]*Aura, 0, 16),
 		onCastCompleteAuras:        make([]*Aura, 0, 16),
+		afterCastAuras:             make([]*Aura, 0, 16),
 		onSpellHitDealtAuras:       make([]*Aura, 0, 16),
 		onSpellHitTakenAuras:       make([]*Aura, 0, 16),
 		onPeriodicDamageDealtAuras: make([]*Aura, 0, 16),
@@ -294,8 +302,8 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
 	}
-	if len(at.auras) > 100 {
-		panic(fmt.Sprintf("Over 100 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
+	if len(at.auras) > 200 {
+		panic(fmt.Sprintf("Over 200 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
 	}
 
 	newAura := &Aura{}
@@ -304,6 +312,7 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	newAura.metrics.ID = aura.ActionID
 	newAura.activeIndex = Inactive
 	newAura.onCastCompleteIndex = Inactive
+	newAura.afterCastIndex = Inactive
 	newAura.onSpellHitDealtIndex = Inactive
 	newAura.onSpellHitTakenIndex = Inactive
 	newAura.onPeriodicDamageDealtIndex = Inactive
@@ -330,6 +339,7 @@ func (unit *Unit) GetOrRegisterAura(aura Aura) *Aura {
 		return unit.RegisterAura(aura)
 	} else {
 		curAura.OnCastComplete = aura.OnCastComplete
+		curAura.AfterCast = aura.AfterCast
 		curAura.OnSpellHitDealt = aura.OnSpellHitDealt
 		curAura.OnSpellHitTaken = aura.OnSpellHitTaken
 		curAura.OnPeriodicDamageDealt = aura.OnPeriodicDamageDealt
@@ -410,6 +420,7 @@ func (at *auraTracker) init(sim *Simulation) {
 func (at *auraTracker) reset(sim *Simulation) {
 	at.activeAuras = at.activeAuras[:0]
 	at.onCastCompleteAuras = at.onCastCompleteAuras[:0]
+	at.afterCastAuras = at.afterCastAuras[:0]
 	at.onSpellHitDealtAuras = at.onSpellHitDealtAuras[:0]
 	at.onSpellHitTakenAuras = at.onSpellHitTakenAuras[:0]
 	at.onPeriodicDamageDealtAuras = at.onPeriodicDamageDealtAuras[:0]
@@ -522,6 +533,11 @@ func (aura *Aura) Activate(sim *Simulation) {
 		aura.Unit.onCastCompleteAuras = append(aura.Unit.onCastCompleteAuras, aura)
 	}
 
+	if aura.AfterCast != nil {
+		aura.afterCastIndex = int32(len(aura.Unit.afterCastAuras))
+		aura.Unit.afterCastAuras = append(aura.Unit.afterCastAuras, aura)
+	}
+
 	if aura.OnSpellHitDealt != nil {
 		aura.onSpellHitDealtIndex = int32(len(aura.Unit.onSpellHitDealtAuras))
 		aura.Unit.onSpellHitDealtAuras = append(aura.Unit.onSpellHitDealtAuras, aura)
@@ -579,6 +595,14 @@ func (aura *Aura) Prioritize() {
 		aura.Unit.onCastCompleteAuras[aura.onCastCompleteIndex] = otherAura
 		otherAura.onCastCompleteIndex = aura.onCastCompleteIndex
 		aura.onCastCompleteIndex = 0
+	}
+
+	if aura.afterCastIndex > 0 {
+		otherAura := aura.Unit.afterCastAuras[0]
+		aura.Unit.afterCastAuras[0] = aura
+		aura.Unit.afterCastAuras[aura.afterCastIndex] = otherAura
+		otherAura.afterCastIndex = aura.afterCastIndex
+		aura.afterCastIndex = 0
 	}
 
 	if aura.onSpellHitDealtIndex > 0 {
@@ -693,6 +717,15 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 		aura.onCastCompleteIndex = Inactive
 	}
 
+	if aura.afterCastIndex != Inactive {
+		removeAfterCastIndex := aura.afterCastIndex
+		aura.Unit.afterCastAuras = removeBySwappingToBack(aura.Unit.afterCastAuras, removeAfterCastIndex)
+		if removeAfterCastIndex < int32(len(aura.Unit.afterCastAuras)) {
+			aura.Unit.afterCastAuras[removeAfterCastIndex].afterCastIndex = removeAfterCastIndex
+		}
+		aura.afterCastIndex = Inactive
+	}
+
 	if aura.onSpellHitDealtIndex != Inactive {
 		removeOnSpellHitDealtIndex := aura.onSpellHitDealtIndex
 		aura.Unit.onSpellHitDealtAuras = removeBySwappingToBack(aura.Unit.onSpellHitDealtAuras, removeOnSpellHitDealtIndex)
@@ -776,6 +809,13 @@ func removeBySwappingToBack(arr []*Aura, removeIdx int32) []*Aura {
 func (at *auraTracker) OnCastComplete(sim *Simulation, spell *Spell) {
 	for _, aura := range at.onCastCompleteAuras {
 		aura.OnCastComplete(aura, sim, spell)
+	}
+}
+
+// Invokes the AfterCast event for all tracked Auras.
+func (at *auraTracker) AfterCast(sim *Simulation, spell *Spell) {
+	for _, aura := range at.afterCastAuras {
+		aura.AfterCast(aura, sim, spell)
 	}
 }
 

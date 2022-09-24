@@ -61,5 +61,10 @@ export const SmitePriestRotationConfig = {
 			label: 'Meme Dream',
 			labelTooltip: 'Assumes 2nd Smite Priest in raid, so just spams HF + Smite with permanent HF uptime.',
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecSmitePriest>({
+			fieldName: 'allowedHolyFireDelayMs',
+			label: 'Allowed Delay for HF',
+			labelTooltip: 'Time, in milliseconds, the player is allowed to wait for Holy Fire if it is about to come off CD.',
+		}),
 	],
 };

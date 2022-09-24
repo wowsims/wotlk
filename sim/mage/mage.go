@@ -246,22 +246,6 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 	}
 }
 
-func (mage *Mage) fireSpellOutcomeApplier(secondaryCritMultiplier float64) core.OutcomeApplier {
-
-	critMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier)
-
-	combMult := mage.SpellCritMultiplier(1, secondaryCritMultiplier+.5)
-
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if mage.CombustionAura.IsActive() {
-			mage.OutcomeFuncMagicHitAndCrit(combMult)(sim, spell, spellEffect, attackTable)
-		} else {
-			mage.OutcomeFuncMagicHitAndCrit(critMult)(sim, spell, spellEffect, attackTable)
-		}
-	}
-
-}
-
 func NewMage(character core.Character, options proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
@@ -274,6 +258,7 @@ func NewMage(character core.Character, options proto.Player) *Mage {
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
+	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 

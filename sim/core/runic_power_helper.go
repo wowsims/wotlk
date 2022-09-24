@@ -31,6 +31,8 @@ func NewRuneCost(rp, blood, frost, unholy, death uint8) RuneCost {
 		value += 1 << 6
 	} else if death == 2 {
 		value += 3 << 6
+	} else if death > 2 {
+		value += 3 << 6 // we cant represent more than 2 death runes
 	}
 
 	value += int16(rp) << 8
@@ -122,6 +124,8 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 		return
 	}
 	rp.ConvertFromDeath(sim, rp.btslot)
+	bloodTapAura := rp.unit.GetAura("Blood Tap")
+	bloodTapAura.Deactivate(sim)
 	rp.btslot = -1
 }
 

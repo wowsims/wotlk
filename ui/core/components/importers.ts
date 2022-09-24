@@ -36,6 +36,9 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 		if (!showInRaidSim) {
 			itemElem.classList.add('within-raid-sim-hide');
 		}
+		if (label == 'Addon') {
+			itemElem.classList.add('experimental');
+		}
 		itemElem.textContent = label;
 		itemElem.addEventListener('click', onClick);
 		menuElem.appendChild(itemElem);
@@ -43,7 +46,7 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 
 	addMenuItem('Json', () => new IndividualJsonImporter(menuElem, simUI), true);
 	addMenuItem('80U', () => new Individual80UImporter(menuElem, simUI), true);
-	//addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
+	addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
 
 	return importSettings;
 }

@@ -14,6 +14,9 @@ import (
 // Callback for when a cast is finished, i.e. when the in-game castbar reaches full.
 type OnCastComplete func(aura *Aura, sim *Simulation, spell *Spell)
 
+// Callback for when a cast is finished, but after calculations are done
+type AfterCast func(aura *Aura, sim *Simulation, spell *Spell)
+
 type Hardcast struct {
 	Expires    time.Duration
 	OnComplete func(*Simulation, *Unit)
@@ -217,7 +220,9 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 		fullCastTime := spell.CurCast.CastTime + spell.CurCast.ChannelTime + spell.CurCast.AfterCastDelay
 
 		if fullCastTime != 0 || gcd != 0 {
-			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+MaxDuration(gcd, fullCastTime))
+			gcdDelay := MaxDuration(gcd, fullCastTime)
+			spell.SpellMetrics[target.UnitIndex].TotalCastTime += gcdDelay
+			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+gcdDelay)
 		}
 
 		onCastComplete(sim, target)
@@ -277,6 +282,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 				configOnCastComplete(sim, spell)
 			}
 			oldOnCastComplete1(sim, target)
+			spell.Unit.AfterCast(sim, spell)
 			if configAfterCast != nil {
 				configAfterCast(sim, spell)
 			}

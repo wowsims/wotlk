@@ -31,7 +31,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !spellEffect.Landed() {
@@ -64,7 +64,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !spellEffect.Landed() {
@@ -85,12 +85,15 @@ func init() {
 		timbalsSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 45055},
 			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(285, 475),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				BaseDamage:     core.BaseDamageConfigRoll(285, 475),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -132,12 +135,15 @@ func init() {
 			scryerSpell = character.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 45429},
 				SpellSchool: core.SpellSchoolArcane,
+				ProcMask:    core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultSpellCritMultiplier(),
+				ThreatMultiplier: 1,
+
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-					BaseDamage:       core.BaseDamageConfigRoll(333, 367),
-					OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+					BaseDamage:     core.BaseDamageConfigRoll(333, 367),
+					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 				}),
 			})
 		}
@@ -155,7 +161,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
 				if !spellEffect.Landed() {

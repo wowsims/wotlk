@@ -43,7 +43,7 @@ var P1BalanceDruid = &proto.Player{
 	Equipment: balanceDruid.P1Gear,
 	Consumes:  balanceDruid.FullConsumes,
 	Spec:      balanceDruid.PlayerOptionsAdaptive,
-	Buffs:     balanceDruid.FullIndividualBuffs,
+	Buffs:     core.FullIndividualBuffs,
 }
 
 var P1ElementalShaman = &proto.Player{
@@ -53,7 +53,7 @@ var P1ElementalShaman = &proto.Player{
 	Equipment: elementalShaman.P1Gear,
 	Consumes:  elementalShaman.FullConsumes,
 	Spec:      elementalShaman.PlayerOptionsAdaptive,
-	Buffs:     elementalShaman.FullIndividualBuffs,
+	Buffs:     core.FullIndividualBuffs,
 }
 
 var P1ShadowPriest = &proto.Player{
@@ -63,7 +63,7 @@ var P1ShadowPriest = &proto.Player{
 	Equipment: shadowPriest.P1Gear,
 	Consumes:  shadowPriest.FullConsumes,
 	Spec:      shadowPriest.PlayerOptionsIdeal,
-	Buffs:     shadowPriest.FullIndividualBuffs,
+	Buffs:     core.FullIndividualBuffs,
 }
 
 var P1EnhancementShaman = &proto.Player{
@@ -73,7 +73,7 @@ var P1EnhancementShaman = &proto.Player{
 	Equipment: enhancementShaman.Phase1Gear,
 	Consumes:  enhancementShaman.FullConsumes,
 	Spec:      enhancementShaman.PlayerOptionsBasic,
-	Buffs:     enhancementShaman.FullIndividualBuffs,
+	Buffs:     core.FullIndividualBuffs,
 }
 
 var P1BMHunter = &proto.Player{
@@ -83,7 +83,7 @@ var P1BMHunter = &proto.Player{
 	Equipment: hunter.P1Gear,
 	Consumes:  hunter.FullConsumes,
 	Spec:      hunter.PlayerOptionsMM,
-	Buffs:     hunter.FullIndividualBuffs,
+	Buffs:     core.FullIndividualBuffs,
 }
 
 var BasicRaid = &proto.Raid{

@@ -2,6 +2,7 @@ package warrior
 
 import (
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -19,6 +20,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		cost -= 3
 	}
 	refundAmount := cost * 0.8
+	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	var extraRage float64
 	extraRageBonus := core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution), 10, 0)
@@ -26,6 +28,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47471},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -34,7 +37,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD:  gcd,
 			},
 			IgnoreHaste: true,
 			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -43,19 +46,18 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
+		ThreatMultiplier: 1.25,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1.25,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 1456 + hitEffect.MeleeAttackPower(spell.Unit)*0.2 + 38*(extraRage+extraRageBonus)
+					return 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(warrior.critMultiplier(true)),
+			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {

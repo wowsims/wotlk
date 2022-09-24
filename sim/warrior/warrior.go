@@ -1,6 +1,7 @@
 package warrior
 
 import (
+	"github.com/wowsims/wotlk/sim/core/items"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -24,11 +25,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance              Stance
-	overpowerValidUntil time.Duration
-	rendValidUntil      time.Duration
-	RevengeValidUntil   time.Duration
-	shoutExpiresAt      time.Duration
+	Stance                 Stance
+	overpowerValidUntil    time.Duration
+	rendValidUntil         time.Duration
+	shoutExpiresAt         time.Duration
+	revengeProcAura        *core.Aura
+	glyphOfRevengeProcAura *core.Aura
+	disableHsCleaveUntil   time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -49,7 +52,6 @@ type Warrior struct {
 	Execute              *core.Spell
 	MortalStrike         *core.Spell
 	Overpower            *core.Spell
-	Rampage              *core.Spell
 	Rend                 *core.Spell
 	Revenge              *core.Spell
 	ShieldBlock          *core.Spell
@@ -59,11 +61,17 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
+	WhirlwindOH          *core.Spell
 	DeepWounds           *core.Spell
+	Shockwave            *core.Spell
+	ConcussionBlow       *core.Spell
+	Bladestorm           *core.Spell
+	BladestormOH         *core.Spell
 
-	RendDots             *core.Dot
-	DeepWoundsDots       []*core.Dot
-	DeepWoundsTickDamage []float64
+	RendDots               *core.Dot
+	DeepWoundsDots         []*core.Dot
+	DeepWoundsTickDamage   []float64
+	DeepwoundsDamageBuffer []float64
 
 	HeroicStrikeOrCleave *core.Spell
 	HSOrCleaveQueueAura  *core.Aura
@@ -73,15 +81,16 @@ type Warrior struct {
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
-	BloodsurgeAura  *core.Aura
-	SuddenDeathAura *core.Aura
+	BloodsurgeAura    *core.Aura
+	SuddenDeathAura   *core.Aura
+	SwordAndBoardAura *core.Aura
+	ShieldBlockAura   *core.Aura
 
 	DemoralizingShoutAura *core.Aura
 	BloodFrenzyAuras      []*core.Aura
 	TraumaAuras           []*core.Aura
 	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
 	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
-	RampageAura           *core.Aura
 	SunderArmorAura       *core.Aura
 	ThunderClapAura       *core.Aura
 }
@@ -102,12 +111,19 @@ func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 			raidBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
 		}
 	}
+
+	if warrior.Talents.Rampage {
+		raidBuffs.Rampage = true
+	}
 }
 
 func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
+	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
+	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
+
 	warrior.Shout = warrior.makeShoutSpell()
 
 	primaryTimer := warrior.NewTimer()
@@ -124,11 +140,13 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
-	warrior.registerShieldSlamSpell(primaryTimer)
+	warrior.registerShieldSlamSpell()
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
 	warrior.registerRendSpell()
+	warrior.registerShockwaveSpell()
+	warrior.registerConcussionBlowSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -137,6 +155,10 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
+	warrior.DeepwoundsDamageBuffer = []float64{}
+	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
+		warrior.DeepwoundsDamageBuffer = append(warrior.DeepwoundsDamageBuffer, 0)
+	}
 	warrior.DeepWoundsTickDamage = []float64{}
 	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
 		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)
@@ -150,7 +172,6 @@ func (warrior *Warrior) Initialize() {
 func (warrior *Warrior) Reset(sim *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
-	warrior.RevengeValidUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
@@ -168,29 +189,52 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 	warrior.PseudoStats.CanParry = true
 
 	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
-	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/85.1)
+	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .05) // 5% block from str
+	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
 
 	return warrior
 }
 
-func (warrior *Warrior) secondaryCritModifier(applyImpale bool) float64 {
-	secondaryModifier := 0.0
-	if applyImpale {
-		secondaryModifier += 0.1 * float64(warrior.Talents.Impale)
+type hand int8
+
+const (
+	none hand = 0
+	mh   hand = 1
+	oh   hand = 2
+)
+
+func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0)
+}
+
+func primary(warrior *Warrior, hand hand) float64 {
+	if warrior.Talents.PoleaxeSpecialization > 0 {
+		if (hand == mh && isPoleaxe(warrior.GetMHWeapon())) || (hand == oh && isPoleaxe(warrior.GetOHWeapon())) {
+			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
+		}
 	}
-	return secondaryModifier
+	return 1
 }
-func (warrior *Warrior) critMultiplier(applyImpale bool) float64 {
-	return warrior.MeleeCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
+
+func isPoleaxe(weapon *items.Item) bool {
+	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
 }
-func (warrior *Warrior) spellCritMultiplier(applyImpale bool) float64 {
-	return warrior.SpellCritMultiplier(1.0, warrior.secondaryCritModifier(applyImpale))
+
+func (warrior *Warrior) critMultiplier(hand hand) float64 {
+	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0.1*float64(warrior.Talents.Impale))
 }
 
 func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
+	return warrior.HasGlyph(int32(glyph))
+}
+
+func (warrior *Warrior) attackPowerMultiplier(spell *core.Spell, coeff float64) float64 {
+	return spell.MeleeAttackPower() * coeff
 }
 
 func init() {

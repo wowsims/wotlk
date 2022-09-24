@@ -11,36 +11,6 @@ const (
 	SpellFlagPrimaryJudgement   = core.SpellFlagAgentReserved2
 )
 
-type hybridScaling struct {
-	AP float64
-	SP float64
-}
-
-type Additive []float64
-type Multiplicative []Additive
-
-func (mod *Additive) Get() float64 {
-	sum := 1.0
-	// Combine additive bonuses.
-	for _, value := range *mod {
-		sum += value
-	}
-	return sum
-}
-
-func (mod *Multiplicative) Get() float64 {
-	multiplier := 1.0
-	// Combine multiplicative bonuses.
-	for _, additive := range *mod {
-		multiplier *= additive.Get()
-	}
-	return multiplier
-}
-
-func (mod *Multiplicative) Clone() Multiplicative {
-	return (*mod)[:]
-}
-
 type Paladin struct {
 	core.Character
 
@@ -70,8 +40,8 @@ type Paladin struct {
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
-	ConsecrationDot    *core.Dot
-	SealOfVengeanceDot []*core.Dot
+	ConsecrationDot     *core.Dot
+	SealOfVengeanceDots []*core.Dot
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
@@ -142,7 +112,7 @@ func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (paladin *Paladin) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	paladin.AutoAttacks.MHEffect.OutcomeApplier = paladin.OutcomeFuncMeleeWhite(paladin.MeleeCritMultiplier())
+	paladin.AutoAttacks.MHConfig.CritMultiplier = paladin.MeleeCritMultiplier()
 
 	paladin.registerSealOfVengeanceSpellAndAura()
 	paladin.registerSealOfRighteousnessSpellAndAura()
@@ -170,8 +140,9 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivinePleaSpell()
 	paladin.registerRighteousVengeanceSpell()
 
+	targets := paladin.Env.GetNumTargets()
+
 	if paladin.Talents.RighteousVengeance > 0 {
-		targets := paladin.Env.GetNumTargets()
 		paladin.RighteousVengeanceDots = []*core.Dot{}
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
@@ -184,6 +155,11 @@ func (paladin *Paladin) Initialize() {
 		for i := int32(0); i < targets; i++ {
 			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
 		}
+	}
+
+	paladin.SealOfVengeanceDots = []*core.Dot{}
+	for i := int32(0); i < targets; i++ {
+		paladin.SealOfVengeanceDots = append(paladin.SealOfVengeanceDots, paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(i)))
 	}
 
 	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
@@ -228,6 +204,8 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
 	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
+
+	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
 
 	return paladin
 }

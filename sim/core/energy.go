@@ -34,6 +34,7 @@ type energyBar struct {
 }
 
 func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) {
+	unit.SetCurrentPowerBar(EnergyBar)
 
 	unit.energyBar = energyBar{
 		unit:      unit,

@@ -85,41 +85,34 @@ enum Stat {
 	StatIntellect = 3;
 	StatSpirit = 4;
 	StatSpellPower = 5;
-	StatHealingPower = 6;
-	StatArcaneSpellPower = 7;
-	StatFireSpellPower = 8;
-	StatFrostSpellPower = 9;
-	StatHolySpellPower = 10;
-	StatNatureSpellPower = 11;
-	StatShadowSpellPower = 12;
-	StatMP5 = 13;
-	StatSpellHit = 14;
-	StatSpellCrit = 15;
-	StatSpellHaste = 16;
-	StatSpellPenetration = 17;
-	StatAttackPower = 18;
-	StatMeleeHit = 19;
-	StatMeleeCrit = 20;
-	StatMeleeHaste = 21;
-	StatArmorPenetration = 22;
-	StatExpertise = 23;
-	StatMana = 24;
-	StatEnergy = 25;
-	StatRage = 26;
-	StatArmor = 27;
-	StatRangedAttackPower = 28;
-	StatDefense = 29;
-	StatBlock = 30;
-	StatBlockValue = 31;
-	StatDodge = 32;
-	StatParry = 33;
-	StatResilience = 34;
-	StatHealth = 35;
-	StatArcaneResistance = 36;
-	StatFireResistance = 37;
-	StatFrostResistance = 38;
-	StatNatureResistance = 39;
-	StatShadowResistance = 40;
+	StatMP5 = 6;
+	StatSpellHit = 7;
+	StatSpellCrit = 8;
+	StatSpellHaste = 9;
+	StatSpellPenetration = 10;
+	StatAttackPower = 11;
+	StatMeleeHit = 12;
+	StatMeleeCrit = 13;
+	StatMeleeHaste = 14;
+	StatArmorPenetration = 15;
+	StatExpertise = 16;
+	StatMana = 17;
+	StatEnergy = 18;
+	StatRage = 19;
+	StatArmor = 20;
+	StatRangedAttackPower = 21;
+	StatDefense = 22;
+	StatBlock = 23;
+	StatBlockValue = 24;
+	StatDodge = 25;
+	StatParry = 26;
+	StatResilience = 27;
+	StatHealth = 28;
+	StatArcaneResistance = 29;
+	StatFireResistance = 30;
+	StatFrostResistance = 31;
+	StatNatureResistance = 32;
+	StatShadowResistance = 33;
 }
 
 enum ItemType {
@@ -472,7 +465,6 @@ message IndividualBuffs {
 	bool blessing_of_sanctuary = 4;
 	bool vigilance = 5;
 	bool renewed_hope = 6;
-
 	// Only used in individual sims 
 	//   as the class that provides these would cast them in raid sim
 
@@ -495,6 +487,7 @@ message IndividualBuffs {
 	bool judgements_of_the_wise = 16;
 	bool improved_soul_leech = 17;
 	bool enduring_winter = 18;
+	bool focus_magic = 22;
 }
 
 message Consumes {
@@ -801,6 +794,10 @@ message HealingModel {
 
 	// How often healing is applied.
 	double cadence_seconds = 2;
+
+	
+	
+	double inspiration_uptime = 3;
 }
 
 message CustomRotation {

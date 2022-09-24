@@ -8,21 +8,51 @@ import (
 
 func (warrior *Warrior) RegisterRecklessnessCD() {
 	actionID := core.ActionID{SpellID: 1719}
+	var affectedSpells []*core.Spell
+
 	reckAura := warrior.RegisterAura(core.Aura{
 		Label:     "Recklessness",
 		ActionID:  actionID,
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = []*core.Spell{
+				warrior.HeroicStrikeOrCleave,
+				warrior.Bloodthirst,
+				warrior.Devastate,
+				warrior.Execute,
+				warrior.MortalStrike,
+				warrior.Overpower,
+				warrior.Revenge,
+				warrior.ShieldSlam,
+				warrior.Slam,
+				warrior.ThunderClap,
+				warrior.Whirlwind,
+				warrior.WhirlwindOH,
+				warrior.Shockwave,
+				warrior.ConcussionBlow,
+				warrior.Bladestorm,
+				warrior.BladestormOH,
+			}
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.BonusMeleeSpellCritRating += 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
+			for _, spell := range affectedSpells {
+				if spell != nil {
+					spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+				}
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.BonusMeleeSpellCritRating -= 100 * core.CritRatingPerCritChance
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
+			for _, spell := range affectedSpells {
+				if spell != nil {
+					spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				}
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
+			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
 				return
 			}
 			aura.RemoveStack(sim)

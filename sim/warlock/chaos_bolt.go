@@ -11,43 +11,25 @@ import (
 func (warlock *Warlock) registerChaosBoltSpell() {
 	actionID := core.ActionID{SpellID: 59172}
 	spellSchool := core.SpellSchoolFire
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false)
-	fireAndBrimstoneBonus := 0.02 * float64(warlock.Talents.FireAndBrimstone)
-	normalMultiplier := baseAdditiveMultiplier + fireAndBrimstoneBonus
-	spellCoefficient := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	effect := core.SpellEffect{
-		ProcMask:             core.ProcMaskSpellDamage,
-		BonusSpellCritRating: core.TernaryFloat64(warlock.Talents.Devastation, 1, 0) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier:     1,
-		ThreatMultiplier:     1 - 0.1*float64(warlock.Talents.DestructiveReach),
-		BaseDamage:           core.BaseDamageConfigMagic(1429.0, 1813.0, spellCoefficient),
-		OutcomeApplier:       warlock.OutcomeFuncMagicHitAndCrit(warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5)),
-		OnInit: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if warlock.ImmolateDot.IsActive() {
-				spellEffect.DamageMultiplier = normalMultiplier
-			} else {
-				spellEffect.DamageMultiplier = normalMultiplier - fireAndBrimstoneBonus
-			}
-		},
+		BaseDamage:     core.BaseDamageConfigMagic(1429, 1813, 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
+		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	baseCost := 0.07 * warlock.BaseMana
-	costReductionFactor := 1.0
-	if float64(warlock.Talents.Cataclysm) > 0 {
-		costReductionFactor -= 0.01 + 0.03*float64(warlock.Talents.Cataclysm)
-	}
 
 	warlock.ChaosBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * costReductionFactor,
+				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*2500 - (time.Millisecond * 100 * time.Duration(warlock.Talents.Bane)),
 			},
@@ -60,6 +42,13 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 				Duration: time.Second * (12 - 2*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),
 			},
 		},
+
+		BonusCritRating: 0 +
+			warlock.masterDemonologistFireCrit() +
+			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
+		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})

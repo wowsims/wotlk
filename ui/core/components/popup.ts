@@ -14,8 +14,14 @@ export class Popup extends Component {
 		this.rootElem.style.setProperty('--theme-color-background', computedStyles.getPropertyValue('--theme-color-background').trim());
 		this.rootElem.style.setProperty('--theme-color-background-raw', computedStyles.getPropertyValue('--theme-color-background-raw').trim());
 
+		if (parent.closest('.hide-damage-metrics')) {
+			this.rootElem.classList.add('hide-damage-metrics');
+		}
 		if (parent.closest('.hide-threat-metrics')) {
 			this.rootElem.classList.add('hide-threat-metrics');
+		}
+		if (parent.closest('.hide-healing-metrics')) {
+			this.rootElem.classList.add('hide-healing-metrics');
 		}
 
 		$(this.rootElem).bPopup({

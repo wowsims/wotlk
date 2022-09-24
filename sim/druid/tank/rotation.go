@@ -25,13 +25,13 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 		} else if bear.shouldDemoRoar(sim) {
 			bear.DemoralizingRoar.Cast(sim, bear.CurrentTarget)
 		} else if bear.Rotation.Swipe == proto.FeralTankDruid_Rotation_SwipeSpam {
-			if bear.CanSwipe() {
-				bear.Swipe.Cast(sim, bear.CurrentTarget)
+			if bear.CanSwipeBear() {
+				bear.SwipeBear.Cast(sim, bear.CurrentTarget)
 			}
 		} else if bear.CanMangleBear(sim) {
 			bear.MangleBear.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldSwipe(sim) {
-			bear.Swipe.Cast(sim, bear.CurrentTarget)
+			bear.SwipeBear.Cast(sim, bear.CurrentTarget)
 		} else if bear.CanLacerate(sim) {
 			bear.Lacerate.Cast(sim, bear.CurrentTarget)
 		}
@@ -51,10 +51,10 @@ func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool 
 }
 
 func (bear *FeralTankDruid) shouldSwipe(sim *core.Simulation) bool {
-	ap := bear.GetStat(stats.AttackPower) + bear.PseudoStats.MobTypeAttackPower + bear.CurrentTarget.PseudoStats.BonusMeleeAttackPowerTaken
+	ap := bear.GetStat(stats.AttackPower) + bear.PseudoStats.MobTypeAttackPower
 
 	return bear.Rotation.Swipe == proto.FeralTankDruid_Rotation_SwipeWithEnoughAP &&
-		bear.CanSwipe() &&
+		bear.CanSwipeBear() &&
 		bear.LacerateDot.GetStacks() == 5 &&
 		bear.LacerateDot.RemainingDuration(sim) > time.Millisecond*3000 &&
 		ap >= float64(bear.Rotation.SwipeApThreshold)

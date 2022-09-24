@@ -35,8 +35,8 @@ type RunicPowerBar struct {
 	currentRunicPower float64
 
 	// These flags are used to simplify pending action checks
-	// |BFUDS| |BFUDS| |BFUDS| |BFUDS| |BFUDS| |BFUDS|
-	runeStates int32
+	// |DS|DS|DS|DS|DS|DS|
+	runeStates int16
 	runeMeta   [6]RuneMeta
 	btslot     int8
 
@@ -56,6 +56,10 @@ type RunicPowerBar struct {
 
 	isACopy bool
 	clone   *RunicPowerBar
+}
+
+func (rp *RunicPowerBar) Print() {
+	fmt.Print(rp.DebugString())
 }
 
 func (rp *RunicPowerBar) DebugString() string {
@@ -106,7 +110,7 @@ func (rp *RunicPowerBar) reset(sim *Simulation) {
 	rp.runeStates = baseRuneState // unspent, no death
 }
 
-const baseRuneState = 0b100001000001000010000010000100
+const baseRuneState = int16(0)
 
 func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64,
 	onRuneSpend OnRune,
@@ -115,6 +119,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 	onUnholyRuneGain OnRune,
 	onDeathRuneGain OnRune,
 	onRunicPowerGain OnRunicPowerGain) {
+	unit.SetCurrentPowerBar(RunicPower)
 	unit.RunicPowerBar = RunicPowerBar{
 		unit: unit,
 
@@ -251,9 +256,9 @@ func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int32) time.Dura
 	return 0
 }
 
-const anyBloodSpent = 0b0000100001
-const anyFrostSpent = 0b0000100001 << 10
-const anyUnholySpent = 0b0000100001 << 20
+const anyBloodSpent = 0b0101
+const anyFrostSpent = 0b0101 << 4
+const anyUnholySpent = 0b0101 << 8
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
 	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
@@ -265,6 +270,10 @@ func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
 	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
+}
+
+func (rp *RunicPowerBar) CurrentRuneGraces(sim *Simulation) (time.Duration, time.Duration, time.Duration) {
+	return rp.CurrentBloodRuneGrace(sim), rp.CurrentFrostRuneGrace(sim), rp.CurrentUnholyRuneGrace(sim)
 }
 
 func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Duration {
@@ -432,7 +441,7 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpen
 }
 
 func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
-	const unspentBlood1 = isDeath | isSpent
+	const unspentBlood1 = isSpent
 	if rp.runeStates&unspentBlood1 == 0 {
 		return true
 	} else {
@@ -441,8 +450,8 @@ func (rp *RunicPowerBar) LeftBloodRuneReady() bool {
 }
 
 func (rp *RunicPowerBar) RightBloodRuneReady() bool {
-	const unspentBlood1 = isDeath | isSpent
-	const unspentBlood2 = unspentBlood1 << 5
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 2
 	if rp.runeStates&unspentBlood2 == 0 {
 		return true
 	} else {
@@ -456,7 +465,7 @@ func (rp *RunicPowerBar) RuneIsDeath(slot int8) bool {
 
 func (rp *RunicPowerBar) CurrentBloodRunes() int8 {
 	const unspentBlood1 = isDeath | isSpent
-	const unspentBlood2 = unspentBlood1 << 5
+	const unspentBlood2 = unspentBlood1 << 2
 
 	var count int8
 	if rp.runeStates&unspentBlood1 == 0 {
@@ -465,13 +474,12 @@ func (rp *RunicPowerBar) CurrentBloodRunes() int8 {
 	if rp.runeStates&unspentBlood2 == 0 {
 		count++
 	}
-
 	return count
 }
 
 func (rp *RunicPowerBar) CurrentFrostRunes() int8 {
-	const unspentFrost1 = (isDeath | isSpent) << 10
-	const unspentFrost2 = unspentFrost1 << 5
+	const unspentFrost1 = (isDeath | isSpent) << 4
+	const unspentFrost2 = unspentFrost1 << 2
 
 	var count int8
 	if rp.runeStates&unspentFrost1 == 0 {
@@ -480,13 +488,12 @@ func (rp *RunicPowerBar) CurrentFrostRunes() int8 {
 	if rp.runeStates&unspentFrost2 == 0 {
 		count++
 	}
-
 	return count
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRunes() int8 {
-	const unspentUnholy1 = (isDeath | isSpent) << 20
-	const unspentUnholy2 = unspentUnholy1 << 5
+	const unspentUnholy1 = (isDeath | isSpent) << 8
+	const unspentUnholy2 = unspentUnholy1 << 2
 
 	var count int8
 	if rp.runeStates&unspentUnholy1 == 0 {
@@ -511,7 +518,7 @@ func (rp *RunicPowerBar) CurrentDeathRunes() int8 {
 
 func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
 	const unspentBlood1 = isSpent
-	const unspentBlood2 = unspentBlood1 << 5
+	const unspentBlood2 = unspentBlood1 << 2
 
 	var count int32
 	if rp.runeStates&unspentBlood1 == 0 {
@@ -525,8 +532,8 @@ func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
 }
 
 func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
-	const unspentFrost1 = (isSpent) << 10
-	const unspentFrost2 = unspentFrost1 << 5
+	const unspentFrost1 = (isSpent) << 4
+	const unspentFrost2 = unspentFrost1 << 2
 
 	var count int32
 	if rp.runeStates&unspentFrost1 == 0 {
@@ -540,8 +547,8 @@ func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
 }
 
 func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
-	const unspentUnholy1 = (isSpent) << 20
-	const unspentUnholy2 = unspentUnholy1 << 5
+	const unspentUnholy1 = (isSpent) << 8
+	const unspentUnholy2 = unspentUnholy1 << 2
 
 	var count int32
 	if rp.runeStates&unspentUnholy1 == 0 {
@@ -554,27 +561,35 @@ func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
 	return count
 }
 
+func (rp *RunicPowerBar) NormalCurrentRunes() (int32, int32, int32) {
+	return rp.NormalCurrentBloodRunes(), rp.NormalCurrentFrostRunes(), rp.NormalCurrentUnholyRunes()
+}
+func (rp *RunicPowerBar) AllRunesSpent() bool {
+	const allSpent = isSpent | (isSpent << 2) | (isSpent << 4) | (isSpent << 6) | (isSpent << 8) | (isSpent << 10)
+	return rp.runeStates&allSpent == allSpent
+}
+
 func (rp *RunicPowerBar) AllBloodRunesSpent() bool {
-	const checkBloodSpent = isSpent & (isSpent << 5)
+	const checkBloodSpent = isSpent | (isSpent << 2)
 	return rp.runeStates&checkBloodSpent == checkBloodSpent
 }
 
 func (rp *RunicPowerBar) AllFrostSpent() bool {
-	const checkFrostSpent = (isSpent << 10) & (isSpent << 15)
+	const checkFrostSpent = (isSpent << 4) | (isSpent << 6)
 	return rp.runeStates&checkFrostSpent == checkFrostSpent
 }
 
 func (rp *RunicPowerBar) AllUnholySpent() bool {
-	const checkUnholySpent = (isSpent << 20) & (isSpent << 25)
+	const checkUnholySpent = (isSpent << 8) | (isSpent << 10)
 	return rp.runeStates&checkUnholySpent == checkUnholySpent
 }
 
 func (rp *RunicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount float64, bloodAmount int8, frostAmount int8, unholyAmount int8) bool {
-	totalDeathRunes := rp.CurrentDeathRunes()
-
 	if rp.CurrentRunicPower() < runicPowerAmount {
 		return false
 	}
+
+	totalDeathRunes := rp.CurrentDeathRunes()
 
 	if rp.CurrentBloodRunes() < bloodAmount {
 		if totalDeathRunes > 0 {
@@ -906,38 +921,38 @@ func (rp *RunicPowerBar) launchPA(sim *Simulation, at time.Duration) {
 
 // Constants for finding runes
 
-//                |BFUDSBFUDSBFUDSBFUDSBFUDSBFUDS|
-const checkDeath = 0b000100001000010000100001000010
-const checkSpent = 0b000010000100001000010000100001
+//                    |DS|DS|DS|DS|DS|DS|
+const checkDeath = int16(0b101010101010)
+const checkSpent = int16(0b010101010101)
 
-const isDeath = int32(0b00010)
-const isSpent = int32(0b00001)
+const isDeath = int16(0b10)
+const isSpent = int16(0b01)
 
-var isDeaths = [6]int32{
+var isDeaths = [6]int16{
 	isDeath,
-	isDeath << 5,
+	isDeath << 2,
+	isDeath << 4,
+	isDeath << 6,
+	isDeath << 8,
 	isDeath << 10,
-	isDeath << 15,
-	isDeath << 20,
-	isDeath << 25,
 }
 
-var isSpents = [6]int32{
+var isSpents = [6]int16{
 	isSpent,
-	isSpent << 5,
+	isSpent << 2,
+	isSpent << 4,
+	isSpent << 6,
+	isSpent << 8,
 	isSpent << 10,
-	isSpent << 15,
-	isSpent << 20,
-	isSpent << 25,
 }
 
-var isSpentDeath = [6]int32{
+var isSpentDeath = [6]int16{
 	(isDeath | isSpent),
-	(isDeath | isSpent) << 5,
+	(isDeath | isSpent) << 2,
+	(isDeath | isSpent) << 4,
+	(isDeath | isSpent) << 6,
+	(isDeath | isSpent) << 8,
 	(isDeath | isSpent) << 10,
-	(isDeath | isSpent) << 15,
-	(isDeath | isSpent) << 20,
-	(isDeath | isSpent) << 25,
 }
 
 func (rp *RunicPowerBar) Advance(sim *Simulation, newTime time.Duration) {

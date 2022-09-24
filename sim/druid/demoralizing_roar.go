@@ -11,10 +11,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 	cost := 10.0
 
 	baseEffect := core.SpellEffect{
-		ProcMask:         core.ProcMaskEmpty,
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  62 * 2,
-		OutcomeApplier:   druid.OutcomeFuncMagicHit(),
+		OutcomeApplier: druid.OutcomeFuncMagicHit(),
 	}
 
 	numHits := druid.Env.GetNumTargets()
@@ -36,9 +33,9 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 	}
 
 	druid.DemoralizingRoar = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48560},
-		SpellSchool: core.SpellSchoolPhysical,
-
+		ActionID:     core.ActionID{SpellID: 48560},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -50,6 +47,9 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
+
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  62 * 2,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})

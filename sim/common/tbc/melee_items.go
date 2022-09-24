@@ -28,13 +28,15 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: 12632},
 			SpellSchool: core.SpellSchoolNature,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			ProcMask:    core.ProcMaskEmpty,
 
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(3),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -46,7 +48,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// https://wotlk.wowhead.com/spell=16615/add-lightning-dam-weap-03, proc mask = 20.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -61,13 +63,15 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: 17111},
 			SpellSchool: core.SpellSchoolFire,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			ProcMask:    core.ProcMaskEmpty,
 
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(2),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -79,7 +83,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// https://wotlk.wowhead.com/spell=7711/add-fire-dam-weap-02, proc mask = 20.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -103,7 +107,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("EmpyreanDemolisher") > procChance {
@@ -126,13 +130,15 @@ func init() {
 		singleTargetSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    procActionID.WithTag(1),
 			SpellSchool: core.SpellSchoolNature,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 0.5,
+			ProcMask:    core.ProcMaskEmpty,
 
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 0.5,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(300),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -151,10 +157,7 @@ func init() {
 		}
 
 		baseBounceEffect := core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  63,
-			OutcomeApplier:   character.OutcomeFuncMagicHit(),
+			OutcomeApplier: character.OutcomeFuncMagicHit(),
 		}
 
 		numHits := core.MinInt32(5, character.Env.GetNumTargets())
@@ -172,8 +175,13 @@ func init() {
 		}
 
 		bounceSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:     procActionID.WithTag(2),
-			SpellSchool:  core.SpellSchoolNature,
+			ActionID:    procActionID.WithTag(2),
+			SpellSchool: core.SpellSchoolNature,
+			ProcMask:    core.ProcMaskEmpty,
+
+			ThreatMultiplier: 1,
+			FlatThreatBonus:  63,
+
 			ApplyEffects: core.ApplyEffectFuncDamageMultiple(bounceEffects),
 		})
 
@@ -184,10 +192,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Thunderfury") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Thunderfury") {
 					return
 				}
 
@@ -211,7 +219,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// https://wotlk.wowhead.com/spell=16916/strength-of-the-champion, proc mask = 0. Handled in-game via script.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("KhoriumChampion") > procChance {
@@ -243,7 +251,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// https://wotlk.wowhead.com/spell=33489/blinding-speed, proc mask = 0. Handled in-game via script.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("BlackoutTruncheon") > procChance {
@@ -269,7 +277,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// https://wotlk.wowhead.com/spell=34513/lionheart, proc mask = 0. Handled in-game via script.
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("LionheartChampion") > procChance {
@@ -294,7 +302,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("LionheartExecutioner") > procChance {
@@ -321,7 +329,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("DrakefistHammer") > procChance {
@@ -348,7 +356,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("Dragonmaw") > procChance {
@@ -375,7 +383,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("Dragonstrike") > procChance {
@@ -394,14 +402,16 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagIgnoreResists,
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
 
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigFlat(600),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		})
 
@@ -414,7 +424,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// ProcMask: 20
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("Despair") > procChance {
@@ -433,6 +443,7 @@ func init() {
 		spell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagIgnoreResists | core.SpellFlagNoOnCastComplete,
 
 			Cast: core.CastConfig{
@@ -446,13 +457,13 @@ func init() {
 				},
 			},
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
+			ThreatMultiplier: 1,
 
+			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 				BaseDamage:     core.BaseDamageConfigRoll(513, 567),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		})
 
@@ -469,12 +480,15 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 34696},
 			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigRoll(285, 315),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				BaseDamage:     core.BaseDamageConfigRoll(285, 315),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -488,7 +502,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("GlaiveOfThePit") > procChance {
@@ -551,13 +565,13 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				// mask 340
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Band of the Eternal Champion") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Band of the Eternal Champion") {
 					return
 				}
 
@@ -580,7 +594,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 					return
 				}
 				if sim.RandomFloat("The Bladefist") > procChance {
@@ -607,11 +621,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Heartrazor") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Heartrazor") {
 					return
 				}
 
@@ -628,11 +642,13 @@ func init() {
 		const procChance = 2.7 / 60.0
 		actionID := core.ActionID{ItemID: 29996}
 
-		var resourceMetrics *core.ResourceMetrics
+		var resourceMetricsRage *core.ResourceMetrics
+		var resourceMetricsEnergy *core.ResourceMetrics
 		if character.HasRageBar() {
-			resourceMetrics = character.NewRageMetrics(actionID)
-		} else if character.HasEnergyBar() {
-			resourceMetrics = character.NewEnergyMetrics(actionID)
+			resourceMetricsRage = character.NewRageMetrics(actionID)
+		}
+		if character.HasEnergyBar() {
+			resourceMetricsEnergy = character.NewEnergyMetrics(actionID)
 		}
 
 		character.GetOrRegisterAura(core.Aura{
@@ -642,20 +658,21 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 
-				if spell.Unit.HasRageBar() {
+				cpb := spell.Unit.GetCurrentPowerBar()
+				if cpb == core.RageBar {
 					if sim.RandomFloat("Rod of the Sun King") > procChance {
 						return
 					}
-					spell.Unit.AddRage(sim, 5, resourceMetrics)
-				} else if spell.Unit.HasEnergyBar() {
+					spell.Unit.AddRage(sim, 5, resourceMetricsRage)
+				} else if cpb == core.EnergyBar {
 					if sim.RandomFloat("Rod of the Sun King") > procChance {
 						return
 					}
-					spell.Unit.AddEnergy(sim, 10, resourceMetrics)
+					spell.Unit.AddEnergy(sim, 10, resourceMetricsEnergy)
 				}
 			},
 		})
@@ -674,7 +691,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					procAura.Deactivate(sim)
 					return
 				}
@@ -716,7 +733,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("WarpSlicer") > procChance {
@@ -754,7 +771,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("Devastation") > procChance {
@@ -774,12 +791,15 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: 31193},
 			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMagic(48, 54, 1),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				BaseDamage:     core.BaseDamageConfigMagic(48, 54, 1),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -791,7 +811,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("BladeOfUnquenchedThirst") > procChance {
@@ -816,7 +836,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				if sim.RandomFloat("SingingCrystalAxe") > procChance {
@@ -847,6 +867,7 @@ func init() {
 				blinkstrikeSpell = character.GetOrRegisterSpell(core.SpellConfig{
 					ActionID:     core.ActionID{ItemID: 31332},
 					SpellSchool:  core.SpellSchoolPhysical,
+					ProcMask:     core.ProcMaskMeleeMHAuto,
 					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
 				})
@@ -855,7 +876,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 
@@ -863,7 +884,7 @@ func init() {
 					return
 				}
 
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Blinkstrike") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Blinkstrike") {
 					return
 				}
 				icd.Use(sim)
@@ -896,7 +917,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(procMask) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 				if sim.RandomFloat("The Night Blade") > procChance {
@@ -918,12 +939,15 @@ func init() {
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 40291},
 			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskEmpty,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigFlat(20),
-				OutcomeApplier:   character.OutcomeFuncMagicHitAndCrit(character.DefaultSpellCritMultiplier()),
+				BaseDamage:     core.BaseDamageConfigFlat(20),
+				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
 			}),
 		})
 
@@ -932,7 +956,7 @@ func init() {
 			ActionID: core.ActionID{SpellID: 40291},
 			Duration: time.Second * 6,
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -947,11 +971,11 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "Syphon Of The Nathrezim") {
+				if ppmm.Proc(sim, spell.ProcMask, "Syphon Of The Nathrezim") {
 					procAura.Activate(sim)
 				}
 			},
@@ -995,7 +1019,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -1026,13 +1050,16 @@ func init() {
 			scryerSpell = character.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 45428},
 				SpellSchool: core.SpellSchoolArcane,
+				ProcMask:    core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultMeleeCritMultiplier(),
+				ThreatMultiplier: 1,
+
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-					BaseDamage:       core.BaseDamageConfigRoll(333, 367),
+					BaseDamage: core.BaseDamageConfigRoll(333, 367),
 					// TODO: validate this is a melee hit roll
-					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(character.DefaultMeleeCritMultiplier()),
+					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
 				}),
 			})
 		}
@@ -1050,7 +1077,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !spellEffect.Landed() {
@@ -1071,19 +1098,11 @@ func init() {
 	})
 	core.NewItemEffect(12590, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		effectAura := character.GetOrRegisterAura(core.Aura{
-			Label:    "Felstriker Proc",
-			ActionID: core.ActionID{SpellID: 16551},
-			Duration: time.Second * 3,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusMeleeCritRating += 100 * core.CritRatingPerCritChance
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				character.PseudoStats.BonusMeleeCritRating -= 100 * core.CritRatingPerCritChance
+		effectAura := character.NewTemporaryStatsAura("Felstriker Proc", core.ActionID{SpellID: 16551}, stats.Stats{stats.MeleeCrit: 100 * core.CritRatingPerCritChance}, time.Second*3)
+		mh, oh := character.GetWeaponHands(12590)
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
-			},
-		})
-		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMelee)
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Felstriker",
 			Duration: core.NeverExpires,
@@ -1091,10 +1110,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
-				if !ppmm.Proc(sim, spellEffect.ProcMask, "Felstriker") {
+				if !ppmm.Proc(sim, spell.ProcMask, "Felstriker") {
 					return
 				}
 				effectAura.Activate(sim)

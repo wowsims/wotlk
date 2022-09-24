@@ -31,7 +31,9 @@ var defaultProtTalents = &proto.PaladinTalents{
 var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
 
 var defaultProtOptions = &proto.ProtectionPaladin_Options{
-	Aura: proto.PaladinAura_RetributionAura,
+	Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+	Seal:      proto.PaladinSeal_Vengeance,
+	Aura:      proto.PaladinAura_RetributionAura,
 }
 
 var DefaultOptions = &proto.Player_ProtectionPaladin{
@@ -42,130 +44,104 @@ var DefaultOptions = &proto.Player_ProtectionPaladin{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:   true,
-	GiftOfTheWild:      proto.TristateEffect_TristateEffectImproved,
-	PowerWordFortitude: proto.TristateEffect_TristateEffectRegular,
-	MoonkinAura:        proto.TristateEffect_TristateEffectRegular,
-	TotemOfWrath:       true,
-	WrathOfAirTotem:    true,
-	ManaSpringTotem:    proto.TristateEffect_TristateEffectRegular,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:     true,
-	BlessingOfSanctuary: true,
-	BlessingOfWisdom:    proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:     proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfBlindingLight,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
+	Flask:           proto.Flask_FlaskOfStoneblood,
+	Food:            proto.Food_FoodDragonfinFilet,
+	DefaultPotion:   proto.Potions_IndestructiblePotion,
+	PrepopPotion:    proto.Potions_IndestructiblePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
-var FullDebuffs = &proto.Debuffs{
-	Misery:          true,
-	CurseOfElements: true,
-	BloodFrenzy:     true,
-	SunderArmor:     true,
-	FaerieFire:      proto.TristateEffect_TristateEffectImproved,
-	CurseOfWeakness: proto.TristateEffect_TristateEffectImproved,
-}
-
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
-]}`)
-var Phase4Gear = items.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 32521,
-		"enchant": 29191,
-		"gems": [
-			25896,
-			32196
-		]
-	},
-	{
-		"id": 32362
-	},
-	{
-		"id": 30998,
-		"enchant": 28911,
-		"gems": [
-			32200,
-			32196
-		]
-	},
-	{
-		"id": 33593,
-		"enchant": 33148
-	},
-	{
-		"id": 30991,
-		"enchant": 27957,
-		"gems": [
-			32196,
-			32196,
-			32221
-		]
-	},
-	{
-		"id": 32232,
-		"enchant": 22534
-	},
-	{
-		"id": 30985,
-		"enchant": 33153,
-		"gems": [
-			32196
-		]
-	},
-	{
-		"id": 32342,
-		"gems": [
-			32200,
-			32200
-		]
-	},
-	{
-		"id": 30995,
-		"enchant": 24274,
-		"gems": [
-			32200
-		]
-	},
-	{
-		"id": 32245,
-		"enchant": 35297,
-		"gems": [
-			32200,
-			32200
-		]
-	},
-	{
-		"id": 32261,
-		"enchant": 22536
-	},
-	{
-		"id": 29172,
-		"enchant": 22536
-	},
-	{
-		"id": 31858
-	},
-	{
-		"id": 33829
-	},
-	{
-		"id": 30910,
-		"enchant": 22555
-	},
-	{
-		"id": 32375,
-		"enchant": 28282
-	},
-	{
-		"id": 33504
-	}
-]}`)
+        {
+          "id": 40581,
+          "enchant": 44878,
+          "gems": [
+            41396,
+            36767
+          ]
+        },
+        {
+          "id": 40387
+        },
+        {
+          "id": 40584,
+          "enchant": 44957,
+          "gems": [
+            49110
+          ]
+        },
+        {
+          "id": 40410,
+          "enchant": 55002
+        },
+        {
+          "id": 40579,
+          "enchant": 44489,
+          "gems": [
+            36767,
+            40022
+          ]
+        },
+        {
+          "id": 39764,
+          "enchant": 44944,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 40580,
+          "enchant": 63770,
+          "gems": [
+            40008,
+            0
+          ]
+        },
+        {
+          "id": 39759,
+          "enchant": 54793,
+          "gems": [
+            40008,
+            40008
+          ]
+        },
+        {
+          "id": 40589,
+          "enchant": 38373
+        },
+        {
+          "id": 39717,
+          "enchant": 55016,
+          "gems": [
+            40089
+          ]
+        },
+        {
+          "id": 40718
+        },
+        {
+          "id": 40107
+        },
+        {
+          "id": 44063,
+          "gems": [
+            36767,
+            40089
+          ]
+        },
+        {
+          "id": 37220
+        },
+        {
+          "id": 40345,
+          "enchant": 44496
+        },
+        {
+          "id": 40400,
+          "enchant": 44936
+        },
+        {
+          "id": 40707
+        }
+      ]}`)

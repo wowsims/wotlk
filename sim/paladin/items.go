@@ -24,7 +24,7 @@ var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
@@ -125,7 +125,7 @@ var ItemSetLightswornBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 						return
 					}
 					if sim.RandomFloat("lightsworn 2pc") > 0.4 {
@@ -145,7 +145,7 @@ func (paladin *Paladin) getItemSetLightswornBattlegearBonus4() float64 {
 	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornBattlegear, 4), .1, 0)
 }
 
-// Tier 10 ret
+// PvP ret
 var ItemSetGladiatorsVindication = core.NewItemSet(core.ItemSet{
 	Name: "Gladiator's Vindication",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -161,6 +161,103 @@ var ItemSetGladiatorsVindication = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+// Tier 7 prot
+var ItemSetRedemptionPlate = core.NewItemSet(core.ItemSet{
+	Name: "Redemption Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in hammer_of_the_righteous.go
+		},
+		4: func(agent core.Agent) {
+			// TODO: increase duration of divine shield and divine protection by 3sec
+		},
+	},
+})
+
+func (paladin *Paladin) getItemSetRedemptionPlateBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetRedemptionPlate, 2), .1, 0)
+}
+
+// Tier 8 prot
+var ItemSetAegisPlate = core.NewItemSet(core.ItemSet{
+	Name: "Aegis Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in sov.go
+		},
+		4: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+			procAura := paladin.NewTemporaryStatsAura("Aegis", core.ActionID{SpellID: 64883}, stats.Stats{stats.BlockValue: 225}, time.Second*6)
+
+			paladin.RegisterAura(core.Aura{
+				Label:    "Aegis Plate 4P Bonus",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell.SpellID == paladin.ShieldOfRighteousness.SpellID {
+						procAura.Activate(sim)
+					}
+				},
+			})
+		},
+	},
+})
+
+func (paladin *Paladin) getItemSetAegisPlateBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisPlate, 2), .1, 0)
+}
+
+// Tier 9 prot (Alliance)
+var ItemSetTuralyonsPlate = core.NewItemSet(core.ItemSet{
+	Name: "Turalyon's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in hammer_of_the_righteous.go
+			// TODO: Implement Hand of Reckoning bonus, if it ever becomes relevant
+		},
+		4: func(agent core.Agent) {
+			// TODO: Decreases the cooldown of Divine Protection and duration of Forbearance by 30sec
+		},
+	},
+})
+
+// Tier 9 prot (Horde)
+var ItemSetLiadrinsPlate = core.NewItemSet(core.ItemSet{
+	Name: "Liadrin's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in hammer_of_the_righteous.go
+			// TODO: Implement Hand of Reckoning bonus, if it ever becomes relevant
+		},
+		4: func(agent core.Agent) {
+			// TODO: Decreases the cooldown of Divine Protection and duration of Forbearance by 30sec
+		},
+	},
+})
+
+func (paladin *Paladin) getItemSetT9PlateBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsPlate, 2) || paladin.HasSetBonus(ItemSetLiadrinsPlate, 2), .05, 0)
+}
+
+// Tier 10 prot
+var ItemSetLightswornPlate = core.NewItemSet(core.ItemSet{
+	Name: "Lightsworn Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Implemented in hammer_of_the_righteous.go
+		},
+		4: func(agent core.Agent) {
+			// TODO: When you activate Divine Plea, you gain 12% dodge for 10 sec
+		},
+	},
+})
+
+func (paladin *Paladin) getItemSetLightswornPlateBonus2() float64 {
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetLightswornPlate, 2), .2, 0)
+}
 
 func (paladin *Paladin) getItemSetGladiatorsVindicationBonusGloves() float64 {
 	hasGloves := (paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40798) || // S5a Hateful
@@ -400,11 +497,11 @@ func init() {
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				isVengeanceDot := false
-				for _, vengeanceDot := range paladin.SealOfVengeanceDot{
-					if spell == vengeanceDot.Spell{
+				for _, vengeanceDot := range paladin.SealOfVengeanceDots {
+					if spell == vengeanceDot.Spell {
 						isVengeanceDot = true
 					}
-				} 
+				}
 				if isVengeanceDot {
 					if !icd.IsReady(sim) || sim.RandomFloat("Libram of Valiance") > 0.70 {
 						return
@@ -419,7 +516,7 @@ func init() {
 
 	core.NewItemEffect(32368, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Tome of the Lightbringer Proc", core.ActionID{SpellID: 41042}, stats.Stats{stats.BlockValue: 186}, time.Second*5)
+		procAura := paladin.NewTemporaryStatsAura("Tome of the Lightbringer Proc", core.ActionID{SpellID: 41042}, stats.Stats{stats.BlockValue: 186}, time.Second*10)
 
 		paladin.RegisterAura(core.Aura{
 			Label:    "Tome of the Lightbringer",
@@ -429,6 +526,42 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(40707, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram of Obstruction Proc", core.ActionID{SpellID: 60794}, stats.Stats{stats.BlockValue: 352}, time.Second*10)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram of Obstruction",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
+					procAura.Activate(sim)
+				}
+			},
+		})
+	})
+
+	core.NewItemEffect(45145, func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		procAura := paladin.NewTemporaryStatsAura("Libram of the Sacred Shield Proc", core.ActionID{SpellID: 65182}, stats.Stats{stats.BlockValue: 450}, time.Second*20)
+
+		paladin.RegisterAura(core.Aura{
+			Label:    "Libram of the Sacred Shield",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spell.SpellID == paladin.HolyShield.SpellID {
 					procAura.Activate(sim)
 				}
 			},
@@ -469,7 +602,10 @@ func init() {
 		actionID := core.ActionID{ItemID: 32489}
 
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
+			ActionID:         actionID,
+			ProcMask:         core.ProcMaskEmpty,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
 		})
 
 		target := paladin.CurrentTarget
@@ -482,10 +618,6 @@ func init() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 2,
 			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				ProcMask:         core.ProcMaskPeriodicDamage,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-
 				BaseDamage:     core.BaseDamageConfigFlat(480 / 4),
 				OutcomeApplier: paladin.OutcomeFuncTick(),
 				IsPeriodic:     true,

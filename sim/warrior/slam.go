@@ -10,10 +10,12 @@ import (
 func (warrior *Warrior) registerSlamSpell() {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
+	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -22,22 +24,21 @@ func (warrior *Warrior) registerSlamSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     cost,
-				GCD:      core.GCDDefault,
+				GCD:      gcd,
 				CastTime: time.Millisecond*1500 - time.Millisecond*500*time.Duration(warrior.Talents.ImprovedSlam),
 			},
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 0.1, 0),
+		CritMultiplier:   warrior.critMultiplier(mh),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  140,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1 * (1 + 0.02*float64(warrior.Talents.UnendingFury)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 1.1, 1),
-			ThreatMultiplier: 1,
-			BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
-			FlatThreatBonus:  70,
-
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 250, 1, 1, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 250, true),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
@@ -49,7 +50,8 @@ func (warrior *Warrior) registerSlamSpell() {
 }
 
 func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.BloodsurgeAura.IsActive() && sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime)
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.BloodsurgeAura.IsActive() &&
+		sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime)
 }
 
 func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {
@@ -60,6 +62,11 @@ func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
 	if warrior.BloodsurgeAura.IsActive() {
 		warrior.Slam.DefaultCast.CastTime = 0
 	}
-	warrior.AutoAttacks.DelayMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+
+	warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	if warrior.AutoAttacks.IsDualWielding {
+		warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	}
+
 	return warrior.Slam.Cast(sim, target)
 }

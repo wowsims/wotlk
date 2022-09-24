@@ -235,11 +235,10 @@ type AttackTable struct {
 	BinaryNatureHitChance float64
 	BinaryShadowHitChance float64
 
-	ArmorDamageModifier float64
-
 	DamageDealtMultiplier               float64
 	NatureDamageDealtMultiplier         float64
 	PeriodicShadowDamageDealtMultiplier float64
+	HealingDealtMultiplier              float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
@@ -250,6 +249,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		DamageDealtMultiplier:               1,
 		NatureDamageDealtMultiplier:         1,
 		PeriodicShadowDamageDealtMultiplier: 1,
+		HealingDealtMultiplier:              1,
 	}
 
 	if defender.Type == EnemyUnit {
@@ -272,7 +272,6 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseParryChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
 	}
 
-	table.UpdateArmorDamageReduction()
 	table.UpdatePartialResists()
 
 	return table

@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+import "common.proto";
+
 message WarriorTalents {
 	// Arms
 	int32 improved_heroic_strike = 1;
@@ -94,13 +96,6 @@ message WarriorTalents {
 	int32 sword_and_board = 83;
 	int32 damage_shield = 84;
 	bool shockwave = 85;
-
-	// TBC Talents (Here because some deprecated abilities that hasn't been removed need it so it could be compiled)
-	int32 improved_sunder_armor = 86;
-	int32 improved_shield_wall = 87;
-	bool improved_shield_block = 88;
-	int32 defiance = 89;
-	bool shield_slam = 90;
 }
 
 enum WarriorMajorGlyph {
@@ -187,6 +182,13 @@ message Warrior {
 		bool spam_execute = 15;
 		bool use_ww_during_execute = 16;
 		bool use_slam_over_execute = 17;
+
+		enum StanceOption {
+			DefaultStance = 0;
+			BattleStance = 1;
+			BerserkerStance = 2;
+		}
+		StanceOption stance_option = 19;
 	}
 	Rotation rotation = 1;
 
@@ -202,26 +204,37 @@ message Warrior {
 
 message ProtectionWarrior {
 	message Rotation {
-		enum DemoShout {
-			DemoShoutNone = 0;
-			DemoShoutMaintain = 1;
-			DemoShoutFiller = 2;
+		enum DemoShoutChoice {
+			DemoShoutChoiceNone = 0;
+			DemoShoutChoiceMaintain = 1;
+			DemoShoutChoiceFiller = 2;
 		}
-		DemoShout demo_shout = 1;
+		DemoShoutChoice demo_shout_choice = 1;
 
-		enum ThunderClap {
-			ThunderClapNone = 0;
-			ThunderClapMaintain = 1;
-			ThunderClapOnCD = 2;
+		enum ThunderClapChoice {
+			ThunderClapChoiceNone = 0;
+			ThunderClapChoiceMaintain = 1;
+			ThunderClapChoiceOnCD = 2;
 		}
-		ThunderClap thunder_clap = 2;
+		ThunderClapChoice thunder_clap_choice = 2;
 
-		bool use_shield_block = 5;
+		enum SpellOption {
+			NoSpell = 0;
+			Revenge = 1;
+			ShieldSlam = 2;
+			Devastate = 3;
+			SunderArmor = 4;
+			Shout = 5;
+			DemoralizingShout = 6;
+			ThunderClap = 7;
+			MortalStrike = 8;
+			ConcussionBlow = 9;
+			Shockwave = 10;
+		}
+		CustomRotation custom_rotation = 3;
 
-		bool use_cleave = 4;
-
-		// Minimum rage to queue HS or Cleave.
-		int32 hs_rage_threshold = 3;
+		double hs_rage_threshold = 4;
+		bool prio_sslam_on_shield_block = 5;
 	}
 	Rotation rotation = 1;
 
@@ -229,7 +242,6 @@ message ProtectionWarrior {
 
 	message Options {
 		double starting_rage = 1;
-		bool use_shield_wall = 8;
 
 		WarriorShout shout = 4;
 		bool precast_shout = 5;

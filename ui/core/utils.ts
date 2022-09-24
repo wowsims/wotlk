@@ -150,7 +150,7 @@ export function permutations<T>(arr: Array<T>, k: number): Array<Array<T>> {
 		return arr.map((v, i) => {
 			const withoutThisElem = arr.slice();
 			withoutThisElem.splice(i, 1);
-			const permutationsWithoutThisElem = permutations(withoutThisElem, k-1);
+			const permutationsWithoutThisElem = permutations(withoutThisElem, k - 1);
 			return permutationsWithoutThisElem.map(perm => [v].concat(perm));
 		}).flat();
 	}

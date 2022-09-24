@@ -19,6 +19,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		ResourceType: stats.Rage,
@@ -28,20 +29,32 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			DefaultCast: core.Cast{
 				Cost: cost,
 			},
+
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if warrior.glyphOfRevengeProcAura != nil {
+					if warrior.glyphOfRevengeProcAura.IsActive() {
+						cast.Cost = 0
+
+						warrior.glyphOfRevengeProcAura.Deactivate(sim)
+					}
+				}
+			},
 		},
 
+		BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  259,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  194,
-			BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
-
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, 1, 1, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, true),
+			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if sim.CurrentTime < warrior.disableHsCleaveUntil {
+					return
+				}
 				if !spellEffect.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
@@ -58,15 +71,8 @@ func (warrior *Warrior) registerCleaveSpell() {
 
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 	baseEffect := core.SpellEffect{
-		ProcMask: core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  125,
-		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
-
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, 1, 1, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(warrior.critMultiplier(true)),
+		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true),
+		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
@@ -80,6 +86,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},
 		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
@@ -90,6 +97,12 @@ func (warrior *Warrior) registerCleaveSpell() {
 				Cost: cost,
 			},
 		},
+
+		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
+		CritMultiplier:   warrior.critMultiplier(mh),
+		ThreatMultiplier: 1,
+		FlatThreatBonus:  225,
 
 		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
 	})
@@ -114,6 +127,11 @@ func (warrior *Warrior) DequeueHSOrCleave(sim *core.Simulation) {
 // Returns true if the regular melee swing should be used, false otherwise.
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !warrior.HSOrCleaveQueueAura.IsActive() {
+		return nil
+	}
+
+	if sim.CurrentTime < warrior.disableHsCleaveUntil {
+		warrior.DequeueHSOrCleave(sim)
 		return nil
 	}
 

@@ -2,12 +2,11 @@ package encounters
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/encounters/naxxrammas"
 )
 
 func init() {
-	registerNaxxramas10()
-	registerBlackTemple()
-	registerSunwellPlateau()
+	naxxrammas.Register()
 }
 
 func AddSingleTargetBossEncounter(presetTarget core.PresetTarget) {

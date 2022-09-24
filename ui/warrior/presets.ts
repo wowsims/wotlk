@@ -19,6 +19,7 @@ import {
 	Warrior_Options as WarriorOptions,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
+	Warrior_Rotation_StanceOption as StanceOption,
 } from '../core/proto/warrior.js';
 
 import * as Gems from '../core/proto_utils/gems.js';
@@ -36,7 +37,7 @@ export const ArmsTalents = {
 		talentsString: '3022032023335100102012213231251-305-2033',
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfRending,
-			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
+			major2: WarriorMajorGlyph.GlyphOfMortalStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
 			minor1: WarriorMinorGlyph.GlyphOfBattle,
 			minor2: WarriorMinorGlyph.GlyphOfCommand,
@@ -62,35 +63,37 @@ export const FuryTalents = {
 
 export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
-  useMs: true,
-  useCleave: false,
+	useMs: true,
+	useCleave: false,
 
 	prioritizeWw: true,
 	sunderArmor: SunderArmor.SunderArmorHelpStack,
 
-  msRageThreshold: 50,
-	hsRageThreshold: 60,
+	msRageThreshold: 40,
+	hsRageThreshold: 50,
 	rendRageThresholdBelow: 70,
-  slamRageThreshold: 15,
+	slamRageThreshold: 30,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
 	useSlamOverExecute: true,
-  spamExecute: true,
+	spamExecute: true,
+	stanceOption: StanceOption.DefaultStance,
 });
 
 export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
-  useCleave: false,
+	useCleave: false,
 	sunderArmor: SunderArmor.SunderArmorHelpStack,
-	msRageThreshold: 50,
-  slamRageThreshold: 15,
-	hsRageThreshold: 60,
+	msRageThreshold: 40,
+	slamRageThreshold: 30,
+	hsRageThreshold: 50,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	spamExecute: true,
+	stanceOption: StanceOption.DefaultStance,
 });
 
 export const DefaultOptions = WarriorOptions.create({
@@ -103,11 +106,11 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
-  prepopPotion:  Potions.IndestructiblePotion,
+	prepopPotion: Potions.IndestructiblePotion,
 });
 
 export const P1_PRERAID_FURY_PRESET = {
-	name: 'P1 Pre-Raid Fury',
+	name: 'P1 Pre-Raid Fury Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -210,7 +213,7 @@ export const P1_PRERAID_FURY_PRESET = {
 };
 
 export const P1_FURY_PRESET = {
-	name: 'P1 BiS Fury',
+	name: 'P1 Fury Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -244,7 +247,7 @@ export const P1_FURY_PRESET = {
           "enchant": 44489,
           "gems": [
             42142,
-            42142
+            49110
           ]
         },
         {
@@ -271,7 +274,7 @@ export const P1_FURY_PRESET = {
           "id": 40529,
           "enchant": 38374,
           "gems": [
-            39996,
+            42142,
             39996
           ]
         },
@@ -309,7 +312,7 @@ export const P1_FURY_PRESET = {
 };
 
 export const P1_PRERAID_ARMS_PRESET = {
-	name: 'P1 Pre-Raid Arms',
+	name: 'P1 Pre-Raid Arms Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
@@ -377,7 +380,7 @@ export const P1_PRERAID_ARMS_PRESET = {
           "id": 44306,
           "enchant": 55016,
           "gems": [
-            0,
+            42702,
             40037
           ]
         },
@@ -412,7 +415,7 @@ export const P1_PRERAID_ARMS_PRESET = {
 };
 
 export const P1_ARMS_PRESET = {
-	name: 'P1 BiS Arms',
+	name: 'P1 Arms Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -421,7 +424,7 @@ export const P1_ARMS_PRESET = {
           "enchant": 44879,
           "gems": [
             41398,
-            39996
+            42153
           ]
         },
         {
@@ -434,7 +437,7 @@ export const P1_ARMS_PRESET = {
           "id": 40530,
           "enchant": 44871,
           "gems": [
-            40058
+            40038
           ]
         },
         {
@@ -442,19 +445,17 @@ export const P1_ARMS_PRESET = {
           "enchant": 55002
         },
         {
-          "id": 40525,
+          "id": 40539,
           "enchant": 44489,
           "gems": [
-            42142,
-            42142
+            42153
           ]
         },
         {
           "id": 40330,
           "enchant": 44484,
           "gems": [
-            39996,
-            39996
+            40002
           ]
         },
         {
@@ -465,17 +466,17 @@ export const P1_ARMS_PRESET = {
           ]
         },
         {
-          "id": 40317,
+          "id": 40205,
           "gems": [
-            42142
+            42153
           ]
         },
         {
-          "id": 40529,
+          "id": 40318,
           "enchant": 38374,
           "gems": [
-            39996,
-            0
+            49110,
+            40038
           ]
         },
         {
@@ -485,11 +486,11 @@ export const P1_ARMS_PRESET = {
         {
           "id": 43993,
           "gems": [
-            39996
+            40002
           ]
         },
         {
-          "id": 40717
+          "id": 40474
         },
         {
           "id": 42987

@@ -10,14 +10,11 @@ import (
 func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 	baseCost := paladin.BaseMana * 0.06
 
-	baseModifiers := Multiplicative{}
-	baseMultiplier := baseModifiers.Get()
-
 	paladin.ShieldOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 61411},
-		SpellSchool: core.SpellSchoolHoly,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 61411},
+		SpellSchool:  core.SpellSchoolHoly,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -34,25 +31,25 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskMeleeMHSpecial,
-
-			DamageMultiplier: baseMultiplier,
-			ThreatMultiplier: 1,
-			BonusCritRating:  1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					// TODO: Confirm this is an accurate calculation.
-					bv := 2760.0
-					if paladin.GetStat(stats.BlockValue) < bv {
-						bv = paladin.GetStat(stats.BlockValue)
+					// TODO: Derive or find accurate source for DR curve
+					bv := paladin.GetStat(stats.BlockValue)
+					if bv <= 2400.0 {
+						return 520.0 + bv
+					} else {
+						bv = 2400.0 + (bv-2400.0)/2
+						return 520.0 + core.TernaryFloat64(bv > 2760.0, 2760.0, bv)
 					}
-					return 390 + bv
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(paladin.MeleeCritMultiplier()),
+			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),
 	})
 }

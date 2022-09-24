@@ -28,6 +28,12 @@
 .results-sim-dps .topline-result-avg:after {
   content: " DPS";
 }
+.results-sim-tto .topline-result-avg:after {
+  content: " TTO";
+}
+.results-sim-hps .topline-result-avg:after {
+  content: " HPS";
+}
 .results-sim-tps .topline-result-avg:after {
   content: " TPS";
 }

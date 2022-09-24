@@ -191,9 +191,9 @@ class ItemPicker extends Component {
 				});
 				// Make enchant text hover have a tooltip.
 				if (newItem.enchant.isSpellId) {
-					this.enchantElem.setAttribute('data-wowhead', `spell=${newItem.enchant.id}`);
+					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.id}`);
 				} else {
-					this.enchantElem.setAttribute('data-wowhead', `item=${newItem.enchant.id}`);
+					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.id}`);
 				}
 			}
 

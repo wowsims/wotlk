@@ -55,15 +55,14 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 					targetDummySpell = aura.Unit.CurrentTarget.RegisterSpell(core.SpellConfig{
 						ActionID:    core.ActionID{SpellID: 49375},
 						SpellSchool: core.SpellSchoolMagic,
+						ProcMask:    core.ProcMaskSpellDamage,
 						Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics,
 
 						Cast: core.CastConfig{},
 
+						DamageMultiplier: 1,
+
 						ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-							ProcMask: core.ProcMaskSpellDamage,
-
-							DamageMultiplier: 1,
-
 							BaseDamage:     core.BaseDamageConfigRoll(dk.Inputs.AvgAMSHit*0.9, dk.Inputs.AvgAMSHit*1.1),
 							OutcomeApplier: target.OutcomeFuncAlwaysHit(),
 						}),
@@ -82,13 +81,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			}
 
 			dk.PseudoStats.PhysicalDamageTakenMultiplier *= physDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.ArcaneDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.FireDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.FrostDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.HolyDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier *= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier *= spellDmgTakenMult
 
 			rs.DoCost(sim)
@@ -96,13 +95,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.PseudoStats.PhysicalDamageTakenMultiplier /= physDmgTakenMult
+			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
 			dk.PseudoStats.ArcaneDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.FireDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.FrostDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.HolyDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.NatureDamageTakenMultiplier /= spellDmgTakenMult
 			dk.PseudoStats.ShadowDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier /= spellDmgTakenMult
 		},
 
@@ -122,7 +121,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell:    dk.AntiMagicShell.Spell,
 			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityDefault,
+			Priority: core.CooldownPriorityLow,
 		})
 	} else if dk.Inputs.UseAMS {
 		dk.AddMajorCooldown(core.MajorCooldown{

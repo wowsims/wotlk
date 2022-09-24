@@ -16,9 +16,12 @@ var manaMetrics *core.ResourceMetrics
 func (mage *Mage) registerIgniteSpell() {
 	manaMetrics = mage.NewManaMetrics(empoweredFireActionId)
 	mage.Ignite = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    IgniteActionID,
-		SpellSchool: core.SpellSchoolFire,
-		Flags:       SpellFlagMage | core.SpellFlagIgnoreModifiers,
+		ActionID:         IgniteActionID,
+		SpellSchool:      core.SpellSchoolFire,
+		ProcMask:         core.ProcMaskSpellDamage,
+		Flags:            SpellFlagMage | core.SpellFlagIgnoreModifiers,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 	})
 }
 
@@ -56,11 +59,8 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 
 	// Reassign the effect to apply the new damage value.
 	igniteDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
-		ProcMask:         core.ProcMaskPeriodicDamage,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
-		IsPeriodic:       true,
-		BaseDamage:       core.BaseDamageConfigFlat(newTickDamage),
+		IsPeriodic: true,
+		BaseDamage: core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 			if float64(mage.Talents.EmpoweredFire)/3.0 > sim.RandomFloat("EmpoweredFireIgniteMana") {
 				mage.AddMana(sim, mage.Unit.BaseMana*.02, manaMetrics, false)
@@ -83,7 +83,7 @@ func (mage *Mage) applyIgnite() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
 			if spell.SpellSchool.Matches(core.SpellSchoolFire) && spellEffect.Outcome.Matches(core.OutcomeCrit) {

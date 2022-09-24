@@ -6,6 +6,7 @@ import { SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
 import { CastMetricsTable } from './cast_metrics.js';
 import { DtpsMeleeMetricsTable } from './dtps_melee_metrics.js';
+import { HealingMetricsTable } from './healing_metrics.js';
 import { MeleeMetricsTable } from './melee_metrics.js';
 import { SpellMetricsTable } from './spell_metrics.js';
 import { ResourceMetricsTable } from './resource_metrics.js';
@@ -62,11 +63,10 @@ Chart.defaults.color = colorSettings.mainTextColor;
 const layoutHTML = `
 <div class="dr-root">
 	<ul class="dr-toolbar nav nav-tabs">
-		<li class="results-filter">
-		</li>
-		<li class="tabs-filler">
-		</li>
-		<li class="dr-tab-tab active"><a data-toggle="tab" href="#damageTab">DAMAGE</a></li>
+		<li class="results-filter"></li>
+		<li class="tabs-filler"></li>
+		<li class="dr-tab-tab damage-metrics active"><a data-toggle="tab" href="#damageTab">DAMAGE</a></li>
+		<li class="dr-tab-tab healing-metrics"><a data-toggle="tab" href="#healingTab">HEALING</a></li>
 		<li class="dr-tab-tab threat-metrics"><a data-toggle="tab" href="#damageTakenTab">DAMAGE TAKEN</a></li>
 		<li class="dr-tab-tab"><a data-toggle="tab" href="#buffsTab">BUFFS</a></li>
 		<li class="dr-tab-tab"><a data-toggle="tab" href="#debuffsTab">DEBUFFS</a></li>
@@ -91,6 +91,16 @@ const layoutHTML = `
 				</div>
 			</div>
 			<div class="dr-row dps-histogram">
+			</div>
+		</div>
+		<div id="healingTab" class="tab-pane dr-tab-content healing-content fade">
+			<div class="dr-row topline-results">
+			</div>
+			<div class="dr-row single-player-only">
+				<div class="healing-spell-metrics">
+				</div>
+			</div>
+			<div class="dr-row hps-histogram">
 			</div>
 		</div>
 		<div id="damageTakenTab" class="tab-pane dr-tab-content damage-taken-content fade">
@@ -148,12 +158,14 @@ const resultsFilter = new ResultsFilter({
 	colorSettings: colorSettings,
 });
 
-const toplineResultsDiv = document.body.getElementsByClassName('topline-results')[0] as HTMLElement;
-const toplineResults = new ToplineResults({ parent: toplineResultsDiv, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
+(Array.from(document.body.getElementsByClassName('topline-results')) as Array<HTMLElement>).forEach(toplineResultsDiv => {
+	new ToplineResults({ parent: toplineResultsDiv, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
+});
 
 const castMetrics = new CastMetricsTable({ parent: document.body.getElementsByClassName('cast-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const meleeMetrics = new MeleeMetricsTable({ parent: document.body.getElementsByClassName('melee-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const spellMetrics = new SpellMetricsTable({ parent: document.body.getElementsByClassName('spell-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
+const healingMetrics = new HealingMetricsTable({ parent: document.body.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const resourceMetrics = new ResourceMetricsTable({ parent: document.body.getElementsByClassName('resource-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings });
 const playerDamageMetrics = new PlayerDamageMetricsTable({ parent: document.body.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: resultsEmitter, colorSettings: colorSettings }, resultsFilter);
 const buffAuraMetrics = new AuraMetricsTable({
@@ -192,6 +204,7 @@ function updateResults() {
 }
 
 document.body.classList.add('hide-threat-metrics');
+document.body.classList.add('hide-healing-metrics');
 window.addEventListener('message', async event => {
 	const data = DetailedResultsUpdate.fromJson(event.data);
 	switch (data.data.oneofKind) {
@@ -202,10 +215,30 @@ window.addEventListener('message', async event => {
 			break;
 		case 'settings':
 			const settings = data.data.settings;
+			if (settings.showDamageMetrics) {
+				document.body.classList.remove('hide-damage-metrics');
+			} else {
+				document.body.classList.add('hide-damage-metrics');
+				if (document.getElementById('damageTab')!.classList.contains('active')) {
+					document.getElementById('damageTab')!.classList.remove('active');
+					document.getElementById('damageTab')!.classList.remove('in');
+					document.getElementById('healingTab')!.classList.add('active');
+					document.getElementById('healingTab')!.classList.add('in');
+
+					const toolbar = document.getElementsByClassName('dr-toolbar')[0] as HTMLElement;
+					(toolbar.getElementsByClassName('damage-metrics')[0] as HTMLElement).classList.remove('active');
+					(toolbar.getElementsByClassName('healing-metrics')[0] as HTMLElement).classList.add('active');
+				}
+			}
 			if (settings.showThreatMetrics) {
 				document.body.classList.remove('hide-threat-metrics');
 			} else {
 				document.body.classList.add('hide-threat-metrics');
+			}
+			if (settings.showHealingMetrics) {
+				document.body.classList.remove('hide-healing-metrics');
+			} else {
+				document.body.classList.add('hide-healing-metrics');
 			}
 			if (settings.showExperimental) {
 				document.body.classList.remove('hide-experimental');

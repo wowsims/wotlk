@@ -1,6 +1,7 @@
 package protection
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -28,6 +29,8 @@ type ProtectionWarrior struct {
 
 	Rotation proto.ProtectionWarrior_Rotation
 	Options  proto.ProtectionWarrior_Options
+
+	CustomRotation *common.CustomRotation
 }
 
 func NewProtectionWarrior(character core.Character, options proto.Player) *ProtectionWarrior {
@@ -44,7 +47,18 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 		Options:  *warOptions.Options,
 	}
 
-	war.EnableRageBar(warOptions.Options.StartingRage, core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1), func(sim *core.Simulation) {
+	rbo := core.RageBarOptions{
+		StartingRage:   warOptions.Options.StartingRage,
+		RageMultiplier: core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1),
+	}
+	if mh := war.GetMHWeapon(); mh != nil {
+		rbo.MHSwingSpeed = mh.SwingSpeed
+	}
+	if oh := war.GetOHWeapon(); oh != nil {
+		rbo.OHSwingSpeed = oh.SwingSpeed
+	}
+
+	war.EnableRageBar(rbo, func(sim *core.Simulation) {
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
@@ -61,6 +75,13 @@ func NewProtectionWarrior(character core.Character, options proto.Player) *Prote
 		},
 	})
 
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(war.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
+
 	return war
 }
 
@@ -71,15 +92,11 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(war.Rotation.UseCleave, float64(war.Rotation.HsRageThreshold))
+	war.RegisterHSOrCleave(false, float64(war.Rotation.HsRageThreshold))
+	war.RegisterShieldWallCD()
+	war.RegisterShieldBlockCD()
 
-	if war.Options.UseShieldWall {
-		war.RegisterShieldWallCD()
-	}
-
-	if war.Rotation.UseShieldBlock {
-		war.RegisterShieldBlockCD()
-	}
+	war.CustomRotation = war.makeCustomRotation()
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {

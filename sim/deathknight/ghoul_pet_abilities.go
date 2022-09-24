@@ -58,6 +58,7 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 		Spell: ghoulPet.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: ClawSpellID},
 			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics,
 
 			Cast: core.CastConfig{
@@ -66,12 +67,13 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 				},
 			},
 
+			DamageMultiplier: 1.5,
+			CritMultiplier:   2,
+			ThreatMultiplier: 1,
+
 			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				ProcMask:         core.ProcMaskMeleeMHSpecial,
-				DamageMultiplier: 1,
-				ThreatMultiplier: 1,
-				BaseDamage:       core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, 1.0, 1.5, true),
-				OutcomeApplier:   ghoulPet.OutcomeFuncMeleeSpecialHitAndCrit(2),
+				BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
+				OutcomeApplier: ghoulPet.OutcomeFuncMeleeSpecialHitAndCrit(),
 			}),
 		}),
 	}

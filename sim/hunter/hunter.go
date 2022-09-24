@@ -119,9 +119,9 @@ func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
-	hunter.AutoAttacks.OHEffect.OutcomeApplier = hunter.OutcomeFuncMeleeWhite(hunter.critMultiplier(false, false, hunter.CurrentTarget))
-	hunter.AutoAttacks.RangedEffect.OutcomeApplier = hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(false, false, hunter.CurrentTarget))
+	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false, hunter.CurrentTarget)
+	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false, hunter.CurrentTarget)
+	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false, hunter.CurrentTarget)
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
@@ -181,7 +181,6 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 	hunter.PseudoStats.CanParry = true
 
 	rangedWeapon := hunter.WeaponFromRanged(0)
-	hunter.PseudoStats.RangedSpeedMultiplier = 1
 
 	// Passive bonus (used to be from quiver).
 	hunter.PseudoStats.RangedSpeedMultiplier *= 1.15

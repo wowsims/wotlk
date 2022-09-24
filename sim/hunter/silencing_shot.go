@@ -14,10 +14,10 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.SilencingShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 34490},
-		SpellSchool: core.SpellSchoolPhysical,
-		Flags:       core.SpellFlagMeleeMetrics,
-
+		ActionID:     core.ActionID{SpellID: 34490},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -32,14 +32,14 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-			DamageMultiplier: 0.5 *
-				(1 + 0.01*float64(hunter.Talents.MarkedForDeath)),
-			ThreatMultiplier: 1,
+		DamageMultiplier: 0.5 *
+			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
 
+		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigRangedWeapon(hunter.AmmoDamageBonus),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 
 			// Add a check for later so we use ASAP when it comes off CD.
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

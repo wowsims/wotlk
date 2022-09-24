@@ -14,21 +14,68 @@ func init() {
 
 func TestRetribution(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassPaladin,
-
+		Class:      proto.Class_ClassPaladin,
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceDraenei, proto.Race_RaceDwarf},
 
-		GearSet: core.GearSetCombo{Label: "P4", GearSet: Phase4Gear},
-
-		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin", SpecOptions: DefaultOptions},
-		Glyphs:      defaultRetGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
+		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin SOV", SpecOptions: DefaultOptions},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{
+				Label: "Retribution Paladin SOC",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Command,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultRetRotation,
+					},
+				},
+			},
+			{
+				Label: "Retribution Paladin SOR",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Righteousness,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: defaultRetRotation,
+					},
+				},
+			},
+			{
+				Label: "Retribution Paladin SOV 2 Target Swapping",
+				SpecOptions: &proto.Player_RetributionPaladin{
+					RetributionPaladin: &proto.RetributionPaladin{
+						Talents: defaultRetTalents,
+						Options: &proto.RetributionPaladin_Options{
+							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:                 proto.PaladinSeal_Vengeance,
+							Aura:                 proto.PaladinAura_RetributionAura,
+							DamageTakenPerSecond: 0,
+						},
+						Rotation: &proto.RetributionPaladin_Rotation{
+							ConsSlack:            500,
+							ExoSlack:             500,
+							UseDivinePlea:        true,
+							DivinePleaPercentage: 0.75,
+							HolyWrathThreshold:   4,
+							SovTargets:           2,
+						},
+					},
+				},
+			},
+		},
+		Glyphs:   defaultRetGlyphs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -52,14 +99,14 @@ func BenchmarkSimulate(b *testing.B) {
 				Race:      proto.Race_RaceBloodElf,
 				Class:     proto.Class_ClassPaladin,
 				Glyphs:    defaultRetGlyphs,
-				Equipment: Phase4Gear,
+				Equipment: Phase1Gear,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

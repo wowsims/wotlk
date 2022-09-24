@@ -1,8 +1,9 @@
 package druid
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -17,7 +18,10 @@ type Druid struct {
 	RebirthUsed       bool
 	MaulRageThreshold float64
 	RebirthTiming     float64
+	BleedsActive      int
+	AssumeBleedActive bool
 
+	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
 	Enrage           *core.Spell
 	FaerieFire       *core.Spell
@@ -38,7 +42,8 @@ type Druid struct {
 	Starfire         *core.Spell
 	Starfall         *core.Spell
 	StarfallSplash   *core.Spell
-	Swipe            *core.Spell
+	SwipeBear        *core.Spell
+	SwipeCat         *core.Spell
 	TigersFury       *core.Spell
 	Wrath            *core.Spell
 
@@ -47,6 +52,7 @@ type Druid struct {
 
 	InsectSwarmDot    *core.Dot
 	LacerateDot       *core.Dot
+	LasherweaveDot    *core.Dot
 	MoonfireDot       *core.Dot
 	RakeDot           *core.Dot
 	RipDot            *core.Dot
@@ -57,6 +63,7 @@ type Druid struct {
 	BerserkAura          *core.Aura
 	CatFormAura          *core.Aura
 	ClearcastingAura     *core.Aura
+	SwiftStarfireAura    *core.Aura
 	DemoralizingRoarAura *core.Aura
 	EnrageAura           *core.Aura
 	FaerieFireAura       *core.Aura
@@ -66,6 +73,8 @@ type Druid struct {
 	NaturesSwiftnessAura *core.Aura
 	TigersFuryAura       *core.Aura
 	SavageRoarAura       *core.Aura
+	SolarEclipseProcAura *core.Aura
+	LunarEclipseProcAura *core.Aura
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 
@@ -75,9 +84,21 @@ type Druid struct {
 	Treant2  *TreantPet
 	Treant3  *TreantPet
 
-	form         DruidForm
-	disabledMCDs []*core.MajorCooldown
-	SetBonuses   DruidTierSets
+	form           DruidForm
+	disabledMCDs   []*core.MajorCooldown
+	SetBonuses     DruidTierSets
+	TalentsBonuses TalentsBonuses
+}
+
+type TalentsBonuses struct {
+	moonfuryMultiplier      float64
+	iffBonusCrit            float64
+	vengeanceModifier       float64
+	genesisMultiplier       float64
+	moonglowMultiplier      float64
+	naturesMajestyBonusCrit float64
+	naturesSplendorTick     int
+	starlightWrathModifier  time.Duration
 }
 
 type DruidTierSets struct {
@@ -90,12 +111,38 @@ type DruidTierSets struct {
 	balance_t9_4  bool
 	balance_t10_2 bool
 	balance_t10_4 bool
+	balance_pvp_2 bool
+	balance_pvp_4 bool
 }
 
 type SelfBuffs struct {
-	Omen bool
-
 	InnervateTarget proto.RaidTarget
+}
+
+// Registering non-unique Talent effects
+func (druid *Druid) RegisterTalentsBonuses() {
+	druid.TalentsBonuses = TalentsBonuses{
+		moonfuryMultiplier:      []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury],
+		genesisMultiplier:       1 + 0.01*float64(druid.Talents.Genesis),
+		moonglowMultiplier:      1 - 0.03*float64(druid.Talents.Moonglow),
+		naturesMajestyBonusCrit: 2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
+		vengeanceModifier:       0.2 * float64(druid.Talents.Vengeance),
+		naturesSplendorTick:     core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		starlightWrathModifier:  time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath),
+	}
+}
+
+func (druid *Druid) ResetTalentsBonuses() {
+	druid.TalentsBonuses = TalentsBonuses{
+		moonfuryMultiplier:      0,
+		genesisMultiplier:       0,
+		moonglowMultiplier:      0,
+		iffBonusCrit:            0,
+		naturesMajestyBonusCrit: 0,
+		vengeanceModifier:       0,
+		naturesSplendorTick:     0,
+		starlightWrathModifier:  0,
+	}
 }
 
 func (druid *Druid) GetCharacter() *core.Character {
@@ -119,10 +166,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 			// For now, we assume Improved Moonkin Form is maxed-out
 			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
 		}
-		// Idol of the Raven Goddess
-		if druid.Equip[items.ItemSlotRanged].ID == 32387 {
-			druid.AddStat(stats.SpellCrit, 40)
-		}
 	}
 	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
 		raidBuffs.LeaderOfThePack = core.MaxTristate(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
@@ -135,7 +178,7 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 func (druid *Druid) PrimalGoreOutcomeFuncTick() core.OutcomeApplier {
 	if druid.Talents.PrimalGore {
-		return druid.OutcomeFuncTickHitAndCrit(druid.MeleeCritMultiplier())
+		return druid.OutcomeFuncTickHitAndCrit()
 	} else {
 		return druid.OutcomeFuncTick()
 	}
@@ -161,7 +204,11 @@ func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}
+	druid.registerFaerieFireSpell()
+	druid.registerRebirthSpell()
+	druid.registerInnervateCD()
 
+	// Bonus sets
 	druid.SetBonuses = DruidTierSets{
 		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
 		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
@@ -172,11 +219,9 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetMalfurionsRegalia, 4) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 4),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
+		druid.HasSetBonus(ItemSetGladiatorsWildhide, 2),
+		druid.HasSetBonus(ItemSetGladiatorsWildhide, 4),
 	}
-
-	druid.registerFaerieFireSpell()
-	druid.registerRebirthSpell()
-	druid.registerInnervateCD()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -187,6 +232,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
 	druid.registerForceOfNatureCD()
+	druid.registerLasherweaveDot()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
@@ -204,14 +250,18 @@ func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
 	druid.registerRipSpell()
 	druid.registerSavageRoarSpell()
 	druid.registerShredSpell()
-	druid.registerSwipeSpell()
+	druid.registerSwipeBearSpell()
+	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()
 }
 
 func (druid *Druid) Reset(sim *core.Simulation) {
+	druid.BleedsActive = 0
 	druid.form = druid.StartingForm
 	druid.disabledMCDs = []*core.MajorCooldown{}
 	druid.RebirthUsed = false
+	druid.LunarICD.Timer.Reset()
+	druid.SolarICD.Timer.Reset()
 }
 
 func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto.DruidTalents) *Druid {
@@ -225,8 +275,10 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	druid.EnableManaBar()
 
 	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/25)
-	druid.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/14.7059)
+	// Druids get 0.012 crit per agi at level 80, roughly 1 per 83.33
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, (1.0/83.33)*core.CritRatingPerCritChance)
+	// Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.16
+	druid.AddStatDependency(stats.Agility, stats.Dodge, (1.0/47.16)*core.DodgeRatingPerDodgeChance)
 
 	// Druids get extra melee haste
 	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
@@ -242,30 +294,30 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      7237,
-		stats.Strength:    85,
-		stats.Agility:     86,
-		stats.Stamina:     98,
-		stats.Intellect:   143,
-		stats.Spirit:      159,
-		stats.Mana:        3496,
-		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.56% chance to crit shown on naked character screen
-		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
-		stats.Health:      7237,
+		stats.Health:      6892, // 8227 health shown on naked character (would include tauren bonus)
 		stats.Strength:    94,
 		stats.Agility:     78,
 		stats.Stamina:     99,
 		stats.Intellect:   139,
 		stats.Spirit:      161,
-		stats.Mana:        3496,
+		stats.Mana:        3496,                                // 5301 mana shown on naked character
 		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
-		stats.AttackPower: -20,                                 // accounts for the fact that the first 20 points in Str only provide 1 AP rather than 2
-		stats.MeleeCrit:   0.96 * core.CritRatingPerCritChance, // 3.96% chance to crit shown on naked character screen
-		stats.Dodge:       -1.87 * core.DodgeRatingPerDodgeChance,
+		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.41% chance to crit shown on naked character screen
+		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
+		stats.AttackPower: -20,
+	}
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
+		stats.Health:      7237, // 8217 health shown on naked character
+		stats.Strength:    85,
+		stats.Agility:     86,
+		stats.Stamina:     98,
+		stats.Intellect:   143,
+		stats.Spirit:      159,
+		stats.Mana:        3496,                                // 5361 mana shown on naked character
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
+		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
+		stats.AttackPower: -20,
 	}
 }
 

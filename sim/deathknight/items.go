@@ -262,19 +262,12 @@ func (dk *Deathknight) registerScourgelordsPlateProc() {
 	}))
 }
 
-func (dk *Deathknight) sigilOfAwarenessBonus(spell *RuneSpell) float64 {
-	if dk.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40207 {
-		return 0
-	}
+func (dk *Deathknight) sigilOfTheDarkRiderBonus() float64 {
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 39208, 90, 0)
+}
 
-	if spell == dk.Obliterate {
-		return 336
-	} else if spell == dk.ScourgeStrike {
-		return 189
-	} else if spell == dk.DeathStrike {
-		return 315
-	}
-	return 0
+func (dk *Deathknight) sigilOfAwarenessBonus() float64 {
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40207, 420, 0)
 }
 
 func (dk *Deathknight) sigilOfTheFrozenConscienceBonus() float64 {
@@ -286,7 +279,7 @@ func (dk *Deathknight) sigilOfTheWildBuckBonus() float64 {
 }
 
 func (dk *Deathknight) sigilOfArthriticBindingBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 91, 0)
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 203, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
@@ -294,7 +287,7 @@ func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 113, 0)
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 205, 0)
 }
 
 func init() {
@@ -342,7 +335,7 @@ func init() {
 
 				shouldConsume := false
 				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID.SameAction(consumeSpell) {
+					if spell.ActionID.SameActionIgnoreTag(consumeSpell) {
 						shouldConsume = true
 						break
 					}
@@ -362,20 +355,20 @@ func init() {
 				}
 
 				if mh && !oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeMH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 						return
 					}
 				} else if oh && !mh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 						return
 					}
 				} else if mh && oh {
-					if !spellEffect.ProcMask.Matches(core.ProcMaskMelee) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 				}
 
-				if ppmm.Proc(sim, spellEffect.ProcMask, "rune of cinderglacier") {
+				if ppmm.Proc(sim, spell.ProcMask, "rune of cinderglacier") {
 					cinderProcAura.Activate(sim)
 				}
 			},

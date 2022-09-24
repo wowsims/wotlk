@@ -17,10 +17,10 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 	ssProcSpell := hunter.chimeraShotSerpentStingSpell()
 
 	hunter.ChimeraShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53209},
-		SpellSchool: core.SpellSchoolNature,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
-
+		ActionID:     core.ActionID{SpellID: 53209},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskRangedSpecial,
+		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -38,23 +38,22 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 			},
 		},
 
+		DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
-			DamageMultiplier: 1 + 0.01*float64(hunter.Talents.MarkedForDeath),
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
+					rap := spell.RangedAttackPower(hitEffect.Target)
 					return 1.25 * (rap*0.2 +
 						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
 						hunter.AmmoDamageBonus +
-						hitEffect.BonusWeaponDamage(spell.Unit))
+						spell.BonusWeaponDamage())
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(hunter.critMultiplier(true, true, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
@@ -75,25 +74,26 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 	return hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53353},
 		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
+		DamageMultiplierAdditive: 1 +
+			0.1*float64(hunter.Talents.ImprovedStings) +
+			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
+		DamageMultiplier: 1 *
+			(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
+			hunter.markedForDeathMultiplier(),
+		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask: core.ProcMaskRangedSpecial,
-
-			DamageMultiplier: 1 *
-				(1 + 0.1*float64(hunter.Talents.ImprovedStings)) *
-				core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), 1.1, 1) *
-				(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)),
-			ThreatMultiplier: 1,
-
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := hitEffect.RangedAttackPower(spell.Unit) + hitEffect.RangedAttackPowerOnTarget()
-					return 242 + rap*0.04
+					return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(hunter.critMultiplier(true, false, hunter.CurrentTarget)),
+			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(),
 		}),
 	})
 }

@@ -57,14 +57,6 @@ func (mage *Mage) ApplyTalents() {
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
 
-	if mage.Talents.SpellPower > 0 {
-		mage.bonusCritDamage += .25 * float64(mage.Talents.SpellPower)
-	}
-
-	if mage.Talents.Burnout > 0 {
-		mage.bonusCritDamage += .1 * float64(mage.Talents.Burnout)
-	}
-
 	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	mage.PseudoStats.CostMultiplier *= 1 - .01*float64(mage.Talents.Precision)
 
@@ -361,7 +353,7 @@ func (mage *Mage) applyMasterOfElements() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
@@ -385,6 +377,18 @@ func (mage *Mage) registerCombustionCD() {
 		Duration: time.Minute * 2,
 	}
 
+	fireCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage)
+	combCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+.5)
+	frostfireCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3)
+	frostfireCombCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3+.5)
+
+	var fireSpells []*core.Spell
+	mage.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+			fireSpells = append(fireSpells, spell)
+		}
+	})
+
 	numCrits := 0
 	const critPerStack = 10 * core.CritRatingPerCritChance
 
@@ -395,12 +399,23 @@ func (mage *Mage) registerCombustionCD() {
 		MaxStacks: 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
+			for _, spell := range fireSpells {
+				spell.CritMultiplier = combCritMult
+			}
+			mage.FrostfireBolt.CritMultiplier = frostfireCombCritMult
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)
+			for _, spell := range fireSpells {
+				spell.CritMultiplier = fireCritMult
+			}
+			mage.FrostfireBolt.CritMultiplier = frostfireCritMult
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.BonusFireCritRating += critPerStack * float64(newStacks-oldStacks)
+			bonusCrit := critPerStack * float64(newStacks-oldStacks)
+			for _, spell := range fireSpells {
+				spell.BonusCritRating += bonusCrit
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {

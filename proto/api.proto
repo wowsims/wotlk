@@ -86,6 +86,9 @@ message Raid {
 
 	// Staggers Stormstrike casts across Enhance Shaman to maximize charge usage.
 	bool stagger_stormstrikes = 3;
+
+	// Extra fake players to add. Currently only used by healing sims.
+	int32 target_dummies = 6;
 }
 
 message SimOptions {
@@ -149,6 +152,9 @@ message TargetedActionMetrics {
 
 	// Total shielding done to this target by this action.
 	double shielding = 13;
+
+	// Total time spent casting this action, in milliseconds, either from hard casts, GCD, or channeling.
+	double cast_time_ms = 14;
 }
 
 message AuraMetrics {
@@ -209,6 +215,7 @@ message UnitMetrics {
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
 	DistributionMetrics hps = 14;
+	DistributionMetrics tto = 15; // Time To OOM, in seconds.
 
 	// average seconds spent oom per iteration
 	double seconds_oom_avg = 3; 
@@ -226,6 +233,7 @@ message UnitMetrics {
 // Results for a whole raid.
 message PartyMetrics {
 	DistributionMetrics dps = 1;
+	DistributionMetrics hps = 3;
 
 	repeated UnitMetrics players = 2;
 }
@@ -233,6 +241,7 @@ message PartyMetrics {
 // Results for a whole raid.
 message RaidMetrics {
 	DistributionMetrics dps = 1;
+	DistributionMetrics hps = 3;
 
 	repeated PartyMetrics parties = 2;
 }
@@ -324,6 +333,7 @@ message StatWeightsRequest {
 }
 message StatWeightsResult {
 	StatWeightValues dps = 1;
+	StatWeightValues hps = 4;
 	StatWeightValues tps = 2;
 	StatWeightValues dtps = 3;
 }
@@ -348,6 +358,7 @@ message ProgressMetrics {
 
 	// Partial Results 
 	double dps = 5;
+	double hps = 9;
 
 	// Final Results
 	RaidSimResult final_raid_result = 6; // only set when completed

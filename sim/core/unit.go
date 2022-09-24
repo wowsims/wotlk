@@ -8,6 +8,7 @@ import (
 )
 
 type UnitType int
+type SpellRegisteredHandler func(spell *Spell)
 
 const (
 	PlayerUnit UnitType = iota
@@ -15,7 +16,16 @@ const (
 	PetUnit
 )
 
-type DynamicDamageTakenModifier func(sim *Simulation, spellEffect *SpellEffect)
+type PowerBarType int
+
+const (
+	ManaBar PowerBarType = iota
+	EnergyBar
+	RageBar
+	RunicPower
+)
+
+type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
 
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.
@@ -78,6 +88,7 @@ type Unit struct {
 
 	PseudoStats stats.PseudoStats
 
+	currentPowerBar PowerBarType
 	healthBar
 	manaBar
 	rageBar
@@ -85,7 +96,8 @@ type Unit struct {
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
-	Spellbook []*Spell
+	Spellbook                 []*Spell
+	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
 	Pets []PetAgent
@@ -126,6 +138,7 @@ type Unit struct {
 	CastSpeed float64
 
 	CurrentTarget *Unit
+	defaultTarget *Unit
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -194,7 +207,6 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	unit.statsWithoutDeps = unit.statsWithoutDeps.Add(bonus)
 
 	bonus = unit.ApplyStatDependencies(bonus)
-	bonus[stats.Mana] = 0 // TODO: Mana needs special treatment
 
 	if sim.Log != nil {
 		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
@@ -217,12 +229,6 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	}
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
-	}
-	if bonus[stats.Armor] != 0 {
-		unit.updateArmor()
-	}
-	if bonus[stats.ArmorPenetration] != 0 {
-		unit.updateArmorPen()
 	}
 	if bonus[stats.SpellPenetration] != 0 {
 		unit.updateSpellPen()
@@ -254,7 +260,6 @@ func (unit *Unit) EnableDynamicStatDep(sim *Simulation, dep *stats.StatDependenc
 	if unit.StatDependencyManager.EnableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
-		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
@@ -266,29 +271,14 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 	if unit.StatDependencyManager.DisableDynamicStatDep(dep) {
 		oldStats := unit.stats
 		unit.stats = unit.ApplyStatDependencies(unit.statsWithoutDeps)
-		unit.stats[stats.Mana] = oldStats[stats.Mana] // Need to reset mana because it's also used as current mana.
 		unit.processDynamicBonus(sim, unit.stats.Subtract(oldStats))
 
 		if sim.Log != nil {
-			unit.Log(sim, "Dynamic dep enabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
+			unit.Log(sim, "Dynamic dep disabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
 		}
 	}
 }
 
-func (unit *Unit) updateArmor() {
-	for _, table := range unit.DefenseTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
-func (unit *Unit) updateArmorPen() {
-	for _, table := range unit.AttackTables {
-		if table != nil {
-			table.UpdateArmorDamageReduction()
-		}
-	}
-}
 func (unit *Unit) updateResistances() {
 	for _, table := range unit.DefenseTables {
 		if table != nil {
@@ -355,8 +345,8 @@ func (unit *Unit) Armor() float64 {
 	return unit.PseudoStats.ArmorMultiplier * unit.stats[stats.Armor]
 }
 
-func (unit *Unit) ArmorPenetrationPercentage() float64 {
-	return MaxFloat(MinFloat(unit.stats[stats.ArmorPenetration]/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
+func (unit *Unit) ArmorPenetrationPercentage(armorPenRating float64) float64 {
+	return MaxFloat(MinFloat(armorPenRating/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
 
 func (unit *Unit) RangedSwingSpeed() float64 {
@@ -380,6 +370,29 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.AutoAttacks.UpdateSwingTime(sim)
 }
 
+func (unit *Unit) AddBonusRangedHitRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusHitRating += amount
+		}
+	})
+}
+func (unit *Unit) AddBonusRangedCritRating(amount float64) {
+	unit.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskRanged) {
+			spell.BonusCritRating += amount
+		}
+	})
+}
+
+func (unit *Unit) SetCurrentPowerBar(bar PowerBarType) {
+	unit.currentPowerBar = bar
+}
+
+func (unit *Unit) GetCurrentPowerBar() PowerBarType {
+	return unit.currentPowerBar
+}
+
 func (unit *Unit) finalize() {
 	if unit.Env.IsFinalized() {
 		panic("Unit already finalized!")
@@ -390,6 +403,7 @@ func (unit *Unit) finalize() {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}
 
+	unit.defaultTarget = unit.CurrentTarget
 	unit.applyParryHaste()
 	unit.updateCastSpeed()
 
@@ -404,6 +418,8 @@ func (unit *Unit) finalize() {
 	unit.initialStats = unit.ApplyStatDependencies(unit.initialStatsWithoutDeps)
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats
+
+	unit.AutoAttacks.finalize()
 
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
@@ -421,10 +437,12 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.stats = unit.initialStats
 	unit.PseudoStats = unit.initialPseudoStats
 	unit.auraTracker.reset(sim)
+	// Spellbook needs to be reset AFTER auras.
 	for _, spell := range unit.Spellbook {
 		spell.reset(sim)
 	}
 
+	unit.manaBar.reset()
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
 
@@ -447,9 +465,9 @@ func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
-	unit.doneIterationGCD(sim.CurrentTime)
+	unit.doneIterationGCD(sim)
 
-	unit.doneIterationMana()
+	unit.manaBar.doneIteration()
 	unit.rageBar.doneIteration()
 
 	unit.auraTracker.doneIteration(sim)
@@ -457,4 +475,14 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 		spell.doneIteration()
 	}
 	unit.resetCDs(sim)
+}
+
+func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
+	var spells []*Spell
+	for _, spell := range unit.Spellbook {
+		if spell.SpellSchool.Matches(school) {
+			spells = append(spells, spell)
+		}
+	}
+	return spells
 }

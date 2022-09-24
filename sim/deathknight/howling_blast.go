@@ -24,8 +24,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
 		ActionID:     HowlingBlastActionID,
 		SpellSchool:  core.SpellSchoolFrost,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:  core.GCDDefault,
@@ -44,23 +46,22 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			},
 		},
 
-		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
-			ProcMask:             core.ProcMaskSpellDamage,
-			BonusSpellCritRating: 0.0,
-			DamageMultiplier:     1.0,
-			ThreatMultiplier:     1.0,
+		DamageMultiplier: 1,
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
+		ThreatMultiplier: 1,
 
+		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + dk.getImpurityBonus(hitEffect, spell.Unit)*0.2) *
+					return (roll + 0.2*dk.getImpurityBonus(spell)) *
 						dk.glacielRotBonus(hitEffect.Target) *
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit(dk.spellCritMultiplierGoGandMoM())),
+			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

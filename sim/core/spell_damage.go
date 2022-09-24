@@ -61,17 +61,17 @@ func BaseDamageFuncMagic(minFlatDamage float64, maxFlatDamage float64, spellCoef
 
 	if minFlatDamage == 0 && maxFlatDamage == 0 {
 		return func(_ *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			return hitEffect.SpellPower(spell.Unit, spell) * spellCoefficient
+			return spell.SpellPower() * spellCoefficient
 		}
 	} else if minFlatDamage == maxFlatDamage {
 		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			damage := hitEffect.SpellPower(spell.Unit, spell) * spellCoefficient
+			damage := spell.SpellPower() * spellCoefficient
 			return damage + minFlatDamage
 		}
 	} else {
 		deltaDamage := maxFlatDamage - minFlatDamage
 		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			damage := hitEffect.SpellPower(spell.Unit, spell) * spellCoefficient
+			damage := spell.SpellPower() * spellCoefficient
 			damage += damageRollOptimized(sim, minFlatDamage, deltaDamage)
 			return damage
 		}
@@ -82,6 +82,36 @@ func BaseDamageConfigMagic(minFlatDamage float64, maxFlatDamage float64, spellCo
 }
 func BaseDamageConfigMagicNoRoll(flatDamage float64, spellCoefficient float64) BaseDamageConfig {
 	return BaseDamageConfigMagic(flatDamage, flatDamage, spellCoefficient)
+}
+
+func BaseDamageFuncHealing(minFlatHealing float64, maxFlatHealing float64, spellCoefficient float64) BaseDamageCalculator {
+	if spellCoefficient == 0 {
+		return BaseDamageFuncRoll(minFlatHealing, maxFlatHealing)
+	}
+
+	if minFlatHealing == 0 && maxFlatHealing == 0 {
+		return func(_ *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			return spell.HealingPower() * spellCoefficient
+		}
+	} else if minFlatHealing == maxFlatHealing {
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			damage := spell.HealingPower() * spellCoefficient
+			return damage + minFlatHealing
+		}
+	} else {
+		deltaHealing := maxFlatHealing - minFlatHealing
+		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
+			damage := spell.HealingPower() * spellCoefficient
+			damage += damageRollOptimized(sim, minFlatHealing, deltaHealing)
+			return damage
+		}
+	}
+}
+func BaseDamageConfigHealing(minFlatHealing float64, maxFlatHealing float64, spellCoefficient float64) BaseDamageConfig {
+	return BuildBaseDamageConfig(BaseDamageFuncHealing(minFlatHealing, maxFlatHealing, spellCoefficient), spellCoefficient)
+}
+func BaseDamageConfigHealingNoRoll(flatHealing float64, spellCoefficient float64) BaseDamageConfig {
+	return BaseDamageConfigHealing(flatHealing, flatHealing, spellCoefficient)
 }
 
 func MultiplyByStacks(config BaseDamageConfig, aura *Aura) BaseDamageConfig {
@@ -99,19 +129,16 @@ func BaseDamageFuncMelee(minFlatDamage float64, maxFlatDamage float64, spellCoef
 
 	if minFlatDamage == 0 && maxFlatDamage == 0 {
 		return func(_ *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-			return ap * spellCoefficient
+			return spellCoefficient * spell.MeleeAttackPower()
 		}
 	} else if minFlatDamage == maxFlatDamage {
 		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-			return ap*spellCoefficient + minFlatDamage
+			return minFlatDamage + spellCoefficient*spell.MeleeAttackPower()
 		}
 	} else {
 		deltaDamage := maxFlatDamage - minFlatDamage
 		return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-			ap := hitEffect.MeleeAttackPower(spell.Unit) + hitEffect.MeleeAttackPowerOnTarget()
-			damage := ap * spellCoefficient
+			damage := spellCoefficient * spell.MeleeAttackPower()
 			damage += damageRollOptimized(sim, minFlatDamage, deltaDamage)
 			return damage
 		}
@@ -126,58 +153,52 @@ type Hand bool
 const MainHand Hand = true
 const OffHand Hand = false
 
-func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, baseMultiplier float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageCalculator {
+func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, includeBonusWeaponDamage bool) BaseDamageCalculator {
 	// Bonus weapon damage applies after OH penalty: https://www.youtube.com/watch?v=bwCIU87hqTs
-	// TODO not all weapon damage based attacks "scale" with +bonusWeaponDamage (e.g. Devastate, Shiv, Mutilate don't)
-	// ... but for other's, BonusAttackPowerOnTarget only applies to weapon damage based attacks
 	if normalized {
 		if hand == MainHand {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-				damage := spell.Unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(
-					sim, hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
-				damage = damage*baseMultiplier + flatBonus
+				damage := spell.Unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
-					damage += hitEffect.BonusWeaponDamage(spell.Unit)
+					damage += spell.BonusWeaponDamage()
 				}
-				return damage * weaponMultiplier
+				return damage
 			}
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-				damage := spell.Unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(
-					sim, hitEffect.MeleeAttackPower(spell.Unit)+2*hitEffect.MeleeAttackPowerOnTarget())
-				damage = damage*0.5*baseMultiplier + flatBonus
+				damage := spell.Unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				damage = damage*0.5 + flatBonus
 				if includeBonusWeaponDamage {
-					damage += hitEffect.BonusWeaponDamage(spell.Unit)
+					damage += spell.BonusWeaponDamage()
 				}
-				return damage * weaponMultiplier
+				return damage
 			}
 		}
 	} else {
 		if hand == MainHand {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-				damage := spell.Unit.AutoAttacks.MH.CalculateWeaponDamage(
-					sim, hitEffect.MeleeAttackPower(spell.Unit)+hitEffect.MeleeAttackPowerOnTarget())
-				damage = damage*baseMultiplier + flatBonus
+				damage := spell.Unit.AutoAttacks.MH.CalculateWeaponDamage(sim, spell.MeleeAttackPower())
+				damage = damage + flatBonus
 				if includeBonusWeaponDamage {
-					damage += hitEffect.BonusWeaponDamage(spell.Unit)
+					damage += spell.BonusWeaponDamage()
 				}
-				return damage * weaponMultiplier
+				return damage
 			}
 		} else {
 			return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-				damage := spell.Unit.AutoAttacks.OH.CalculateWeaponDamage(
-					sim, hitEffect.MeleeAttackPower(spell.Unit)+2*hitEffect.MeleeAttackPowerOnTarget())
-				damage = damage*0.5*baseMultiplier + flatBonus
+				damage := spell.Unit.AutoAttacks.OH.CalculateWeaponDamage(sim, spell.MeleeAttackPower())
+				damage = damage*0.5 + flatBonus
 				if includeBonusWeaponDamage {
-					damage += hitEffect.BonusWeaponDamage(spell.Unit)
+					damage += spell.BonusWeaponDamage()
 				}
-				return damage * weaponMultiplier
+				return damage
 			}
 		}
 	}
 }
-func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, baseMultiplier float64, weaponMultiplier float64, includeBonusWeaponDamage bool) BaseDamageConfig {
-	calculator := BaseDamageFuncMeleeWeapon(hand, normalized, flatBonus, baseMultiplier, weaponMultiplier, includeBonusWeaponDamage)
+func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, includeBonusWeaponDamage bool) BaseDamageConfig {
+	calculator := BaseDamageFuncMeleeWeapon(hand, normalized, flatBonus, includeBonusWeaponDamage)
 	if includeBonusWeaponDamage {
 		return BuildBaseDamageConfig(calculator, 1)
 	} else {
@@ -187,9 +208,9 @@ func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, 
 
 func BaseDamageFuncRangedWeapon(flatBonus float64) BaseDamageCalculator {
 	return func(sim *Simulation, hitEffect *SpellEffect, spell *Spell) float64 {
-		return spell.Unit.AutoAttacks.Ranged.CalculateWeaponDamage(sim, hitEffect.RangedAttackPower(spell.Unit)+hitEffect.RangedAttackPowerOnTarget()) +
+		return spell.Unit.AutoAttacks.Ranged.CalculateWeaponDamage(sim, spell.RangedAttackPower(hitEffect.Target)) +
 			flatBonus +
-			hitEffect.BonusWeaponDamage(spell.Unit)
+			spell.BonusWeaponDamage()
 	}
 }
 func BaseDamageConfigRangedWeapon(flatBonus float64) BaseDamageConfig {

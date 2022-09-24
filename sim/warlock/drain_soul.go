@@ -9,7 +9,6 @@ import (
 )
 
 func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) *core.Spell {
-
 	if dot.IsActive() && dot.TickCount+1 < maxTicks {
 		return warlock.DrainSoulChannelling
 	} else {
@@ -17,46 +16,10 @@ func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTic
 	}
 }
 
-func (warlock *Warlock) dynamicDrainSoulMultiplier() float64 {
-
-	// Execute Multiplier - is now basekit for performance optimization
-	// Additive with Death's Embrace so we need to remove its effect to add it again with the spell's own execution multiplier.
-	// if sim.IsExecutePhase25() {
-	// 	dynamicMultiplier *= (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace))/(1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
-	// }
-
-	// Soul Siphon Multiplier
-	soulSiphonMultiplier := 1.
-	if warlock.Talents.SoulSiphon > 0 {
-		afflictionSpellNumber := 1. // Counts Drain Soul/Drain Life itself
-		if warlock.CurseOfDoomDot.IsActive() || warlock.CurseOfAgonyDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.CorruptionDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.UnstableAfflictionDot.IsActive() || warlock.ImmolateDot.IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if warlock.HauntDebuffAura(warlock.CurrentTarget).IsActive() {
-			afflictionSpellNumber += 1.
-		}
-		if afflictionSpellNumber < 3 {
-			soulSiphonMultiplier = (1 + 0.03*float64(warlock.Talents.SoulSiphon)*afflictionSpellNumber) / (1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.)
-		}
-	}
-
-	return soulSiphonMultiplier
-}
-
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
-	baseAdditiveMultiplier := warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true)
-	// For performance optimization, the execute modifier is basekit since we never use it before execute
-	executeMultiplier := (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
-	maxDynamicMultiplier := 1 + 0.03*float64(warlock.Talents.SoulSiphon)*3.
-	drainSoulDamageMultiplier := baseAdditiveMultiplier * executeMultiplier * maxDynamicMultiplier
+	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
 	baseCost := warlock.BaseMana * 0.14
 	channelTime := 3 * time.Second
 	epsilon := 1 * time.Millisecond
@@ -64,6 +27,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
+		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -76,10 +40,13 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			},
 		},
 
+		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		// For performance optimization, the execute modifier is basekit since we never use it before execute
+		DamageMultiplier: (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-			OutcomeApplier:   warlock.OutcomeFuncMagicHitBinary(),
+			OutcomeApplier: warlock.OutcomeFuncMagicHitBinary(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return
@@ -93,12 +60,30 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	target := warlock.CurrentTarget
 
 	effect := core.SpellEffect{
-		DamageMultiplier: drainSoulDamageMultiplier * warlock.dynamicDrainSoulMultiplier(),
-		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		IsPeriodic:       true,
-		OutcomeApplier:   warlock.OutcomeFuncTick(),
-		ProcMask:         core.ProcMaskPeriodicDamage,
-		BaseDamage:       core.BaseDamageConfigMagicNoRoll(710/5, 3./7.),
+		IsPeriodic:     true,
+		OutcomeApplier: warlock.OutcomeFuncTick(),
+		BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagicNoRoll(142, 0.429),
+			func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
+				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					w := warlock
+					auras := []*core.Aura{
+						w.HauntDebuffAura(target),
+						w.UnstableAfflictionDot.Aura, w.CorruptionDot.Aura,
+						w.SeedDots[hitEffect.Target.Index].Aura, w.CurseOfAgonyDot.Aura,
+						w.CurseOfDoomDot.Aura, w.CurseOfElementsAura, w.CurseOfWeaknessAura,
+						w.CurseOfTonguesAura,
+						// missing: death coil
+					}
+					counter := 0
+					for _, aura := range auras {
+						if aura.IsActive() {
+							counter++
+						}
+					}
+					return oldCalc(sim, hitEffect, spell) *
+						(1.0 + float64(core.MinInt(3, counter))*soulSiphonMultiplier)
+				}
+			}),
 	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{
@@ -117,7 +102,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		ProcMask: core.ProcMaskEmpty,
 		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
@@ -125,11 +112,13 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				CastTime:    0,
 			},
 		},
+
+		ThreatMultiplier: 1,
+		// TODO: Is this really correct?
+		FlatThreatBonus: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskEmpty,
-			ThreatMultiplier: 1,
-			FlatThreatBonus:  1,
-			OutcomeApplier:   warlock.OutcomeFuncAlwaysHit(),
+			OutcomeApplier: warlock.OutcomeFuncAlwaysHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				warlock.DrainSoulDot.Apply(sim) // TODO: do we want to just refresh and continue ticking with same snapshot or update snapshot?
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)

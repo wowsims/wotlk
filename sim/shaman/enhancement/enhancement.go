@@ -1,6 +1,8 @@
 package enhancement
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -39,13 +41,13 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		totems = *enhOptions.Rotation.Totems
 	}
 
-	var rotation Rotation
-	rotation = NewPriorityRotation(enhOptions.Talents, enhOptions.Rotation)
-
 	enh := &EnhancementShaman{
-		Shaman:   shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
-		rotation: rotation,
+		Shaman: shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
 	}
+
+	var rotation Rotation
+	rotation = NewPriorityRotation(enh, enhOptions.Rotation)
+	enh.rotation = rotation
 
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{
@@ -78,7 +80,6 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank ||
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
-		enh.HasMHWeaponImbue = true
 	}
 
 	enh.SpiritWolves = &shaman.SpiritWolves{
@@ -115,4 +116,59 @@ func (enh *EnhancementShaman) Initialize() {
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
 	enh.scheduler.Reset(sim, enh.GetCharacter())
+}
+
+func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, reactionTime time.Duration) bool {
+	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousSwingAt
+	reactionTime = core.TernaryDuration(previousAttack < reactionTime, reactionTime-previousAttack, 0)
+
+	//calculate cast times for weaving
+	lbCastTime := enh.ApplyCastSpeed(enh.LightningBolt.DefaultCast.CastTime-(time.Millisecond*time.Duration(500*enh.MaelstromWeaponAura.GetStacks()))) + reactionTime
+	//calculate swing times for weaving
+	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+
+	if lbCastTime < timeUntilSwing {
+		if reactionTime > 0 {
+			reactionTime += sim.CurrentTime
+
+			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
+				enh.GCD.Reset()
+				enh.LightningBolt.Cast(sim, enh.CurrentTarget)
+			})
+
+			enh.WaitUntil(sim, reactionTime)
+			return true
+		}
+		return enh.LightningBolt.Cast(sim, enh.CurrentTarget)
+	}
+
+	return false
+}
+
+func (enh *EnhancementShaman) CastLavaBurstWeave(sim *core.Simulation, reactionTime time.Duration) bool {
+	previousAttack := sim.CurrentTime - enh.AutoAttacks.PreviousSwingAt
+	reactionTime = core.TernaryDuration(previousAttack < reactionTime, reactionTime-previousAttack, 0)
+
+	//calculate cast times for weaving
+	lvbCastTime := enh.ApplyCastSpeed(enh.LavaBurst.DefaultCast.CastTime) + reactionTime
+	//calculate swing times for weaving
+	timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+
+	if lvbCastTime < timeUntilSwing {
+		if reactionTime > 0 {
+			reactionTime += sim.CurrentTime
+
+			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
+				enh.GCD.Reset()
+				enh.LavaBurst.Cast(sim, enh.CurrentTarget)
+			})
+
+			enh.WaitUntil(sim, reactionTime)
+			return true
+		}
+
+		return enh.LavaBurst.Cast(sim, enh.CurrentTarget)
+	}
+
+	return false
 }

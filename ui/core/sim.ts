@@ -53,13 +53,13 @@ import { WorkerPool } from './worker_pool.js';
 import * as OtherConstants from './constants/other.js';
 
 export type RaidSimData = {
-    request: RaidSimRequest,
-    result: RaidSimResult,
+	request: RaidSimRequest,
+	result: RaidSimResult,
 };
 
 export type StatWeightsData = {
-    request: StatWeightsRequest,
-    result: StatWeightsResult,
+	request: StatWeightsRequest,
+	result: StatWeightsResult,
 };
 
 // Core Sim module which deals only with api types, no UI-related stuff.
@@ -73,7 +73,9 @@ export class Sim {
 	private show1hWeapons: boolean = true;
 	private show2hWeapons: boolean = true;
 	private showMatchingGems: boolean = true;
+	private showDamageMetrics: boolean = true;
 	private showThreatMetrics: boolean = false;
+	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
 
 	readonly raid: Raid;
@@ -94,7 +96,9 @@ export class Sim {
 	readonly show1hWeaponsChangeEmitter = new TypedEvent<void>();
 	readonly show2hWeaponsChangeEmitter = new TypedEvent<void>();
 	readonly showMatchingGemsChangeEmitter = new TypedEvent<void>();
+	readonly showDamageMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
+	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
@@ -135,7 +139,9 @@ export class Sim {
 			this.show1hWeaponsChangeEmitter,
 			this.show2hWeaponsChangeEmitter,
 			this.showMatchingGemsChangeEmitter,
+			this.showDamageMetricsChangeEmitter,
 			this.showThreatMetricsChangeEmitter,
+			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
 		]);
 
@@ -438,6 +444,16 @@ export class Sim {
 		}
 	}
 
+	getShowDamageMetrics(): boolean {
+		return this.showDamageMetrics;
+	}
+	setShowDamageMetrics(eventID: EventID, newShowDamageMetrics: boolean) {
+		if (newShowDamageMetrics != this.showDamageMetrics) {
+			this.showDamageMetrics = newShowDamageMetrics;
+			this.showDamageMetricsChangeEmitter.emit(eventID);
+		}
+	}
+
 	getShowThreatMetrics(): boolean {
 		return this.showThreatMetrics;
 	}
@@ -445,6 +461,16 @@ export class Sim {
 		if (newShowThreatMetrics != this.showThreatMetrics) {
 			this.showThreatMetrics = newShowThreatMetrics;
 			this.showThreatMetricsChangeEmitter.emit(eventID);
+		}
+	}
+
+	getShowHealingMetrics(): boolean {
+		return this.showHealingMetrics;
+	}
+	setShowHealingMetrics(eventID: EventID, newShowHealingMetrics: boolean) {
+		if (newShowHealingMetrics != this.showHealingMetrics) {
+			this.showHealingMetrics = newShowHealingMetrics;
+			this.showHealingMetricsChangeEmitter.emit(eventID);
 		}
 	}
 
@@ -472,7 +498,7 @@ export class Sim {
 		const item = this.items[itemSpec.id];
 		if (!item)
 			return null;
-		
+
 		const enchant = itemSpec.enchant > 0 ? this.enchants.find(e => (e.id == itemSpec.enchant && e.type == item.type)) : null;
 		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
 
@@ -506,7 +532,9 @@ export class Sim {
 			iterations: this.getIterations(),
 			phase: this.getPhase(),
 			fixedRngSeed: BigInt(this.getFixedRngSeed()),
+			showDamageMetrics: this.getShowDamageMetrics(),
 			showThreatMetrics: this.getShowThreatMetrics(),
+			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
 			faction: this.getFaction(),
 		});
@@ -517,27 +545,31 @@ export class Sim {
 			this.setIterations(eventID, proto.iterations || 3000);
 			this.setPhase(eventID, proto.phase || OtherConstants.CURRENT_PHASE);
 			this.setFixedRngSeed(eventID, Number(proto.fixedRngSeed));
+			this.setShowDamageMetrics(eventID, proto.showDamageMetrics);
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
+			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
 		});
 	}
 
-	applyDefaults(eventID: EventID, isTankSim: boolean) {
+	applyDefaults(eventID: EventID, isTankSim: boolean, isHealingSim: boolean) {
 		this.fromProto(eventID, SimSettingsProto.create({
 			iterations: 3000,
 			phase: OtherConstants.CURRENT_PHASE,
 			faction: Faction.Alliance,
+			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
+			showHealingMetrics: isHealingSim,
 		}));
 	}
 }
 
 export class SimError extends Error {
-    readonly errorStr: string;
+	readonly errorStr: string;
 
-    constructor(errorStr: string) {
-        super(errorStr);
-        this.errorStr = errorStr;
-    }
+	constructor(errorStr: string) {
+		super(errorStr);
+		this.errorStr = errorStr;
+	}
 }

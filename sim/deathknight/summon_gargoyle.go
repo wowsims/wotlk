@@ -131,6 +131,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51963},
 		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -142,18 +143,19 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			},
 		},
 
+		DamageMultiplier: 1,
+		CritMultiplier:   1.5,
+		ThreatMultiplier: 1,
+
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			ProcMask:         core.ProcMaskSpellDamage,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + hitEffect.MeleeAttackPower(spell.Unit)*attackPowerModifier
+					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + attackPowerModifier*spell.MeleeAttackPower()
 					return dmgRoll
 				},
 				TargetSpellCoefficient: 1,
 			},
-			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05, 1.5),
+			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05),
 		}),
 	})
 }
