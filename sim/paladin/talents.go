@@ -194,13 +194,13 @@ func (paladin *Paladin) applyReckoning() {
 		MaxStacks: 4,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			reckoningSpell = paladin.GetOrRegisterSpell(core.SpellConfig{
-				ActionID:     actionID,
-				SpellSchool:  core.SpellSchoolPhysical,
-				ProcMask:     core.ProcMaskMeleeMH,
-				Flags:        core.SpellFlagMeleeMetrics,
+				ActionID:         actionID,
+				SpellSchool:      core.SpellSchoolPhysical,
+				ProcMask:         core.ProcMaskMeleeMH,
+				Flags:            core.SpellFlagMeleeMetrics,
 				CritMultiplier:   paladin.MeleeCritMultiplier(),
-				DamageMultiplier:	1,
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
+				DamageMultiplier: 1,
+				ApplyEffects:     core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
 			})
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

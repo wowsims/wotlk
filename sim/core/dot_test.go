@@ -34,7 +34,7 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 		fa.Spell = fa.RegisterSpell(SpellConfig{
 			ActionID:    ActionID{SpellID: 42},
 			SpellSchool: SpellSchoolShadow,
-			ProcMask:       ProcMaskSpellDamage,
+			ProcMask:    ProcMaskSpellDamage,
 			Flags:       SpellFlagIgnoreResists,
 			Cast:        CastConfig{},
 

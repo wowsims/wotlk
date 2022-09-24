@@ -51,7 +51,7 @@ func NewProtectionPaladin(character core.Character, options proto.Player) *Prote
 	prot.SelectedRotation = prot.customRotation
 
 	prot.PaladinAura = protOptions.Options.Aura
-	
+
 	prot.HasGlyphAS = prot.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 
 	prot.EnableAutoAttacks(prot, core.AutoAttackOptions{
