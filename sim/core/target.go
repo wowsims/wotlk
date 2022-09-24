@@ -137,9 +137,8 @@ func NewTarget(options proto.Target, targetIndex int32) *Target {
 	}
 
 	if target.Level == defaultRaidBossLevel && options.SuppressDodge {
-		// Sunwell boss Dodge Suppression. -20% dodge and -5% miss chance.
+		// ICC boss Dodge Suppression. -20% dodge only.
 		target.PseudoStats.DodgeReduction += 0.2
-		target.PseudoStats.IncreasedMissChance -= 0.05
 	}
 
 	target.PseudoStats.CanBlock = true
@@ -253,7 +252,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 	}
 
 	if defender.Type == EnemyUnit {
-		// Assumes attacker (the Player) is level 70.
+		// Assumes attacker (the Player) is level 80.
 		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level, 0.04, 0.05, 0.06, 0.17)
 		table.BaseMissChance = UnitLevelFloat64(defender.Level, 0.05, 0.055, 0.06, 0.08)
 		table.BaseBlockChance = 0.05
@@ -264,7 +263,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.GlanceMultiplier = UnitLevelFloat64(defender.Level, 0.95, 0.95, 0.85, 0.75)
 		table.CritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
 	} else {
-		// Assumes defender (the Player) is level 70.
+		// Assumes defender (the Player) is level 80.
 		table.BaseSpellMissChance = 0.05
 		table.BaseMissChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
 		table.BaseBlockChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
