@@ -76,6 +76,7 @@ func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
 		},
 
 		DamageMultiplier: 1,
+		CritMultiplier:   1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigRoll(79000, 81000),
