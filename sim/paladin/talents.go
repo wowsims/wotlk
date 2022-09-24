@@ -198,6 +198,8 @@ func (paladin *Paladin) applyReckoning() {
 				SpellSchool:  core.SpellSchoolPhysical,
 				ProcMask:     core.ProcMaskMeleeMH,
 				Flags:        core.SpellFlagMeleeMetrics,
+				CritMultiplier:   paladin.MeleeCritMultiplier(),
+				DamageMultiplier:	1,
 				ApplyEffects: core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
 			})
 		},
