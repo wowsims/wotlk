@@ -23,27 +23,6 @@ var StandardTalents = &proto.PriestTalents{
 	VampiricTouch:          true,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	GiftOfTheWild:         2,
-	PowerWordFortitude:    2,
-	StrengthOfEarthTotem:  2,
-	ArcaneBrilliance:      true,
-	DivineSpirit:          true,
-	TrueshotAura:          true,
-	LeaderOfThePack:       2,
-	IcyTalons:             true,
-	TotemOfWrath:          true,
-	MoonkinAura:           2,
-	WrathOfAirTotem:       true,
-	SanctifiedRetribution: true,
-	Bloodlust:             true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-}
-
 var DefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
@@ -57,15 +36,6 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion:   proto.Potions_SuperManaPotion,
 	PrepopPotion:    proto.Potions_PotionOfWildMagic,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	SunderArmor:        true,
-	FaerieFire:         2,
-	BloodFrenzy:        true,
-	EbonPlaguebringer:  true,
-	HeartOfTheCrusader: true,
-	JudgementOfWisdom:  true,
 }
 
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{

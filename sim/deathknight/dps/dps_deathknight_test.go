@@ -14,22 +14,15 @@ func init() {
 
 func TestUnholy(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassDeathknight,
-
+		Class:      proto.Class_ClassDeathknight,
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "Unholy P1 ", GearSet: UnholyDwP1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "Unholy P1 ", GearSet: UnholyDwP1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
 
-		Glyphs: UnholyDefaultGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Glyphs:   UnholyDefaultGlyphs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -45,22 +38,15 @@ func TestUnholy(t *testing.T) {
 
 func TestFrost(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassDeathknight,
-
+		Class:      proto.Class_ClassDeathknight,
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
 
-		Glyphs: FrostDefaultGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Glyphs:   FrostDefaultGlyphs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,

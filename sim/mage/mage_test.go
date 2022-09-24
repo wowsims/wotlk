@@ -15,21 +15,15 @@ func init() {
 func TestArcane(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
+		Race:  proto.Race_RaceTroll,
 
-		Race: proto.Race_RaceTroll,
-
-		GearSet: core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
-
+		GearSet:     core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "ArcaneRotation", SpecOptions: PlayerOptionsArcane},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsArcaneAOE},
 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullArcanePartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullArcaneConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullArcaneConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -49,21 +43,15 @@ func TestArcane(t *testing.T) {
 func TestFire(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
+		Race:  proto.Race_RaceTroll,
 
-		Race: proto.Race_RaceTroll,
-
-		GearSet: core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
-
+		GearSet:     core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "FireRotation", SpecOptions: PlayerOptionsFire},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFireAOE},
 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullFirePartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullFireConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullFireConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -83,21 +71,15 @@ func TestFire(t *testing.T) {
 func TestFrost(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
+		Race:  proto.Race_RaceTroll,
 
-		Race: proto.Race_RaceTroll,
-
-		GearSet: core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
-
+		GearSet:     core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "FrostRotation", SpecOptions: PlayerOptionsFrost},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullFrostPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullFrostConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullFrostConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

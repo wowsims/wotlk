@@ -131,31 +131,11 @@ var warriorOptions = &proto.Warrior_Options{
 	Shout:           proto.WarriorShout_WarriorShoutBattle,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance: true,
-	GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
-	BattleShout:      proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:  proto.TristateEffect_TristateEffectImproved,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings:  true,
-	BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
-	BlessingOfMight:  proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion: proto.Potions_IndestructiblePotion,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	JudgementOfWisdom: true,
-	Misery:            true,
 }
 
 var FuryP1Gear = items.EquipmentSpecFromJsonString(`{"items": [

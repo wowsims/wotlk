@@ -352,39 +352,10 @@ var DeadlyDeadly = &proto.Rogue_Options{
 	OhImbue: proto.Rogue_Options_InstantPoison,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	AbominationsMight:     true,
-	Bloodlust:             true,
-	ElementalOath:         true,
-	GiftOfTheWild:         proto.TristateEffect_TristateEffectImproved,
-	IcyTalons:             true,
-	LeaderOfThePack:       proto.TristateEffect_TristateEffectImproved,
-	SanctifiedRetribution: true,
-	StrengthOfEarthTotem:  proto.TristateEffect_TristateEffectImproved,
-	SwiftRetribution:      true,
-}
-
-var FullPartyBuffs = &proto.PartyBuffs{}
-
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfEndlessRage,
 	DefaultPotion:   proto.Potions_PotionOfSpeed,
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:        true,
-	EarthAndMoon:       true,
-	FaerieFire:         proto.TristateEffect_TristateEffectImproved,
-	HeartOfTheCrusader: true,
-	Mangle:             true,
-	ShadowMastery:      true,
-	SunderArmor:        true,
 }
 
 var PreRaidGear = items.EquipmentSpecFromJsonString(`{"items": [

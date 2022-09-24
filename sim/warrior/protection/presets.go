@@ -65,34 +65,9 @@ var warriorOptions = &proto.ProtectionWarrior_Options{
 	StartingRage: 0,
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Thorns:               proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	BattleElixir:   proto.BattleElixir_ElixirOfMastery,
 	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	BloodFrenzy:   true,
-	FaerieFire:    proto.TristateEffect_TristateEffectImproved,
-	Misery:        true,
-	ShadowEmbrace: true,
-	ScorpidSting:  true,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [

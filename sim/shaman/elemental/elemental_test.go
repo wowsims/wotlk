@@ -14,13 +14,11 @@ func init() {
 
 func TestElemental(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassShaman,
-
+		Class:      proto.Class_ClassShaman,
 		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			core.SpecOptionsCombo{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
@@ -29,11 +27,7 @@ func TestElemental(t *testing.T) {
 			// 	core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 		},
 
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -70,11 +64,11 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsAdaptive,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

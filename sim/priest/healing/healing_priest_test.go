@@ -15,20 +15,13 @@ func init() {
 func TestDisc(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:    proto.Class_ClassPriest,
+		Race:     proto.Race_RaceUndead,
 		IsHealer: true,
 
-		Race: proto.Race_RaceUndead,
-
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
 		Glyphs:      DiscGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -48,20 +41,13 @@ func TestDisc(t *testing.T) {
 func TestHoly(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:    proto.Class_ClassPriest,
+		Race:     proto.Race_RaceUndead,
 		IsHealer: true,
 
-		Race: proto.Race_RaceUndead,
-
-		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
 		Glyphs:      HolyGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
 		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

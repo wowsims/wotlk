@@ -14,8 +14,7 @@ func init() {
 
 func TestHunter(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassHunter,
-
+		Class:      proto.Class_ClassHunter,
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
@@ -28,13 +27,8 @@ func TestHunter(t *testing.T) {
 			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsAOE},
 		},
 
-		Glyphs: DefaultGlyphs,
-
-		RaidBuffs:   FullRaidBuffs,
-		PartyBuffs:  FullPartyBuffs,
-		PlayerBuffs: FullIndividualBuffs,
-		Consumes:    FullConsumes,
-		Debuffs:     FullDebuffs,
+		Glyphs:   DefaultGlyphs,
+		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeMail,
@@ -66,11 +60,11 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsMM,
-				Buffs:     FullIndividualBuffs,
+				Buffs:     core.FullIndividualBuffs,
 			},
-			FullPartyBuffs,
-			FullRaidBuffs,
-			FullDebuffs),
+			core.FullPartyBuffs,
+			core.FullRaidBuffs,
+			core.FullDebuffs),
 		Encounter: &proto.Encounter{
 			Duration: 300,
 			Targets: []*proto.Target{

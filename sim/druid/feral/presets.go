@@ -62,41 +62,12 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	},
 }
 
-var FullRaidBuffs = &proto.RaidBuffs{
-	ArcaneBrilliance:     true,
-	GiftOfTheWild:        proto.TristateEffect_TristateEffectImproved,
-	Bloodlust:            true,
-	BattleShout:          proto.TristateEffect_TristateEffectImproved,
-	LeaderOfThePack:      proto.TristateEffect_TristateEffectImproved,
-	ManaSpringTotem:      proto.TristateEffect_TristateEffectRegular,
-	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
-	WindfuryTotem:        proto.TristateEffect_TristateEffectImproved,
-	UnleashedRage:        true,
-}
-var FullPartyBuffs = &proto.PartyBuffs{
-	BraidedEterniumChain: true,
-}
-var FullIndividualBuffs = &proto.IndividualBuffs{
-	BlessingOfKings: true,
-	BlessingOfMight: proto.TristateEffect_TristateEffectImproved,
-}
-
 var FullConsumes = &proto.Consumes{
 	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
 	GuardianElixir:  proto.GuardianElixir_ElixirOfMajorMageblood,
 	Food:            proto.Food_FoodGrilledMudfish,
 	DefaultPotion:   proto.Potions_HastePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
-}
-
-var FullDebuffs = &proto.Debuffs{
-	JudgementOfWisdom: true,
-	BloodFrenzy:       true,
-	GiftOfArthas:      true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
-	SunderArmor:       true,
-	Mangle:            true,
-	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
 }
 
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
