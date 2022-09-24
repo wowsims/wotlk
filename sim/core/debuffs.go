@@ -845,7 +845,7 @@ func ScreechAura(target *Unit) *Aura {
 const AtkSpeedReductionAuraTag = "AtkSpdReduction"
 
 func ThunderClapAura(target *Unit, points int32) *Aura {
-	speedMultiplier := []float64{0.9, 0.86, 0.83, 0.8}[points]
+	speedMultiplier := []float64{1.1, 1.14, 1.17, 1.2}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -853,18 +853,18 @@ func ThunderClapAura(target *Unit, points int32) *Aura {
 		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 47502},
 		Duration: time.Second * 30,
-		Priority: inverseMult,
+		Priority: speedMultiplier,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
 		},
 	})
 }
 
 func InfectedWoundsAura(target *Unit, points int32) *Aura {
-	speedMultiplier := []float64{1.0, 0.94, 0.86, 0.80}[points]
+	speedMultiplier := []float64{1.0, 1.06, 1.14, 1.20}[points]
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -872,12 +872,12 @@ func InfectedWoundsAura(target *Unit, points int32) *Aura {
 		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 48485},
 		Duration: time.Second * 12,
-		Priority: inverseMult,
+		Priority: speedMultiplier,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
 		},
 	})
 }
@@ -885,7 +885,7 @@ func InfectedWoundsAura(target *Unit, points int32) *Aura {
 // Note: Paladin code might apply this as part of their judgement auras instead
 // of using another separate aura.
 func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
-	speedMultiplier := 1.0 - 0.1*float64(points)
+	speedMultiplier := 1.0 + 0.1*float64(points)
 	inverseMult := 1 / speedMultiplier
 
 	return target.GetOrRegisterAura(Aura{
@@ -893,18 +893,18 @@ func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
 		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 53696},
 		Duration: time.Second * 30,
-		Priority: inverseMult,
+		Priority: speedMultiplier,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
 		},
 	})
 }
 
 func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
-	speedMultiplier := 0.86 - 0.02*float64(impIcyTouch)
+	speedMultiplier := 1.14 + 0.02*float64(impIcyTouch)
 
 	inverseMult := 1 / speedMultiplier
 	return target.GetOrRegisterAura(Aura{
@@ -912,12 +912,12 @@ func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
 		Tag:      AtkSpeedReductionAuraTag,
 		ActionID: ActionID{SpellID: 55095},
 		Duration: time.Second * 15,
-		Priority: inverseMult,
+		Priority: speedMultiplier,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
+			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.MultiplyAttackSpeed(sim, inverseMult)
+			aura.Unit.MultiplyAttackSpeed(sim, speedMultiplier)
 		},
 	})
 }
