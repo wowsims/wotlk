@@ -19,7 +19,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.RunicPower,
 		BaseCost:     baseCost,
 
@@ -45,7 +45,6 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 					return weaponBaseDamage(sim, hitEffect, spell) *
 						dk.RoRTSBonus(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 
 			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),

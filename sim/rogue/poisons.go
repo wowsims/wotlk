@@ -107,7 +107,6 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 			return 74 + 0.03*spell.MeleeAttackPower()
 		},
-		TargetSpellCoefficient: 1,
 	}
 	numTargets := rogue.Env.GetNumTargets()
 	for i := int32(0); i < numTargets; i++ {
@@ -228,7 +227,6 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 300 + 0.1*spell.MeleeAttackPower()
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(),
 		}),
@@ -252,7 +250,6 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 231 + 0.04*spell.MeleeAttackPower()
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: rogue.OutcomeFuncMagicHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

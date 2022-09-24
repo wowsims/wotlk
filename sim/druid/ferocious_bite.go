@@ -26,7 +26,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
 
@@ -70,7 +70,6 @@ func (druid *Druid) registerFerociousBiteSpell() {
 					roll := sim.RandomFloat("Ferocious Bite") * 140.0
 					return base + roll + attackPower*0.07*comboPoints
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 

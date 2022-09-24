@@ -153,7 +153,6 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + attackPowerModifier*spell.MeleeAttackPower()
 					return dmgRoll
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05),
 		}),

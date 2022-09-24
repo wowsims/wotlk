@@ -74,7 +74,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
 				return 553 + 0.02*spell.RangedAttackPower(spellEffect.Target)
-			}, 0),
+			}),
 			OutcomeApplier: hunter.OutcomeFuncTick(),
 		}),
 	})

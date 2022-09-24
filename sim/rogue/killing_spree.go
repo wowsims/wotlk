@@ -25,7 +25,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		ActionID:    core.ActionID{SpellID: 51690, Tag: 1},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
@@ -36,7 +36,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		ActionID:    core.ActionID{SpellID: 51690, Tag: 2},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		DamageMultiplier: 1 *
 			(1 + 0.02*float64(rogue.Talents.FindWeakness)) *
 			(1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),

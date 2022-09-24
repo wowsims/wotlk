@@ -19,7 +19,7 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 		ActionID:    core.ActionID{SpellID: 12809},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -45,7 +45,6 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 0.38 * spell.MeleeAttackPower()
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 

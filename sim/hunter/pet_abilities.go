@@ -155,7 +155,7 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 			ActionID:    core.ActionID{SpellID: spellID},
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -205,7 +205,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 	var applyEffects core.ApplySpellEffects
 	var procMask core.ProcMask
 	if config.School == core.SpellSchoolPhysical {
-		flags = core.SpellFlagMeleeMetrics
+		flags = core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage
 		procMask = core.ProcMaskSpellDamage
 		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
@@ -654,7 +654,7 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagApplyArmorReduction,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagApplyArmorReduction,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

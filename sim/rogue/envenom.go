@@ -56,7 +56,6 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 					// doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
 					return baseDamage*float64(deadlyPoisonStacks) + apRatio*float64(comboPoints)*spell.MeleeAttackPower()
 				},
-				TargetSpellCoefficient: 0,
 			},
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

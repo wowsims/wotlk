@@ -18,7 +18,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		ActionID:     core.ActionID{SpellID: 48668, Tag: comboPoints},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -48,7 +48,6 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 						apRatio*spell.MeleeAttackPower() +
 						spell.BonusWeaponDamage()
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

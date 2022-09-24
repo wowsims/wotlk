@@ -47,7 +47,6 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 						return 520.0 + core.TernaryFloat64(bv > 2760.0, 2760.0, bv)
 					}
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),

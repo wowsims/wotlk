@@ -24,7 +24,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 				ActionID:    core.ActionID{SpellID: 13964},
 				SpellSchool: core.SpellSchoolPhysical,
 				ProcMask:    core.ProcMaskMeleeMHAuto,
-				Flags:       core.SpellFlagMeleeMetrics,
+				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 				DamageMultiplier: rogue.AutoAttacks.MHConfig.DamageMultiplier,
 				ThreatMultiplier: rogue.AutoAttacks.MHConfig.ThreatMultiplier,

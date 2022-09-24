@@ -54,7 +54,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 						dk.RoRTSBonus(hitEffect.Target) *
 						dk.mercilessCombatBonus(sim)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
 
@@ -99,7 +98,6 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
 					return roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(),
 

@@ -60,7 +60,6 @@ func (druid *Druid) registerLacerateSpell() {
 						return damage
 					}
 				},
-				TargetSpellCoefficient: 0,
 			},
 			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
 
@@ -105,8 +104,7 @@ func (druid *Druid) registerLacerateSpell() {
 		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
 			IsPeriodic: true,
 			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
-				Calculator:             core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),
-				TargetSpellCoefficient: 0,
+				Calculator: core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),
 			}, dotAura),
 			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
 		}),

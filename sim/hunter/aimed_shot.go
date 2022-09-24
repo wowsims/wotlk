@@ -18,7 +18,7 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 		ActionID:     core.ActionID{SpellID: 49050},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -55,7 +55,6 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 						spell.BonusWeaponDamage() +
 						408
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
 		}),

@@ -87,7 +87,6 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 					}
 					return dk.dndApSnapshot * dk.RoRTSBonus(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: dk.OutcomeDeathAndDecaySpecial(),
 		})),

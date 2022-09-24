@@ -115,7 +115,6 @@ func (dk *Deathknight) registerFrostFever() {
 						return (29.44 + 0.06325*dk.getImpurityBonus(spell)) *
 							core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
-					TargetSpellCoefficient: 1,
 				},
 				OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
 			}),
@@ -190,7 +189,6 @@ func (dk *Deathknight) registerBloodPlague() {
 						return (36.248 + 0.06325*dk.getImpurityBonus(spell)) *
 							core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
 					},
-					TargetSpellCoefficient: 1,
 				},
 				OutcomeApplier: outcomeApplier,
 			}),
@@ -240,7 +238,6 @@ func (dk *Deathknight) registerDrwFrostFever() {
 						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
 						return 29.44 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
 					},
-					TargetSpellCoefficient: 1,
 				},
 				OutcomeApplier: dk.RuneWeapon.OutcomeFuncAlwaysHit(),
 			}),
@@ -295,7 +292,6 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
 						return 36.248 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
 					},
-					TargetSpellCoefficient: 1,
 				},
 				OutcomeApplier: outcomeApplier,
 			}),

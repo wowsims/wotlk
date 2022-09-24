@@ -24,7 +24,7 @@ func (druid *Druid) registerMangleBearSpell() {
 		ActionID:     core.ActionID{SpellID: 48564},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
 
@@ -79,7 +79,7 @@ func (druid *Druid) registerMangleCatSpell() {
 		ActionID:     core.ActionID{SpellID: 48566},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 

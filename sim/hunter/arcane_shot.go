@@ -56,7 +56,6 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 492 + 0.15*spell.RangedAttackPower(hitEffect.Target)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(),
 			OnSpellHitDealt: onSpellHit,

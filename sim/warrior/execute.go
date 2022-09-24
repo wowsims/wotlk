@@ -29,7 +29,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		ActionID:    core.ActionID{SpellID: 47471},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -55,7 +55,6 @@ func (warrior *Warrior) registerExecuteSpell() {
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					return 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)
 				},
-				TargetSpellCoefficient: 1,
 			},
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 
