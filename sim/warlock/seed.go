@@ -26,18 +26,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	actionID := core.ActionID{SpellID: 47836, Tag: 1}
 	spellSchool := core.SpellSchoolShadow
 
-	baseSeedExplosionEffect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(1633, 1897, 0.2129),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-	}
-
-	// Use a custom aoe effect list that does not include the seeded target.
-	baseEffects := make([]core.SpellEffect, warlock.Env.GetNumTargets())
-	for i := range baseEffects {
-		baseEffects[i] = baseSeedExplosionEffect
-		baseEffects[i].Target = warlock.Env.GetTargetUnit(int32(i))
-	}
-
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: spellSchool,
@@ -50,7 +38,19 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		CritMultiplier:           warlock.DefaultSpellCritMultiplier(),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
-		ApplyEffects: core.ApplyEffectFuncMultipleDamageCapped(baseEffects, false),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dmgFromSP := 0.2129 * spell.SpellPower()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				// Seeded target is not affected by explosion.
+				if &aoeTarget.Unit == target {
+					continue
+				}
+
+				baseDamage := sim.Roll(1633, 1897) + dmgFromSP
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		},
 	})
 
 	effect := core.SpellEffect{

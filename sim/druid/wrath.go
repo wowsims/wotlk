@@ -12,36 +12,12 @@ const IdolAvenger int32 = 31025
 const IdolSteadfastRenewal int32 = 40712
 
 func (druid *Druid) registerWrathSpell() {
-	baseCost := 0.11 * druid.BaseMana
-
 	actionID := core.ActionID{SpellID: 48461}
+	baseCost := 0.11 * druid.BaseMana
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
-	spellCoefficient := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
-
-	effect := core.SpellEffect{
-		OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
-				if druid.SetBonuses.balance_t10_4 {
-					if druid.LasherweaveDot.IsActive() {
-						druid.LasherweaveDot.Refresh(sim)
-					} else {
-						druid.LasherweaveDot.Apply(sim)
-					}
-				}
-			}
-			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
-				druid.SwiftStarfireAura.Activate(sim)
-			}
-		},
-	}
-
-	// Idols
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0)
-	bonusFlatDamage += core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
-	effect.BaseDamage = core.BaseDamageConfigMagic(557.0+bonusFlatDamage, 627.0+bonusFlatDamage, spellCoefficient)
+	spellCoeff := 0.571 * (1 + 0.02*float64(druid.Talents.WrathOfCenarius))
+	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
+		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -71,6 +47,25 @@ func (druid *Druid) registerWrathSpell() {
 		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := bonusFlatDamage + sim.Roll(557, 627) + spellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.DidCrit() {
+				if druid.Talents.MoonkinForm {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
+				}
+				if druid.SetBonuses.balance_t10_4 {
+					if druid.LasherweaveDot.IsActive() {
+						druid.LasherweaveDot.Refresh(sim)
+					} else {
+						druid.LasherweaveDot.Apply(sim)
+					}
+				}
+			}
+			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
+				druid.SwiftStarfireAura.Activate(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

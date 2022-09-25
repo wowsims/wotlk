@@ -10,14 +10,17 @@ type ProcDamageEffect struct {
 	ID      int32
 	Trigger ProcTrigger
 
-	School     core.SpellSchool
-	BaseDamage core.BaseDamageConfig
+	School core.SpellSchool
+	MinDmg float64
+	MaxDmg float64
 }
 
 func newProcDamageEffect(config ProcDamageEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
+		minDmg := config.MinDmg
+		maxDmg := config.MaxDmg
 		damageSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{ItemID: config.ID},
 			SpellSchool: config.School,
@@ -27,10 +30,9 @@ func newProcDamageEffect(config ProcDamageEffect) {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     config.BaseDamage,
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(minDmg, maxDmg))
+			},
 		})
 
 		triggerConfig := config.Trigger
@@ -54,8 +56,9 @@ func init() {
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,
 		},
-		School:     core.SpellSchoolFire,
-		BaseDamage: core.BaseDamageConfigRoll(1024, 1536),
+		School: core.SpellSchoolFire,
+		MinDmg: 1024,
+		MaxDmg: 1536,
 	})
 
 	newProcDamageEffect(ProcDamageEffect{
@@ -68,8 +71,9 @@ func init() {
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,
 		},
-		School:     core.SpellSchoolShadow,
-		BaseDamage: core.BaseDamageConfigRoll(1168, 1752),
+		School: core.SpellSchoolShadow,
+		MinDmg: 1168,
+		MaxDmg: 1752,
 	})
 
 	newProcDamageEffect(ProcDamageEffect{
@@ -82,8 +86,9 @@ func init() {
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,
 		},
-		School:     core.SpellSchoolHoly,
-		BaseDamage: core.BaseDamageConfigRoll(1024, 1536),
+		School: core.SpellSchoolHoly,
+		MinDmg: 1024,
+		MaxDmg: 1536,
 	})
 
 	core.AddEffectsToTest = true
@@ -98,8 +103,9 @@ func init() {
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,
 		},
-		School:     core.SpellSchoolArcane,
-		BaseDamage: core.BaseDamageConfigRoll(1504, 2256),
+		School: core.SpellSchoolArcane,
+		MinDmg: 1504,
+		MaxDmg: 2256,
 	})
 
 	newProcDamageEffect(ProcDamageEffect{
@@ -111,8 +117,9 @@ func init() {
 			ProcChance: 0.10,
 			ICD:        time.Second * 15,
 		},
-		School:     core.SpellSchoolShadow,
-		BaseDamage: core.BaseDamageConfigRoll(788, 1312),
+		School: core.SpellSchoolShadow,
+		MinDmg: 788,
+		MaxDmg: 1312,
 	})
 
 	newProcDamageEffect(ProcDamageEffect{
@@ -124,7 +131,8 @@ func init() {
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,
 		},
-		School:     core.SpellSchoolShadow,
-		BaseDamage: core.BaseDamageConfigRoll(1750, 2250),
+		School: core.SpellSchoolShadow,
+		MinDmg: 1750,
+		MaxDmg: 2250,
 	})
 }

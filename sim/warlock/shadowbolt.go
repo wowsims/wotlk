@@ -12,26 +12,8 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	baseCost := 0.17 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47809}
 	spellSchool := core.SpellSchoolShadow
+	spellCoeff := 0.857 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
-
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(694.0, 775.0, 0.857*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-			// ISB debuff
-			if warlock.Talents.ImprovedShadowBolt > 0 {
-				if warlock.Talents.ImprovedShadowBolt < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
-					if sim.RandomFloat("ISB") > ISBProcChance {
-						return
-					}
-				}
-				core.ShadowMasteryAura(warlock.CurrentTarget).Activate(sim) // calls refresh if already active.
-			}
-		},
-	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -65,6 +47,19 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(694, 775) + spellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					// ISB debuff
+					if ISBProcChance > 0 && (ISBProcChance == 1 || sim.RandomFloat("ISB") <= ISBProcChance) {
+						// TODO precalculate aura
+						core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
+					}
+				}
+				spell.DealDamage(sim, &result)
+			})
+		},
 	})
 }

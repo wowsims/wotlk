@@ -12,6 +12,7 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	baseCost := 0.2 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47827}
 	spellSchool := core.SpellSchoolShadow
+	spellCoeff := 0.429 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowburn) {
 		warlock.RegisterResetEffect(func(sim *core.Simulation) {
@@ -21,11 +22,6 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 				}
 			})
 		})
-	}
-
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(775.0, 865.0, 0.429*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
 	}
 
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{
@@ -53,6 +49,9 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(775, 865) + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

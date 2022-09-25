@@ -109,31 +109,34 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 }
 
 func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
-	effect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-	}
-
+	var baseDamage float64
+	var spellCoeff float64
 	if isMH {
 		if weapon := shaman.GetMHWeapon(); weapon != nil {
-			baseDamage := weapon.SwingSpeed * 68.5
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+			baseDamage = weapon.SwingSpeed * 68.5
+			spellCoeff = 0.1 * weapon.SwingSpeed / 2.6
 		}
 	} else {
 		if weapon := shaman.GetOHWeapon(); weapon != nil {
-			baseDamage := weapon.SwingSpeed * 68.5
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+			baseDamage = weapon.SwingSpeed * 68.5
+			spellCoeff = 0.1 * weapon.SwingSpeed / 2.6
 		}
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 58790},
-		SpellSchool:      core.SpellSchoolFire,
-		ProcMask:         core.ProcMaskEmpty,
+		ActionID:    core.ActionID{SpellID: 58790},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
-		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 
@@ -191,31 +194,34 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 }
 
 func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
-	effect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-	}
-
+	var baseDamage float64
+	var spellCoeff float64
 	if isMH {
 		if weapon := shaman.GetMHWeapon(); weapon != nil {
-			baseDamage := weapon.SwingSpeed * 64
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+			baseDamage = weapon.SwingSpeed * 64
+			spellCoeff = 0.1 * weapon.SwingSpeed / 2.6
 		}
 	} else {
 		if weapon := shaman.GetOHWeapon(); weapon != nil {
-			baseDamage := weapon.SwingSpeed * 64
-			effect.BaseDamage = core.BaseDamageConfigMagic(baseDamage, baseDamage, (0.1 / 2.6 * weapon.SwingSpeed))
+			baseDamage = weapon.SwingSpeed * 64
+			spellCoeff = 0.1 * weapon.SwingSpeed / 2.6
 		}
 	}
 
 	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 58789},
-		SpellSchool:      core.SpellSchoolFire,
-		ProcMask:         core.ProcMaskEmpty,
+		ActionID:    core.ActionID{SpellID: 58789},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * 1 * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
-		ApplyEffects:     core.ApplyEffectFuncDirectDamage(effect),
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 
@@ -291,7 +297,6 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 }
 
 func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
-
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},
 		SpellSchool: core.SpellSchoolFrost,
@@ -302,10 +307,10 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(530, 530, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 530 + 0.1*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 

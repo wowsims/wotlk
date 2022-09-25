@@ -214,11 +214,11 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 		})
 	} else {
 		procMask = core.ProcMaskMeleeMHSpecial
-		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:  hp.OutcomeFuncMagicHitAndCrit(),
-			OnSpellHitDealt: config.OnSpellHitDealt,
-		})
+		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(config.MinDmg, config.MaxDmg) + config.APRatio*spell.MeleeAttackPower()
+			baseDamage *= 1 + 0.2*float64(hp.KillCommandAura.GetStacks())
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		}
 	}
 
 	return PetAbility{

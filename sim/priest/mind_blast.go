@@ -11,48 +11,12 @@ import (
 func (priest *Priest) registerMindBlastSpell() {
 	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
-	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				priest.AddShadowWeavingStack(sim)
-			}
-			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
-				priest.ShadowyInsightAura.Activate(sim)
-			}
-			if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil {
-				priest.ImprovedSpiritTap.Activate(sim)
-			}
-		},
-	}
+	normalSpellCoeff := 0.429
+	miserySpellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
 
-	normalCalc := core.BaseDamageFuncMagic(997, 1053, 0.429)
-	miseryCalc := core.BaseDamageFuncMagic(997, 1053, (1+float64(priest.Talents.Misery)*0.05)*0.429)
-
-	normMod := (1 + float64(priest.Talents.Darkness)*0.02) * // initialize modifier
+	normMod := (1 + 0.02*float64(priest.Talents.Darkness)) *
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
-
-	swpMod := (1 + float64(priest.Talents.Darkness)*0.02) * (1 + float64(priest.Talents.TwistedFaith)*0.02) *
-		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
-
-	effect.BaseDamage = core.BaseDamageConfig{
-		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-			var dmg float64
-			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-
-			if priest.MiseryAura.IsActive() { // priest.MiseryAura != nil
-				dmg = miseryCalc(sim, effect, spell)
-			} else {
-				dmg = normalCalc(sim, effect, spell)
-			}
-			if priest.ShadowWordPainDot.IsActive() {
-				dmg *= swpMod // multiply the damage
-			} else {
-				dmg *= normMod // multiply the damage
-			}
-			return dmg * shadowWeavingMod
-		},
-	}
+	swpMod := normMod * (1 + 0.02*float64(priest.Talents.TwistedFaith))
 
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48127},
@@ -79,6 +43,32 @@ func (priest *Priest) registerMindBlastSpell() {
 		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(997, 1053)
+			if priest.MiseryAura.IsActive() {
+				baseDamage += miserySpellCoeff * spell.SpellPower()
+			} else {
+				baseDamage += normalSpellCoeff * spell.SpellPower()
+			}
+
+			baseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
+			if priest.ShadowWordPainDot.IsActive() {
+				baseDamage *= swpMod
+			} else {
+				baseDamage *= normMod
+			}
+
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				priest.AddShadowWeavingStack(sim)
+			}
+			if result.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+				priest.ShadowyInsightAura.Activate(sim)
+			}
+			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

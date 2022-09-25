@@ -9,7 +9,7 @@ import (
 var DeathCoilActionID = core.ActionID{SpellID: 49895}
 
 func (dk *Deathknight) registerDeathCoilSpell() {
-	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
+	bonusFlatDamage := 443 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 	baseCost := float64(core.NewRuneCost(40, 0, 0, 0, 0))
 	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     DeathCoilActionID,
@@ -40,28 +40,21 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1.0,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (baseDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: dk.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.LastOutcome = spellEffect.Outcome
-				if spellEffect.Landed() && dk.Talents.UnholyBlight {
-					dk.procUnholyBlight(sim, spellEffect.Target, spellEffect.Damage)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := (bonusFlatDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(target)
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() && dk.Talents.UnholyBlight {
+				dk.procUnholyBlight(sim, target, result.Damage)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.DeathCoil.IsReady(sim)
 	}, nil)
 }
 
 func (dk *Deathknight) registerDrwDeathCoilSpell() {
-	baseDamage := 443.0 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
+	bonusFlatDamage := 443 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 
 	dk.RuneWeapon.DeathCoil = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathCoilActionID,
@@ -75,13 +68,9 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1.0,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return baseDamage + 0.15*dk.RuneWeapon.getImpurityBonus(spell)
-				},
-			},
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := bonusFlatDamage + 0.15*dk.RuneWeapon.getImpurityBonus(spell)
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

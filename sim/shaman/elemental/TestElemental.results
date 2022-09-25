@@ -663,8 +663,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-Adaptive-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6472.36203
-  tps: 5967.45126
+  dps: 6456.24631
+  tps: 5954.10493
  }
 }
 dps_results: {
@@ -684,8 +684,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-Adaptive-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2071.22886
-  tps: 1685.42522
+  dps: 2053.85763
+  tps: 1671.37279
  }
 }
 dps_results: {
@@ -705,8 +705,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8242.84966
-  tps: 5870.29184
+  dps: 8189.85584
+  tps: 5817.61801
  }
 }
 dps_results: {
@@ -726,8 +726,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3801.23861
-  tps: 1645.89796
+  dps: 3795.27123
+  tps: 1647.09463
  }
 }
 dps_results: {
@@ -747,8 +747,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-Adaptive-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6385.5689
-  tps: 5899.68633
+  dps: 6445.97422
+  tps: 5942.69673
  }
 }
 dps_results: {
@@ -768,8 +768,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-Adaptive-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2057.0414
-  tps: 1674.31027
+  dps: 2056.41866
+  tps: 1673.74175
  }
 }
 dps_results: {
@@ -789,8 +789,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8045.5215
-  tps: 5780.85195
+  dps: 8144.05247
+  tps: 5870.95122
  }
 }
 dps_results: {
@@ -810,8 +810,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3669.67812
-  tps: 1609.92765
+  dps: 3674.47072
+  tps: 1612.63855
  }
 }
 dps_results: {

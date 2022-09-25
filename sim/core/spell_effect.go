@@ -46,7 +46,6 @@ type SpellEffect struct {
 	// Results
 	Outcome HitOutcome
 	Damage  float64 // Damage done by this cast.
-	Threat  float64
 
 	PreoutcomeDamage float64 // Damage done by this cast before Outcome is applied.
 }
@@ -177,6 +176,54 @@ func (spell *Spell) healingCritRating() float64 {
 	return spell.Unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
 }
 
+func (spell *Spell) CalcDamagePreOutcome(sim *Simulation, target *Unit, attackTable *AttackTable, baseDamage float64) SpellEffect {
+	result := SpellEffect{
+		Target: target,
+		Damage: baseDamage,
+	}
+
+	result.Damage *= spell.CasterDamageMultiplier()
+	result.Damage *= spell.ResistanceMultiplier(sim, false, attackTable)
+	result.Damage = spell.applyTargetModifiers(result.Damage, sim, attackTable, false)
+	result.PreoutcomeDamage = result.Damage
+
+	return result
+}
+
+func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *SpellEffect) {
+	for i := range result.Target.DynamicDamageTakenModifiers {
+		result.Target.DynamicDamageTakenModifiers[i](sim, spell, result)
+	}
+	result.Damage = MaxFloat(0, result.Damage)
+}
+
+func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
+	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
+	StartDelayedAction(sim, DelayedActionOptions{
+		DoAt:     sim.CurrentTime + travelTime,
+		OnAction: callback,
+	})
+}
+
+// Applies the fully computed spell result to the sim.
+func (spell *Spell) DealDamage(sim *Simulation, result *SpellEffect) {
+	spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
+	spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.calcThreat(spell)
+
+	// Mark total damage done in raid so far for health based fights.
+	// Don't include damage done by EnemyUnits to Players
+	if result.Target.Type == EnemyUnit {
+		sim.Encounter.DamageTaken += result.Damage
+	}
+
+	if sim.Log != nil {
+		spell.Unit.Log(sim, "%s %s %s. (Threat: %0.3f)", result.Target.LogLabel(), spell.ActionID, result, result.calcThreat(spell))
+	}
+
+	spell.Unit.OnSpellHitDealt(sim, spell, result)
+	result.Target.OnSpellHitTaken(sim, spell, result)
+}
+
 func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spell) float64 {
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
@@ -243,10 +290,7 @@ func (spellEffect *SpellEffect) finalize(sim *Simulation, spell *Spell) {
 
 // Applies the fully computed results from this SpellEffect to the sim.
 func (spellEffect *SpellEffect) finalizeInternal(sim *Simulation, spell *Spell) {
-	for i := range spellEffect.Target.DynamicDamageTakenModifiers {
-		spellEffect.Target.DynamicDamageTakenModifiers[i](sim, spell, spellEffect)
-	}
-	spellEffect.Damage = MaxFloat(0, spellEffect.Damage)
+	spell.ApplyPostOutcomeDamageModifiers(sim, spellEffect)
 
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalDamage += spellEffect.Damage
 	spell.SpellMetrics[spellEffect.Target.UnitIndex].TotalThreat += spellEffect.calcThreat(spell)

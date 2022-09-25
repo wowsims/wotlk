@@ -79,10 +79,10 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(203, 227, 0.571),
-			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(203, 227) + 0.571*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 
@@ -155,11 +155,11 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 		CritMultiplier:   1.5,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
-			BaseDamage:     core.BaseDamageConfigMagic(237, 237, 0.429),
-			OutcomeApplier: wp.OutcomeFuncMagicHitAndCrit(),
-		}),
+			baseDamage := 237 + 0.429*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 

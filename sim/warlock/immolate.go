@@ -10,15 +10,8 @@ import (
 
 func (warlock *Warlock) registerImmolateSpell() {
 	baseCost := 0.17 * warlock.BaseMana
-	spellCoefficient := 0.2
 	actionID := core.ActionID{SpellID: 47811}
 	spellSchool := core.SpellSchoolFire
-
-	effect := core.SpellEffect{
-		BaseDamage:      core.BaseDamageConfigMagic(460.0, 460.0, spellCoefficient),
-		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(),
-		OnSpellHitDealt: applyDotOnLanded(&warlock.ImmolateDot),
-	}
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -46,7 +39,14 @@ func (warlock *Warlock) registerImmolateSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 460 + 0.2*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				warlock.ImmolateDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	target := warlock.CurrentTarget
@@ -79,7 +79,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, spellCoefficient),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
 			OutcomeApplier: warlock.OutcomeFuncMagicCrit(),
 		}),
 	})

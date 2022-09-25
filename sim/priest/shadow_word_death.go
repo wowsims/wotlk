@@ -47,29 +47,21 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.AddShadowWeavingStack(sim)
-				}
-				if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
-					priest.ShadowyInsightAura.Activate(sim)
-				}
-				if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil {
-					priest.ImprovedSpiritTap.Activate(sim)
-				}
-			},
-			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfigMagic(750, 870, 0.429),
-				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-						dmg := oldCalculator(sim, spellEffect, spell)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(750, 870) + 0.429*spell.SpellPower()
+			baseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 
-						return dmg * swMod
-					}
-				}),
-			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
-		}),
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				priest.AddShadowWeavingStack(sim)
+			}
+			if result.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+				priest.ShadowyInsightAura.Activate(sim)
+			}
+			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
+				priest.ImprovedSpiritTap.Activate(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

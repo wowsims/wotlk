@@ -146,10 +146,11 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(163*3, 0.9), //3x damage for 3 mirror images
-			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			//3x damage for 3 mirror images
+			baseDamage := 163*3 + 0.9*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 
@@ -178,9 +179,10 @@ func (mi *MirrorImage) registerFireblastSpell() {
 		CritMultiplier:   mi.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(88*3, 0.45), //3x damage for 3 mirror images
-			OutcomeApplier: mi.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			//3x damage for 3 mirror images
+			baseDamage := 88*3 + 0.45*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8901.05985
-  tps: 10962.02967
+  dps: 8895.38492
+  tps: 10956.35474
  }
 }
 dps_results: {
@@ -647,8 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3393.63555
-  tps: 3734.67977
+  dps: 3388.74122
+  tps: 3729.78545
  }
 }
 dps_results: {

@@ -78,51 +78,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
-	effect := core.SpellEffect{
-		IsPeriodic: true,
-
-		OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
-		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				priest.AddShadowWeavingStack(sim)
-			}
-			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
-				priest.ShadowyInsightAura.Activate(sim)
-			}
-			if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
-				priest.ImprovedSpiritTap.Activate(sim)
-			}
-		},
-	}
-
 	normalCalc := core.BaseDamageFuncMagic(588/3, 588/3, 0.257)
 	miseryCalc := core.BaseDamageFuncMagic(588/3, 588/3, (1+float64(priest.Talents.Misery)*0.05)*0.257)
 
 	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
-
-	effect.BaseDamage = core.BaseDamageConfig{
-		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-			var dmg float64
-			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-			glyphMod := 0.0
-
-			if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
-				glyphMod = 0.1
-			}
-
-			if priest.MiseryAura.IsActive() {
-				dmg = miseryCalc(sim, effect, spell)
-			} else {
-				dmg = normalCalc(sim, effect, spell)
-			}
-			if priest.ShadowWordPainDot.IsActive() {
-				dmg *= normMod * (1 + glyphMod + float64(priest.Talents.TwistedFaith)*0.02) // multiply the damage
-			} else {
-				dmg *= normMod // multiply the damage
-			}
-			return dmg * shadowWeavingMod
-		},
-	}
 
 	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
@@ -140,7 +99,45 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		TickLength:          time.Second - mfReducTime,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncSnapshot(target, effect),
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			IsPeriodic: true,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
+					var dmg float64
+					shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
+					glyphMod := 0.0
+
+					if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
+						glyphMod = 0.1
+					}
+
+					if priest.MiseryAura.IsActive() {
+						dmg = miseryCalc(sim, effect, spell)
+					} else {
+						dmg = normalCalc(sim, effect, spell)
+					}
+					if priest.ShadowWordPainDot.IsActive() {
+						dmg *= normMod * (1 + glyphMod + float64(priest.Talents.TwistedFaith)*0.02) // multiply the damage
+					} else {
+						dmg *= normMod // multiply the damage
+					}
+					return dmg * shadowWeavingMod
+				},
+			},
+			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
+			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if spellEffect.Landed() {
+					priest.AddShadowWeavingStack(sim)
+				}
+				if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+					priest.ShadowyInsightAura.Activate(sim)
+				}
+				if spellEffect.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+					priest.ImprovedSpiritTap.Activate(sim)
+				}
+			},
+		}),
 	})
 }
 

@@ -190,7 +190,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
 				// Only LB / CL / LvB use EM
-				if spell.ActionID.SpellID != lavaBurstActionID.SpellID {
+				if spell != shaman.LavaBurst {
 					return
 				}
 			}

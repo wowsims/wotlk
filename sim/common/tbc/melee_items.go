@@ -34,10 +34,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(3),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 3)
+			},
 		})
 
 		character.RegisterAura(core.Aura{
@@ -69,10 +68,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(2),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 2)
+			},
 		})
 
 		character.RegisterAura(core.Aura{
@@ -136,10 +134,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 0.5,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(300),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 300)
+			},
 		})
 
 		makeDebuffAura := func(target *core.Unit) *core.Aura {
@@ -486,10 +483,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(285, 315),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(285, 315))
+			},
 		})
 
 		const hasteBonus = 212.0
@@ -797,10 +793,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigMagic(48, 54, 1),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(48, 54)+1*spell.SpellPower())
+			},
 		})
 
 		const procChance = 0.02
@@ -945,10 +940,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(20),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 20)
+			},
 		})
 
 		procAura := character.GetOrRegisterAura(core.Aura{

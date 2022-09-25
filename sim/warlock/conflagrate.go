@@ -10,19 +10,16 @@ import (
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
-	baseCost := 0.16 * warlock.BaseMana
-	spellCoefficient := 0.2
-
 	actionID := core.ActionID{SpellID: 17962}
 	spellSchool := core.SpellSchoolFire
 	target := warlock.CurrentTarget
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
-	effect := core.SpellEffect{
-		BaseDamage:      core.BaseDamageConfigMagicNoRoll(0.6*785/5.*float64(warlock.ImmolateDot.NumberOfTicks), 0.6*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
-		OutcomeApplier:  warlock.OutcomeFuncMagicHitAndCrit(),
-		OnSpellHitDealt: applyDotOnLanded(&warlock.ConflagrateDot),
-	}
+	baseCost := 0.16 * warlock.BaseMana
+	directFlatDamage := 0.6 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
+	directSpellCoeff := 0.6 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
+	dotFlatDamage := 0.4 / 3 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
+	dotSpellCoeff := 0.4 / 3 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -59,7 +56,14 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				warlock.ConflagrateDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	warlock.ConflagrateDot = core.NewDot(core.Dot{
@@ -81,7 +85,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(0.4/3*785/5*float64(warlock.ImmolateDot.NumberOfTicks), 0.4/3*spellCoefficient*float64(warlock.ImmolateDot.NumberOfTicks)),
+			BaseDamage:     core.BaseDamageConfigMagicNoRoll(dotFlatDamage, dotSpellCoeff),
 			OutcomeApplier: warlock.OutcomeFuncMagicCrit(),
 		}),
 	})

@@ -153,6 +153,12 @@ func (sim *Simulation) RandomFloat(label string) float64 {
 	return v
 }
 
+// Shorthand for commonly-used RNG behavior.
+// Returns a random number between min and max.
+func (sim *Simulation) Roll(min float64, max float64) float64 {
+	return min + (max-min)*sim.RandomFloat("Damage Roll")
+}
+
 func (sim *Simulation) Reset() {
 	sim.reset()
 }

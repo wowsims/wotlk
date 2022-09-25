@@ -11,24 +11,12 @@ import (
 func (mage *Mage) registerScorchSpell() {
 	baseCost := .08 * mage.BaseMana
 
-	var onSpellHitDealt core.EffectOnSpellHitDealt
-	if mage.Talents.ImprovedScorch > 0 {
+	hasImpScorch := mage.Talents.ImprovedScorch > 0
+	procChance := float64(mage.Talents.ImprovedScorch) / 3.0
+	if hasImpScorch {
 		mage.ScorchAura = mage.CurrentTarget.GetAura(core.ImprovedScorchAuraLabel)
 		if mage.ScorchAura == nil {
 			mage.ScorchAura = core.ImprovedScorchAura(mage.CurrentTarget)
-		}
-
-		procChance := float64(mage.Talents.ImprovedScorch) / 3.0
-		onSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-
-			if procChance != 1.0 || sim.RandomFloat("Improved Scorch") > procChance {
-				return
-			}
-
-			mage.ScorchAura.Activate(sim)
 		}
 	}
 
@@ -57,10 +45,15 @@ func (mage *Mage) registerScorchSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:      core.BaseDamageConfigMagic(382, 451, 1.5/3.5),
-			OutcomeApplier:  mage.OutcomeFuncMagicHitAndCrit(),
-			OnSpellHitDealt: onSpellHitDealt,
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(382, 451) + (1.5/3.5)*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if hasImpScorch && result.Landed() {
+				if procChance == 1.0 || sim.RandomFloat("Improved Scorch") <= procChance {
+					mage.ScorchAura.Activate(sim)
+				}
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }
