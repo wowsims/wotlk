@@ -573,14 +573,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
 			{ item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
 			{ item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
-			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
 			{ item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
 			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
@@ -623,8 +623,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
 			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.UnholyFrenzy, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
+			{ item: IconInputs.UnholyFrenzy, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(buffsSection, this.player, {
@@ -638,8 +638,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const debuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.PhysicalDamageDebuff, stats: [Stat.StatAttackPower] },
-			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.PhysicalDamageDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.SpellDamageDebuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellHitDebuff, stats: [Stat.StatSpellHit] },
 			{ item: IconInputs.SpellCritDebuff, stats: [Stat.StatSpellCrit] },
@@ -663,7 +663,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const miscDebuffOptions = this.splitRelevantOptions([
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {
 			new MultiIconPicker(debuffsSection, this.player, {
@@ -762,12 +762,12 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		const foodOptions = this.splitRelevantOptions([
-			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
-			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
+			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
 			{ item: Food.FoodDragonfinFilet, stats: [Stat.StatStrength] },
 			{ item: Food.FoodCuttlesteak, stats: [Stat.StatSpirit] },
-			{ item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower] },
+			{ item: Food.FoodMegaMammothMeal, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: Food.FoodHeartyRhino, stats: [Stat.StatArmorPenetration] },
 			{ item: Food.FoodRhinoliciousWormsteak, stats: [Stat.StatExpertise] },
 			{ item: Food.FoodFirecrackerSalmon, stats: [Stat.StatSpellPower] },
