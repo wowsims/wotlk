@@ -45,1295 +45,1295 @@ character_stats_results: {
 dps_results: {
  key: "TestRetribution-AllItems-AegisBattlegear"
  value: {
-  dps: 5332.6172
-  tps: 5430.4759
+  dps: 5322.61014
+  tps: 5420.46884
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-AegisPlate"
  value: {
-  dps: 4791.47136
-  tps: 4888.09842
+  dps: 4784.82845
+  tps: 4881.45551
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-AshtongueTalismanofZeal-32489"
  value: {
-  dps: 5593.52561
-  tps: 5691.94651
+  dps: 5591.22871
+  tps: 5689.64961
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 5658.97591
-  tps: 5757.40139
+  dps: 5645.51317
+  tps: 5743.93865
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 5741.32537
-  tps: 5839.89067
+  dps: 5738.37693
+  tps: 5836.94223
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 5663.33242
-  tps: 5762.23481
+  dps: 5659.83239
+  tps: 5758.73478
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 5577.31137
-  tps: 5674.31131
+  dps: 5569.24349
+  tps: 5666.24343
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 4745.73129
-  tps: 4842.32196
+  dps: 4731.68893
+  tps: 4828.2796
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 4593.15355
-  tps: 4689.57625
+  dps: 4581.79327
+  tps: 4678.21596
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 4530.70682
-  tps: 4627.0358
+  dps: 4521.37906
+  tps: 4617.70803
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 5665.79629
-  tps: 5650.90584
+  dps: 5652.28045
+  tps: 5637.66032
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 5784.09489
-  tps: 5882.52037
+  dps: 5768.71217
+  tps: 5867.13766
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 5658.70575
-  tps: 5757.10827
+  dps: 5643.1634
+  tps: 5741.56592
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 5699.69959
-  tps: 5798.26131
+  dps: 5688.4151
+  tps: 5786.97682
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 5639.18089
-  tps: 5737.58341
+  dps: 5626.5786
+  tps: 5724.98112
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 5569.31697
-  tps: 5667.74246
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Defender'sCode-40257"
  value: {
-  dps: 5571.66412
-  tps: 5670.08961
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 5681.73357
-  tps: 5780.15906
+  dps: 5667.1715
+  tps: 5765.59698
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 5658.97591
-  tps: 5757.40139
+  dps: 5645.51317
+  tps: 5743.93865
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 5659.44878
-  tps: 5758.24249
+  dps: 5647.95925
+  tps: 5746.75296
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 5676.1943
-  tps: 5774.61978
+  dps: 5661.20702
+  tps: 5759.6325
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 5667.1836
-  tps: 5765.60908
+  dps: 5659.58874
+  tps: 5758.01422
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 5658.97591
-  tps: 5757.40139
+  dps: 5645.51317
+  tps: 5743.93865
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 5726.26885
-  tps: 5824.6488
+  dps: 5706.46836
+  tps: 5804.84831
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 5675.55341
-  tps: 5773.95593
+  dps: 5662.6824
+  tps: 5761.08492
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ForgeEmber-37660"
  value: {
-  dps: 5629.26511
-  tps: 5727.66763
+  dps: 5623.07404
+  tps: 5721.47656
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 5665.79629
-  tps: 5764.22177
+  dps: 5652.28045
+  tps: 5750.70593
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 5664.43221
-  tps: 5762.85769
+  dps: 5650.92699
+  tps: 5749.35247
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-FuriousGladiator'sLibramofFortitude-42853"
  value: {
-  dps: 5800.1676
-  tps: 5898.59308
+  dps: 5784.74676
+  tps: 5883.17224
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-FuturesightRune-38763"
  value: {
-  dps: 5586.64041
-  tps: 5685.0659
+  dps: 5571.83835
+  tps: 5670.26383
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Gladiator'sVindication"
  value: {
-  dps: 5710.82275
-  tps: 5808.83373
+  dps: 5701.55792
+  tps: 5799.5689
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-HatefulGladiator'sLibramofFortitude-42851"
  value: {
-  dps: 5771.05053
-  tps: 5869.47602
+  dps: 5755.7269
+  tps: 5854.15238
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 5624.8771
-  tps: 5723.30258
+  dps: 5609.65725
+  tps: 5708.08273
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 5676.1943
-  tps: 5774.61978
+  dps: 5661.20702
+  tps: 5759.6325
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 5667.1836
-  tps: 5765.60908
+  dps: 5659.58874
+  tps: 5758.01422
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-IncisorFragment-37723"
  value: {
-  dps: 5767.34702
-  tps: 5866.19508
+  dps: 5757.59926
+  tps: 5856.44732
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 5663.73266
-  tps: 5763.93153
+  dps: 5660.58364
+  tps: 5760.7825
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 5687.39823
-  tps: 5785.82371
+  dps: 5673.84333
+  tps: 5772.26881
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 5571.66412
-  tps: 5670.08961
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 5661.74138
-  tps: 5758.77721
+  dps: 5653.199
+  tps: 5750.23482
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Liadrin'sPlate"
  value: {
-  dps: 4895.49417
-  tps: 4991.43563
+  dps: 4891.06094
+  tps: 4987.00241
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramofFuriousBlows-37574"
  value: {
-  dps: 5719.60385
-  tps: 5818.00637
+  dps: 5717.37803
+  tps: 5815.78055
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramofObstruction-40707"
  value: {
-  dps: 5701.14525
-  tps: 5799.57073
+  dps: 5686.07586
+  tps: 5784.50134
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramofReciprocation-40706"
  value: {
-  dps: 5701.14525
-  tps: 5799.57073
+  dps: 5686.07586
+  tps: 5784.50134
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramofThreeTruths-50455"
  value: {
-  dps: 5777.69502
-  tps: 5876.12051
+  dps: 5762.35395
+  tps: 5860.77943
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramofValiance-47661"
  value: {
-  dps: 6042.73895
-  tps: 6141.16443
+  dps: 6026.35863
+  tps: 6124.78411
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LibramoftheSacredShield-45145"
  value: {
-  dps: 5701.14525
-  tps: 5799.57073
+  dps: 5686.07586
+  tps: 5784.50134
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LightbringerBattlegear"
  value: {
-  dps: 4268.22142
-  tps: 4363.40645
+  dps: 4267.59731
+  tps: 4362.78234
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LightswornBattlegear"
  value: {
-  dps: 6332.55741
-  tps: 6436.0375
+  dps: 6326.68144
+  tps: 6430.16153
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LightswornPlate"
  value: {
-  dps: 5022.10222
-  tps: 5118.12548
+  dps: 5018.14939
+  tps: 5114.17264
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 5569.31697
-  tps: 5667.74246
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 5667.5544
-  tps: 5766.14759
+  dps: 5664.16246
+  tps: 5762.75565
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 5571.66412
-  tps: 5670.08961
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 5681.98446
-  tps: 5780.40994
+  dps: 5668.44711
+  tps: 5766.87259
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 5687.39823
-  tps: 5785.82371
+  dps: 5673.84333
+  tps: 5772.26881
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 5658.97591
-  tps: 5757.40139
+  dps: 5645.51317
+  tps: 5743.93865
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 5658.97591
-  tps: 5757.40139
+  dps: 5645.51317
+  tps: 5743.93865
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 5569.31697
-  tps: 5667.74246
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionBattlegear"
  value: {
-  dps: 4956.12268
-  tps: 5055.44881
+  dps: 4939.76731
+  tps: 5039.09345
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionPlate"
  value: {
-  dps: 4647.29491
-  tps: 4743.27518
+  dps: 4637.19842
+  tps: 4733.17869
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 5689.10734
-  tps: 5787.40081
+  dps: 5681.84723
+  tps: 5780.1407
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 5704.02891
-  tps: 5802.32238
+  dps: 5696.89117
+  tps: 5795.18464
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 5783.66387
-  tps: 5882.08935
+  dps: 5768.30161
+  tps: 5866.72709
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RelentlessGladiator'sLibramofFortitude-42854"
  value: {
-  dps: 5819.42194
-  tps: 5917.84742
+  dps: 5803.93277
+  tps: 5902.35825
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 5662.09524
-  tps: 5759.84484
+  dps: 5653.10239
+  tps: 5750.85198
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 5571.66412
-  tps: 5670.08961
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SavageGladiator'sLibramofFortitude-42611"
  value: {
-  dps: 5763.13673
-  tps: 5861.56221
+  dps: 5747.84188
+  tps: 5846.26736
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 5571.66412
-  tps: 5670.08961
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 5569.31697
-  tps: 5667.74246
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 5569.31697
-  tps: 5667.74246
+  dps: 5554.69987
+  tps: 5653.12535
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SparkofLife-37657"
  value: {
-  dps: 5625.126
-  tps: 5719.15751
+  dps: 5615.58759
+  tps: 5709.6191
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-StormshroudArmor"
  value: {
-  dps: 4440.33995
-  tps: 4536.18555
+  dps: 4428.08219
+  tps: 4523.92778
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 5687.39823
-  tps: 5785.82371
+  dps: 5673.84333
+  tps: 5772.26881
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 5681.98446
-  tps: 5780.40994
+  dps: 5668.44711
+  tps: 5766.87259
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 5672.51035
-  tps: 5770.93583
+  dps: 5659.00372
+  tps: 5757.4292
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 5708.69139
-  tps: 5807.08529
+  dps: 5700.3436
+  tps: 5798.7375
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 5782.06264
-  tps: 5880.6645
+  dps: 5770.76668
+  tps: 5869.36854
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 5789.95759
-  tps: 5888.65377
+  dps: 5789.11036
+  tps: 5887.80654
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 5665.79629
-  tps: 5764.22177
+  dps: 5652.28045
+  tps: 5750.70593
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 5664.43221
-  tps: 5762.85769
+  dps: 5650.92699
+  tps: 5749.35247
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TomeoftheLightbringer-32368"
  value: {
-  dps: 5701.14525
-  tps: 5799.57073
+  dps: 5686.07586
+  tps: 5784.50134
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 5664.43221
-  tps: 5762.85769
+  dps: 5650.92699
+  tps: 5749.35247
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 5665.79629
-  tps: 5764.22177
+  dps: 5652.28045
+  tps: 5750.70593
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 5661.74138
-  tps: 5758.77721
+  dps: 5653.199
+  tps: 5750.23482
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sPlate"
  value: {
-  dps: 4895.49417
-  tps: 4991.43563
+  dps: 4891.06094
+  tps: 4987.00241
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 4631.67282
-  tps: 4728.91655
+  dps: 4622.66135
+  tps: 4719.90508
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-WrathfulGladiator'sLibramofFortitude-51478"
  value: {
-  dps: 5841.42691
-  tps: 5939.85239
+  dps: 5825.85964
+  tps: 5924.28512
  }
 }
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 5732.26414
-  tps: 5830.83208
+  dps: 5725.32608
+  tps: 5823.89402
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16438.62844
-  tps: 18599.75558
+  dps: 16434.75326
+  tps: 18595.8804
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4787.05224
-  tps: 4889.262
+  dps: 4783.88938
+  tps: 4886.09914
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5416.19488
-  tps: 5523.46763
+  dps: 5407.05924
+  tps: 5514.33199
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7231.04754
-  tps: 8504.08595
+  dps: 7222.55206
+  tps: 8495.59047
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2099.16055
-  tps: 2164.65567
+  dps: 2097.13966
+  tps: 2162.63478
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2833.89124
-  tps: 2921.92255
+  dps: 2810.49584
+  tps: 2898.52715
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14137.62359
-  tps: 16298.95818
+  dps: 14154.91052
+  tps: 16316.24511
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4397.35051
-  tps: 4499.55233
+  dps: 4390.43868
+  tps: 4492.6405
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4998.45337
-  tps: 5105.70605
+  dps: 4994.10559
+  tps: 5101.35827
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6102.80681
-  tps: 7384.27731
+  dps: 6086.20194
+  tps: 7367.67244
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1869.72941
-  tps: 1935.29787
+  dps: 1866.18177
+  tps: 1931.75022
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2540.80569
-  tps: 2628.92802
+  dps: 2531.52389
+  tps: 2619.64623
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15480.99168
-  tps: 17634.73493
+  dps: 15491.19673
+  tps: 17644.93998
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5618.52688
-  tps: 5720.73665
+  dps: 5607.3973
+  tps: 5709.60707
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6147.84997
-  tps: 6255.12272
+  dps: 6144.55339
+  tps: 6251.82614
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6871.8677
-  tps: 8175.3082
+  dps: 6855.97749
+  tps: 8159.41799
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2464.09372
-  tps: 2529.55243
+  dps: 2454.92073
+  tps: 2520.37944
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3184.85141
-  tps: 3272.79169
+  dps: 3166.68601
+  tps: 3254.62629
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15153.81811
-  tps: 17314.92965
+  dps: 15175.68599
+  tps: 17336.79753
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5618.52688
-  tps: 5720.73665
+  dps: 5607.3973
+  tps: 5709.60707
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6147.84997
-  tps: 6255.12272
+  dps: 6144.55339
+  tps: 6251.82614
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6652.03816
-  tps: 7949.98616
+  dps: 6639.3734
+  tps: 7937.3214
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2464.09372
-  tps: 2529.55243
+  dps: 2454.92073
+  tps: 2520.37944
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3184.85141
-  tps: 3272.79169
+  dps: 3166.68601
+  tps: 3254.62629
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16546.34632
-  tps: 18708.016
+  dps: 16554.86083
+  tps: 18716.53051
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4793.76432
-  tps: 4895.54993
+  dps: 4790.31413
+  tps: 4892.09974
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5440.21285
-  tps: 5547.25586
+  dps: 5430.31155
+  tps: 5537.35456
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7328.35427
-  tps: 8618.82927
+  dps: 7315.00934
+  tps: 8605.48434
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2015.91841
-  tps: 2075.5571
+  dps: 2011.58394
+  tps: 2071.22263
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2840.81277
-  tps: 2929.07851
+  dps: 2817.67645
+  tps: 2905.9422
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14256.71646
-  tps: 16418.62589
+  dps: 14260.80473
+  tps: 16422.71416
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4402.82261
-  tps: 4504.60607
+  dps: 4402.2684
+  tps: 4504.05186
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5023.4824
-  tps: 5130.46938
+  dps: 5020.33398
+  tps: 5127.32096
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6232.78139
-  tps: 7523.25639
+  dps: 6217.26696
+  tps: 7507.74196
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1775.06296
-  tps: 1834.83111
+  dps: 1773.12087
+  tps: 1832.88902
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOR-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2549.55096
-  tps: 2637.91152
+  dps: 2539.88872
+  tps: 2628.24928
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15634.19983
-  tps: 17791.35722
+  dps: 15630.65497
+  tps: 17787.81235
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5647.32236
-  tps: 5749.0974
+  dps: 5632.66535
+  tps: 5734.44039
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6170.62372
-  tps: 6277.66673
+  dps: 6168.89768
+  tps: 6275.94069
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6946.68429
-  tps: 8237.15929
+  dps: 6929.03226
+  tps: 8219.50726
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2377.51253
-  tps: 2437.53635
+  dps: 2372.19521
+  tps: 2432.21902
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3192.42592
-  tps: 3280.59686
+  dps: 3174.3905
+  tps: 3262.56144
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15244.23172
-  tps: 17406.17901
+  dps: 15255.83793
+  tps: 17417.78523
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5647.32236
-  tps: 5749.0974
+  dps: 5632.66535
+  tps: 5734.44039
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6170.62372
-  tps: 6277.66673
+  dps: 6168.89768
+  tps: 6275.94069
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6746.94888
-  tps: 8037.42388
+  dps: 6724.17915
+  tps: 8014.65415
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2377.51253
-  tps: 2437.53635
+  dps: 2372.19521
+  tps: 2432.21902
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3192.42592
-  tps: 3280.59686
+  dps: 3174.3905
+  tps: 3262.56144
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16546.38134
-  tps: 18712.21139
+  dps: 16561.4527
+  tps: 18727.28275
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4825.91671
-  tps: 4928.18007
+  dps: 4813.6391
+  tps: 4915.90245
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5456.87363
-  tps: 5564.1471
+  dps: 5447.57567
+  tps: 5554.84914
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7277.27304
-  tps: 8522.33137
+  dps: 7256.85833
+  tps: 8501.91667
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2037.21282
-  tps: 2097.88052
+  dps: 2032.38209
+  tps: 2093.04979
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2855.27872
-  tps: 2943.20346
+  dps: 2831.59439
+  tps: 2919.51913
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14285.17612
-  tps: 16451.2196
+  dps: 14298.11725
+  tps: 16464.16073
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4433.17723
-  tps: 4535.44059
+  dps: 4432.54446
+  tps: 4534.80782
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5037.38582
-  tps: 5144.63891
+  dps: 5032.89365
+  tps: 5140.14674
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6131.37673
-  tps: 7376.43507
+  dps: 6116.04663
+  tps: 7361.10497
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1795.01917
-  tps: 1855.61543
+  dps: 1793.48762
+  tps: 1854.08387
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOR-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2562.81999
-  tps: 2650.83404
+  dps: 2553.51418
+  tps: 2641.52824
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15625.93604
-  tps: 17774.48085
+  dps: 15633.82014
+  tps: 17782.36495
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5683.98852
-  tps: 5786.25188
+  dps: 5673.86306
+  tps: 5776.12642
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6197.27701
-  tps: 6304.55048
+  dps: 6193.8659
+  tps: 6301.13937
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6852.93991
-  tps: 8097.99825
+  dps: 6843.46275
+  tps: 8088.52108
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2409.41128
-  tps: 2469.93386
+  dps: 2401.83508
+  tps: 2462.35766
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3210.78652
-  tps: 3298.62196
+  dps: 3192.43053
+  tps: 3280.26597
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15268.96288
-  tps: 17434.79294
+  dps: 15279.82346
+  tps: 17445.65351
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5683.98852
-  tps: 5786.25188
+  dps: 5673.86306
+  tps: 5776.12642
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6197.27701
-  tps: 6304.55048
+  dps: 6193.8659
+  tps: 6301.13937
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6645.75666
-  tps: 7890.815
+  dps: 6624.72175
+  tps: 7869.78008
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2409.41128
-  tps: 2469.93386
+  dps: 2401.83508
+  tps: 2462.35766
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3210.78652
-  tps: 3298.62196
+  dps: 3192.43053
+  tps: 3280.26597
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16541.83722
-  tps: 18707.92048
+  dps: 16544.15263
+  tps: 18710.23588
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4824.97848
-  tps: 4927.23542
+  dps: 4812.68714
+  tps: 4914.94408
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5453.86039
-  tps: 5561.12423
+  dps: 5444.57445
+  tps: 5551.83829
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7489.98196
-  tps: 8819.05363
+  dps: 7478.50991
+  tps: 8807.58157
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2108.9589
-  tps: 2172.66997
+  dps: 2101.74484
+  tps: 2165.45591
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOC-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2854.63277
-  tps: 2942.57883
+  dps: 2830.95691
+  tps: 2918.90297
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14260.97617
-  tps: 16427.0668
+  dps: 14272.20618
+  tps: 16438.29681
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4431.15815
-  tps: 4533.41508
+  dps: 4430.52993
+  tps: 4532.78686
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5036.1939
-  tps: 5143.43742
+  dps: 5031.71242
+  tps: 5138.95594
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6351.35705
-  tps: 7684.09038
+  dps: 6335.18328
+  tps: 7667.91661
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1843.93683
-  tps: 1907.12692
+  dps: 1841.97984
+  tps: 1905.16994
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOR-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2561.04735
-  tps: 2649.08306
+  dps: 2551.74672
+  tps: 2639.78243
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15620.65161
-  tps: 17776.30885
+  dps: 15642.52836
+  tps: 17798.18559
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5683.52003
-  tps: 5785.77697
+  dps: 5672.62341
+  tps: 5774.88034
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6193.61575
-  tps: 6300.87959
+  dps: 6190.21312
+  tps: 6297.47695
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7099.18696
-  tps: 8431.9203
+  dps: 7081.47834
+  tps: 8414.21167
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2481.17623
-  tps: 2545.30069
+  dps: 2476.27547
+  tps: 2540.39993
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3209.74649
-  tps: 3297.60289
+  dps: 3191.40407
+  tps: 3279.26047
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15292.10721
-  tps: 17458.10315
+  dps: 15307.29919
+  tps: 17473.29513
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5683.52003
-  tps: 5785.77697
+  dps: 5672.62341
+  tps: 5774.88034
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 6193.61575
-  tps: 6300.87959
+  dps: 6190.21312
+  tps: 6297.47695
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6869.84015
-  tps: 8202.57349
+  dps: 6858.94265
+  tps: 8191.67598
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2481.17623
-  tps: 2545.30069
+  dps: 2476.27547
+  tps: 2540.39993
  }
 }
 dps_results: {
  key: "TestRetribution-Settings-Human-P1-Retribution Paladin SOV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3209.74649
-  tps: 3297.60289
+  dps: 3191.40407
+  tps: 3279.26047
  }
 }
 dps_results: {
  key: "TestRetribution-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 5433.21209
-  tps: 5531.66731
+  dps: 5426.2337
+  tps: 5524.68892
  }
 }
