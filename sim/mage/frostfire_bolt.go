@@ -47,10 +47,12 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := (722+838)/2 + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
-			if result.Landed() {
-				mage.FrostfireDot.Apply(sim)
-			}
-			spell.DealDamage(sim, &result)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					mage.FrostfireDot.Apply(sim)
+				}
+				spell.DealDamage(sim, &result)
+			})
 		},
 	})
 

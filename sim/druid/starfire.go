@@ -28,8 +28,11 @@ func (druid *Druid) registerStarfireSpell() {
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.
+	// TODO: This was reordered at some point and is benefitting from wrath of cenarius which isn't intended.
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoeff, 0) +
 		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoeff, 0)
+
+	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -70,8 +73,9 @@ func (druid *Druid) registerStarfireSpell() {
 			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
 			if result.Landed() {
 				if result.DidCrit() {
-					hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-					druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+					if druid.Talents.MoonkinForm {
+						druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
+					}
 					if druid.SetBonuses.balance_t10_4 {
 						if druid.LasherweaveDot.IsActive() {
 							druid.LasherweaveDot.Refresh(sim)
@@ -80,12 +84,9 @@ func (druid *Druid) registerStarfireSpell() {
 						}
 					}
 				}
-				if druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire) && druid.MoonfireDot.IsActive() {
-					maxMoonfireTicks := druid.maxMoonfireTicks()
-					if druid.MoonfireDot.NumberOfTicks < maxMoonfireTicks {
-						druid.MoonfireDot.NumberOfTicks += 1
-						druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
-					}
+				if hasGlyph && druid.MoonfireDot.IsActive() && druid.MoonfireDot.NumberOfTicks < druid.maxMoonfireTicks() {
+					druid.MoonfireDot.NumberOfTicks += 1
+					druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
 				}
 			}
 			spell.DealDamage(sim, &result)

@@ -63,10 +63,12 @@ func (warlock *Warlock) registerHauntSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(645, 753) + 0.4286*spell.SpellPower()
 			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
-			if result.Landed() {
-				HauntDebuffAura.Activate(sim)
-			}
-			spell.DealDamage(sim, &result)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					HauntDebuffAura.Activate(sim)
+				}
+				spell.DealDamage(sim, &result)
+			})
 		},
 	})
 }

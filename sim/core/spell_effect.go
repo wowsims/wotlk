@@ -197,6 +197,14 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 	result.Damage = MaxFloat(0, result.Damage)
 }
 
+func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
+	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
+	StartDelayedAction(sim, DelayedActionOptions{
+		DoAt:     sim.CurrentTime + travelTime,
+		OnAction: callback,
+	})
+}
+
 // Applies the fully computed spell result to the sim.
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellEffect) {
 	spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage

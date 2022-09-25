@@ -50,14 +50,16 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(694, 775) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
-			if result.Landed() {
-				// ISB debuff
-				if ISBProcChance > 0 && (ISBProcChance == 1 || sim.RandomFloat("ISB") < ISBProcChance) {
-					// TODO precalculate aura
-					core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					// ISB debuff
+					if ISBProcChance > 0 && (ISBProcChance == 1 || sim.RandomFloat("ISB") <= ISBProcChance) {
+						// TODO precalculate aura
+						core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
+					}
 				}
-			}
-			spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, &result)
+			})
 		},
 	})
 }

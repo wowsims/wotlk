@@ -44,7 +44,7 @@ func (priest *Priest) registerMindBlastSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(997, 1053) + 0.5711*spell.SpellPower()
+			baseDamage := sim.Roll(997, 1053)
 			if priest.MiseryAura.IsActive() {
 				baseDamage += miserySpellCoeff * spell.SpellPower()
 			} else {

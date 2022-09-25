@@ -51,8 +51,9 @@ func (druid *Druid) registerWrathSpell() {
 			baseDamage := bonusFlatDamage + sim.Roll(557, 627) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
 			if result.DidCrit() {
-				hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-				druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
+				if druid.Talents.MoonkinForm {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
+				}
 				if druid.SetBonuses.balance_t10_4 {
 					if druid.LasherweaveDot.IsActive() {
 						druid.LasherweaveDot.Refresh(sim)
