@@ -316,6 +316,7 @@ class TargetPicker extends Component {
 		new NumberPicker(section3, modTarget, {
 			label: 'Swing Speed',
 			labelTooltip: 'Time in seconds between auto attacks. Set to 0 to disable auto attacks.',
+			float: true,
 			changedEvent: (target: Target) => target.propChangeEmitter,
 			getValue: (target: Target) => target.getSwingSpeed(),
 			setValue: (eventID: EventID, target: Target, newValue: number) => {
@@ -378,8 +379,8 @@ class TargetPicker extends Component {
 			},
 		});
 		new BooleanPicker(section3, modTarget, {
-			label: 'Sunwell Radiance',
-			labelTooltip: 'Reduces the chance for this enemy\'s attacks to be dodged by 20% and be missed by 5%. All Sunwell Plateau bosses have this.',
+			label: 'Chill of the Throne',
+			labelTooltip: 'Reduces the chance for this enemy\'s attacks to be dodged by 20%. Active in Icecrown Citadel.',
 			changedEvent: (target: Target) => target.changeEmitter,
 			getValue: (target: Target) => target.getSuppressDodge(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {

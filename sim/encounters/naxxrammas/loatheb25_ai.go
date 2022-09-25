@@ -23,8 +23,8 @@ func addLoatheb25(bossPrefix string) {
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       1.5,
-			MinBaseDamage:    14135,
+			SwingSpeed:       1.2,
+			MinBaseDamage:    6727,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

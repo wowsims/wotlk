@@ -95,7 +95,9 @@ func (weapon Weapon) GetSpellSchool() SpellSchool {
 }
 
 func (weapon Weapon) EnemyWeaponDamage(sim *Simulation, attackPower float64) float64 {
-	rand := 1 + 0.5*sim.RandomFloat("Enemy Weapon Damage")
+	// Maximum damage range is 135% of minimum damage; AP contribution is % of minimum damage roll
+	// TODO: Scrape more logs to determine this value, it was 133% in classic but seems to be slightly higher?
+	rand := 1 + 0.35*sim.RandomFloat("Enemy Weapon Damage")
 	return weapon.BaseDamageMin * (rand + attackPower*EnemyAutoAttackAPCoefficient)
 }
 

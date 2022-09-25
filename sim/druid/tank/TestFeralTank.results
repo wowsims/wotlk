@@ -619,9 +619,9 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 1323.73595
-  tps: 1827.68205
-  dtps: 537.78976
+  dps: 1318.90609
+  tps: 1820.01748
+  dtps: 523.36667
  }
 }
 dps_results: {
@@ -669,8 +669,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1425.13223
-  tps: 1979.90617
-  dtps: 500.58089
+  dps: 1440.58147
+  tps: 2004.94641
+  dtps: 488.03992
  }
 }
