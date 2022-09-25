@@ -27,7 +27,8 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
+			// Cancel out caster multiplier so it doesn't double dip.
+			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg/spell.CasterDamageMultiplier())
 		},
 	})
 

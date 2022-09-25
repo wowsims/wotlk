@@ -72,10 +72,10 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				ActionID: core.ActionID{SpellID: 61082},
 				Duration: time.Second * 10,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.AddStatDynamic(sim, stats.Spirit, 300.)
+					aura.Unit.AddStatDynamic(sim, stats.Spirit, 300)
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.AddStatDynamic(sim, stats.Spirit, -300.)
+					aura.Unit.AddStatDynamic(sim, stats.Spirit, -300)
 				},
 			})
 
@@ -85,7 +85,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.LifeTap {
 						if SpiritsoftheDamnedAura.IsActive() {
 							SpiritsoftheDamnedAura.Refresh(sim)
