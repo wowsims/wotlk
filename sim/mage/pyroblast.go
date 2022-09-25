@@ -11,6 +11,7 @@ import (
 func (mage *Mage) registerPyroblastSpell() {
 	actionID := core.ActionID{SpellID: 42891}
 	baseCost := .22 * mage.BaseMana
+	spellCoeff := 1.15 + 0.05*float64(mage.Talents.EmpoweredFire)
 
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -48,17 +49,14 @@ func (mage *Mage) registerPyroblastSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfigMagic(1210, 1531, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
-			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((1210+1531)/2, 1.15+0.05*float64(mage.Talents.EmpoweredFire)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					mage.PyroblastDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1210, 1531) + spellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				mage.PyroblastDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	target := mage.CurrentTarget

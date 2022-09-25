@@ -28,6 +28,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 
 	actionID := core.ActionID{SpellID: 42897}
 	totalDiscount := 1 - .01*float64(mage.Talents.ArcaneFocus+mage.Talents.Precision)
+	spellCoeff := 2.5/3.5 + .03*float64(mage.Talents.ArcaneEmpowerment)
 
 	mage.ArcaneBlast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -68,9 +69,9 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(1185, 1377, (2.5/3.5)+.03*float64(mage.Talents.ArcaneEmpowerment)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1185, 1377) + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

@@ -57,7 +57,7 @@ func (paladin *Paladin) registerExorcismSpell() {
 			},
 
 			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-				if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+				if spell.MagicHitCheck(sim, attackTable) {
 					if spellEffect.Target.MobType == proto.MobType_MobTypeDemon || spellEffect.Target.MobType == proto.MobType_MobTypeUndead || spellEffect.MagicCritCheck(sim, spell, attackTable) {
 						spellEffect.Outcome = core.OutcomeCrit
 						spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++

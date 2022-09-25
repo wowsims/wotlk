@@ -32,7 +32,7 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 				return
 			}
 
-			if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+			if spell.MagicHitCheck(sim, attackTable) {
 				if spellEffect.MagicCritCheck(sim, spell, attackTable) {
 					spellEffect.Outcome = core.OutcomeCrit
 					spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++

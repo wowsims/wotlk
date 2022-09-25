@@ -68,30 +68,19 @@ const FlameshockID = 49233
 
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	actionID := core.ActionID{SpellID: FlameshockID}
-	config, effect := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
+	config, _ := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
+
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
-
-	effect.BaseDamage = core.BaseDamageConfigMagic(500, 500, 0.214)
-
 	config.CritMultiplier = shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
-	effect.OutcomeApplier = shaman.OutcomeFuncMagicHitAndCrit()
-	if effect.OnSpellHitDealt == nil {
-		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				shaman.FlameShockDot.Apply(sim)
-			}
-		}
-	} else {
-		oldSpellHit := effect.OnSpellHitDealt
-		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			oldSpellHit(sim, spell, spellEffect)
-			if spellEffect.Landed() {
-				shaman.FlameShockDot.Apply(sim)
-			}
-		}
-	}
 
-	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
+	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		baseDamage := 500 + 0.214*spell.SpellPower()
+		result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+		if result.Landed() {
+			shaman.FlameShockDot.Apply(sim)
+		}
+		spell.DealDamage(sim, &result)
+	}
 
 	target := shaman.CurrentTarget
 	shaman.FlameShockDot = core.NewDot(core.Dot{

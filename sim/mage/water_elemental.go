@@ -160,9 +160,9 @@ func (we *WaterElemental) registerWaterboltSpell() {
 		CritMultiplier:   we.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(256, 328, 3.0/3.5),
-			OutcomeApplier: we.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(256, 328) + (3.0/3.5)*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

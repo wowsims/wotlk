@@ -10,7 +10,7 @@ import (
 
 func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if spellEffect.MagicHitCheck(sim, spell, attackTable) {
+		if spell.MagicHitCheck(sim, attackTable) {
 			if sim.RandomFloat("Fixed Crit Roll") < dk.dndCritSnapshot {
 				spellEffect.Outcome = core.OutcomeCrit
 				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++

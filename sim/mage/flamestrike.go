@@ -11,11 +11,6 @@ func (mage *Mage) registerFlamestrikeSpell() {
 	actionID := core.ActionID{SpellID: 42926}
 	baseCost := .30 * mage.BaseMana
 
-	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(mage.Env, core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(876, 1071, 0.243),
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-	})
-
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
@@ -42,7 +37,12 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			applyAOEDamage(sim, target, spell)
+			dmgFromSP := 0.243 * spell.SpellPower()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := sim.Roll(876, 1071) + dmgFromSP
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
 			mage.FlamestrikeDot.Apply(sim)
 		},
 	})

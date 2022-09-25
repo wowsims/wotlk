@@ -35,9 +35,9 @@ func (mage *Mage) registerFireBlastSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(925, 1095, 1.5/3.5),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(925, 1095) + (1.5/3.5)*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

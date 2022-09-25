@@ -55,10 +55,10 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		//TickLength:           time.Second * 2.2,
 		NumberOfTicks: 24,
 		TickLength:    time.Second * 60 / 24,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(90, 120, 0.167),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(90, 120) + 0.167*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		}),
 	})
 }
 
@@ -102,10 +102,13 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(371, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 371 + 0.1*spell.SpellPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		}),
 	})
 }
 

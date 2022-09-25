@@ -37,9 +37,9 @@ func (mage *Mage) registerDeepFreezeSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(1469, 1741, 7.5/3.5),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1469, 1741) + (7.5/3.5)*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

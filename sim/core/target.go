@@ -23,6 +23,9 @@ type Encounter struct {
 	DamageTaken float64
 	// In health fight: set to true until we get something to base on
 	DurationIsEstimate bool
+
+	// Value to multiply by, for damage spells which are subject to the aoe cap.
+	aoeCapMultiplier float64
 }
 
 func NewEncounter(options proto.Encounter) Encounter {
@@ -75,7 +78,16 @@ func NewEncounter(options proto.Encounter) Encounter {
 		encounter.DurationIsEstimate = true
 	}
 
+	encounter.updateAOECapMultiplier()
+
 	return encounter
+}
+
+func (encounter *Encounter) AOECapMultiplier() float64 {
+	return encounter.aoeCapMultiplier
+}
+func (encounter *Encounter) updateAOECapMultiplier() {
+	encounter.aoeCapMultiplier = MinFloat(10/float64(len(encounter.Targets)), 1)
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {

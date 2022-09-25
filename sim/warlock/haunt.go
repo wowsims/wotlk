@@ -60,16 +60,13 @@ func (warlock *Warlock) registerHauntSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Pandemic, 1, 0)),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(645.0, 753.0, 0.4286),
-			OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(645, 753) + 0.4286*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
 				HauntDebuffAura.Activate(sim)
-			},
-		}),
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

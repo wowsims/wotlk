@@ -37,15 +37,14 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(900, 1140, 0.5711),
-			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.HolyFireDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(900, 1140) + 0.5711*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				priest.HolyFireDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)

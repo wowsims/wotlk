@@ -17,6 +17,7 @@ import (
 func (mage *Mage) registerArcaneMissilesSpell() {
 	actionID := core.ActionID{SpellID: 42846}
 	baseCost := .31 * mage.BaseMana
+	spellCoeff := 1/3.5 + 0.03*float64(mage.Talents.ArcaneEmpowerment)
 
 	bonusCrit := 0.0
 	if mage.MageTier.t9_4 {
@@ -96,9 +97,9 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(362, 1/3.5+0.03*float64(mage.Talents.ArcaneEmpowerment)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 362 + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		}),
 	})
 }

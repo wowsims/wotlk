@@ -12,6 +12,7 @@ import (
 func (mage *Mage) registerFireballSpell() {
 	actionID := core.ActionID{SpellID: 42833}
 	baseCost := .19 * mage.BaseMana
+	spellCoeff := 1 + 0.05*float64(mage.Talents.EmpoweredFire)
 
 	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
 
@@ -44,17 +45,14 @@ func (mage *Mage) registerFireballSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfigMagic(898, 1143, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
-			// BaseDamage:     core.BaseDamageConfigMagicNoRoll((898 + 1143)/2, 1.0+0.05*float64(mage.Talents.EmpoweredFire)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && !hasGlyph {
-					mage.FireballDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(898, 1143) + spellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() && !hasGlyph {
+				mage.FireballDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	target := mage.CurrentTarget

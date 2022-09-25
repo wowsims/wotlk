@@ -17,11 +17,6 @@ func (mage *Mage) registerLivingBombSpell() {
 	baseCost := .22 * mage.BaseMana
 	bonusCrit := float64(mage.Talents.WorldInFlames+mage.Talents.CriticalMass) * 2 * core.CritRatingPerCritChance
 
-	livingBombExplosionEffect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagicNoRoll(690, 1.5/3.5),
-		OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-	}
-
 	livingBombExplosionSpell := mage.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFire,
@@ -32,8 +27,14 @@ func (mage *Mage) registerLivingBombSpell() {
 		DamageMultiplier: mage.spellDamageMultiplier,
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
-		ApplyEffects:     core.ApplyEffectFuncAOEDamageCapped(mage.Env, livingBombExplosionEffect),
-		// ApplyEffects: core.ApplyEffectFuncDirectDamage(livingBombExplosionEffect),
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 690 + (1.5/3.5)*spell.SpellPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		},
 	})
 
 	target := mage.CurrentTarget

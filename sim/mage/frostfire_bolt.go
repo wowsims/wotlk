@@ -12,6 +12,7 @@ import (
 func (mage *Mage) registerFrostfireBoltSpell() {
 	actionID := core.ActionID{SpellID: 47610}
 	baseCost := .14 * mage.BaseMana
+	spellCoeff := 3.0/3.5 + .05*float64(mage.Talents.EmpoweredFire)
 
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -43,16 +44,14 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll((722+838)/2, 3.0/3.5+float64(mage.Talents.EmpoweredFire)*.05),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					mage.FrostfireDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := (722+838)/2 + spellCoeff*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				mage.FrostfireDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	target := mage.CurrentTarget

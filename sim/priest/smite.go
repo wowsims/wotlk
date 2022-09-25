@@ -32,9 +32,9 @@ func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(713, 799, 0.7143),
-			OutcomeApplier: priest.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(713, 799) + 0.7143*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }

@@ -42,10 +42,16 @@ func (shaman *Shaman) registerFireNovaSpell() {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamage(shaman.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(893, 997, 0.2142), // FIXME: double check spell coefficients
-			OutcomeApplier: shaman.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// FIXME: double check spell coefficients
+			dmgFromSP := 0.2142 * spell.SpellPower()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := sim.Roll(893, 997) + dmgFromSP
+				// TODO: Uncomment this
+				//baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		},
 	})
 }
 

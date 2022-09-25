@@ -11,11 +11,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 	baseCost := 0.14 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47838}
 	spellSchool := core.SpellSchoolFire
-
-	effect := core.SpellEffect{
-		BaseDamage:     warlock.incinerateDamage(),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-	}
+	spellCoeff := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -45,9 +41,15 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
-	})
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(582, 676) + spellCoeff*spell.SpellPower()
+			if warlock.ImmolateDot.IsActive() {
+				baseDamage += 157 //  145 to 169 averages to 157
+			}
 
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
+	})
 }
 
 func (warlock *Warlock) moltenCoreIncinerateModifier() float64 {
@@ -56,20 +58,4 @@ func (warlock *Warlock) moltenCoreIncinerateModifier() float64 {
 		castTimeModifier *= (1.0 - 0.1*float64(warlock.Talents.MoltenCore))
 	}
 	return castTimeModifier
-}
-
-func (warlock *Warlock) incinerateDamage() core.BaseDamageConfig {
-	spellCoefficient := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
-	base := core.BaseDamageConfigMagic(582.0, 676.0, spellCoefficient)
-
-	return core.WrapBaseDamageConfig(base, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			normalDamage := oldCalculator(sim, hitEffect, spell)
-			// Boost damage if immolate is ticking
-			if warlock.ImmolateDot.IsActive() {
-				normalDamage += 157 //  145 to 169 averages to 157
-			}
-			return normalDamage
-		}
-	})
 }

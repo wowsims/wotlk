@@ -12,12 +12,8 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	actionID := core.ActionID{SpellID: 59172}
 	spellSchool := core.SpellSchoolFire
 
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(1429, 1813, 0.7142*(1+0.04*float64(warlock.Talents.ShadowAndFlame))),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-	}
-
 	baseCost := 0.07 * warlock.BaseMana
+	spellCoeff := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	warlock.ChaosBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -50,7 +46,9 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1429, 1813) + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
-
 }

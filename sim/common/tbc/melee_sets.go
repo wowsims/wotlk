@@ -25,10 +25,9 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 				CritMultiplier:   character.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					BaseDamage:     core.BaseDamageConfigRoll(100, 150),
-					OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-				}),
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(100, 150))
+				},
 			})
 
 			ppmm := character.AutoAttacks.NewPPMManager(2, core.ProcMaskMelee)
@@ -68,10 +67,9 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 				CritMultiplier:   char.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					BaseDamage:     core.BaseDamageConfigRoll(15, 25),
-					OutcomeApplier: char.OutcomeFuncMagicHitAndCrit(),
-				}),
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(15, 25))
+				},
 			})
 			char.RegisterAura(core.Aura{
 				Label:    "Stormshround Armor 2pc",

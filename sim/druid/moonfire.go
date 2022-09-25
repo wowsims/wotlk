@@ -48,20 +48,17 @@ func (druid *Druid) registerMoonfireSpell() {
 		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(406, 476, 0.15),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.MoonfireDot.Apply(sim)
-					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						hasMoonkinForm := core.TernaryFloat64(druid.Talents.MoonkinForm, 1, 0)
-						druid.AddMana(sim, druid.MaxMana()*0.02*hasMoonkinForm, manaMetrics, true)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(406, 476) + 0.15*spell.SpellPower()
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				druid.MoonfireDot.Apply(sim)
+				if result.DidCrit() && druid.Talents.MoonkinForm {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
 				}
-			},
-		}),
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 
 	target := druid.CurrentTarget

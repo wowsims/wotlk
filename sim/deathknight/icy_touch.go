@@ -92,20 +92,15 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 7,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-					return roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
-				},
-			},
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMagicHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
+			baseDamage := roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					dk.RuneWeapon.FrostFeverSpell.Cast(sim, spellEffect.Target)
-				}
-			},
-		}),
+			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			if result.Landed() {
+				dk.RuneWeapon.FrostFeverSpell.Cast(sim, target)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

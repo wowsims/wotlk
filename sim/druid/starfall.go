@@ -74,10 +74,10 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(563, 653, 0.3),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(563, 653) + 0.3*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		}),
 	})
 
 	druid.StarfallDotSplash = core.NewDot(core.Dot{
@@ -88,9 +88,12 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(druid.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(101, 0.13),
-			OutcomeApplier: druid.OutcomeFuncMagicHitAndCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 101 + 0.13*spell.SpellPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		}),
 	})
 }

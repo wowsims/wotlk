@@ -84,10 +84,9 @@ func (gft *GnomishFlameTurret) registerFlameCannonSpell() {
 		CritMultiplier:   gft.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			BaseDamage:     BaseDamageConfigRoll(31, 36),
-			OutcomeApplier: gft.OutcomeFuncMagicHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(31, 36))
+		},
 	})
 }
 

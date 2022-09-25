@@ -39,53 +39,32 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		}
 	}
 
-	effect := shaman.newElectricSpellEffect(973, 1111, 0.5714, isLightningOverload)
-
-	makeOnSpellHit := func(hitIndex int32) func(*core.Simulation, *core.Spell, *core.SpellEffect) {
-		if !isLightningOverload && shaman.Talents.LightningOverload > 0 {
-			lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.11 / 3
-			return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
-				if sim.RandomFloat("CL Lightning Overload") > lightningOverloadChance {
-					return
-				}
-				shaman.ChainLightningLOs[hitIndex].Cast(sim, spellEffect.Target)
-			}
-		} else {
-			return nil
-		}
-	}
-
-	hasTidefury := shaman.HasSetBonus(ItemSetTidefury, 2)
 	numHits := core.MinInt32(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
+	dmgReductionPerBounce := core.TernaryFloat64(shaman.HasSetBonus(ItemSetTidefury, 2), 0.83, 0.7)
+	dmgBonus := shaman.electricSpellBonusDamage(0.5714)
+	spellCoeff := 0.5714 + 0.04*float64(shaman.Talents.Shamanism)
 
-	effect.Target = shaman.Env.GetTargetUnit(0)
-	effect.OnSpellHitDealt = makeOnSpellHit(0)
-	effects = append(effects, effect)
+	canLO := !isLightningOverload && shaman.Talents.LightningOverload > 0
+	lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.11 / 3
 
-	bounceMult := 1.0
-	for i := int32(1); i < numHits; i++ {
-		bounceEffect := effects[i-1] // Makes a copy of the previous bounce
-		bounceEffect.Target = shaman.Env.GetTargetUnit(i)
-		if hasTidefury {
-			bounceMult *= 0.83
-		} else {
-			bounceMult *= 0.7
-		}
-		curBounceMult := bounceMult
-		bounceEffect.BaseDamage = core.WrapBaseDamageConfig(bounceEffect.BaseDamage, func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
-			return func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-				return oldCalc(sim, effect, spell) * curBounceMult
+	spellConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		bounceCoeff := 1.0
+		curTarget := target
+		for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+			baseDamage := dmgBonus + sim.Roll(973, 1111) + spellCoeff*spell.SpellPower()
+			baseDamage *= bounceCoeff
+			result := spell.CalcDamageMagicHitAndCrit(sim, curTarget, baseDamage)
+
+			if canLO && result.Landed() && sim.RandomFloat("CL Lightning Overload") <= lightningOverloadChance {
+				shaman.ChainLightningLOs[hitIndex].Cast(sim, curTarget)
 			}
-		})
-		bounceEffect.OnSpellHitDealt = makeOnSpellHit(i)
 
-		effects = append(effects, bounceEffect)
+			spell.DealDamage(sim, &result)
+
+			bounceCoeff *= dmgReductionPerBounce
+			curTarget = sim.Environment.NextTargetUnit(target)
+		}
 	}
 
-	spellConfig.ApplyEffects = core.ApplyEffectFuncDamageMultiple(effects)
 	return shaman.RegisterSpell(spellConfig)
 }

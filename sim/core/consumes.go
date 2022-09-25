@@ -1046,10 +1046,9 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-				BaseDamage:     BaseDamageConfigFlat(40),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 40)
+			},
 		})
 
 		const procChance = 0.185
@@ -1225,13 +1224,13 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: ApplyEffectFuncAOEDamage(character.Env, SpellEffect{
-			BaseDamage:     BaseDamageConfigRoll(minDamage, maxDamage),
-			OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			// TODO: AOE Cap
+			for _, aoeTarget := range sim.Encounter.Targets {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, sim.Roll(minDamage, maxDamage))
+			}
 			// TODO: Deal self-damage
-			//OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			//},
-		}),
+		},
 	}
 }
 func (character *Character) newThermalSapperSpell(sharedTimer *Timer) *Spell {

@@ -12,11 +12,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 	actionID := core.ActionID{SpellID: 47825}
 	spellSchool := core.SpellSchoolFire
 
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagic(1323.0, 1657.0, 1.15),
-		OutcomeApplier: warlock.OutcomeFuncMagicHitAndCrit(),
-	}
-
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
@@ -44,7 +39,10 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1323, 1657) + 1.15*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
 

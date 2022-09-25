@@ -30,10 +30,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(237),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 237)
+			},
 		})
 
 		character.GetOrRegisterAura(core.Aura{
@@ -77,10 +76,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(185, 215),
-				OutcomeApplier: character.OutcomeFuncMagicHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(185, 215))
+			},
 		})
 
 		character.GetOrRegisterAura(core.Aura{
