@@ -279,12 +279,11 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				ThreatMultiplier: 1,
 				FlatThreatBonus:  90,
 
-				ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-					OutcomeApplier: character.OutcomeFuncAlwaysHit(),
-					OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-						debuffAuras[spellEffect.Target.Index].Activate(sim)
-					},
-				}),
+				ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+					debuffAuras[target.Index].Activate(sim)
+					// TODO: Make a function for "hit+threat" that doesn't do full damage calcs.
+					spell.CalcAndDealDamageAlwaysHit(sim, target, 0)
+				},
 			})
 
 			character.RegisterAura(Aura{

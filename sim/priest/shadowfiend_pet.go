@@ -63,12 +63,9 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				shadowfiend.ShadowcrawlAura.Activate(sim)
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			shadowfiend.ShadowcrawlAura.Activate(sim)
+		},
 	})
 
 	shadowfiend.PseudoStats.DamageTakenMultiplier *= 0.1

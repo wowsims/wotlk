@@ -68,15 +68,11 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		DamageMultiplier:         1,
 		ThreatMultiplier:         1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// weapon_speed * (0.022* AP + 0.044*HolP)
-					return paladin.GetMHWeapon().SwingSpeed * (.022*spell.MeleeAttackPower() + .044*spell.SpellPower())
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncAlwaysHit(), // can't miss if attack landed
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// weapon_speed * (0.022* AP + 0.044*HolP)
+			baseDamage := paladin.GetMHWeapon().SwingSpeed * (.022*spell.MeleeAttackPower() + .044*spell.SpellPower())
+			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+		},
 	})
 
 	// Seal of Righteousness aura.

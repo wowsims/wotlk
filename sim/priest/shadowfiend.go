@@ -40,12 +40,9 @@ func (priest *Priest) registerShadowfiendSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				priest.ShadowfiendAura.Activate(sim)
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			priest.ShadowfiendAura.Activate(sim)
+		},
 	})
 
 	priest.AddMajorCooldown(core.MajorCooldown{
