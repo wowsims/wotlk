@@ -10,10 +10,24 @@ import (
 //  3. Modify the damage if necessary.
 type OutcomeApplier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable)
 
+func (spell *Spell) ApplyOutcomeAlwaysHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	result.Outcome = OutcomeHit
+	spell.SpellMetrics[result.Target.UnitIndex].Hits++
+}
+func (spell *Spell) CalcDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) SpellEffect {
+	attackTable := spell.Unit.AttackTables[target.UnitIndex]
+	result := spell.CalcDamagePreOutcome(sim, target, attackTable, baseDamage)
+	spell.ApplyOutcomeAlwaysHit(sim, &result, attackTable)
+	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
+	return result
+}
+func (spell *Spell) CalcAndDealDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) {
+	result := spell.CalcDamageAlwaysHit(sim, target, baseDamage)
+	spell.DealDamage(sim, &result)
+}
 func (unit *Unit) OutcomeFuncAlwaysHit() OutcomeApplier {
-	return func(_ *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		spellEffect.Outcome = OutcomeHit
-		spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.ApplyOutcomeAlwaysHit(sim, spellEffect, attackTable)
 	}
 }
 

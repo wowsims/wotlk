@@ -23,15 +23,10 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: dk.CurrentTarget.OutcomeFuncAlwaysHit(),
-
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return dk.LastScourgeStrikeDamage * (diseaseMulti * dk.dkCountActiveDiseases(hitEffect.Target))
-				},
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := dk.LastScourgeStrikeDamage * diseaseMulti * dk.dkCountActiveDiseases(target)
+			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+		},
 	})
 }
 

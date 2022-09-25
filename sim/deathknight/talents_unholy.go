@@ -90,14 +90,10 @@ func (dk *Deathknight) applyWanderingPlague() {
 		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(dk.Env, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return dk.LastDiseaseDamage
-				},
-			},
-			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := dk.LastDiseaseDamage
+			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+		},
 	})
 }
 
@@ -116,14 +112,9 @@ func (dk *Deathknight) applyNecrosis() {
 		DamageMultiplier: 0.04 * float64(dk.Talents.Necrosis),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return curDmg
-				},
-			},
-			OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
+		},
 	})
 
 	dk.NecrosisAura = core.MakePermanent(dk.RegisterAura(core.Aura{

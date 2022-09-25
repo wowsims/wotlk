@@ -361,14 +361,9 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						return dmg
-					},
-				},
-				OutcomeApplier: character.OutcomeFuncAlwaysHit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageAlwaysHit(sim, target, dmg)
+			},
 		})
 	}
 
