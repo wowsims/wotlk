@@ -425,7 +425,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 			NewAction(dk.RotationActionCallback_BS).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+			NewAction(dk.RotationActionCallback_NEAT)
 	} else {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BS).
@@ -436,7 +436,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 			NewAction(dk.RotationActionCallback_BS).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+			NewAction(dk.RotationActionCallback_NEAT)
 	}
 
 	dk.NextCast = nil

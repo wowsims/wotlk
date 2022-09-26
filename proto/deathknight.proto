@@ -205,6 +205,8 @@ message Deathknight {
 		bool desync_rotation = 17;
 
 		StartingPresence bl_presence = 18;
+
+		string neat_genome = 19;
 	}
 	Rotation rotation = 1;
 

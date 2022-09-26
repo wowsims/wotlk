@@ -1,6 +1,22 @@
-in 9
-hidden 1
-out 8
+in 0
+in 1
+in 2
+in 3
+in 4
+in 5
+in 6
+in 7
+in 8
+hidden 9
+hidden 10
+out 11
+out 12
+out 13
+out 14
+out 15
+out 16
+out 17
+out 18
 connection 2 9 0.333 t 0 
 connection 9 10 0.8 t 1
 connection 3 9 0.4 t 2

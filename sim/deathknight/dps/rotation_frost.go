@@ -11,7 +11,7 @@ import (
 type FrostRotation struct {
 	dk *DpsDeathknight
 
-	genome    *neat.Genome
+	genome    neat.Genome
 	spellBook []*deathknight.RuneSpell
 
 	oblitCount int32
@@ -50,33 +50,7 @@ func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	// Horn Of Winter
 	// Wait Percent of 1 second
 
-	if fr.genome = neat.NewGenomeFromFile("assets/neat/frost_dk_genome1.neat"); fr.genome == nil {
-		fr.genome = neat.NewGenome()
-
-		var inNodes [9]*neat.Node
-		for i := 0; i < 17; i++ {
-			inNodes[i] = neat.NewNode(neat.NodeKind_Input, i)
-			fr.genome.AddNode(inNodes[i])
-		}
-
-		var hidNodes [2]*neat.Node
-		for i := 0; i < 2; i++ {
-			hidNodes[i] = neat.NewNode(neat.NodeKind_Output, i)
-			fr.genome.AddNode(hidNodes[i])
-		}
-
-		var outNodes [8]*neat.Node
-		for i := 0; i < len(outNodes); i++ {
-			outNodes[i] = neat.NewNode(neat.NodeKind_Hidden, i)
-			fr.genome.AddNode(outNodes[i])
-		}
-
-		fr.genome.NumInputs = 9
-		fr.genome.NumOutputs = 8
-
-		fr.genome.AddConnection(neat.NewConnection(inNodes[2].Id, hidNodes[0].Id, 0.333, true, 0))
-	}
-
+	fr.genome.FromString(dk.Rotation.NeatGenome)
 	fr.spellBook = []*deathknight.RuneSpell{
 		dk.IcyTouch,
 		dk.PlagueStrike,
@@ -103,8 +77,6 @@ func (fr *FrostRotation) EvaluateGenome(sim *core.Simulation, target *core.Unit)
 		core.TernaryFloat64(dk.KM(), 1.0, 0.0),
 		core.TernaryFloat64(dk.Rime(), 1.0, 0.0),
 	}
-
-	inputs = neat.Regularize(inputs)
 
 	// Proliferate network
 	maxIdx, outputs := fr.genome.Evaluate(inputs)

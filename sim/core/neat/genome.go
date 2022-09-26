@@ -2,6 +2,7 @@ package neat
 
 import (
 	"bufio"
+	"fmt"
 	"math"
 	"math/rand"
 	"os"
@@ -22,95 +23,116 @@ type Genome struct {
 
 func NewGenome() *Genome {
 	g := &Genome{}
+	return g
+}
+
+func (g *Genome) FromString(def string) {
 	g.Connections = make(map[int]*Connection)
 	g.Nodes = make(map[int]*Node)
+
+	scanner := bufio.NewScanner(strings.NewReader(def))
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		var nodes []*Node = make([]*Node, 0)
+		var nodeDecl bool = false
+		var nodeKind NodeKind
+		var connectionDecl bool = false
+		var connectionDataIdx int = 0
+		var connectionData [4]float64
+		var connectionExpressed bool = false
+		for _, token := range strings.Fields(scanner.Text()) {
+			if strings.Contains(token, "in") {
+				nodeDecl = true
+				connectionDecl = false
+				nodeKind = NodeKind_Input
+			} else if strings.Contains(token, "hidden") {
+				nodeDecl = true
+				connectionDecl = false
+				nodeKind = NodeKind_Hidden
+			} else if strings.Contains(token, "out") {
+				nodeDecl = true
+				connectionDecl = false
+				nodeKind = NodeKind_Output
+			} else if strings.Contains(token, "connection") {
+				connectionDecl = true
+				connectionDataIdx = 0
+				nodeDecl = false
+			} else if strings.Contains(token, "t") {
+				connectionExpressed = true
+			} else if strings.Contains(token, "f") {
+				connectionExpressed = false
+			} else if val, err := strconv.Atoi(token); err == nil {
+				if nodeDecl {
+					switch nodeKind {
+					case NodeKind_Input:
+						n := NewNode(NodeKind_Input, val)
+						nodes = append(nodes, n)
+						g.AddNode(n)
+						g.NumInputs++
+					case NodeKind_Hidden:
+						n := NewNode(NodeKind_Hidden, val)
+						nodes = append(nodes, n)
+						g.AddNode(n)
+					case NodeKind_Output:
+						n := NewNode(NodeKind_Output, val)
+						nodes = append(nodes, n)
+						g.AddNode(n)
+						g.NumOutputs++
+					}
+
+					nodeDecl = false
+				} else if connectionDecl {
+					connectionData[connectionDataIdx] = float64(val)
+					connectionDataIdx++
+				}
+			} else if val, err := strconv.ParseFloat(token, 32); err == nil {
+				if connectionDecl {
+					connectionData[connectionDataIdx] = val
+					connectionDataIdx++
+				}
+			}
+		}
+
+		if connectionDecl {
+			g.AddConnection(NewConnection(int(connectionData[0]), int(connectionData[1]), connectionData[2], connectionExpressed, int(connectionData[3])))
+		}
+	}
+}
+
+func (g *Genome) ToString() string {
+	result := ""
+	for _, n := range g.Nodes {
+		kind := "in"
+		if n.IsHidden() {
+			kind = "hidden"
+		} else if n.IsOutput() {
+			kind = "out"
+		}
+		result += fmt.Sprintf("%s %d\n", kind, n.Id)
+	}
+
+	for _, c := range g.Connections {
+		exp := "f"
+		if c.Expressed {
+			exp = "t"
+		}
+		result += fmt.Sprintf("connection %d %d %f %b %d", c.In, c.Out, c.Weight, exp, c.Innovation)
+	}
+
+	return result
+}
+
+func NewGenomeFromString(def string) *Genome {
+	g := NewGenome()
+	g.FromString(def)
 	return g
 }
 
 func NewGenomeFromFile(path string) *Genome {
-	file, err := os.Open(path)
+	file, err := os.ReadFile(path)
 	if err == nil {
-		g := NewGenome()
-
-		scanner := bufio.NewScanner(file)
-		scanner.Split(bufio.ScanLines)
-
-		var nodeKey int = 0
-		for scanner.Scan() {
-			var nodes []*Node = make([]*Node, 0)
-			var nodeDecl bool = false
-			var nodeKind NodeKind
-			var connectionDecl bool = false
-			var connectionDataIdx int = 0
-			var connectionData [4]float64
-			var connectionExpressed bool = false
-			for _, token := range strings.Fields(scanner.Text()) {
-				if strings.Contains(token, "in") {
-					nodeDecl = true
-					connectionDecl = false
-					nodeKind = NodeKind_Input
-				} else if strings.Contains(token, "hidden") {
-					nodeDecl = true
-					connectionDecl = false
-					nodeKind = NodeKind_Hidden
-				} else if strings.Contains(token, "out") {
-					nodeDecl = true
-					connectionDecl = false
-					nodeKind = NodeKind_Output
-				} else if strings.Contains(token, "connection") {
-					connectionDecl = true
-					connectionDataIdx = 0
-					nodeDecl = false
-				} else if strings.Contains(token, "t") {
-					connectionExpressed = true
-				} else if strings.Contains(token, "f") {
-					connectionExpressed = false
-				} else if val, err := strconv.Atoi(token); err == nil {
-					if nodeDecl {
-						switch nodeKind {
-						case NodeKind_Input:
-							for i := 0; i < val; i++ {
-								n := NewNode(NodeKind_Input, i+nodeKey)
-								nodes = append(nodes, n)
-								g.AddNode(n)
-							}
-							g.NumInputs = val
-							nodeKey += val
-						case NodeKind_Hidden:
-							for i := 0; i < val; i++ {
-								n := NewNode(NodeKind_Hidden, i+nodeKey)
-								nodes = append(nodes, n)
-								g.AddNode(n)
-							}
-							nodeKey += val
-						case NodeKind_Output:
-							for i := 0; i < val; i++ {
-								n := NewNode(NodeKind_Output, i+nodeKey)
-								nodes = append(nodes, n)
-								g.AddNode(n)
-							}
-							g.NumOutputs = val
-							nodeKey += val
-						}
-
-						nodeDecl = false
-					} else if connectionDecl {
-						connectionData[connectionDataIdx] = float64(val)
-						connectionDataIdx++
-					}
-				} else if val, err := strconv.ParseFloat(token, 32); err == nil {
-					if connectionDecl {
-						connectionData[connectionDataIdx] = val
-						connectionDataIdx++
-					}
-				}
-			}
-
-			if connectionDecl {
-				g.AddConnection(NewConnection(int(connectionData[0]), int(connectionData[1]), connectionData[2], connectionExpressed, int(connectionData[3])))
-			}
-		}
-
+		g := NewGenomeFromString(string(file))
 		return g
 	}
 
