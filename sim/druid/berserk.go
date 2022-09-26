@@ -23,6 +23,7 @@ func (druid *Druid) registerBerserkCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if druid.InForm(Cat) {
 				druid.PseudoStats.CostMultiplier /= 2.0
+				druid.TigersFuryAura.Deactivate(sim)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
