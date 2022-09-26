@@ -386,6 +386,7 @@ func init() {
 	core.NewItemEffect(31858, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 31858}
+		var outcomeApplier core.NewOutcomeApplier
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -396,11 +397,13 @@ func init() {
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(95, 115),
-				OutcomeApplier: character.OutcomeFuncCritFixedChance(0.03),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(95, 115)
+				result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
+				spell.DealDamage(sim, &result)
+			},
 		})
+		outcomeApplier = procSpell.OutcomeCritFixedChance(0.03)
 
 		// Normal proc chance.
 		procChance := 0.1

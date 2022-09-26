@@ -10,26 +10,7 @@ import (
 
 func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	baseCost := 0.09 * hunter.BaseMana
-
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return 0.2*spell.RangedAttackPower(hitEffect.Target) +
-					hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-					hunter.AmmoDamageBonus +
-					spell.BonusWeaponDamage() +
-					408
-			},
-		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-	}
-
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = hunter.Env.GetTargetUnit(i)
-	}
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 49048},
@@ -66,7 +47,20 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			sharedDmg := hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+				hunter.AmmoDamageBonus +
+				spell.BonusWeaponDamage() +
+				408
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := sharedDmg + 0.2*spell.RangedAttackPower(curTarget)
+				spell.CalcAndDealDamageRangedHitAndCrit(sim, curTarget, baseDamage)
+
+				curTarget = sim.Environment.NextTargetUnit(target)
+			}
+		},
 	})
 }
 

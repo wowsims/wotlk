@@ -42,9 +42,11 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: paladin.OutcomeFuncRangedHit(), // Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
+			spell.DealOutcome(sim, &result)
+		},
 	})
 }
 
@@ -76,9 +78,11 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: paladin.OutcomeFuncRangedHit(), // Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
+			spell.DealOutcome(sim, &result)
+		},
 	})
 }
 

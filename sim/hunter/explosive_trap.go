@@ -11,16 +11,7 @@ import (
 func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	actionID := core.ActionID{SpellID: 49067}
 	baseCost := 0.19 * hunter.BaseMana
-
-	applyAOEDamage := core.ApplyEffectFuncAOEDamageCapped(hunter.Env, core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return core.DamageRoll(sim, 523, 671) +
-					0.1*spell.RangedAttackPower(hitEffect.Target)
-			},
-		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-	})
+	hasGlyph := hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveTrap)
 
 	hunter.ExplosiveTrap = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -48,13 +39,17 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			applyAOEDamage(sim, target, spell)
+			for _, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(&aoeTarget.Unit)
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamageRangedHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
 			hunter.ExplosiveTrapDot.Apply(sim)
 		},
 	})
 
 	periodicOutcomeFunc := hunter.OutcomeFuncRangedHit()
-	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveTrap) {
+	if hasGlyph {
 		periodicOutcomeFunc = hunter.OutcomeFuncRangedHitAndCrit()
 	}
 

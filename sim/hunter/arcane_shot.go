@@ -11,14 +11,10 @@ import (
 func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 	baseCost := 0.05 * hunter.BaseMana
 
-	var onSpellHit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
-	if hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfArcaneShot) {
-		manaMetrics := hunter.NewManaMetrics(core.ActionID{ItemID: 42898})
-		onSpellHit = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() && (hunter.SerpentStingDot.IsActive() || hunter.ScorpidStingAura.IsActive()) {
-				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics, false)
-			}
-		}
+	hasGlyph := hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfArcaneShot)
+	var manaMetrics *core.ResourceMetrics
+	if hasGlyph {
+		manaMetrics = hunter.NewManaMetrics(core.ActionID{ItemID: 42898})
 	}
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
@@ -51,14 +47,13 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 492 + 0.15*spell.RangedAttackPower(hitEffect.Target)
-				},
-			},
-			OutcomeApplier:  hunter.OutcomeFuncRangedHitAndCrit(),
-			OnSpellHitDealt: onSpellHit,
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 492 + 0.15*spell.RangedAttackPower(target)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			if hasGlyph && result.Landed() && (hunter.SerpentStingDot.IsActive() || hunter.ScorpidStingAura.IsActive()) {
+				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics, false)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

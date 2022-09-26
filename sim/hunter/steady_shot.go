@@ -76,23 +76,18 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.1*spell.RangedAttackPower(hitEffect.Target) +
-						hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
-						hunter.NormalizedAmmoDamageBonus +
-						252
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.1*spell.RangedAttackPower(target) +
+				hunter.AutoAttacks.Ranged.BaseDamage(sim)*2.8/hunter.AutoAttacks.Ranged.SwingSpeed +
+				hunter.NormalizedAmmoDamageBonus +
+				252
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && impSSProcChance > 0 && sim.RandomFloat("Imp Steady Shot") < impSSProcChance {
-					hunter.ImprovedSteadyShotAura.Activate(sim)
-				}
-			},
-		}),
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			if result.Landed() && impSSProcChance > 0 && sim.RandomFloat("Imp Steady Shot") < impSSProcChance {
+				hunter.ImprovedSteadyShotAura.Activate(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }
 

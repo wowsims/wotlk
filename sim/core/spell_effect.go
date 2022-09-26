@@ -183,6 +183,17 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 	result.Damage = MaxFloat(0, result.Damage)
 }
 
+// For spells that do no damage but still have a hit/miss check.
+func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+	attackTable := spell.Unit.AttackTables[target.UnitIndex]
+	result := SpellEffect{
+		Target: target,
+		Damage: 0,
+	}
+	outcomeApplier(sim, &result, attackTable)
+	return result
+}
+
 func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 	result := SpellEffect{
@@ -198,6 +209,10 @@ func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64
 	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
 
 	return result
+}
+
+func (spell *Spell) DealOutcome(sim *Simulation, result *SpellEffect) {
+	spell.DealDamage(sim, result)
 }
 
 // Applies the fully computed spell result to the sim.

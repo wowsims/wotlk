@@ -9,24 +9,16 @@ import (
 )
 
 func (warrior *Warrior) registerThunderClapSpell() {
-	cost := 20.0 - float64(warrior.Talents.FocusedRage) - []float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap]
-	cost -= core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0)
+	cost := 20.0 -
+		float64(warrior.Talents.FocusedRage) -
+		[]float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap] -
+		core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0)
 
-	warrior.ThunderClapAura = core.ThunderClapAura(warrior.CurrentTarget, warrior.Talents.ImprovedThunderClap)
-
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return 300 + 0.12*spell.MeleeAttackPower()
-			},
-		},
-		OutcomeApplier: warrior.OutcomeFuncRangedHitAndCrit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				core.ThunderClapAura(spellEffect.Target, warrior.Talents.ImprovedThunderClap).Activate(sim)
-			}
-		},
+	tcAuras := make([]*core.Aura, warrior.Env.GetNumTargets())
+	for _, target := range warrior.Env.Encounter.Targets {
+		tcAuras[target.Index] = core.ThunderClapAura(&target.Unit, warrior.Talents.ImprovedThunderClap)
 	}
+	warrior.ThunderClapAura = tcAuras[warrior.CurrentTarget.Index]
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47502},
@@ -54,7 +46,18 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1.85,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, baseEffect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 300 + 0.12*spell.MeleeAttackPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := spell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
+				spell.DealDamage(sim, &result)
+				if result.Landed() {
+					tcAuras[aoeTarget.Index].Activate(sim)
+				}
+			}
+		},
 	})
 }
 

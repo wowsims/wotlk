@@ -342,10 +342,11 @@ func (hunter *Hunter) applyWildQuiver() {
 		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigRangedWeapon(0),
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
+				spell.BonusWeaponDamage()
+			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+		},
 	})
 
 	hunter.RegisterAura(core.Aura{

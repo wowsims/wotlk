@@ -34,14 +34,13 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: hunter.OutcomeFuncRangedHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					hunter.SerpentStingDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
+			if result.Landed() {
+				hunter.SerpentStingDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, &result)
+		},
 	})
 
 	dotOutcome := hunter.OutcomeFuncTick()

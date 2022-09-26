@@ -892,7 +892,7 @@ dps_results: {
 dps_results: {
  key: "TestHunter-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6779.99961
-  tps: 5828.52272
+  dps: 6775.34914
+  tps: 5823.87225
  }
 }
