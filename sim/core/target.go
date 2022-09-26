@@ -220,24 +220,12 @@ type AttackTable struct {
 	GlanceMultiplier float64
 	CritSuppression  float64
 
-	PartialResistArcaneRollThreshold00 float64
-	PartialResistArcaneRollThreshold25 float64
-	PartialResistArcaneRollThreshold50 float64
-	PartialResistHolyRollThreshold00   float64
-	PartialResistHolyRollThreshold25   float64
-	PartialResistHolyRollThreshold50   float64
-	PartialResistFireRollThreshold00   float64
-	PartialResistFireRollThreshold25   float64
-	PartialResistFireRollThreshold50   float64
-	PartialResistFrostRollThreshold00  float64
-	PartialResistFrostRollThreshold25  float64
-	PartialResistFrostRollThreshold50  float64
-	PartialResistNatureRollThreshold00 float64
-	PartialResistNatureRollThreshold25 float64
-	PartialResistNatureRollThreshold50 float64
-	PartialResistShadowRollThreshold00 float64
-	PartialResistShadowRollThreshold25 float64
-	PartialResistShadowRollThreshold50 float64
+	PartialResistArcaneThresholds Thresholds
+	PartialResistHolyThresholds   Thresholds
+	PartialResistFireThresholds   Thresholds
+	PartialResistFrostThresholds  Thresholds
+	PartialResistNatureThresholds Thresholds
+	PartialResistShadowThresholds Thresholds
 
 	BinaryArcaneHitChance float64
 	BinaryHolyHitChance   float64

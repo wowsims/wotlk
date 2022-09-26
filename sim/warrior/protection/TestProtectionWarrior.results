@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.79114
+  weights: 0.7912
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.25069
+  weights: 0.25075
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.0451
+  weights: 0.04504
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.5234
-  weights: 0.15868
+  weights: 0.52334
+  weights: 0.15951
   weights: 0
   weights: 0
   weights: 0
@@ -103,8 +103,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1970.80937
-  tps: 5718.55477
+  dps: 1970.96638
+  tps: 5718.88033
  }
 }
 dps_results: {
@@ -166,8 +166,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 2005.36866
-  tps: 5789.87304
+  dps: 2005.34251
+  tps: 5789.81883
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 2000.19053
-  tps: 5781.47781
+  dps: 2000.33496
+  tps: 5781.77728
  }
 }
 dps_results: {
@@ -488,8 +488,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-StormshroudArmor"
  value: {
-  dps: 1556.04394
-  tps: 4596.30546
+  dps: 1556.04347
+  tps: 4596.30447
  }
 }
 dps_results: {
@@ -516,8 +516,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 1450.74461
-  tps: 4225.09699
+  dps: 1450.65229
+  tps: 4224.90556
  }
 }
 dps_results: {
@@ -600,8 +600,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2819.69746
-  tps: 7424.52929
+  dps: 2818.60122
+  tps: 7422.25625
   dtps: 95.64931
  }
 }
@@ -692,8 +692,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2960.37697
-  tps: 7799.29786
+  dps: 2958.94956
+  tps: 7796.33813
   dtps: 99.39883
  }
 }
