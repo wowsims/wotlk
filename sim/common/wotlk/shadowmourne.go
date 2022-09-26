@@ -29,10 +29,12 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{ // simulate this as hitting single target for now.
-				BaseDamage:     core.BaseDamageConfigMagic(1900, 2100, 0),
-				OutcomeApplier: player.OutcomeFuncMagicHit(), // can miss, can't crit
-			})})
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(1900, 2100)
+				// can miss, can't crit
+				spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			},
+		})
 
 		stackingAura := player.GetOrRegisterAura(core.Aura{
 			Label:     "Soul Fragment",
