@@ -217,7 +217,12 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		},
 		AutoSwingRanged: true,
 	})
-	hunter.AutoAttacks.RangedEffect.BaseDamage.Calculator = core.BaseDamageFuncRangedWeapon(hunter.AmmoDamageBonus)
+	hunter.AutoAttacks.RangedConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
+			hunter.AmmoDamageBonus +
+			spell.BonusWeaponDamage()
+		spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+	}
 
 	hunter.pet = hunter.NewHunterPet()
 

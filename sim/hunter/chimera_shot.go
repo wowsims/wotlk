@@ -42,30 +42,24 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					rap := spell.RangedAttackPower(hitEffect.Target)
-					return 1.25 * (rap*0.2 +
-						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-						hunter.AmmoDamageBonus +
-						spell.BonusWeaponDamage())
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.2*spell.RangedAttackPower(target) +
+				hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+				hunter.AmmoDamageBonus +
+				spell.BonusWeaponDamage()
+			baseDamage *= 1.25
 
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			if result.Landed() {
 				if hunter.SerpentStingDot.IsActive() {
 					hunter.SerpentStingDot.Rollover(sim)
-					ssProcSpell.Cast(sim, spellEffect.Target)
+					ssProcSpell.Cast(sim, target)
 				} else if hunter.ScorpidStingAura.IsActive() {
 					hunter.ScorpidStingAura.Refresh(sim)
 				}
-			},
-		}),
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }
 
@@ -85,13 +79,9 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 242 + 0.04*spell.RangedAttackPower(target)
+			spell.CalcAndDealDamageRangedCritOnly(sim, target, baseDamage)
+		},
 	})
 }

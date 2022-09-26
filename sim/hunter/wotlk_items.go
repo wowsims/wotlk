@@ -217,7 +217,6 @@ func init() {
 
 			var rangedSpell *core.Spell
 			initSpell := func() {
-				rangedEffect := hunter.AutoAttacks.RangedEffect
 				rangedSpell = hunter.RegisterSpell(core.SpellConfig{
 					ActionID:    core.ActionID{ItemID: itemID},
 					SpellSchool: core.SpellSchoolPhysical,
@@ -227,7 +226,14 @@ func init() {
 					DamageMultiplier: 0.5,
 					CritMultiplier:   hunter.AutoAttacks.RangedConfig.CritMultiplier,
 					ThreatMultiplier: 1,
-					ApplyEffects:     core.ApplyEffectFuncDirectDamage(rangedEffect),
+
+					ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+						baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
+							hunter.AmmoDamageBonus +
+							spell.BonusWeaponDamage()
+
+						spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+					},
 				})
 			}
 

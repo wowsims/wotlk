@@ -127,6 +127,7 @@ var gargoyleBaseStats = stats.Stats{
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
+	var outcomeApplier core.NewOutcomeApplier
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51963},
@@ -147,14 +148,11 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 		CritMultiplier:   1.5,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dmgRoll := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + attackPowerModifier*spell.MeleeAttackPower()
-					return dmgRoll
-				},
-			},
-			OutcomeApplier: garg.OutcomeFuncCritFixedChance(0.05),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + attackPowerModifier*spell.MeleeAttackPower()
+			result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
+			spell.DealDamage(sim, &result)
+		},
 	})
+	outcomeApplier = garg.GargoyleStrike.OutcomeCritFixedChance(0.05)
 }

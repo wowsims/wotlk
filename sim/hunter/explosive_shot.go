@@ -17,23 +17,6 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 	actionID := core.ActionID{SpellID: 60053}
 	baseCost := 0.07 * hunter.BaseMana
 
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return core.DamageRoll(sim, 386, 464) +
-					0.14*spell.RangedAttackPower(hitEffect.Target)
-			},
-		},
-		OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-	}
-
-	initialEffect := baseEffect
-	initialEffect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
-			hunter.ExplosiveShotDot.Apply(sim)
-		}
-	}
-
 	hunter.ExplosiveShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
@@ -63,11 +46,16 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(initialEffect),
-	})
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(386, 464) + 0.14*spell.RangedAttackPower(target)
 
-	dotEffect := baseEffect
-	dotEffect.IsPeriodic = true
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			if result.Landed() {
+				hunter.ExplosiveShotDot.Apply(sim)
+			}
+			spell.DealDamage(sim, &result)
+		},
+	})
 
 	target := hunter.CurrentTarget
 	hunter.ExplosiveShotDot = core.NewDot(core.Dot{
@@ -78,6 +66,15 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		}),
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 1,
-		TickEffects:   core.TickFuncSnapshot(target, dotEffect),
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			IsPeriodic: true,
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return core.DamageRoll(sim, 386, 464) +
+						0.14*spell.RangedAttackPower(hitEffect.Target)
+				},
+			},
+			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
+		}),
 	})
 }
