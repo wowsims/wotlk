@@ -51,7 +51,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			baseDamage := sim.Roll(750, 870) + 0.429*spell.SpellPower()
 			baseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 			}

@@ -90,7 +90,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 
 	spellConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := dmgBonus + sim.Roll(719, 819) + spellCoeff*spell.SpellPower()
-		result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 		if result.Landed() {
 			if applyDot && result.DidCrit() { // need to merge in the 4pt8 effect

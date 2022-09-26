@@ -265,16 +265,13 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(150),
-				OutcomeApplier: character.OutcomeFuncMagicCrit(),
-
-				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() {
-						debuffs[spellEffect.Target.Index].Activate(sim)
-					}
-				},
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcDamage(sim, target, 150, spell.OutcomeMagicCrit)
+				if result.Landed() {
+					debuffs[target.Index].Activate(sim)
+				}
+				spell.DealDamage(sim, &result)
+			},
 		})
 
 		if mh {

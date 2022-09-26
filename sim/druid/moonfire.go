@@ -50,7 +50,7 @@ func (druid *Druid) registerMoonfireSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(406, 476) + 0.15*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				druid.MoonfireDot.Apply(sim)
 				if result.DidCrit() && druid.Talents.MoonkinForm {

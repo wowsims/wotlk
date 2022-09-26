@@ -75,7 +75,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := 500 + 0.214*spell.SpellPower()
-		result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		if result.Landed() {
 			shaman.FlameShockDot.Apply(sim)
 		}

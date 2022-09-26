@@ -53,7 +53,7 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 			baseDamage := dmgBonus + sim.Roll(973, 1111) + spellCoeff*spell.SpellPower()
 			baseDamage *= bounceCoeff
-			result := spell.CalcDamageMagicHitAndCrit(sim, curTarget, baseDamage)
+			result := spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 			if canLO && result.Landed() && sim.RandomFloat("CL Lightning Overload") <= lightningOverloadChance {
 				shaman.ChainLightningLOs[hitIndex].Cast(sim, curTarget)

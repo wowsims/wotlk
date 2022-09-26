@@ -50,7 +50,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				(8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)) *
 				(1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks()))
 
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)

@@ -121,11 +121,16 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		NumberOfTicks: 40,
 		TickLength:    time.Second * 3,
 
-		// TODO is this the right affect should it be Capped?
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(fireElemental.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(68, 70, 0.032), // TODO these are approximation, from base SP
-			OutcomeApplier: fireElemental.OutcomeFuncMagicCrit(),
-		})),
+		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// TODO is this the right affect should it be Capped?
+			// TODO these are approximation, from base SP
+			dmgFromSP := 0.032 * spell.SpellPower()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := sim.Roll(68, 70) + dmgFromSP
+				//baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamageMagicCrit(sim, &aoeTarget.Unit, baseDamage)
+			}
+		}),
 	})
 
 	fireElemental.FireShieldAura = fireElemental.RegisterAura(core.Aura{

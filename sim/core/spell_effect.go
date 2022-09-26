@@ -176,7 +176,8 @@ func (spell *Spell) healingCritRating() float64 {
 	return spell.Unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
 }
 
-func (spell *Spell) CalcDamagePreOutcome(sim *Simulation, target *Unit, attackTable *AttackTable, baseDamage float64) SpellEffect {
+func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 	result := SpellEffect{
 		Target: target,
 		Damage: baseDamage,
@@ -186,6 +187,8 @@ func (spell *Spell) CalcDamagePreOutcome(sim *Simulation, target *Unit, attackTa
 	result.Damage *= spell.ResistanceMultiplier(sim, false, attackTable)
 	result.Damage = spell.applyTargetModifiers(result.Damage, sim, attackTable, false)
 	result.PreoutcomeDamage = result.Damage
+	outcomeApplier(sim, &result, attackTable)
+	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
 
 	return result
 }
