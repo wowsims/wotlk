@@ -91,8 +91,8 @@ var armsRotation = &proto.Warrior_Rotation{
 	UseCleave: false,
 
 	HsRageThreshold:   50,
-	MsRageThreshold:   40,
-	SlamRageThreshold: 30,
+	MsRageThreshold:   35,
+	SlamRageThreshold: 25,
 	RendCdThreshold:   0,
 
 	SpamExecute: false,
@@ -109,9 +109,9 @@ var furyRotation = &proto.Warrior_Rotation{
 	UseRend:   false,
 	UseCleave: false,
 
-	HsRageThreshold:        50,
+	HsRageThreshold:        30,
 	RendRageThresholdBelow: 70,
-	SlamRageThreshold:      30,
+	SlamRageThreshold:      25,
 	RendCdThreshold:        0,
 
 	UseHsDuringExecute: true,
@@ -122,7 +122,7 @@ var furyRotation = &proto.Warrior_Rotation{
 	MaintainDemoShout:   false,
 	MaintainThunderClap: false,
 
-	StanceOption: proto.Warrior_Rotation_BerserkerStance,
+	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
 var warriorOptions = &proto.Warrior_Options{
