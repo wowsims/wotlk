@@ -26,14 +26,10 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					return curDmg
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncAlwaysHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Cancel out caster multiplier so it doesn't double dip.
+			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg/spell.CasterDamageMultiplier())
+		},
 	})
 
 	ssAura := warrior.RegisterAura(core.Aura{

@@ -121,6 +121,10 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed*attackPower)/MeleeAttackRatingPerDamage
 }
 
+func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.Ranged.CalculateWeaponDamage(sim, attackPower)
+}
+
 type MeleeDamageCalculator func(attackPower float64, bonusWeaponDamage float64) float64
 
 // Returns whether this hit effect is associated with the main-hand weapon.
@@ -168,9 +172,8 @@ type AutoAttacks struct {
 	OHConfig     SpellConfig
 	RangedConfig SpellConfig
 
-	MHEffect     SpellEffect
-	OHEffect     SpellEffect
-	RangedEffect SpellEffect
+	MHEffect SpellEffect
+	OHEffect SpellEffect
 
 	MHAuto     *Spell
 	OHAuto     *Spell
@@ -253,6 +256,12 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		DamageMultiplier: 1,
 		CritMultiplier:   options.Ranged.CritMultiplier,
 		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
+				spell.BonusWeaponDamage()
+			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+		},
 	}
 
 	if unit.Type == EnemyUnit {
@@ -272,10 +281,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		unit.AutoAttacks.OHEffect = SpellEffect{
 			BaseDamage:     BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
 			OutcomeApplier: unit.OutcomeFuncMeleeWhite(),
-		}
-		unit.AutoAttacks.RangedEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigRangedWeapon(0),
-			OutcomeApplier: unit.OutcomeFuncRangedHitAndCrit(),
 		}
 	}
 }
@@ -298,7 +303,6 @@ func (aa *AutoAttacks) finalize() {
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 
 	if aa.RangedConfig.ProcMask != ProcMaskUnknown {
-		aa.RangedConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.RangedEffect)
 		aa.RangedAuto = aa.unit.GetOrRegisterSpell(aa.RangedConfig)
 	}
 }

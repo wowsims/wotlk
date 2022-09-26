@@ -92,6 +92,7 @@ func (warrior *Warrior) applyDamageShield() {
 		return
 	}
 
+	coeff := 0.1 * float64(warrior.Talents.DamageShield)
 	damageShieldProcSpell := warrior.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58874},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -101,14 +102,10 @@ func (warrior *Warrior) applyDamageShield() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return warrior.GetStat(stats.BlockValue) * 0.1 * float64(warrior.Talents.DamageShield)
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncAlwaysHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := coeff * warrior.GetStat(stats.BlockValue)
+			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+		},
 	})
 
 	core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
@@ -382,13 +379,13 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			Duration: core.NeverExpires,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
 				swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:       core.ActionID{SpellID: 12281},
-					SpellSchool:    core.SpellSchoolPhysical,
-					ProcMask:       core.ProcMaskMeleeMHAuto,
-					Flags:          core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-					CritMultiplier: warrior.critMultiplier(mh),
-
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(warrior.AutoAttacks.MHEffect),
+					ActionID:         core.ActionID{SpellID: 12281},
+					SpellSchool:      core.SpellSchoolPhysical,
+					ProcMask:         core.ProcMaskMeleeMHAuto,
+					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
+					CritMultiplier:   warrior.critMultiplier(mh),
+					DamageMultiplier: 1,
+					ApplyEffects:     core.ApplyEffectFuncDirectDamage(warrior.AutoAttacks.MHEffect),
 				})
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {

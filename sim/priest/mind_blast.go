@@ -58,7 +58,7 @@ func (priest *Priest) registerMindBlastSpell() {
 				baseDamage *= normMod
 			}
 
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 			}

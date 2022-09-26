@@ -23,39 +23,36 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 
 	var curTarget *core.Unit
 	var remainingJumps int
-	priest.ProcPrayerOfMending = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		IsHealing:      true,
-		BaseDamage:     core.BaseDamageConfigHealingNoRoll(1043, 0.8057),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(),
+	priest.ProcPrayerOfMending = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		baseHealing := 1043 + 0.8057*spell.HealingPower()
+		priest.PrayerOfMending.CalcAndDealHealingCrit(sim, target, baseHealing)
 
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			pomAuras[spellEffect.Target.UnitIndex].Deactivate(sim)
-			curTarget = nil
+		pomAuras[target.UnitIndex].Deactivate(sim)
+		curTarget = nil
 
-			// Bounce to new ally.
-			if remainingJumps == 0 {
-				return
+		// Bounce to new ally.
+		if remainingJumps == 0 {
+			return
+		}
+
+		// Find ally with lowest % HP and is not the current mending target.
+		var newTarget *core.Unit
+		for _, raidUnit := range priest.Env.Raid.AllUnits {
+			if raidUnit == target {
+				continue
 			}
 
-			// Find ally with lowest % HP and is not the current mending target.
-			var newTarget *core.Unit
-			for _, raidUnit := range priest.Env.Raid.AllUnits {
-				if raidUnit == spellEffect.Target {
-					continue
-				}
-
-				if newTarget == nil || (raidUnit.HasHealthBar() && newTarget.HasHealthBar() && raidUnit.CurrentHealthPercent() < newTarget.CurrentHealthPercent()) {
-					newTarget = raidUnit
-				}
+			if newTarget == nil || (raidUnit.HasHealthBar() && newTarget.HasHealthBar() && raidUnit.CurrentHealthPercent() < newTarget.CurrentHealthPercent()) {
+				newTarget = raidUnit
 			}
+		}
 
-			if newTarget != nil {
-				pomAuras[newTarget.UnitIndex].Activate(sim)
-				curTarget = newTarget
-				remainingJumps--
-			}
-		},
-	})
+		if newTarget != nil {
+			pomAuras[newTarget.UnitIndex].Activate(sim)
+			curTarget = newTarget
+			remainingJumps--
+		}
+	}
 
 	priest.PrayerOfMending = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

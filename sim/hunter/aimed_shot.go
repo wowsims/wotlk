@@ -46,17 +46,13 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.2*spell.RangedAttackPower(hitEffect.Target) +
-						hunter.AutoAttacks.Ranged.BaseDamage(sim) +
-						hunter.AmmoDamageBonus +
-						spell.BonusWeaponDamage() +
-						408
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.2*spell.RangedAttackPower(target) +
+				hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+				hunter.AmmoDamageBonus +
+				spell.BonusWeaponDamage() +
+				408
+			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
