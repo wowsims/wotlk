@@ -176,6 +176,13 @@ func (spell *Spell) healingCritRating() float64 {
 	return spell.Unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
 }
 
+func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *SpellEffect) {
+	for i := range result.Target.DynamicDamageTakenModifiers {
+		result.Target.DynamicDamageTakenModifiers[i](sim, spell, result)
+	}
+	result.Damage = MaxFloat(0, result.Damage)
+}
+
 func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 	result := SpellEffect{
@@ -185,27 +192,12 @@ func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64
 
 	result.Damage *= spell.CasterDamageMultiplier()
 	result.Damage *= spell.ResistanceMultiplier(sim, false, attackTable)
-	result.Damage = spell.applyTargetModifiers(result.Damage, sim, attackTable, false)
+	result.Damage = spell.applyTargetModifiers(result.Damage, attackTable, false)
 	result.PreoutcomeDamage = result.Damage
 	outcomeApplier(sim, &result, attackTable)
 	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
 
 	return result
-}
-
-func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *SpellEffect) {
-	for i := range result.Target.DynamicDamageTakenModifiers {
-		result.Target.DynamicDamageTakenModifiers[i](sim, spell, result)
-	}
-	result.Damage = MaxFloat(0, result.Damage)
-}
-
-func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
-	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
-	StartDelayedAction(sim, DelayedActionOptions{
-		DoAt:     sim.CurrentTime + travelTime,
-		OnAction: callback,
-	})
 }
 
 // Applies the fully computed spell result to the sim.
@@ -227,6 +219,44 @@ func (spell *Spell) DealDamage(sim *Simulation, result *SpellEffect) {
 	result.Target.OnSpellHitTaken(sim, spell, result)
 }
 
+func (spell *Spell) CalcHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+	attackTable := spell.Unit.AttackTables[target.UnitIndex]
+	result := SpellEffect{
+		Target: target,
+		Damage: baseHealing,
+	}
+
+	result.Damage *= spell.CasterHealingMultiplier()
+	result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
+	outcomeApplier(sim, &result, attackTable)
+
+	return result
+}
+
+// Applies the fully computed spell result to the sim.
+func (spell *Spell) DealHealing(sim *Simulation, result *SpellEffect) {
+	spell.SpellMetrics[result.Target.UnitIndex].TotalHealing += result.Damage
+	spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.calcThreat(spell)
+	if result.Target.HasHealthBar() {
+		result.Target.GainHealth(sim, result.Damage, spell.HealthMetrics(result.Target))
+	}
+
+	if sim.Log != nil {
+		spell.Unit.Log(sim, "%s %s %s. (Threat: %0.3f)", result.Target.LogLabel(), spell.ActionID, result, result.calcThreat(spell))
+	}
+
+	spell.Unit.OnHealDealt(sim, spell, result)
+	result.Target.OnHealTaken(sim, spell, result)
+}
+
+func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
+	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
+	StartDelayedAction(sim, DelayedActionOptions{
+		DoAt:     sim.CurrentTime + travelTime,
+		OnAction: callback,
+	})
+}
+
 func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spell) float64 {
 	if spellEffect.BaseDamage.Calculator == nil {
 		return 0
@@ -242,7 +272,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		afterAttackMods := spellEffect.Damage
 		spellEffect.applyResistances(sim, spell, attackTable)
 		afterResistances := spellEffect.Damage
-		spellEffect.applyTargetModifiers(sim, spell, attackTable)
+		spellEffect.applyTargetModifiers(spell, attackTable)
 		afterTargetMods := spellEffect.Damage
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
@@ -254,14 +284,14 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 	} else {
 		spellEffect.applyAttackerModifiers(sim, spell)
 		spellEffect.applyResistances(sim, spell, attackTable)
-		spellEffect.applyTargetModifiers(sim, spell, attackTable)
+		spellEffect.applyTargetModifiers(spell, attackTable)
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	spellEffect.applyResistances(sim, spell, attackTable)
-	spellEffect.applyTargetModifiers(sim, spell, attackTable)
+	spellEffect.applyTargetModifiers(spell, attackTable)
 	spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 }
 
@@ -396,7 +426,7 @@ func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *S
 // Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
 func (spell *Spell) CasterDamageMultiplier() float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		return 1.0
+		return 1
 	}
 
 	attacker := spell.Unit
@@ -427,15 +457,15 @@ func (spell *Spell) CasterDamageMultiplier() float64 {
 	return multiplier
 }
 
-func (spellEffect *SpellEffect) applyTargetModifiers(sim *Simulation, spell *Spell, attackTable *AttackTable) {
+func (spellEffect *SpellEffect) applyTargetModifiers(spell *Spell, attackTable *AttackTable) {
 	if spellEffect.IsHealing && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
 		spellEffect.Damage *= attackTable.Defender.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 		return
 	}
 
-	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, sim, attackTable, spellEffect.IsPeriodic)
+	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, attackTable, spellEffect.IsPeriodic)
 }
-func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attackTable *AttackTable, isPeriodic bool) float64 {
+func (spell *Spell) applyTargetModifiers(damage float64, attackTable *AttackTable, isPeriodic bool) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
 		return damage
 	}
@@ -475,4 +505,23 @@ func (spell *Spell) applyTargetModifiers(damage float64, sim *Simulation, attack
 	}
 
 	return damage
+}
+
+func (spell *Spell) CasterHealingMultiplier() float64 {
+	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
+		return 1
+	}
+
+	return spell.Unit.PseudoStats.HealingDealtMultiplier *
+		spell.DamageMultiplier *
+		spell.DamageMultiplierAdditive
+}
+func (spell *Spell) applyTargetHealingModifiers(damage float64, attackTable *AttackTable) float64 {
+	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		return damage
+	}
+
+	return damage *
+		attackTable.Defender.PseudoStats.HealingTakenMultiplier *
+		attackTable.HealingDealtMultiplier
 }

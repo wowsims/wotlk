@@ -10,6 +10,7 @@ import (
 
 func (priest *Priest) registerFlashHealSpell() {
 	baseCost := .18 * priest.BaseMana
+	spellCoeff := 0.8057 + 0.04*float64(priest.Talents.EmpoweredHealing)
 
 	priest.FlashHeal = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48071},
@@ -34,11 +35,9 @@ func (priest *Priest) registerFlashHealSpell() {
 		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			IsHealing: true,
-
-			BaseDamage:     core.BaseDamageConfigHealing(1896, 2203, 0.8057+0.04*float64(priest.Talents.EmpoweredHealing)),
-			OutcomeApplier: priest.OutcomeFuncHealingCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseHealing := sim.Roll(1896, 2203) + spellCoeff*spell.HealingPower()
+			spell.CalcAndDealHealingCrit(sim, target, baseHealing)
+		},
 	})
 }

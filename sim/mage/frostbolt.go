@@ -10,6 +10,7 @@ import (
 
 func (mage *Mage) registerFrostboltSpell() {
 	baseCost := .11 * mage.BaseMana
+	spellCoeff := (3.0/3.5)*0.95 + 0.05*float64(mage.Talents.EmpoweredFrostbolt)
 
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42842},
@@ -36,9 +37,9 @@ func (mage *Mage) registerFrostboltSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(799, 861, (3.0/3.5)*0.95+0.05*float64(mage.Talents.EmpoweredFrostbolt)),
-			OutcomeApplier: mage.OutcomeFuncMagicHitAndCritBinary(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(799, 861) + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHitAndCritBinary(sim, target, baseDamage)
+		},
 	})
 }
