@@ -39,7 +39,7 @@ export const ArmsTalents = {
 			major1: WarriorMajorGlyph.GlyphOfRending,
 			major2: WarriorMajorGlyph.GlyphOfMortalStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
-			minor1: WarriorMinorGlyph.GlyphOfBattle,
+			minor1: WarriorMinorGlyph.GlyphOfThunderClap,
 			minor2: WarriorMinorGlyph.GlyphOfCommand,
 			minor3: WarriorMinorGlyph.GlyphOfCharge,
 		}),
@@ -49,30 +49,30 @@ export const ArmsTalents = {
 export const FuryTalents = {
 	name: 'Fury',
 	data: SavedTalents.create({
-		talentsString: '30202300233-325003101504310053120500351',
+		talentsString: '32002301233-305053000520310053120500351',
 		glyphs: Glyphs.create({
 			major1: WarriorMajorGlyph.GlyphOfWhirlwind,
 			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
 			minor1: WarriorMinorGlyph.GlyphOfBattle,
-			minor2: WarriorMinorGlyph.GlyphOfCommand,
+			minor2: WarriorMinorGlyph.GlyphOfBloodrage,
 			minor3: WarriorMinorGlyph.GlyphOfCharge,
 		}),
 	}),
 };
 
 export const DefaultRotation = WarriorRotation.create({
-	useRend: true,
+	useRend: false,
 	useMs: true,
 	useCleave: false,
 
 	prioritizeWw: true,
-	sunderArmor: SunderArmor.SunderArmorHelpStack,
+	sunderArmor: SunderArmor.SunderArmorNone,
 
-	msRageThreshold: 40,
-	hsRageThreshold: 50,
+	msRageThreshold: 35,
+	hsRageThreshold: 30,
 	rendRageThresholdBelow: 70,
-	slamRageThreshold: 30,
+	slamRageThreshold: 25,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
 	useBtDuringExecute: true,
@@ -86,9 +86,9 @@ export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
 	useCleave: false,
-	sunderArmor: SunderArmor.SunderArmorHelpStack,
-	msRageThreshold: 40,
-	slamRageThreshold: 30,
+	sunderArmor: SunderArmor.SunderArmorNone,
+	msRageThreshold: 355,
+	slamRageThreshold: 25,
 	hsRageThreshold: 50,
 	rendCdThreshold: 0,
 	useHsDuringExecute: true,
@@ -104,9 +104,9 @@ export const DefaultOptions = WarriorOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodDragonfinFilet,
+	food: Food.FoodSpicedWormBurger,
 	defaultPotion: Potions.IndestructiblePotion,
-	prepopPotion: Potions.IndestructiblePotion,
+	prepopPotion: Potions.PotionOfSpeed,
 });
 
 export const P1_PRERAID_FURY_PRESET = {
@@ -119,13 +119,13 @@ export const P1_PRERAID_FURY_PRESET = {
           "enchant": 44879,
           "gems": [
             41398,
-            49110
+            42702
           ]
         },
         {
           "id": 42645,
           "gems": [
-            42142
+            40003
           ]
         },
         {
@@ -140,8 +140,8 @@ export const P1_PRERAID_FURY_PRESET = {
           "id": 39606,
           "enchant": 44489,
           "gems": [
-            42142,
-            39996
+            40003,
+            40003
           ]
         },
         {
@@ -162,30 +162,26 @@ export const P1_PRERAID_FURY_PRESET = {
         {
           "id": 40694,
           "gems": [
-            42142,
-            39996
+            42149,
+            42149
           ]
         },
         {
-          "id": 37193,
-          "enchant": 38374,
-          "gems": [
-            39996,
-            39996
-          ]
+          "id": 44205,
+          "enchant": 38374
         },
         {
           "id": 44306,
           "enchant": 55016,
           "gems": [
-            39996,
-            39996
+            40037,
+            40037
           ]
         },
         {
           "id": 42642,
           "gems": [
-            40037
+            42149
           ]
         },
         {
@@ -206,8 +202,7 @@ export const P1_PRERAID_FURY_PRESET = {
           "enchant": 44492
         },
         {
-          "id": 37191,
-          "enchant": 41167
+          "id": 37191
         }
       ]}`),
 };
@@ -218,24 +213,24 @@ export const P1_FURY_PRESET = {
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
         {
-          "id": 40528,
+          "id": 44006,
           "enchant": 44879,
           "gems": [
-            41398,
-            39996
+            41285,
+            42702
           ]
         },
         {
           "id": 44664,
           "gems": [
-            39996
+            40037
           ]
         },
         {
           "id": 40530,
           "enchant": 44871,
           "gems": [
-            40058
+            42149
           ]
         },
         {
@@ -243,18 +238,17 @@ export const P1_FURY_PRESET = {
           "enchant": 55002
         },
         {
-          "id": 40525,
+          "id": 40539,
           "enchant": 44489,
           "gems": [
-            42142,
-            49110
+            40037
           ]
         },
         {
-          "id": 40733,
+          "id": 39765,
           "enchant": 44484,
           "gems": [
-            0
+            40037
           ]
         },
         {
@@ -265,17 +259,17 @@ export const P1_FURY_PRESET = {
           ]
         },
         {
-          "id": 40317,
+          "id": 40205,
           "gems": [
-            42142
+            42149
           ]
         },
         {
           "id": 40529,
           "enchant": 38374,
           "gems": [
-            42142,
-            39996
+            40037,
+            40086
           ]
         },
         {
@@ -285,11 +279,11 @@ export const P1_FURY_PRESET = {
         {
           "id": 43993,
           "gems": [
-            39996
+            42149
           ]
         },
         {
-          "id": 40075
+          "id": 40717
         },
         {
           "id": 42987
@@ -321,13 +315,13 @@ export const P1_PRERAID_ARMS_PRESET = {
           "enchant": 44879,
           "gems": [
             41285,
-            49110
+            42702
           ]
         },
         {
           "id": 42645,
           "gems": [
-            42142
+            40002
           ]
         },
         {
@@ -342,8 +336,8 @@ export const P1_PRERAID_ARMS_PRESET = {
           "id": 39606,
           "enchant": 44489,
           "gems": [
-            42142,
-            39996
+            40002,
+            40002
           ]
         },
         {
@@ -364,30 +358,30 @@ export const P1_PRERAID_ARMS_PRESET = {
         {
           "id": 40694,
           "gems": [
-            42142,
-            39996
+            42149,
+            42149
           ]
         },
         {
           "id": 37193,
           "enchant": 38374,
           "gems": [
-            39996,
-            39996
+            40002,
+            40037
           ]
         },
         {
           "id": 44306,
           "enchant": 55016,
           "gems": [
-            42702,
-            40037
+            40086,
+            40002
           ]
         },
         {
           "id": 42642,
           "gems": [
-            40037
+            42149
           ]
         },
         {
@@ -405,11 +399,7 @@ export const P1_PRERAID_ARMS_PRESET = {
         },
         {},
         {
-          "id": 44504,
-          "enchant": 41167,
-          "gems": [
-            40038
-          ]
+          "id": 37191
         }
       ]}`),
 };
