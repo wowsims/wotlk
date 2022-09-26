@@ -98,99 +98,102 @@ export const DefaultConsumes = Consumes.create({
 export const P1_BALANCED_PRESET = {
 	name: 'P1 Balanced Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-        {
-          "id": 40546,
-          "enchant": 44878,
-          "gems": [
-            41380,
-            40034
-          ]
-        },
-        {
-          "id": 40387
-        },
-        {
-          "id": 39704,
-          "enchant": 44957,
-          "gems": [
-            40008
-          ]
-        },
-        {
-          "id": 40252,
-          "enchant": 55002
-        },
-        {
-          "id": 40544,
-          "enchant": 44489,
-          "gems": [
-            40008,
-            40008
-          ]
-        },
-        {
-          "id": 39764,
-          "enchant": 44944,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 40545,
-          "enchant": 63770,
-          "gems": [
-            49110,
-            0
-          ]
-        },
-        {
-          "id": 39759,
-          "enchant": 54793,
-          "gems": [
-            40008,
-            36767
-          ]
-        },
-        {
-          "id": 40589,
-          "enchant": 38373
-        },
-        {
-          "id": 40297,
-          "enchant": 44491
-        },
-        {
-          "id": 40370
-        },
-        {
-          "id": 40718
-        },
-        {
-          "id": 40257
-        },
-        {
-          "id": 44063,
-          "gems": [
-            36767,
-            40089
-          ]
-        },
-        {
-          "id": 40402,
-          "enchant": 22559
-        },
-        {
-          "id": 40400,
-          "enchant": 44936
-        },
-        {
-          "id": 41168,
-          "gems": [
-            36767
-          ]
-        }
-      ]}`),
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
+    {
+      "id": 40546,
+      "enchant": 44878,
+      "gems": [
+        41380,
+        40034
+      ]
+    },
+    {
+      "id": 40387
+    },
+    {
+      "id": 39704,
+      "enchant": 44957,
+      "gems": [
+        40034
+      ]
+    },
+    {
+      "id": 40722,
+      "enchant": 55002
+    },
+    {
+      "id": 44000,
+      "enchant": 44489,
+      "gems": [
+        40034,
+        40015
+      ]
+    },
+    {
+      "id": 39764,
+      "enchant": 44944,
+      "gems": [
+        0
+      ]
+    },
+    {
+      "id": 40545,
+      "enchant": 63770,
+      "gems": [
+        40034,
+        0
+      ]
+    },
+    {
+      "id": 39759,
+      "enchant": 54793,
+      "gems": [
+        40008,
+        36767
+      ]
+    },
+    {
+      "id": 40589,
+      "enchant": 38373
+    },
+    {
+      "id": 39717,
+      "enchant": 44491,
+      "gems": [
+        40089
+      ]
+    },
+    {
+      "id": 40370
+    },
+    {
+      "id": 40718
+    },
+    {
+      "id": 40257
+    },
+    {
+      "id": 44063,
+      "gems": [
+        36767,
+        40089
+      ]
+    },
+    {
+      "id": 40402,
+      "enchant": 44496
+    },
+    {
+      "id": 40400,
+      "enchant": 44936
+    },
+    {
+      "id": 41168,
+      "gems": [
+        36767
+      ]
+    }
+  ]`),
 };
 
 export const P1_PRERAID_BALANCED_PRESET = {
@@ -202,18 +205,15 @@ export const P1_PRERAID_BALANCED_PRESET = {
       "enchant": 44878,
       "gems": [
         41380,
-        40089
+        40015
       ]
     },
     {
       "id": 40679
     },
     {
-      "id": 37635,
-      "enchant": 44957,
-      "gems": [
-        40089
-      ]
+      "id": 37814,
+      "enchant": 44957
     },
     {
       "id": 37728,
@@ -246,7 +246,7 @@ export const P1_PRERAID_BALANCED_PRESET = {
       "id": 37379,
       "enchant": 54793,
       "gems": [
-        36767,
+        40034,
         36767
       ]
     },
@@ -265,7 +265,7 @@ export const P1_PRERAID_BALANCED_PRESET = {
       "id": 37784
     },
     {
-      "id": 37257
+      "id": 37186
     },
     {
       "id": 37220
@@ -273,13 +273,13 @@ export const P1_PRERAID_BALANCED_PRESET = {
     {
       "id": 44063,
       "gems": [
-        40089,
+        36767,
         40089
       ]
     },
     {
       "id": 37401,
-      "enchant": 22559
+      "enchant": 44496
     },
     {
       "id": 43085,
