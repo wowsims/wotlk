@@ -198,16 +198,23 @@ func (unit *Unit) OutcomeFuncTickMagicHit() OutcomeApplier {
 	}
 }
 
+func (spell *Spell) OutcomeMagicHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if spell.MagicHitCheck(sim, attackTable) {
+		result.Outcome = OutcomeHit
+		spell.SpellMetrics[result.Target.UnitIndex].Hits++
+	} else {
+		result.Outcome = OutcomeMiss
+		result.Damage = 0
+		spell.SpellMetrics[result.Target.UnitIndex].Misses++
+	}
+}
+func (spell *Spell) CalcAndDealDamageMagicHit(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMagicHit)
+	spell.DealDamage(sim, &result)
+}
 func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spell.MagicHitCheck(sim, attackTable) {
-			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
-		} else {
-			spellEffect.Outcome = OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
-			spellEffect.Damage = 0
-		}
+		spell.OutcomeMagicHit(sim, spellEffect, attackTable)
 	}
 }
 
