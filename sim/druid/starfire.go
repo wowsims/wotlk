@@ -70,7 +70,7 @@ func (druid *Druid) registerStarfireSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := bonusFlatDamage + sim.Roll(1038, 1222) + spellCoeff*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				if result.DidCrit() {
 					if druid.Talents.MoonkinForm {

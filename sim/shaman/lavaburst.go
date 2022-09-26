@@ -88,7 +88,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := dmgBonus + sim.Roll(1192, 1518) + spellCoeff*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if applyDot && result.Landed() {
 				lvbdotDmg = result.Damage * 0.1 // TODO: does this dot pool with the previous dot?
 				lvbDot.Apply(sim)               // will resnapshot dmg

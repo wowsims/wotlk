@@ -49,7 +49,7 @@ func (druid *Druid) registerWrathSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := bonusFlatDamage + sim.Roll(557, 627) + spellCoeff*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.DidCrit() {
 				if druid.Talents.MoonkinForm {
 					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)

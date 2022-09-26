@@ -295,10 +295,9 @@ func init() {
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(1654, 2020),
-				OutcomeApplier: character.OutcomeFuncMagicCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicCrit(sim, target, sim.Roll(1654, 2020))
+			},
 		})
 
 		character.AddMajorCooldown(core.MajorCooldown{

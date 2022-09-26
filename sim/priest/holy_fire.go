@@ -39,7 +39,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(900, 1140) + 0.5711*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.HolyFireDot.Apply(sim)
 			}

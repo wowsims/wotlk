@@ -9,25 +9,19 @@ import (
 //  2. Update spell outcome metrics.
 //  3. Modify the damage if necessary.
 type OutcomeApplier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable)
+type NewOutcomeApplier func(sim *Simulation, result *SpellEffect, attackTable *AttackTable)
 
-func (spell *Spell) ApplyOutcomeAlwaysHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+func (spell *Spell) OutcomeAlwaysHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	result.Outcome = OutcomeHit
 	spell.SpellMetrics[result.Target.UnitIndex].Hits++
 }
-func (spell *Spell) CalcDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) SpellEffect {
-	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-	result := spell.CalcDamagePreOutcome(sim, target, attackTable, baseDamage)
-	spell.ApplyOutcomeAlwaysHit(sim, &result, attackTable)
-	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
-	return result
-}
 func (spell *Spell) CalcAndDealDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamageAlwaysHit(sim, target, baseDamage)
+	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 	spell.DealDamage(sim, &result)
 }
 func (unit *Unit) OutcomeFuncAlwaysHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		spell.ApplyOutcomeAlwaysHit(sim, spellEffect, attackTable)
+		spell.OutcomeAlwaysHit(sim, spellEffect, attackTable)
 	}
 }
 
@@ -78,7 +72,7 @@ func (unit *Unit) OutcomeFuncTickMagicHitAndCrit() OutcomeApplier {
 	}
 }
 
-func (spell *Spell) ApplyOutcomeMagicHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+func (spell *Spell) OutcomeMagicHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -97,37 +91,36 @@ func (spell *Spell) ApplyOutcomeMagicHitAndCrit(sim *Simulation, result *SpellEf
 		spell.SpellMetrics[result.Target.UnitIndex].Misses++
 	}
 }
-func (spell *Spell) CalcDamageMagicHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) SpellEffect {
-	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-	result := spell.CalcDamagePreOutcome(sim, target, attackTable, baseDamage)
-	spell.ApplyOutcomeMagicHitAndCrit(sim, &result, attackTable)
-	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
-	return result
-}
 func (spell *Spell) CalcAndDealDamageMagicHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 	spell.DealDamage(sim, &result)
 }
-
 func (unit *Unit) OutcomeFuncMagicHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		spell.ApplyOutcomeMagicHitAndCrit(sim, spellEffect, attackTable)
+		spell.OutcomeMagicHitAndCrit(sim, spellEffect, attackTable)
 	}
 }
 
+func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if spell.CritMultiplier == 0 {
+		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if result.MagicCritCheck(sim, spell, attackTable) {
+		result.Outcome = OutcomeCrit
+		result.Damage *= spell.CritMultiplier
+		spell.SpellMetrics[result.Target.UnitIndex].Crits++
+	} else {
+		result.Outcome = OutcomeHit
+		spell.SpellMetrics[result.Target.UnitIndex].Hits++
+	}
+}
+func (spell *Spell) CalcAndDealDamageMagicCrit(sim *Simulation, target *Unit, baseDamage float64) {
+	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicCrit)
+	spell.DealDamage(sim, &result)
+}
 func (unit *Unit) OutcomeFuncMagicCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		if spell.CritMultiplier == 0 {
-			panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
-		}
-		if spellEffect.MagicCritCheck(sim, spell, attackTable) {
-			spellEffect.Outcome = OutcomeCrit
-			spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
-			spellEffect.Damage *= spell.CritMultiplier
-		} else {
-			spellEffect.Outcome = OutcomeHit
-			spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
-		}
+		spell.OutcomeMagicCrit(sim, spellEffect, attackTable)
 	}
 }
 

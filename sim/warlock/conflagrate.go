@@ -58,7 +58,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				warlock.ConflagrateDot.Apply(sim)
 			}

@@ -96,7 +96,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
 			baseDamage := roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 
-			result := spell.CalcDamageMagicHitAndCrit(sim, target, baseDamage)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				dk.RuneWeapon.FrostFeverSpell.Cast(sim, target)
 			}
