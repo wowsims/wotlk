@@ -167,15 +167,11 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 	actionID := core.ActionID{SpellID: 54053}
 	baseCost := 131.0 // TODO: should be 3% of BaseMana, but it's unclear what that actually refers to with pets
 
-	var onSpellHitDealt func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
-	if wp.owner.Talents.ImprovedFelhunter > 0 {
-		petManaMetrics := wp.NewManaMetrics(actionID)
-		maxManaMult := 0.04 * float64(wp.owner.Talents.ImprovedFelhunter)
-		onSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
-			}
-		}
+	var petManaMetrics *core.ResourceMetrics
+	maxManaMult := 0.04 * float64(wp.owner.Talents.ImprovedFelhunter)
+	impFelhunter := wp.owner.Talents.ImprovedFelhunter > 0
+	if impFelhunter {
+		petManaMetrics = wp.NewManaMetrics(actionID)
 	}
 
 	return wp.RegisterSpell(core.SpellConfig{
@@ -201,29 +197,30 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 		CritMultiplier:   1.5 + 0.1*float64(wp.owner.Talents.Ruin),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagic(97+1, 97+41, 0.429),
-				func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
-					return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						w := wp.owner
-						dots := []*core.Dot{
-							w.UnstableAfflictionDot, w.ImmolateDot, w.CurseOfAgonyDot,
-							w.CurseOfDoomDot, w.CorruptionDot, w.ConflagrateDot,
-							w.SeedDots[hitEffect.Target.Index], w.DrainSoulDot,
-							// missing: drain life, shadowflame
-						}
-						counter := 0
-						for _, dot := range dots {
-							if dot.IsActive() {
-								counter++
-							}
-						}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(97+1, 97+41) + 0.429*spell.SpellPower()
 
-						return oldCalc(sim, hitEffect, spell) * (1 + 0.15*float64(counter))
-					}
-				}),
-			OutcomeApplier:  wp.OutcomeFuncMagicHitAndCritBinary(),
-			OnSpellHitDealt: onSpellHitDealt,
-		}),
+			w := wp.owner
+			dots := []*core.Dot{
+				w.UnstableAfflictionDot, w.ImmolateDot, w.CurseOfAgonyDot,
+				w.CurseOfDoomDot, w.CorruptionDot, w.ConflagrateDot,
+				w.SeedDots[target.Index], w.DrainSoulDot,
+				// missing: drain life, shadowflame
+			}
+			counter := 0
+			for _, dot := range dots {
+				if dot.IsActive() {
+					counter++
+				}
+			}
+
+			baseDamage *= 1 + 0.15*float64(counter)
+
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCritBinary)
+			if impFelhunter && result.Landed() {
+				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
+			}
+			spell.DealDamage(sim, &result)
+		},
 	})
 }

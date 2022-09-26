@@ -12,6 +12,7 @@ import (
 func (priest *Priest) registerRenewSpell() {
 	actionID := core.ActionID{SpellID: 48068}
 	baseCost := 0.17 * priest.BaseMana
+	spellCoeff := priest.renewSpellCoefficient()
 
 	if priest.Talents.EmpoweredRenew > 0 {
 		priest.EmpoweredRenew = priest.RegisterSpell(core.SpellConfig{
@@ -29,12 +30,10 @@ func (priest *Priest) registerRenewSpell() {
 			CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				IsHealing: true,
-
-				BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
-				OutcomeApplier: priest.OutcomeFuncHealingCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseHealing := 280 + spellCoeff*spell.HealingPower()
+				spell.CalcAndDealHealingCrit(sim, target, baseHealing)
+			},
 		})
 	}
 

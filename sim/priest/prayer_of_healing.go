@@ -12,15 +12,7 @@ import (
 func (priest *Priest) registerPrayerOfHealingSpell() {
 	baseCost := .48 * priest.BaseMana
 
-	baseEffect := core.SpellEffect{
-		IsHealing: true,
-
-		BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
-		OutcomeApplier: priest.OutcomeFuncHealingCrit(),
-	}
-
-	// Separate ApplyEffects functions for each party.
-	var applyPartyEffects []core.ApplySpellEffects
+	var glyphHots []*core.Dot
 
 	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48072},
@@ -50,43 +42,30 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
 			party := targetAgent.GetCharacter().Party
-			applyPartyEffects[party.Index](sim, target, spell)
+
+			healFromSP := 0.526 * spell.HealingPower()
+			for _, partyAgent := range party.PlayersAndPets {
+				partyTarget := partyAgent.GetCharacter()
+				baseHealing := sim.Roll(2109, 2228) + healFromSP
+				spell.CalcAndDealHealingCrit(sim, &partyTarget.Unit, baseHealing)
+				if glyphHots != nil {
+					glyphHots[partyTarget.UnitIndex].Activate(sim)
+				}
+			}
 		},
 	})
 
-	for _, party := range priest.Env.Raid.Parties {
-		var effects []core.SpellEffect
-		var hots []*core.Dot
-		for _, target := range party.PlayersAndPets {
-			effect := baseEffect
-			effect.Target = &target.GetCharacter().Unit
-			effects = append(effects, effect)
-
-			if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
-				hots = append(hots, priest.makePrayerOfHealingGlyphHot(effect.Target, baseEffect))
+	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
+		glyphHots := make([]*core.Dot, len(priest.Env.AllUnits))
+		for _, unit := range priest.Env.AllUnits {
+			if !priest.IsOpponent(unit) {
+				glyphHots[unit.UnitIndex] = priest.makePrayerOfHealingGlyphHot(unit)
 			}
-		}
-
-		if len(effects) == 0 {
-			applyPartyEffects = append(applyPartyEffects, nil)
-			continue
-		}
-
-		applyDirectEffects := core.ApplyEffectFuncDamageMultiple(effects)
-		if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
-			applyPartyEffects = append(applyPartyEffects, func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				applyDirectEffects(sim, target, spell)
-				for _, hot := range hots {
-					hot.Activate(sim)
-				}
-			})
-		} else {
-			applyPartyEffects = append(applyPartyEffects, applyDirectEffects)
 		}
 	}
 }
 
-func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect core.SpellEffect) *core.Dot {
+func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit) *core.Dot {
 	spell := priest.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{ItemID: 42409},
 		SpellSchool: core.SpellSchoolHoly,
@@ -108,7 +87,7 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit, pohEffect c
 			IsPeriodic: true,
 			IsHealing:  true,
 
-			BaseDamage:     pohEffect.BaseDamage,
+			BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
 			OutcomeApplier: priest.OutcomeFuncTick(),
 		}),
 	})

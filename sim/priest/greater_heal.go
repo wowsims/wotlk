@@ -9,6 +9,7 @@ import (
 
 func (priest *Priest) registerGreaterHealSpell() {
 	baseCost := .32 * priest.BaseMana
+	spellCoeff := 1.6114 + 0.08*float64(priest.Talents.EmpoweredHealing)
 
 	priest.GreaterHeal = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48063},
@@ -34,11 +35,9 @@ func (priest *Priest) registerGreaterHealSpell() {
 		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			IsHealing: true,
-
-			BaseDamage:     core.BaseDamageConfigHealing(3980, 4621, 1.6114+0.08*float64(priest.Talents.EmpoweredHealing)),
-			OutcomeApplier: priest.OutcomeFuncHealingCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseHealing := sim.Roll(3980, 4621) + spellCoeff*spell.HealingPower()
+			spell.CalcAndDealHealingCrit(sim, target, baseHealing)
+		},
 	})
 }

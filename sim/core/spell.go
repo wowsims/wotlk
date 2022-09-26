@@ -601,7 +601,7 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, deferFinaliz
 			effect.applyAttackerModifiers(sim, spell)
 			effect.applyResistances(sim, spell, attackTable)
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
-			effect.applyTargetModifiers(sim, spell, attackTable)
+			effect.applyTargetModifiers(spell, attackTable)
 			if !deferFinalization {
 				effect.finalize(sim, spell)
 			}
@@ -656,7 +656,7 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 				if i == 0 {
 					onOutcome(sim, effect.Outcome)
 				}
-				effect.applyTargetModifiers(sim, spell, attackTable)
+				effect.applyTargetModifiers(spell, attackTable)
 				effect.finalize(sim, spell)
 			}
 		}
