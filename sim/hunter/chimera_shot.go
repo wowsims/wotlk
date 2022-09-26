@@ -79,14 +79,6 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
 		ThreatMultiplier: 1,
 
-		//ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		//	BaseDamage: core.BaseDamageConfig{
-		//		Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-		//			return 242 + 0.04*spell.RangedAttackPower(hitEffect.Target)
-		//		},
-		//	},
-		//	OutcomeApplier: hunter.OutcomeFuncRangedCritOnly(),
-		//}),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 242 + 0.04*spell.RangedAttackPower(target)
 			spell.CalcAndDealDamageRangedCritOnly(sim, target, baseDamage)
