@@ -193,7 +193,7 @@ export const P1_BALANCED_PRESET = {
         36767
       ]
     }
-  ]`),
+  ]}`),
 };
 
 export const P1_PRERAID_BALANCED_PRESET = {
