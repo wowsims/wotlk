@@ -194,11 +194,7 @@ func BaseDamageFuncMeleeWeapon(hand Hand, normalized bool, flatBonus float64, in
 }
 func BaseDamageConfigMeleeWeapon(hand Hand, normalized bool, flatBonus float64, includeBonusWeaponDamage bool) BaseDamageConfig {
 	calculator := BaseDamageFuncMeleeWeapon(hand, normalized, flatBonus, includeBonusWeaponDamage)
-	if includeBonusWeaponDamage {
-		return BuildBaseDamageConfig(calculator)
-	} else {
-		return BuildBaseDamageConfig(calculator)
-	}
+	return BuildBaseDamageConfig(calculator)
 }
 
 func BaseDamageFuncRangedWeapon(flatBonus float64) BaseDamageCalculator {
