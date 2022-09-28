@@ -862,7 +862,7 @@ func init() {
 					SpellSchool:  core.SpellSchoolPhysical,
 					ProcMask:     core.ProcMaskMeleeMHAuto,
 					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
+					ApplyEffects: character.AutoAttacks.MHConfig.ApplyEffects,
 				})
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {

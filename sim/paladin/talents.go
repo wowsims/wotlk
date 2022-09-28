@@ -200,7 +200,7 @@ func (paladin *Paladin) applyReckoning() {
 				Flags:            core.SpellFlagMeleeMetrics,
 				CritMultiplier:   paladin.MeleeCritMultiplier(),
 				DamageMultiplier: 1,
-				ApplyEffects:     core.ApplyEffectFuncDirectDamage(paladin.AutoAttacks.MHEffect),
+				ApplyEffects:     paladin.AutoAttacks.MHConfig.ApplyEffects,
 			})
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {

@@ -871,7 +871,7 @@ dps_results: {
 dps_results: {
  key: "TestCombat-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6290.48787
-  tps: 4466.24639
+  dps: 6288.33364
+  tps: 4464.71689
  }
 }

@@ -22,17 +22,14 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// Beta testing shows wowhead coeffs are probably correct
-					return 274 +
-						0.0732*spell.MeleeAttackPower() +
-						0.117*spell.SpellPower()
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMagicHitBinary(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Beta testing shows wowhead coeffs are probably correct
+			baseDamage := 274 +
+				0.0732*spell.MeleeAttackPower() +
+				0.117*spell.SpellPower()
+
+			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+		},
 	})
 
 	blockBonus := 30*core.BlockRatingPerBlockChance + core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 29388, 42, 0)

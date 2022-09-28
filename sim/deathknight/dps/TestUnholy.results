@@ -689,7 +689,7 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7398.748
-  tps: 5689.21063
+  dps: 7378.83559
+  tps: 5717.00007
  }
 }

@@ -379,13 +379,16 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			Duration: core.NeverExpires,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
 				swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:         core.ActionID{SpellID: 12281},
-					SpellSchool:      core.SpellSchoolPhysical,
-					ProcMask:         core.ProcMaskMeleeMHAuto,
-					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-					CritMultiplier:   warrior.critMultiplier(mh),
+					ActionID:    core.ActionID{SpellID: 12281},
+					SpellSchool: core.SpellSchoolPhysical,
+					ProcMask:    core.ProcMaskMeleeMHAuto,
+					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
+
 					DamageMultiplier: 1,
-					ApplyEffects:     core.ApplyEffectFuncDirectDamage(warrior.AutoAttacks.MHEffect),
+					CritMultiplier:   warrior.critMultiplier(mh),
+					ThreatMultiplier: 1,
+
+					ApplyEffects: warrior.AutoAttacks.MHConfig.ApplyEffects,
 				})
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {

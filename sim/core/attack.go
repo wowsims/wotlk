@@ -121,6 +121,14 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed*attackPower)/MeleeAttackRatingPerDamage
 }
 
+func (unit *Unit) MHWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.MH.CalculateWeaponDamage(sim, attackPower)
+}
+
+func (unit *Unit) OHWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
+}
+
 func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.Ranged.CalculateWeaponDamage(sim, attackPower)
 }
@@ -227,6 +235,13 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		DamageMultiplier: 1,
 		CritMultiplier:   options.MainHand.CritMultiplier,
 		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+		},
 	}
 
 	unit.AutoAttacks.OHConfig = SpellConfig{
@@ -238,6 +253,13 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		DamageMultiplier: 1,
 		CritMultiplier:   options.OffHand.CritMultiplier,
 		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			baseDamage := 0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+		},
 	}
 
 	unit.AutoAttacks.RangedConfig = SpellConfig{
@@ -273,15 +295,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			BaseDamage:     BaseDamageConfigEnemyWeapon(OffHand),
 			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
 		}
-	} else {
-		unit.AutoAttacks.MHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigMeleeWeapon(MainHand, false, 0, true),
-			OutcomeApplier: unit.OutcomeFuncMeleeWhite(),
-		}
-		unit.AutoAttacks.OHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigMeleeWeapon(OffHand, false, 0, true),
-			OutcomeApplier: unit.OutcomeFuncMeleeWhite(),
-		}
 	}
 }
 
@@ -297,9 +310,11 @@ func (aa *AutoAttacks) finalize() {
 		return
 	}
 
-	aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
+	if aa.unit.Type == EnemyUnit {
+		aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
+		aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
+	}
 	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
-	aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 
 	if aa.RangedConfig.ProcMask != ProcMaskUnknown {
