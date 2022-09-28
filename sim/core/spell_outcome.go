@@ -266,12 +266,6 @@ func (spell *Spell) CalcAndDealDamageMeleeWhite(sim *Simulation, target *Unit, b
 	spell.DealDamage(sim, &result)
 }
 
-//func (unit *Unit) OutcomeFuncMeleeWhite() OutcomeApplier {
-//	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-//		spell.OutcomeMeleeWhite(sim, spellEffect, attackTable)
-//	}
-//}
-
 func (unit *Unit) OutcomeFuncMeleeSpecialHit() OutcomeApplier {
 	if unit.PseudoStats.InFrontOfTarget {
 		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
