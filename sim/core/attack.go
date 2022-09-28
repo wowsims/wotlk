@@ -310,13 +310,11 @@ func (aa *AutoAttacks) finalize() {
 		return
 	}
 
-	if aa.MHConfig.ApplyEffects == nil {
+	if aa.unit.Type == EnemyUnit {
 		aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
-	}
-	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
-	if aa.OHConfig.ApplyEffects == nil {
 		aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
 	}
+	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 
 	if aa.RangedConfig.ProcMask != ProcMaskUnknown {
