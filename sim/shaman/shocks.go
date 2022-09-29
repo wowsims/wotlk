@@ -55,10 +55,9 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	config := shaman.newShockSpellConfig(49231, core.SpellSchoolNature, baseMana*0.18, shockTimer)
-	config.Flags |= core.SpellFlagBinary
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(854, 900) + 0.386*spell.SpellPower()
-		spell.CalcAndDealDamageMagicHitAndCritBinary(sim, target, baseDamage)
+		spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
 	}
 
 	shaman.EarthShock = shaman.RegisterSpell(config)
@@ -123,13 +122,12 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
-	config.Flags |= core.SpellFlagBinary
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 	config.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
 	config.ThreatMultiplier *= 2
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(812, 858) + 0.386*spell.SpellPower()
-		spell.CalcAndDealDamageMagicHitAndCritBinary(sim, target, baseDamage)
+		spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
 	}
 
 	shaman.FrostShock = shaman.RegisterSpell(config)

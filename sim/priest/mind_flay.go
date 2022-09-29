@@ -9,6 +9,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
+//  The first never deals damage, so the latter should probably be used as ActionID here.
 func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
 }
@@ -22,7 +24,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	}
 
 	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
+		OutcomeApplier: priest.OutcomeFuncMagicHit(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -42,7 +44,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
-		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
+		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
