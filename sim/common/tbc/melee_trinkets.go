@@ -80,7 +80,7 @@ func init() {
 					SpellSchool:  core.SpellSchoolPhysical,
 					ProcMask:     core.ProcMaskMeleeMHAuto,
 					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
+					ApplyEffects: character.AutoAttacks.MHConfig.ApplyEffects,
 
 					DamageMultiplier: 1,
 					CritMultiplier:   character.DefaultMeleeCritMultiplier(),

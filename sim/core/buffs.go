@@ -370,9 +370,9 @@ func ApplyInspiration(character *Character, uptime float64) {
 func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 	actionID := ActionID{SpellID: 54043}
 
-	damage := 112.0
+	baseDamage := 112.0
 	if sanctifiedRetribution {
-		damage *= 1.5
+		baseDamage *= 1.5
 	}
 
 	procSpell := character.RegisterSpell(SpellConfig{
@@ -384,10 +384,9 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			BaseDamage:     BaseDamageConfigFlat(damage),
-			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
-		}),
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+		},
 	})
 
 	return character.RegisterAura(Aura{
@@ -407,6 +406,7 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 
 func ThornsAura(character *Character, points int32) *Aura {
 	actionID := ActionID{SpellID: 53307}
+	baseDamage := 73 * (1 + 0.25*float64(points))
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
@@ -417,10 +417,9 @@ func ThornsAura(character *Character, points int32) *Aura {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-			BaseDamage:     BaseDamageConfigFlat(73 * (1 + 0.25*float64(points))),
-			OutcomeApplier: character.OutcomeFuncMagicHitBinary(),
-		}),
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+		},
 	})
 
 	return character.RegisterAura(Aura{

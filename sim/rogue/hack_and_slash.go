@@ -27,9 +27,10 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 				DamageMultiplier: rogue.AutoAttacks.MHConfig.DamageMultiplier,
+				CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
 				ThreatMultiplier: rogue.AutoAttacks.MHConfig.ThreatMultiplier,
 
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(rogue.AutoAttacks.MHEffect),
+				ApplyEffects: rogue.AutoAttacks.MHConfig.ApplyEffects,
 			})
 		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {

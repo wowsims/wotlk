@@ -34,10 +34,10 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
 		ThreatMultiplier: 1, //fix when spirit weapons is fixed
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagic(380, 380, 0.267),
-			OutcomeApplier: shaman.OutcomeFuncMagicHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 380 + 0.267*spell.SpellPower()
+			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+		},
 	})
 
 	icd := core.Cooldown{

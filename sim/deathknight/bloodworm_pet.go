@@ -38,7 +38,12 @@ func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
 	})
 
 	// Hit and Crit only
-	bloodworm.AutoAttacks.MHEffect.OutcomeApplier = bloodworm.OutcomeFuncMeleeSpecialCritOnly()
+	bloodworm.AutoAttacks.MHConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+			spell.BonusWeaponDamage()
+
+		spell.CalcAndDealDamageMeleeSpecialCritOnly(sim, target, baseDamage)
+	}
 
 	bloodworm.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	bloodworm.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))

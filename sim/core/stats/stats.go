@@ -335,7 +335,7 @@ type PseudoStats struct {
 
 	DamageTakenMultiplier float64 // All damage
 
-	ArmorMultiplier float64 // Major/minor/special multipicative armor modifiers
+	ArmorMultiplier float64 // Major/minor/special multiplicative armor modifiers
 
 	PhysicalDamageTakenMultiplier float64
 	ArcaneDamageTakenMultiplier   float64

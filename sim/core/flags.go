@@ -3,6 +3,8 @@ package core
 import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"math/bits"
+	"strconv"
 )
 
 type ProcMask uint32
@@ -114,14 +116,20 @@ const (
 	// These bits are set by the crit and damage rolls.
 	OutcomeCrit
 	OutcomeCrush
-	OutcomePartial1_4 // 1/4 of the spell was resisted.
-	OutcomePartial2_4 // 2/4 of the spell was resisted.
-	OutcomePartial3_4 // 3/4 of the spell was resisted.
+
+	OutcomePartial1
+	OutcomePartial2
+	OutcomePartial4
+	OutcomePartial8
 )
 
 const (
-	OutcomePartial = OutcomePartial1_4 | OutcomePartial2_4 | OutcomePartial3_4
+	OutcomePartial = OutcomePartial1 | OutcomePartial2 | OutcomePartial4 | OutcomePartial8
 	OutcomeLanded  = OutcomeHit | OutcomeCrit | OutcomeCrush | OutcomeGlance | OutcomeBlock
+)
+
+var (
+	OutcomePartialOffset = bits.TrailingZeros(uint(OutcomePartial1))
 )
 
 func (ho HitOutcome) String() string {
@@ -151,15 +159,10 @@ func (ho HitOutcome) String() string {
 }
 
 func (ho HitOutcome) PartialResistString() string {
-	if ho.Matches(OutcomePartial1_4) {
-		return " (25% Resist)"
-	} else if ho.Matches(OutcomePartial2_4) {
-		return " (50% Resist)"
-	} else if ho.Matches(OutcomePartial3_4) {
-		return " (75% Resist)"
-	} else {
-		return ""
+	if x := ho >> OutcomePartialOffset; x > 0 {
+		return " (" + strconv.Itoa(10*int(x)) + "% Resist)"
 	}
+	return ""
 }
 
 // Other flags

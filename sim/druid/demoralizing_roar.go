@@ -10,27 +10,11 @@ import (
 func (druid *Druid) registerDemoralizingRoarSpell() {
 	cost := 10.0
 
-	baseEffect := core.SpellEffect{
-		OutcomeApplier: druid.OutcomeFuncMagicHit(),
+	drAuras := make([]*core.Aura, druid.Env.GetNumTargets())
+	for _, target := range druid.Env.Encounter.Targets {
+		drAuras[target.Index] = core.DemoralizingRoarAura(&target.Unit, druid.Talents.FeralAggression)
 	}
-
-	numHits := druid.Env.GetNumTargets()
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = druid.Env.GetTargetUnit(i)
-
-		demoRoarAura := core.DemoralizingRoarAura(effects[i].Target, druid.Talents.FeralAggression)
-		if i == 0 {
-			druid.DemoralizingRoarAura = demoRoarAura
-		}
-
-		effects[i].OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				demoRoarAura.Activate(sim)
-			}
-		}
-	}
+	druid.DemoralizingRoarAura = drAuras[druid.CurrentTarget.Index]
 
 	druid.DemoralizingRoar = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48560},
@@ -51,7 +35,15 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  62 * 2,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := spell.CalcDamage(sim, &aoeTarget.Unit, 0, spell.OutcomeMagicHit)
+				spell.DealDamage(sim, &result)
+				if result.Landed() {
+					drAuras[aoeTarget.Index].Activate(sim)
+				}
+			}
+		},
 	})
 }
 

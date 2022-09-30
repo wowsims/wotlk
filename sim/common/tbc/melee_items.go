@@ -153,22 +153,10 @@ func init() {
 			})
 		}
 
-		baseBounceEffect := core.SpellEffect{
-			OutcomeApplier: character.OutcomeFuncMagicHit(),
-		}
-
 		numHits := core.MinInt32(5, character.Env.GetNumTargets())
-		bounceEffects := make([]core.SpellEffect, 0, numHits)
-		for i := int32(0); i < numHits; i++ {
-			bounceEffects = append(bounceEffects, baseBounceEffect)
-			bounceEffects[i].Target = character.Env.GetTargetUnit(i)
-
-			debuffAura := makeDebuffAura(bounceEffects[i].Target)
-			bounceEffects[i].OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					debuffAura.Activate(sim)
-				}
-			}
+		debuffAuras := make([]*core.Aura, character.Env.GetNumTargets())
+		for _, target := range character.Env.Encounter.Targets {
+			debuffAuras[target.Index] = makeDebuffAura(&target.Unit)
 		}
 
 		bounceSpell := character.RegisterSpell(core.SpellConfig{
@@ -179,7 +167,17 @@ func init() {
 			ThreatMultiplier: 1,
 			FlatThreatBonus:  63,
 
-			ApplyEffects: core.ApplyEffectFuncDamageMultiple(bounceEffects),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				curTarget := target
+				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+					result := spell.CalcDamage(sim, curTarget, 0, spell.OutcomeMagicHit)
+					if result.Landed() {
+						debuffAuras[target.Index].Activate(sim)
+					}
+					spell.DealDamage(sim, &result)
+					curTarget = sim.Environment.NextTargetUnit(target)
+				}
+			},
 		})
 
 		character.RegisterAura(core.Aura{
@@ -864,7 +862,7 @@ func init() {
 					SpellSchool:  core.SpellSchoolPhysical,
 					ProcMask:     core.ProcMaskMeleeMHAuto,
 					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
-					ApplyEffects: core.ApplyEffectFuncDirectDamage(character.AutoAttacks.MHEffect),
+					ApplyEffects: character.AutoAttacks.MHConfig.ApplyEffects,
 				})
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {

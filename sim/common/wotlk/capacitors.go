@@ -173,7 +173,6 @@ func init() {
 			var mhSpell *core.Spell
 			var ohSpell *core.Spell
 			initSpells := func() {
-				mhEffect := character.AutoAttacks.MHEffect
 				mhSpell = character.GetOrRegisterSpell(core.SpellConfig{
 					ActionID:         core.ActionID{ItemID: itemID}.WithTag(1),
 					SpellSchool:      core.SpellSchoolPhysical,
@@ -182,11 +181,10 @@ func init() {
 					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 					CritMultiplier:   character.AutoAttacks.MHConfig.CritMultiplier,
 					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
-					ApplyEffects:     core.ApplyEffectFuncDirectDamage(mhEffect),
+					ApplyEffects:     character.AutoAttacks.MHConfig.ApplyEffects,
 				})
 
 				if character.AutoAttacks.IsDualWielding {
-					ohEffect := character.AutoAttacks.OHEffect
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{ItemID: itemID}.WithTag(2),
 						SpellSchool:      core.SpellSchoolPhysical,
@@ -195,7 +193,7 @@ func init() {
 						DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 						CritMultiplier:   character.AutoAttacks.OHConfig.CritMultiplier,
 						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,
-						ApplyEffects:     core.ApplyEffectFuncDirectDamage(ohEffect),
+						ApplyEffects:     character.AutoAttacks.OHConfig.ApplyEffects,
 					})
 				}
 			}
