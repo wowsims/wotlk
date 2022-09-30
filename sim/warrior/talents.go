@@ -179,13 +179,14 @@ func (warrior *Warrior) applyTasteForBlood() {
 				return
 			}
 
-			// Taste for Blood has 25% chance to not proc due to a bug. The chance is calculated from a controlled test here
+			// Taste for Blood has 25% chance to not proc if ICD is expired during rend ticks. The chance is calculated from a controlled test here
 			// https://classic.warcraftlogs.com/reports/2zcDnpNFXGaAPg34/#fight=last&type=damage-done&source=1
-			if sim.RandomFloat("Taste for Blood bug") <= 0.25 {
+			if sim.RandomFloat("Taste for Blood bug") <= 0.25 && (sim.CurrentTime-warrior.lastTasteForBloodProc == time.Second*6) {
 				return
 			}
 			icd.Use(sim)
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
+			warrior.lastTasteForBloodProc = sim.CurrentTime
 		},
 	})
 }

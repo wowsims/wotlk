@@ -1,8 +1,9 @@
 package warrior
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/items"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -32,6 +33,7 @@ type Warrior struct {
 	revengeProcAura        *core.Aura
 	glyphOfRevengeProcAura *core.Aura
 	disableHsCleaveUntil   time.Duration
+	lastTasteForBloodProc  time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration
