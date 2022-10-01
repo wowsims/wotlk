@@ -9,6 +9,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
+//  Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
 func (priest *Priest) MindSearActionID(numTicks int) core.ActionID {
 	return core.ActionID{SpellID: 53023, Tag: int32(numTicks)}
 }
@@ -18,7 +20,7 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	channelTime := time.Second * time.Duration(numTicks)
 
 	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
+		OutcomeApplier: priest.OutcomeFuncMagicHit(),
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if !spellEffect.Landed() {
 				return
@@ -31,7 +33,7 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 		ActionID:     priest.MindSearActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
-		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
+		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

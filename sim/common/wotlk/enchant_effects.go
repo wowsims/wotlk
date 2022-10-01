@@ -117,7 +117,6 @@ func init() {
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskEmpty,
-			Flags:       core.SpellFlagBinary,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
@@ -137,7 +136,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && spell.SpellSchool == core.SpellSchoolPhysical {
+				if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) {
 					procSpell.Cast(sim, spell.Unit)
 				}
 			},

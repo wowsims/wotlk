@@ -228,8 +228,8 @@ func (spell *Spell) OutcomeMagicHitBinary(sim *Simulation, result *SpellEffect, 
 		spell.SpellMetrics[result.Target.UnitIndex].Misses++
 	}
 }
-func (spell *Spell) CalcAndDealDamageMagicHitBinary(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMagicHitBinary)
+func (spell *Spell) CalcAndDealDamageMagicHitBinary(sim *Simulation, target *Unit, baseDamage float64) {
+	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitBinary)
 	spell.DealDamage(sim, &result)
 }
 func (unit *Unit) OutcomeFuncMagicHitBinary() OutcomeApplier {
@@ -501,6 +501,10 @@ func (spell *Spell) MagicHitCheck(sim *Simulation, attackTable *AttackTable) boo
 	missChance := attackTable.BaseSpellMissChance - spell.SpellHitChance(attackTable.Defender)
 	return sim.RandomFloat("Magical Hit Roll") > missChance
 }
+
+// TODO if a binary spell misses, it's logged as "resist" (similar to "dodge", "miss", etc.), so it's treated
+//  as just another HitOutcome.
+// TODO research the few remaining binary spells (Thorns, Retribution Aura, and Holy Shield).
 func (spell *Spell) MagicHitCheckBinary(sim *Simulation, attackTable *AttackTable) bool {
 	baseHitChance := (1 - attackTable.BaseSpellMissChance) * attackTable.GetBinaryHitChance(spell.SpellSchool)
 	missChance := 1 - baseHitChance - spell.SpellHitChance(attackTable.Defender)
