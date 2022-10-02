@@ -24,7 +24,7 @@ func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cas
 func (druid *Druid) registerStarfireSpell() {
 	actionID := core.ActionID{SpellID: 48465}
 	baseCost := 0.16 * druid.BaseMana
-	spellCoeff := 1.0 * (1 + 0.04*float64(druid.Talents.WrathOfCenarius))
+	spellCoeff := 1.0 + (0.04 * float64(druid.Talents.WrathOfCenarius))
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
 	// This seems to be unaffected by wrath of cenarius so it needs to come first.

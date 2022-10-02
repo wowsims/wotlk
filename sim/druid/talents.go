@@ -10,7 +10,6 @@ import (
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
 	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
-	druid.AddStat(stats.SpellPower, (float64(druid.Talents.ImprovedMoonkinForm)*0.1)*druid.GetStat(stats.Spirit))
 	druid.PseudoStats.CastSpeedMultiplier *= 1 + (float64(druid.Talents.CelestialFocus) * 0.01)
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
@@ -26,6 +25,11 @@ func (druid *Druid) ApplyTalents() {
 		druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
 	}
 
+	if druid.Talents.ImprovedMoonkinForm > 0 {
+		bonus := 0.1 * float64(druid.Talents.ImprovedMoonkinForm)
+		druid.AddStatDependency(stats.Spirit, stats.SpellPower, bonus)
+	}
+
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
 		druid.AddStatDependency(stats.Intellect, stats.SpellPower, bonus)
@@ -39,6 +43,12 @@ func (druid *Druid) ApplyTalents() {
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
+	}
+
+	if druid.Talents.ImprovedFaerieFire > 0 {
+		if druid.CurrentTarget.HasAura("Faerie Fire") || druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+			druid.AddStat(stats.SpellCrit, float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance)
+		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
