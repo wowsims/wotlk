@@ -434,7 +434,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			//spriest.Log(sim, "nextIdx[%d]", nextIdx)
 			//spriest.Log(sim, "bestIdx[%d]", bestIdx)
 			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
-			//spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
+			///spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
 			//spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
 			//spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
 			//spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
@@ -508,9 +508,9 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			if highestPossibleIdx == 0 {
 				for i, v := range dpsPossibleshort {
 					if v >= highestPossibleDmg {
-						if sim.Log != nil {
-							//spriest.Log(sim, "\thighestPossibleDmg[%d]: %01.f", i, v)
-						}
+						//if sim.Log != nil {
+						//	spriest.Log(sim, "\thighestPossibleDmg[%d]: %01.f", i, v)
+						//}
 						highestPossibleIdx = i
 						highestPossibleDmg = v
 					}
@@ -528,7 +528,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				chosenMfs = 3
 			}
 			if chosenMfs > 0 {
-				if float64((allCDs[mbIdb]).Seconds()) < float64(currentWait.Seconds()) && float64((allCDs[mbIdb]).Seconds()) == 0 && spellDPCT[0] > spellDPCT[4]/3*2 {
+				if float64((allCDs[mbIdb]).Seconds()) < float64(currentWait.Seconds()) && float64((allCDs[mbIdb]).Seconds()) == 0 && (mfAddIdx == 2 && spellDPCT[0] > spellDPCT[4]/3*2) || (mfAddIdx == 3 && spellDPCT[0] > spellDPCT[4]) {
 					bestIdx = 0
 					currentWait = allCDs[mbIdb]
 				} else if tickLength*3 <= gcd {
@@ -538,9 +538,12 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				}
 			}
 		}
-		//if sim.Log != nil {
-		//	spriest.Log(sim, "bestIdx[%d]", bestIdx)
-		//}
+
+		if bestIdx == 2 && float64((allCDs[mbIdb]).Seconds()) < float64(currentWait.Seconds()) && float64(currentWait.Seconds()) > 0.4 {
+			bestIdx = 0
+			currentWait = allCDs[mbIdb]
+		}
+
 		// if current spell is SWD and mf2 is less than GCD, and is more dps than SWD then use instead
 		if bestIdx == 3 && tickLength*2 <= gcd {
 			if spellDPCT[3] < spellDPCT[4]*2/3 {
@@ -907,11 +910,11 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 
 		chosenWait := cdDiffs[bestIdx]
 
-		if sim.Log != nil {
-			//spriest.Log(sim, "numTicks %d", numTicks)
-			//spriest.Log(sim, "mfTime %d", mfTime.Seconds())
-			//spriest.Log(sim, "chosenWait %d", chosenWait.Seconds())
-		}
+		//if sim.Log != nil {
+		//spriest.Log(sim, "numTicks %d", numTicks)
+		//spriest.Log(sim, "mfTime %d", mfTime.Seconds())
+		//spriest.Log(sim, "chosenWait %d", chosenWait.Seconds())
+		//}
 
 		var newInd int
 		if chosenWait > gcd {
