@@ -45,6 +45,12 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
 	}
 
+	if druid.Talents.ImprovedFaerieFire > 0 {
+		if druid.CurrentTarget.HasAura("Faerie Fire") || druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+			druid.AddStat(stats.SpellCrit, float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance)
+		}
+	}
+
 	if druid.Talents.SurvivalOfTheFittest > 0 {
 		bonus := 0.02 * float64(druid.Talents.SurvivalOfTheFittest)
 		druid.MultiplyStat(stats.Stamina, 1.0+bonus)
