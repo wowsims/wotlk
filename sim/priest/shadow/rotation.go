@@ -225,13 +225,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		if deltaTimeBL > gcd.Seconds() && numVTbeforeBL < 2 && float64(sim.CurrentTime.Seconds()) < float64(BLusedat) {
 			vtDamage = 0
 		}
-
-		if sim.Log != nil {
-			spriest.Log(sim, "numDPbeforeBL[%d]", float64(numDPbeforeBL))
-			spriest.Log(sim, "numVTbeforeBL[%d]", numVTbeforeBL)
-			spriest.Log(sim, "delta[%d]", deltaTimeBL)
-			spriest.Log(sim, "dotTick[%d]", dotTickSpeed*1e-9)
-		}
+		//newHasteRating := spriest.GetStat(stats.SpellHaste)
+		//if sim.Log != nil {
+		//	spriest.Log(sim, "newHasteRating[%d]", float64(newHasteRating))
+		//}
 
 		// SWD dmg
 		swdDamage = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T7FourSetBonus, 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
@@ -339,22 +336,22 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			mfDamage / float64((tickLength * 3).Seconds()),
 		}
 
-		if sim.Log != nil {
-			//spriest.Log(sim, "mbDamage[%d]", mbDamage)
-			//spriest.Log(sim, "mb time[%d]", float64((gcd + allCDs[mbIdb]).Seconds()))
-			//spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
-			//spriest.Log(sim, "gcd[%d]", gcd.Seconds())
-			//spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
-			//spriest.Log(sim, "critChance[%d]", critChance)
-		}
+		//if sim.Log != nil {
+		//spriest.Log(sim, "mbDamage[%d]", mbDamage)
+		//spriest.Log(sim, "mb time[%d]", allCDs[mbIdb])
+		//spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
+		//spriest.Log(sim, "gcd[%d]", gcd.Seconds())
+		//spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
+		//spriest.Log(sim, "critChance[%d]", critChance)
+		//}
 
 		// Find the maximum DPCT spell
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
-			if sim.Log != nil {
-				//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
-				//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
-			}
+			//if sim.Log != nil {
+			//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+			//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
+			//}
 			if v > bestDmg {
 				bestIdx = i
 				bestDmg = v
@@ -364,10 +361,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		nextCD := core.NeverExpires
 		nextIdx := -1
 		for i, v := range allCDs[1 : len(allCDs)-1] {
-			// if sim.Log != nil {
-			//   spriest.Log(sim, "\tallCDs[%d]: %01.f", i, v)
+			//	if sim.Log != nil {
+			// spriest.Log(sim, "\tallCDs[%d]: %01.f", i, v)
 			// 	 spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
-			// }
+			//}
 			if v < nextCD {
 				nextCD = v
 				nextIdx = i + 1
@@ -433,20 +430,26 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			}
 			totalDps__poss3 = (cdDpso*float64((currentWait+gcd).Seconds()) + mfDamage) / float64((3*tickLength + gcd + residualMF).Seconds())
 
-			//	if sim.Log != nil {
-			//		spriest.Log(sim, "nextIdx[%d]", nextIdx)
-			//		spriest.Log(sim, "bestIdx[%d]", bestIdx)
-			//		spriest.Log(sim, "residualWait[%d]", residualWait.Seconds())
-			//		spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
-			//		spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
-			//		spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
-			//		spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
-			//	}
+			//if sim.Log != nil {
+			//spriest.Log(sim, "nextIdx[%d]", nextIdx)
+			//spriest.Log(sim, "bestIdx[%d]", bestIdx)
+			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
+			//spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
+			//spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
+			//spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
+			//spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
+			//}
 
 			if (totalDps__poss1 > totalDps__poss0) || (totalDps__poss2 > totalDps__poss0) || (totalDps__poss3 > totalDps__poss0) {
 				if totalDps__poss1 > totalDps__poss0 && totalDps__poss1 > totalDps__poss2 && totalDps__poss1 > totalDps__poss3 {
 					bestIdx = nextIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
 					currentWait = waitmin
+				} else if totalDps__poss2 > totalDps__poss0 && totalDps__poss2 > totalDps__poss1 && totalDps__poss2 > totalDps__poss3 {
+					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
+					//currentWait = currentWait
+				} else if totalDps__poss3 > totalDps__poss0 && totalDps__poss3 > totalDps__poss1 && totalDps__poss3 > totalDps__poss2 {
+					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
+					//currentWait = currentWait
 				} else {
 					bestIdx = 4
 				}
@@ -525,10 +528,19 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				chosenMfs = 3
 			}
 			if chosenMfs > 0 {
-				bestIdx = 4
+				if float64((allCDs[mbIdb]).Seconds()) < float64(currentWait.Seconds()) && float64((allCDs[mbIdb]).Seconds()) == 0 && spellDPCT[0] > spellDPCT[4]/3*2 {
+					bestIdx = 0
+					currentWait = allCDs[mbIdb]
+				} else if tickLength*3 <= gcd {
+					bestIdx = 4
+				} else {
+					bestIdx = 4
+				}
 			}
 		}
-
+		//if sim.Log != nil {
+		//	spriest.Log(sim, "bestIdx[%d]", bestIdx)
+		//}
 		// if current spell is SWD and mf2 is less than GCD, and is more dps than SWD then use instead
 		if bestIdx == 3 && tickLength*2 <= gcd {
 			if spellDPCT[3] < spellDPCT[4]*2/3 {
@@ -604,11 +616,12 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			currentWait = time.Millisecond * time.Duration(math.Round(deltaTimeBL*1010))
 		}
 
-		if sim.Log != nil {
-			spriest.Log(sim, "BLusedat %d", currentWait)
-			spriest.Log(sim, "dpDamage %d", dpDamage)
-			spriest.Log(sim, "currentWait %d", currentWait)
-		}
+		//if sim.Log != nil {
+		//spriest.Log(sim, "BLusedat %d", currentWait)
+		//spriest.Log(sim, "dpDamage %d", dpDamage)
+		//spriest.Log(sim, "currentWait %d", currentWait)
+		//}
+
 		if currentWait > 0 && bestIdx != 5 && bestIdx != 4 {
 			spriest.WaitUntil(sim, sim.CurrentTime+currentWait)
 			return
