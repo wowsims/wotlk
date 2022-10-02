@@ -12,7 +12,7 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 		return
 	}
 
-	// CHECKME spellEffect.Outcome isn't updated with resists anymore - why?
+	// TODO check why spellEffect.Outcome isn't updated with resists anymore
 	resistanceMult := spell.ResistanceMultiplier(sim, spellEffect.IsPeriodic, attackTable)
 	spellEffect.Damage *= resistanceMult
 }
@@ -63,12 +63,12 @@ func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 }
 
 func (at *AttackTable) UpdatePartialResists() {
-	at.PartialResistArcaneThresholds, at.BinaryArcaneHitChance = at.Defender.partialResistRollThresholds(SpellSchoolArcane, at.Attacker)
-	at.PartialResistHolyThresholds, at.BinaryHolyHitChance = at.Defender.partialResistRollThresholds(SpellSchoolHoly, at.Attacker)
-	at.PartialResistFireThresholds, at.BinaryFireHitChance = at.Defender.partialResistRollThresholds(SpellSchoolFire, at.Attacker)
-	at.PartialResistFrostThresholds, at.BinaryFrostHitChance = at.Defender.partialResistRollThresholds(SpellSchoolFrost, at.Attacker)
-	at.PartialResistNatureThresholds, at.BinaryNatureHitChance = at.Defender.partialResistRollThresholds(SpellSchoolNature, at.Attacker)
-	at.PartialResistShadowThresholds, at.BinaryShadowHitChance = at.Defender.partialResistRollThresholds(SpellSchoolShadow, at.Attacker)
+	at.PartialResistArcaneThresholds = at.Defender.partialResistRollThresholds(SpellSchoolArcane, at.Attacker)
+	at.PartialResistHolyThresholds = at.Defender.partialResistRollThresholds(SpellSchoolHoly, at.Attacker)
+	at.PartialResistFireThresholds = at.Defender.partialResistRollThresholds(SpellSchoolFire, at.Attacker)
+	at.PartialResistFrostThresholds = at.Defender.partialResistRollThresholds(SpellSchoolFrost, at.Attacker)
+	at.PartialResistNatureThresholds = at.Defender.partialResistRollThresholds(SpellSchoolNature, at.Attacker)
+	at.PartialResistShadowThresholds = at.Defender.partialResistRollThresholds(SpellSchoolShadow, at.Attacker)
 }
 
 func (at *AttackTable) GetPartialResistThresholds(ss SpellSchool) Thresholds {
@@ -87,24 +87,6 @@ func (at *AttackTable) GetPartialResistThresholds(ss SpellSchool) Thresholds {
 		return at.PartialResistShadowThresholds
 	}
 	return Thresholds{{cumulativeChance: 1, bracket: 0}}
-}
-
-func (at *AttackTable) GetBinaryHitChance(ss SpellSchool) float64 {
-	switch ss {
-	case SpellSchoolArcane:
-		return at.BinaryArcaneHitChance
-	case SpellSchoolHoly:
-		return at.BinaryHolyHitChance
-	case SpellSchoolFire:
-		return at.BinaryFireHitChance
-	case SpellSchoolFrost:
-		return at.BinaryFrostHitChance
-	case SpellSchoolNature:
-		return at.BinaryNatureHitChance
-	case SpellSchoolShadow:
-		return at.BinaryShadowHitChance
-	}
-	return 0
 }
 
 /*
@@ -167,7 +149,7 @@ func (x Thresholds) String() string {
 	return sb.String()
 }
 
-func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit) (Thresholds, float64) {
+func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit) Thresholds {
 	ar := unit.averageResist(school, attacker, false)
 
 	if ar <= 0.1 { // always 0%, 10%, or 20%; this covers all player vs. mob cases, in practice
@@ -175,7 +157,7 @@ func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit
 			{cumulativeChance: 1 - 7.5*ar, bracket: 0},
 			{cumulativeChance: 1 - 2.5*ar, bracket: 1},
 			{cumulativeChance: 1, bracket: 2},
-		}, 1 - ar
+		}
 	}
 
 	if ar >= 0.9 { // always 80%, 90%, or 100%; only relevant for tests ;)
@@ -183,7 +165,7 @@ func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit
 			{cumulativeChance: 1 - 7.5*(1-ar), bracket: 10},
 			{cumulativeChance: 1 - 2.5*(1-ar), bracket: 9},
 			{cumulativeChance: 1, bracket: 8},
-		}, 1 - ar
+		}
 	}
 
 	p := func(x float64) float64 {
@@ -207,5 +189,5 @@ func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit
 		thresholds[index-1].cumulativeChance = 1
 	}
 
-	return thresholds, 1 - ar
+	return thresholds
 }
