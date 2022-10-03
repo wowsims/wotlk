@@ -12,9 +12,6 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 	actionID := core.ActionID{SpellID: 48952}
 	numCharges := int32(8)
 
-	// Holy Shield can be both fully and partially resisted in WotLK, so it doesn't use SpellFlagBinary here,
-	//	but does use CalcAndDealDamageMagicHitBinary() below.
-	// TODO needs research ;)
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
@@ -30,7 +27,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 				0.0732*spell.MeleeAttackPower() +
 				0.117*spell.SpellPower()
 
-			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
 		},
 	})
 

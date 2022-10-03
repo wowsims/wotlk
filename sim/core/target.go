@@ -227,13 +227,6 @@ type AttackTable struct {
 	PartialResistNatureThresholds Thresholds
 	PartialResistShadowThresholds Thresholds
 
-	BinaryArcaneHitChance float64
-	BinaryHolyHitChance   float64
-	BinaryFireHitChance   float64
-	BinaryFrostHitChance  float64
-	BinaryNatureHitChance float64
-	BinaryShadowHitChance float64
-
 	DamageDealtMultiplier               float64
 	NatureDamageDealtMultiplier         float64
 	PeriodicShadowDamageDealtMultiplier float64
