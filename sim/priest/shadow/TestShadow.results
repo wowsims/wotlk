@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 4567.06306
-  tps: 3471.94338
+  dps: 4691.41308
+  tps: 3564.6456
  }
 }
 dps_results: {
