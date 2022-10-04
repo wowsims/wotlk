@@ -134,6 +134,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 1134.20551
+  tps: 1544.89214
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-Defender'sCode-40257"
  value: {
   dps: 1117.64178

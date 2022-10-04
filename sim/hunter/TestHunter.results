@@ -155,6 +155,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHunter-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 6678.10806
+  tps: 5670.5178
+ }
+}
+dps_results: {
  key: "TestHunter-AllItems-Defender'sCode-40257"
  value: {
   dps: 6631.80249

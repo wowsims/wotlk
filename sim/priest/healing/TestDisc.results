@@ -163,6 +163,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDisc-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 126.05665
+  tps: 55.03076
+  hps: 5611.10528
+ }
+}
+dps_results: {
  key: "TestDisc-AllItems-Defender'sCode-40257"
  value: {
   dps: 125.11642
