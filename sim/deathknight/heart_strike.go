@@ -76,6 +76,10 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 }
 
 func (dk *Deathknight) registerHeartStrikeSpell() {
+	if !dk.Talents.HeartStrike {
+		return
+	}
+
 	dk.HeartStrike = dk.newHeartStrikeSpell(true, false, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if dk.Env.GetNumTargets() > 1 {
 			dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))

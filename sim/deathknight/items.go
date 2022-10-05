@@ -290,6 +290,14 @@ func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 205, 0)
 }
 
+func (dk *Deathknight) sigilOfTheUnfalteringKnight() *core.Aura {
+	if dk.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40714 {
+		return nil
+	}
+
+	return dk.NewTemporaryStatsAura("Unflinching Valor", core.ActionID{SpellID: 62146}, stats.Stats{stats.Defense: 53.0 / core.DefenseRatingPerDefense}, time.Second*30)
+}
+
 func init() {
 	// Rune of Cinderglacier
 	core.NewItemEffect(53341, func(agent core.Agent) {

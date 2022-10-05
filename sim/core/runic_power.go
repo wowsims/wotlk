@@ -516,6 +516,16 @@ func (rp *RunicPowerBar) CurrentDeathRunes() int8 {
 	return count
 }
 
+func (rp *RunicPowerBar) DeathRunesInFU() int8 {
+	var count int8
+	for i := 2; i < len(rp.runeMeta); i++ {
+		if rp.runeStates&isDeaths[i] != 0 {
+			count++
+		}
+	}
+	return count
+}
+
 func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
 	const unspentBlood1 = isSpent
 	const unspentBlood2 = unspentBlood1 << 2

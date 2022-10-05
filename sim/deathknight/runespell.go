@@ -82,6 +82,10 @@ func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool 
 		rs.onCast(sim)
 	}
 
+	if rs.dk.BladeBarrierAura.IsActive() {
+		rs.dk.BladeBarrierAura.Refresh(sim)
+	}
+
 	return result
 }
 
