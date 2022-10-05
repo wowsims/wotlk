@@ -55,7 +55,7 @@ func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
 }
 
 func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.Talents.MortalStrike
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.Talents.ImprovedSlam > 0
 }
 
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {

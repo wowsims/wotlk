@@ -1,0 +1,12 @@
+## Interface: 40300
+## Title: LibParse
+## Notes: Encodes and Decodes between Lua tables and JSON/CSV.
+## Author: Sapu94
+## Version: v1.5
+## X-Curse-Packaged-Version: v1.5
+## X-Curse-Project-Name: LibParse
+## X-Curse-Project-ID: libparse
+## X-Curse-Repository-ID: wow/libparse/mainline
+
+
+Load.xml

@@ -192,6 +192,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 1927.79542
+  tps: 5611.81381
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-DestructiveSkyflareDiamond"
  value: {
   dps: 1898.07271
