@@ -68,13 +68,19 @@ function WowSimsExporter:CreateGlyphEntry()
     for t = 1, 6 do
 
 		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(t);
-		
+		local link = GetGlyphLink(t);
+
 		if(enabled) then	
-			local name, _ = string.match(GetGlyphLink(t),"Glyph of .+]"):gsub('%]', '')
-			if(glyphType == 1) then-- major
-				table.insert(major, name)
-			else if(glyphType == 2) then -- minor
-				table.insert(minor, name)
+			
+			local name, _ = string.match(link,"Glyph of .+]")
+			if(name) then
+				local formattedName = name:gsub('%]', '')
+
+				if(glyphType == 1 ) then-- major
+					table.insert(major, formattedName)
+				else if(glyphType == 2 ) then -- minor
+					table.insert(minor, formattedName)
+				end
 			end
 
 		end

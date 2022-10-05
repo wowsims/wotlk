@@ -1,7 +1,7 @@
 # wowsimsexporter
-An exporter addon for World Of Warcraft: TBC Classic Sim at  https://wowsims.github.io/tbc
+An exporter addon for World Of Warcraft: WOTLK Classic Sim at  https://wowsims.github.io/wotlk
 
-There is a channel on the wowsims tbc discord
+There is a channel on the wowsims discord
 
 Invite is located here https://discord.gg/N9ZgAMXQ3p
 
@@ -11,10 +11,8 @@ If this is the case, don't open a ticket on the wowsims github, open it here <ht
 
 **Getting the addon**
 
-If anyone would like to test it, you can just download the repository and put the `wowsimsexporter-main` folder in your addons directory. Eventually it will be an addon on wowup/curseforge.
+If anyone would like to test it, you can just download it from the releases on the wowsims under [Addon] and you can also find it on Curseforge
 
-Here is a direct link to the latest that ive uploaded
-https://github.com/generalwrex/wowsimsexporter/archive/refs/heads/main.zip
 
 **To use the addon**
 
@@ -26,13 +24,9 @@ If you change your gear, and enchants or some gems, you can either rerun `/wse e
 
 **To find the import button**
 
-As this is in a testing phase, the import button his hidden from the website to avoid issues with users not knowing where the addon is!
+You must go to Options and enable experimental in order to import from the addon!
 
-To find the import button you can see it by going to any of the sims and adding `?debug` to the URL. If there is a # in the URL the `?debug` has to come first.
-
-This will add a import button to the top right of the page to the right of the report a feature button.
-
-example: https://wowsims.github.io/tbc/enhancement_shaman/?debug#
+This will add a addon button to the import type list.
 
 
 # INFO
