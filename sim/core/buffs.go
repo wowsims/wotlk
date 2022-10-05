@@ -385,7 +385,7 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
 		},
 	})
 
@@ -418,7 +418,7 @@ func ThornsAura(character *Character, points int32) *Aura {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
 		},
 	})
 

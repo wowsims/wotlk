@@ -39,7 +39,7 @@ func (mage *Mage) registerFrostboltSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(799, 861) + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCritBinary(sim, target, baseDamage)
+			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
 		},
 	})
 }

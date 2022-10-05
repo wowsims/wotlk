@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.79554
+  weights: 0.79543
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.2045
+  weights: 0.20448
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.10475
+  weights: 0.10478
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.54013
-  weights: -0.12653
+  weights: 0.54019
+  weights: -0.12733
   weights: 0
   weights: 0
   weights: 0
@@ -189,6 +189,13 @@ dps_results: {
  value: {
   dps: 1934.18238
   tps: 5651.66461
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 1927.79542
+  tps: 5611.81381
  }
 }
 dps_results: {
@@ -600,8 +607,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2813.56903
-  tps: 7411.64965
+  dps: 2814.66157
+  tps: 7413.91504
   dtps: 95.43257
  }
 }
@@ -692,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2958.94956
-  tps: 7796.33813
+  dps: 2960.37697
+  tps: 7799.29786
   dtps: 99.39883
  }
 }

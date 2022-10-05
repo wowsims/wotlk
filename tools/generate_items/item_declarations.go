@@ -71,6 +71,8 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28657, HandType: proto.HandType_HandTypeOneHand},
 	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
 
+	{ID: 29994}, // Wildercloak
+
 	// Include the items we want icons for here.
 	{ID: 43005}, // Pet foods
 	{ID: 33874}, //

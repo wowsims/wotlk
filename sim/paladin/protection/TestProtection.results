@@ -169,6 +169,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 1638.63002
+  tps: 3775.83143
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-Defender'sCode-40257"
  value: {
   dps: 1622.11837
@@ -668,8 +675,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 2015.78153
-  tps: 4732.52326
+  dps: 2025.7904
+  tps: 4756.34442
   dtps: 64.83568
  }
 }
@@ -928,8 +935,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2127.93782
-  tps: 4977.23979
+  dps: 2137.42913
+  tps: 4999.88437
   dtps: 67.08851
  }
 }

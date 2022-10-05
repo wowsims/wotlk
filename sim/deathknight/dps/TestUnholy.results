@@ -155,6 +155,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 7108.16188
+  tps: 5748.15214
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-Defender'sCode-40257"
  value: {
   dps: 7222.89565

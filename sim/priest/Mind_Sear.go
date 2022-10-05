@@ -59,7 +59,7 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 
 	effect := core.SpellEffect{
 		IsPeriodic:     true,
-		OutcomeApplier: priest.OutcomeFuncMagicHitBinary(),
+		OutcomeApplier: priest.OutcomeFuncMagicHit(),
 		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Landed() {
 				priest.AddShadowWeavingStack(sim)

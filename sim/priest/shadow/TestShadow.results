@@ -148,6 +148,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-DeathKnight'sAnguish-38212"
+ value: {
+  dps: 4442.18303
+  tps: 3380.47453
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-Defender'sCode-40257"
  value: {
   dps: 4412.35973
@@ -178,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 4567.06306
-  tps: 3471.94338
+  dps: 4691.41308
+  tps: 3564.6456
  }
 }
 dps_results: {
