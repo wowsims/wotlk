@@ -1,7 +1,7 @@
 # wowsimsexporter
-An exporter addon for World Of Warcraft: WOTLK Classic Sim at  https://wowsims.github.io/wotlk
+An exporter addon for World Of Warcraft: TBC Classic Sim at  https://wowsims.github.io/tbc
 
-There is a channel on the WowSims discord
+There is a channel on the wowsims tbc discord
 
 Invite is located here https://discord.gg/N9ZgAMXQ3p
 
@@ -11,8 +11,10 @@ If this is the case, don't open a ticket on the wowsims github, open it here <ht
 
 **Getting the addon**
 
-If anyone would like to test it, you can just download the repository and put the `wowsimsexporter` folder in your addons directory. 
+If anyone would like to test it, you can just download the repository and put the `wowsimsexporter-main` folder in your addons directory. Eventually it will be an addon on wowup/curseforge.
 
+Here is a direct link to the latest that ive uploaded
+https://github.com/generalwrex/wowsimsexporter/archive/refs/heads/main.zip
 
 **To use the addon**
 
@@ -22,11 +24,11 @@ If anyone would like to test it, you can just download the repository and put th
 
 If you change your gear, and enchants or some gems, you can either rerun `/wse export` if you closed the window and the data will be updated. or just click the `Generate Data` button.
 
-**To find the import button on WoWSims**
+**To find the import button**
 
-As this is in a testing phase, the addon button his hidden from the website to avoid issues with users not knowing where the addon is!
+As this is in a testing phase, the import button his hidden from the website to avoid issues with users not knowing where the addon is!
 
-To find the import button you can see it by going to the options cogwheel and enabling experimental features, it will then appear under Import!
+To find the import button you can see it by going to any of the sims and adding `?debug` to the URL. If there is a # in the URL the `?debug` has to come first.
 
 This will add a import button to the top right of the page to the right of the report a feature button.
 
