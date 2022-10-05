@@ -60,7 +60,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell:    dk.RuneTap.Spell,
 			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityLow,
+			Priority: core.CooldownPriorityDefault,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return dk.RuneTap.CanCast(sim)
 			},

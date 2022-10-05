@@ -225,7 +225,26 @@ message Deathknight {
 
 message TankDeathknight {
 	message Rotation {
+		enum Opener {
+			Regular = 0;
+			Threat = 1;
+		}
 
+		enum OptimizationSetting {
+			Hps = 0;
+			Tps = 1;
+			Dps = 2;
+		}
+
+		enum BloodSpell {
+			BloodStrike = 0;
+			BloodBoil = 1;
+			HeartStrike = 2;
+		}
+
+		Opener opener = 1;
+		OptimizationSetting optimization_setting = 2;
+		BloodSpell blood_spell = 3;
 	}
 	Rotation rotation = 1;
 

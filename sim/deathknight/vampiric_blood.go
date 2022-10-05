@@ -65,7 +65,7 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell:    dk.VampiricBlood.Spell,
 			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityLow,
+			Priority: core.CooldownPriorityDefault,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return dk.VampiricBlood.CanCast(sim)
 			},

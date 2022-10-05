@@ -153,12 +153,12 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					DeathKnightInputs.StartingRunicPower,
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InFrontOfTarget,
+					DeathKnightInputs.StartingRunicPower,
 				],
 			},
 			encounterPicker: {

@@ -22,6 +22,8 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
 	baseCost := float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 0, 0))
 
+	sigilOfTheUnfalteringKnight := dk.sigilOfTheUnfalteringKnight()
+
 	rs := &RuneSpell{}
 	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     IcyTouchActionID,
@@ -43,7 +45,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
 		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
-		ThreatMultiplier: 7,
+		ThreatMultiplier: 1.0,
 
 		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
@@ -72,12 +74,24 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 					if dk.Talents.EbonPlaguebringer > 0 {
 						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
 					}
+
+					if sigilOfTheUnfalteringKnight != nil {
+						sigilOfTheUnfalteringKnight.Activate(sim)
+					}
 				}
 			},
 		}, false),
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
 	}, nil)
+
+	dk.IcyTouch.DynamicThreatMultiplier = func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+		if dk.FrostPresenceAura.IsActive() {
+			return 7.0
+		}
+
+		return 1.0
+	}
 }
 func (dk *Deathknight) registerDrwIcyTouchSpell() {
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()

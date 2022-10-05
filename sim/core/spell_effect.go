@@ -74,7 +74,12 @@ func (spellEffect *SpellEffect) calcThreat(spell *Spell) float64 {
 			flatBonus += spell.DynamicThreatBonus(spellEffect, spell)
 		}
 
-		return (spellEffect.Damage*spell.ThreatMultiplier + flatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
+		dynamicMultiplier := 1.0
+		if spell.DynamicThreatMultiplier != nil {
+			dynamicMultiplier = spell.DynamicThreatMultiplier(spellEffect, spell)
+		}
+
+		return (spellEffect.Damage*spell.ThreatMultiplier*dynamicMultiplier + flatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
 	} else {
 		return 0
 	}

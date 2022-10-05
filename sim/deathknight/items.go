@@ -123,8 +123,14 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
-				return
+			if dk.HeartStrike == nil {
+				if !icd.IsReady(sim) || spell != dk.BloodStrike.Spell {
+					return
+				}
+			} else {
+				if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
+					return
+				}
 			}
 
 			if sim.RandomFloat("UnholyMight") < 0.5 {
@@ -288,6 +294,14 @@ func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
 
 func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 205, 0)
+}
+
+func (dk *Deathknight) sigilOfTheUnfalteringKnight() *core.Aura {
+	if dk.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40714 {
+		return nil
+	}
+
+	return dk.NewTemporaryStatsAura("Unflinching Valor", core.ActionID{SpellID: 62146}, stats.Stats{stats.Defense: 53.0 / core.DefenseRatingPerDefense}, time.Second*30)
 }
 
 func init() {
