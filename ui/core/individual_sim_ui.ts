@@ -678,6 +678,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			// This list is smaller because some potions don't make sense to use as prepot.
 			// E.g. healing/mana potions.
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
+			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);
@@ -694,6 +695,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
+			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);

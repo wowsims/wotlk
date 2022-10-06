@@ -11,6 +11,43 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 	if !dk.Talents.GhoulFrenzy {
 		return
 	}
+
+	gfHeal := dk.RegisterSpell(nil, core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 63560},
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellHealing,
+
+		Cast: core.CastConfig{},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.SpellMetrics[target.UnitIndex].Hits++
+		},
+	}, nil, nil)
+
+	gfHealHot := core.NewDot(core.Dot{
+		Spell: gfHeal.Spell,
+		Aura: dk.Ghoul.RegisterAura(core.Aura{
+			Label:    "Ghoul Frenzy Hot",
+			ActionID: gfHeal.ActionID,
+		}),
+		NumberOfTicks: 5,
+		TickLength:    time.Second * 6,
+		TickEffects: core.TickFuncSnapshot(&dk.Ghoul.Unit, core.SpellEffect{
+			IsPeriodic: true,
+			IsHealing:  true,
+
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return 0.06 * dk.Ghoul.MaxHealth()
+				},
+			},
+			OutcomeApplier: dk.OutcomeFuncTick(),
+		}),
+	})
+
 	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
 	dk.GhoulFrenzy = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 63560},
@@ -33,6 +70,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.GhoulFrenzyAura.Activate(sim)
+			gfHealHot.Apply(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
 		},
 	}, func(sim *core.Simulation) bool {
