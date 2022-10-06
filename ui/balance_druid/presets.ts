@@ -52,7 +52,8 @@ export const DefaultRotation = BalanceDruidRotation.create({
     mfInsideEclipseThreshold: 0,
     useSmartCooldowns : true,
     mcdInsideLunarThreshold: 15,
-    mcdInsideSolarThreshold: 15
+    mcdInsideSolarThreshold: 15,
+	keepIsUp: true
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
