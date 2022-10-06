@@ -405,6 +405,7 @@ func (druid *Druid) applyImprovedLotp() {
 	}
 
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 34300})
+	manaRestore := float64(druid.Talents.ImprovedLeaderOfThePack) * 0.04
 
 	icd := core.Cooldown{
 		Timer:    druid.NewTimer(),
@@ -428,7 +429,7 @@ func (druid *Druid) applyImprovedLotp() {
 				return
 			}
 			icd.Use(sim)
-			druid.AddMana(sim, druid.MaxMana()*0.08, manaMetrics, false)
+			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
 		},
 	})
 }

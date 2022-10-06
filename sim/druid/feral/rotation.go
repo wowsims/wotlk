@@ -243,7 +243,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	ripNow := (curCp >= rotation.MinCombosForRip) && !cat.RipDot.IsActive() && (simTimeRemain >= endThresh) && !isClearcast
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (cat.RipDot.IsActive() && (simTimeRemain-cat.RipDot.RemainingDuration(sim) < endThresh)))
-	mangleNow := !ripNow && !cat.MangleAura.IsActive() && !isClearcast
+	mangleNow := !ripNow && !cat.MangleAura.IsActive()
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && cat.RipDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
 	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast
