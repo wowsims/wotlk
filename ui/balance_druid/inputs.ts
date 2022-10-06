@@ -80,5 +80,15 @@ export const BalanceDruidRotationConfig = {
 			label: 'CDs inside solar eclipse max timing',
 			labelTooltip: 'Maximum solar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'keepIsUp',
+			label: 'Keep Insect Swarm up',
+			labelTooltip: 'Rotation will try to keep Insect Swarm up outside eclipse',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'keepMfUp',
+			label: 'Keep Moonfire up',
+			labelTooltip: 'Rotation will try to keep Moonfire up outside eclipse',
+		}),
 	],
 };
