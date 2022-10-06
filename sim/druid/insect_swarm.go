@@ -31,8 +31,8 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 		DamageMultiplier: 1 *
 			druid.TalentsBonuses.genesisMultiplier *
-			core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0) *
-			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 1.3, 1.0),
+			(1 + core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 0.1, 0) +
+				core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 0.3, 0)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

@@ -123,8 +123,14 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
-				return
+			if dk.HeartStrike == nil {
+				if !icd.IsReady(sim) || spell != dk.BloodStrike.Spell {
+					return
+				}
+			} else {
+				if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
+					return
+				}
 			}
 
 			if sim.RandomFloat("UnholyMight") < 0.5 {
