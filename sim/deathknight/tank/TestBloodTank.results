@@ -26,7 +26,7 @@ character_stats_results: {
   final_stats: 572
   final_stats: 0
   final_stats: 0
-  final_stats: 821.23674
+  final_stats: 564.94074
   final_stats: 679.68094
   final_stats: 15
   final_stats: 38623.6555
@@ -612,9 +612,9 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1743.00843
-  tps: 5648.06725
-  dtps: 360.29022
+  dps: 1869.25603
+  tps: 6255.45846
+  dtps: 271.44284
  }
 }
 dps_results: {
@@ -704,8 +704,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1780.06945
-  tps: 5662.71344
-  dtps: 347.77408
+  dps: 1918.079
+  tps: 6339.68553
+  dtps: 265.60917
  }
 }
