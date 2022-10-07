@@ -270,12 +270,13 @@ func (paladin *Paladin) applyCrusade() {
 	paladin.RegisterResetEffect(
 		func(s *core.Simulation) {
 			if !applied {
-				paladin.PseudoStats.DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {
-					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+						case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+							paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.02 * float64(paladin.Talents.Crusade))
+						default:
+							paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 					}
 				}
 				applied = true
@@ -309,7 +310,10 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	case proto.HandType_HandTypeTwoHand:
 		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
 	case proto.HandType_HandTypeOneHand:
-		paladin.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(paladin.Talents.OneHandedWeaponSpecialization)
+		if paladin.Talents.OneHandedWeaponSpecialization > 0 {
+			// Talent points are 4%, 7%, 10%
+			paladin.PseudoStats.DamageDealtMultiplier *= 1.01 + 0.03*float64(paladin.Talents.OneHandedWeaponSpecialization)
+		}
 	}
 }
 
