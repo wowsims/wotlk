@@ -14,7 +14,7 @@ import (
 
 func (dk *Deathknight) ApplyUnholyTalents() {
 	// Anticipation
-	dk.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(dk.Talents.Anticipation))
+	dk.PseudoStats.BaseDodge += 0.01*float64(dk.Talents.Anticipation)
 
 	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
