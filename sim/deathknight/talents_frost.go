@@ -61,7 +61,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	dk.applyGlacierRot()
 
 	// Deathchill
-	// TODO: Implement
+	dk.applyDeathchill()
 
 	// Improved Icy Talons
 	if dk.Talents.ImprovedIcyTalons {
@@ -166,6 +166,10 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
+			if dk.KillingMachineAura.IsActive() && (spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell || spell == dk.Obliterate.Spell) {
+				dk.KillingMachineAura.Deactivate(sim)
+			}
+
 			if !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
@@ -177,9 +181,64 @@ func (dk *Deathknight) applyKillingMachine() {
 	}))
 }
 
+func (dk *Deathknight) applyDeathchill() {
+	if !dk.Talents.Deathchill {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 49796}
+
+	rs := &RuneSpell{}
+	dk.Deathchill = dk.RegisterSpell(rs, core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    dk.NewTimer(),
+				Duration: 2 * time.Minute,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.DeathchillAura.Activate(sim)
+		},
+	}, nil, nil)
+
+	dk.DeathchillAura = dk.RegisterAura(core.Aura{
+		Label:    "Deathchill",
+		ActionID: actionID,
+		Duration: time.Second * 30.0,
+	})
+
+	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
+		Label: "Deathchill Proc",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if !spellEffect.Landed() {
+				return
+			}
+
+			if spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell || spell == dk.Obliterate.Spell {
+				dk.DeathchillAura.Deactivate(sim)
+			}
+		},
+	}))
+}
+
 func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
 		if dk.KillingMachineAura.IsActive() {
+			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+		} else {
+			outcomeApplier(sim, spell, spellEffect, attackTable)
+		}
+	}
+}
+
+func (dk *Deathknight) deathchillOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
+	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
+		if dk.DeathchillAura.IsActive() {
 			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance

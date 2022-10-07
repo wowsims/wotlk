@@ -69,11 +69,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
 				}
 
-				// KM Consume after OH
-				if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
-					dk.KillingMachineAura.Deactivate(sim)
-				}
-
 				if hasGlyph {
 					dk.FrostFeverSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {

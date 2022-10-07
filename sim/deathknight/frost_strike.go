@@ -81,11 +81,6 @@ func (dk *Deathknight) registerFrostStrikeSpell() {
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		dk.LastOutcome = spellEffect.Outcome
 		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeOhHit)
-
-		// KM Consume after OH
-		if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
-			dk.KillingMachineAura.Deactivate(sim)
-		}
 	})
 	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, nil)
 	dk.FrostStrike = dk.FrostStrikeMhHit
