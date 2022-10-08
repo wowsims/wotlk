@@ -19,12 +19,27 @@ type ProcStatBonusEffect struct {
 	ProcChance float64
 	PPM        float64
 	ICD        time.Duration
+
+	// For ignoring a hardcoded spell.
+	IgnoreSpellID int32
 }
 
 func newProcStatBonusEffect(config ProcStatBonusEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
+
+		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			procAura.Activate(sim)
+		}
+		if config.IgnoreSpellID != 0 {
+			ignoreSpellID := config.IgnoreSpellID
+			handler = func(sim *core.Simulation, spell *core.Spell, _ *core.SpellEffect) {
+				if !spell.IsSpellAction(ignoreSpellID) {
+					procAura.Activate(sim)
+				}
+			}
+		}
 
 		MakeProcTriggerAura(&character.Unit, ProcTrigger{
 			Name:       config.Name,
@@ -35,9 +50,7 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 			ProcChance: config.ProcChance,
 			PPM:        config.PPM,
 			ICD:        config.ICD,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
-				procAura.Activate(sim)
-			},
+			Handler:    handler,
 		})
 	})
 }
@@ -166,6 +179,8 @@ func init() {
 		Outcome:    core.OutcomeCrit,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
+
+		IgnoreSpellID: 60053,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sonic Booster",

@@ -680,7 +680,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrapDot.Spell {
+			if spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
 
