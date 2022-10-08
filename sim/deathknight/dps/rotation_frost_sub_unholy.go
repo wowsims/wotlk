@@ -67,7 +67,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.
 	casted := dk.RotationActionCallback_LastSecondsCast(sim, target)
 
 	if !casted {
-		spell := dk.RegularPrioPickSpell(sim, core.NeverExpires)
+		spell := dk.RegularPrioPickSpell(sim, target, core.NeverExpires)
 		if spell != nil {
 			casted = spell.Cast(sim, target)
 		}
@@ -189,7 +189,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Dump(sim *cor
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
 
-		spell := dk.RegularPrioPickSpell(sim, obAt)
+		spell := dk.RegularPrioPickSpell(sim, target, obAt)
 		if spell != nil {
 			casted = spell.Cast(sim, target)
 		} else {

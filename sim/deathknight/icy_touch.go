@@ -57,15 +57,11 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 						dk.mercilessCombatBonus(sim)
 				},
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
+			OutcomeApplier: dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome
 				if spellEffect.Landed() {
-					if dk.KillingMachineAura.IsActive() {
-						dk.KillingMachineAura.Deactivate(sim)
-					}
-
 					dk.FrostFeverExtended[spellEffect.Target.Index] = 0
 					dk.FrostFeverSpell.Cast(sim, spellEffect.Target)
 					if dk.Talents.CryptFever > 0 {
