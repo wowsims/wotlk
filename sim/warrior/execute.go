@@ -74,3 +74,18 @@ func (warrior *Warrior) SpamExecute(spam bool) bool {
 func (warrior *Warrior) CanExecute() bool {
 	return warrior.CurrentRage() >= warrior.Execute.BaseCost
 }
+
+func (warrior *Warrior) CanSuddenDeathExecute() bool {
+	return warrior.CurrentRage() >= warrior.Execute.BaseCost && warrior.SuddenDeathAura.IsActive()
+}
+
+func (warrior *Warrior) CastExecute(sim *core.Simulation, target *core.Unit) bool {
+	if warrior.Ymirjar4pcProcAura.IsActive() && warrior.SuddenDeathAura.IsActive() {
+		warrior.Execute.DefaultCast.GCD = time.Second * 1
+		warrior.Ymirjar4pcProcAura.RemoveStack(sim)
+	} else {
+		warrior.Execute.DefaultCast.GCD = core.GCDDefault
+	}
+
+	return warrior.Execute.Cast(sim, target)
+}

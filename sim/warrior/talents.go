@@ -233,10 +233,11 @@ func (warrior *Warrior) applyBloodsurge() {
 	}
 
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
-		Label:     "Bloodsurge Proc",
-		ActionID:  core.ActionID{SpellID: 46916},
-		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 10, 5)),
-		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
+		Label:    "Bloodsurge Proc",
+		ActionID: core.ActionID{SpellID: 46916},
+		Duration: time.Second * 5,
+		// 2 stacks to accomodate T10 4 pc
+		MaxStacks: 2,
 	})
 
 	warrior.RegisterAura(core.Aura{
@@ -265,8 +266,10 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			warrior.BloodsurgeAura.Activate(sim)
-			warrior.BloodsurgeAura.AddStack(sim)
-			warrior.BloodsurgeAura.AddStack(sim)
+			if warrior.BloodsurgeAura.GetStacks() <= 1 {
+				warrior.BloodsurgeAura.SetStacks(sim, 1)
+			}
+
 			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
 	})
@@ -561,10 +564,11 @@ func (warrior *Warrior) applySuddenDeath() {
 	}
 
 	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
-		Label:     "Sudden Death Proc",
-		ActionID:  core.ActionID{SpellID: 29724},
-		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 20, 10)),
-		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
+		Label:    "Sudden Death Proc",
+		ActionID: core.ActionID{SpellID: 29724},
+		Duration: time.Second * 10,
+		// 2 stacks to accomodate T10 4 pc
+		MaxStacks: 2,
 	})
 	warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death",
@@ -573,18 +577,20 @@ func (warrior *Warrior) applySuddenDeath() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
+				warrior.SuddenDeathAura.RemoveStack(sim)
+				warrior.AddRage(sim, rage_refund, rageMetrics)
+			}
+
 			if !spellEffect.Landed() {
 				return
 			}
 
 			if spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
 				warrior.SuddenDeathAura.Activate(sim)
-				warrior.SuddenDeathAura.AddStack(sim)
-			}
-
-			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
-				warrior.SuddenDeathAura.RemoveStack(sim)
-				warrior.AddRage(sim, rage_refund, rageMetrics)
+				if warrior.SuddenDeathAura.GetStacks() <= 1 {
+					warrior.SuddenDeathAura.SetStacks(sim, 1)
+				}
 			}
 		},
 	})

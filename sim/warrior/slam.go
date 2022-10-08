@@ -10,7 +10,6 @@ import (
 func (warrior *Warrior) registerSlamSpell() {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
-	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
@@ -24,7 +23,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost:     cost,
-				GCD:      gcd,
+				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*1500 - time.Millisecond*500*time.Duration(warrior.Talents.ImprovedSlam),
 			},
 			IgnoreHaste: true,
@@ -61,6 +60,12 @@ func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
 	if warrior.BloodsurgeAura.IsActive() {
 		warrior.Slam.DefaultCast.CastTime = 0
+		if warrior.Ymirjar4pcProcAura.IsActive() {
+			warrior.Slam.DefaultCast.GCD = time.Second * 1
+			warrior.Ymirjar4pcProcAura.RemoveStack(sim)
+		} else {
+			warrior.Slam.DefaultCast.GCD = core.GCDDefault
+		}
 	}
 
 	warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)

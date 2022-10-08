@@ -34,6 +34,7 @@ type Warrior struct {
 	glyphOfRevengeProcAura *core.Aura
 	disableHsCleaveUntil   time.Duration
 	lastTasteForBloodProc  time.Duration
+	Ymirjar4pcProcAura     *core.Aura
 
 	// Reaction time values
 	reactionTime       time.Duration
