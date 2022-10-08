@@ -232,6 +232,8 @@ func (warrior *Warrior) applyBloodsurge() {
 		procChance = 0.20
 	}
 
+	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge Proc",
 		ActionID: core.ActionID{SpellID: 46916},
@@ -268,6 +270,13 @@ func (warrior *Warrior) applyBloodsurge() {
 			warrior.BloodsurgeAura.Activate(sim)
 			if warrior.BloodsurgeAura.GetStacks() <= 1 {
 				warrior.BloodsurgeAura.SetStacks(sim, 1)
+			}
+
+			if sim.RandomFloat("T10 4 set") < 0.2 && Ymirjar4Set {
+				warrior.BloodsurgeAura.SetStacks(sim, 2)
+				warrior.BloodsurgeAura.Duration = time.Second * 20
+				warrior.Ymirjar4pcProcAura.Activate(sim)
+				warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
 			}
 
 			warrior.lastBloodsurgeProc = sim.CurrentTime
@@ -563,6 +572,8 @@ func (warrior *Warrior) applySuddenDeath() {
 		procChance = 0.09
 	}
 
+	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
 	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death Proc",
 		ActionID: core.ActionID{SpellID: 29724},
@@ -590,6 +601,12 @@ func (warrior *Warrior) applySuddenDeath() {
 				warrior.SuddenDeathAura.Activate(sim)
 				if warrior.SuddenDeathAura.GetStacks() <= 1 {
 					warrior.SuddenDeathAura.SetStacks(sim, 1)
+				}
+				if sim.RandomFloat("T10 4 set") < 0.2 && Ymirjar4Set {
+					warrior.SuddenDeathAura.SetStacks(sim, 2)
+					warrior.SuddenDeathAura.Duration = time.Second * 20
+					warrior.Ymirjar4pcProcAura.Activate(sim)
+					warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
 				}
 			}
 		},
