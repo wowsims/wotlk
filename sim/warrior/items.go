@@ -199,20 +199,6 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 				ActionID:  core.ActionID{SpellID: 70855},
 				Duration:  core.NeverExpires,
 				MaxStacks: 2,
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if sim.RandomFloat("T10 4 set") < 0.2 {
-						if warrior.BloodsurgeAura.IsActive() {
-							warrior.BloodsurgeAura.SetStacks(sim, 2)
-							warrior.BloodsurgeAura.Duration = time.Second * 10
-						} else if warrior.SuddenDeathAura.IsActive() {
-							warrior.SuddenDeathAura.SetStacks(sim, 2)
-							warrior.SuddenDeathAura.Duration = time.Second * 20
-						}
-
-						warrior.Ymirjar4pcProcAura.Activate(sim)
-						warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
-					}
-				},
 			})
 		},
 	},
