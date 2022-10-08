@@ -280,6 +280,7 @@ func (warrior *Warrior) applyBloodsurge() {
 
 			warrior.BloodsurgeAura.Activate(sim)
 			if warrior.BloodsurgeAura.GetStacks() <= 1 {
+				warrior.BloodsurgeAura.Duration = time.Second * 5
 				warrior.BloodsurgeAura.SetStacks(sim, 1)
 			}
 
@@ -615,6 +616,7 @@ func (warrior *Warrior) applySuddenDeath() {
 
 				warrior.SuddenDeathAura.Activate(sim)
 				if warrior.SuddenDeathAura.GetStacks() <= 1 {
+					warrior.SuddenDeathAura.Duration = time.Second * 10
 					warrior.SuddenDeathAura.SetStacks(sim, 1)
 				}
 			}
