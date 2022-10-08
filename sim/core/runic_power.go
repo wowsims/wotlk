@@ -80,6 +80,7 @@ func (rp *RunicPowerBar) CopyRunicPowerBar() *RunicPowerBar {
 
 	rp.clone.maxRunicPower = rp.maxRunicPower
 	rp.clone.currentRunicPower = rp.currentRunicPower
+	rp.clone.runeCD = rp.runeCD
 	rp.clone.runeStates = rp.runeStates
 	rp.clone.runeMeta = rp.runeMeta
 
