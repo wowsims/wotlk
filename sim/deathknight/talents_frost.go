@@ -139,6 +139,14 @@ func (dk *Deathknight) annihilationCritBonus() float64 {
 	return 1.0 * float64(dk.Talents.Annihilation)
 }
 
+func (dk *Deathknight) runeSpellComp(spell *core.Spell, hitSpell *RuneSpell) bool {
+	if hitSpell == nil {
+		return false
+	}
+
+	return hitSpell.Spell == spell
+}
+
 func (dk *Deathknight) applyKillingMachine() {
 	if dk.Talents.KillingMachine == 0 {
 		return
@@ -166,7 +174,9 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if dk.KillingMachineAura.IsActive() && (spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell) {
+			if dk.KillingMachineAura.IsActive() && (dk.runeSpellComp(spell, dk.IcyTouch) ||
+				dk.runeSpellComp(spell, dk.HowlingBlast) ||
+				dk.runeSpellComp(spell, dk.FrostStrike)) {
 				dk.KillingMachineAura.Deactivate(sim)
 			}
 
@@ -217,7 +227,10 @@ func (dk *Deathknight) applyDeathchill() {
 				return
 			}
 
-			if spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell || spell == dk.Obliterate.Spell {
+			if dk.DeathchillAura.IsActive() && (dk.runeSpellComp(spell, dk.IcyTouch) ||
+				dk.runeSpellComp(spell, dk.HowlingBlast) ||
+				dk.runeSpellComp(spell, dk.FrostStrike) ||
+				dk.runeSpellComp(spell, dk.Obliterate)) {
 				dk.DeathchillAura.Deactivate(sim)
 			}
 		},
