@@ -556,8 +556,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 7196.68211
-  tps: 5286.69447
+  dps: 7204.51143
+  tps: 5296.68204
  }
 }
 dps_results: {
