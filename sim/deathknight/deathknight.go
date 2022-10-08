@@ -184,6 +184,9 @@ type Deathknight struct {
 	LastTickTime      time.Duration
 	WanderingPlague   *core.Spell
 
+	Deathchill     *RuneSpell
+	DeathchillAura *core.Aura
+
 	// Presences
 	BloodPresence      *RuneSpell
 	BloodPresenceAura  *core.Aura
