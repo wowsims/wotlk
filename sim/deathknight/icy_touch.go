@@ -57,7 +57,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 						dk.mercilessCombatBonus(sim)
 				},
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
+			OutcomeApplier: dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit())),
 
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				dk.LastOutcome = spellEffect.Outcome

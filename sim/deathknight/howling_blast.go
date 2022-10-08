@@ -60,7 +60,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 						dk.mercilessCombatBonus(sim)
 				},
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
+			OutcomeApplier: dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome

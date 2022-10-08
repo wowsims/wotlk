@@ -166,7 +166,7 @@ func (dk *Deathknight) applyKillingMachine() {
 				return
 			}
 
-			if dk.KillingMachineAura.IsActive() && (spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell || spell == dk.Obliterate.Spell) {
+			if dk.KillingMachineAura.IsActive() && (spell == dk.IcyTouch.Spell || spell == dk.HowlingBlast.Spell || spell == dk.FrostStrike.Spell) {
 				dk.KillingMachineAura.Deactivate(sim)
 			}
 
@@ -226,7 +226,7 @@ func (dk *Deathknight) applyDeathchill() {
 
 func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if dk.KillingMachineAura.IsActive() {
+		if dk.KillingMachineAura != nil && dk.KillingMachineAura.IsActive() {
 			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
@@ -238,7 +238,7 @@ func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeAppli
 
 func (dk *Deathknight) deathchillOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
 	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if dk.DeathchillAura.IsActive() {
+		if dk.DeathchillAura != nil && dk.DeathchillAura.IsActive() {
 			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			outcomeApplier(sim, spell, spellEffect, attackTable)
 			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
