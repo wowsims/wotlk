@@ -197,6 +197,7 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 
 	// Base dodge unaffected by Diminishing Returns
 	warrior.PseudoStats.BaseDodge += 0.03664
+	warrior.PseudoStats.BaseParry += 0.05
 
 	return warrior
 }

@@ -362,6 +362,7 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 
 	// Base dodge unaffected by Diminishing Returns
 	dk.PseudoStats.BaseDodge += 0.03664
+	dk.PseudoStats.BaseParry += 0.05
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 

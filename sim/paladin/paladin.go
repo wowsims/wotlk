@@ -210,6 +210,7 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 
 	// Base dodge is unaffected by Diminishing Returns
 	paladin.PseudoStats.BaseDodge += 0.0327
+	paladin.PseudoStats.BaseParry += 0.05
 
 	return paladin
 }
