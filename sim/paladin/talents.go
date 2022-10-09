@@ -18,8 +18,8 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
-	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
-	paladin.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
+	paladin.PseudoStats.BaseParry += 0.01*float64(paladin.Talents.Deflection)
+	paladin.PseudoStats.BaseDodge += 0.01*float64(paladin.Talents.Anticipation)
 
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 

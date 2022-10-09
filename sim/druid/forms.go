@@ -78,7 +78,7 @@ func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 		}
 	}
 	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-	druid.AddStatDynamic(sim, stats.Dodge, pos*core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
+	druid.PseudoStats.BaseDodge += pos*0.02*float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
 }
 
 func (druid *Druid) registerCatFormSpell() {

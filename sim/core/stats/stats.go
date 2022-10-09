@@ -323,12 +323,17 @@ type PseudoStats struct {
 
 	ParryHaste bool
 
+	// Avoidance % not affected by Diminishing Returns
+	BaseDodge	float64
+	BaseParry	float64
+	//BaseMiss is not needed, this is always 5%
+
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
 	BonusRangedAttackPowerTaken float64 // Hunters mark
 	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
 	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
-	BonusMeleeHitRatingTaken    float64 //
+	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance; still used by Frigid Dreadplate
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
