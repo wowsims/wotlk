@@ -428,6 +428,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBloodTank-AllItems-SavageGladiator'sSigilofStrife-42618"
+ value: {
+  dps: 1495.17099
+  tps: 4541.50172
+ }
+}
+dps_results: {
  key: "TestBloodTank-AllItems-ScourgeborneBattlegear"
  value: {
   dps: 1560.82186
