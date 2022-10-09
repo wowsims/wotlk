@@ -500,6 +500,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-SkycallTotem-33506"
+ value: {
+  dps: 4186.41236
+  tps: 3224.52579
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-SkyshatterHarness"
  value: {
   dps: 2797.55677
@@ -518,6 +525,13 @@ dps_results: {
  value: {
   dps: 4101.09873
   tps: 3149.98498
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Stonebreaker'sTotem-33507"
+ value: {
+  dps: 4161.24365
+  tps: 3194.02674
  }
 }
 dps_results: {
