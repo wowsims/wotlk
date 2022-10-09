@@ -18,24 +18,26 @@ type ReplaceMHSwing func(sim *Simulation, mhSwingSpell *Spell) *Spell
 // Represents a generic weapon. Pets / unarmed / various other cases dont use
 // actual weapon items so this is an abstraction of a Weapon.
 type Weapon struct {
-	BaseDamageMin        float64
-	BaseDamageMax        float64
-	SwingSpeed           float64
-	NormalizedSwingSpeed float64
-	SwingDuration        time.Duration // Duration between 2 swings.
-	CritMultiplier       float64
-	SpellSchool          SpellSchool
+	BaseDamageMin              float64
+	BaseDamageMax              float64
+	MeleeAttackRatingPerDamage float64
+	SwingSpeed                 float64
+	NormalizedSwingSpeed       float64
+	SwingDuration              time.Duration // Duration between 2 swings.
+	CritMultiplier             float64
+	SpellSchool                SpellSchool
 }
 
 func newWeaponFromUnarmed(critMultiplier float64) Weapon {
 	// These numbers are probably wrong but nobody cares.
 	return Weapon{
-		BaseDamageMin:        0,
-		BaseDamageMax:        0,
-		SwingSpeed:           1,
-		NormalizedSwingSpeed: 1,
-		SwingDuration:        time.Second,
-		CritMultiplier:       critMultiplier,
+		BaseDamageMin:              0,
+		BaseDamageMax:              0,
+		SwingSpeed:                 1,
+		NormalizedSwingSpeed:       1,
+		SwingDuration:              time.Second,
+		CritMultiplier:             critMultiplier,
+		MeleeAttackRatingPerDamage: 14,
 	}
 }
 
@@ -50,12 +52,13 @@ func newWeaponFromItem(item items.Item, critMultiplier float64) Weapon {
 	}
 
 	return Weapon{
-		BaseDamageMin:        item.WeaponDamageMin,
-		BaseDamageMax:        item.WeaponDamageMax,
-		SwingSpeed:           item.SwingSpeed,
-		NormalizedSwingSpeed: normalizedWeaponSpeed,
-		SwingDuration:        time.Duration(item.SwingSpeed * float64(time.Second)),
-		CritMultiplier:       critMultiplier,
+		BaseDamageMin:              item.WeaponDamageMin,
+		BaseDamageMax:              item.WeaponDamageMax,
+		SwingSpeed:                 item.SwingSpeed,
+		NormalizedSwingSpeed:       normalizedWeaponSpeed,
+		SwingDuration:              time.Duration(item.SwingSpeed * float64(time.Second)),
+		CritMultiplier:             critMultiplier,
+		MeleeAttackRatingPerDamage: MeleeAttackRatingPerDamage,
 	}
 }
 
@@ -110,15 +113,15 @@ func (weapon Weapon) AverageDamage() float64 {
 }
 
 func (weapon Weapon) CalculateWeaponDamage(sim *Simulation, attackPower float64) float64 {
-	return weapon.BaseDamage(sim) + (weapon.SwingSpeed*attackPower)/MeleeAttackRatingPerDamage
+	return weapon.BaseDamage(sim) + (weapon.SwingSpeed*attackPower)/weapon.MeleeAttackRatingPerDamage
 }
 
 func (weapon Weapon) CalculateAverageWeaponDamage(attackPower float64) float64 {
-	return weapon.AverageDamage() + (weapon.SwingSpeed*attackPower)/MeleeAttackRatingPerDamage
+	return weapon.AverageDamage() + (weapon.SwingSpeed*attackPower)/weapon.MeleeAttackRatingPerDamage
 }
 
 func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
-	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed*attackPower)/MeleeAttackRatingPerDamage
+	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed*attackPower)/weapon.MeleeAttackRatingPerDamage
 }
 
 func (unit *Unit) MHWeaponDamage(sim *Simulation, attackPower float64) float64 {
@@ -213,6 +216,12 @@ type AutoAttackOptions struct {
 }
 
 func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
+	if options.MainHand.MeleeAttackRatingPerDamage == 0 {
+		options.MainHand.MeleeAttackRatingPerDamage = MeleeAttackRatingPerDamage
+	}
+	if options.OffHand.MeleeAttackRatingPerDamage == 0 {
+		options.OffHand.MeleeAttackRatingPerDamage = MeleeAttackRatingPerDamage
+	}
 	unit.AutoAttacks = AutoAttacks{
 		agent:           agent,
 		unit:            unit,
