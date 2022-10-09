@@ -78,7 +78,7 @@ func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 		}
 	}
 	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-	druid.PseudoStats.BaseDodge += pos*0.02*float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
+	druid.PseudoStats.BaseDodge += pos * 0.02 * float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
 }
 
 func (druid *Druid) registerCatFormSpell() {
@@ -119,12 +119,13 @@ func (druid *Druid) registerCatFormSpell() {
 			}
 
 			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:        43,
-				BaseDamageMax:        66,
-				SwingSpeed:           1.0,
-				NormalizedSwingSpeed: 1.0,
-				SwingDuration:        time.Second,
-				CritMultiplier:       druid.MeleeCritMultiplier(),
+				BaseDamageMin:              43,
+				BaseDamageMax:              66,
+				SwingSpeed:                 1.0,
+				NormalizedSwingSpeed:       1.0,
+				SwingDuration:              time.Second,
+				CritMultiplier:             druid.MeleeCritMultiplier(),
+				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 			druid.AutoAttacks.ReplaceMHSwing = nil
 			druid.AutoAttacks.EnableAutoSwing(sim)
@@ -235,12 +236,13 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.UpdateManaRegenRates()
 
 			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:        109,
-				BaseDamageMax:        165,
-				SwingSpeed:           2.5,
-				NormalizedSwingSpeed: 2.5,
-				SwingDuration:        time.Millisecond * 2500,
-				CritMultiplier:       druid.MeleeCritMultiplier(),
+				BaseDamageMin:              109,
+				BaseDamageMax:              165,
+				SwingSpeed:                 2.5,
+				NormalizedSwingSpeed:       2.5,
+				SwingDuration:              time.Millisecond * 2500,
+				CritMultiplier:             druid.MeleeCritMultiplier(),
+				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
 			druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {

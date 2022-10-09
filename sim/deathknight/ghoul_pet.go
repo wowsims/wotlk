@@ -42,11 +42,12 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  120,
-			BaseDamageMax:  160,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			BaseDamageMin:              120,
+			BaseDamageMax:              160,
+			SwingSpeed:                 2,
+			SwingDuration:              time.Second * 2,
+			CritMultiplier:             2,
+			MeleeAttackRatingPerDamage: 17.5,
 		},
 		AutoSwingMelee: true,
 	})
@@ -82,11 +83,12 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  50,
-			BaseDamageMax:  90,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			BaseDamageMin:              50,
+			BaseDamageMax:              90,
+			SwingSpeed:                 2,
+			SwingDuration:              time.Second * 2,
+			CritMultiplier:             2,
+			MeleeAttackRatingPerDamage: 17.5,
 		},
 		AutoSwingMelee: true,
 	})
