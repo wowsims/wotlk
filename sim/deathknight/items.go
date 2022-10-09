@@ -466,6 +466,7 @@ func init() {
 		}))
 	})
 
+	CreateGladiatorsSigil(42618, "Savage", 94, 6)
 	CreateGladiatorsSigil(42619, "Hateful", 106, 6)
 	CreateGladiatorsSigil(42620, "Deadly", 120, 10)
 	CreateGladiatorsSigil(42621, "Furious", 144, 10)

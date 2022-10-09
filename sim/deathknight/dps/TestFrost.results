@@ -421,6 +421,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-SavageGladiator'sSigilofStrife-42618"
+ value: {
+  dps: 7490.73997
+  tps: 4411.56046
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-ScourgeborneBattlegear"
  value: {
   dps: 6974.29878
