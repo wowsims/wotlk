@@ -37,7 +37,7 @@ func newWeaponFromUnarmed(critMultiplier float64) Weapon {
 		NormalizedSwingSpeed:       1,
 		SwingDuration:              time.Second,
 		CritMultiplier:             critMultiplier,
-		MeleeAttackRatingPerDamage: 14,
+		MeleeAttackRatingPerDamage: MeleeAttackRatingPerDamage,
 	}
 }
 
