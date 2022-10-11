@@ -166,6 +166,11 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 41119}, // Potions / In Battle Consumes
 	{ID: 40771}, // Potions / In Battle Consumes
 
+	// Poisons
+	{ID: 43233},
+	{ID: 43231},
+	{ID: 43235},
+
 	// Wrath Enchant Icons
 	{ID: 38375},
 	{ID: 38376},
