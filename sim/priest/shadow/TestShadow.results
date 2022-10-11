@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-IncisorFragment-37723"
  value: {
-  dps: 4765.32714
-  tps: 3640.74029
+  dps: 4412.35973
+  tps: 3357.74355
  }
 }
 dps_results: {

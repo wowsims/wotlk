@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7654.88139
-  tps: 4535.31735
+  dps: 7761.73661
+  tps: 4595.72263
  }
 }
 dps_results: {

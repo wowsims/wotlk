@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-IncisorFragment-37723"
  value: {
-  dps: 6733.43291
-  tps: 4953.27001
+  dps: 6726.59437
+  tps: 4947.94901
  }
 }
 dps_results: {

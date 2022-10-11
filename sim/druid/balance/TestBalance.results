@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7006.27608
-  tps: 6828.06421
+  dps: 7044.42416
+  tps: 6867.72766
  }
 }
 dps_results: {
@@ -403,7 +403,7 @@ dps_results: {
  key: "TestBalance-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 7044.42416
-  tps: 6868.53475
+  tps: 6868.34107
  }
 }
 dps_results: {
