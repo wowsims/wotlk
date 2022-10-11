@@ -141,6 +141,8 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseBtDuringExecute && war.CanBloodthirst(sim) {
 			war.Bloodthirst.Cast(sim, war.CurrentTarget)
+		} else if war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
+			war.Whirlwind.Cast(sim, war.CurrentTarget)
 		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
 			if war.Talents.Bloodthirst && war.CurrentRage() >= war.Rotation.RendRageThresholdBelow {
 				return
