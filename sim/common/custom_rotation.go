@@ -3,12 +3,14 @@ package common
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
 type CustomSpellCondition func(*core.Simulation) bool
 
 type CustomSpell struct {
 	Spell     *core.Spell
+	RuneSpell *deathknight.RuneSpell
 	Condition CustomSpellCondition
 }
 
@@ -27,7 +29,7 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 	}
 	for _, customSpellProto := range crProto.Spells {
 		customSpell := spellsMap[customSpellProto.Spell]
-		if customSpell.Spell != nil {
+		if customSpell.Spell != nil || customSpell.RuneSpell != nil {
 			cr.spells = append(cr.spells, customSpell)
 		}
 	}
@@ -39,10 +41,12 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 	}
 }
 
-func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *core.Spell {
+func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *CustomSpell {
 	for _, customSpell := range cr.spells {
 		if customSpell.Condition(sim) {
-			return customSpell.Spell
+			if customSpell.Spell != nil || customSpell.RuneSpell != nil {
+				return &customSpell
+			}
 		}
 	}
 	return nil
@@ -55,10 +59,15 @@ func (cr *CustomRotation) Cast(sim *core.Simulation) {
 		return
 	}
 
-	success := spell.Cast(sim, cr.character.CurrentTarget)
+	success := false
+	if spell.Spell != nil {
+		success = spell.Spell.Cast(sim, cr.character.CurrentTarget)
+	} else if spell.RuneSpell != nil {
+		success = spell.RuneSpell.Cast(sim, cr.character.CurrentTarget)
+	}
 	if !success {
-		if cr.character.HasManaBar() {
-			cr.character.WaitForMana(sim, spell.CurCast.Cost)
+		if cr.character.HasManaBar() && spell.Spell != nil && spell.RuneSpell == nil {
+			cr.character.WaitForMana(sim, spell.Spell.CurCast.Cost)
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package dps
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
@@ -29,6 +30,8 @@ type DpsDeathknight struct {
 	sr SharedRotation
 	fr FrostRotation
 	ur UnholyRotation
+
+	CustomRotation *common.CustomRotation
 
 	Rotation proto.Deathknight_Rotation
 }
@@ -136,32 +139,33 @@ func (dk *DpsDeathknight) SetupRotations() {
 
 	dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 
-	if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
-		if dk.Rotation.UseEmpowerRuneWeapon {
-			if dk.Rotation.DesyncRotation {
-				dk.setupFrostSubBloodDesyncERWOpener()
+	dk.CustomRotation = dk.makeCustomRotation()
+	if dk.CustomRotation == nil {
+		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
+		if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
+			if dk.Rotation.UseEmpowerRuneWeapon {
+				if dk.Rotation.DesyncRotation {
+					dk.setupFrostSubBloodDesyncERWOpener()
+				} else {
+					dk.setupFrostSubBloodERWOpener()
+				}
 			} else {
-				dk.setupFrostSubBloodERWOpener()
+				dk.setupFrostSubBloodNoERWOpener()
 			}
-		} else {
-			dk.setupFrostSubBloodNoERWOpener()
+		} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() <= dk.FrostPointsInUnholy()) {
+			dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
+			if dk.Rotation.UseEmpowerRuneWeapon {
+				dk.setupFrostSubUnholyERWOpener()
+			} else {
+				dk.setupFrostSubUnholyERWOpener()
+			}
+		} else if dk.Talents.SummonGargoyle {
+			dk.setupUnholyRotations()
+		} else if dk.Talents.DancingRuneWeapon {
+			dk.setupBloodRotations()
 		}
-	} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() <= dk.FrostPointsInUnholy()) {
-		if dk.Rotation.UseEmpowerRuneWeapon {
-			dk.setupFrostSubUnholyERWOpener()
-		} else {
-			dk.setupFrostSubUnholyERWOpener()
-		}
-	} else if dk.Talents.SummonGargoyle {
-		dk.setupUnholyRotations()
-	} else if dk.Talents.DancingRuneWeapon {
-		dk.setupBloodRotations()
 	} else {
-		// TODO: Add some default rotation that works without special talents
-		dk.RotationSequence.Clear().
-			NewAction(dk.RotationActionCallback_IT).
-			NewAction(dk.RotationActionCallback_PS).
-			NewAction(dk.RotationActionCallback_BS)
+		dk.setupCustomRotations()
 	}
 }
 
