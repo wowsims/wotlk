@@ -322,10 +322,14 @@ func init() {
 					Timer:    character.NewTimer(),
 					Duration: time.Second * 60,
 				},
-				SharedCD: core.Cooldown{
-					Timer:    character.GetOffensiveTrinketCD(),
-					Duration: time.Second * 12,
-				},
+				// Shared CD with Offensive trinkets has been removed.
+				// https://twitter.com/AggrendWoW/status/1579664462843633664
+				// Change possibly temporary, but developers have confirmed it was intended.
+
+				// SharedCD: core.Cooldown{
+				// 	Timer:    character.GetOffensiveTrinketCD(),
+				// 	Duration: time.Second * 12,
+				// },
 			},
 
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

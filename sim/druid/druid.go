@@ -283,6 +283,9 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto
 	// Druids get extra melee haste
 	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
+	// Base dodge is unaffected by Diminishing Returns
+	druid.PseudoStats.BaseDodge += 0.0559
+
 	if druid.Talents.ForceOfNature {
 		druid.Treant1 = druid.NewTreant()
 		druid.Treant2 = druid.NewTreant()
@@ -303,7 +306,6 @@ func init() {
 		stats.Mana:        3496,                                // 5301 mana shown on naked character
 		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
 		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.41% chance to crit shown on naked character screen
-		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
 		stats.AttackPower: -20,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDruid}] = stats.Stats{
@@ -316,7 +318,6 @@ func init() {
 		stats.Mana:        3496,                                // 5361 mana shown on naked character
 		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
 		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
-		stats.Dodge:       5.59 * core.DodgeRatingPerDodgeChance,
 		stats.AttackPower: -20,
 	}
 }

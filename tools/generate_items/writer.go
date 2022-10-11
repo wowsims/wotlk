@@ -353,6 +353,8 @@ var allowList = map[int]bool{
 	33143: true, // Stone of Blades
 	33144: true, // Facet of Eternity
 	33504: true, // Libram of Divine Purpose
+	33506: true, // Skycall Totem
+	33507: true, // Stonebreaker's Totem
 	33829: true, // Hex Shrunken Head
 	33831: true, // Berserkers Call
 	34472: true, // Shard of Contempt

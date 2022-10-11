@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
-  dps: 6641.82473
-  tps: 3736.20061
+  dps: 6635.64886
+  tps: 3726.68636
  }
 }
 dps_results: {
@@ -449,6 +449,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-SkycallTotem-33506"
+ value: {
+  dps: 6708.83408
+  tps: 3774.75001
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
   dps: 4761.30429
@@ -467,6 +474,13 @@ dps_results: {
  value: {
   dps: 6636.70401
   tps: 3742.5207
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
+ value: {
+  dps: 6736.32814
+  tps: 3792.86619
  }
 }
 dps_results: {

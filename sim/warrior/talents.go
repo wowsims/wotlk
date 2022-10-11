@@ -9,11 +9,11 @@ import (
 )
 
 func (warrior *Warrior) ApplyTalents() {
-	warrior.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(warrior.Talents.Deflection))
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
+	warrior.PseudoStats.BaseDodge += 0.01*float64(warrior.Talents.Anticipation)
+	warrior.PseudoStats.BaseParry += 0.01*float64(warrior.Talents.Deflection)
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 	warrior.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 

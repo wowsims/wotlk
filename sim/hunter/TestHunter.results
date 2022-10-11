@@ -73,22 +73,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 6724.19902
-  tps: 5707.30097
+  dps: 6722.23839
+  tps: 5705.33784
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 6631.71781
-  tps: 5621.98533
+  dps: 6634.06518
+  tps: 5624.33454
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-BlackBowoftheBetrayer-32336"
  value: {
-  dps: 6341.40392
-  tps: 5329.48552
+  dps: 6340.4029
+  tps: 5328.48872
  }
 }
 dps_results: {
@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 6721.39412
-  tps: 5698.11226
+  dps: 6718.33635
+  tps: 5695.0531
  }
 }
 dps_results: {
@@ -290,15 +290,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-IncisorFragment-37723"
  value: {
-  dps: 6731.81765
-  tps: 5718.68765
+  dps: 6783.4274
+  tps: 5764.54896
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 6918.51511
-  tps: 5908.89464
+  dps: 6919.7539
+  tps: 5910.12511
  }
 }
 dps_results: {
@@ -332,8 +332,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 6631.80249
-  tps: 5622.13719
+  dps: 6630.54577
+  tps: 5620.88046
  }
 }
 dps_results: {
@@ -430,15 +430,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 6631.80249
-  tps: 5622.13719
+  dps: 6630.44596
+  tps: 5620.78065
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-SparkofLife-37657"
  value: {
-  dps: 6807.28424
-  tps: 5796.38653
+  dps: 6807.25273
+  tps: 5796.35502
  }
 }
 dps_results: {
@@ -479,8 +479,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 6761.99164
-  tps: 5742.13339
+  dps: 6763.98242
+  tps: 5744.12416
  }
 }
 dps_results: {
@@ -542,22 +542,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Zod'sRepeatingLongbow-50034"
  value: {
-  dps: 7407.96296
-  tps: 6386.20389
+  dps: 7407.8441
+  tps: 6386.08503
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-Zod'sRepeatingLongbow-50638"
  value: {
-  dps: 7688.93756
-  tps: 6665.57491
+  dps: 7689.30779
+  tps: 6665.94177
  }
 }
 dps_results: {
  key: "TestHunter-Average-Default"
  value: {
-  dps: 6812.57814
-  tps: 5795.60695
+  dps: 6812.77121
+  tps: 5795.79981
  }
 }
 dps_results: {

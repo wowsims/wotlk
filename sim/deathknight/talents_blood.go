@@ -11,6 +11,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+
 )
 
 func (dk *Deathknight) ApplyBloodTalents() {
@@ -97,7 +98,7 @@ func (dk *Deathknight) applySpellDeflection() {
 
 	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 		if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
-			procChance := dk.GetStat(stats.Parry) / core.ParryRatingPerParryChance
+			procChance := dk.PseudoStats.BaseParry + dk.Unit.GetDiminishedParryChance()
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
 			if sim.RandomFloat("Spell Deflection Roll") < procChance {
 				spellEffect.Damage *= dmgMult

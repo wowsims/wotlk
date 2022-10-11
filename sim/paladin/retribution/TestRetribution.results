@@ -26,7 +26,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 667.92
-  final_stats: 921.1621
+  final_stats: 773.1946
   final_stats: 0
   final_stats: 0
   final_stats: 21972.5
@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IncisorFragment-37723"
  value: {
-  dps: 5913.67652
-  tps: 6012.52458
+  dps: 5855.34799
+  tps: 5953.77347
  }
 }
 dps_results: {

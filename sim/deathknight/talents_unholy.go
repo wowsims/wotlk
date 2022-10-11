@@ -14,7 +14,7 @@ import (
 
 func (dk *Deathknight) ApplyUnholyTalents() {
 	// Anticipation
-	dk.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(dk.Talents.Anticipation))
+	dk.PseudoStats.BaseDodge += 0.01 * float64(dk.Talents.Anticipation)
 
 	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
@@ -80,6 +80,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 	}
 
 	actionID := core.ActionID{SpellID: 49655}
+	damageMulti := []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague]
 
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -87,11 +88,11 @@ func (dk *Deathknight) applyWanderingPlague() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
 
-		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := dk.LastDiseaseDamage
+			baseDamage := dk.LastDiseaseDamage * damageMulti
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
 				spell.CalcAndDealDamageAlwaysHit(sim, &aoeTarget.Unit, baseDamage)
