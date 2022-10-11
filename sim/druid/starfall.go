@@ -21,7 +21,7 @@ func (druid *Druid) registerStarfallSpell() {
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
 	// Nature's Majesty
-	naturesMajestyCritBonus := druid.TalentsBonuses.naturesMajestyBonusCrit
+	naturesMajestyCritBonus := druid.talentBonuses.naturesMajesty
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 53201},
@@ -32,7 +32,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * druid.TalentsBonuses.moonglowMultiplier,
+				Cost: baseCost * druid.talentBonuses.moonglow,
 				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -43,7 +43,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 		BonusCritRating:  naturesMajestyCritBonus,
 		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -62,7 +62,7 @@ func (druid *Druid) registerStarfallSpell() {
 		ProcMask:         core.ProcMaskSpellDamage,
 		BonusCritRating:  naturesMajestyCritBonus,
 		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 	})
 

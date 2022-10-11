@@ -346,15 +346,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 6292.02717
-  tps: 4467.33929
+  dps: 6441.65324
+  tps: 4573.5738
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 6292.02717
-  tps: 4467.33929
+  dps: 6460.68784
+  tps: 4587.08837
  }
 }
 dps_results: {

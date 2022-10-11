@@ -28,9 +28,9 @@ func (druid *Druid) registerWrathSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * druid.TalentsBonuses.moonglowMultiplier,
+				Cost:     baseCost * druid.talentBonuses.moonglow,
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*2 - druid.TalentsBonuses.starlightWrathModifier,
+				CastTime: time.Second*2 - druid.talentBonuses.starlightWrath,
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -40,11 +40,11 @@ func (druid *Druid) registerWrathSpell() {
 		},
 
 		BonusCritRating: 0 +
-			druid.TalentsBonuses.naturesMajestyBonusCrit +
-			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+			druid.talentBonuses.naturesMajesty +
+			core.TernaryFloat64(druid.setBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.talentBonuses.moonfury) *
+			core.TernaryFloat64(druid.setBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -54,7 +54,7 @@ func (druid *Druid) registerWrathSpell() {
 				if druid.Talents.MoonkinForm {
 					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
 				}
-				if druid.SetBonuses.balance_t10_4 {
+				if druid.setBonuses.balance_t10_4 {
 					if druid.LasherweaveDot.IsActive() {
 						druid.LasherweaveDot.Refresh(sim)
 					} else {
@@ -62,7 +62,7 @@ func (druid *Druid) registerWrathSpell() {
 					}
 				}
 			}
-			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.SetBonuses.balance_pvp_4 {
+			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.setBonuses.balance_pvp_4 {
 				druid.SwiftStarfireAura.Activate(sim)
 			}
 			spell.DealDamage(sim, &result)

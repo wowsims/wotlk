@@ -47,7 +47,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 	})
 }
 
-func (druid *Druid) CanDemoralizingRoar(sim *core.Simulation) bool {
+func (druid *Druid) CanDemoralizingRoar(_ *core.Simulation) bool {
 	return druid.CurrentRage() >= druid.DemoralizingRoar.DefaultCast.Cost
 }
 

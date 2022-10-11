@@ -60,19 +60,19 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			Label:    "BlackArrow-" + strconv.Itoa(int(hunter.Index)),
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier *= 1.06
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageTakenMultiplier *= 1.06
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				hunter.AttackTables[aura.Unit.UnitIndex].DamageDealtMultiplier /= 1.06
+				hunter.AttackTables[aura.Unit.UnitIndex].DamageTakenMultiplier /= 1.06
 			},
 		}),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic: true,
-
+			// scales slightly better (11.5%) than the tooltip implies (10%), but isn't affected by Hunter's Mark
 			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return 553 + 0.02*spell.RangedAttackPower(spellEffect.Target)
+				return 553 + 0.023*(spell.Unit.GetStat(stats.RangedAttackPower)+spell.Unit.PseudoStats.MobTypeAttackPower)
 			}),
 			OutcomeApplier: hunter.OutcomeFuncTick(),
 		}),

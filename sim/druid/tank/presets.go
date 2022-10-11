@@ -16,7 +16,7 @@ var StandardTalents = &proto.DruidTalents{
 	SurvivalOfTheFittest:    3,
 	LeaderOfThePack:         true,
 	ImprovedLeaderOfThePack: 2,
-	PredatoryInstincts:      5,
+	PredatoryInstincts:      3,
 	Mangle:                  true,
 
 	Furor:               5,

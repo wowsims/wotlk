@@ -19,7 +19,7 @@ func (druid *Druid) registerMoonfireSpell() {
 
 	// T9-2P
 	dotOutcomeApplier := druid.OutcomeFuncTick()
-	if druid.SetBonuses.balance_t9_2 {
+	if druid.setBonuses.balance_t9_2 {
 		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit()
 	}
 
@@ -34,18 +34,17 @@ func (druid *Druid) registerMoonfireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * druid.TalentsBonuses.moonglowMultiplier,
+				Cost: baseCost * druid.talentBonuses.moonglow,
 				GCD:  core.GCDDefault,
 			},
 		},
 
 		BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplierAdditive: 1 +
+		DamageMultiplier: 1 +
 			improvedMoonfireDamageMultiplier +
-			druid.TalentsBonuses.moonfuryMultiplier -
+			druid.talentBonuses.moonfury -
 			moonfireGlyphBaseDamageMultiplier,
-		DamageMultiplier: 1,
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -68,13 +67,13 @@ func (druid *Druid) registerMoonfireSpell() {
 			SpellSchool: core.SpellSchoolArcane,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			DamageMultiplierAdditive: 1 +
+			DamageMultiplier: 1 +
+				druid.talentBonuses.genesis +
 				improvedMoonfireDamageMultiplier +
-				druid.TalentsBonuses.moonfuryMultiplier +
+				druid.talentBonuses.moonfury +
 				moonfireGlyphDotDamageMultiplier,
-			DamageMultiplier: 1 *
-				druid.TalentsBonuses.genesisMultiplier,
-			CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+
+			CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 			ThreatMultiplier: 1,
 		}),
 		Aura: target.RegisterAura(core.Aura{
@@ -87,7 +86,7 @@ func (druid *Druid) registerMoonfireSpell() {
 				druid.Starfire.BonusCritRating -= core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
 			},
 		}),
-		NumberOfTicks: 4 + core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0) + druid.TalentsBonuses.naturesSplendorTick,
+		NumberOfTicks: 4 + core.TernaryInt(druid.setBonuses.balance_t6_2, 1, 0) + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(200, 0.13),
@@ -99,8 +98,8 @@ func (druid *Druid) registerMoonfireSpell() {
 
 func (druid *Druid) maxMoonfireTicks() int {
 	base := 4
-	thunderhearthRegalia := core.TernaryInt(druid.SetBonuses.balance_t6_2, 1, 0)
-	natureSplendor := druid.TalentsBonuses.naturesSplendorTick
+	thunderhearthRegalia := core.TernaryInt(druid.setBonuses.balance_t6_2, 1, 0)
+	natureSplendor := druid.talentBonuses.naturesSplendor
 	starfireGlyph := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire), 3, 0)
 	return base + thunderhearthRegalia + natureSplendor + starfireGlyph
 }

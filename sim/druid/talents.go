@@ -289,7 +289,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				if spell == druid.Starfire || spell == druid.Wrath {
 					if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 						druid.ClearcastingAura.Activate(sim)
-						if druid.SetBonuses.balance_t10_2 {
+						if druid.setBonuses.balance_t10_2 {
 							lasherweave2P.Activate(sim)
 						}
 					}
@@ -321,11 +321,11 @@ func (druid *Druid) applyEclipse() {
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			tierEclipseMultiplier := core.TernaryFloat64(druid.setBonuses.balance_t8_2, 0.07, 0) // T8-2P
 			druid.Wrath.DamageMultiplier *= 1.4 + tierEclipseMultiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			tierEclipseMultiplier := core.TernaryFloat64(druid.setBonuses.balance_t8_2, 0.07, 0) // T8-2P
 			druid.Wrath.DamageMultiplier /= 1.4 + tierEclipseMultiplier
 		},
 	})
@@ -364,11 +364,11 @@ func (druid *Druid) applyEclipse() {
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			tierEclipseBonus := core.TernaryFloat64(druid.setBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
 			druid.Starfire.BonusCritRating += (core.CritRatingPerCritChance * 40) + tierEclipseBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			tierEclipseBonus := core.TernaryFloat64(druid.setBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
 			druid.Starfire.BonusCritRating -= (core.CritRatingPerCritChance * 40) + tierEclipseBonus
 		},
 	})
