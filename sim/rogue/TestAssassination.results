@@ -262,8 +262,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7335.02941
-  tps: 5207.87088
+  dps: 7323.91309
+  tps: 5199.9783
  }
 }
 dps_results: {
