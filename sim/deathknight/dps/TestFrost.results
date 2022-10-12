@@ -444,8 +444,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 8313.24558
-  tps: 4922.80669
+  dps: 8107.35772
+  tps: 4801.38882
  }
 }
 dps_results: {
@@ -535,15 +535,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7644.70727
-  tps: 4521.24741
+  dps: 7432.14163
+  tps: 4394.84645
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6521.85064
-  tps: 3852.93351
+  dps: 6496.10661
+  tps: 3838.08747
  }
 }
 dps_results: {

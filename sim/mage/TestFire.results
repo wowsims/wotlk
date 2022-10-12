@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 7019.06304
-  tps: 5025.59123
+  dps: 6683.49026
+  tps: 4801.29085
  }
 }
 dps_results: {
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Khadgar'sRegalia"
  value: {
-  dps: 6246.19798
-  tps: 4459.29283
+  dps: 5993.52142
+  tps: 4273.85658
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Sunstrider'sRegalia"
  value: {
-  dps: 6104.06253
-  tps: 4374.26979
+  dps: 5810.04459
+  tps: 4174.71498
  }
 }
 dps_results: {

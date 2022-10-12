@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 5052.81727
-  tps: 4272.99576
+  dps: 4878.3368
+  tps: 4119.12138
  }
 }
 dps_results: {
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Khadgar'sRegalia"
  value: {
-  dps: 4565.42078
-  tps: 3841.66217
+  dps: 4407.05292
+  tps: 3705.3324
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Sunstrider'sRegalia"
  value: {
-  dps: 4565.42078
-  tps: 3846.15344
+  dps: 4407.05292
+  tps: 3708.99123
  }
 }
 dps_results: {

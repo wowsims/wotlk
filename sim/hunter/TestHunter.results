@@ -45,8 +45,8 @@ character_stats_results: {
 dps_results: {
  key: "TestHunter-AllItems-Ahn'KaharBloodHunter'sBattlegear"
  value: {
-  dps: 7678.23002
-  tps: 6679.37618
+  dps: 7485.22033
+  tps: 6488.40811
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 7191.26712
-  tps: 6213.24285
+  dps: 7017.35358
+  tps: 6053.95939
  }
 }
 dps_results: {
@@ -535,22 +535,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Windrunner'sPursuit"
  value: {
-  dps: 7102.40796
-  tps: 6085.03367
+  dps: 6925.20605
+  tps: 5917.3482
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-Zod'sRepeatingLongbow-50034"
  value: {
-  dps: 7407.8441
-  tps: 6386.08503
+  dps: 7309.72142
+  tps: 6293.19759
  }
 }
 dps_results: {
  key: "TestHunter-AllItems-Zod'sRepeatingLongbow-50638"
  value: {
-  dps: 7689.30779
-  tps: 6665.94177
+  dps: 7554.22365
+  tps: 6537.97319
  }
 }
 dps_results: {

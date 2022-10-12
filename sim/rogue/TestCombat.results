@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Gladiator'sVestments"
  value: {
-  dps: 6493.33199
-  tps: 4610.26571
+  dps: 6359.19468
+  tps: 4515.02822
  }
 }
 dps_results: {
@@ -388,8 +388,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 6770.00526
-  tps: 4806.70373
+  dps: 6584.58051
+  tps: 4675.05216
  }
 }
 dps_results: {
@@ -528,8 +528,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 6268.35962
-  tps: 4450.53533
+  dps: 6084.03941
+  tps: 4319.66798
  }
 }
 dps_results: {

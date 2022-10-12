@@ -80,8 +80,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 7631.68335
-  tps: 6851.89378
+  dps: 7397.43619
+  tps: 6638.72637
  }
 }
 dps_results: {
@@ -150,15 +150,15 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 6967.26884
-  tps: 6256.67516
+  dps: 6796.46294
+  tps: 6091.74013
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 7004.52721
-  tps: 6202.18998
+  dps: 6773.79658
+  tps: 5977.11674
  }
 }
 dps_results: {

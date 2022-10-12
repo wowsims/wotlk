@@ -255,15 +255,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 6932.79342
-  tps: 3884.98261
+  dps: 6711.21846
+  tps: 3764.10504
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 6519.56683
-  tps: 3697.58848
+  dps: 6322.80689
+  tps: 3578.55483
  }
 }
 dps_results: {
@@ -283,15 +283,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 6557.70494
-  tps: 3686.19565
+  dps: 6379.18092
+  tps: 3576.3076
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sWartide"
  value: {
-  dps: 5464.3466
-  tps: 3083.78233
+  dps: 5415.53707
+  tps: 3053.63912
  }
 }
 dps_results: {
@@ -521,15 +521,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 6694.05154
-  tps: 3782.53226
+  dps: 6542.71398
+  tps: 3703.45165
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
-  dps: 6288.24483
-  tps: 3574.50033
+  dps: 6131.12225
+  tps: 3480.47994
  }
 }
 dps_results: {

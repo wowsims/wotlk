@@ -451,8 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 1831.21049
-  tps: 5588.18711
+  dps: 1775.71045
+  tps: 5408.87025
  }
 }
 dps_results: {
@@ -542,15 +542,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 1785.86953
-  tps: 5420.41732
+  dps: 1721.88549
+  tps: 5208.8504
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-Thassarian'sPlate"
  value: {
-  dps: 1490.25899
-  tps: 4555.28578
+  dps: 1479.26412
+  tps: 4535.53763
  }
 }
 dps_results: {

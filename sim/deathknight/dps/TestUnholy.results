@@ -501,9 +501,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 8052.10902
-  tps: 5247.12703
-  hps: 220.8967
+  dps: 7814.6124
+  tps: 5090.84183
+  hps: 219.47899
  }
 }
 dps_results: {
@@ -511,7 +511,7 @@ dps_results: {
  value: {
   dps: 6954.78409
   tps: 4503.70185
-  hps: 235.91817
+  hps: 223.91268
  }
 }
 dps_results: {
@@ -605,17 +605,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7761.25714
-  tps: 4990.21042
-  hps: 195.56109
+  dps: 7594.87994
+  tps: 4818.85903
+  hps: 192.88189
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6546.69394
-  tps: 4119.12154
-  hps: 217.46809
+  dps: 6488.22914
+  tps: 4072.01006
+  hps: 209.65882
  }
 }
 dps_results: {

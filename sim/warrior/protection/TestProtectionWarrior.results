@@ -299,8 +299,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 2322.2502
-  tps: 6578.49736
+  dps: 2207.64029
+  tps: 6281.60925
  }
 }
 dps_results: {
@@ -593,15 +593,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 2325.84348
-  tps: 6623.89815
+  dps: 2226.07784
+  tps: 6369.90631
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 2556.57317
-  tps: 7196.21171
+  dps: 2442.62511
+  tps: 6899.25577
  }
 }
 dps_results: {

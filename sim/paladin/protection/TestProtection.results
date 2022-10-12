@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Gladiator'sVindication"
  value: {
-  dps: 3455.44762
-  tps: 8226.6532
+  dps: 3350.18009
+  tps: 7981.1378
  }
 }
 dps_results: {
@@ -346,15 +346,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Liadrin'sBattlegear"
  value: {
-  dps: 3432.12074
-  tps: 8149.59134
+  dps: 3270.57235
+  tps: 7776.66662
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-Liadrin'sPlate"
  value: {
-  dps: 3046.60408
-  tps: 7311.8102
+  dps: 3025.11744
+  tps: 7260.41217
  }
 }
 dps_results: {
@@ -402,8 +402,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 3759.49372
-  tps: 8907.19229
+  dps: 3567.52115
+  tps: 8480.91973
  }
 }
 dps_results: {
@@ -647,15 +647,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Turalyon'sBattlegear"
  value: {
-  dps: 3432.12074
-  tps: 8149.59134
+  dps: 3270.57235
+  tps: 7776.66662
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-Turalyon'sPlate"
  value: {
-  dps: 3046.60408
-  tps: 7311.8102
+  dps: 3025.11744
+  tps: 7260.41217
  }
 }
 dps_results: {
