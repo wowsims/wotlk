@@ -140,7 +140,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 	dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 
 	dk.CustomRotation = dk.makeCustomRotation()
-	if dk.CustomRotation == nil {
+	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 		if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
 			if dk.Rotation.UseEmpowerRuneWeapon {

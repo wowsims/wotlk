@@ -137,14 +137,15 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
   frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   frostCustomRotation: CustomRotation.create({
 		spells: [
+			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomPlagueStrike }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomPestilence }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlastRime }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlast }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomBloodBoil }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomFrostStrike }),
 		],
 	}),
 });
