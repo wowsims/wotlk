@@ -21,7 +21,7 @@ var StandardTalents = &proto.DruidTalents{
 	LeaderOfThePack:         true,
 	ImprovedLeaderOfThePack: 2,
 	ProtectorOfThePack:      2,
-	PredatoryInstincts:      5,
+	PredatoryInstincts:      3,
 	KingOfTheJungle:         3,
 	Mangle:                  true,
 	RendAndTear:             5,

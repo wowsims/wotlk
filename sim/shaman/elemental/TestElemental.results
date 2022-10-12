@@ -579,8 +579,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Thrall'sRegalia"
  value: {
-  dps: 4228.60153
-  tps: 3234.35816
+  dps: 4226.38283
+  tps: 3235.45445
  }
 }
 dps_results: {
@@ -670,8 +670,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 3895.54892
-  tps: 3014.29008
+  dps: 3891.6446
+  tps: 3011.01795
  }
 }
 dps_results: {

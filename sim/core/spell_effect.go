@@ -111,7 +111,7 @@ func (spell *Spell) PhysicalHitChance(target *Unit) float64 {
 	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
 
-func (spellEffect *SpellEffect) PhysicalCritChance(unit *Unit, spell *Spell, attackTable *AttackTable) float64 {
+func (spellEffect *SpellEffect) PhysicalCritChance(spell *Spell, attackTable *AttackTable) float64 {
 	critRating := 0.0
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
@@ -143,7 +143,7 @@ func (spell *Spell) SpellHitChance(target *Unit) float64 {
 	return hitRating / (SpellHitRatingPerHitChance * 100)
 }
 
-func (spellEffect *SpellEffect) SpellCritChance(unit *Unit, spell *Spell) float64 {
+func (spellEffect *SpellEffect) SpellCritChance(spell *Spell) float64 {
 	critRating := 0.0
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
@@ -165,7 +165,7 @@ func (spell *Spell) spellCritRating(target *Unit) float64 {
 func (spell *Spell) HealingPower() float64 {
 	return spell.SpellPower()
 }
-func (spellEffect *SpellEffect) HealingCritChance(unit *Unit, spell *Spell) float64 {
+func (spellEffect *SpellEffect) HealingCritChance(spell *Spell) float64 {
 	critRating := 0.0
 	if spellEffect.isSnapshot {
 		// periodic spells apply crit from snapshot at time of initial cast if capable of a crit
@@ -206,9 +206,9 @@ func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64
 		Damage: baseDamage,
 	}
 
-	result.Damage *= spell.CasterDamageMultiplier()
-	result.Damage *= spell.ResistanceMultiplier(sim, false, attackTable)
-	result.Damage = spell.applyTargetModifiers(result.Damage, attackTable, false)
+	result.applyAttackerModifiers(spell, attackTable)
+	result.applyResistances(sim, spell, attackTable)
+	result.applyTargetModifiers(spell, attackTable)
 	result.PreoutcomeDamage = result.Damage
 	outcomeApplier(sim, &result, attackTable)
 	spell.ApplyPostOutcomeDamageModifiers(sim, &result)
@@ -288,7 +288,7 @@ func (spellEffect *SpellEffect) calculateBaseDamage(sim *Simulation, spell *Spel
 func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	if sim.Log != nil {
 		baseDmg := spellEffect.Damage
-		spellEffect.applyAttackerModifiers(sim, spell)
+		spellEffect.applyAttackerModifiers(spell, attackTable)
 		afterAttackMods := spellEffect.Damage
 		spellEffect.applyResistances(sim, spell, attackTable)
 		afterResistances := spellEffect.Damage
@@ -302,7 +302,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 			"%s %s [DEBUG] MAP: %0.01f, RAP: %0.01f, SP: %0.01f, BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
 			spellEffect.Target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 	} else {
-		spellEffect.applyAttackerModifiers(sim, spell)
+		spellEffect.applyAttackerModifiers(spell, attackTable)
 		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.applyTargetModifiers(spell, attackTable)
 		spellEffect.PreoutcomeDamage = spellEffect.Damage
@@ -419,112 +419,111 @@ func (spellEffect *SpellEffect) String() string {
 	}
 }
 
-func (spellEffect *SpellEffect) applyAttackerModifiers(sim *Simulation, spell *Spell) {
-	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		// Even when ignoring attacker multipliers we still apply this one, because its
-		// specific to the spell.
-		spellEffect.Damage *= spell.DamageMultiplier * spell.DamageMultiplierAdditive
-		return
-	}
-
+func (spellEffect *SpellEffect) applyAttackerModifiers(spell *Spell, attackTable *AttackTable) {
 	// For dot snapshots, everything has already been stored in spellEffect.snapshotDamageMultiplier.
 	if spellEffect.isSnapshot {
 		spellEffect.Damage *= spellEffect.snapshotDamageMultiplier
 		return
 	}
 
-	attacker := spell.Unit
-
 	if spellEffect.IsHealing {
-		spellEffect.Damage *= attacker.PseudoStats.HealingDealtMultiplier
+		spellEffect.Damage *= spell.Unit.PseudoStats.HealingDealtMultiplier
 		return
 	}
 
-	spellEffect.Damage *= spell.CasterDamageMultiplier()
+	spellEffect.Damage *= spell.AttackerDamageMultiplier(attackTable)
 }
 
 // Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
-func (spell *Spell) CasterDamageMultiplier() float64 {
+func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
+	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
+	multiplier := spell.DamageMultiplier * spell.DamageMultiplierAdditive
+
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		return 1
+		return multiplier
 	}
 
-	attacker := spell.Unit
-	multiplier := attacker.PseudoStats.DamageDealtMultiplier
-	multiplier *= spell.DamageMultiplier
-	multiplier *= spell.DamageMultiplierAdditive
+	ps := spell.Unit.PseudoStats
 
-	if spell.Flags.Matches(SpellFlagDisease) {
-		multiplier *= attacker.PseudoStats.DiseaseDamageDealtMultiplier
-	}
+	multiplier *= ps.DamageDealtMultiplier * attackTable.DamageDealtMultiplier
 
-	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		multiplier *= attacker.PseudoStats.PhysicalDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		multiplier *= attacker.PseudoStats.ArcaneDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		multiplier *= attacker.PseudoStats.FireDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		multiplier *= attacker.PseudoStats.FrostDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		multiplier *= attacker.PseudoStats.HolyDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		multiplier *= attacker.PseudoStats.NatureDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		multiplier *= attacker.PseudoStats.ShadowDamageDealtMultiplier
+	switch {
+	case spell.SpellSchool.Matches(SpellSchoolPhysical):
+		multiplier *= ps.PhysicalDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolArcane):
+		multiplier *= ps.ArcaneDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolFire):
+		multiplier *= ps.FireDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolFrost):
+		multiplier *= ps.FrostDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolHoly):
+		multiplier *= ps.HolyDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolNature):
+		multiplier *= ps.NatureDamageDealtMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolShadow):
+		multiplier *= ps.ShadowDamageDealtMultiplier
 	}
 
 	return multiplier
 }
 
 func (spellEffect *SpellEffect) applyTargetModifiers(spell *Spell, attackTable *AttackTable) {
-	if spellEffect.IsHealing && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		return
+	}
+
+	if spellEffect.IsHealing {
 		spellEffect.Damage *= attackTable.Defender.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 		return
 	}
 
-	spellEffect.Damage = spell.applyTargetModifiers(spellEffect.Damage, attackTable, spellEffect.IsPeriodic)
-}
-func (spell *Spell) applyTargetModifiers(damage float64, attackTable *AttackTable, isPeriodic bool) float64 {
-	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		return damage
+	if spell.SpellSchool.Matches(SpellSchoolPhysical) && spell.Flags.Matches(SpellFlagIncludeTargetBonusDamage) {
+		spellEffect.Damage += attackTable.Defender.PseudoStats.BonusPhysicalDamageTaken
 	}
 
-	target := attackTable.Defender
-	damage *= attackTable.DamageDealtMultiplier
-	damage *= target.PseudoStats.DamageTakenMultiplier
+	spellEffect.Damage *= spell.TargetDamageMultiplier(attackTable, spellEffect.IsPeriodic)
+}
+func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic bool) float64 {
+	multiplier := 1.0
+
+	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		return multiplier
+	}
+
+	ps := attackTable.Defender.PseudoStats
+
+	multiplier *= attackTable.DamageTakenMultiplier
+	multiplier *= ps.DamageTakenMultiplier
 
 	if spell.Flags.Matches(SpellFlagDisease) {
-		damage *= target.PseudoStats.DiseaseDamageTakenMultiplier
+		multiplier *= ps.DiseaseDamageTakenMultiplier
 	}
 
-	if spell.SpellSchool.Matches(SpellSchoolPhysical) {
-		if spell.Flags.Matches(SpellFlagIncludeTargetBonusDamage) {
-			damage += target.PseudoStats.BonusPhysicalDamageTaken
-		}
+	switch {
+	case spell.SpellSchool.Matches(SpellSchoolPhysical):
+		multiplier *= ps.PhysicalDamageTakenMultiplier
 		if isPeriodic {
-			damage *= target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
 		}
-		damage *= target.PseudoStats.PhysicalDamageTakenMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolArcane) {
-		damage *= target.PseudoStats.ArcaneDamageTakenMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFire) {
-		damage *= target.PseudoStats.FireDamageTakenMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolFrost) {
-		damage *= target.PseudoStats.FrostDamageTakenMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolHoly) {
-		damage *= target.PseudoStats.HolyDamageTakenMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolNature) {
-		damage *= target.PseudoStats.NatureDamageTakenMultiplier
-		damage *= attackTable.NatureDamageDealtMultiplier
-	} else if spell.SpellSchool.Matches(SpellSchoolShadow) {
-		damage *= target.PseudoStats.ShadowDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolArcane):
+		multiplier *= ps.ArcaneDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolFire):
+		multiplier *= ps.FireDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolFrost):
+		multiplier *= ps.FrostDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolHoly):
+		multiplier *= ps.HolyDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolNature):
+		multiplier *= ps.NatureDamageTakenMultiplier
+		multiplier *= attackTable.NatureDamageTakenMultiplier
+	case spell.SpellSchool.Matches(SpellSchoolShadow):
+		multiplier *= ps.ShadowDamageTakenMultiplier
 		if isPeriodic {
-			damage *= attackTable.PeriodicShadowDamageDealtMultiplier
+			multiplier *= attackTable.PeriodicShadowDamageTakenMultiplier
 		}
 	}
 
-	return damage
+	return multiplier
 }
 
 func (spell *Spell) CasterHealingMultiplier() float64 {

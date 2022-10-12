@@ -15,7 +15,7 @@ const IvoryMoongoddess int32 = 27518
 const ShootingStar int32 = 40321
 
 func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
-	if druid.SwiftStarfireAura.IsActive() && druid.SetBonuses.balance_pvp_4 {
+	if druid.SwiftStarfireAura.IsActive() && druid.setBonuses.balance_pvp_4 {
 		cast.CastTime -= 1500 * time.Millisecond
 		druid.SwiftStarfireAura.Deactivate(sim)
 	}
@@ -43,9 +43,9 @@ func (druid *Druid) registerStarfireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * druid.TalentsBonuses.moonglowMultiplier,
+				Cost:     baseCost * druid.talentBonuses.moonglow,
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*3500 - druid.TalentsBonuses.starlightWrathModifier,
+				CastTime: time.Millisecond*3500 - druid.talentBonuses.starlightWrath,
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -60,12 +60,12 @@ func (druid *Druid) registerStarfireSpell() {
 		},
 
 		BonusCritRating: 0 +
-			druid.TalentsBonuses.naturesMajestyBonusCrit +
-			core.TernaryFloat64(druid.SetBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
-			core.TernaryFloat64(druid.SetBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
-		DamageMultiplier: (1 + druid.TalentsBonuses.moonfuryMultiplier) *
-			core.TernaryFloat64(druid.SetBonuses.balance_t9_4, 1.04, 1), // T9-4P
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.TalentsBonuses.vengeanceModifier),
+			druid.talentBonuses.naturesMajesty +
+			core.TernaryFloat64(druid.setBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
+			core.TernaryFloat64(druid.setBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
+		DamageMultiplier: (1 + druid.talentBonuses.moonfury) *
+			core.TernaryFloat64(druid.setBonuses.balance_t9_4, 1.04, 1), // T9-4P
+		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -76,7 +76,7 @@ func (druid *Druid) registerStarfireSpell() {
 					if druid.Talents.MoonkinForm {
 						druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
 					}
-					if druid.SetBonuses.balance_t10_4 {
+					if druid.setBonuses.balance_t10_4 {
 						if druid.LasherweaveDot.IsActive() {
 							druid.LasherweaveDot.Refresh(sim)
 						} else {

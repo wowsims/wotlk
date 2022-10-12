@@ -44,7 +44,8 @@ type DeathknightCoeffs struct {
 	impurityBonusCoeff        float64
 	threatOfThassarianChance  float64
 
-	additiveDamageModifier float64
+	wanderingPlagueMultiplier     float64
+	scourgeStrikeShadowMultiplier float64
 }
 
 type Deathknight struct {
@@ -203,10 +204,18 @@ type Deathknight struct {
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
 }
 
-func (dk *Deathknight) ModifyAdditiveDamageModifier(sim *core.Simulation, value float64) {
-	dk.PseudoStats.DamageDealtMultiplier /= dk.bonusCoeffs.additiveDamageModifier
-	dk.bonusCoeffs.additiveDamageModifier += value
-	dk.PseudoStats.DamageDealtMultiplier *= dk.bonusCoeffs.additiveDamageModifier
+func (dk *Deathknight) ModifyDamageModifier(value float64) {
+	if value > 0 {
+		dk.PseudoStats.DamageDealtMultiplier *= 1 + value
+	} else {
+		dk.PseudoStats.DamageDealtMultiplier /= 1 - value
+	}
+	dk.modifyShadowDamageModifier(value)
+}
+
+func (dk *Deathknight) modifyShadowDamageModifier(value float64) {
+	dk.bonusCoeffs.scourgeStrikeShadowMultiplier += value
+	dk.bonusCoeffs.wanderingPlagueMultiplier += value / 10
 }
 
 func (dk *Deathknight) GetCharacter() *core.Character {
@@ -283,12 +292,13 @@ func (dk *Deathknight) Initialize() {
 
 func (dk *Deathknight) ResetBonusCoeffs() {
 	dk.bonusCoeffs = DeathknightCoeffs{
-		glacierRotBonusCoeff:      1.0,
-		mercilessCombatBonusCoeff: 1.0,
-		impurityBonusCoeff:        1.0,
-		threatOfThassarianChance:  0.0,
+		glacierRotBonusCoeff:      1,
+		mercilessCombatBonusCoeff: 1,
+		impurityBonusCoeff:        1,
+		threatOfThassarianChance:  0,
 
-		additiveDamageModifier: dk.bonusCoeffs.additiveDamageModifier,
+		wanderingPlagueMultiplier:     1,
+		scourgeStrikeShadowMultiplier: 1,
 	}
 }
 
@@ -327,8 +337,6 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}
-
-	dk.bonusCoeffs.additiveDamageModifier = 1
 
 	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))

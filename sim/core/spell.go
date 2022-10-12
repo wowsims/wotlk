@@ -604,10 +604,10 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, deferFinaliz
 			attackTable := spell.Unit.AttackTables[effect.Target.UnitIndex]
 			effect.Damage = effect.calculateBaseDamage(sim, spell)
 			effect.Damage *= capMultiplier
-			effect.applyAttackerModifiers(sim, spell)
+			effect.applyAttackerModifiers(spell, attackTable)
 			effect.applyResistances(sim, spell, attackTable)
-			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			effect.applyTargetModifiers(spell, attackTable)
+			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			if !deferFinalization {
 				effect.finalize(sim, spell)
 			}
@@ -656,13 +656,13 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 				attackTable := spell.Unit.AttackTables[effect.Target.UnitIndex]
 				effect.Damage = effect.calculateBaseDamage(sim, spell)
 				effect.Damage *= capMultiplier
-				effect.applyAttackerModifiers(sim, spell)
+				effect.applyAttackerModifiers(spell, attackTable)
 				effect.applyResistances(sim, spell, attackTable)
+				effect.applyTargetModifiers(spell, attackTable)
 				effect.OutcomeApplier(sim, spell, effect, attackTable)
 				if i == 0 {
 					onOutcome(sim, effect.Outcome)
 				}
-				effect.applyTargetModifiers(spell, attackTable)
 				effect.finalize(sim, spell)
 			}
 		}

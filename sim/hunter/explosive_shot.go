@@ -43,7 +43,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
 		DamageMultiplier: 1,
-		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
