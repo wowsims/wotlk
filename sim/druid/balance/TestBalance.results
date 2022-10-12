@@ -255,15 +255,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4265.95517
-  tps: 4098.69294
+  dps: 4156.45899
+  tps: 3986.60423
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 6902.46956
-  tps: 6730.84823
+  dps: 6779.77141
+  tps: 6611.07398
  }
 }
 dps_results: {
@@ -339,15 +339,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 3926.15581
-  tps: 3751.68295
+  dps: 3911.13962
+  tps: 3736.04397
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 7540.63698
-  tps: 7363.37833
+  dps: 7328.8723
+  tps: 7154.66933
  }
 }
 dps_results: {
@@ -367,15 +367,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 4449.85715
-  tps: 4250.56822
+  dps: 4307.56867
+  tps: 4105.88502
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 7014.27014
-  tps: 6823.83982
+  dps: 6774.53966
+  tps: 6586.73237
  }
 }
 dps_results: {
@@ -479,15 +479,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 4449.85715
-  tps: 4250.56822
+  dps: 4307.56867
+  tps: 4105.88502
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 7014.27014
-  tps: 6823.83982
+  dps: 6774.53966
+  tps: 6586.73237
  }
 }
 dps_results: {

@@ -109,17 +109,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  dps: 124.98721
+  dps: 121.53116
   tps: 51.84887
-  hps: 6031.0138
+  hps: 5895.84751
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 133.71382
+  dps: 129.45634
   tps: 51.84887
-  hps: 5386.07852
+  hps: 5307.38157
  }
 }
 dps_results: {
@@ -293,17 +293,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Gladiator'sInvestiture"
  value: {
-  dps: 131.65416
-  tps: 49.78644
-  hps: 5891.56844
+  dps: 124.42479
+  tps: 48.57885
+  hps: 5681.36442
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-Gladiator'sRaiment"
  value: {
-  dps: 142.38155
+  dps: 136.5339
   tps: 48.57885
-  hps: 5539.13789
+  hps: 5417.36948
  }
 }
 dps_results: {
@@ -613,17 +613,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Zabra'sRaiment"
  value: {
-  dps: 120.17408
+  dps: 116.29695
   tps: 49.33095
-  hps: 5711.20458
+  hps: 5555.12228
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-Zabra'sRegalia"
  value: {
-  dps: 120.96437
+  dps: 116.79423
   tps: 49.33095
-  hps: 5174.41531
+  hps: 5034.57298
  }
 }
 dps_results: {

@@ -248,15 +248,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 7118.96361
-  tps: 5428.81453
+  dps: 6983.69453
+  tps: 5312.31715
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 5747.82579
-  tps: 4392.95059
+  dps: 5671.20816
+  tps: 4320.06287
  }
 }
 dps_results: {
@@ -339,15 +339,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 7867.50317
-  tps: 5949.98063
+  dps: 7660.01603
+  tps: 5808.40575
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveRegalia"
  value: {
-  dps: 5924.37351
-  tps: 4542.15457
+  dps: 5952.40461
+  tps: 4576.45079
  }
 }
 dps_results: {
@@ -367,15 +367,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 7220.55431
-  tps: 5491.64626
+  dps: 7034.77378
+  tps: 5355.15584
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 5642.77105
-  tps: 4343.66034
+  dps: 5604.56364
+  tps: 4306.40697
  }
 }
 dps_results: {
@@ -479,15 +479,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 7220.55431
-  tps: 5491.64626
+  dps: 7034.77378
+  tps: 5355.15584
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 5642.77105
-  tps: 4343.66034
+  dps: 5604.56364
+  tps: 4306.40697
  }
 }
 dps_results: {

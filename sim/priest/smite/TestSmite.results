@@ -101,15 +101,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  dps: 3478.18242
-  tps: 2929.99098
+  dps: 3374.45879
+  tps: 2849.18989
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3154.79994
-  tps: 2660.65146
+  dps: 3082.91746
+  tps: 2600.44784
  }
 }
 dps_results: {
@@ -262,15 +262,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Gladiator'sInvestiture"
  value: {
-  dps: 3564.88358
-  tps: 3007.13016
+  dps: 3412.94148
+  tps: 2884.43193
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-Gladiator'sRaiment"
  value: {
-  dps: 3127.02922
-  tps: 2634.8304
+  dps: 3051.05398
+  tps: 2574.14501
  }
 }
 dps_results: {
@@ -542,15 +542,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Zabra'sRaiment"
  value: {
-  dps: 3193.51539
-  tps: 2699.47514
+  dps: 3085.74385
+  tps: 2611.87246
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-Zabra'sRegalia"
  value: {
-  dps: 3084.03205
-  tps: 2608.93514
+  dps: 2971.2821
+  tps: 2517.80527
  }
 }
 dps_results: {
