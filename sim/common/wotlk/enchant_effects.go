@@ -65,12 +65,12 @@ func init() {
 			return
 		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		ppmm := character.AutoAttacks.NewPPMManager(7.0, procMask)
+		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44525},
 			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskEmpty,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
@@ -269,7 +269,7 @@ func init() {
 		w.BaseDamageMax += 15
 	})
 
-	core.NewItemEffect(54998, func(agent core.Agent) {
+	core.NewItemEffect(41091, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54757}
 
@@ -358,7 +358,7 @@ func init() {
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 50401},
 			SpellSchool: core.SpellSchoolFrost,
-			ProcMask:    core.ProcMaskEmpty,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
