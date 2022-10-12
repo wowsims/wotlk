@@ -307,7 +307,6 @@ type PseudoStats struct {
 	HolyDamageDealtMultiplier     float64
 	NatureDamageDealtMultiplier   float64
 	ShadowDamageDealtMultiplier   float64
-	DiseaseDamageDealtMultiplier  float64
 
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
@@ -324,8 +323,8 @@ type PseudoStats struct {
 	ParryHaste bool
 
 	// Avoidance % not affected by Diminishing Returns
-	BaseDodge	float64
-	BaseParry	float64
+	BaseDodge float64
+	BaseParry float64
 	//BaseMiss is not needed, this is always 5%
 
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
@@ -351,15 +350,15 @@ type PseudoStats struct {
 	ShadowDamageTakenMultiplier   float64
 	DiseaseDamageTakenMultiplier  float64
 
+	PeriodicPhysicalDamageTakenMultiplier float64
+	PeriodicShadowDamageTakenMultiplier   float64
+
 	ReducedPhysicalHitTakenChance float64
 	ReducedArcaneHitTakenChance   float64
 	ReducedFireHitTakenChance     float64
 	ReducedFrostHitTakenChance    float64
 	ReducedNatureHitTakenChance   float64
 	ReducedShadowHitTakenChance   float64
-
-	PeriodicPhysicalDamageTakenMultiplier float64
-	PeriodicShadowDamageTakenMultiplier   float64
 
 	HealingTakenMultiplier float64
 }
@@ -383,7 +382,6 @@ func NewPseudoStats() PseudoStats {
 		HolyDamageDealtMultiplier:     1,
 		NatureDamageDealtMultiplier:   1,
 		ShadowDamageDealtMultiplier:   1,
-		DiseaseDamageDealtMultiplier:  1,
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 

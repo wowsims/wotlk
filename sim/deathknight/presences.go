@@ -88,7 +88,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
 
-			dk.ModifyAdditiveDamageModifier(sim, damageBonusCoeff)
+			dk.ModifyDamageModifier(damageBonusCoeff)
 			aura.Unit.EnableDynamicStatDep(sim, statDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -96,7 +96,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 
-			dk.ModifyAdditiveDamageModifier(sim, -damageBonusCoeff)
+			dk.ModifyDamageModifier(-damageBonusCoeff)
 			aura.Unit.DisableDynamicStatDep(sim, statDep)
 		},
 	}

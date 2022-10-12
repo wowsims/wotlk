@@ -118,7 +118,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.registerReadinessCD()
 }
 
-func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, target *core.Unit) float64 {
+func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
 
@@ -262,7 +262,7 @@ func (hunter *Hunter) applyPiercingShots() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagIgnoreResists,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -339,7 +339,7 @@ func (hunter *Hunter) applyWildQuiver() {
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 0.8,
-		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

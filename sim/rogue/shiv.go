@@ -18,7 +18,7 @@ func (rogue *Rogue) registerShivSpell() {
 		ActionID:     core.ActionID{SpellID: 5938},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeOHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder | core.SpellFlagCannotBeDodged,
+		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
 
@@ -39,7 +39,7 @@ func (rogue *Rogue) registerShivSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, false),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialNoBlockDodgeParryNoCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
@@ -48,7 +48,9 @@ func (rogue *Rogue) registerShivSpell() {
 					case proto.Rogue_Options_DeadlyPoison:
 						rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
 					case proto.Rogue_Options_InstantPoison:
-						rogue.InstantPoison[2].Cast(sim, spellEffect.Target)
+						rogue.InstantPoison[ShivProc].Cast(sim, spellEffect.Target)
+					case proto.Rogue_Options_WoundPoison:
+						rogue.WoundPoison[ShivProc].Cast(sim, spellEffect.Target)
 					}
 				}
 			},

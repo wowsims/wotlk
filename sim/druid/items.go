@@ -553,7 +553,7 @@ func init() {
 }
 
 func (druid *Druid) registerLasherweaveDot() {
-	if !druid.SetBonuses.balance_t10_4 {
+	if !druid.setBonuses.balance_t10_4 {
 		return
 	}
 

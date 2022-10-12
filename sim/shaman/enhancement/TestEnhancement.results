@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5719.76192
-  tps: 3229.60086
+  dps: 5718.94422
+  tps: 3229.93743
  }
 }
 dps_results: {

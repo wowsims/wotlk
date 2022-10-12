@@ -83,6 +83,8 @@ func (druid *Druid) NewTreant() *TreantPet {
 	}
 	treant.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	treant.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+
+	treant.PseudoStats.DamageDealtMultiplier = 1 + 0.05*float64(druid.Talents.Brambles)
 	treant.EnableAutoAttacks(treant, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  252,
@@ -105,10 +107,10 @@ func (treant *TreantPet) GetPet() *core.Pet {
 func (treant *TreantPet) Initialize() {
 }
 
-func (treant *TreantPet) Reset(sim *core.Simulation) {
+func (treant *TreantPet) Reset(_ *core.Simulation) {
 }
 
-func (treant *TreantPet) OnGCDReady(sim *core.Simulation) {
+func (treant *TreantPet) OnGCDReady(_ *core.Simulation) {
 	treant.DoNothing()
 }
 

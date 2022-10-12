@@ -21,7 +21,6 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 
 	procMask := core.ProcMaskMeleeMHSpecial
 	effect := core.SpellEffect{
-
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, false),
 		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 

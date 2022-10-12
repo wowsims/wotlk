@@ -18,8 +18,8 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
-	paladin.PseudoStats.BaseParry += 0.01*float64(paladin.Talents.Deflection)
-	paladin.PseudoStats.BaseDodge += 0.01*float64(paladin.Talents.Anticipation)
+	paladin.PseudoStats.BaseParry += 0.01 * float64(paladin.Talents.Deflection)
+	paladin.PseudoStats.BaseDodge += 0.01 * float64(paladin.Talents.Anticipation)
 
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 
@@ -273,10 +273,10 @@ func (paladin *Paladin) applyCrusade() {
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {
-						case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-							paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.02 * float64(paladin.Talents.Crusade))
-						default:
-							paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.02 * float64(paladin.Talents.Crusade))
+					default:
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 					}
 				}
 				applied = true
@@ -491,7 +491,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   paladin.MeleeCritMultiplier(),

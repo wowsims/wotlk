@@ -10,7 +10,6 @@ import (
 )
 
 func (rogue *Rogue) ApplyTalents() {
-
 	rogue.applyMurder()
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
@@ -18,7 +17,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyFocusedAttacks()
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
-	rogue.PseudoStats.MeleeSpeedMultiplier *= (1.0 + []float64{0, 0.03, 0.06, 0.10}[rogue.Talents.LightningReflexes])
+	rogue.PseudoStats.MeleeSpeedMultiplier *= []float64{1, 1.03, 1.06, 1.10}[rogue.Talents.LightningReflexes]
 	rogue.AddStat(stats.Parry, core.ParryRatingPerParryChance*2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
@@ -81,7 +80,7 @@ func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core
 	}
 	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 		costMultiplier := 1.0
-		if spell.Flags.Matches(SpellFlagBuilder) {
+		if spell.Flags.Matches(SpellFlagBuilder) { // note: this also applies to openers, as per https://www.wowhead.com/wotlk/spell=60163/cheaper-combo-moves
 			costMultiplier *= builderCostMultiplier
 		}
 		cast.Cost *= costMultiplier
@@ -138,12 +137,12 @@ func (rogue *Rogue) registerHungerForBlood() {
 	})
 }
 
-func (rogue *Rogue) preyOnTheWeakMultiplier(target *core.Unit) float64 {
+func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	// TODO: Use the following predicate if/when health values are modeled
 	//if rogue.CurrentTarget != nil &&
 	//rogue.CurrentTarget.HasHealthBar() &&
 	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
-	return (1 + 0.04*float64(rogue.Talents.PreyOnTheWeak))
+	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
 }
 
 func (rogue *Rogue) registerColdBloodCD() {
@@ -359,16 +358,14 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    BladeFlurryActionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		// No proc mask, so it won't proc itself.
-		ProcMask: core.ProcMaskEmpty,
-		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Cancel out caster multiplier so it doesn't double dip.
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg/spell.CasterDamageMultiplier())
+			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
 		},
 	})
 
