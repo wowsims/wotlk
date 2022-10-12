@@ -175,7 +175,6 @@ func (dk *Deathknight) applyKillingMachine() {
 			}
 
 			if dk.KillingMachineAura.IsActive() && (dk.runeSpellComp(spell, dk.IcyTouch) ||
-				dk.runeSpellComp(spell, dk.HowlingBlast) ||
 				dk.runeSpellComp(spell, dk.FrostStrike)) {
 				dk.KillingMachineAura.Deactivate(sim)
 			}

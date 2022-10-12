@@ -3,15 +3,17 @@ package common
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-type CustomSpellCondition func(*core.Simulation) bool
+// Custom condition for an action.
+type CustomCondition func(*core.Simulation) bool
+
+// Custom action based on a condition. Returns a bool and the CurCast cost.
+type CustomAction func(*core.Simulation, *core.Unit) (bool, float64)
 
 type CustomSpell struct {
-	Spell     *core.Spell
-	RuneSpell *deathknight.RuneSpell
-	Condition CustomSpellCondition
+	Action    CustomAction
+	Condition CustomCondition
 }
 
 type CustomRotation struct {
@@ -29,7 +31,7 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 	}
 	for _, customSpellProto := range crProto.Spells {
 		customSpell := spellsMap[customSpellProto.Spell]
-		if customSpell.Spell != nil || customSpell.RuneSpell != nil {
+		if customSpell.Action != nil {
 			cr.spells = append(cr.spells, customSpell)
 		}
 	}
@@ -44,7 +46,7 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *CustomSpell {
 	for _, customSpell := range cr.spells {
 		if customSpell.Condition(sim) {
-			if customSpell.Spell != nil || customSpell.RuneSpell != nil {
+			if customSpell.Action != nil {
 				return &customSpell
 			}
 		}
@@ -60,14 +62,13 @@ func (cr *CustomRotation) Cast(sim *core.Simulation) {
 	}
 
 	success := false
-	if spell.Spell != nil {
-		success = spell.Spell.Cast(sim, cr.character.CurrentTarget)
-	} else if spell.RuneSpell != nil {
-		success = spell.RuneSpell.Cast(sim, cr.character.CurrentTarget)
+	cost := 0.0
+	if spell.Action != nil {
+		success, cost = spell.Action(sim, cr.character.CurrentTarget)
 	}
 	if !success {
-		if cr.character.HasManaBar() && spell.Spell != nil && spell.RuneSpell == nil {
-			cr.character.WaitForMana(sim, spell.Spell.CurCast.Cost)
+		if cr.character.HasManaBar() && spell.Action != nil {
+			cr.character.WaitForMana(sim, cost)
 		}
 	}
 }

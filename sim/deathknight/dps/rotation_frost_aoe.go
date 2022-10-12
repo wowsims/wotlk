@@ -14,6 +14,11 @@ func (dk *DpsDeathknight) setupCustomRotations() {
 		if dk.CustomRotation != nil {
 			dk.CustomRotation.Cast(sim)
 		}
+
+		if dk.LastCast == dk.EmpowerRuneWeapon || dk.LastCast == dk.BloodTap || dk.LastCast == dk.UnbreakableArmor {
+			return sim.CurrentTime
+		}
+
 		return -1
 	})
 }
@@ -21,82 +26,152 @@ func (dk *DpsDeathknight) setupCustomRotations() {
 func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 	return common.NewCustomRotation(dk.Rotation.FrostCustomRotation, dk.GetCharacter(), map[int32]common.CustomSpell{
 		int32(proto.Deathknight_Rotation_CustomIcyTouch): common.CustomSpell{
-			RuneSpell: dk.IcyTouch,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.IcyTouch.CurCast.Cost
+				return dk.IcyTouch.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return !dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.IcyTouch.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomPlagueStrike): common.CustomSpell{
-			RuneSpell: dk.PlagueStrike,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.PlagueStrike.CurCast.Cost
+				return dk.PlagueStrike.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return !dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() && dk.PlagueStrike.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomPestilence): common.CustomSpell{
-			RuneSpell: dk.Pestilence,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.Pestilence.CurCast.Cost
+				return dk.Pestilence.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				if !dk.Pestilence.CanCast(sim) {
 					return false
 				}
 
-				if dk.FrostFeverDisease[dk.CurrentTarget.Index].ExpiresAt()-sim.CurrentTime <= 2*time.Second && dk.BloodPlagueDisease[dk.CurrentTarget.Index].ExpiresAt()-sim.CurrentTime <= 2*time.Second {
+				ff := dk.FrostFeverDisease[dk.CurrentTarget.Index].ExpiresAt() - sim.CurrentTime
+				bp := dk.BloodPlagueDisease[dk.CurrentTarget.Index].ExpiresAt() - sim.CurrentTime
+				ffHalfDuration := time.Duration(0.5 * float64(dk.FrostFeverDisease[dk.CurrentTarget.Index].Duration))
+				bpHalfDuration := time.Duration(0.5 * float64(dk.BloodPlagueDisease[dk.CurrentTarget.Index].Duration))
+				if ff <= 2*time.Second && bp <= 2*time.Second && sim.GetRemainingDuration() >= ffHalfDuration && sim.GetRemainingDuration() >= bpHalfDuration {
 					return true
 				}
 
-				needToSpread := false
 				numHits := dk.Env.GetNumTargets()
+				numDiseased := numHits
 				for i := int32(0); i < numHits; i++ {
 					target := &dk.Env.GetTarget(i).Unit
 					diseases := dk.FrostFeverDisease[target.Index].IsActive() && dk.BloodPlagueDisease[target.Index].IsActive()
 
 					if !diseases {
-						needToSpread = true
+						numDiseased--
 					}
 				}
 
-				return needToSpread
+				return float64(numDiseased)/float64(numHits) <= 0.5
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomObliterate): common.CustomSpell{
-			RuneSpell: dk.Obliterate,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.Obliterate.CurCast.Cost
+				return dk.Obliterate.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.Obliterate.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHowlingBlast): common.CustomSpell{
-			RuneSpell: dk.HowlingBlast,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.HowlingBlast.CurCast.Cost
+				return dk.HowlingBlast.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.HowlingBlast.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHowlingBlastRime): common.CustomSpell{
-			RuneSpell: dk.HowlingBlast,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.HowlingBlast.CurCast.Cost
+				return dk.HowlingBlast.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.HowlingBlast.CanCast(sim) && dk.Rime()
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodBoil): common.CustomSpell{
-			RuneSpell: dk.BloodBoil,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.BloodBoil.CurCast.Cost
+				return dk.BloodBoil.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.BloodBoil.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodStrike): common.CustomSpell{
-			RuneSpell: dk.BloodStrike,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.BloodStrike.CurCast.Cost
+				return dk.BloodStrike.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.BloodStrike.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomDeathAndDecay): common.CustomSpell{
-			RuneSpell: dk.DeathAndDecay,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.DeathAndDecay.CurCast.Cost
+				return dk.DeathAndDecay.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.DeathAndDecay.CanCast(sim)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHornOfWinter): common.CustomSpell{
-			RuneSpell: dk.HornOfWinter,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.HornOfWinter.CurCast.Cost
+				return dk.HornOfWinter.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return dk.HornOfWinter.CanCast(sim)
+			},
+		},
+		int32(proto.Deathknight_Rotation_CustomUnbreakableArmor): common.CustomSpell{
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.UnbreakableArmor.CurCast.Cost
+				return dk.UnbreakableArmor.Cast(sim, target), cost
+			},
+			Condition: func(sim *core.Simulation) bool {
+				return dk.UnbreakableArmor.CanCast(sim)
+			},
+		},
+		int32(proto.Deathknight_Rotation_CustomBloodTap): common.CustomSpell{
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.BloodTap.CurCast.Cost
+				return dk.BloodTap.Cast(sim, target), cost
+			},
+			Condition: func(sim *core.Simulation) bool {
+				return dk.BloodTap.CanCast(sim)
+			},
+		},
+		int32(proto.Deathknight_Rotation_CustomEmpoweredRuneWeapon): common.CustomSpell{
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.EmpowerRuneWeapon.CurCast.Cost
+				return dk.EmpowerRuneWeapon.Cast(sim, target), cost
+			},
+			Condition: func(sim *core.Simulation) bool {
+				return dk.EmpowerRuneWeapon.CanCast(sim)
+			},
+		},
+		int32(proto.Deathknight_Rotation_CustomFrostStrike): common.CustomSpell{
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := dk.FrostStrike.CurCast.Cost
+				return dk.FrostStrike.Cast(sim, target), cost
+			},
+			Condition: func(sim *core.Simulation) bool {
+				return dk.FrostStrike.CanCast(sim)
 			},
 		},
 	})

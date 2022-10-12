@@ -195,6 +195,10 @@ message Deathknight {
 			CustomBloodStrike = 8;
 			CustomDeathAndDecay = 9;
 			CustomHornOfWinter = 10;
+			CustomUnbreakableArmor = 11;
+			CustomBloodTap = 12;
+			CustomEmpoweredRuneWeapon = 13;
+			CustomFrostStrike = 14;
 		}
 		CustomRotation frost_custom_rotation = 20;
 

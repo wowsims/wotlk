@@ -253,6 +253,10 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 		{ actionId: ActionId.fromSpellId(49930), value: CustomSpellOption.CustomBloodStrike },
 		{ actionId: ActionId.fromSpellId(49938), value: CustomSpellOption.CustomDeathAndDecay },
 		{ actionId: ActionId.fromSpellId(57623), value: CustomSpellOption.CustomHornOfWinter },
+		{ actionId: ActionId.fromSpellId(51271), value: CustomSpellOption.CustomUnbreakableArmor },
+		{ actionId: ActionId.fromSpellId(45529), value: CustomSpellOption.CustomBloodTap },
+		{ actionId: ActionId.fromSpellId(47568), value: CustomSpellOption.CustomEmpoweredRuneWeapon },
+		{ actionId: ActionId.fromSpellId(55268), value: CustomSpellOption.CustomFrostStrike },
 	],
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().frostRotationType == FrostRotationType.Custom,
 });
