@@ -82,9 +82,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	//  vary in a similar manner to the lower bound. When near a cap of some sort you would ideally change your stat mod such that it doesn't go
 	//  over this cap, however due to the random nature of the simulations which introduces noise the effect of the stat mod itself can be lost.
 	//  There are two strategies or compromises: 1) Accepting that our stat mod goes over the cap and therefore typically shows a diminished
-	//  value than it should, which is generally not very useful. 2) Doing the calculation Away from the cap itself, but this introduces a different
+	//  value than it should, which is generally not very useful. 2) Doing the calculation Away from the cap itself, but this introduces other problems.
 
-	// Do half the iterations with a positive, and half with a negative value for better accuracy.
 	result := StatWeightsResult{}
 	dpsHists := [stats.Len]map[int32]int32{}
 	hpsHists := [stats.Len]map[int32]int32{}
