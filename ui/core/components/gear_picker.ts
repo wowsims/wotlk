@@ -498,10 +498,10 @@ class SelectorModal extends Popup {
 				</div>
       `;
 
-			//if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-			const epElem = listItemElem.getElementsByClassName('selector-modal-list-item-ep')[0] as HTMLElement;
-			epElem.style.display = 'none';
-			//}
+			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
+				const epElem = listItemElem.getElementsByClassName('selector-modal-list-item-ep')[0] as HTMLElement;
+				epElem.style.display = 'none';
+			}
 
 			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLImageElement;
 			itemData.actionId.fill().then(filledId => {
