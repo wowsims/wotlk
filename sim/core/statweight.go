@@ -76,32 +76,34 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 	var waitGroup sync.WaitGroup
 
+	// Jooper (12/10/2022):
+	//	- So my reasoning for changing the central difference for EP calculations to a unilateral calculation is simply that EPs are typically
+	//  used to assign a value to an increase in stats, not a decrease. And in most situations, with constant stat mods the upper bound will not
+	//  vary in a similar manner to the lower bound. When near a cap of some sort you would ideally change your stat mod such that it doesn't go
+	//  over this cap, however due to the random nature of the simulations which introduces noise the effect of the stat mod itself can be lost.
+	//  There are two strategies or compromises: 1) Accepting that our stat mod goes over the cap and therefore typically shows a diminished
+	//  value than it should, which is generally not very useful. 2) Doing the calculation Away from the cap itself, but this introduces a different
+
 	// Do half the iterations with a positive, and half with a negative value for better accuracy.
-	resultLow := StatWeightsResult{}
-	resultHigh := StatWeightsResult{}
-	dpsHistsLow := [stats.Len]map[int32]int32{}
-	dpsHistsHigh := [stats.Len]map[int32]int32{}
-	hpsHistsLow := [stats.Len]map[int32]int32{}
-	hpsHistsHigh := [stats.Len]map[int32]int32{}
-	tpsHistsLow := [stats.Len]map[int32]int32{}
-	tpsHistsHigh := [stats.Len]map[int32]int32{}
-	dtpsHistsLow := [stats.Len]map[int32]int32{}
-	dtpsHistsHigh := [stats.Len]map[int32]int32{}
+	result := StatWeightsResult{}
+	dpsHists := [stats.Len]map[int32]int32{}
+	hpsHists := [stats.Len]map[int32]int32{}
+	tpsHists := [stats.Len]map[int32]int32{}
+	dtpsHists := [stats.Len]map[int32]int32{}
 
 	var iterationsTotal int32
 	var iterationsDone int32
 	var simsTotal int32
 	var simsCompleted int32
 
-	doStat := func(stat stats.Stat, value float64, isLow bool) {
+	doStat := func(stat stats.Stat, value float64) {
 		defer waitGroup.Done()
 
 		simRequest := googleProto.Clone(baseSimRequest).(*proto.RaidSimRequest)
 		simRequest.Raid.Parties[0].Players[0].BonusStats[stat] += value
-		simRequest.SimOptions.Iterations /= 2 // Cut in half since we're doing above and below separately.
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
-		go RunSim(*simRequest, reporter) // RunRaidSim(simRequest)
+		go RunSim(*simRequest, reporter)
 
 		var localIterations int32
 		var errorStr string
@@ -133,7 +135,6 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 				}
 			}
 		}
-		// TODO: get stack trace out if final result error is set.
 		if errorStr != "" {
 			panic("Stat weights error: " + errorStr)
 		}
@@ -146,101 +147,37 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		tpsDiff := (tpsMetrics.Avg - baselineTpsMetrics.Avg) / value
 		dtpsDiff := -(dtpsMetrics.Avg - baselineDtpsMetrics.Avg) / value
 
-		if isLow {
-			resultLow.Dps.Weights[stat] = dpsDiff
-			resultLow.Hps.Weights[stat] = hpsDiff
-			resultLow.Tps.Weights[stat] = tpsDiff
-			resultLow.Dtps.Weights[stat] = dtpsDiff
-			resultLow.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
-			resultLow.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
-			resultLow.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
-			resultLow.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
-			dpsHistsLow[stat] = dpsMetrics.Hist
-			hpsHistsLow[stat] = hpsMetrics.Hist
-			tpsHistsLow[stat] = tpsMetrics.Hist
-			dtpsHistsLow[stat] = dtpsMetrics.Hist
-		} else {
-			resultHigh.Dps.Weights[stat] = dpsDiff
-			resultHigh.Hps.Weights[stat] = tpsDiff
-			resultHigh.Tps.Weights[stat] = tpsDiff
-			resultHigh.Dtps.Weights[stat] = dtpsDiff
-			resultHigh.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
-			dpsHistsHigh[stat] = dpsMetrics.Hist
-			hpsHistsHigh[stat] = hpsMetrics.Hist
-			tpsHistsHigh[stat] = tpsMetrics.Hist
-			dtpsHistsHigh[stat] = dtpsMetrics.Hist
-		}
+		result.Dps.Weights[stat] = dpsDiff
+		result.Hps.Weights[stat] = hpsDiff
+		result.Tps.Weights[stat] = tpsDiff
+		result.Dtps.Weights[stat] = dtpsDiff
+		result.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
+		result.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
+		result.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
+		result.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
+		dpsHists[stat] = dpsMetrics.Hist
+		hpsHists[stat] = hpsMetrics.Hist
+		tpsHists[stat] = tpsMetrics.Hist
+		dtpsHists[stat] = dtpsMetrics.Hist
 	}
 
-	// Melee hit cap is 8% in WoTLK
-	melee2HHitCap := 8 * MeleeHitRatingPerHitChance
-	// Spell hit cap is 17% in WoTLK
-	spellHitCap := 17 * SpellHitRatingPerHitChance
-	if swr.Debuffs != nil && (swr.Debuffs.Misery || swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved) {
-		spellHitCap -= 3 * SpellHitRatingPerHitChance
-	}
-
-	const defaultStatMod = 50.0
-	const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
-	const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
-	statModsLow := stats.Stats{}
-	statModsHigh := stats.Stats{}
-
-	// Make sure reference stat is included.
-	statModsLow[referenceStat] = defaultStatMod
-	statModsHigh[referenceStat] = defaultStatMod
+	percMod := 0.05
+	statMods := stats.Stats{}
+	statMods[referenceStat] = baseStats[referenceStat] * percMod
 
 	for _, stat := range statsToWeigh {
-		statMod := defaultStatMod
-		if stat == stats.SpellHit {
-			statMod = spellHitStatMod
-			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
-				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - spellHitCap
-				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
-				} else {
-					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
-				}
-
-				continue
-			}
-		} else if stat == stats.MeleeHit {
-			statMod = meleeHitStatMod
-			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
-				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - melee2HHitCap
-				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
-				} else {
-					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
-				}
-				continue
-			}
-		}
-		statModsHigh[stat] = statMod
-		statModsLow[stat] = -statMod
+		statMods[stat] = baseStats[stat] * percMod
 	}
 
-	for stat, _ := range statModsLow {
-		if statModsLow[stat] == 0 {
+	for stat, _ := range statMods {
+		if statMods[stat] == 0 {
 			continue
 		}
-		waitGroup.Add(2)
+		waitGroup.Add(1)
 		atomic.AddInt32(&iterationsTotal, swr.SimOptions.Iterations)
-		atomic.AddInt32(&simsTotal, 2)
+		atomic.AddInt32(&simsTotal, 1)
 
-		go doStat(stats.Stat(stat), statModsLow[stat], true)
-		go doStat(stats.Stat(stat), statModsHigh[stat], false)
+		go doStat(stats.Stat(stat), statMods[stat])
 	}
 
 	waitGroup.Wait()
@@ -248,54 +185,16 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	for _, stat := range statsToWeigh {
 		// Check for hard caps.
 		if stat == stats.SpellHit || stat == stats.MeleeHit || stat == stats.Expertise {
-			if resultHigh.Dps.Weights[stat] < 0.1 {
-				statModsHigh[stat] = 0
+			if result.Dps.Weights[stat] < 0.1 {
+				statMods[stat] = 0
 				continue
 			}
 		}
-
-		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
-		//
-		if stat == stats.SpellHit {
-			if baseStats[stat] >= spellHitCap {
-				statModsLow[stat] = statModsHigh[stat]
-				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
-				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
-				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
-				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
-			}
-		} else if stat == stats.MeleeHit {
-			if baseStats[stat] >= melee2HHitCap {
-				statModsLow[stat] = statModsHigh[stat]
-				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
-				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
-				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
-				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
-			}
-		}
 	}
 
-	result := StatWeightsResult{}
-	for statIdx, _ := range statModsLow {
+	for statIdx, _ := range statMods {
 		stat := stats.Stat(statIdx)
-		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
-			continue
-		}
-
-		result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat] + resultHigh.Dps.Weights[stat]) / 2
-		result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat] + resultHigh.Hps.Weights[stat]) / 2
-		result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat] + resultHigh.Tps.Weights[stat]) / 2
-		result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat] + resultHigh.Dtps.Weights[stat]) / 2
-
-		result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat] + resultHigh.Dps.WeightsStdev[stat]) / 2
-		result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat] + resultHigh.Hps.WeightsStdev[stat]) / 2
-		result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat] + resultHigh.Tps.WeightsStdev[stat]) / 2
-		result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2
-	}
-
-	for statIdx, _ := range statModsLow {
-		stat := stats.Stat(statIdx)
-		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
+		if statMods[stat] == 0 {
 			continue
 		}
 
