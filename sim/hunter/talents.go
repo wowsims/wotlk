@@ -262,7 +262,7 @@ func (hunter *Hunter) applyPiercingShots() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagIgnoreResists,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
