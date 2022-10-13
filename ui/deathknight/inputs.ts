@@ -270,6 +270,7 @@ export const DeathKnightRotationConfig = {
 				{ name: 'Single Target', value: FrostRotationType.SingleTarget },
 				{ name: 'Custom', value: FrostRotationType.Custom },
 			],
+			changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 		}),
 		UseAutoRotation,
