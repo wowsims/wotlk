@@ -192,6 +192,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-DeadlyGladiator'sTotemofSurvival-42602"
+ value: {
+  dps: 4254.02786
+  tps: 3267.87576
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 4095.50258
@@ -311,6 +318,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-FuriousGladiator'sTotemofSurvival-42603"
+ value: {
+  dps: 4263.01111
+  tps: 3274.53703
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 4074.98513
@@ -336,6 +350,13 @@ dps_results: {
  value: {
   dps: 3837.95809
   tps: 2961.53186
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-HatefulGladiator'sTotemofSurvival-42601"
+ value: {
+  dps: 4248.89458
+  tps: 3264.06931
  }
 }
 dps_results: {
@@ -465,6 +486,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-RelentlessGladiator'sTotemofSurvival-42604"
+ value: {
+  dps: 4273.91933
+  tps: 3282.62572
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-RevitalizingSkyflareDiamond"
  value: {
   dps: 4113.8112
@@ -476,6 +504,13 @@ dps_results: {
  value: {
   dps: 4074.98513
   tps: 3134.52693
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-SavageGladiator'sTotemofSurvival-42594"
+ value: {
+  dps: 4242.47798
+  tps: 3259.31126
  }
 }
 dps_results: {
@@ -672,6 +707,13 @@ dps_results: {
  value: {
   dps: 3891.6446
   tps: 3011.01795
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-WrathfulGladiator'sTotemofSurvival-51513"
+ value: {
+  dps: 4285.46922
+  tps: 3291.19022
  }
 }
 dps_results: {

@@ -228,7 +228,40 @@ func init() {
 		})
 	})
 
+	registerSpellPVPTotem("Savage Gladiator's Totem of Survival", 42594, 52)
+	registerSpellPVPTotem("Hateful Gladiator's Totem of Survival", 42601, 62)
+	registerSpellPVPTotem("Deadly Gladiator's Totem of Survival", 42602, 70)
+	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84)
+	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101)
+	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119)
+
 	// Even though these item effects are handled elsewhere, add them so they are
 	// detected for automatic testing.
 	core.NewItemEffect(TotemOfThePulsingEarth, func(core.Agent) {})
+}
+
+func registerSpellPVPTotem(name string, id int32, sp float64) {
+	core.NewItemEffect(id, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		procAura := shaman.NewTemporaryStatsAura(name+" proc", core.ActionID{ItemID: id}, stats.Stats{stats.SpellPower: sp}, time.Second*10)
+
+		shaman.RegisterAura(core.Aura{
+			Label:    name,
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() {
+					return
+				}
+
+				if !spell.Flags.Matches(SpellFlagShock) {
+					return
+				}
+
+				procAura.Activate(sim)
+			},
+		})
+	})
 }
