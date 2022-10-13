@@ -8,12 +8,15 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Spec } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 
 import {
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
+	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
+  Deathknight_Rotation_FrostRotationType,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -131,6 +134,20 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 0,
+  frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+  frostCustomRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomPlagueStrike }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomPestilence }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlastRime }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlast }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomBloodBoil }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomFrostStrike }),
+		],
+	}),
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({

@@ -176,6 +176,32 @@ message Deathknight {
 			Unholy = 1;
 		}
 
+		enum FrostRotationType {
+			UnknownType = 0;
+			SingleTarget = 1;
+			Custom = 2;
+		}
+		FrostRotationType frost_rotation_type = 19;
+		
+		enum CustomSpellOption {
+			CustomNoSpell = 0;
+			CustomIcyTouch = 1;
+			CustomPlagueStrike = 2;
+			CustomPestilence = 3;
+			CustomObliterate = 4;
+			CustomHowlingBlast = 5;
+			CustomHowlingBlastRime = 6;
+			CustomBloodBoil = 7;
+			CustomBloodStrike = 8;
+			CustomDeathAndDecay = 9;
+			CustomHornOfWinter = 10;
+			CustomUnbreakableArmor = 11;
+			CustomBloodTap = 12;
+			CustomEmpoweredRuneWeapon = 13;
+			CustomFrostStrike = 14;
+		}
+		CustomRotation frost_custom_rotation = 20;
+
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
 		
