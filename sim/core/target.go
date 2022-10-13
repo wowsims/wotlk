@@ -226,10 +226,8 @@ type AttackTable struct {
 	PartialResistNatureThresholds Thresholds
 	PartialResistShadowThresholds Thresholds
 
-	// These damage multipliers are used if they apply to a specific attacker-defender pair only,
-	//  e.g. Stormstrike increases the caster's damage vs the debuffed mob, but noone else is affected.
-	DamageDealtMultiplier               float64 // attacker buff, used for e.g. DoT snapshotting
-	DamageTakenMultiplier               float64 // defender debuff, changing DoT ticks dynamically
+	DamageDealtMultiplier               float64 // attacker buff, applied in applyAttackerModifiers()
+	DamageTakenMultiplier               float64 // defender debuff, applied in applyTargetModifiers()
 	NatureDamageTakenMultiplier         float64
 	PeriodicShadowDamageTakenMultiplier float64
 	HealingDealtMultiplier              float64

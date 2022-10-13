@@ -269,7 +269,7 @@ func init() {
 		w.BaseDamageMax += 15
 	})
 
-	core.NewItemEffect(41091, func(agent core.Agent) {
+	core.NewItemEffect(54998, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54757}
 
