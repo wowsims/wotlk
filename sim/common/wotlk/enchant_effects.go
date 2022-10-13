@@ -10,6 +10,47 @@ import (
 
 func init() {
 	// Keep these in order by item ID.
+	core.NewItemEffect(11207, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 11207
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 11207
+		if !mh && !oh {
+			return
+		}
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(6.0, procMask)
+
+		procSpell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 13897},
+			SpellSchool: core.SpellSchoolFire,
+			ProcMask:    core.ProcMaskSpellDamage,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 40)
+			},
+		})
+
+		character.GetOrRegisterAura(core.Aura{
+			Label:    "Fiery Weapon",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+					return
+				}
+
+				if ppmm.Proc(sim, spell.ProcMask, "Fiery Weapon") {
+					procSpell.Cast(sim, spellEffect.Target)
+				}
+			},
+		})
+	})
 
 	core.NewItemEffect(37339, func(agent core.Agent) {
 		character := agent.GetCharacter()
