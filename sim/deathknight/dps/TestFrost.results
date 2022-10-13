@@ -66,13 +66,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-<<<<<<< HEAD
-  dps: 7489.51282
+  dps: 7490.11691
   tps: 4427.45572
-=======
-  dps: 7507.21742
-  tps: 4437.91134
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
@@ -85,25 +80,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-<<<<<<< HEAD
-  dps: 6358.4494
+  dps: 6358.99419
   tps: 3762.36085
-=======
-  dps: 6358.90894
-  tps: 3762.3097
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-<<<<<<< HEAD
-  dps: 6067.31879
+  dps: 6067.86575
   tps: 3587.45392
-=======
-  dps: 6068.96653
-  tps: 3588.11439
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
@@ -466,13 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sPlate"
  value: {
-<<<<<<< HEAD
-  dps: 6785.69095
+  dps: 6786.2424
   tps: 4010.27377
-=======
-  dps: 6790.81922
-  tps: 4013.1442
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
@@ -527,13 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-StormshroudArmor"
  value: {
-<<<<<<< HEAD
-  dps: 6021.67147
+  dps: 6022.20715
   tps: 3560.91386
-=======
-  dps: 6022.29531
-  tps: 3560.96676
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
@@ -637,25 +612,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-<<<<<<< HEAD
-  dps: 7880.50957
+  dps: 7881.1245
   tps: 4659.40917
-=======
-  dps: 7876.98232
-  tps: 4656.98667
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 11210.79459
+  dps: 11211.3771
   tps: 6661.99636
-=======
-  dps: 11204.07901
-  tps: 6657.61751
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
@@ -675,13 +640,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-<<<<<<< HEAD
-  dps: 6997.81338
+  dps: 6998.18526
   tps: 4161.71888
-=======
-  dps: 6987.61521
-  tps: 4155.37685
->>>>>>> 6a815f0d2fea2dd352063093e10b819839228cd9
  }
 }
 dps_results: {
