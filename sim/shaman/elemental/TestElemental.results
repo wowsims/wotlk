@@ -355,8 +355,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-HatefulGladiator'sTotemofSurvival-42601"
  value: {
-  dps: 4248.89458
-  tps: 3264.06931
+  dps: 4231.2208
+  tps: 3251.01217
  }
 }
 dps_results: {
@@ -509,8 +509,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-SavageGladiator'sTotemofSurvival-42594"
  value: {
-  dps: 4242.47798
-  tps: 3259.31126
+  dps: 4227.65481
+  tps: 3248.36011
  }
 }
 dps_results: {

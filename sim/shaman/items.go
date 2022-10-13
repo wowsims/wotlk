@@ -228,22 +228,22 @@ func init() {
 		})
 	})
 
-	registerSpellPVPTotem("Savage Gladiator's Totem of Survival", 42594, 52)
-	registerSpellPVPTotem("Hateful Gladiator's Totem of Survival", 42601, 62)
-	registerSpellPVPTotem("Deadly Gladiator's Totem of Survival", 42602, 70)
-	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84)
-	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101)
-	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119)
+	registerSpellPVPTotem("Savage Gladiator's Totem of Survival", 42594, 52, 6)
+	registerSpellPVPTotem("Hateful Gladiator's Totem of Survival", 42601, 62, 6)
+	registerSpellPVPTotem("Deadly Gladiator's Totem of Survival", 42602, 70, 10)
+	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84, 10)
+	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101, 10)
+	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119, 10)
 
 	// Even though these item effects are handled elsewhere, add them so they are
 	// detected for automatic testing.
 	core.NewItemEffect(TotemOfThePulsingEarth, func(core.Agent) {})
 }
 
-func registerSpellPVPTotem(name string, id int32, sp float64) {
+func registerSpellPVPTotem(name string, id int32, sp float64, seconds float64) {
 	core.NewItemEffect(id, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura(name+" proc", core.ActionID{ItemID: id}, stats.Stats{stats.SpellPower: sp}, time.Second*10)
+		procAura := shaman.NewTemporaryStatsAura(name+" proc", core.ActionID{ItemID: id}, stats.Stats{stats.SpellPower: sp}, time.Second*time.Duration(seconds))
 
 		shaman.RegisterAura(core.Aura{
 			Label:    name,
