@@ -328,6 +328,8 @@ func init() {
 			IcyTouchActionID,
 		}
 
+		dk := agent.(DeathKnightAgent).GetDeathKnight()
+
 		cinderProcAura := character.GetOrRegisterAura(core.Aura{
 			ActionID:  core.ActionID{SpellID: 53386},
 			Label:     "Cinderglacier",
@@ -337,10 +339,12 @@ func init() {
 				aura.SetStacks(sim, aura.MaxStacks)
 				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= cinderBonusCoeff
 				aura.Unit.PseudoStats.FrostDamageDealtMultiplier *= cinderBonusCoeff
+				dk.modifyShadowDamageModifier(0.2)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= cinderBonusCoeff
 				aura.Unit.PseudoStats.FrostDamageDealtMultiplier /= cinderBonusCoeff
+				dk.modifyShadowDamageModifier(-0.2)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Outcome.Matches(core.OutcomeLanded) {

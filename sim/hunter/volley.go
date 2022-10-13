@@ -49,7 +49,7 @@ func (hunter *Hunter) registerVolleySpell() {
 
 		DamageMultiplier: 1 *
 			(1 + 0.04*float64(hunter.Talents.Barrage)),
-		CritMultiplier:   hunter.critMultiplier(true, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

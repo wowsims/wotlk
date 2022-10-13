@@ -14,17 +14,22 @@ var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
 func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	diseaseMulti := dk.dkDiseaseMultiplier(0.12)
 
+	// This spell (70890) is marked as "Ignore Damage Taken Modifiers" and "Ignore Caster Damage Modifiers", but does neither.
+	//  E.g. Ebon Plague affects it like a normal spell, but caster damage modifiers (Apply Aura: Mod Damage Done % (Shadow))
+	//  are affecting it additively (e.g. Blood Presence (+15%), Desolation (+5%), and Black Ice (+10%) add only 30% instead of
+	//  the regular ~32.9% damage).
+
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagIgnoreResists | core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := dk.LastScourgeStrikeDamage * diseaseMulti * dk.dkCountActiveDiseases(target)
+			baseDamage := dk.LastScourgeStrikeDamage * diseaseMulti * dk.dkCountActiveDiseases(target) * dk.bonusCoeffs.scourgeStrikeShadowMultiplier
 			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
 		},
 	})

@@ -25,6 +25,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Black Ice
 	dk.PseudoStats.FrostDamageDealtMultiplier *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
 	dk.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
+	dk.modifyShadowDamageModifier(0.02 * float64(dk.Talents.BlackIce))
 
 	// Nerves Of Cold Steel
 	if dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {

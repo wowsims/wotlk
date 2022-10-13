@@ -73,7 +73,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 4), .1, 0),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
-		CritMultiplier:   hunter.critMultiplier(true, true, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(true, true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

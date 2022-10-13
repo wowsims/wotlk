@@ -259,5 +259,4 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
-	{ID: 50256, Filter: true}, // Shadow's Edge One-Hander (NEW)
 }

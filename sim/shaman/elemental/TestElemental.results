@@ -299,15 +299,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 3526.85353
-  tps: 2704.74045
+  dps: 3484.94569
+  tps: 2671.44657
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 4670.61091
-  tps: 3545.2229
+  dps: 4467.26389
+  tps: 3393.19868
  }
 }
 dps_results: {
@@ -327,15 +327,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 3218.02748
-  tps: 2490.96085
+  dps: 3192.723
+  tps: 2471.23278
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-Gladiator'sWartide"
  value: {
-  dps: 3904.35932
-  tps: 3011.80676
+  dps: 3837.95809
+  tps: 2961.53186
  }
 }
 dps_results: {
@@ -572,15 +572,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 3523.73965
-  tps: 2714.43306
+  dps: 3512.3063
+  tps: 2707.97156
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-Thrall'sRegalia"
  value: {
-  dps: 4364.10415
-  tps: 3329.38888
+  dps: 4226.38283
+  tps: 3235.45445
  }
 }
 dps_results: {
@@ -670,8 +670,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 3895.54892
-  tps: 3014.29008
+  dps: 3891.6446
+  tps: 3011.01795
  }
 }
 dps_results: {

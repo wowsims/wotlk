@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 7933.34519
-  tps: 6511.47648
+  dps: 7887.3676
+  tps: 6463.62296
  }
 }
 dps_results: {
@@ -549,15 +549,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 8271.08155
-  tps: 6792.37037
+  dps: 8076.74315
+  tps: 6638.98641
  }
 }
 dps_results: {
  key: "TestArms-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 8760.91899
-  tps: 7227.08664
+  dps: 8405.91284
+  tps: 6931.25168
  }
 }
 dps_results: {
@@ -570,8 +570,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 11734.59579
-  tps: 10156.49697
+  dps: 11087.28114
+  tps: 9641.0798
  }
 }
 dps_results: {
@@ -591,8 +591,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7002.26586
-  tps: 6205.40306
+  dps: 6588.32044
+  tps: 5870.84162
  }
 }
 dps_results: {
@@ -612,8 +612,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 11746.89556
-  tps: 10177.35783
+  dps: 11119.56369
+  tps: 9674.5127
  }
 }
 dps_results: {
@@ -633,8 +633,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7093.60639
-  tps: 6294.38503
+  dps: 6712.50855
+  tps: 5991.12761
  }
 }
 dps_results: {

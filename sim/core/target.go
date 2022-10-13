@@ -204,7 +204,6 @@ func (target *Target) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
 }
 
 // Holds cached values for outcome/damage calculations, for a specific attacker+defender pair.
-//
 // These are updated dynamically when attacker or defender stats change.
 type AttackTable struct {
 	Attacker *Unit
@@ -227,9 +226,12 @@ type AttackTable struct {
 	PartialResistNatureThresholds Thresholds
 	PartialResistShadowThresholds Thresholds
 
-	DamageDealtMultiplier               float64
-	NatureDamageDealtMultiplier         float64
-	PeriodicShadowDamageDealtMultiplier float64
+	// These damage multipliers are used if they apply to a specific attacker-defender pair only,
+	//  e.g. Stormstrike increases the caster's damage vs the debuffed mob, but noone else is affected.
+	DamageDealtMultiplier               float64 // attacker buff, used for e.g. DoT snapshotting
+	DamageTakenMultiplier               float64 // defender debuff, changing DoT ticks dynamically
+	NatureDamageTakenMultiplier         float64
+	PeriodicShadowDamageTakenMultiplier float64
 	HealingDealtMultiplier              float64
 }
 
@@ -239,8 +241,9 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Defender: defender,
 
 		DamageDealtMultiplier:               1,
-		NatureDamageDealtMultiplier:         1,
-		PeriodicShadowDamageDealtMultiplier: 1,
+		DamageTakenMultiplier:               1,
+		NatureDamageTakenMultiplier:         1,
+		PeriodicShadowDamageTakenMultiplier: 1,
 		HealingDealtMultiplier:              1,
 	}
 

@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Gladiator'sVestments"
  value: {
-  dps: 6493.33199
-  tps: 4610.26571
+  dps: 6359.19468
+  tps: 4515.02822
  }
 }
 dps_results: {
@@ -346,15 +346,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 6292.02717
-  tps: 4467.33929
+  dps: 6441.65324
+  tps: 4573.5738
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 6292.02717
-  tps: 4467.33929
+  dps: 6460.68784
+  tps: 4587.08837
  }
 }
 dps_results: {
@@ -388,8 +388,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 6770.00526
-  tps: 4806.70373
+  dps: 6584.58051
+  tps: 4675.05216
  }
 }
 dps_results: {
@@ -528,8 +528,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 6268.35962
-  tps: 4450.53533
+  dps: 6084.03941
+  tps: 4319.66798
  }
 }
 dps_results: {

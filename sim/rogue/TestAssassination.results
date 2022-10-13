@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Gladiator'sVestments"
  value: {
-  dps: 7224.31369
-  tps: 5129.26272
+  dps: 7131.58856
+  tps: 5063.42788
  }
 }
 dps_results: {
@@ -346,15 +346,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7145.33051
-  tps: 5073.18466
+  dps: 7348.27527
+  tps: 5217.27544
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7145.33051
-  tps: 5073.18466
+  dps: 7373.11107
+  tps: 5234.90886
  }
 }
 dps_results: {
@@ -388,8 +388,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7741.17112
-  tps: 5496.2315
+  dps: 7577.38087
+  tps: 5379.94041
  }
 }
 dps_results: {
@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 7111.79733
-  tps: 5049.3761
+  dps: 6881.39336
+  tps: 4885.78929
  }
 }
 dps_results: {

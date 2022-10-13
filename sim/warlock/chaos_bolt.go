@@ -15,11 +15,13 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	baseCost := 0.07 * warlock.BaseMana
 	spellCoeff := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
+	// ChaosBolt is affected by level-based partial resists.
+	// TODO If there's bosses with elevated fire resistances, we'd need another spell flag,
+	//  or add an unlimited amount of "bonusSpellPenetration".
 	warlock.ChaosBolt = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagIgnoreResists,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

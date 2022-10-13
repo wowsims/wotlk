@@ -31,7 +31,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 
 		BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
-		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
