@@ -259,7 +259,7 @@ func init() {
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolFrost,
-			ProcMask:    core.ProcMaskEmpty,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
