@@ -1038,7 +1038,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 
 		flameCapProc := character.RegisterSpell(SpellConfig{
 			ActionID:    actionID,
-			ProcMask:    ProcMaskEmpty,
+			ProcMask:    ProcMaskSpellDamage,
 			SpellSchool: SpellSchoolFire,
 
 			DamageMultiplier: 1,
