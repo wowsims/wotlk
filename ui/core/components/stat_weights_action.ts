@@ -54,7 +54,7 @@ class EpWeightsMenu extends Popup {
 					<p>Use "CALCULATE" to begin calculating all EPs. 
 					Once complete you can use the new EPs by using the 
 					<span class="fa fa-copy" style="color: var(--theme-color-primary);"></span> icon above the EPs.</p>
-					<p>The 'Current EPs' column is the values currently used by the item pickers to sort items.</p>
+					<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items.</p>
 				</div>
 				<div class="ep-weights-results">
 				</div>
