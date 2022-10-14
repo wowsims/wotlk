@@ -6,7 +6,7 @@ import {
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
-	Deathknight_Rotation_StartingPresence as StartingPresence,
+	Deathknight_Rotation_Presence as StartingPresence,
 	Deathknight_Rotation_BloodRuneFiller as BloodRuneFiller,
 	Deathknight_Rotation_BloodTap as BloodTap,
 	Deathknight_Rotation_FrostRotationType as FrostRotationType,
@@ -220,7 +220,7 @@ export const OblitDelayDurationInput = InputHelpers.makeRotationNumberInput<Spec
 	fieldName: 'oblitDelayDuration',
 	label: 'Oblit Delay (ms)',
 	labelTooltip: 'How long a FS/HB/HW can delay a Oblit by.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getTalents().howlingBlast && player.getRotation().frostRotationType != FrostRotationType.Custom,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -228,7 +228,8 @@ export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDe
 	fieldName: 'autoRotation',
 	label: 'Automatic Rotation',
 	labelTooltip: 'Have sim automatically adjust rotation based on the scenario. This is still in development and currently only works for Unholy.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getTalents().howlingBlast,
 });
 
 export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
@@ -236,6 +237,19 @@ export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDea
 	label: 'Use Desync Rotation',
 	labelTooltip: 'Use the Desync Rotation.',
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.sim.getShowExperimental(),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const Presence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'presence',
+	label: 'Presence',
+	labelTooltip: 'Presence to be in during the encounter.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Frost', value: StartingPresence.Frost },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -273,6 +287,7 @@ export const DeathKnightRotationConfig = {
 			changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 		}),
+		Presence,
 		UseAutoRotation,
 		BloodTapGhoulFrenzy,
 		UseEmpowerRuneWeapon,
