@@ -193,6 +193,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					RogueInputs.StartingOverkillDuration,
 					OtherInputs.StartingConjured,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

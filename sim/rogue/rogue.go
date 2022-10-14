@@ -180,6 +180,10 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.disabledMCDs = rogue.DisableAllEnabledCooldowns(core.CooldownTypeUnknown)
 	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
+	if rogue.Options.StartingOverkillDuration > 0 {
+		rogue.OverkillAura.Activate(sim)
+		rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
+	}
 	rogue.setPriorityItems(sim)
 }
 
