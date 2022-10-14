@@ -23,6 +23,7 @@ import {
 	Rogue_Rotation as RogueRotation,
 	Rogue_Options as RogueOptions,
 	Rogue_Rotation_Frequency as Frequency,
+	Rogue_Options_PoisonImbue,
 } from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -68,6 +69,27 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 							} else {
 								return '';
 							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							const mhWeaponSpeed = simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;
+							const ohWeaponSpeed = simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed;
+							const mhImbue = simUI.player.getSpecOptions().mhImbue;
+							const ohImbue = simUI.player.getSpecOptions().ohImbue;
+							if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
+								return '';
+							}
+							if ((mhWeaponSpeed < ohWeaponSpeed) && (ohImbue == Rogue_Options_PoisonImbue.DeadlyPoison)) {
+								return 'Deadly poison applied to slower (off hand) weapon!';
+							}
+							if ((ohWeaponSpeed < mhWeaponSpeed) && (mhImbue == Rogue_Options_PoisonImbue.DeadlyPoison)) {
+								return 'Deadly poison applied to slower (main hand) weapon!';
+							}
+							return '';
 						},
 					};
 				},
