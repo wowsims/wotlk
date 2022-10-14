@@ -282,7 +282,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		pendingActions = append(pendingActions, pendingAction{cat.SavageRoarAura.ExpiresAt(), roarCost})
 	}
 
-	sort.Slice(pendingActions, func(i, j int) bool {
+	sort.SliceStable(pendingActions, func(i, j int) bool {
 		return pendingActions[i].refreshTime < pendingActions[j].refreshTime
 	})
 

@@ -2,7 +2,6 @@ package rogue
 
 import (
 	"math"
-	"sort"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -230,9 +229,9 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 	}
 
 	// Reverse
-	sort.Slice(prioStack, func(i, j int) bool {
-		return j < i
-	})
+	for i, j := 0, len(prioStack)-1; i < j; i, j = i+1, j-1 {
+		prioStack[i], prioStack[j] = prioStack[j], prioStack[i]
+	}
 
 	return prioStack
 }
