@@ -75,8 +75,9 @@ func (rogue *Rogue) registerMutilateSpell() {
 	ohHitSpell := rogue.newMutilateHitSpell(false)
 
 	baseCost := 60.0
+	staticModifier := 0.0
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate) {
-		baseCost -= 5
+		staticModifier = 5.0
 	}
 	refundAmount := baseCost * 0.8
 
@@ -86,7 +87,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		BaseCost:     60.0,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -94,7 +95,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
+			ModifyCast:  rogue.makeCastModifier(staticModifier),
 		},
 
 		ThreatMultiplier: 1,

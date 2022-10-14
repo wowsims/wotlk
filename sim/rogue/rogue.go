@@ -136,7 +136,7 @@ func (rogue *Rogue) Initialize() {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
 	}
 
-	rogue.CastModifier = rogue.makeCastModifier()
+	rogue.CastModifier = rogue.makeCastModifier(0)
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()

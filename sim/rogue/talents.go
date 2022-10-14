@@ -72,7 +72,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	}
 }
 
-func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
+func (rogue *Rogue) makeCastModifier(staticReduction float64) func(*core.Simulation, *core.Spell, *core.Cast) {
 	builderCostMultiplier := 1.0
 	costReduction := 40.0
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
@@ -84,7 +84,7 @@ func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core
 			costMultiplier *= builderCostMultiplier
 		}
 		cast.Cost *= costMultiplier
-		cast.Cost = math.Ceil(cast.Cost)
+		cast.Cost = math.Ceil(cast.Cost - staticReduction)
 		if rogue.VanCleefsProcAura.IsActive() {
 			cast.Cost = core.MaxFloat(0, cast.Cost-costReduction)
 			rogue.VanCleefsProcAura.Deactivate(sim)
