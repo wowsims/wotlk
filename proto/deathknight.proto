@@ -171,9 +171,10 @@ message Deathknight {
 			BloodBoil = 1;
 		}
 
-		enum StartingPresence {
+		enum Presence {
 			Blood = 0;
 			Unholy = 1;
+			Frost = 2;
 		}
 
 		enum FrostRotationType {
@@ -218,7 +219,7 @@ message Deathknight {
 
 		BloodRuneFiller blood_rune_filler = 9;
 
-		StartingPresence starting_presence = 10;
+		Presence starting_presence = 10;
 		BloodTap blood_tap = 11;
 
 		double oblit_delay_duration = 12;
@@ -230,7 +231,9 @@ message Deathknight {
 
 		bool desync_rotation = 17;
 
-		StartingPresence bl_presence = 18;
+		Presence bl_presence = 18;
+
+		Presence presence = 21;
 	}
 	Rotation rotation = 1;
 

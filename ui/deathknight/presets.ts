@@ -20,7 +20,7 @@ import {
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { Deathknight_Rotation_StartingPresence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
+import { Deathknight_Rotation_Presence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -108,7 +108,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 });
@@ -128,7 +128,8 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	startingPresence: Deathknight_Rotation_Presence.Blood,
+	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	avgAmsSuccessRate: 1.0,
@@ -162,7 +163,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 export const DefaultBloodRotation = DeathKnightRotation.create({
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
 	useAms: false,
 });

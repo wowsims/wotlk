@@ -184,10 +184,24 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 
 	dk.Presence = deathknight.UnsetPresence
 
-	if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy && dk.Talents.SummonGargoyle {
-		dk.ChangePresence(sim, deathknight.UnholyPresence)
-	} else {
-		dk.ChangePresence(sim, deathknight.BloodPresence)
+	b, f, u := deathknight.PointsInTalents(dk.Talents)
+
+	if f > u && f > b {
+		if dk.Rotation.Presence == proto.Deathknight_Rotation_Blood {
+			dk.ChangePresence(sim, deathknight.BloodPresence)
+		} else if dk.Rotation.Presence == proto.Deathknight_Rotation_Frost {
+			dk.ChangePresence(sim, deathknight.FrostPresence)
+		} else if dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy {
+			dk.ChangePresence(sim, deathknight.UnholyPresence)
+		}
+	}
+
+	if u > f && u > b {
+		if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy {
+			dk.ChangePresence(sim, deathknight.UnholyPresence)
+		} else if dk.Talents.SummonGargoyle {
+			dk.ChangePresence(sim, deathknight.BloodPresence)
+		}
 	}
 
 	dk.sr.Reset(sim)
