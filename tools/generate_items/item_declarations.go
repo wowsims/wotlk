@@ -171,6 +171,9 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 43231},
 	{ID: 43235},
 
+	// Thistle Tea
+	{ID: 7676},
+
 	// Wrath Enchant Icons
 	{ID: 38375},
 	{ID: 38376},
