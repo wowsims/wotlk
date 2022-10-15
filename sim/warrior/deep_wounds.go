@@ -20,7 +20,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
-		DamageMultiplier: 1 * (1 + 0.16*float64(warrior.Talents.DeepWounds)),
+		DamageMultiplier: 1 * 0.16 * float64(warrior.Talents.DeepWounds),
 		ThreatMultiplier: 1,
 	})
 
@@ -64,9 +64,9 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 	deepWoundsDot := warrior.DeepWoundsDots[target.Index]
 
 	if isMh {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower()) * warrior.PseudoStats.PhysicalDamageDealtMultiplier * 0.48
+		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower())
 	} else {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower()) * warrior.PseudoStats.PhysicalDamageDealtMultiplier * 0.48
+		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower())
 	}
 
 	newTickDamage := warrior.DeepwoundsDamageBuffer[target.Index] / 6
