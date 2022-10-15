@@ -189,6 +189,7 @@ message Warrior {
 			BerserkerStance = 2;
 		}
 		StanceOption stance_option = 19;
+		bool disable_tfb_bug = 20;
 	}
 	Rotation rotation = 1;
 

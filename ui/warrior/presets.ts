@@ -80,6 +80,7 @@ export const DefaultRotation = WarriorRotation.create({
 	useSlamOverExecute: true,
 	spamExecute: true,
 	stanceOption: StanceOption.DefaultStance,
+  disableTfbBug: false,
 });
 
 export const ArmsRotation = WarriorRotation.create({
@@ -94,6 +95,7 @@ export const ArmsRotation = WarriorRotation.create({
 	useHsDuringExecute: true,
 	spamExecute: true,
 	stanceOption: StanceOption.DefaultStance,
+  disableTfbBug: false,
 });
 
 export const DefaultOptions = WarriorOptions.create({
