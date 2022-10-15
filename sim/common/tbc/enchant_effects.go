@@ -195,7 +195,7 @@ func init() {
 		} else {
 			label += "OH"
 		}
-		ppmm := character.AutoAttacks.NewPPMManager(3, core.ProcMaskMelee)
+		ppmm := character.AutoAttacks.NewPPMManager(2.15, core.ProcMaskMelee)
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    label,
