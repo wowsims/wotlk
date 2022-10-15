@@ -66,7 +66,7 @@ func (warrior *Warrior) registerRendSpell() {
 			IsPeriodic: true,
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())*warrior.PseudoStats.PhysicalDamageDealtMultiplier) / 5
+					return (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
 				},
 			},
 			OutcomeApplier: warrior.OutcomeFuncTick(),
