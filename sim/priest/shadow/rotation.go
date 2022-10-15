@@ -348,10 +348,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// Find the maximum DPCT spell
 		bestDmg := 0.0
 		for i, v := range spellDPCT {
-			//if sim.Log != nil {
-			//spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
-			//spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
-			//}
+			if sim.Log != nil {
+				spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+				spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
+			}
 			if v > bestDmg {
 				bestIdx = i
 				bestDmg = v
@@ -434,7 +434,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			//spriest.Log(sim, "nextIdx[%d]", nextIdx)
 			//spriest.Log(sim, "bestIdx[%d]", bestIdx)
 			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
-			///spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
+			//spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
 			//spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
 			//spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
 			//spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
@@ -447,9 +447,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				} else if totalDps__poss2 > totalDps__poss0 && totalDps__poss2 > totalDps__poss1 && totalDps__poss2 > totalDps__poss3 {
 					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
 					//currentWait = currentWait
+					bestIdx = 4
 				} else if totalDps__poss3 > totalDps__poss0 && totalDps__poss3 > totalDps__poss1 && totalDps__poss3 > totalDps__poss2 {
 					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
 					//currentWait = currentWait
+					bestIdx = 4
 				} else {
 					bestIdx = 4
 				}
@@ -796,7 +798,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 
 	AlmostAnotherTick := numTicks_Base - numTicks_floored
 
-	if AlmostAnotherTick > 0.75 {
+	if AlmostAnotherTick > 0.95 {
 		numTicks += 1
 	}
 
