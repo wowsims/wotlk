@@ -125,7 +125,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.PRERAID_PRESET.gear,
+				gear: Presets.PRERAID_PRESET_ASSASSINATION.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatAgility]: 1.89,
@@ -142,7 +142,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.CombatTalents.data,
+				talents: Presets.AssassinationTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -214,8 +214,10 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
+					Presets.PRERAID_PRESET_ASSASSINATION,
+					Presets.PRERAID_PRESET_COMBAT,
+					Presets.P1_PRESET_ASSASSINATION,
+					Presets.P1_PRESET_COMBAT,
 				],
 			},
 		})
