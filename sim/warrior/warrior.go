@@ -16,6 +16,7 @@ type WarriorInputs struct {
 	PrecastShoutSapphire bool
 	PrecastShoutT2       bool
 	RendCdThreshold      time.Duration
+	DisableTfbBug        bool
 }
 
 type Warrior struct {
