@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.70346
+  weights: 0.70324
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.21218
+  weights: 0.21203
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.06117
+  weights: -0.06049
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.37537
-  weights: -0.07126
+  weights: 0.37567
+  weights: -0.07141
   weights: 0
   weights: 0
   weights: 0
@@ -523,15 +523,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 1515.40965
-  tps: 4366.68655
+  dps: 1482.09878
+  tps: 4297.61646
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 1657.43736
-  tps: 4732.84258
+  dps: 1620.46441
+  tps: 4656.17916
  }
 }
 dps_results: {
@@ -607,8 +607,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2798.24226
-  tps: 7386.36354
+  dps: 2798.16365
+  tps: 7386.20056
   dtps: 125.82077
  }
 }
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 2962.25251
-  tps: 7814.00828
+  dps: 2962.15555
+  tps: 7813.80721
   dtps: 121.89261
  }
 }

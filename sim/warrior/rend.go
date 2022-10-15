@@ -14,7 +14,6 @@ func (warrior *Warrior) registerRendSpell() {
 
 	cost := 10.0
 	refundAmount := cost * 0.8
-	isAbove75 := true
 	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -33,17 +32,13 @@ func (warrior *Warrior) registerRendSpell() {
 		},
 
 		// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
-		DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
+		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					if sim.GetRemainingDurationPercent() <= 0.75 && isAbove75 {
-						isAbove75 = false
-						warrior.Rend.DamageMultiplier /= 1.35
-					}
 					warrior.RendDots.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15))
 					warrior.rendValidUntil = sim.CurrentTime + time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15)
@@ -54,6 +49,13 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 	})
 	target := warrior.CurrentTarget
+	snapshotCalculator := func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+		tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
+		if sim.GetRemainingDurationPercent() > 0.75 {
+			return tickDamage * 1.35
+		}
+		return tickDamage
+	}
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
@@ -62,15 +64,11 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
-				},
-			},
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			BaseDamage:     core.BaseDamageConfig{Calculator: snapshotCalculator},
 			OutcomeApplier: warrior.OutcomeFuncTick(),
-		})),
+			IsPeriodic:     true,
+		}),
 	})
 }
 

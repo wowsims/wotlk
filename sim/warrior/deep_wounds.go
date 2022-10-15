@@ -20,7 +20,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
-		DamageMultiplier: 1 * 0.16 * float64(warrior.Talents.DeepWounds),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 	})
 
@@ -61,22 +61,26 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 }
 
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isMh bool) {
-	deepWoundsDot := warrior.DeepWoundsDots[target.Index]
+	dot := warrior.DeepWoundsDots[target.Index]
 
+	dotDamageMultiplier := 0.16 * float64(warrior.Talents.DeepWounds) * warrior.PseudoStats.DamageDealtMultiplier * warrior.PseudoStats.PhysicalDamageDealtMultiplier
 	if isMh {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower())
+		dotDamage := (warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * dotDamageMultiplier
+		warrior.DeepwoundsDamageBuffer[target.Index] += dotDamage
 	} else {
-		warrior.DeepwoundsDamageBuffer[target.Index] += warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(warrior.DeepWounds.MeleeAttackPower())
+		dwsMultiplier := 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
+		dotDamage := ((warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) * 0.5) + dot.Spell.BonusWeaponDamage()) * dwsMultiplier * dotDamageMultiplier
+		warrior.DeepwoundsDamageBuffer[target.Index] += dotDamage
 	}
 
 	newTickDamage := warrior.DeepwoundsDamageBuffer[target.Index] / 6
 	warrior.DeepWoundsTickDamage[target.Index] = newTickDamage
 	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
-	deepWoundsDot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+	dot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
 		IsPeriodic:     true,
 		BaseDamage:     core.BaseDamageConfigFlat(newTickDamage),
 		OutcomeApplier: warrior.OutcomeFuncTick(),
 	}))
-	deepWoundsDot.Apply(sim)
+	dot.Apply(sim)
 }
