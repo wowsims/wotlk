@@ -52,8 +52,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 6715.57814
-  tps: 4946.24133
+  dps: 6701.32894
+  tps: 4935.43911
  }
 }
 dps_results: {
@@ -80,22 +80,22 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 5475.52751
-  tps: 4040.59193
+  dps: 5420.03223
+  tps: 4000.31977
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5486.27239
-  tps: 4046.85468
+  dps: 5446.97591
+  tps: 4022.02975
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5197.85844
-  tps: 3839.41545
+  dps: 5215.90923
+  tps: 3853.48131
  }
 }
 dps_results: {
@@ -164,8 +164,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 5932.48384
-  tps: 4378.36279
+  dps: 5959.50987
+  tps: 4392.36846
  }
 }
 dps_results: {
@@ -192,8 +192,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 6747.23954
-  tps: 4965.47162
+  dps: 6745.99805
+  tps: 4965.36904
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 6401.90477
-  tps: 4712.64737
+  dps: 6435.72311
+  tps: 4739.3568
  }
 }
 dps_results: {
@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 6747.23954
-  tps: 4965.47162
+  dps: 6745.99805
+  tps: 4965.36904
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 6862.13906
-  tps: 5049.42983
+  dps: 6858.18225
+  tps: 5045.16785
  }
 }
 dps_results: {
@@ -332,15 +332,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-OnslaughtArmor"
  value: {
-  dps: 4147.85204
-  tps: 3073.53938
+  dps: 4167.72259
+  tps: 3089.78983
  }
 }
 dps_results: {
  key: "TestFury-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 4973.71227
-  tps: 3676.65961
+  dps: 4991.18564
+  tps: 3690.34821
  }
 }
 dps_results: {
@@ -430,8 +430,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 6240.35952
-  tps: 4599.74781
+  dps: 6223.98676
+  tps: 4585.43166
  }
 }
 dps_results: {
@@ -451,8 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-StormshroudArmor"
  value: {
-  dps: 5108.30385
-  tps: 3774.22229
+  dps: 5101.05813
+  tps: 3768.67964
  }
 }
 dps_results: {
@@ -542,50 +542,50 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5464.19781
-  tps: 4033.63975
+  dps: 5448.2137
+  tps: 4020.10766
  }
 }
 dps_results: {
  key: "TestFury-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 6660.12906
-  tps: 4899.22633
+  dps: 6622.23712
+  tps: 4872.35012
  }
 }
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 7035.62799
-  tps: 5174.51211
+  dps: 7091.52215
+  tps: 5215.89406
  }
 }
 dps_results: {
  key: "TestFury-Average-Default"
  value: {
-  dps: 6828.54195
-  tps: 5027.09378
+  dps: 6831.45783
+  tps: 5029.06853
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8837.48528
-  tps: 6964.42967
+  dps: 8846.66331
+  tps: 6972.83926
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6821.59942
-  tps: 5020.57967
+  dps: 6809.25487
+  tps: 5010.5639
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7958.98158
-  tps: 5851.61966
+  dps: 8048.53095
+  tps: 5917.13334
  }
 }
 dps_results: {
@@ -626,35 +626,35 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8187.27008
-  tps: 6013.17461
+  dps: 8112.68467
+  tps: 5957.1463
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5058.37285
-  tps: 4166.47668
+  dps: 5093.6002
+  tps: 4191.42445
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3507.58442
-  tps: 2610.98204
+  dps: 3488.31294
+  tps: 2597.0434
  }
 }
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3841.78479
-  tps: 2861.32266
+  dps: 3856.78678
+  tps: 2877.43882
  }
 }
 dps_results: {
  key: "TestFury-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6327.74368
-  tps: 4658.74341
+  dps: 6334.14654
+  tps: 4667.65436
  }
 }

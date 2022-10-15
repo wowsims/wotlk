@@ -403,7 +403,7 @@ dps_results: {
  key: "TestBalance-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 7044.42416
-  tps: 6868.34107
+  tps: 6868.53475
  }
 }
 dps_results: {
@@ -515,7 +515,7 @@ dps_results: {
  key: "TestBalance-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
   dps: 7044.42416
-  tps: 6864.9375
+  tps: 6864.83082
  }
 }
 dps_results: {

@@ -164,8 +164,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Defender'sCode-40257"
  value: {
-  dps: 5707.7822
-  tps: 5806.20768
+  dps: 5705.37155
+  tps: 5803.79703
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 5707.7822
-  tps: 5806.20768
+  dps: 5705.37155
+  tps: 5803.79703
  }
 }
 dps_results: {
@@ -416,8 +416,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 5707.7822
-  tps: 5806.20768
+  dps: 5705.37155
+  tps: 5803.79703
  }
 }
 dps_results: {
@@ -507,8 +507,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 5707.7822
-  tps: 5806.20768
+  dps: 5705.37155
+  tps: 5803.79703
  }
 }
 dps_results: {
@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 5707.7822
-  tps: 5806.20768
+  dps: 5705.37155
+  tps: 5803.79703
  }
 }
 dps_results: {
