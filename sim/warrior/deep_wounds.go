@@ -31,7 +31,7 @@ func (warrior *Warrior) applyDeepWounds() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell.ProcMask.Matches(core.ProcMaskEmpty) {
+			if spell.ProcMask.Matches(core.ProcMaskEmpty) || !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
 				return
 			}
 			if spellEffect.Outcome.Matches(core.OutcomeCrit) {

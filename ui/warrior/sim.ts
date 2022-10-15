@@ -45,8 +45,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
 				Stat.StatArmor,
-				// putting it here to enable moonkin crit
-				Stat.StatSpellCrit,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -59,9 +57,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
 				Stat.StatMeleeHit,
-				Stat.StatSpellHit,
 				Stat.StatMeleeCrit,
-				Stat.StatSpellCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
 				Stat.StatArmor,
@@ -102,7 +98,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					bloodlust: true,
 					devotionAura: TristateEffect.TristateEffectImproved,
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
-					moonkinAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: false,
