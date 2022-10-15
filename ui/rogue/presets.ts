@@ -68,8 +68,8 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodMegaMammothMeal,
 });
 
-export const PRERAID_PRESET = {
-	name: 'Pre-Raid',
+export const PRERAID_PRESET_ASSASSINATION = {
+	name: 'Pre-Raid Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
     {
@@ -159,10 +159,110 @@ export const PRERAID_PRESET = {
   ]}`),
 };
 
-export const P1_PRESET = {
-	name: 'P1',
+export const PRERAID_PRESET_COMBAT = {
+  name: 'Pre-Raid Combat',
+  tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+  gear: EquipmentSpec.fromJsonString(`{"items": [
+    {
+      "id": 42550,
+      "enchant": 44879,
+      "gems": [
+        41398,
+        40014
+      ]
+    },
+    {
+      "id": 40678
+    },
+    {
+      "id": 37139,
+      "enchant": 44871,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 34241,
+      "enchant": 55002,
+      "gems": [
+        40014
+      ]
+    },
+    {
+      "id": 39558,
+      "enchant": 44489,
+      "gems": [
+        39999,
+        40014
+      ]
+    },
+    {
+      "id": 34448,
+      "enchant": 44484,
+      "gems": [
+        39999,
+        0
+      ]
+    },
+    {
+      "id": 39560,
+      "enchant": 54999,
+      "gems": [
+        40014,
+        0
+      ]
+    },
+    {
+      "id": 40694,
+      "gems": [
+        42702,
+        39999
+      ]
+    },
+    {
+      "id": 37644,
+      "enchant": 38374
+    },
+    {
+      "id": 34575,
+      "enchant": 55016,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 40586
+    },
+    {
+      "id": 37642
+    },
+    {
+      "id": 40684
+    },
+    {
+      "id": 44253
+    },
+    {
+      "id": 37693,
+      "enchant": 44492
+    },
+    {
+      "id": 37856,
+      "enchant": 44492
+    },
+    {
+      "id": 44504,
+      "gems": [
+        40053
+      ]
+    }
+  ]}`),
+}
+
+export const P1_PRESET_ASSASSINATION = {
+	name: 'P1 Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
     {
       "id": 40499,
       "enchant": 44879,
@@ -174,14 +274,14 @@ export const P1_PRESET = {
     {
       "id": 44664,
       "gems": [
-        42154
+        40003
       ]
     },
     {
       "id": 40502,
       "enchant": 44871,
       "gems": [
-        36766
+        40003
       ]
     },
     {
@@ -192,7 +292,7 @@ export const P1_PRESET = {
       "id": 40539,
       "enchant": 44489,
       "gems": [
-        36766
+        40003
       ]
     },
     {
@@ -204,10 +304,10 @@ export const P1_PRESET = {
       ]
     },
     {
-      "id": 40496,
+      "id": 45397,
       "enchant": 54999,
       "gems": [
-        40058,
+        40053,
         0
       ]
     },
@@ -236,7 +336,7 @@ export const P1_PRESET = {
       "id": 40474
     },
     {
-        "id": 40684
+      "id": 40684
     },
     {
       "id": 44253
@@ -247,6 +347,101 @@ export const P1_PRESET = {
     },
     {
       "id": 40386,
+      "enchant": 44492
+    },
+    {
+      "id": 40385
+    }
+  ]}`),
+}
+
+export const P1_PRESET_COMBAT = {
+	name: 'P1 Combat',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+    {
+      "id": 40499,
+      "enchant": 44879,
+      "gems": [
+        41398,
+        42702
+      ]
+    },
+    {
+      "id": 44664,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 40502,
+      "enchant": 44871,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 40403,
+      "enchant": 55002
+    },
+    {
+      "id": 40539,
+      "enchant": 44489,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 39765,
+      "enchant": 44484,
+      "gems": [
+        39999,
+        0
+      ]
+    },
+    {
+      "id": 40541,
+      "enchant": 54999,
+      "gems": [
+        0
+      ]
+    },
+    {
+      "id": 40205,
+      "gems": [
+        39999
+      ]
+    },
+    {
+      "id": 44011,
+      "enchant": 38374,
+      "gems": [
+        39999,
+        39999
+      ]
+    },
+    {
+      "id": 39701,
+      "enchant": 55016
+    },
+    {
+      "id": 40074
+    },
+    {
+      "id": 40474
+    },
+    {
+      "id": 40684
+    },
+    {
+      "id": 44253
+    },
+    {
+      "id": 40383,
+      "enchant": 44492
+    },
+    {
+      "id": 39714,
       "enchant": 44492
     },
     {
