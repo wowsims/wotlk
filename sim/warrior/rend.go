@@ -54,7 +54,6 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 	})
 	target := warrior.CurrentTarget
-	tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()*warrior.PseudoStats.PhysicalDamageDealtMultiplier) / 5
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
@@ -65,8 +64,11 @@ func (warrior *Warrior) registerRendSpell() {
 		TickLength:    time.Second * 3,
 		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			IsPeriodic: true,
-
-			BaseDamage:     core.BaseDamageConfigFlat(tickDamage),
+			BaseDamage: core.BaseDamageConfig{
+				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+					return (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())*warrior.PseudoStats.PhysicalDamageDealtMultiplier) / 5
+				},
+			},
 			OutcomeApplier: warrior.OutcomeFuncTick(),
 		})),
 	})
