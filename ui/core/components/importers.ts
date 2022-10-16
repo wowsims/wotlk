@@ -1,13 +1,16 @@
 import { Class } from '../proto/common.js';
 import { EquipmentSpec } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
+import { Glyphs } from '../proto/common.js';
+import { Profession } from '../proto/common.js';
 import { Race } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { IndividualSimSettings } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player.js';
-import { classNames, nameToClass, nameToRace } from '../proto_utils/names.js';
-import { talentSpellIdsToTalentString } from '../talents/factory.js';
+import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names.js';
+import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory.js';
+import { GlyphConfig } from '../talents/glyphs_picker.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Popup } from './popup.js';
@@ -35,9 +38,6 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 		itemElem.classList.add('dropdown-item');
 		if (!showInRaidSim) {
 			itemElem.classList.add('within-raid-sim-hide');
-		}
-		if (label == 'Addon') {
-			itemElem.classList.add('experimental');
 		}
 		itemElem.textContent = label;
 		itemElem.addEventListener('click', onClick);
@@ -108,7 +108,7 @@ export abstract class Importer extends Popup {
 
 	abstract onImport(data: string): void
 
-	protected finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string) {
+	protected finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>) {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
 			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
@@ -142,6 +142,12 @@ export abstract class Importer extends Popup {
 			simUI.player.setGear(eventID, gear);
 			if (talentsStr) {
 				simUI.player.setTalentsString(eventID, talentsStr);
+			}
+			if (glyphs) {
+				simUI.player.setGlyphs(eventID, glyphs)
+			}
+			if (professions.length > 0) {
+				simUI.player.setProfessions(eventID, professions)
 			}
 		});
 
@@ -240,7 +246,7 @@ class Individual80UImporter<SpecType extends Spec> extends Importer {
 
 		const gear = this.simUI.sim.lookupEquipmentSpec(equipmentSpec);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
 	}
 }
 
@@ -255,7 +261,7 @@ class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 				Import settings from the <a href="https://www.curseforge.com/wow/addons/wowsimsexporter" target="_blank">WoWSims Importer In-Game Addon</a>.
 			</p>
 			<p>
-				This feature imports gear, race, and talents. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
+				This feature imports gear, race, talents, glyphs, and professions. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
 			</p>
 			<p>
 				To import, paste the output from the addon below and click, 'Import'.
@@ -277,12 +283,44 @@ class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 			throw new Error('Could not parse Race!');
 		}
 
+		const professions = (importJson['professions'] as Array<{name: string, level: number}>).map(profData => nameToProfession(profData.name));
+		professions.forEach((prof, i) => {
+			if (prof == Profession.ProfessionUnknown) {
+				throw new Error(`Could not parse profession '${importJson['professions'][i]}'`);
+			}
+		});
+
 		const talentsStr = (importJson['talents'] as string) || '';
+
+		const glyphsConfig = classGlyphsConfig[charClass];
+		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.majorGlyphs));
+		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.minorGlyphs));
+		const glyphs = Glyphs.create({
+			major1: majorGlyphIDs[0] || 0,
+			major2: majorGlyphIDs[1] || 0,
+			major3: majorGlyphIDs[2] || 0,
+			minor1: minorGlyphIDs[0] || 0,
+			minor2: minorGlyphIDs[1] || 0,
+			minor3: minorGlyphIDs[2] || 0,
+		});
 
 		const gearJson = importJson['gear'];
 		gearJson.items = (gearJson.items as Array<any>).filter(item => item != null);
 		const equipmentSpec = EquipmentSpec.fromJson(gearJson);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, glyphs, professions);
 	}
+}
+
+function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConfig>): number {
+	if (!glyphName) {
+		return 0;
+	}
+
+	for (let glyphIDStr in glyphsConfig) {
+		if (glyphsConfig[glyphIDStr].name == glyphName) {
+			return parseInt(glyphIDStr);
+		}
+	}
+	throw new Error(`Unknown glyph name '${glyphName}'`);
 }

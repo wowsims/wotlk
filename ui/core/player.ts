@@ -316,6 +316,12 @@ export class Player<SpecType extends Spec> {
 	getProfessions(): Array<Profession> {
 		return [this.profession1, this.profession2].filter(p => p != Profession.ProfessionUnknown);
 	}
+	setProfessions(eventID: EventID, newProfessions: Array<Profession>) {
+		TypedEvent.freezeAllAndDo(() => {
+			this.setProfession1(eventID, newProfessions[0] || Profession.ProfessionUnknown);
+			this.setProfession2(eventID, newProfessions[1] || Profession.ProfessionUnknown);
+		});
+	}
 	hasProfession(prof: Profession): boolean {
 		return this.getProfessions().includes(prof);
 	}
