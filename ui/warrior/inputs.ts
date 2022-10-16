@@ -92,8 +92,8 @@ export const WarriorRotationConfig = {
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendHealthThresholdAbove',
-			label: 'Rend health threshold',
-			labelTooltip: 'Rend will only be used when boss health is above this value.',
+			label: 'Rend health threshold (%)',
+			labelTooltip: 'Rend will only be used when boss health is above this value in %.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
 		}),
