@@ -295,6 +295,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
+ value: {
+  dps: 7308.07065
+  tps: 7126.98542
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdoloftheWhiteStag-32257"
  value: {
   dps: 7264.96157
