@@ -61,7 +61,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if maximizeIsUptime && insectSwarmUptime <= 0 {
 					return moonkin.InsectSwarm
 				}
-				if rotation.UseSmartCooldowns {
+				if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
@@ -76,7 +76,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if maximizeMfUptime && moonfireUptime <= 0 {
 					return moonkin.Moonfire
 				}
-				if rotation.UseSmartCooldowns {
+				if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
 					moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
