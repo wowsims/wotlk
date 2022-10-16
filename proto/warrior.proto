@@ -190,6 +190,7 @@ message Warrior {
 		}
 		StanceOption stance_option = 19;
 		bool disable_tfb_bug = 20;
+		double rend_health_threshold_above = 21;
 	}
 	Rotation rotation = 1;
 

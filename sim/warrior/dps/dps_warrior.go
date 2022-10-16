@@ -94,6 +94,7 @@ func (war *DpsWarrior) Initialize() {
 	war.Warrior.Initialize()
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
+	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()
