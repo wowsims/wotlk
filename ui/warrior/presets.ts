@@ -71,6 +71,7 @@ export const DefaultRotation = WarriorRotation.create({
 
 	msRageThreshold: 35,
 	hsRageThreshold: 30,
+  rendHealthThresholdAbove: 20,
 	rendRageThresholdBelow: 70,
 	slamRageThreshold: 25,
 	rendCdThreshold: 0,

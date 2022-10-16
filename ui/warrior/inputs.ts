@@ -91,6 +91,13 @@ export const WarriorRotationConfig = {
 			labelTooltip: 'Heroic Strike when rage is above:',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
+			fieldName: 'rendHealthThresholdAbove',
+			label: 'Rend health threshold',
+			labelTooltip: 'Rend will only be used when boss health is above this value.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendRageThresholdBelow',
 			label: 'Rend rage threshold below',
 			labelTooltip: 'Rend will only be used when rage is smaller than this value.',

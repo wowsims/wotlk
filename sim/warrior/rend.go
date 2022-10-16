@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerRendSpell() {
+func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
 	actionID := core.ActionID{SpellID: 47465}
 
 	cost := 10.0
@@ -70,8 +70,15 @@ func (warrior *Warrior) registerRendSpell() {
 			IsPeriodic:     true,
 		}),
 	})
+
+	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)
+	warrior.RendHealthThresholdAbove = healthThreshold / 100
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
+	if warrior.Talents.Bloodthirst {
+		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
+			warrior.CurrentRage() <= warrior.RendRageThresholdBelow && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent()
+	}
 	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }
