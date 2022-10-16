@@ -25,7 +25,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 	rotation := &moonkin.Rotation
 	target := moonkin.CurrentTarget
-	var spell *core.Spell
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
@@ -37,6 +36,18 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	fishingForSolar := solarICD < lunarICD
 	maximizeIsUptime := rotation.MaximizeIsUptime && rotation.UseIs
 	maximizeMfUptime := rotation.MaximizeMfUptime && rotation.UseMf
+
+	if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
+		return moonkin.Rebirth
+	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
+		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
+		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+		return moonkin.ForceOfNature
+	} else if moonkin.Starfall.IsReady(sim) {
+		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
+		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+		return moonkin.Starfall
+	}
 
 	if moonkin.Talents.Eclipse > 0 {
 		// Eclipse stuff
@@ -64,8 +75,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
-					moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-					moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
 				}
 				if moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds() {
 					return moonkin.Starfire
@@ -78,8 +87,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				}
 				if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
-					moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-					moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
 				}
 				if insectSwarmUptime > 0 || float64(rotation.IsInsideEclipseThreshold) >= solarUptime.Seconds() {
 					return moonkin.Wrath
@@ -93,25 +100,15 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	}
 
 	// Non-Eclipse
-	if spell == nil {
-		// We're not gonna rez someone during eclipse, are we ?
-		if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
-			return moonkin.Rebirth
-		} else if moonkin.Starfall.IsReady(sim) {
-			return moonkin.Starfall
-		} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
-			return moonkin.ForceOfNature
-		} else if rotation.UseMf && moonfireUptime <= 0 && (fishingForLunar || maximizeMfUptime) {
-			return moonkin.Moonfire
-		} else if rotation.UseIs && insectSwarmUptime <= 0 && (fishingForSolar || maximizeIsUptime) {
-			return moonkin.InsectSwarm
-		} else if fishingForLunar {
-			return moonkin.Wrath
-		} else {
-			return moonkin.Starfire
-		}
+	if rotation.UseMf && moonfireUptime <= 0 && (fishingForLunar || maximizeMfUptime) {
+		return moonkin.Moonfire
+	} else if rotation.UseIs && insectSwarmUptime <= 0 && (fishingForSolar || maximizeIsUptime) {
+		return moonkin.InsectSwarm
+	} else if fishingForLunar {
+		return moonkin.Wrath
+	} else {
+		return moonkin.Starfire
 	}
-	return moonkin.Starfire
 }
 
 func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
