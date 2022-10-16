@@ -59,8 +59,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  59,
-			BaseDamageMax:  87,
+			BaseDamageMin:  50,
+			BaseDamageMax:  78,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
