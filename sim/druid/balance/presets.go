@@ -63,10 +63,9 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			UseMf:                    true,
 			UseIs:                    true,
 			UseBattleRes:             true,
-			IsInsideEclipseThreshold: 14.0,
+			IsInsideEclipseThreshold: 15.0,
 			UseSmartCooldowns:        true,
-			McdInsideLunarThreshold:  15.0,
-			McdInsideSolarThreshold:  15.0,
+			MaximizeIsUptime:         true,
 		},
 	},
 }
