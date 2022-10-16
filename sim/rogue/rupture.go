@@ -14,7 +14,7 @@ const RuptureSpellID = 48672
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	numTicks := int(comboPoints) + 3 + core.TernaryInt(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
+	numTicks := comboPoints + 3 + core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
 	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
@@ -48,7 +48,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.ruptureDot.Spell = spell
-					rogue.ruptureDot.NumberOfTicks = numTicks
+					rogue.ruptureDot.NumberOfTicks = int(numTicks)
 					rogue.ruptureDot.RecomputeAuraDuration()
 					rogue.ruptureDot.Apply(sim)
 					rogue.ApplyFinisher(sim, spell)
@@ -93,7 +93,7 @@ func (rogue *Rogue) registerRupture() {
 				comboPoints := rogue.ComboPoints()
 				return 127 +
 					18*float64(comboPoints) +
-					[]float64{0.0, 0.015, 0.024, 0.03, 0.034286, 0.0375}[comboPoints]*spell.MeleeAttackPower()
+					[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*spell.MeleeAttackPower()
 			}),
 			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(),
 		}),

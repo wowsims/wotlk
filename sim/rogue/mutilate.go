@@ -22,7 +22,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 	procMask := core.ProcMaskMeleeMHSpecial
 	effect := core.SpellEffect{
 		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 181, false),
-		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialCritOnly(), // Crit/Hit, should include Block
 
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if isMH {
@@ -100,7 +100,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
+			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(), // Miss/Dodge/Parry/Hit
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)

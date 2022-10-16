@@ -69,8 +69,9 @@ type Rogue struct {
 
 	lastDeadlyPoisonProcMask    core.ProcMask
 	deadlyPoisonProcChanceBonus float64
-	instantPoisonPPMM           core.PPMManager
 	deadlyPoisonDots            []*core.Dot
+	instantPoisonPPMM           core.PPMManager
+	woundPoisonPPMM             core.PPMManager
 	ruptureDot                  *core.Dot
 
 	AdrenalineRushAura   *core.Aura
@@ -244,8 +245,8 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 
 func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
-		chanceToRefresh := float64(rogue.Talents.CutToTheChase) * 0.2
-		if chanceToRefresh == 1 || sim.RandomFloat("Cut to the Chase") < chanceToRefresh {
+		procChance := float64(rogue.Talents.CutToTheChase) * 0.2
+		if sim.Proc(procChance, "Cut to the Chase") {
 			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[5]
 			rogue.SliceAndDiceAura.Activate(sim)
 		}

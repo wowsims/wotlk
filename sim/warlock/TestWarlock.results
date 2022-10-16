@@ -45,8 +45,8 @@ character_stats_results: {
 dps_results: {
  key: "TestWarlock-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 7101.56325
-  tps: 6369.72967
+  dps: 7084.43112
+  tps: 6352.63961
  }
 }
 dps_results: {
@@ -59,8 +59,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 6935.84464
-  tps: 6190.35532
+  dps: 6948.48271
+  tps: 6205.40364
  }
 }
 dps_results: {
@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 7025.98746
-  tps: 6280.49813
+  dps: 7039.50643
+  tps: 6296.42736
  }
 }
 dps_results: {
@@ -94,8 +94,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 6936.90865
-  tps: 6191.41932
+  dps: 6920.33437
+  tps: 6178.615
  }
 }
 dps_results: {
@@ -115,8 +115,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 6935.84464
-  tps: 6190.35532
+  dps: 6948.48271
+  tps: 6205.40364
  }
 }
 dps_results: {
@@ -164,8 +164,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 6935.84464
-  tps: 6190.35532
+  dps: 6948.48271
+  tps: 6205.40364
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7052.51393
-  tps: 6311.08561
+  dps: 7042.35258
+  tps: 6300.55959
  }
 }
 dps_results: {
@@ -437,7 +437,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6991.31323
-  tps: 6280.49813
+  dps: 7004.80674
+  tps: 6296.42736
  }
 }

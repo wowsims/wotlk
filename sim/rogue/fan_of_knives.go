@@ -33,7 +33,7 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.
 
 	effect := core.SpellEffect{
 		BaseDamage:     baseDamageConfig,
-		OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 	}
 
 	spell := rogue.RegisterSpell(core.SpellConfig{

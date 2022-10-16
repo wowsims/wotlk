@@ -47,7 +47,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					points := int32(1)

@@ -102,7 +102,7 @@ func (mage *Mage) applyHotStreak() {
 				return
 			} else {
 				if heatingUp {
-					if procChance == 1 || sim.RandomFloat("Hot Streak") < procChance {
+					if sim.Proc(procChance, "Hot Streak") {
 						mage.HotStreakAura.Activate(sim)
 						heatingUp = false
 					}

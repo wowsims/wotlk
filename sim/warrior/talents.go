@@ -587,7 +587,7 @@ func (warrior *Warrior) applySuddenDeath() {
 		Label:    "Sudden Death Proc",
 		ActionID: core.ActionID{SpellID: 29724},
 		Duration: time.Second * 10,
-		// 2 stacks to accomodate T10 4 pc
+		// 2 stacks to accommodate T10 4 pc
 		MaxStacks: 2,
 	})
 	warrior.RegisterAura(core.Aura{
@@ -647,7 +647,7 @@ func (warrior *Warrior) applyShieldSpecialization() {
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
-				if procChance == 1.0 || sim.RandomFloat("Shield Specialization") < procChance {
+				if sim.Proc(procChance, "Shield Specialization") {
 					warrior.AddRage(sim, rageAdded, rageMetrics)
 				}
 			}

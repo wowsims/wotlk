@@ -54,18 +54,17 @@ func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 }
 
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
-	ruthlessnessChance := 0.2 * float64(rogue.Talents.Ruthlessness)
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
-
-	relentlessStrikes := rogue.Talents.RelentlessStrikes
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
 
 	return func(sim *core.Simulation, numPoints int32) {
-		if ruthlessnessChance > 0 && sim.RandomFloat("Ruthlessness") < ruthlessnessChance {
-			rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
+		if t := rogue.Talents.Ruthlessness; t > 0 {
+			if sim.RandomFloat("Ruthlessness") < 0.2*float64(t) {
+				rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
+			}
 		}
-		if relentlessStrikes > 0 {
-			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(relentlessStrikes)*float64(numPoints) {
+		if t := rogue.Talents.RelentlessStrikes; t > 0 {
+			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(t*numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
 		}
@@ -227,7 +226,7 @@ func (rogue *Rogue) applySealFate() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("Seal Fate") < procChance {
+			if sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
 			}
 		},
@@ -323,7 +322,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		return
 	}
 
-	procChance := float64(rogue.Talents.FocusedAttacks) / 3.0
+	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.FocusedAttacks]
 	energyMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 51637})
 
 	rogue.RegisterAura(core.Aura{
@@ -340,7 +339,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
-			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
+			if sim.Proc(procChance, "Focused Attacks") {
 				rogue.AddEnergy(sim, 2, energyMetrics)
 			}
 		},

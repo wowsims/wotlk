@@ -69,7 +69,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfigMeleeWeapon(
 				core.MainHand, true, 0, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())

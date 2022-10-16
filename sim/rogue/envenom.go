@@ -8,17 +8,21 @@ import (
 )
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 	baseDamage := 215.0
-	apRatio := 0.09
-	chanceToRetainStacks := rogue.Talents.MasterPoisoner / 3.0
+	apRatio := 0.09 * float64(comboPoints)
+
+	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
 
 	cost := 35.0
+	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
+	// TODO Envenom can only be cast if the target is afflicted by Deadly Poison
+	//  The current rotation code doesn't handle cast failures gracefully, so this is hard to
+	//  work around at the moment
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 57993, Tag: comboPoints},
 		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		ProcMask:     core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
 		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
 		BaseCost:     cost,
@@ -29,12 +33,10 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				GCD:  time.Second,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				// The envenom aura is actived even if the attack fails to land
-				// This aura is also applied before the hit effect
+				// - the aura is active even if the attack fails to land
+				// - the aura is applied before the hit effect
 				// See: https://github.com/where-fore/rogue-wotlk/issues/32
-				deadlyPoisonStacks := rogue.deadlyPoisonDots[rogue.CurrentTarget.Index].GetStacks()
-				doses := core.MinInt32(deadlyPoisonStacks, comboPoints)
-				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+doses)
+				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
 				rogue.EnvenomAura.Activate(sim)
 				rogue.CastModifier(sim, spell, cast)
 			},
@@ -50,21 +52,25 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					target := hitEffect.Target
-					deadlyPoisonStacks := rogue.deadlyPoisonDots[target.Index].GetStacks()
-					// Despite the tool-tip, doses are not currently used in the calculation
-					// doses := float64(core.MinInt32(deadlyPoisonStacks, comboPoints))
-					return baseDamage*float64(deadlyPoisonStacks) + apRatio*float64(comboPoints)*spell.MeleeAttackPower()
+					dp := rogue.deadlyPoisonDots[hitEffect.Target.Index]
+					// - base damage is scaled by consumed doses (<= comboPoints)
+					// - apRatio is independent of consumed doses (== comboPoints)
+					consumed := core.MinInt32(dp.GetStacks(), comboPoints)
+					return baseDamage*float64(consumed) + apRatio*spell.MeleeAttackPower()
 				},
 			},
 			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				target := spellEffect.Target
 				if spellEffect.Landed() {
 					rogue.ApplyFinisher(sim, spell)
 					rogue.ApplyCutToTheChase(sim)
-					if chanceToRetainStacks < 1 && sim.RandomFloat("Master Poisoner") > float64(chanceToRetainStacks) {
-						rogue.deadlyPoisonDots[target.Index].Cancel(sim)
+					if !sim.Proc(chanceToRetainStacks, "Master Poisoner") {
+						dp := rogue.deadlyPoisonDots[spellEffect.Target.Index]
+						if newStacks := dp.GetStacks() - comboPoints; newStacks > 0 {
+							dp.SetStacks(sim, newStacks)
+						} else {
+							dp.Cancel(sim)
+						}
 					}
 				} else {
 					if refundAmount > 0 {
