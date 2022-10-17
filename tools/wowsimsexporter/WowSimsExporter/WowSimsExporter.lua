@@ -10,7 +10,7 @@ WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")
 
-local version = "2.2"
+local version = "2.3"
 
 local defaults = {
 	profile = {
