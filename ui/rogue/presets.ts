@@ -304,7 +304,7 @@ export const P1_PRESET_ASSASSINATION = {
       ]
     },
     {
-      "id": 45397,
+      "id": 40496,
       "enchant": 54999,
       "gems": [
         40053,
