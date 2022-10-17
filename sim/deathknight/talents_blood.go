@@ -11,7 +11,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-
 )
 
 func (dk *Deathknight) ApplyBloodTalents() {
@@ -309,7 +308,7 @@ func (dk *Deathknight) applySuddenDoom() {
 				return
 			}
 
-			if spell != dk.HeartStrike.Spell && spell != dk.BloodStrike.Spell {
+			if dk.runeSpellComp(spell, dk.HeartStrike) && dk.runeSpellComp(spell, dk.BloodStrike) {
 				return
 			}
 

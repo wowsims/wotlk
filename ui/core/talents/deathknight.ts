@@ -676,8 +676,8 @@ export const deathknightTalentsConfig: TalentsConfig<DeathknightTalents> = newTa
 				},
 				"spellIds": [
 					54639,
-					54637,
-					54638
+					54638,
+					54637
 				],
 				"maxPoints": 3
 			},
