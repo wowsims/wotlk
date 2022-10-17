@@ -109,7 +109,13 @@ func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.switchIT = false
 
 	dk.Presence = deathknight.UnsetPresence
-	dk.ChangePresence(sim, deathknight.FrostPresence)
+	if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Blood {
+		dk.ChangePresence(sim, deathknight.BloodPresence)
+	} else if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Frost {
+		dk.ChangePresence(sim, deathknight.FrostPresence)
+	} else if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Unholy {
+		dk.ChangePresence(sim, deathknight.UnholyPresence)
+	}
 
 	dk.SetupRotations()
 }

@@ -54,11 +54,11 @@ func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *CustomSpell {
 	return nil
 }
 
-func (cr *CustomRotation) Cast(sim *core.Simulation) {
+func (cr *CustomRotation) Cast(sim *core.Simulation) bool {
 	spell := cr.ChooseSpell(sim)
 
 	if spell == nil {
-		return
+		return false
 	}
 
 	success := false
@@ -71,4 +71,6 @@ func (cr *CustomRotation) Cast(sim *core.Simulation) {
 			cr.character.WaitForMana(sim, cost)
 		}
 	}
+
+	return true
 }

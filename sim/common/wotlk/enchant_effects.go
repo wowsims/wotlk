@@ -507,7 +507,7 @@ func init() {
 			return
 		}
 
-		character.AddStat(stats.Defense, 13)
+		character.AddStat(stats.Defense, 13*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.01)
 	})
 
@@ -523,7 +523,7 @@ func init() {
 			return
 		}
 
-		character.AddStat(stats.Defense, 25)
+		character.AddStat(stats.Defense, 25*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.02)
 	})
 
