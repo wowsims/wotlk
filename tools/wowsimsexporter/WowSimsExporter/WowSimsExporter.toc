@@ -1,5 +1,5 @@
-## Title: WowSimsExporter |c0000ffffWOTLK|r
-## Version: 2.1
+## Title: WowSimsExporter v2.2 |c0000ffffWOTLK|r 
+## Version: 2.2
 ## Author: generalwrex
 ## Interface: 30400
 ## Notes: This is an exporter written to quickly export your character to https://wowsims.github.io/wotlk/ for simulations.
