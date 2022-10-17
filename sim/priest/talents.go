@@ -151,7 +151,7 @@ func (priest *Priest) applyGrace() {
 		},
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.PenanceHeal {
-				if procChance == 1 || sim.RandomFloat("Grace") < procChance {
+				if sim.Proc(procChance, "Grace") {
 					aura := auras[spellEffect.Target.UnitIndex]
 					aura.Activate(sim)
 					aura.AddStack(sim)

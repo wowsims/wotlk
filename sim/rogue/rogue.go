@@ -69,8 +69,9 @@ type Rogue struct {
 
 	lastDeadlyPoisonProcMask    core.ProcMask
 	deadlyPoisonProcChanceBonus float64
-	instantPoisonPPMM           core.PPMManager
 	deadlyPoisonDots            []*core.Dot
+	instantPoisonPPMM           core.PPMManager
+	woundPoisonPPMM             core.PPMManager
 	ruptureDot                  *core.Dot
 
 	AdrenalineRushAura   *core.Aura
@@ -129,8 +130,8 @@ func (rogue *Rogue) HasMinorGlyph(glyph proto.RogueMinorGlyph) bool {
 
 func (rogue *Rogue) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	rogue.AutoAttacks.MHConfig.CritMultiplier = rogue.MeleeCritMultiplier(true, false)
-	rogue.AutoAttacks.OHConfig.CritMultiplier = rogue.MeleeCritMultiplier(false, false)
+	rogue.AutoAttacks.MHConfig.CritMultiplier = rogue.MeleeCritMultiplier(false)
+	rogue.AutoAttacks.OHConfig.CritMultiplier = rogue.MeleeCritMultiplier(false)
 
 	if rogue.Talents.QuickRecovery > 0 {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
@@ -187,14 +188,12 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.setPriorityItems(sim)
 }
 
-func (rogue *Rogue) MeleeCritMultiplier(isMH bool, applyLethality bool) float64 {
-	primaryModifier := 1.0
-	secondaryModifier := 0.0
-	preyModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
+func (rogue *Rogue) MeleeCritMultiplier(applyLethality bool) float64 {
+	primaryModifier := rogue.preyOnTheWeakMultiplier(rogue.CurrentTarget)
+	var secondaryModifier float64
 	if applyLethality {
 		secondaryModifier += 0.06 * float64(rogue.Talents.Lethality)
 	}
-	primaryModifier *= preyModifier
 	return rogue.Character.MeleeCritMultiplier(primaryModifier, secondaryModifier)
 }
 func (rogue *Rogue) SpellCritMultiplier() float64 {
@@ -244,8 +243,8 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 
 func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
-		chanceToRefresh := float64(rogue.Talents.CutToTheChase) * 0.2
-		if chanceToRefresh == 1 || sim.RandomFloat("Cut to the Chase") < chanceToRefresh {
+		procChance := float64(rogue.Talents.CutToTheChase) * 0.2
+		if sim.Proc(procChance, "Cut to the Chase") {
 			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[5]
 			rogue.SliceAndDiceAura.Activate(sim)
 		}

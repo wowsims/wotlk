@@ -63,6 +63,10 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		Priority:     options.Priority,
 	}
 
+	if options.TickImmediately {
+		pa.NextActionAt = sim.CurrentTime
+	}
+
 	tickIndex := 0
 
 	pa.OnAction = func(sim *Simulation) {
@@ -83,24 +87,12 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		}
 	}
 
-	if options.TickImmediately {
-		if sim.CurrentTime == 0 {
-			pa.NextActionAt = 0
-		} else {
-			options.OnAction(sim)
-		}
-	}
-
 	return pa
 }
 
 // Convenience for immediately creating and starting a periodic action.
 func StartPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
 	pa := NewPeriodicAction(sim, options)
-
-	// If `TickImmediately` is true and CurrentTime > 0 the PA will be launched inside the constructor.
-	if !options.TickImmediately || sim.CurrentTime == 0 {
-		sim.AddPendingAction(pa)
-	}
+	sim.AddPendingAction(pa)
 	return pa
 }

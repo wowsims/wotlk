@@ -49,7 +49,7 @@ func (mage *Mage) registerScorchSpell() {
 			baseDamage := sim.Roll(382, 451) + (1.5/3.5)*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if hasImpScorch && result.Landed() {
-				if procChance == 1.0 || sim.RandomFloat("Improved Scorch") <= procChance {
+				if sim.Proc(procChance, "Improved Scorch") {
 					mage.ScorchAura.Activate(sim)
 				}
 			}

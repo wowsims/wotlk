@@ -33,8 +33,8 @@ func (rogue *Rogue) registerShivSpell() {
 
 		DamageMultiplier: (1 +
 			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0)) * (1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)),
-		CritMultiplier:   rogue.MeleeCritMultiplier(false, true),
+			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0)) * rogue.dwsMultiplier(),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

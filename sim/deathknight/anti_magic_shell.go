@@ -1,18 +1,18 @@
 package deathknight
 
 import (
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerAntiMagicShellSpell() {
 	actionID := core.ActionID{SpellID: 48707}
 	cdTimer := dk.NewTimer()
-	cd := time.Second*45 - time.Second*time.Duration(core.TernaryInt32(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfAntiMagicShell), 2, 0))
-
+	cd := time.Second * 45
+	
 	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.AntiMagicShell = dk.RegisterSpell(rs, core.SpellConfig{
@@ -47,7 +47,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	dk.AntiMagicShellAura = dk.RegisterAura(core.Aura{
 		Label:    "Anti-Magic Shell",
 		ActionID: actionID,
-		Duration: time.Second * 5,
+		Duration: time.Second*5 + core.TernaryDuration(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfAntiMagicShell), 2*time.Second, 0),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if dk.Inputs.IsDps {
 				target := aura.Unit.CurrentTarget
