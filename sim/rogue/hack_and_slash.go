@@ -27,7 +27,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 				DamageMultiplier: rogue.AutoAttacks.MHConfig.DamageMultiplier,
-				CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+				CritMultiplier:   rogue.MeleeCritMultiplier(false),
 				ThreatMultiplier: rogue.AutoAttacks.MHConfig.ThreatMultiplier,
 
 				ApplyEffects: rogue.AutoAttacks.MHConfig.ApplyEffects,

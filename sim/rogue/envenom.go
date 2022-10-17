@@ -46,7 +46,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		DamageMultiplier: 1 +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.VilePoisons],
-		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

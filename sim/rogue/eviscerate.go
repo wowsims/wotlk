@@ -39,7 +39,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			0.03*float64(rogue.Talents.Aggression),
-		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{

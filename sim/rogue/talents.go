@@ -24,7 +24,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
-	rogue.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+	rogue.AutoAttacks.OHConfig.DamageMultiplier *= rogue.dwsMultiplier()
 
 	if rogue.Talents.Deadliness > 0 {
 		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
@@ -44,6 +44,11 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
 	rogue.registerKillingSpreeCD()
+}
+
+// dwsMultiplier returns the offhand damage multiplier
+func (rogue *Rogue) dwsMultiplier() float64 {
+	return 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
 }
 
 func getRelentlessStrikesSpellID(talentPoints int32) int32 {
@@ -137,7 +142,8 @@ func (rogue *Rogue) registerHungerForBlood() {
 }
 
 func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
-	// TODO: Use the following predicate if/when health values are modeled
+	// TODO: Use the following predicate if/when health values are modeled,
+	//  but note that this would have to be applied dynamically in that case.
 	//if rogue.CurrentTarget != nil &&
 	//rogue.CurrentTarget.HasHealthBar() &&
 	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
