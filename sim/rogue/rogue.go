@@ -156,7 +156,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
 
-	if rogue.Talents.Mutilate {
+	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
 		rogue.registerEnvenom()
 	}
 
