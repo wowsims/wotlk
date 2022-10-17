@@ -12,7 +12,7 @@ import (
 const (
 	// 7.5 CPM
 	maxFireBlastCasts = 15
-	maxFireNovaCasts  = 15
+	maxFireNovaCasts  = 2
 )
 
 type FireElemental struct {
@@ -94,6 +94,11 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
+	if fireElemental.FireNova.BaseCost > fireElemental.CurrentMana() {
+		fireElemental.WaitForMana(sim, fireElemental.FireNova.BaseCost)
+		return
+	}
+
 	random := sim.RandomFloat("Fire Elemental Pet Spell")
 
 	//Meele the other 30%
@@ -156,7 +161,7 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 				TODO working on figuring this out, getting close need more trials. will need to remove specific buffs,
 				ie does not gain the benefit from draenei buff.
 			*/
-			stats.Expertise: math.Floor((spellHitRatingFromOwner * 0.79)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: math.Floor((spellHitRatingFromOwner * 0.79)),
 		}
 	}
 }
