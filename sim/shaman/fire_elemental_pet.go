@@ -12,7 +12,7 @@ import (
 const (
 	// 7.5 CPM
 	maxFireBlastCasts = 15
-	maxFireNovaCasts  = 2
+	maxFireNovaCasts  = 15
 )
 
 type FireElemental struct {
