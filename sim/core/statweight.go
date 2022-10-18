@@ -76,14 +76,6 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 	var waitGroup sync.WaitGroup
 
-	// Jooper (12/10/2022):
-	//	- So my reasoning for changing the central difference for EP calculations to a unilateral calculation is simply that EPs are typically
-	//  used to assign a value to an increase in stats, not a decrease. And in most situations, with constant stat mods the upper bound will not
-	//  vary in a similar manner to the lower bound. When near a cap of some sort you would ideally change your stat mod such that it doesn't go
-	//  over this cap, however due to the random nature of the simulations which introduces noise the effect of the stat mod itself can be lost.
-	//  There are two strategies or compromises: 1) Accepting that our stat mod goes over the cap and therefore typically shows a diminished
-	//  value than it should, which is generally not very useful. 2) Doing the calculation Away from the cap itself, but this introduces other problems.
-
 	result := StatWeightsResult{}
 	dpsHists := [stats.Len]map[int32]int32{}
 	hpsHists := [stats.Len]map[int32]int32{}
@@ -160,12 +152,44 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		dtpsHists[stat] = dtpsMetrics.Hist
 	}
 
-	percMod := 0.05
+	percMod := 0.025
 	statMods := stats.Stats{}
 	statMods[referenceStat] = baseStats[referenceStat] * percMod
 
+	statCap := func(stat stats.Stat, mod float64, cap float64) {
+		if baseStats[stat] < cap && baseStats[stat]+mod > cap {
+			modToCap := cap - baseStats[stat]
+			if modToCap >= 0.5*mod {
+				statMods[stat] = modToCap
+			}
+		}
+	}
+
+	meleeSoftCap := 8.0 * MeleeHitRatingPerHitChance
+	meleeHardCap := 27.0 * MeleeHitRatingPerHitChance
+	spellCap := 17.0 * SpellHitRatingPerHitChance
+	if swr.Debuffs != nil && (swr.Debuffs.Misery || swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved) {
+		spellCap -= 3 * SpellHitRatingPerHitChance
+	}
+
+	expSoftCap := 213.0
+	expHardCap := 459.0
+
 	for _, stat := range statsToWeigh {
-		statMods[stat] = baseStats[stat] * percMod
+		mod := baseStats[stat] * percMod
+		if stat == stats.MeleeHit {
+			statCap(stats.MeleeHit, mod, meleeSoftCap)
+			statCap(stats.MeleeHit, mod, meleeHardCap)
+		} else if stat == stats.SpellHit {
+			statCap(stats.SpellHit, mod, spellCap)
+		} else if stat == stats.Expertise {
+			statCap(stats.Expertise, mod, expSoftCap)
+			statCap(stats.Expertise, mod, expHardCap)
+		}
+
+		if statMods[stat] == 0 {
+			statMods[stat] = mod
+		}
 	}
 
 	for stat, _ := range statMods {
