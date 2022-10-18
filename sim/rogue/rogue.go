@@ -174,7 +174,7 @@ func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
 }
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
-	rogue.EnergyTickMultiplier *= multiplier
+	rogue.EnergyTickMultiplier += multiplier
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -225,7 +225,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 		maxEnergy += 10
 	}
 	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
-	rogue.EnergyTickMultiplier *= (1 + []float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
+	rogue.ApplyEnergyTickMultiplier([]float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{
 		MainHand:       rogue.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.

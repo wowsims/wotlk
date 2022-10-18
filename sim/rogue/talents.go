@@ -478,12 +478,12 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.ApplyEnergyTickMultiplier(2.0)
+			rogue.ApplyEnergyTickMultiplier(1.0)
 			rogue.rotationItems = rogue.planRotation(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.ApplyEnergyTickMultiplier(1 / 2.0)
+			rogue.ApplyEnergyTickMultiplier(-1.0)
 			rogue.rotationItems = rogue.planRotation(sim)
 		},
 	})
