@@ -20,7 +20,7 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.
 		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, false)
 	} else {
 		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
-		weaponMultiplier *= 0.5 * rogue.dwsMultiplier()
+		weaponMultiplier *= rogue.dwsMultiplier()
 		procMask = core.ProcMaskMeleeOHSpecial
 		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, false)
 	}
