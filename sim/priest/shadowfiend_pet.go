@@ -96,12 +96,12 @@ func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		hitPercentage := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 
-		return stats.Stats{
+		return stats.Stats{ //still need to nail down shadow fiend crit scaling, but removing owner crit scaling after further investigation
 			stats.AttackPower: ownerStats[stats.SpellPower] * 5.377,
 			stats.MeleeHit:    hitPercentage * core.MeleeHitRatingPerHitChance,
 			stats.SpellHit:    ownerStats[stats.SpellHit],
-			stats.MeleeCrit:   ownerStats[stats.SpellCrit],
-			stats.SpellCrit:   ownerStats[stats.SpellCrit],
+			//stats.MeleeCrit:   ownerStats[stats.SpellCrit],
+			//stats.SpellCrit: ownerStats[stats.SpellCrit],
 			//stats.MeleeHaste:  ownerStats[stats.SpellHaste],
 			//stats.SpellHaste:  ownerStats[stats.SpellHaste],
 		}
