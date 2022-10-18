@@ -44,6 +44,25 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	}
 }
 
+// Jooper 19/10/2022:
+//		Firstly, I changed from a stating stat mod for every stat of 50 to a relative stat mod of 5% for every stat, this is due to how stats generally have
+//      different orders of magnitude, which may lead to really bad results for certain stats as 50 might represent a very small delta. This is still not perfect
+//      since in cases where we have very little of some stat the delta will also be quite small and therefore "ruin" the calculation, we can fix this later by
+//      defining some baseline stat mod for each stat. I believe this change is an improvement still from the previous method, it has made DTPS stat weights a lot
+//		more stable as for example a 50 armor increase was negligble and just gave back noise for the weight.
+//
+//     	Secondly, I changed the calculation from a central difference to a forward difference, this is the default convention used in SimulationCraft for stat weights.
+//		Generally you look at stat weights from the point of view of addition, not subtraction, therefore I believe that while central differencing makes more sense from
+//		a mathematical point of view it not always may represent the better data from the point of view of stat weights in game. Additionally, the way in which the high/low
+//		results were combined (as essentially an average) didn't make particular sense to me, it should be more something like:
+//
+//			sw = (low*delta_low + high*delta_high)/(delta_low + delta_high)
+//
+// 		as this represents a weighted average from both ends. This makes sense because when checking for caps its possible that deltas on either side were different sizes.
+// 		I think, like it is done in SimC, adding an option to perform central differences (rather than it being default) may be more useful in the long run.
+//
+//		Finally, I added expertise cap detection, both dodge / parry caps are now taken into account (we were getting reports of weird expertise weights).
+
 func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
 	if swr.Player.BonusStats == nil {
 		swr.Player.BonusStats = make([]float64, stats.Len)
@@ -152,7 +171,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		dtpsHists[stat] = dtpsMetrics.Hist
 	}
 
-	percMod := 0.025
+	percMod := 0.05
 	statMods := stats.Stats{}
 	statMods[referenceStat] = baseStats[referenceStat] * percMod
 
@@ -172,8 +191,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		spellCap -= 3 * SpellHitRatingPerHitChance
 	}
 
-	expSoftCap := 213.0
-	expHardCap := 459.0
+	expSoftCap := 26.0
+	expHardCap := 56.0
 
 	for _, stat := range statsToWeigh {
 		mod := baseStats[stat] * percMod
@@ -183,8 +202,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		} else if stat == stats.SpellHit {
 			statCap(stats.SpellHit, mod, spellCap)
 		} else if stat == stats.Expertise {
-			statCap(stats.Expertise, mod, expSoftCap)
-			statCap(stats.Expertise, mod, expHardCap)
+			statCap(stats.Expertise, math.Floor(mod), expSoftCap)
+			statCap(stats.Expertise, math.Floor(mod), expHardCap)
 		}
 
 		if statMods[stat] == 0 {
