@@ -173,12 +173,5 @@ export const WarriorRotationConfig = {
 			label: 'Maintain Thunder Clap',
 			labelTooltip: 'Keep Thunder Clap active on the primary target.',
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
-			fieldName: 'disableTfbBug',
-			label: 'Disable TfB Bug',
-			labelTooltip: 'TfB will not fail to proc 25% of the time if rend ticks at the same time as the ICD expiring.',
-			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike && player.sim.getShowExperimental(),
-		}),
 	],
 };
