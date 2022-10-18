@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 5052.81727
-  tps: 4272.99576
+  dps: 4878.3368
+  tps: 4119.12138
  }
 }
 dps_results: {
@@ -101,8 +101,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 4390.15613
-  tps: 3699.17797
+  dps: 4390.19406
+  tps: 3699.04916
  }
 }
 dps_results: {
@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 4349.42007
-  tps: 3658.21596
+  dps: 4349.51168
+  tps: 3658.13715
  }
 }
 dps_results: {
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Khadgar'sRegalia"
  value: {
-  dps: 4565.42078
-  tps: 3841.66217
+  dps: 4407.05292
+  tps: 3705.3324
  }
 }
 dps_results: {
@@ -318,8 +318,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 4288.05074
-  tps: 3606.66711
+  dps: 4288.1482
+  tps: 3606.75998
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Sunstrider'sRegalia"
  value: {
-  dps: 4565.42078
-  tps: 3846.15344
+  dps: 4407.05292
+  tps: 3708.99123
  }
 }
 dps_results: {
@@ -500,8 +500,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 4544.91237
-  tps: 3826.98247
+  dps: 4544.91734
+  tps: 3826.9784
  }
 }
 dps_results: {
@@ -528,22 +528,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4364.28669
-  tps: 4462.99531
+  dps: 4362.35716
+  tps: 4460.89416
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 582.14225
-  tps: 413.08244
+  dps: 580.96278
+  tps: 413.03697
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1256.56324
-  tps: 891.11099
+  dps: 1255.21684
+  tps: 890.08769
  }
 }
 dps_results: {
@@ -570,22 +570,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2789.18396
-  tps: 3068.70846
+  dps: 2753.40583
+  tps: 3038.41429
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2789.18396
-  tps: 2338.15709
+  dps: 2753.40583
+  tps: 2311.55151
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3316.03838
-  tps: 2606.94928
+  dps: 3316.79954
+  tps: 2625.65882
  }
 }
 dps_results: {

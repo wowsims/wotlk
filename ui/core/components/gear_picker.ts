@@ -29,6 +29,7 @@ import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
 
 declare var $: any;
+declare var tippy: any;
 
 export class GearPicker extends Component {
 	// ItemSlot is used as the index
@@ -454,9 +455,15 @@ class SelectorModal extends Popup {
       <div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
       <div class="selector-modal-phase-selector"></div>
     </div>
+	<div style="width: 100%;height: 30px;font-size: 18px;">
+		<span style="float:left">Item</span>
+		<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
+	</div>
     <ul class="selector-modal-list"></ul>
     `;
 
+		const helpIcon = tabContent.getElementsByClassName("ep-help").item(0);
+		tippy(helpIcon, {'content': 'These values are computed using stat weights which can be edited using the "Stat Weights" button.'});
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, this.player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, this.player.sim);
 		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand && this.player.getClass() != Class.ClassWarrior) {

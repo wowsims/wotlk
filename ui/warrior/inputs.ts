@@ -91,6 +91,13 @@ export const WarriorRotationConfig = {
 			labelTooltip: 'Heroic Strike when rage is above:',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
+			fieldName: 'rendHealthThresholdAbove',
+			label: 'Rend health threshold (%)',
+			labelTooltip: 'Rend will only be used when boss health is above this value in %.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendRageThresholdBelow',
 			label: 'Rend rage threshold below',
 			labelTooltip: 'Rend will only be used when rage is smaller than this value.',
@@ -165,6 +172,13 @@ export const WarriorRotationConfig = {
 			fieldName: 'maintainThunderClap',
 			label: 'Maintain Thunder Clap',
 			labelTooltip: 'Keep Thunder Clap active on the primary target.',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
+			fieldName: 'disableTfbBug',
+			label: 'Disable TfB Bug',
+			labelTooltip: 'TfB will not fail to proc 25% of the time if rend ticks at the same time as the ICD expiring.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike && player.sim.getShowExperimental(),
 		}),
 	],
 };

@@ -226,8 +226,8 @@ type AttackTable struct {
 	PartialResistNatureThresholds Thresholds
 	PartialResistShadowThresholds Thresholds
 
-	DamageDealtMultiplier               float64
-	DamageTakenMultiplier               float64
+	DamageDealtMultiplier               float64 // attacker buff, applied in applyAttackerModifiers()
+	DamageTakenMultiplier               float64 // defender debuff, applied in applyTargetModifiers()
 	NatureDamageTakenMultiplier         float64
 	PeriodicShadowDamageTakenMultiplier float64
 	HealingDealtMultiplier              float64

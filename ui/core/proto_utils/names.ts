@@ -73,6 +73,18 @@ export const professionNames: Record<Profession, string> = {
 	[Profession.Tailoring]: 'Tailoring',
 };
 
+export function nameToProfession(name: string): Profession {
+	const lower = name.toLowerCase();
+	for (const key in professionNames) {
+		const prof = parseInt(key) as Profession;
+		if (professionNames[prof].toLowerCase() == lower) {
+			return prof;
+		}
+	}
+
+	return Profession.ProfessionUnknown;
+}
+
 export const statOrder: Array<Stat> = [
 	Stat.StatHealth,
 	Stat.StatArmor,

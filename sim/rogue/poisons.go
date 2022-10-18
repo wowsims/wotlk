@@ -165,17 +165,6 @@ func (rogue *Rogue) applyDeadlyPoison() {
 	})
 }
 
-func (rogue *Rogue) GetWoundPoisonProcChance(mask core.ProcMask) float64 {
-	if mask.Matches(core.ProcMaskMeleeMH) && rogue.Options.MhImbue != proto.Rogue_Options_WoundPoison {
-		return 0.0
-	}
-	if mask.Matches(core.ProcMaskMeleeOH) && rogue.Options.OhImbue != proto.Rogue_Options_WoundPoison {
-		return 0.0
-	}
-	return 0.5
-
-}
-
 func (rogue *Rogue) applyWoundPoison() {
 	procMask := core.GetMeleeProcMaskForHands(
 		rogue.Options.MhImbue == proto.Rogue_Options_WoundPoison,
@@ -184,6 +173,10 @@ func (rogue *Rogue) applyWoundPoison() {
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
+
+	const basePPM = 0.5 / (1.4 / 60) // ~21.43, the former 50% normalized to a 1.4 speed weapon
+	rogue.woundPoisonPPMM = rogue.AutoAttacks.NewPPMManager(basePPM, procMask)
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Wound Poison",
 		Duration: core.NeverExpires,
@@ -194,10 +187,9 @@ func (rogue *Rogue) applyWoundPoison() {
 			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
-			if sim.RandomFloat("Wound Poison") > rogue.GetWoundPoisonProcChance(procMask) {
-				return
+			if rogue.woundPoisonPPMM.Proc(sim, spell.ProcMask, "Wound Poison") {
+				rogue.WoundPoison[NormalProc].Cast(sim, spellEffect.Target)
 			}
-			rogue.WoundPoison[NormalProc].Cast(sim, spellEffect.Target)
 		},
 	})
 }
@@ -327,7 +319,9 @@ func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
 		rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison,
 		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
 
-	ppm := 8.57 * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + bonusChance)
+	const basePPM = 0.2 / (1.4 / 60) // ~8.57, the former 20% normalized to a 1.4 speed weapon
+
+	ppm := basePPM * (1 + float64(rogue.Talents.ImprovedPoisons)*0.1 + bonusChance)
 	rogue.instantPoisonPPMM = rogue.AutoAttacks.NewPPMManager(ppm, procMask)
 }
 

@@ -8,6 +8,7 @@ import {
 	TankDeathknight_Rotation_OptimizationSetting as OptimizationSetting,
 	TankDeathknight_Rotation_Opener as Opener,
 	TankDeathknight_Rotation_BloodSpell as BloodSpell,
+	TankDeathknight_Rotation_Presence as Presence,
 } from '../core/proto/deathknight.js';
 
 
@@ -26,6 +27,17 @@ export const StartingRunicPower = InputHelpers.makeSpecOptionsNumberInput<Spec.S
 
 export const TankDeathKnightRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, Presence>({
+			fieldName: 'presence',
+			label: 'Presence',
+			labelTooltip: 'Presence to be in during the encounter.',
+			values: [
+				{ name: 'Blood', value: Presence.Blood },
+				{ name: 'Frost', value: Presence.Frost },
+				{ name: 'Unholy', value: Presence.Unholy },
+			],
+			changeEmitter: (player: Player<Spec.SpecTankDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, Opener>({
 			fieldName: 'opener',
 			label: 'Opener',

@@ -43,7 +43,7 @@ func (mage *Mage) applyWintersChill() {
 		return
 	}
 
-	procChance := float64(mage.Talents.WintersChill) / 3
+	procChance := []float64{0, 0.33, 0.66, 1}[mage.Talents.WintersChill]
 
 	mage.RegisterAura(core.Aura{
 		Label:    "Winters Chill Talent",
@@ -57,7 +57,7 @@ func (mage *Mage) applyWintersChill() {
 			}
 
 			if spell.SpellSchool == core.SpellSchoolFrost && spell != mage.WintersChill {
-				if procChance == 1.0 || sim.RandomFloat("Winters Chill") < procChance {
+				if sim.Proc(procChance, "Winters Chill") {
 					mage.WintersChill.Cast(sim, spellEffect.Target)
 				}
 			}

@@ -8,16 +8,19 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Spec } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 
 import {
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
+	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
+  Deathknight_Rotation_FrostRotationType,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { Deathknight_Rotation_StartingPresence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
+import { Deathknight_Rotation_Presence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -105,7 +108,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Unholy,
+	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 });
@@ -125,12 +128,27 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	startingPresence: Deathknight_Rotation_Presence.Blood,
+	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 0,
+  frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+  frostCustomRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomPlagueStrike }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomPestilence }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlastRime }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlast }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomBloodBoil }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
+			CustomSpell.create({ spell: CustomSpellOption.CustomFrostStrike }),
+		],
+	}),
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
@@ -145,7 +163,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 export const DefaultBloodRotation = DeathKnightRotation.create({
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
-	startingPresence: Deathknight_Rotation_StartingPresence.Blood,
+	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
 	useAms: false,
 });

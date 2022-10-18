@@ -42,7 +42,12 @@ var BloodTankTalents = &proto.DeathknightTalents{
 	Anticipation:         2,
 }
 
-var bloodTankRotation = &proto.TankDeathknight_Rotation{}
+var bloodTankRotation = &proto.TankDeathknight_Rotation{
+	Presence:            proto.TankDeathknight_Rotation_Frost,
+	Opener:              proto.TankDeathknight_Rotation_Threat,
+	OptimizationSetting: proto.TankDeathknight_Rotation_Hps,
+	BloodSpell:          proto.TankDeathknight_Rotation_BloodStrike,
+}
 
 var deathKnightOptions = &proto.TankDeathknight_Options{
 	StartingRunicPower: 0,

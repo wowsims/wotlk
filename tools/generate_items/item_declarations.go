@@ -171,6 +171,9 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 43231},
 	{ID: 43235},
 
+	// Thistle Tea
+	{ID: 7676},
+
 	// Wrath Enchant Icons
 	{ID: 38375},
 	{ID: 38376},
@@ -259,5 +262,4 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
-	{ID: 50256, Filter: true}, // Shadow's Edge One-Hander (NEW)
 }

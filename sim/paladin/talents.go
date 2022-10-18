@@ -309,7 +309,7 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	switch mhWeapon.HandType {
 	case proto.HandType_HandTypeTwoHand:
 		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
-	case proto.HandType_HandTypeOneHand:
+	case proto.HandType_HandTypeOneHand, proto.HandType_HandTypeMainHand:
 		if paladin.Talents.OneHandedWeaponSpecialization > 0 {
 			// Talent points are 4%, 7%, 10%
 			paladin.PseudoStats.DamageDealtMultiplier *= 1.01 + 0.03*float64(paladin.Talents.OneHandedWeaponSpecialization)

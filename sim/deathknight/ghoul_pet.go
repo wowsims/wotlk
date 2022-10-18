@@ -94,6 +94,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	})
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
 	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
@@ -191,8 +192,8 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 
 var ghoulPetBaseStats = stats.Stats{
 	stats.Agility:     856,
-	stats.Strength:    311, //331 base, 20 is removed from the base instead of the scale to work with dynamic stats
-	stats.AttackPower: 836,
+	stats.Strength:    331,
+	stats.AttackPower: -20,
 
 	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }

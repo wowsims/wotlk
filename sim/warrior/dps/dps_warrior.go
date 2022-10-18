@@ -47,6 +47,7 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 		Warrior: warrior.NewWarrior(character, *warOptions.Talents, warrior.WarriorInputs{
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
+			DisableTfbBug:   warOptions.Rotation.DisableTfbBug,
 		}),
 		Rotation: *warOptions.Rotation,
 		Options:  *warOptions.Options,
@@ -93,6 +94,7 @@ func (war *DpsWarrior) Initialize() {
 	war.Warrior.Initialize()
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
+	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()

@@ -109,13 +109,13 @@ func GenerateCriticalDamageMultiplierTestCase(
 	case Poison:
 		actualMultiplier = rog.SpellCritMultiplier()
 	case MHAuto:
-		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+		actualMultiplier = rog.MeleeCritMultiplier(false)
 	case OHAuto:
-		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+		actualMultiplier = rog.MeleeCritMultiplier(false)
 	case Builder:
-		actualMultiplier = rog.MeleeCritMultiplier(true, true)
+		actualMultiplier = rog.MeleeCritMultiplier(true)
 	case Finisher:
-		actualMultiplier = rog.MeleeCritMultiplier(true, false)
+		actualMultiplier = rog.MeleeCritMultiplier(false)
 	}
 	t.Run(testName, func(t *testing.T) {
 		if !core.WithinToleranceFloat64(expectedMultiplier, actualMultiplier, 0.0001) {

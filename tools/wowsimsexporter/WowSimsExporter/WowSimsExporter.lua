@@ -10,7 +10,7 @@ WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")
 
-local version = "2.1"
+local version = "2.3"
 
 local defaults = {
 	profile = {
@@ -48,7 +48,7 @@ function WowSimsExporter:CreateCharacterStructure(unit)
     self.Character = {
         name = name,
         realm = realm,
-        race = engRace,
+        race = engRace:gsub( "Scourge", "Undead"), -- hack? lol
         class = engClass:lower(),
 		level = tonumber(level),
         talents = "",
@@ -100,8 +100,7 @@ function WowSimsExporter:CreateProfessionEntry()
 	for i = 1, GetNumSkillLines() do
 		local name, _, _, skillLevel = GetSkillLineInfo(i)
 		if names_inv[name] then
-			table.insert(professions, { name = name, level = skillLevel })
-			print(name, skillLevel)
+			table.insert(professions, { name = name, level = skillLevel })		
 		end
 	end
 	self.Character.professions = professions
@@ -182,8 +181,8 @@ function WowSimsExporter:GetGearEnchantGems(type)
     end
 	self.Character.spec = self:CheckCharacterSpec(self.Character.class)
 	self.Character.talents = self:CreateTalentEntry()
-	self:CreateGlyphEntry()
-	self:CreateProfessionEntry()
+	self:CreateGlyphEntry() -- wotlk
+	self:CreateProfessionEntry() -- wotlk
 	self.Character.gear.items = gear
 
     return self.Character

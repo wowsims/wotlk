@@ -192,6 +192,7 @@ message Rogue {
 		}
 		PoisonImbue mh_imbue = 2;
 		PoisonImbue oh_imbue = 3;
+		int32 starting_overkill_duration = 4;
 	}
 	Options options = 3;
 }

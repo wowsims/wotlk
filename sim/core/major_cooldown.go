@@ -392,13 +392,13 @@ func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
 
 // sortOne will take the given mcd and attempt to sort it towards the back.
 // If it finds a linked CD (like trinkets that share offensive CD) it will sort them backwards first.
-//  If while sorting it finds something further back with lower CD than the previous one (for example, after activating cold snap)
-//  it will mark that the whole slice needs to be re-sorted "mcdm.fullSort" and returns immediately.
+//	If while sorting it finds something further back with lower CD than the previous one (for example, after activating cold snap)
+//	it will mark that the whole slice needs to be re-sorted "mcdm.fullSort" and returns immediately.
 func (mcdm *majorCooldownManager) sortOne(mcd *MajorCooldown, curIdx int) bool {
 	newReadyAt := mcd.ReadyAt()
 	var lastReadAt time.Duration
 	for sortIdx := curIdx + 1; sortIdx < len(mcdm.majorCooldowns); sortIdx++ {
-		if mcdm.majorCooldowns[sortIdx].Spell.SharedCD.Timer == mcd.Spell.SharedCD.Timer {
+		if mcd.Spell.SharedCD.Timer != nil && mcdm.majorCooldowns[sortIdx].Spell.SharedCD.Timer == mcd.Spell.SharedCD.Timer {
 			mcdm.sortOne(mcdm.majorCooldowns[sortIdx], sortIdx)
 			if mcdm.fullSort {
 				return true
@@ -438,7 +438,7 @@ func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
 }
 
 func (mcdm *majorCooldownManager) sort() {
-	sort.Slice(mcdm.majorCooldowns, func(i, j int) bool {
+	sort.SliceStable(mcdm.majorCooldowns, func(i, j int) bool {
 		// Since we're just comparing and don't actually care about the remaining CD, ok to use 0 instead of sim.CurrentTime.
 		cdA := mcdm.majorCooldowns[i].ReadyAt()
 		cdB := mcdm.majorCooldowns[j].ReadyAt()

@@ -42,12 +42,12 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 			0.05*float64(rogue.Talents.BladeTwisting) +
 			core.TernaryFloat64(rogue.Talents.SurpriseAttacks, 0.1, 0) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
-		CritMultiplier:   rogue.MeleeCritMultiplier(true, true),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
+			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
 					points := int32(1)

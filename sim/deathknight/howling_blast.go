@@ -85,5 +85,9 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			return dk.HowlingBlast.IsReady(sim)
 		}
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.HowlingBlast.IsReady(sim)
-	}, nil)
+	}, func(sim *core.Simulation) {
+		if dk.KillingMachineAura.IsActive() {
+			dk.KillingMachineAura.Deactivate(sim)
+		}
+	})
 }

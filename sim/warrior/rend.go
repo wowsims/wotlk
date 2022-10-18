@@ -9,12 +9,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warrior *Warrior) registerRendSpell() {
+func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
 	actionID := core.ActionID{SpellID: 47465}
 
 	cost := 10.0
 	refundAmount := cost * 0.8
-	isAbove75 := true
 	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -33,17 +32,13 @@ func (warrior *Warrior) registerRendSpell() {
 		},
 
 		// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
-		DamageMultiplier: (1 + 0.1*float64(warrior.Talents.ImprovedRend)) * 1.35,
+		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Landed() {
-					if sim.GetRemainingDurationPercent() <= 0.75 && isAbove75 {
-						isAbove75 = false
-						warrior.Rend.DamageMultiplier /= 1.35
-					}
 					warrior.RendDots.Apply(sim)
 					warrior.procBloodFrenzy(sim, spellEffect, time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15))
 					warrior.rendValidUntil = sim.CurrentTime + time.Second*core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 21, 15)
@@ -54,7 +49,13 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 	})
 	target := warrior.CurrentTarget
-	tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.AverageDamage()*warrior.PseudoStats.PhysicalDamageDealtMultiplier) / 5
+	snapshotCalculator := func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+		tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
+		if sim.GetRemainingDurationPercent() > 0.75 {
+			return tickDamage * 1.35
+		}
+		return tickDamage
+	}
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
@@ -63,15 +64,21 @@ func (warrior *Warrior) registerRendSpell() {
 		}),
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			IsPeriodic: true,
-
-			BaseDamage:     core.BaseDamageConfigFlat(tickDamage),
+		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
+			BaseDamage:     core.BaseDamageConfig{Calculator: snapshotCalculator},
 			OutcomeApplier: warrior.OutcomeFuncTick(),
-		})),
+			IsPeriodic:     true,
+		}),
 	})
+
+	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)
+	warrior.RendHealthThresholdAbove = healthThreshold / 100
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
+	if warrior.Talents.Bloodthirst {
+		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
+			warrior.CurrentRage() <= warrior.RendRageThresholdBelow && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent()
+	}
 	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }

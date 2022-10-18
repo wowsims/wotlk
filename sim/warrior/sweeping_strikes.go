@@ -34,9 +34,9 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		Label:     "Sweeping Strikes",
 		ActionID:  actionID,
 		Duration:  core.NeverExpires,
-		MaxStacks: 10,
+		MaxStacks: 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.SetStacks(sim, 10)
+			aura.SetStacks(sim, 5)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if aura.GetStacks() == 0 || spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {

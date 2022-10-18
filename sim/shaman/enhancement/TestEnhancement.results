@@ -148,6 +148,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-DeadlyGladiator'sTotemofSurvival-42602"
+ value: {
+  dps: 6762.85203
+  tps: 3811.124
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 6676.86424
@@ -255,15 +262,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 6932.79342
-  tps: 3884.98261
+  dps: 6711.21846
+  tps: 3764.10504
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 6519.56683
-  tps: 3697.58848
+  dps: 6322.80689
+  tps: 3578.55483
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-FuriousGladiator'sTotemofSurvival-42603"
+ value: {
+  dps: 6774.01676
+  tps: 3818.09661
  }
 }
 dps_results: {
@@ -283,15 +297,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 6557.70494
-  tps: 3686.19565
+  dps: 6379.18092
+  tps: 3576.3076
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sWartide"
  value: {
-  dps: 5464.3466
-  tps: 3083.78233
+  dps: 5415.53707
+  tps: 3053.63912
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-HatefulGladiator'sTotemofSurvival-42601"
+ value: {
+  dps: 6741.72026
+  tps: 3797.37806
  }
 }
 dps_results: {
@@ -414,6 +435,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-RelentlessGladiator'sTotemofSurvival-42604"
+ value: {
+  dps: 6787.57393
+  tps: 3826.56335
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-RevitalizingSkyflareDiamond"
  value: {
   dps: 6597.4559
@@ -425,6 +453,13 @@ dps_results: {
  value: {
   dps: 6540.47231
   tps: 3680.8966
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-SavageGladiator'sTotemofSurvival-42594"
+ value: {
+  dps: 6736.1248
+  tps: 3793.97208
  }
 }
 dps_results: {
@@ -521,15 +556,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 6694.05154
-  tps: 3782.53226
+  dps: 6542.71398
+  tps: 3703.45165
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
-  dps: 6288.24483
-  tps: 3574.50033
+  dps: 6131.12225
+  tps: 3480.47994
  }
 }
 dps_results: {
@@ -631,10 +666,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-WrathfulGladiator'sTotemofSurvival-51513"
+ value: {
+  dps: 6801.92858
+  tps: 3835.52814
+ }
+}
+dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
-  dps: 6800.20612
-  tps: 3836.48191
+  dps: 6800.21702
+  tps: 3836.48914
  }
 }
 dps_results: {
@@ -703,22 +745,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12786.06068
-  tps: 7672.34774
+  dps: 12524.25995
+  tps: 7397.94772
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3463.48051
-  tps: 1855.41968
+  dps: 3762.71138
+  tps: 1925.39426
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5063.53655
-  tps: 2287.63772
+  dps: 5170.4842
+  tps: 2353.29417
  }
 }
 dps_results: {
@@ -787,22 +829,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12749.52919
-  tps: 7787.51079
+  dps: 12676.35672
+  tps: 7652.2579
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3505.98624
-  tps: 1906.04371
+  dps: 3544.18994
+  tps: 1846.76985
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4971.82167
-  tps: 2302.84365
+  dps: 5008.07118
+  tps: 2334.10361
  }
 }
 dps_results: {

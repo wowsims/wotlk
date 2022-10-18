@@ -171,10 +171,37 @@ message Deathknight {
 			BloodBoil = 1;
 		}
 
-		enum StartingPresence {
+		enum Presence {
 			Blood = 0;
 			Unholy = 1;
+			Frost = 2;
 		}
+
+		enum FrostRotationType {
+			UnknownType = 0;
+			SingleTarget = 1;
+			Custom = 2;
+		}
+		FrostRotationType frost_rotation_type = 19;
+		
+		enum CustomSpellOption {
+			CustomNoSpell = 0;
+			CustomIcyTouch = 1;
+			CustomPlagueStrike = 2;
+			CustomPestilence = 3;
+			CustomObliterate = 4;
+			CustomHowlingBlast = 5;
+			CustomHowlingBlastRime = 6;
+			CustomBloodBoil = 7;
+			CustomBloodStrike = 8;
+			CustomDeathAndDecay = 9;
+			CustomHornOfWinter = 10;
+			CustomUnbreakableArmor = 11;
+			CustomBloodTap = 12;
+			CustomEmpoweredRuneWeapon = 13;
+			CustomFrostStrike = 14;
+		}
+		CustomRotation frost_custom_rotation = 20;
 
 		ArmyOfTheDead army_of_the_dead = 1;
 		bool use_death_and_decay = 2;
@@ -192,7 +219,7 @@ message Deathknight {
 
 		BloodRuneFiller blood_rune_filler = 9;
 
-		StartingPresence starting_presence = 10;
+		Presence starting_presence = 10;
 		BloodTap blood_tap = 11;
 
 		double oblit_delay_duration = 12;
@@ -204,7 +231,9 @@ message Deathknight {
 
 		bool desync_rotation = 17;
 
-		StartingPresence bl_presence = 18;
+		Presence bl_presence = 18;
+
+		Presence presence = 21;
 	}
 	Rotation rotation = 1;
 
@@ -241,6 +270,13 @@ message TankDeathknight {
 			BloodBoil = 1;
 			HeartStrike = 2;
 		}
+
+		enum Presence {
+			Blood = 0;
+			Frost = 1;
+			Unholy = 2;
+		}
+		Presence presence = 4;
 
 		Opener opener = 1;
 		OptimizationSetting optimization_setting = 2;
