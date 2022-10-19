@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.91219
+  weights: 0.86476
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.25201
+  weights: 0.23455
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.00952
+  weights: 0.00941
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.46855
-  weights: 0.31497
+  weights: 0.43824
+  weights: -0.07141
   weights: 0
   weights: 0
   weights: 0
