@@ -159,6 +159,17 @@ func (sim *Simulation) Roll(min float64, max float64) float64 {
 	return min + (max-min)*sim.RandomFloat("Damage Roll")
 }
 
+func (sim *Simulation) Proc(p float64, label string) bool {
+	switch {
+	case p >= 1:
+		return true
+	case p <= 0:
+		return false
+	default:
+		return sim.RandomFloat(label) < p
+	}
+}
+
 func (sim *Simulation) Reset() {
 	sim.reset()
 }
@@ -251,7 +262,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		// fmt.Printf("Iteration: %d\n", i)
 		if sim.ProgressReport != nil && time.Since(st) > time.Millisecond*100 {
 			metrics := sim.Raid.GetMetrics(i + 1)
-			sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: i + 1, Dps: metrics.Dps.Avg, Hps: metrics.Hps.Avg})
+			sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: i, Dps: metrics.Dps.Avg, Hps: metrics.Hps.Avg})
 			runtime.Gosched() // ensure that reporting threads are given time to report, mostly only important in wasm (only 1 thread)
 			st = time.Now()
 		}

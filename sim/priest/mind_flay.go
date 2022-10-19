@@ -52,7 +52,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -95,6 +95,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
 
 	var mfReducTime time.Duration
+	mfReducTime = time.Millisecond * 0
 	// ADDED Bug where root resist gem reduces MF by 10%
 	// ADDED TROLL MF BUG 15% REDUCED CHANNEL TIME DUE TO DA VOODOO SHUFFLE
 	if priest.GetCharacter().Race == proto.Race_RaceTroll {
@@ -110,7 +111,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		}
 	}
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		mfReducTime = time.Millisecond * 170
+		mfReducTime = mfReducTime + time.Millisecond*170
 	}
 
 	return core.NewDot(core.Dot{
@@ -171,9 +172,6 @@ func (priest *Priest) MindFlayTickDuration() time.Duration {
 	for _, gem := range priest.Equip[proto.ItemSlot_ItemSlotHead].Gems {
 		if gem.ID == 25895 || gem.ID == 41335 {
 			mfReducTime = time.Millisecond * 100
-			if priest.GetCharacter().Race == proto.Race_RaceTroll {
-				mfReducTime = time.Millisecond*150 + time.Millisecond*100
-			}
 		}
 	}
 	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0) - core.TernaryDuration(priest.GetCharacter().Race == proto.Race_RaceTroll, time.Millisecond*150, 0) - mfReducTime)

@@ -156,10 +156,8 @@ message BalanceDruid {
 		float mf_inside_eclipse_threshold = 5;
 		float is_inside_eclipse_threshold = 6;
 		bool use_smart_cooldowns = 7;
-		float mcd_inside_lunar_threshold = 8;
-		float mcd_inside_solar_threshold = 9;
-		bool keep_is_up = 10;
-		bool keep_mf_up = 11;
+		bool maximize_mf_uptime = 8;
+		bool maximize_is_uptime = 9;
 	}
 
   Rotation rotation = 1;

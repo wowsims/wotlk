@@ -187,7 +187,7 @@ func (hunter *Hunter) applyInvigoration() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("Invigoration") < procChance {
+			if sim.Proc(procChance, "Invigoration") {
 				hunter.AddMana(sim, 0.01*hunter.MaxMana(), manaMetrics, false)
 			}
 		},
@@ -404,7 +404,7 @@ func (hunter *Hunter) applyFrenzy() {
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if procChance == 1 || sim.RandomFloat("Frenzy") < procChance {
+			if sim.Proc(procChance, "Frenzy") {
 				procAura.Activate(sim)
 			}
 		},
@@ -629,7 +629,7 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ThrillOfTheHunt") < procChance {
+			if sim.Proc(procChance, "ThrillOfTheHunt") {
 				hunter.AddMana(sim, spell.CurCast.Cost*0.4, manaMetrics, false)
 			}
 		},
@@ -675,7 +675,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
+			if sim.Proc(procChance, "ExposeWeakness") {
 				procAura.Activate(sim)
 			}
 		},
@@ -688,7 +688,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
+			if sim.Proc(procChance, "ExposeWeakness") {
 				procAura.Activate(sim)
 			}
 		},
@@ -796,9 +796,11 @@ func (hunter *Hunter) registerReadinessCD() {
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()
-			hunter.KillCommand.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
 			hunter.ExplosiveTrap.CD.Reset()
+			if hunter.KillCommand != nil {
+				hunter.KillCommand.CD.Reset()
+			}
 			if hunter.AimedShot != nil {
 				hunter.AimedShot.CD.Reset()
 			}

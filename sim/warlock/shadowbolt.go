@@ -53,7 +53,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				if result.Landed() {
 					// ISB debuff
-					if ISBProcChance > 0 && (ISBProcChance == 1 || sim.RandomFloat("ISB") <= ISBProcChance) {
+					if sim.Proc(ISBProcChance, "ISB") {
 						// TODO precalculate aura
 						core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
 					}

@@ -40,7 +40,7 @@ export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): Glyph
 	return new GlyphsPicker(parent, player, classGlyphsConfig[player.getClass()]);
 }
 
-const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
+export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],
 	[Class.ClassDeathknight]: deathknightTalentsConfig,
 	[Class.ClassDruid]: druidTalentsConfig,
@@ -54,7 +54,7 @@ const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassWarrior]: warriorTalentsConfig,
 };
 
-const classGlyphsConfig: Record<Class, GlyphsConfig> = {
+export const classGlyphsConfig: Record<Class, GlyphsConfig> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
 	[Class.ClassDeathknight]: deathknightGlyphsConfig,
 	[Class.ClassDruid]: druidGlyphsConfig,

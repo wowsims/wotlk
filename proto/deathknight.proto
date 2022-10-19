@@ -271,6 +271,13 @@ message TankDeathknight {
 			HeartStrike = 2;
 		}
 
+		enum Presence {
+			Blood = 0;
+			Frost = 1;
+			Unholy = 2;
+		}
+		Presence presence = 4;
+
 		Opener opener = 1;
 		OptimizationSetting optimization_setting = 2;
 		BloodSpell blood_spell = 3;

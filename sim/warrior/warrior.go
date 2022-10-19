@@ -76,9 +76,11 @@ type Warrior struct {
 	DeepWoundsTickDamage   []float64
 	DeepwoundsDamageBuffer []float64
 
-	HeroicStrikeOrCleave *core.Spell
-	HSOrCleaveQueueAura  *core.Aura
-	HSRageThreshold      float64
+	HeroicStrikeOrCleave     *core.Spell
+	HSOrCleaveQueueAura      *core.Aura
+	HSRageThreshold          float64
+	RendRageThresholdBelow   float64
+	RendHealthThresholdAbove float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -147,7 +149,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
-	warrior.registerRendSpell()
 	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
 

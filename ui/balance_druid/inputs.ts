@@ -70,25 +70,16 @@ export const BalanceDruidRotationConfig = {
 			label: 'Smart Cooldowns usage',
 			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
 		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
-			fieldName: 'mcdInsideLunarThreshold',
-			label: 'CDs inside lunar eclipse max timing',
-			labelTooltip: 'Maximum lunar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
-			fieldName: 'mcdInsideSolarThreshold',
-			label: 'CDs inside solar eclipse max timing',
-			labelTooltip: 'Maximum solar eclipse uptime at which major cooldowns can be used. 15 = right on proc,  0 = deactivated.',
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'maximizeMfUptime',
+			label: 'Maximize Moonfire uptime',
+			labelTooltip: 'Rotation will try to keep Moonfire up without clipping',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'keepIsUp',
-			label: 'Keep Insect Swarm up',
-			labelTooltip: 'Rotation will try to keep Insect Swarm up outside eclipse',
+			fieldName: 'maximizeIsUptime',
+			label: 'Maximize Insect Swarm uptime',
+			labelTooltip: 'Rotation will try to keep Insect Swarm up without clipping',
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'keepMfUp',
-			label: 'Keep Moonfire up',
-			labelTooltip: 'Rotation will try to keep Moonfire up outside eclipse',
-		}),
+
 	],
 };

@@ -57,7 +57,7 @@ func (ai *DefaultAI) DoAction(sim *core.Simulation) {
 			continue
 		}
 
-		if ability.ChanceToUse == 1 || sim.RandomFloat("TargetAbility") < ability.ChanceToUse {
+		if sim.Proc(ability.ChanceToUse, "TargetAbility") {
 			ability.Spell.Cast(sim, ai.Target.CurrentTarget)
 			return
 		}

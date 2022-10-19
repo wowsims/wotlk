@@ -24,7 +24,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*1*float64(rogue.Talents.Precision))
 	rogue.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*5*float64(rogue.Talents.WeaponExpertise))
 	rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.SerratedBlades))
-	rogue.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+	rogue.AutoAttacks.OHConfig.DamageMultiplier *= rogue.dwsMultiplier()
 
 	if rogue.Talents.Deadliness > 0 {
 		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
@@ -46,6 +46,11 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerKillingSpreeCD()
 }
 
+// dwsMultiplier returns the offhand damage multiplier
+func (rogue *Rogue) dwsMultiplier() float64 {
+	return 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+}
+
 func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 	if talentPoints == 1 {
 		return 14179
@@ -54,18 +59,17 @@ func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 }
 
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
-	ruthlessnessChance := 0.2 * float64(rogue.Talents.Ruthlessness)
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
-
-	relentlessStrikes := rogue.Talents.RelentlessStrikes
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
 
 	return func(sim *core.Simulation, numPoints int32) {
-		if ruthlessnessChance > 0 && sim.RandomFloat("Ruthlessness") < ruthlessnessChance {
-			rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
+		if t := rogue.Talents.Ruthlessness; t > 0 {
+			if sim.RandomFloat("Ruthlessness") < 0.2*float64(t) {
+				rogue.AddComboPoints(sim, 1, ruthlessnessMetrics)
+			}
 		}
-		if relentlessStrikes > 0 {
-			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(relentlessStrikes)*float64(numPoints) {
+		if t := rogue.Talents.RelentlessStrikes; t > 0 {
+			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(t*numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
 		}
@@ -138,7 +142,8 @@ func (rogue *Rogue) registerHungerForBlood() {
 }
 
 func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
-	// TODO: Use the following predicate if/when health values are modeled
+	// TODO: Use the following predicate if/when health values are modeled,
+	//  but note that this would have to be applied dynamically in that case.
 	//if rogue.CurrentTarget != nil &&
 	//rogue.CurrentTarget.HasHealthBar() &&
 	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
@@ -227,7 +232,7 @@ func (rogue *Rogue) applySealFate() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("Seal Fate") < procChance {
+			if sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
 			}
 		},
@@ -323,7 +328,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		return
 	}
 
-	procChance := float64(rogue.Talents.FocusedAttacks) / 3.0
+	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.FocusedAttacks]
 	energyMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 51637})
 
 	rogue.RegisterAura(core.Aura{
@@ -340,7 +345,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.IsSpellAction(FanOfKnivesSpellID) {
 				return
 			}
-			if procChance == 1 || sim.RandomFloat("Focused Attacks") <= procChance {
+			if sim.Proc(procChance, "Focused Attacks") {
 				rogue.AddEnergy(sim, 2, energyMetrics)
 			}
 		},
@@ -473,12 +478,12 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.ApplyEnergyTickMultiplier(2.0)
+			rogue.ApplyEnergyTickMultiplier(1.0)
 			rogue.rotationItems = rogue.planRotation(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
-			rogue.ApplyEnergyTickMultiplier(1 / 2.0)
+			rogue.ApplyEnergyTickMultiplier(-1.0)
 			rogue.rotationItems = rogue.planRotation(sim)
 		},
 	})

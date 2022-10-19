@@ -12,7 +12,11 @@ import (
 func (dk *DpsDeathknight) setupCustomRotations() {
 	dk.RotationSequence.NewAction(func(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 		if dk.CustomRotation != nil {
-			dk.CustomRotation.Cast(sim)
+			if !dk.CustomRotation.Cast(sim) {
+				return -1
+			}
+		} else {
+			dk.LastCast = nil
 		}
 
 		if dk.LastCast == dk.EmpowerRuneWeapon || dk.LastCast == dk.BloodTap || dk.LastCast == dk.UnbreakableArmor {
