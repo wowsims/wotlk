@@ -189,7 +189,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	statModsHigh := stats.Stats{}
 
 	// Make sure reference stat is included.
-	statModsLow[referenceStat] = -baseStats[referenceStat] * 0.05
+	statModsLow[referenceStat] = baseStats[referenceStat] * 0.05
 	statModsHigh[referenceStat] = baseStats[referenceStat] * 0.05
 
 	doCap := func(stat stats.Stat, statMod float64) bool {
