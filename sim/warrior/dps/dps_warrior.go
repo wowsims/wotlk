@@ -47,7 +47,6 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 		Warrior: warrior.NewWarrior(character, *warOptions.Talents, warrior.WarriorInputs{
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
-			DisableTfbBug:   warOptions.Rotation.DisableTfbBug,
 		}),
 		Rotation: *warOptions.Rotation,
 		Options:  *warOptions.Options,
