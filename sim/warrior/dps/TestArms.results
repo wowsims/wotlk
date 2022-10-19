@@ -169,6 +169,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-DreadnaughtPlate"
+ value: {
+  dps: 6655.3214
+  tps: 5455.02494
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-EffulgentSkyflareDiamond"
  value: {
   dps: 8318.04723
@@ -435,6 +442,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-SiegebreakerPlate"
+ value: {
+  dps: 6765.72713
+  tps: 5547.96318
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
   dps: 8014.56524
@@ -554,10 +568,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-Wrynn'sPlate"
+ value: {
+  dps: 6925.33712
+  tps: 5673.44716
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-YmirjarLord'sBattlegear"
  value: {
   dps: 8592.89375
   tps: 7071.44847
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-YmirjarLord'sPlate"
+ value: {
+  dps: 7095.36037
+  tps: 5817.92569
  }
 }
 dps_results: {
