@@ -60,7 +60,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		},
 
 		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
-		DamageMultiplier: (1 + .05*float64(warrior.Talents.GagOrder)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), 1.1, 1), // TODO: GagOrder might apply differently
+		DamageMultiplier: (1 + .05*float64(warrior.Talents.GagOrder)) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtPlate, 2), 1.1, 1) * core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), 1.2, 1), // TODO: GagOrder might apply differently
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1.3,
 		FlatThreatBonus:  770,

@@ -34,7 +34,7 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			},
 		},
 
-		DamageMultiplier: 1,
+		DamageMultiplier: core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), 1.2, 1),
 		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1,
 

@@ -66,8 +66,8 @@ func (warrior *Warrior) registerDevastateSpell() {
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.SwordAndBoard),
-		DamageMultiplier: weaponMulti,
+		BonusCritRating:  5*core.CritRatingPerCritChance*float64(warrior.Talents.SwordAndBoard) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerPlate, 2), 10*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: weaponMulti * core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsPlate, 2), 1.05, 1.0),
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  flatThreatBonus,

@@ -204,6 +204,57 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+// Tank sets
+
+var ItemSetDreadnaughtPlate = core.NewItemSet(core.ItemSet{
+	Name: "Dreadnaught Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// 10% damage on shield slam
+		},
+		4: func(agent core.Agent) {
+			// 3 sec duration increase on shield wall
+		},
+	},
+})
+
+var ItemSetSiegebreakerPlate = core.NewItemSet(core.ItemSet{
+	Name: "Siegebreaker Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// 10% crit chance on devastate
+		},
+		4: func(agent core.Agent) {
+			// 10% magical damage mitigation
+		},
+	},
+})
+
+var ItemSetWrynnsPlate = core.NewItemSet(core.ItemSet{
+	Name:            "Wrynn's Plate",
+	AlternativeName: "Hellscream's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// 5% devastate damage
+		},
+		4: func(agent core.Agent) {
+			// 10 second shield block CD reduction
+		},
+	},
+})
+
+var ItemSetYmirjarLordsPlate = core.NewItemSet(core.ItemSet{
+	Name: "Ymirjar Lord's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// 20% increased SSlam and Shockwave damage
+		},
+		4: func(agent core.Agent) {
+			// TODO: Absorb from bloodrage
+		},
+	},
+})
+
 func init() {
 
 	core.NewItemEffect(32485, func(agent core.Agent) {
