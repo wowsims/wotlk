@@ -45,11 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-<<<<<<< HEAD
-  weights: 0.80035
-=======
-  weights: 0.70324
->>>>>>> efed6ccc3fe89c346e2c5f7982c93065cec659dc
+  weights: 0.91219
   weights: 0
   weights: 0
   weights: 0
@@ -60,11 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-<<<<<<< HEAD
-  weights: 0.21059
-=======
-  weights: 0.21203
->>>>>>> efed6ccc3fe89c346e2c5f7982c93065cec659dc
+  weights: 0.25201
   weights: 0
   weights: 0
   weights: 0
@@ -73,21 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-<<<<<<< HEAD
-  weights: 0.00384
+  weights: 0.00952
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.43806
-  weights: 0.14175
-=======
-  weights: -0.06049
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0.37567
-  weights: -0.07141
->>>>>>> efed6ccc3fe89c346e2c5f7982c93065cec659dc
+  weights: 0.46855
+  weights: 0.31497
   weights: 0
   weights: 0
   weights: 0
