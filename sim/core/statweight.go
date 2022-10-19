@@ -53,12 +53,12 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 //
 //     	Secondly, I changed the calculation from a central difference to a forward difference, this is the default convention used in SimulationCraft for stat weights.
 //		Generally you look at stat weights from the point of view of addition, not subtraction, therefore I believe that while central differencing makes more sense from
-//		a mathematical point of view it not always may represent the better data from the point of view of stat weights in game. Additionally, the way in which the high/low
+//		a mathematical point of view it may not always represent the better data from the point of view of stat weights in game. Additionally, the way in which the high/low
 //		results were combined (as essentially an average) didn't make particular sense to me, it should be more something like:
 //
 //			sw = (low*delta_low + high*delta_high)/(delta_low + delta_high)
 //
-// 		as this represents a weighted average from both ends. This makes sense because when checking for caps its possible that deltas on either side were different sizes.
+// 		as this represents a weighted average from both ends. This makes sense because when checking for caps as its possible that deltas on either side were different sizes.
 // 		I think, like it is done in SimC, adding an option to perform central differences (rather than it being default) may be more useful in the long run.
 //
 //		Finally, I added expertise cap detection, both dodge / parry caps are now taken into account (we were getting reports of weird expertise weights).
