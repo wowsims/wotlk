@@ -47,7 +47,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			for _, partyAgent := range party.PlayersAndPets {
 				partyTarget := partyAgent.GetCharacter()
 				baseHealing := sim.Roll(2109, 2228) + healFromSP
-				spell.CalcAndDealHealingCrit(sim, &partyTarget.Unit, baseHealing)
+				spell.CalcAndDealHealing(sim, &partyTarget.Unit, baseHealing, spell.OutcomeHealingCrit)
 				if glyphHots != nil {
 					glyphHots[partyTarget.UnitIndex].Activate(sim)
 				}
@@ -83,12 +83,12 @@ func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit) *core.Dot {
 		}),
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			IsHealing:  true,
-
-			BaseDamage:     core.BaseDamageConfigHealing(2109, 2228, 0.526),
-			OutcomeApplier: priest.OutcomeFuncTick(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = sim.Roll(2109, 2228) + 0.526*dot.Spell.HealingPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+		},
 	})
 }
