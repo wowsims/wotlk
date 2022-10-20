@@ -104,9 +104,9 @@ func SetupFakeSim() *Simulation {
 	return sim
 }
 
-func expectDotTickDamage(t *testing.T, dot *Dot, expectedDamage float64) {
+func expectDotTickDamage(t *testing.T, sim *Simulation, dot *Dot, expectedDamage float64) {
 	damageBefore := dot.Spell.SpellMetrics[0].TotalDamage
-	dot.TickOnce()
+	dot.TickOnce(sim)
 	damageAfter := dot.Spell.SpellMetrics[0].TotalDamage
 	delta := damageAfter - damageBefore
 
@@ -120,10 +120,10 @@ func TestDotSnapshot(t *testing.T) {
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Rollover(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 }
 
 func TestDotSnapshotSpellPower(t *testing.T) {
@@ -131,15 +131,15 @@ func TestDotSnapshotSpellPower(t *testing.T) {
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	// Spell power shouldn't get applied because dot was already snapshot.
 	fa.GetCharacter().AddStatDynamic(sim, stats.SpellPower, 100)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Deactivate(sim)
 	fa.Dot.Activate(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100 + 100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100 + 100) * 1.5
 }
 
 func TestDotSnapshotSpellMultiplier(t *testing.T) {
@@ -149,8 +149,8 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	spell.DamageMultiplier *= 2
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100) * 1.5 * 2
 
 	fa.Dot.Rollover(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100) * 1.5 * 2
 }

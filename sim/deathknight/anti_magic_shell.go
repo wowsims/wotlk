@@ -12,7 +12,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	actionID := core.ActionID{SpellID: 48707}
 	cdTimer := dk.NewTimer()
 	cd := time.Second * 45
-	
+
 	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.AntiMagicShell = dk.RegisterSpell(rs, core.SpellConfig{

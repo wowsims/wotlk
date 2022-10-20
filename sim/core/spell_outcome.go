@@ -31,6 +31,9 @@ func (unit *Unit) OutcomeFuncTick() OutcomeApplier {
 		spellEffect.Outcome = OutcomeHit
 	}
 }
+func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	result.Outcome = OutcomeHit
+}
 
 func (unit *Unit) OutcomeFuncTickHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -69,6 +72,20 @@ func (unit *Unit) OutcomeFuncTickMagicHitAndCrit() OutcomeApplier {
 		} else {
 			spellEffect.Outcome = OutcomeHit
 		}
+	}
+}
+
+func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if sim.RandomFloat("Magical Crit Roll") < dot.SnapshotCritChance {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
+	} else {
+		result.Outcome = OutcomeHit
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
 	}
 }
 
@@ -222,118 +239,141 @@ func (spell *Spell) CalcAndDealDamageMeleeWhite(sim *Simulation, target *Unit, b
 	spell.DealDamage(sim, &result)
 }
 
-func (unit *Unit) OutcomeFuncMeleeSpecialHit() OutcomeApplier {
-	if unit.PseudoStats.InFrontOfTarget {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
+func (spell *Spell) OutcomeMeleeSpecialHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	unit := spell.Unit
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
 
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableParry(spell, attackTable, roll, &chance) {
-				spellEffect.applyAttackTableHit(spell)
-			}
+	if unit.PseudoStats.InFrontOfTarget {
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableParry(spell, attackTable, roll, &chance) {
+			result.applyAttackTableHit(spell)
 		}
 	} else {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) {
-				spellEffect.applyAttackTableHit(spell)
-			}
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) {
+			result.applyAttackTableHit(spell)
 		}
 	}
 }
+func (spell *Spell) CalcAndDealDamageMeleeSpecialHit(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHit)
+	spell.DealDamage(sim, &result)
+}
+func (unit *Unit) OutcomeFuncMeleeSpecialHit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeSpecialHit(sim, spellEffect, attackTable)
+	}
+}
 
-func (unit *Unit) OutcomeFuncMeleeSpecialHitAndCrit() OutcomeApplier {
+func (spell *Spell) OutcomeMeleeSpecialHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	unit := spell.Unit
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
 	if unit.PseudoStats.InFrontOfTarget {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableParry(spell, attackTable, roll, &chance) {
-				if spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
-					spellEffect.applyAttackTableBlock(spell, attackTable, roll, &chance)
-				} else {
-					if !spellEffect.applyAttackTableBlock(spell, attackTable, roll, &chance) {
-						spellEffect.applyAttackTableHit(spell)
-					}
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableParry(spell, attackTable, roll, &chance) {
+			if result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+				result.applyAttackTableBlock(spell, attackTable, roll, &chance)
+			} else {
+				if !result.applyAttackTableBlock(spell, attackTable, roll, &chance) {
+					result.applyAttackTableHit(spell)
 				}
 			}
 		}
 	} else {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
-				spellEffect.applyAttackTableHit(spell)
-			}
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+			result.applyAttackTableHit(spell)
 		}
+	}
+}
+func (spell *Spell) CalcAndDealDamageMeleeSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHitAndCrit)
+	spell.DealDamage(sim, &result)
+}
+func (unit *Unit) OutcomeFuncMeleeSpecialHitAndCrit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeSpecialHitAndCrit(sim, spellEffect, attackTable)
 	}
 }
 
 // Like OutcomeFuncMeleeSpecialHitAndCrit, but blocks prevent crits (all weapon damage based attacks).
-func (unit *Unit) OutcomeFuncMeleeWeaponSpecialHitAndCrit() OutcomeApplier {
-	if unit.PseudoStats.InFrontOfTarget {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableParry(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableBlock(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
-				spellEffect.applyAttackTableHit(spell)
-			}
-		}
-	} else {
-		return unit.OutcomeFuncMeleeSpecialHitAndCrit()
-	}
-}
-
-func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoCrit() OutcomeApplier {
-	if unit.PseudoStats.InFrontOfTarget {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableParry(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableBlock(spell, attackTable, roll, &chance) {
-				spellEffect.applyAttackTableHit(spell)
-			}
-		}
-	} else {
-		return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-			roll := sim.RandomFloat("White Hit Table")
-			chance := 0.0
-
-			if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-				!spellEffect.applyAttackTableDodge(spell, attackTable, roll, &chance) {
-				spellEffect.applyAttackTableHit(spell)
-			}
-		}
-	}
-}
-
-func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry() OutcomeApplier {
-	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+func (spell *Spell) OutcomeMeleeWeaponSpecialHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if spell.Unit.PseudoStats.InFrontOfTarget {
 		roll := sim.RandomFloat("White Hit Table")
 		chance := 0.0
 
-		if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
-			spellEffect.applyAttackTableHit(spell)
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableParry(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableBlock(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+			result.applyAttackTableHit(spell)
 		}
+	} else {
+		spell.OutcomeMeleeSpecialHitAndCrit(sim, result, attackTable)
+	}
+}
+func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+	spell.DealDamage(sim, &result)
+}
+func (unit *Unit) OutcomeFuncMeleeWeaponSpecialHitAndCrit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeWeaponSpecialHitAndCrit(sim, spellEffect, attackTable)
+	}
+}
+
+func (spell *Spell) OutcomeMeleeWeaponSpecialNoCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	unit := spell.Unit
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if unit.PseudoStats.InFrontOfTarget {
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableParry(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableBlock(spell, attackTable, roll, &chance) {
+			result.applyAttackTableHit(spell)
+		}
+	} else {
+		if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableDodge(spell, attackTable, roll, &chance) {
+			result.applyAttackTableHit(spell)
+		}
+	}
+}
+func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialNoCrit(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialNoCrit)
+	spell.DealDamage(sim, &result)
+}
+func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoCrit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeWeaponSpecialNoCrit(sim, spellEffect, attackTable)
+	}
+}
+
+func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParry(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+		!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+		result.applyAttackTableHit(spell)
+	}
+}
+func (spell *Spell) CalcAndDealDamageMeleeSpecialNoBlockDodgeParry(sim *Simulation, target *Unit, baseHealing float64) {
+	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+	spell.DealDamage(sim, &result)
+}
+func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeSpecialNoBlockDodgeParry(sim, spellEffect, attackTable)
 	}
 }
 
@@ -358,6 +398,7 @@ func (spell *Spell) CalcAndDealDamageMeleeSpecialCritOnly(sim *Simulation, targe
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialCritOnly)
 	spell.DealDamage(sim, &result)
 }
+
 func (unit *Unit) OutcomeFuncMeleeSpecialCritOnly() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		spell.OutcomeMeleeSpecialCritOnly(sim, spellEffect, attackTable)
