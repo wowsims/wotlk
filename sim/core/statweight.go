@@ -193,6 +193,8 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	statModsHigh[referenceStat] = baseStats[referenceStat] * 0.05
 
 	doCap := func(stat stats.Stat, statMod float64) bool {
+		activeCap := false
+
 		if stat == stats.SpellHit {
 			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
@@ -205,7 +207,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 
 			if baseStats[stat] > spellHitCap && baseStats[stat]-statMod < spellHitCap {
@@ -219,7 +221,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 		} else if stat == stats.MeleeHit {
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
@@ -233,7 +235,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 			if baseStats[stat] > melee2HHitCap && baseStats[stat]-statMod < melee2HHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
@@ -246,7 +248,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 		} else if stat == stats.Expertise {
 			if baseStats[stat] < expertiseSoftCap && baseStats[stat]+statMod > expertiseSoftCap {
@@ -260,7 +262,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 
 			if baseStats[stat] > expertiseSoftCap && baseStats[stat]-statMod < expertiseSoftCap {
@@ -274,7 +276,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = statMod
 				}
 
-				return true
+				activeCap = true
 			}
 
 			if baseStats[stat] < expertiseHardCap && baseStats[stat]+statMod > expertiseHardCap {
@@ -288,7 +290,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = -statMod
 				}
 
-				return true
+				activeCap = true
 			}
 
 			if baseStats[stat] > expertiseHardCap && baseStats[stat]-statMod < expertiseHardCap {
@@ -302,11 +304,11 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 					statModsLow[stat] = statMod
 				}
 
-				return true
+				activeCap = true
 			}
 		}
 
-		return false
+		return activeCap
 	}
 
 	for _, stat := range statsToWeigh {
@@ -359,18 +361,15 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		}
 
 		if statModsLow[stat] != statModsHigh[stat] {
-			lowMod := math.Abs(statModsLow[stat])
-			highMod := math.Abs(statModsHigh[stat])
-			totalMod := lowMod + highMod
-			result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat]*lowMod + resultHigh.Dps.Weights[stat]*highMod) / totalMod
-			result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat]*lowMod + resultHigh.Hps.Weights[stat]*highMod) / totalMod
-			result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat]*lowMod + resultHigh.Tps.Weights[stat]*highMod) / totalMod
-			result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat]*lowMod + resultHigh.Dtps.Weights[stat]*highMod) / totalMod
+			result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat] + resultHigh.Dps.Weights[stat]) / 2.0
+			result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat] + resultHigh.Hps.Weights[stat]) / 2.0
+			result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat] + resultHigh.Tps.Weights[stat]) / 2.0
+			result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat] + resultHigh.Dtps.Weights[stat]) / 2.0
 
-			result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat]*lowMod + resultHigh.Dps.WeightsStdev[stat]*highMod) / totalMod
-			result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat]*lowMod + resultHigh.Hps.WeightsStdev[stat]*highMod) / totalMod
-			result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat]*lowMod + resultHigh.Tps.WeightsStdev[stat]*highMod) / totalMod
-			result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat]*lowMod + resultHigh.Dtps.WeightsStdev[stat]*highMod) / totalMod
+			result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat] + resultHigh.Dps.WeightsStdev[stat]) / 2.0
+			result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat] + resultHigh.Hps.WeightsStdev[stat]) / 2.0
+			result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat] + resultHigh.Tps.WeightsStdev[stat]) / 2.0
+			result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2.0
 		} else {
 			result.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
 			result.Hps.Weights[stat] = resultLow.Hps.Weights[stat]
