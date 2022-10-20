@@ -57,19 +57,6 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
-	effect := core.SpellEffect{
-		IsPeriodic:     true,
-		OutcomeApplier: priest.OutcomeFuncMagicHit(),
-		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				priest.AddShadowWeavingStack(sim)
-			}
-			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
-				priest.ShadowyInsightAura.Activate(sim)
-			}
-		},
-	}
-
 	normalCoeff := 0.2861
 	miseryCoeff := normalCoeff * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
@@ -87,7 +74,6 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncAOESnapshotCapped(priest.Env, effect),
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dmg := sim.Roll(212, 228)
 			if priest.MiseryAura.IsActive() {
