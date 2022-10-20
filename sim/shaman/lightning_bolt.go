@@ -70,15 +70,13 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			}),
 			TickLength:    time.Second * 2,
 			NumberOfTicks: 2,
-			TickEffects: core.TickFuncSnapshot(shaman.CurrentTarget, core.SpellEffect{
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-						return lbdotDmg / 2 //spread dot over 2 ticks
-					},
-				},
-				IsPeriodic:     true,
-				OutcomeApplier: shaman.OutcomeFuncTick(),
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = lbdotDmg / 2 // spread dot over 2 ticks
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		})
 	}
 

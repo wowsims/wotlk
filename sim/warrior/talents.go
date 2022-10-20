@@ -835,7 +835,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
-			bladestormDot.TickOnce()
+			bladestormDot.TickOnce(sim)
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)

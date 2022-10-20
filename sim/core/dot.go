@@ -5,6 +5,8 @@ import (
 )
 
 type TickEffects func(*Simulation, *Dot) func()
+type OnSnapshot func(sim *Simulation, target *Unit, dot *Dot, isRollover bool)
+type OnTick func(sim *Simulation, target *Unit, dot *Dot)
 
 type Dot struct {
 	Spell *Spell
@@ -17,6 +19,13 @@ type Dot struct {
 
 	// If true, tick length will be shortened based on casting speed.
 	AffectedByCastSpeed bool
+
+	OnSnapshot OnSnapshot
+	OnTick     OnTick
+
+	SnapshotBaseDamage         float64
+	SnapshotCritChance         float64
+	SnapshotAttackerMultiplier float64
 
 	TickEffects    TickEffects
 	snapshotEffect *SpellEffect
@@ -97,15 +106,32 @@ func (dot *Dot) RecomputeAuraDuration() {
 //
 //	doRollover will apply previously snapshotted crit/%dmg instead of recalculating.
 func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
-	dot.isRollover = doRollover
-	dot.tickFn = dot.TickEffects(sim, dot)
-	dot.isRollover = false
+	if dot.OnTick == nil {
+		// Legacy behavior. TODO: Remove this
+		dot.isRollover = doRollover
+		dot.tickFn = dot.TickEffects(sim, dot)
+		dot.isRollover = false
+	} else {
+		if dot.OnSnapshot != nil {
+			// TODO: This matches current behavior, and is probably fine for all the sims right now,
+			// but will be incorrect if we start allowing target swaps.
+			target := dot.Spell.Unit.CurrentTarget
+			dot.OnSnapshot(sim, target, dot, doRollover)
+		}
+	}
 }
 
 // Forces an instant tick. Does not reset the tick timer or aura duration,
 // the tick is simply an extra tick.
-func (dot *Dot) TickOnce() {
-	dot.tickFn()
+func (dot *Dot) TickOnce(sim *Simulation) {
+	if dot.OnTick == nil {
+		dot.tickFn()
+	} else {
+		// TODO: This matches current behavior, and is probably fine for all the sims right now,
+		// but will be incorrect if we start allowing target swaps.
+		target := dot.Spell.Unit.CurrentTarget
+		dot.OnTick(sim, target, dot)
+	}
 }
 
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
@@ -114,7 +140,7 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 			if dot.lastTickTime != sim.CurrentTime {
 				dot.lastTickTime = sim.CurrentTime
 				dot.TickCount++
-				dot.tickFn()
+				dot.TickOnce(sim)
 			}
 		},
 		CleanUp: func(sim *Simulation) {
@@ -124,7 +150,7 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 				if dot.lastTickTime != sim.CurrentTime {
 					dot.lastTickTime = sim.CurrentTime
 					dot.TickCount++
-					dot.tickFn()
+					dot.TickOnce(sim)
 				}
 			}
 		},

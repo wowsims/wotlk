@@ -63,7 +63,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			dk.dndApSnapshot = 0.0
 			dk.dndCritSnapshot = 0.0
 			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce()
+			dk.DeathAndDecayDot.TickOnce(sim)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.DeathAndDecay.IsReady(sim)

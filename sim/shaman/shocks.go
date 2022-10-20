@@ -108,11 +108,14 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		NumberOfTicks:       6 + core.TernaryInt(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicCrit(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 834/6 + 0.1*dot.Spell.SpellPower()
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+		},
 	})
 
 	// Apply this talent after creating DoT spell so it doesn't get copied into periodic DamageMultiplier.
