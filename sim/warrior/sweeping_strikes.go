@@ -47,7 +47,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			//  do a normalized MH hit instead. This is true for Sudden Death procs as well.
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].GetArmorDamageModifier(spell)
+			curDmg = spellEffect.Damage / spellEffect.ResistanceMultiplier
 
 			ssHit.Cast(sim, warrior.Env.NextTargetUnit(spellEffect.Target))
 			ssHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--

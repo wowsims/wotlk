@@ -13,8 +13,11 @@ func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, 
 	}
 
 	// TODO check why spellEffect.Outcome isn't updated with resists anymore
-	resistanceMult := spell.ResistanceMultiplier(sim, spellEffect.IsPeriodic, attackTable)
-	spellEffect.Damage *= resistanceMult
+	resistanceMultiplier := spell.ResistanceMultiplier(sim, spellEffect.IsPeriodic, attackTable)
+	spellEffect.Damage *= resistanceMultiplier
+
+	spellEffect.ResistanceMultiplier = resistanceMultiplier
+	spellEffect.PreOutcomeDamage = spellEffect.Damage
 }
 
 // Modifies damage based on Armor or Magic resistances, depending on the damage type.

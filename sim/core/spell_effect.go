@@ -47,7 +47,8 @@ type SpellEffect struct {
 	Outcome HitOutcome
 	Damage  float64 // Damage done by this cast.
 
-	PreoutcomeDamage float64 // Damage done by this cast before Outcome is applied.
+	ResistanceMultiplier float64 // Partial Resists / Armor multiplier
+	PreOutcomeDamage     float64 // Damage done by this cast before Outcome is applied
 }
 
 func (spellEffect *SpellEffect) Validate() {
@@ -211,19 +212,17 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 
 	if sim.Log == nil {
 		result.applyAttackerModifiers(spell, attackTable)
-		result.applyResistances(sim, spell, attackTable)
 		result.applyTargetModifiers(spell, attackTable, isPeriodic)
-		result.PreoutcomeDamage = result.Damage
+		result.applyResistances(sim, spell, attackTable)
 		outcomeApplier(sim, &result, attackTable)
 		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
 	} else {
 		result.applyAttackerModifiers(spell, attackTable)
 		afterAttackMods := result.Damage
-		result.applyResistances(sim, spell, attackTable)
-		afterResistances := result.Damage
 		result.applyTargetModifiers(spell, attackTable, isPeriodic)
 		afterTargetMods := result.Damage
-		result.PreoutcomeDamage = result.Damage
+		result.applyResistances(sim, spell, attackTable)
+		afterResistances := result.Damage
 		outcomeApplier(sim, &result, attackTable)
 		afterOutcome := result.Damage
 		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
@@ -231,8 +230,8 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 
 		spell.Unit.Log(
 			sim,
-			"%s %s [DEBUG] MAP: %0.01f, RAP: %0.01f, SP: %0.01f, BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterResistances:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f, AfterPostOutcome:%0.01f",
-			target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDamage, afterAttackMods, afterResistances, afterTargetMods, afterOutcome, afterPostOutcome)
+			"%s %s [DEBUG] MAP: %0.01f, RAP: %0.01f, SP: %0.01f, BaseDamage:%0.01f, AfterAttackerMods:%0.01f, AfterTargetMods:%0.01f, AfterResistances:%0.01f, AfterOutcome:%0.01f, AfterPostOutcome:%0.01f",
+			target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDamage, afterAttackMods, afterTargetMods, afterResistances, afterOutcome, afterPostOutcome)
 	}
 
 	return result
@@ -253,19 +252,17 @@ func (dot *Dot) CalcSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier
 
 	if sim.Log == nil {
 		result.Damage *= dot.SnapshotAttackerMultiplier
-		result.applyResistances(sim, spell, attackTable)
 		result.applyTargetModifiers(spell, attackTable, true)
-		result.PreoutcomeDamage = result.Damage
+		result.applyResistances(sim, spell, attackTable)
 		outcomeApplier(sim, &result, attackTable)
 		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
 	} else {
 		result.Damage *= dot.SnapshotAttackerMultiplier
 		afterAttackMods := result.Damage
-		result.applyResistances(sim, spell, attackTable)
-		afterResistances := result.Damage
 		result.applyTargetModifiers(spell, attackTable, true)
 		afterTargetMods := result.Damage
-		result.PreoutcomeDamage = result.Damage
+		result.applyResistances(sim, spell, attackTable)
+		afterResistances := result.Damage
 		outcomeApplier(sim, &result, attackTable)
 		afterOutcome := result.Damage
 		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
@@ -382,11 +379,10 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		baseDmg := spellEffect.Damage
 		spellEffect.applyAttackerModifiers(spell, attackTable)
 		afterAttackMods := spellEffect.Damage
-		spellEffect.applyResistances(sim, spell, attackTable)
-		afterResistances := spellEffect.Damage
 		spellEffect.applyTargetModifiers(spell, attackTable, spellEffect.IsPeriodic)
 		afterTargetMods := spellEffect.Damage
-		spellEffect.PreoutcomeDamage = spellEffect.Damage
+		spellEffect.applyResistances(sim, spell, attackTable)
+		afterResistances := spellEffect.Damage
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 		afterOutcome := spellEffect.Damage
 		spell.Unit.Log(
@@ -395,15 +391,14 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 			spellEffect.Target.LogLabel(), spell.ActionID, spell.Unit.GetStat(stats.AttackPower), spell.Unit.GetStat(stats.RangedAttackPower), spell.Unit.GetStat(stats.SpellPower), baseDmg, afterAttackMods, afterResistances, afterTargetMods, afterOutcome)
 	} else {
 		spellEffect.applyAttackerModifiers(spell, attackTable)
-		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.applyTargetModifiers(spell, attackTable, spellEffect.IsPeriodic)
-		spellEffect.PreoutcomeDamage = spellEffect.Damage
+		spellEffect.applyResistances(sim, spell, attackTable)
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
-	spellEffect.applyResistances(sim, spell, attackTable)
 	spellEffect.applyTargetModifiers(spell, attackTable, spellEffect.IsPeriodic)
+	spellEffect.applyResistances(sim, spell, attackTable)
 	spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 }
 

@@ -74,7 +74,7 @@ type Warrior struct {
 	RendDots               *core.Dot
 	DeepWoundsDots         []*core.Dot
 	DeepWoundsTickDamage   []float64
-	DeepwoundsDamageBuffer []float64
+	DeepWoundsDamageBuffer []float64
 
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
@@ -159,17 +159,11 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	warrior.DeepwoundsDamageBuffer = []float64{}
+	warrior.DeepWoundsDamageBuffer = make([]float64, warrior.Env.GetNumTargets())
+	warrior.DeepWoundsTickDamage = make([]float64, warrior.Env.GetNumTargets())
+	warrior.DeepWoundsDots = make([]*core.Dot, warrior.Env.GetNumTargets())
 	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		warrior.DeepwoundsDamageBuffer = append(warrior.DeepwoundsDamageBuffer, 0)
-	}
-	warrior.DeepWoundsTickDamage = []float64{}
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		warrior.DeepWoundsTickDamage = append(warrior.DeepWoundsTickDamage, 0)
-	}
-	warrior.DeepWoundsDots = []*core.Dot{}
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		warrior.DeepWoundsDots = append(warrior.DeepWoundsDots, warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(i)))
+		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(i))
 	}
 }
 
