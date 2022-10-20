@@ -161,7 +161,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			dtpsHistsLow[stat] = dtpsMetrics.Hist
 		} else {
 			resultHigh.Dps.Weights[stat] = dpsDiff
-			resultHigh.Hps.Weights[stat] = tpsDiff
+			resultHigh.Hps.Weights[stat] = hpsDiff
 			resultHigh.Tps.Weights[stat] = tpsDiff
 			resultHigh.Dtps.Weights[stat] = dtpsDiff
 			resultHigh.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
@@ -182,51 +182,149 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	if swr.Debuffs != nil && (swr.Debuffs.Misery || swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved) {
 		spellHitCap -= 3 * SpellHitRatingPerHitChance
 	}
+	expertiseSoftCap := 26.0 * 8.2
+	expertiseHardCap := 56.0 * 8.2
 
-	const defaultStatMod = 50.0
-	const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
-	const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
 	statModsLow := stats.Stats{}
 	statModsHigh := stats.Stats{}
 
 	// Make sure reference stat is included.
-	statModsLow[referenceStat] = defaultStatMod
-	statModsHigh[referenceStat] = defaultStatMod
+	statModsLow[referenceStat] = baseStats[referenceStat] * 0.05
+	statModsHigh[referenceStat] = baseStats[referenceStat] * 0.05
 
-	for _, stat := range statsToWeigh {
-		statMod := defaultStatMod
+	doCap := func(stat stats.Stat, statMod float64) bool {
+		activeCap := false
+
 		if stat == stats.SpellHit {
-			statMod = spellHitStatMod
 			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - spellHitCap
 				if newMod > 0.5*statMod {
 					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
 				} else {
 					// Otherwise we go the opposite way of cap
 					statModsHigh[stat] = -statMod
 					statModsLow[stat] = -statMod
 				}
 
-				continue
+				activeCap = true
 			}
-		} else if stat == stats.MeleeHit {
-			statMod = meleeHitStatMod
-			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
+
+			if baseStats[stat] > spellHitCap && baseStats[stat]-statMod < spellHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - melee2HHitCap
+				newMod := baseStats[stat] - spellHitCap
 				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
+					statModsLow[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
 					statModsHigh[stat] = -statMod
 					statModsLow[stat] = -statMod
 				}
-				continue
+
+				activeCap = true
+			}
+		} else if stat == stats.MeleeHit {
+			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - melee2HHitCap
+				if newMod > 0.5*statMod {
+					statModsHigh[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = -statMod
+					statModsLow[stat] = -statMod
+				}
+
+				activeCap = true
+			}
+			if baseStats[stat] > melee2HHitCap && baseStats[stat]-statMod < melee2HHitCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - melee2HHitCap
+				if newMod > 0.5*statMod {
+					statModsLow[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = -statMod
+					statModsLow[stat] = -statMod
+				}
+
+				activeCap = true
+			}
+		} else if stat == stats.Expertise {
+			if baseStats[stat] < expertiseSoftCap && baseStats[stat]+statMod > expertiseSoftCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - expertiseSoftCap
+				if newMod > 0.5*statMod {
+					statModsHigh[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = -statMod
+					statModsLow[stat] = -statMod
+				}
+
+				activeCap = true
+			}
+
+			if baseStats[stat] > expertiseSoftCap && baseStats[stat]-statMod < expertiseSoftCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - expertiseSoftCap
+				if newMod > 0.5*statMod {
+					statModsLow[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = statMod
+					statModsLow[stat] = statMod
+				}
+
+				activeCap = true
+			}
+
+			if baseStats[stat] < expertiseHardCap && baseStats[stat]+statMod > expertiseHardCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - expertiseHardCap
+				if newMod > 0.5*statMod {
+					statModsHigh[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = -statMod
+					statModsLow[stat] = -statMod
+				}
+
+				activeCap = true
+			}
+
+			if baseStats[stat] > expertiseHardCap && baseStats[stat]-statMod < expertiseHardCap {
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - expertiseHardCap
+				if newMod > 0.5*statMod {
+					statModsLow[stat] = newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = statMod
+					statModsLow[stat] = statMod
+				}
+
+				activeCap = true
 			}
 		}
+
+		return activeCap
+	}
+
+	for _, stat := range statsToWeigh {
+		statMod := math.Max(50.0, baseStats[stat]*0.05)
+
+		if baseStats[stat]-statMod <= 0.0 {
+			statModsHigh[stat] = statMod
+			statModsLow[stat] = statMod
+			doCap(stat, statMod)
+			continue
+		}
+
+		if doCap(stat, statMod) {
+			continue
+		}
+
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod
 	}
@@ -253,26 +351,6 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 				continue
 			}
 		}
-
-		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
-		//
-		if stat == stats.SpellHit {
-			if baseStats[stat] >= spellHitCap {
-				statModsLow[stat] = statModsHigh[stat]
-				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
-				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
-				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
-				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
-			}
-		} else if stat == stats.MeleeHit {
-			if baseStats[stat] >= melee2HHitCap {
-				statModsLow[stat] = statModsHigh[stat]
-				resultLow.Dps.Weights[stat] = resultHigh.Dps.Weights[stat]
-				resultLow.Hps.Weights[stat] = resultHigh.Hps.Weights[stat]
-				resultLow.Tps.Weights[stat] = resultHigh.Tps.Weights[stat]
-				resultLow.Dtps.Weights[stat] = resultHigh.Dtps.Weights[stat]
-			}
-		}
 	}
 
 	result := StatWeightsResult{}
@@ -282,15 +360,27 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			continue
 		}
 
-		result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat] + resultHigh.Dps.Weights[stat]) / 2
-		result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat] + resultHigh.Hps.Weights[stat]) / 2
-		result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat] + resultHigh.Tps.Weights[stat]) / 2
-		result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat] + resultHigh.Dtps.Weights[stat]) / 2
+		if statModsLow[stat] != statModsHigh[stat] {
+			result.Dps.Weights[stat] = (resultLow.Dps.Weights[stat] + resultHigh.Dps.Weights[stat]) / 2.0
+			result.Hps.Weights[stat] = (resultLow.Hps.Weights[stat] + resultHigh.Hps.Weights[stat]) / 2.0
+			result.Tps.Weights[stat] = (resultLow.Tps.Weights[stat] + resultHigh.Tps.Weights[stat]) / 2.0
+			result.Dtps.Weights[stat] = (resultLow.Dtps.Weights[stat] + resultHigh.Dtps.Weights[stat]) / 2.0
 
-		result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat] + resultHigh.Dps.WeightsStdev[stat]) / 2
-		result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat] + resultHigh.Hps.WeightsStdev[stat]) / 2
-		result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat] + resultHigh.Tps.WeightsStdev[stat]) / 2
-		result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2
+			result.Dps.WeightsStdev[stat] = (resultLow.Dps.WeightsStdev[stat] + resultHigh.Dps.WeightsStdev[stat]) / 2.0
+			result.Hps.WeightsStdev[stat] = (resultLow.Hps.WeightsStdev[stat] + resultHigh.Hps.WeightsStdev[stat]) / 2.0
+			result.Tps.WeightsStdev[stat] = (resultLow.Tps.WeightsStdev[stat] + resultHigh.Tps.WeightsStdev[stat]) / 2.0
+			result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2.0
+		} else {
+			result.Dps.Weights[stat] = resultLow.Dps.Weights[stat]
+			result.Hps.Weights[stat] = resultLow.Hps.Weights[stat]
+			result.Tps.Weights[stat] = resultLow.Tps.Weights[stat]
+			result.Dtps.Weights[stat] = resultLow.Dtps.Weights[stat]
+
+			result.Dps.WeightsStdev[stat] = resultLow.Dps.WeightsStdev[stat]
+			result.Hps.WeightsStdev[stat] = resultLow.Hps.WeightsStdev[stat]
+			result.Tps.WeightsStdev[stat] = resultLow.Tps.WeightsStdev[stat]
+			result.Dtps.WeightsStdev[stat] = resultLow.Dtps.WeightsStdev[stat]
+		}
 	}
 
 	for statIdx, _ := range statModsLow {
