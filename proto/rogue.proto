@@ -177,6 +177,8 @@ message Rogue {
 		int32 minimum_combo_points_multi_target_slice = 9;
 
 		int32 envenom_pool_amount = 10;
+
+		bool use_feint = 11;
 	}
 	Rotation rotation = 1;
 

@@ -122,5 +122,10 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: "useFeint",
+			label: 'Use Feint',
+			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
+		}),
 	],
 };
