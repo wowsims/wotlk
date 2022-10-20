@@ -28,7 +28,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
 		ProcMask:     core.ProcMaskEmpty,
-		Flags:        core.SpellFlagBinary | core.SpellFlagChanneled,
+		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -46,7 +46,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warlock.OutcomeFuncMagicHitBinary(),
+			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Landed() {
 					return

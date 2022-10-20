@@ -204,7 +204,6 @@ func (target *Target) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
 }
 
 // Holds cached values for outcome/damage calculations, for a specific attacker+defender pair.
-//
 // These are updated dynamically when attacker or defender stats change.
 type AttackTable struct {
 	Attacker *Unit
@@ -227,16 +226,10 @@ type AttackTable struct {
 	PartialResistNatureThresholds Thresholds
 	PartialResistShadowThresholds Thresholds
 
-	BinaryArcaneHitChance float64
-	BinaryHolyHitChance   float64
-	BinaryFireHitChance   float64
-	BinaryFrostHitChance  float64
-	BinaryNatureHitChance float64
-	BinaryShadowHitChance float64
-
-	DamageDealtMultiplier               float64
-	NatureDamageDealtMultiplier         float64
-	PeriodicShadowDamageDealtMultiplier float64
+	DamageDealtMultiplier               float64 // attacker buff, applied in applyAttackerModifiers()
+	DamageTakenMultiplier               float64 // defender debuff, applied in applyTargetModifiers()
+	NatureDamageTakenMultiplier         float64
+	PeriodicShadowDamageTakenMultiplier float64
 	HealingDealtMultiplier              float64
 }
 
@@ -246,8 +239,9 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Defender: defender,
 
 		DamageDealtMultiplier:               1,
-		NatureDamageDealtMultiplier:         1,
-		PeriodicShadowDamageDealtMultiplier: 1,
+		DamageTakenMultiplier:               1,
+		NatureDamageTakenMultiplier:         1,
+		PeriodicShadowDamageTakenMultiplier: 1,
 		HealingDealtMultiplier:              1,
 	}
 
@@ -268,7 +262,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseMissChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
 		table.BaseBlockChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
 		table.BaseDodgeChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
-		table.BaseParryChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
+		table.BaseParryChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
 	}
 
 	table.UpdatePartialResists()

@@ -42,11 +42,12 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  120,
-			BaseDamageMax:  160,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			BaseDamageMin:              120,
+			BaseDamageMax:              160,
+			SwingSpeed:                 2,
+			SwingDuration:              time.Second * 2,
+			CritMultiplier:             2,
+			MeleeAttackRatingPerDamage: 17.5,
 		},
 		AutoSwingMelee: true,
 	})
@@ -82,16 +83,18 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  50,
-			BaseDamageMax:  90,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			BaseDamageMin:              50,
+			BaseDamageMax:              90,
+			SwingSpeed:                 2,
+			SwingDuration:              time.Second * 2,
+			CritMultiplier:             2,
+			MeleeAttackRatingPerDamage: 17.5,
 		},
 		AutoSwingMelee: true,
 	})
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
 	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
@@ -190,7 +193,7 @@ func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 var ghoulPetBaseStats = stats.Stats{
 	stats.Agility:     856,
 	stats.Strength:    331,
-	stats.AttackPower: 836,
+	stats.AttackPower: -20,
 
 	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
@@ -210,7 +213,7 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead) - 20,
+			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
 
 			stats.MeleeHit: hitRatingFromOwner,
 			stats.SpellHit: hitRatingFromOwner,

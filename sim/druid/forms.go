@@ -78,7 +78,7 @@ func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 		}
 	}
 	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-	druid.AddStatDynamic(sim, stats.Dodge, pos*core.DodgeRatingPerDodgeChance*2*float64(druid.Talents.FeralSwiftness))
+	druid.PseudoStats.BaseDodge += pos * 0.02 * float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
 }
 
 func (druid *Druid) registerCatFormSpell() {
@@ -119,12 +119,13 @@ func (druid *Druid) registerCatFormSpell() {
 			}
 
 			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:        43,
-				BaseDamageMax:        66,
-				SwingSpeed:           1.0,
-				NormalizedSwingSpeed: 1.0,
-				SwingDuration:        time.Second,
-				CritMultiplier:       druid.MeleeCritMultiplier(),
+				BaseDamageMin:              43,
+				BaseDamageMax:              66,
+				SwingSpeed:                 1.0,
+				NormalizedSwingSpeed:       1.0,
+				SwingDuration:              time.Second,
+				CritMultiplier:             druid.MeleeCritMultiplier(),
+				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 			druid.AutoAttacks.ReplaceMHSwing = nil
 			druid.AutoAttacks.EnableAutoSwing(sim)
@@ -201,7 +202,6 @@ func (druid *Druid) PowerShiftBear(sim *core.Simulation) {
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	baseCost := druid.BaseMana * 0.35
-	furorProcChance := 0.2 * float64(druid.Talents.Furor)
 
 	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
 	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
@@ -228,19 +228,20 @@ func (druid *Druid) registerBearFormSpell() {
 
 			druid.PseudoStats.ThreatMultiplier *= 1.3
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier *= (1.0 - potpdtm)
+			druid.PseudoStats.DamageTakenMultiplier *= 1.0 - potpdtm
 
 			druid.manageCooldownsEnabled(sim)
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
 			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:        109,
-				BaseDamageMax:        165,
-				SwingSpeed:           2.5,
-				NormalizedSwingSpeed: 2.5,
-				SwingDuration:        time.Millisecond * 2500,
-				CritMultiplier:       druid.MeleeCritMultiplier(),
+				BaseDamageMin:              109,
+				BaseDamageMax:              165,
+				SwingSpeed:                 2.5,
+				NormalizedSwingSpeed:       2.5,
+				SwingDuration:              time.Millisecond * 2500,
+				CritMultiplier:             druid.MeleeCritMultiplier(),
+				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
 			druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
@@ -259,7 +260,7 @@ func (druid *Druid) registerBearFormSpell() {
 
 			druid.PseudoStats.ThreatMultiplier /= 1.3
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier /= (1.0 - potpdtm)
+			druid.PseudoStats.DamageTakenMultiplier /= 1.0 - potpdtm
 
 			druid.AutoAttacks.CancelAutoSwing(sim)
 			druid.manageCooldownsEnabled(sim)
@@ -271,6 +272,8 @@ func (druid *Druid) registerBearFormSpell() {
 	})
 
 	rageMetrics := druid.NewRageMetrics(actionID)
+
+	furorProcChance := []float64{0, 0.2, 0.4, 0.6, 0.8, 1}[druid.Talents.Furor]
 
 	druid.BearForm = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -288,9 +291,9 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rageDelta := 0.0 - druid.CurrentRage()
-			if furorProcChance >= 0.9 || (furorProcChance > 0 && sim.RandomFloat("Furor") < furorProcChance) {
-				rageDelta += 10.0
+			rageDelta := 0 - druid.CurrentRage()
+			if sim.Proc(furorProcChance, "Furor") {
+				rageDelta += 10
 			}
 			if rageDelta > 0 {
 				druid.AddRage(sim, rageDelta, rageMetrics)

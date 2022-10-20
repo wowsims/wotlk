@@ -35,7 +35,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			hot := penanceDots[target.UnitIndex]
 			hot.Apply(sim)
 			// Do immediate tick
-			hot.TickOnce()
+			hot.TickOnce(sim)
 		}
 	} else {
 		procMask = core.ProcMaskSpellDamage
@@ -46,7 +46,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 					dot := penanceDots[spellEffect.Target.UnitIndex]
 					dot.Apply(sim)
 					// Do immediate tick
-					dot.TickOnce()
+					dot.TickOnce(sim)
 				}
 			},
 		})

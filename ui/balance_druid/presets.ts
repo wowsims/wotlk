@@ -48,11 +48,10 @@ export const DefaultRotation = BalanceDruidRotation.create({
     useBattleRes: false,
     useIs: true,
     useMf: false,
-    isInsideEclipseThreshold: 14,
+    isInsideEclipseThreshold: 15,
     mfInsideEclipseThreshold: 0,
     useSmartCooldowns : true,
-    mcdInsideLunarThreshold: 15,
-    mcdInsideSolarThreshold: 15
+	maximizeIsUptime : true
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({

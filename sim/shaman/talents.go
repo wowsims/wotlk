@@ -176,10 +176,10 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		ActionID: core.ActionID{SpellID: 64701},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellHaste, 15*core.HasteRatingPerHastePercent)
+			shaman.PseudoStats.CastSpeedMultiplier *= 1.15
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.AddStatDynamic(sim, stats.SpellHaste, -15*core.HasteRatingPerHastePercent)
+			shaman.PseudoStats.CastSpeedMultiplier /= 1.15
 		},
 	})
 

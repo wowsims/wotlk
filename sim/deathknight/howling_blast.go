@@ -60,18 +60,13 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 						dk.mercilessCombatBonus(sim)
 				},
 			},
-			OutcomeApplier: dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit()),
+			OutcomeApplier: dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit())),
 			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if spellEffect.Target == dk.CurrentTarget {
 					dk.LastOutcome = spellEffect.Outcome
 				}
 				if dk.Talents.ChillOfTheGrave > 0 && spellEffect.Outcome.Matches(core.OutcomeLanded) {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
-				}
-
-				// KM Consume after OH
-				if spellEffect.Landed() && dk.KillingMachineAura.IsActive() {
-					dk.KillingMachineAura.Deactivate(sim)
 				}
 
 				if hasGlyph {
@@ -90,5 +85,9 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			return dk.HowlingBlast.IsReady(sim)
 		}
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.HowlingBlast.IsReady(sim)
-	}, nil)
+	}, func(sim *core.Simulation) {
+		if dk.KillingMachineAura.IsActive() {
+			dk.KillingMachineAura.Deactivate(sim)
+		}
+	})
 }

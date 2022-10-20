@@ -189,6 +189,7 @@ message Warrior {
 			BerserkerStance = 2;
 		}
 		StanceOption stance_option = 19;
+		double rend_health_threshold_above = 20;
 	}
 	Rotation rotation = 1;
 

@@ -16,7 +16,6 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		ActionID:    actionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagBinary,
 
 		// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
 		DamageMultiplier: 1,
@@ -28,7 +27,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 				0.0732*spell.MeleeAttackPower() +
 				0.117*spell.SpellPower()
 
-			spell.CalcAndDealDamageMagicHitBinary(sim, target, baseDamage)
+			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
 		},
 	})
 

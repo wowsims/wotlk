@@ -26,9 +26,9 @@ func RegisterTankDeathknight() {
 type TankDeathknight struct {
 	*deathknight.Deathknight
 
-	btr BloodTankRotation
+	switchIT   bool
+	BloodSpell *deathknight.RuneSpell
 
-	Options  proto.TankDeathknight_Options
 	Rotation proto.TankDeathknight_Rotation
 }
 
@@ -41,7 +41,6 @@ func NewTankDeathknight(character core.Character, options proto.Player) *TankDea
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
 		}),
 		Rotation: *dkOptions.Rotation,
-		Options:  *dkOptions.Options,
 	}
 
 	if dkOptions.Options.UnholyFrenzyTarget != nil {
@@ -77,15 +76,46 @@ func (dk *TankDeathknight) Initialize() {
 func (dk *TankDeathknight) SetupRotations() {
 	dk.RotationSequence.Clear()
 
-	dk.setupBloodTankERWThreatOpener()
+	if dk.Rotation.Opener == proto.TankDeathknight_Rotation_Regular {
+		dk.setupTankRegularERWOpener()
+	} else if dk.Rotation.Opener == proto.TankDeathknight_Rotation_Threat {
+		dk.setupTankThreatERWOpener()
+	}
+
+	if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Hps {
+		dk.RotationSequence.NewAction(dk.TankRA_Hps)
+	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Tps {
+		dk.RotationSequence.NewAction(dk.TankRA_Tps)
+	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Dps {
+		dk.RotationSequence.NewAction(dk.TankRA_Hps)
+	}
+
+	if dk.Rotation.BloodSpell == proto.TankDeathknight_Rotation_BloodStrike {
+		dk.BloodSpell = dk.BloodStrike
+	} else if dk.Rotation.BloodSpell == proto.TankDeathknight_Rotation_BloodBoil {
+		dk.BloodSpell = dk.BloodBoil
+	} else if dk.Rotation.BloodSpell == proto.TankDeathknight_Rotation_HeartStrike {
+		if dk.HeartStrike != nil {
+			dk.BloodSpell = dk.HeartStrike
+		} else {
+			dk.BloodSpell = dk.BloodStrike
+		}
+	}
 }
 
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 
-	dk.Presence = deathknight.UnsetPresence
-	dk.ChangePresence(sim, deathknight.FrostPresence)
+	dk.switchIT = false
 
-	dk.btr.Reset(sim)
+	dk.Presence = deathknight.UnsetPresence
+	if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Blood {
+		dk.ChangePresence(sim, deathknight.BloodPresence)
+	} else if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Frost {
+		dk.ChangePresence(sim, deathknight.FrostPresence)
+	} else if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Unholy {
+		dk.ChangePresence(sim, deathknight.UnholyPresence)
+	}
+
 	dk.SetupRotations()
 }

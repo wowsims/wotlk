@@ -13,12 +13,14 @@ var TricksOfTheTradeActionID = core.ActionID{SpellID: 57934}
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
 	energyMetrics := rogue.NewEnergyMetrics(TricksOfTheTradeActionID)
-	energyCost := 15.0
+	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
+
 	auraDuration := time.Second * 6
-	spellTag := int32(0)
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade) {
 		auraDuration += time.Second * 4
 	}
+
+	var spellTag int32
 	if rogue.Options.TricksOfTheTradeTarget != nil {
 		target := rogue.Env.Raid.GetPlayerFromRaidTarget(*rogue.Options.TricksOfTheTradeTarget).GetCharacter()
 		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, spellTag)
@@ -42,7 +44,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second*30 + auraDuration,
+				Duration: time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks),
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if hasShadowblades {

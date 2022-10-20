@@ -35,7 +35,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
-		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -62,7 +62,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			DamageMultiplierAdditive: 1 +
 				.10*float64(hunter.Talents.TrapMastery) +
 				.02*float64(hunter.Talents.TNT),
-			CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+			CritMultiplier:   hunter.critMultiplier(false, false),
 			ThreatMultiplier: 1,
 		}),
 		Aura: hunter.RegisterAura(core.Aura{

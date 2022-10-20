@@ -1,13 +1,16 @@
 import { RaidTarget, Spec } from '../core/proto/common.js';
+import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
-	Deathknight_Rotation_StartingPresence as StartingPresence,
+	Deathknight_Rotation_Presence as StartingPresence,
 	Deathknight_Rotation_BloodRuneFiller as BloodRuneFiller,
 	Deathknight_Rotation_BloodTap as BloodTap,
+	Deathknight_Rotation_FrostRotationType as FrostRotationType,
+	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
 } from '../core/proto/deathknight.js';
@@ -105,7 +108,7 @@ export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.S
 	fieldName: 'useEmpowerRuneWeapon',
 	label: 'Empower Rune Weapon',
 	labelTooltip: 'Use Empower Rune Weapon in rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 });
 
 export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
@@ -193,6 +196,7 @@ export const UseAMSInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathk
 	fieldName: 'useAms',
 	label: 'Use AMS',
 	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -200,7 +204,7 @@ export const AvgAMSSuccessRateInput = InputHelpers.makeRotationNumberInput<Spec.
 	fieldName: 'avgAmsSuccessRate',
 	label: 'Avg AMS Success %',
 	labelTooltip: 'Chance for damage to be taken during the 5 second window of AMS.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation && player.getTalents().howlingBlast && player.getRotation().frostRotationType != FrostRotationType.Custom,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -208,7 +212,7 @@ export const AvgAMSHitInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeat
 	fieldName: 'avgAmsHit',
 	label: 'Avg AMS Hit',
 	labelTooltip: 'How much on average (+-10%) the character is hit for when AMS is successful.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation && player.getTalents().howlingBlast && player.getRotation().frostRotationType != FrostRotationType.Custom,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -216,7 +220,7 @@ export const OblitDelayDurationInput = InputHelpers.makeRotationNumberInput<Spec
 	fieldName: 'oblitDelayDuration',
 	label: 'Oblit Delay (ms)',
 	labelTooltip: 'How long a FS/HB/HW can delay a Oblit by.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -224,19 +228,66 @@ export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDe
 	fieldName: 'autoRotation',
 	label: 'Automatic Rotation',
 	labelTooltip: 'Have sim automatically adjust rotation based on the scenario. This is still in development and currently only works for Unholy.',
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getTalents().howlingBlast,
 });
 
 export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'desyncRotation',
 	label: 'Use Desync Rotation',
 	labelTooltip: 'Use the Desync Rotation.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.sim.getShowExperimental(),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const Presence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'presence',
+	label: 'Presence',
+	labelTooltip: 'Presence to be in during the encounter.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Frost', value: StartingPresence.Frost },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.SpecDeathknight, CustomSpellOption>({
+	fieldName: 'frostCustomRotation',
+	numColumns: 4,
+	values: [
+		{ actionId: ActionId.fromSpellId(49909), value: CustomSpellOption.CustomIcyTouch },
+		{ actionId: ActionId.fromSpellId(49921), value: CustomSpellOption.CustomPlagueStrike },
+		{ actionId: ActionId.fromSpellId(50842), value: CustomSpellOption.CustomPestilence },
+		{ actionId: ActionId.fromSpellId(51425), value: CustomSpellOption.CustomObliterate },
+		{ actionId: ActionId.fromSpellId(51411), value: CustomSpellOption.CustomHowlingBlast },
+		{ actionId: ActionId.fromSpellId(59057), value: CustomSpellOption.CustomHowlingBlastRime },
+		{ actionId: ActionId.fromSpellId(49941), value: CustomSpellOption.CustomBloodBoil },
+		{ actionId: ActionId.fromSpellId(49930), value: CustomSpellOption.CustomBloodStrike },
+		{ actionId: ActionId.fromSpellId(49938), value: CustomSpellOption.CustomDeathAndDecay },
+		{ actionId: ActionId.fromSpellId(57623), value: CustomSpellOption.CustomHornOfWinter },
+		{ actionId: ActionId.fromSpellId(51271), value: CustomSpellOption.CustomUnbreakableArmor },
+		{ actionId: ActionId.fromSpellId(45529), value: CustomSpellOption.CustomBloodTap },
+		{ actionId: ActionId.fromSpellId(47568), value: CustomSpellOption.CustomEmpoweredRuneWeapon },
+		{ actionId: ActionId.fromSpellId(55268), value: CustomSpellOption.CustomFrostStrike },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().frostRotationType == FrostRotationType.Custom,
+});
 
 export const DeathKnightRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FrostRotationType>({
+			fieldName: 'frostRotationType',
+			label: 'Rotation Type',
+			values: [
+				{ name: 'Single Target', value: FrostRotationType.SingleTarget },
+				{ name: 'Custom', value: FrostRotationType.Custom },
+			],
+			changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
+		}),
+		Presence,
 		UseAutoRotation,
 		BloodTapGhoulFrenzy,
 		UseEmpowerRuneWeapon,
@@ -252,6 +303,6 @@ export const DeathKnightRotationConfig = {
 		AvgAMSSuccessRateInput,
 		AvgAMSHitInput,
 		DesyncRotation,
-		//SetDeathAndDecayPrio,
+		FrostCustomRotation,
 	],
 };

@@ -29,10 +29,10 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			},
 		},
 
-		DamageMultiplier: 1 *
-			druid.TalentsBonuses.genesisMultiplier *
-			core.TernaryFloat64(druid.SetBonuses.balance_t7_2, 1.1, 1.0) *
-			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 1.3, 1.0),
+		DamageMultiplier: 1 +
+			druid.talentBonuses.genesis +
+			core.TernaryFloat64(druid.setBonuses.balance_t7_2, 0.1, 0) +
+			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 0.3, 0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
@@ -60,14 +60,14 @@ func (druid *Druid) registerInsectSwarmSpell() {
 				druid.Wrath.DamageMultiplier /= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
 			},
 		}),
-		NumberOfTicks: 6 + druid.TalentsBonuses.naturesSplendorTick,
+		NumberOfTicks: 6 + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 2,
 		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
 			IsPeriodic:     true,
 			BaseDamage:     core.BaseDamageConfigMagicNoRoll(215, 0.2),
 			OutcomeApplier: druid.OutcomeFuncTick(),
 			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.SetBonuses.balance_t8_4 {
+				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.setBonuses.balance_t8_4 {
 					tierProc := druid.GetOrRegisterAura(core.Aura{
 						Label:    "Elune's Wrath",
 						ActionID: core.ActionID{SpellID: 64823},

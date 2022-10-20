@@ -193,7 +193,13 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			// You have a 20% chance for your Bloodsurge and Sudden Death talents to grant 2 charges of their effect instead of 1,
 			// reduce the global cooldown on Execute or Slam by 0.5 sec, and for the duration of the effect to be increased by 100%.
-			// Handled in talents.go.
+			warrior := agent.(WarriorAgent).GetWarrior()
+			warrior.Ymirjar4pcProcAura = warrior.RegisterAura(core.Aura{
+				Label:     "Ymirjar Lord's Battlegear 4pc Proc",
+				ActionID:  core.ActionID{SpellID: 70855},
+				Duration:  core.NeverExpires,
+				MaxStacks: 2,
+			})
 		},
 	},
 })

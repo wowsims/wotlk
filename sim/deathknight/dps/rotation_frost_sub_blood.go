@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime time.Duration) *deathknight.RuneSpell {
+func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *deathknight.RuneSpell {
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 	abGcd := 1500 * time.Millisecond
@@ -18,6 +18,9 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, untilTime t
 	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km {
 		return dk.FrostStrike
 	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+		if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+			dk.Deathchill.Cast(sim, target)
+		}
 		return dk.FrostStrike
 	} else if sim.CurrentTime+spGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km && rime {
 		return dk.FrostStrike
@@ -138,7 +141,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 		ddAt := dk.SpentBloodRuneReadyAt()
 
 		if br == 0 {
-			spell := dk.RegularPrioPickSpell(sim, core.NeverExpires)
+			spell := dk.RegularPrioPickSpell(sim, target, core.NeverExpires)
 			if spell != nil {
 				casted = spell.Cast(sim, target)
 			} else {
@@ -146,7 +149,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 				waitUntil = ddAt
 			}
 		} else if br == 1 {
-			spell := dk.RegularPrioPickSpell(sim, ddAt+1500*time.Millisecond)
+			spell := dk.RegularPrioPickSpell(sim, target, ddAt+1500*time.Millisecond)
 			if spell != nil {
 				casted = spell.Cast(sim, target)
 			} else {
@@ -178,7 +181,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA(s
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
 		if !dk.UnbreakableArmor.IsReady(sim) {
-			spell := dk.RegularPrioPickSpell(sim, core.NeverExpires)
+			spell := dk.RegularPrioPickSpell(sim, target, core.NeverExpires)
 			if spell != nil {
 				casted = spell.Cast(sim, target)
 			} else {
@@ -265,7 +268,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			return core.TernaryDuration(casted, -1, sim.CurrentTime)
 		} else {
 			delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
-			spell := dk.RegularPrioPickSpell(sim, obAt+delayAmount)
+			spell := dk.RegularPrioPickSpell(sim, target, obAt+delayAmount)
 			if spell != nil {
 				casted = spell.Cast(sim, target)
 			} else {
@@ -354,6 +357,16 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(
 	return sim.CurrentTime
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+		dk.Deathchill.Cast(sim, target)
+	}
+	dk.FrostStrike.Cast(sim, target)
+
+	s.Advance()
+	return -1
+}
+
 func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
@@ -363,7 +376,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_FS).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).

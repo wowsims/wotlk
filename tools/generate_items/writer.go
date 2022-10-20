@@ -316,6 +316,9 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
+	29994: true, // Thalassian Wildercloak
+	30627: true, // Tsunami Talisman
+	38212: true, // Death Knight's Anguish
 	11815: true, // Hand of Justice
 	12590: true, // Felstriker
 	12632: true, // Storm Gauntlets
@@ -350,6 +353,8 @@ var allowList = map[int]bool{
 	33143: true, // Stone of Blades
 	33144: true, // Facet of Eternity
 	33504: true, // Libram of Divine Purpose
+	33506: true, // Skycall Totem
+	33507: true, // Stonebreaker's Totem
 	33829: true, // Hex Shrunken Head
 	33831: true, // Berserkers Call
 	34472: true, // Shard of Contempt

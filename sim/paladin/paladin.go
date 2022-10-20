@@ -205,7 +205,12 @@ func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin
 	// Paladins get more melee haste from haste than other classes, 25.22/1%
 	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
 
-	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
+	// Paladins get 1 block value per 2 str
+	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5)
+
+	// Base dodge is unaffected by Diminishing Returns
+	paladin.PseudoStats.BaseDodge += 0.0327
+	paladin.PseudoStats.BaseParry += 0.05
 
 	return paladin
 }
@@ -222,7 +227,6 @@ func init() {
 		stats.Agility:     92,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
@@ -235,7 +239,6 @@ func init() {
 		stats.Agility:     87,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
@@ -248,7 +251,6 @@ func init() {
 		stats.Agility:     90,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
@@ -261,6 +263,5 @@ func init() {
 		stats.Agility:     86,
 		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
 		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.27 * core.DodgeRatingPerDodgeChance,
 	}
 }

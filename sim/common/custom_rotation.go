@@ -5,11 +5,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type CustomSpellCondition func(*core.Simulation) bool
+// Custom condition for an action.
+type CustomCondition func(*core.Simulation) bool
+
+// Custom action based on a condition. Returns a bool and the CurCast cost.
+type CustomAction func(*core.Simulation, *core.Unit) (bool, float64)
 
 type CustomSpell struct {
-	Spell     *core.Spell
-	Condition CustomSpellCondition
+	Action    CustomAction
+	Condition CustomCondition
 }
 
 type CustomRotation struct {
@@ -27,7 +31,7 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 	}
 	for _, customSpellProto := range crProto.Spells {
 		customSpell := spellsMap[customSpellProto.Spell]
-		if customSpell.Spell != nil {
+		if customSpell.Action != nil {
 			cr.spells = append(cr.spells, customSpell)
 		}
 	}
@@ -39,26 +43,34 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 	}
 }
 
-func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *core.Spell {
+func (cr *CustomRotation) ChooseSpell(sim *core.Simulation) *CustomSpell {
 	for _, customSpell := range cr.spells {
 		if customSpell.Condition(sim) {
-			return customSpell.Spell
+			if customSpell.Action != nil {
+				return &customSpell
+			}
 		}
 	}
 	return nil
 }
 
-func (cr *CustomRotation) Cast(sim *core.Simulation) {
+func (cr *CustomRotation) Cast(sim *core.Simulation) bool {
 	spell := cr.ChooseSpell(sim)
 
 	if spell == nil {
-		return
+		return false
 	}
 
-	success := spell.Cast(sim, cr.character.CurrentTarget)
+	success := false
+	cost := 0.0
+	if spell.Action != nil {
+		success, cost = spell.Action(sim, cr.character.CurrentTarget)
+	}
 	if !success {
-		if cr.character.HasManaBar() {
-			cr.character.WaitForMana(sim, spell.CurCast.Cost)
+		if cr.character.HasManaBar() && spell.Action != nil {
+			cr.character.WaitForMana(sim, cost)
 		}
 	}
+
+	return true
 }

@@ -36,6 +36,12 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 	],
 });
 
+export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
+	fieldName: 'startingOverkillDuration',
+	label: 'Starting Overkill duration',
+	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
+});
+
 export const RogueRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({

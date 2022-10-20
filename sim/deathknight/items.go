@@ -123,8 +123,14 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
-				return
+			if dk.HeartStrike == nil {
+				if !icd.IsReady(sim) || spell != dk.BloodStrike.Spell {
+					return
+				}
+			} else {
+				if !icd.IsReady(sim) || (spell != dk.BloodStrike.Spell && spell != dk.HeartStrike.Spell) {
+					return
+				}
 			}
 
 			if sim.RandomFloat("UnholyMight") < 0.5 {
@@ -290,6 +296,14 @@ func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 205, 0)
 }
 
+func (dk *Deathknight) sigilOfTheUnfalteringKnight() *core.Aura {
+	if dk.Equip[proto.ItemSlot_ItemSlotRanged].ID != 40714 {
+		return nil
+	}
+
+	return dk.NewTemporaryStatsAura("Unflinching Valor", core.ActionID{SpellID: 62146}, stats.Stats{stats.Defense: 53.0 / core.DefenseRatingPerDefense}, time.Second*30)
+}
+
 func init() {
 	// Rune of Cinderglacier
 	core.NewItemEffect(53341, func(agent core.Agent) {
@@ -314,6 +328,8 @@ func init() {
 			IcyTouchActionID,
 		}
 
+		dk := agent.(DeathKnightAgent).GetDeathKnight()
+
 		cinderProcAura := character.GetOrRegisterAura(core.Aura{
 			ActionID:  core.ActionID{SpellID: 53386},
 			Label:     "Cinderglacier",
@@ -323,10 +339,12 @@ func init() {
 				aura.SetStacks(sim, aura.MaxStacks)
 				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= cinderBonusCoeff
 				aura.Unit.PseudoStats.FrostDamageDealtMultiplier *= cinderBonusCoeff
+				dk.modifyShadowDamageModifier(0.2)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= cinderBonusCoeff
 				aura.Unit.PseudoStats.FrostDamageDealtMultiplier /= cinderBonusCoeff
+				dk.modifyShadowDamageModifier(-0.2)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				if !spellEffect.Outcome.Matches(core.OutcomeLanded) {
@@ -452,6 +470,7 @@ func init() {
 		}))
 	})
 
+	CreateGladiatorsSigil(42618, "Savage", 94, 6)
 	CreateGladiatorsSigil(42619, "Hateful", 106, 6)
 	CreateGladiatorsSigil(42620, "Deadly", 120, 10)
 	CreateGladiatorsSigil(42621, "Furious", 144, 10)

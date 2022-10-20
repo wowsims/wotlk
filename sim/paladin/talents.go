@@ -18,8 +18,8 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.SanctityOfBattle)*core.CritRatingPerCritChance)
 
-	paladin.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(paladin.Talents.Deflection))
-	paladin.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(paladin.Talents.Anticipation))
+	paladin.PseudoStats.BaseParry += 0.01 * float64(paladin.Talents.Deflection)
+	paladin.PseudoStats.BaseDodge += 0.01 * float64(paladin.Talents.Anticipation)
 
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 
@@ -270,11 +270,12 @@ func (paladin *Paladin) applyCrusade() {
 	paladin.RegisterResetEffect(
 		func(s *core.Simulation) {
 			if !applied {
-				paladin.PseudoStats.DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
 					switch unit.MobType {
 					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.02 * float64(paladin.Talents.Crusade))
+					default:
 						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
 					}
 				}
@@ -308,8 +309,11 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	switch mhWeapon.HandType {
 	case proto.HandType_HandTypeTwoHand:
 		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
-	case proto.HandType_HandTypeOneHand:
-		paladin.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(paladin.Talents.OneHandedWeaponSpecialization)
+	case proto.HandType_HandTypeOneHand, proto.HandType_HandTypeMainHand:
+		if paladin.Talents.OneHandedWeaponSpecialization > 0 {
+			// Talent points are 4%, 7%, 10%
+			paladin.PseudoStats.DamageDealtMultiplier *= 1.01 + 0.03*float64(paladin.Talents.OneHandedWeaponSpecialization)
+		}
 	}
 }
 
@@ -487,7 +491,7 @@ func (paladin *Paladin) registerRighteousVengeanceSpell() {
 		ActionID:    dotActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   paladin.MeleeCritMultiplier(),

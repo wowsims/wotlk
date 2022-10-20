@@ -107,73 +107,109 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 	return common.NewCustomRotation(hunter.Rotation.CustomRotation, hunter.GetCharacter(), map[int32]common.CustomSpell{
 		int32(proto.Hunter_Rotation_ArcaneShot): common.CustomSpell{
-			Spell: hunter.ArcaneShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.ArcaneShot.CurCast.Cost
+				return hunter.ArcaneShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotDot == nil || !hunter.ExplosiveShotDot.IsActive())
 			},
 		},
 		int32(proto.Hunter_Rotation_AimedShot): common.CustomSpell{
-			Spell: hunter.AimedShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.AimedShot.CurCast.Cost
+				return hunter.AimedShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.AimedShot.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_BlackArrow): common.CustomSpell{
-			Spell: hunter.BlackArrow,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.BlackArrow.CurCast.Cost
+				return hunter.BlackArrow.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.BlackArrow.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_ChimeraShot): common.CustomSpell{
-			Spell: hunter.ChimeraShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.ChimeraShot.CurCast.Cost
+				return hunter.ChimeraShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.ChimeraShot.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_ExplosiveShot): common.CustomSpell{
-			Spell: hunter.ExplosiveShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.ExplosiveShot.CurCast.Cost
+				return hunter.ExplosiveShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.ExplosiveShot.IsReady(sim) && !hunter.ExplosiveShotDot.IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_ExplosiveTrap): common.CustomSpell{
-			Spell: hunter.TrapWeaveSpell,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.TrapWeaveSpell.CurCast.Cost
+				return hunter.TrapWeaveSpell.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.ExplosiveTrap.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_KillShot): common.CustomSpell{
-			Spell: hunter.KillShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.KillShot.CurCast.Cost
+				return hunter.KillShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_MultiShot): common.CustomSpell{
-			Spell: hunter.MultiShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.MultiShot.CurCast.Cost
+				return hunter.MultiShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.MultiShot.IsReady(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_ScorpidStingSpell): common.CustomSpell{
-			Spell: hunter.ScorpidSting,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.ScorpidSting.CurCast.Cost
+				return hunter.ScorpidSting.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_SerpentStingSpell): common.CustomSpell{
-			Spell: hunter.SerpentSting,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.SerpentSting.CurCast.Cost
+				return hunter.SerpentSting.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentStingDot.IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_SteadyShot): common.CustomSpell{
-			Spell: hunter.SteadyShot,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.SteadyShot.CurCast.Cost
+				return hunter.SteadyShot.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return true
 			},
 		},
 		int32(proto.Hunter_Rotation_Volley): common.CustomSpell{
-			Spell: hunter.Volley,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				cost := hunter.Volley.CurCast.Cost
+				return hunter.Volley.Cast(sim, target), cost
+			},
 			Condition: func(sim *core.Simulation) bool {
 				return true
 			},

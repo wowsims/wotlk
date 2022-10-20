@@ -13,22 +13,20 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 12328}
+	actionID := core.ActionID{SpellID: 12723}
 
 	var curDmg float64
 	ssHit := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		// No proc mask, so it won't proc itself.
-		ProcMask: core.ProcMaskEmpty,
-		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Cancel out caster multiplier so it doesn't double dip.
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg/spell.CasterDamageMultiplier())
+			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
 		},
 	})
 
@@ -36,16 +34,17 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		Label:     "Sweeping Strikes",
 		ActionID:  actionID,
 		Duration:  core.NeverExpires,
-		MaxStacks: 10,
+		MaxStacks: 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.SetStacks(sim, 10)
+			aura.SetStacks(sim, 5)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if aura.GetStacks() == 0 || spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			// TODO: If the triggering spell is Execute and 2nd target health > 20%, do a normalized MH hit instead.
+			// TODO: If the triggering spell is Whirlwind, or an Execute that would sweeping strike a >20% target,
+			//  do a normalized MH hit instead. This is true for Sudden Death procs as well.
 
 			// Undo armor reduction to get the raw damage value.
 			curDmg = spellEffect.Damage / warrior.AttackTables[spellEffect.Target.Index].GetArmorDamageModifier(spell)

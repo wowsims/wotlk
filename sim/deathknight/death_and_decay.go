@@ -63,7 +63,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			dk.dndApSnapshot = 0.0
 			dk.dndCritSnapshot = 0.0
 			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce()
+			dk.DeathAndDecayDot.TickOnce(sim)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.DeathAndDecay.IsReady(sim)
@@ -81,7 +81,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
 					if doSnapshot {
-						dk.dndCritSnapshot = hitEffect.SpellCritChance(spell.Unit, spell)
+						dk.dndCritSnapshot = hitEffect.SpellCritChance(spell)
 						dk.dndApSnapshot = 62.0 + 0.0475*dk.getImpurityBonus(spell)
 						doSnapshot = false
 					}

@@ -11,11 +11,11 @@ import (
 func (druid *Druid) registerFerociousBiteSpell() {
 	actionID := core.ActionID{SpellID: 48577}
 	baseCost := 35.0
-	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := 0.4 * float64(druid.Talents.PrimalPrecision)
 	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 25667, 14, 0)
 
 	var excessEnergy float64
-	var refundAmount float64 = 0.0
+	var refundAmount float64
 
 	biteBaseBonusCrit := core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0)
 	if druid.AssumeBleedActive {

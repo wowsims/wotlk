@@ -71,6 +71,8 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 28657, HandType: proto.HandType_HandTypeOneHand},
 	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
 
+	{ID: 29994}, // Wildercloak
+
 	// Include the items we want icons for here.
 	{ID: 43005}, // Pet foods
 	{ID: 33874}, //
@@ -164,6 +166,14 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 41119}, // Potions / In Battle Consumes
 	{ID: 40771}, // Potions / In Battle Consumes
 
+	// Poisons
+	{ID: 43233},
+	{ID: 43231},
+	{ID: 43235},
+
+	// Thistle Tea
+	{ID: 7676},
+
 	// Wrath Enchant Icons
 	{ID: 38375},
 	{ID: 38376},
@@ -252,5 +262,4 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
-	{ID: 50256, Filter: true}, // Shadow's Edge One-Hander (NEW)
 }

@@ -9,11 +9,11 @@ import (
 )
 
 func (warrior *Warrior) ApplyTalents() {
-	warrior.AddStat(stats.Parry, core.ParryRatingPerParryChance*1*float64(warrior.Talents.Deflection))
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Armor, warrior.Equip.Stats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
+	warrior.PseudoStats.BaseDodge += 0.01 * float64(warrior.Talents.Anticipation)
+	warrior.PseudoStats.BaseParry += 0.01 * float64(warrior.Talents.Deflection)
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
 	warrior.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 
@@ -179,13 +179,9 @@ func (warrior *Warrior) applyTasteForBlood() {
 				return
 			}
 
-			// Taste for Blood has 25% chance to not proc due to a bug. The chance is calculated from a controlled test here
-			// https://classic.warcraftlogs.com/reports/2zcDnpNFXGaAPg34/#fight=last&type=damage-done&source=1
-			if sim.RandomFloat("Taste for Blood bug") <= 0.25 {
-				return
-			}
 			icd.Use(sim)
 			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
+			warrior.lastTasteForBloodProc = sim.CurrentTime
 		},
 	})
 }
@@ -231,11 +227,14 @@ func (warrior *Warrior) applyBloodsurge() {
 		procChance = 0.20
 	}
 
+	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
-		Label:     "Bloodsurge Proc",
-		ActionID:  core.ActionID{SpellID: 46916},
-		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 10, 5)),
-		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
+		Label:    "Bloodsurge Proc",
+		ActionID: core.ActionID{SpellID: 46916},
+		Duration: time.Second * 5,
+		// 2 stacks to accomodate T10 4 pc
+		MaxStacks: 2,
 	})
 
 	warrior.RegisterAura(core.Aura{
@@ -264,8 +263,22 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 
 			warrior.BloodsurgeAura.Activate(sim)
-			warrior.BloodsurgeAura.AddStack(sim)
-			warrior.BloodsurgeAura.AddStack(sim)
+			if Ymirjar4Set {
+				if sim.RandomFloat("T10 4 set") < 0.2 {
+
+					warrior.BloodsurgeAura.Duration = time.Second * 10
+					warrior.BloodsurgeAura.SetStacks(sim, 2)
+					warrior.Ymirjar4pcProcAura.Activate(sim)
+					warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
+					return
+				}
+			}
+
+			if warrior.BloodsurgeAura.GetStacks() <= 1 {
+				warrior.BloodsurgeAura.Duration = time.Second * 5
+				warrior.BloodsurgeAura.SetStacks(sim, 1)
+			}
+
 			warrior.lastBloodsurgeProc = sim.CurrentTime
 		},
 	})
@@ -559,11 +572,14 @@ func (warrior *Warrior) applySuddenDeath() {
 		procChance = 0.09
 	}
 
+	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
 	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
-		Label:     "Sudden Death Proc",
-		ActionID:  core.ActionID{SpellID: 29724},
-		Duration:  time.Second * time.Duration(core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 20, 10)),
-		MaxStacks: core.TernaryInt32(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 2, 1),
+		Label:    "Sudden Death Proc",
+		ActionID: core.ActionID{SpellID: 29724},
+		Duration: time.Second * 10,
+		// 2 stacks to accommodate T10 4 pc
+		MaxStacks: 2,
 	})
 	warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death",
@@ -572,18 +588,32 @@ func (warrior *Warrior) applySuddenDeath() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
+				warrior.SuddenDeathAura.RemoveStack(sim)
+				warrior.AddRage(sim, rage_refund, rageMetrics)
+			}
+
 			if !spellEffect.Landed() {
 				return
 			}
 
 			if spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
 				warrior.SuddenDeathAura.Activate(sim)
-				warrior.SuddenDeathAura.AddStack(sim)
-			}
+				if Ymirjar4Set {
+					if sim.RandomFloat("T10 4 set") < 0.2 {
+						warrior.SuddenDeathAura.Activate(sim)
+						warrior.SuddenDeathAura.Duration = time.Second * 20
+						warrior.SuddenDeathAura.SetStacks(sim, 2)
+						warrior.Ymirjar4pcProcAura.Activate(sim)
+						warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
+						return
+					}
+				}
 
-			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
-				warrior.SuddenDeathAura.RemoveStack(sim)
-				warrior.AddRage(sim, rage_refund, rageMetrics)
+				if warrior.SuddenDeathAura.GetStacks() <= 1 {
+					warrior.SuddenDeathAura.Duration = time.Second * 10
+					warrior.SuddenDeathAura.SetStacks(sim, 1)
+				}
 			}
 		},
 	})
@@ -608,7 +638,7 @@ func (warrior *Warrior) applyShieldSpecialization() {
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
-				if procChance == 1.0 || sim.RandomFloat("Shield Specialization") < procChance {
+				if sim.Proc(procChance, "Shield Specialization") {
 					warrior.AddRage(sim, rageAdded, rageMetrics)
 				}
 			}
@@ -805,7 +835,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
-			bladestormDot.TickOnce()
+			bladestormDot.TickOnce(sim)
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)

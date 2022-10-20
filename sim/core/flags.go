@@ -195,7 +195,7 @@ const (
 	SpellFlagAgentReserved3
 	SpellFlagAgentReserved4
 
-	SpellFlagIgnoreModifiers = SpellFlagIgnoreAttackerModifiers | SpellFlagIgnoreResists | SpellFlagIgnoreTargetModifiers
+	SpellFlagIgnoreModifiers = SpellFlagIgnoreAttackerModifiers | SpellFlagIgnoreTargetModifiers
 )
 
 type SpellSchool byte

@@ -10,7 +10,6 @@ import (
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
 	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
-	druid.AddStat(stats.SpellPower, (float64(druid.Talents.ImprovedMoonkinForm)*0.1)*druid.GetStat(stats.Spirit))
 	druid.PseudoStats.CastSpeedMultiplier *= 1 + (float64(druid.Talents.CelestialFocus) * 0.01)
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
@@ -26,6 +25,11 @@ func (druid *Druid) ApplyTalents() {
 		druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
 	}
 
+	if druid.Talents.ImprovedMoonkinForm > 0 {
+		bonus := 0.1 * float64(druid.Talents.ImprovedMoonkinForm)
+		druid.AddStatDependency(stats.Spirit, stats.SpellPower, bonus)
+	}
+
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
 		druid.AddStatDependency(stats.Intellect, stats.SpellPower, bonus)
@@ -39,6 +43,12 @@ func (druid *Druid) ApplyTalents() {
 	if druid.Talents.HeartOfTheWild > 0 {
 		bonus := 0.04 * float64(druid.Talents.HeartOfTheWild)
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
+	}
+
+	if druid.Talents.ImprovedFaerieFire > 0 {
+		if druid.CurrentTarget.HasAura("Faerie Fire") || druid.CurrentTarget.HasAura("Improved Faerie Fire") {
+			druid.AddStat(stats.SpellCrit, float64(druid.Talents.ImprovedFaerieFire)*1*core.CritRatingPerCritChance)
+		}
 	}
 
 	if druid.Talents.SurvivalOfTheFittest > 0 {
@@ -170,7 +180,7 @@ func (druid *Druid) applyPrimalFury() {
 		return
 	}
 
-	procChance := 0.5 * float64(druid.Talents.PrimalFury)
+	procChance := []float64{0, 0.5, 1}[druid.Talents.PrimalFury]
 	actionID := core.ActionID{SpellID: 37117}
 	rageMetrics := druid.NewRageMetrics(actionID)
 	cpMetrics := druid.NewComboPointMetrics(actionID)
@@ -184,14 +194,14 @@ func (druid *Druid) applyPrimalFury() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if druid.InForm(Bear) {
 				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-					if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
+					if sim.Proc(procChance, "Primal Fury") {
 						druid.AddRage(sim, 5, rageMetrics)
 					}
 				}
 			} else if druid.InForm(Cat) {
 				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
 					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						if procChance >= 0.9 || sim.RandomFloat("Primal Fury") < procChance {
+						if sim.Proc(procChance, "Primal Fury") {
 							druid.AddComboPoints(sim, 1, cpMetrics)
 						}
 					}
@@ -279,7 +289,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				if spell == druid.Starfire || spell == druid.Wrath {
 					if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
 						druid.ClearcastingAura.Activate(sim)
-						if druid.SetBonuses.balance_t10_2 {
+						if druid.setBonuses.balance_t10_2 {
 							lasherweave2P.Activate(sim)
 						}
 					}
@@ -311,11 +321,11 @@ func (druid *Druid) applyEclipse() {
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			tierEclipseMultiplier := core.TernaryFloat64(druid.setBonuses.balance_t8_2, 0.07, 0) // T8-2P
 			druid.Wrath.DamageMultiplier *= 1.4 + tierEclipseMultiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseMultiplier := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, 0.07, 0) // T8-2P
+			tierEclipseMultiplier := core.TernaryFloat64(druid.setBonuses.balance_t8_2, 0.07, 0) // T8-2P
 			druid.Wrath.DamageMultiplier /= 1.4 + tierEclipseMultiplier
 		},
 	})
@@ -354,11 +364,11 @@ func (druid *Druid) applyEclipse() {
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			tierEclipseBonus := core.TernaryFloat64(druid.setBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
 			druid.Starfire.BonusCritRating += (core.CritRatingPerCritChance * 40) + tierEclipseBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			tierEclipseBonus := core.TernaryFloat64(druid.SetBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
+			tierEclipseBonus := core.TernaryFloat64(druid.setBonuses.balance_t8_2, core.CritRatingPerCritChance*7, 0) // T8-2P
 			druid.Starfire.BonusCritRating -= (core.CritRatingPerCritChance * 40) + tierEclipseBonus
 		},
 	})
@@ -395,6 +405,7 @@ func (druid *Druid) applyImprovedLotp() {
 	}
 
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 34300})
+	manaRestore := float64(druid.Talents.ImprovedLeaderOfThePack) * 0.04
 
 	icd := core.Cooldown{
 		Timer:    druid.NewTimer(),
@@ -418,7 +429,7 @@ func (druid *Druid) applyImprovedLotp() {
 				return
 			}
 			icd.Use(sim)
-			druid.AddMana(sim, druid.MaxMana()*0.08, manaMetrics, false)
+			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
 		},
 	})
 }

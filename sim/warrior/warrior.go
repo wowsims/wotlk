@@ -1,8 +1,9 @@
 package warrior
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/items"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -32,6 +33,8 @@ type Warrior struct {
 	revengeProcAura        *core.Aura
 	glyphOfRevengeProcAura *core.Aura
 	disableHsCleaveUntil   time.Duration
+	lastTasteForBloodProc  time.Duration
+	Ymirjar4pcProcAura     *core.Aura
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -73,9 +76,11 @@ type Warrior struct {
 	DeepWoundsTickDamage   []float64
 	DeepwoundsDamageBuffer []float64
 
-	HeroicStrikeOrCleave *core.Spell
-	HSOrCleaveQueueAura  *core.Aura
-	HSRageThreshold      float64
+	HeroicStrikeOrCleave     *core.Spell
+	HSOrCleaveQueueAura      *core.Aura
+	HSRageThreshold          float64
+	RendRageThresholdBelow   float64
+	RendHealthThresholdAbove float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -144,7 +149,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
-	warrior.registerRendSpell()
 	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
 
@@ -192,6 +196,10 @@ func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs W
 	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
+
+	// Base dodge unaffected by Diminishing Returns
+	warrior.PseudoStats.BaseDodge += 0.03664
+	warrior.PseudoStats.BaseParry += 0.05
 
 	return warrior
 }
@@ -247,7 +255,6 @@ func init() {
 		stats.Spirit:      61,
 		stats.AttackPower: 590,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9651,
@@ -258,7 +265,6 @@ func init() {
 		stats.Spirit:      58,
 		stats.AttackPower: 592,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9581,
@@ -269,7 +275,6 @@ func init() {
 		stats.Spirit:      59,
 		stats.AttackPower: 570,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9621,
@@ -280,7 +285,6 @@ func init() {
 		stats.Spirit:      63,
 		stats.AttackPower: 588,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9611,
@@ -291,7 +295,6 @@ func init() {
 		stats.Spirit:      59,
 		stats.AttackPower: 582,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9641,
@@ -302,7 +305,6 @@ func init() {
 		stats.Spirit:      62,
 		stats.AttackPower: 594,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      10047,
@@ -313,7 +315,6 @@ func init() {
 		stats.Spirit:      61,
 		stats.AttackPower: 578,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9631,
@@ -324,7 +325,6 @@ func init() {
 		stats.Spirit:      60,
 		stats.AttackPower: 590,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9541,
@@ -335,7 +335,6 @@ func init() {
 		stats.Spirit:      64,
 		stats.AttackPower: 566,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-		stats.Dodge:       3.664 * core.DodgeRatingPerDodgeChance,
 	}
 }
 

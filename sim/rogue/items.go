@@ -208,8 +208,8 @@ func init() {
 				numPoints = rogue.ComboPoints()
 
 				if spell.SameActionIgnoreTag(rogue.SliceAndDice[1].ActionID) {
-					// SND won't call OnSpellHit so we have to add the effect now.
-					if numPoints == 5 || sim.RandomFloat("AshtongueTalismanOfLethality") < 0.2*float64(numPoints) {
+					// SND won't call OnSpellHit, so we have to add the effect now.
+					if p := 0.2 * float64(numPoints); sim.Proc(p, "AshtongueTalismanOfLethality") {
 						procAura.Activate(sim)
 					}
 				}
@@ -219,7 +219,7 @@ func init() {
 					return
 				}
 
-				if numPoints == 5 || sim.RandomFloat("AshtongueTalismanOfLethality") < 0.2*float64(numPoints) {
+				if p := 0.2 * float64(numPoints); sim.Proc(p, "AshtongueTalismanOfLethality") {
 					procAura.Activate(sim)
 				}
 			},

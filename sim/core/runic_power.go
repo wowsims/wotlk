@@ -33,6 +33,7 @@ type RunicPowerBar struct {
 
 	maxRunicPower     float64
 	currentRunicPower float64
+	runeCD            time.Duration
 
 	// These flags are used to simplify pending action checks
 	// |DS|DS|DS|DS|DS|DS|
@@ -79,6 +80,7 @@ func (rp *RunicPowerBar) CopyRunicPowerBar() *RunicPowerBar {
 
 	rp.clone.maxRunicPower = rp.maxRunicPower
 	rp.clone.currentRunicPower = rp.currentRunicPower
+	rp.clone.runeCD = rp.runeCD
 	rp.clone.runeStates = rp.runeStates
 	rp.clone.runeMeta = rp.runeMeta
 
@@ -112,7 +114,7 @@ func (rp *RunicPowerBar) reset(sim *Simulation) {
 
 const baseRuneState = int16(0)
 
-func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64,
+func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower float64, runeCD time.Duration,
 	onRuneSpend OnRune,
 	onBloodRuneGain OnRune,
 	onFrostRuneGain OnRune,
@@ -125,6 +127,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 
 		maxRunicPower:     maxRunicPower,
 		currentRunicPower: currentRunicPower,
+		runeCD:            runeCD,
 
 		runeStates: baseRuneState,
 
@@ -516,6 +519,16 @@ func (rp *RunicPowerBar) CurrentDeathRunes() int8 {
 	return count
 }
 
+func (rp *RunicPowerBar) DeathRunesInFU() int8 {
+	var count int8
+	for i := 2; i < len(rp.runeMeta); i++ {
+		if rp.runeStates&isDeaths[i] != 0 {
+			count++
+		}
+	}
+	return count
+}
+
 func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
 	const unspentBlood1 = isSpent
 	const unspentBlood2 = unspentBlood1 << 2
@@ -880,7 +893,7 @@ func (rp *RunicPowerBar) LaunchRuneRegen(sim *Simulation, slot int8) {
 	if rp.runeMeta[slot].lastRegenTime != -1 {
 		runeGracePeriod = MinDuration(time.Millisecond*2500, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
 	}
-	rp.runeMeta[slot].regenAt = sim.CurrentTime + (time.Second*10 - runeGracePeriod)
+	rp.runeMeta[slot].regenAt = sim.CurrentTime + (rp.runeCD - runeGracePeriod)
 
 	rp.launchPA(sim, rp.runeMeta[slot].regenAt)
 }

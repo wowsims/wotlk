@@ -118,7 +118,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.registerReadinessCD()
 }
 
-func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, target *core.Unit) float64 {
+func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
 
@@ -187,7 +187,7 @@ func (hunter *Hunter) applyInvigoration() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("Invigoration") < procChance {
+			if sim.Proc(procChance, "Invigoration") {
 				hunter.AddMana(sim, 0.01*hunter.MaxMana(), manaMetrics, false)
 			}
 		},
@@ -339,7 +339,7 @@ func (hunter *Hunter) applyWildQuiver() {
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 0.8,
-		CritMultiplier:   hunter.critMultiplier(false, false, hunter.CurrentTarget),
+		CritMultiplier:   hunter.critMultiplier(false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -404,7 +404,7 @@ func (hunter *Hunter) applyFrenzy() {
 			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if procChance == 1 || sim.RandomFloat("Frenzy") < procChance {
+			if sim.Proc(procChance, "Frenzy") {
 				procAura.Activate(sim)
 			}
 		},
@@ -465,7 +465,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
-				Duration: hunter.applyLongevity(time.Minute*2) - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfBestialWrath), time.Second*20, 0),
+				Duration: hunter.applyLongevity(time.Minute*2 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfBestialWrath), time.Second*20, 0)),
 			},
 		},
 
@@ -629,7 +629,7 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ThrillOfTheHunt") < procChance {
+			if sim.Proc(procChance, "ThrillOfTheHunt") {
 				hunter.AddMana(sim, spell.CurCast.Cost*0.4, manaMetrics, false)
 			}
 		},
@@ -675,12 +675,12 @@ func (hunter *Hunter) applyExposeWeakness() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
+			if sim.Proc(procChance, "ExposeWeakness") {
 				procAura.Activate(sim)
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrapDot.Spell {
+			if spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
 
@@ -688,7 +688,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 				return
 			}
 
-			if procChance == 1 || sim.RandomFloat("ExposeWeakness") < procChance {
+			if sim.Proc(procChance, "ExposeWeakness") {
 				procAura.Activate(sim)
 			}
 		},
@@ -796,9 +796,11 @@ func (hunter *Hunter) registerReadinessCD() {
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()
-			hunter.KillCommand.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
 			hunter.ExplosiveTrap.CD.Reset()
+			if hunter.KillCommand != nil {
+				hunter.KillCommand.CD.Reset()
+			}
 			if hunter.AimedShot != nil {
 				hunter.AimedShot.CD.Reset()
 			}

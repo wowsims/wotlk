@@ -65,12 +65,12 @@ func init() {
 			return
 		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		ppmm := character.AutoAttacks.NewPPMManager(7.0, procMask)
+		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 44525},
 			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskEmpty,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultSpellCritMultiplier(),
@@ -117,7 +117,6 @@ func init() {
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskEmpty,
-			Flags:       core.SpellFlagBinary,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
@@ -137,7 +136,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && spell.SpellSchool == core.SpellSchoolPhysical {
+				if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) {
 					procSpell.Cast(sim, spell.Unit)
 				}
 			},
@@ -323,10 +322,14 @@ func init() {
 					Timer:    character.NewTimer(),
 					Duration: time.Second * 60,
 				},
-				SharedCD: core.Cooldown{
-					Timer:    character.GetOffensiveTrinketCD(),
-					Duration: time.Second * 12,
-				},
+				// Shared CD with Offensive trinkets has been removed.
+				// https://twitter.com/AggrendWoW/status/1579664462843633664
+				// Change possibly temporary, but developers have confirmed it was intended.
+
+				// SharedCD: core.Cooldown{
+				// 	Timer:    character.GetOffensiveTrinketCD(),
+				// 	Duration: time.Second * 12,
+				// },
 			},
 
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -355,7 +358,7 @@ func init() {
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 50401},
 			SpellSchool: core.SpellSchoolFrost,
-			ProcMask:    core.ProcMaskEmpty,
+			ProcMask:    core.ProcMaskSpellDamage,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -504,7 +507,7 @@ func init() {
 			return
 		}
 
-		character.AddStat(stats.Defense, 13)
+		character.AddStat(stats.Defense, 13*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.01)
 	})
 
@@ -520,7 +523,7 @@ func init() {
 			return
 		}
 
-		character.AddStat(stats.Defense, 25)
+		character.AddStat(stats.Defense, 25*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.02)
 	})
 

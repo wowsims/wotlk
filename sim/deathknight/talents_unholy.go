@@ -14,7 +14,7 @@ import (
 
 func (dk *Deathknight) ApplyUnholyTalents() {
 	// Anticipation
-	dk.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(dk.Talents.Anticipation))
+	dk.PseudoStats.BaseDodge += 0.01 * float64(dk.Talents.Anticipation)
 
 	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
@@ -79,19 +79,23 @@ func (dk *Deathknight) applyWanderingPlague() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 49655}
+	actionID := core.ActionID{SpellID: 50526}
+
+	// this scales with damage taken modifiers, and very slightly with (shadow) damage dealt modifiers (~10%):
+	// e.g. in blood presence, a frost fever tick for 1130 hits debuffed targets for 1146 (+1.5%), and non debuffed
+	// targets for 1015 (-13%, +1.5%)
 
 	dk.WanderingPlague = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := dk.LastDiseaseDamage
+			baseDamage := dk.LastDiseaseDamage * dk.bonusCoeffs.wanderingPlagueMultiplier
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
 				spell.CalcAndDealDamageAlwaysHit(sim, &aoeTarget.Unit, baseDamage)
@@ -111,7 +115,7 @@ func (dk *Deathknight) applyNecrosis() {
 		ActionID:    core.ActionID{SpellID: 51460},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -177,7 +181,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
 			core.TernaryFloat64(isMh, 1, dk.nervesOfColdSteelBonus()),
@@ -186,7 +190,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
 			BaseDamage: core.BaseDamageConfig{
 				Calculator: func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					diseaseMultiplier := (0.25 + dk.dkCountActiveDiseases(spellEffect.Target)*0.125)
+					diseaseMultiplier := 0.25 + dk.dkCountActiveDiseases(spellEffect.Target)*0.125
 					if isMh {
 						return mhBaseDamage(sim, spellEffect, spell) * diseaseMultiplier
 					} else {
@@ -248,10 +252,10 @@ func (dk *Deathknight) applyDesolation() {
 		Label:    "Desolation",
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.ModifyAdditiveDamageModifier(sim, bonusDamageCoeff)
+			dk.ModifyDamageModifier(bonusDamageCoeff)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.ModifyAdditiveDamageModifier(sim, -bonusDamageCoeff)
+			dk.ModifyDamageModifier(-bonusDamageCoeff)
 		},
 	})
 }
@@ -290,7 +294,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagIgnoreTargetModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

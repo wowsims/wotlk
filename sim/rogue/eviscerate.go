@@ -10,7 +10,9 @@ import (
 
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	baseDamage := 127.0 + 370*float64(comboPoints)
-	apRatio := 0.05 * float64(comboPoints)
+	// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
+	apRatio := 0.07 * float64(comboPoints)
+
 	cost := 35.0
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
@@ -37,7 +39,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			[]float64{0.0, 0.07, 0.14, 0.2}[rogue.Talents.ImprovedEviscerate] +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			0.03*float64(rogue.Talents.Aggression),
-		CritMultiplier:   rogue.MeleeCritMultiplier(true, false),
+		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
