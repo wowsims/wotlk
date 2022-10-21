@@ -275,7 +275,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionShoot},
 		SpellSchool: SpellSchoolPhysical,
 		ProcMask:    ProcMaskRangedAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage | SpellFlagNoOnCastComplete,
+		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
 
 		Cast: CastConfig{
 			IgnoreHaste: true,
