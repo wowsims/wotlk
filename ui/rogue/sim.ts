@@ -1,28 +1,20 @@
-import { Item, Race, RaidBuffs, WeaponType } from '../core/proto/common.js';
+import { RaidBuffs, WeaponType } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
-	Rogue,
-	Rogue_Rotation as RogueRotation,
-	Rogue_Options as RogueOptions,
 	Rogue_Rotation_Frequency as Frequency,
+	RogueMajorGlyph,
 	Rogue_Options_PoisonImbue,
 } from '../core/proto/rogue.js';
 
@@ -66,6 +58,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger)
 							) {
 								return '\'Mutilate\' talent selected, but daggers not equipped in both hands!';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getRotation().useFeint && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfFeint)) {
+								return '\'Use Feint\' selected, but missing Glyph of Feint!';
 							} else {
 								return '';
 							}

@@ -37,7 +37,7 @@ func (priest *Priest) registerFlashHealSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseHealing := sim.Roll(1896, 2203) + spellCoeff*spell.HealingPower()
-			spell.CalcAndDealHealingCrit(sim, target, baseHealing)
+			spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 		},
 	})
 }

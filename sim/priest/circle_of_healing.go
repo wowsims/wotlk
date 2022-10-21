@@ -46,7 +46,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 			healFromSP := 0.4029 * spell.HealingPower()
 			for _, aoeTarget := range targets {
 				baseHealing := sim.Roll(958, 1058) + healFromSP
-				spell.CalcAndDealHealingCrit(sim, aoeTarget, baseHealing)
+				spell.CalcAndDealHealing(sim, aoeTarget, baseHealing, spell.OutcomeHealingCrit)
 			}
 		},
 	})

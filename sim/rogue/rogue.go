@@ -52,6 +52,7 @@ type Rogue struct {
 	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
+	Feint            *core.Spell
 	Hemorrhage       *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
@@ -145,6 +146,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
 	rogue.registerFanOfKnives()
+	rogue.registerFeintSpell()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerWoundPoisonSpell()
