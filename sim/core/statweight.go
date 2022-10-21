@@ -199,7 +199,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - spellHitCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsHigh[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
@@ -213,12 +213,12 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] > spellHitCap && baseStats[stat]-statMod < spellHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - spellHitCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsLow[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
+					statModsHigh[stat] = statMod
+					statModsLow[stat] = statMod
 				}
 
 				activeCap = true
@@ -227,7 +227,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - melee2HHitCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsHigh[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
@@ -240,12 +240,12 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] > melee2HHitCap && baseStats[stat]-statMod < melee2HHitCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - melee2HHitCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsLow[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
+					statModsHigh[stat] = statMod
+					statModsLow[stat] = statMod
 				}
 
 				activeCap = true
@@ -254,7 +254,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] < expertiseSoftCap && baseStats[stat]+statMod > expertiseSoftCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - expertiseSoftCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsHigh[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
@@ -268,7 +268,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] > expertiseSoftCap && baseStats[stat]-statMod < expertiseSoftCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - expertiseSoftCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsLow[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
@@ -282,7 +282,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] < expertiseHardCap && baseStats[stat]+statMod > expertiseHardCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - expertiseHardCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsHigh[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
@@ -296,7 +296,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			if baseStats[stat] > expertiseHardCap && baseStats[stat]-statMod < expertiseHardCap {
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - expertiseHardCap
-				if newMod > 0.5*statMod {
+				if math.Abs(newMod) > 0.5*statMod {
 					statModsLow[stat] = newMod
 				} else {
 					// Otherwise we go the opposite way of cap
