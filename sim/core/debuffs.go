@@ -401,11 +401,10 @@ func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
 	})
 }
 
-var BloodFrenzyActionID = ActionID{SpellID: 29859}
 var phyDmgDebuff = `4%phydmg`
 
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, points)
+	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", ActionID{SpellID: 29859}, points)
 }
 func SavageCombatAura(target *Unit, points int32) *Aura {
 	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, points)

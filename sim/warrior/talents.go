@@ -526,10 +526,10 @@ func (warrior *Warrior) applyWreckingCrew() {
 		ActionID: core.ActionID{SpellID: 57518},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= bonus
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= bonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonus
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= bonus
 		},
 	})
 	warrior.RegisterAura(core.Aura{
