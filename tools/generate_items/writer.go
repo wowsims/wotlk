@@ -339,6 +339,7 @@ var allowList = map[int]bool{
 	28785: true, // The Lightning Capacitor
 	28830: true, // Dragonspine Trophy
 	29383: true, // Bloodlust Brooch
+	29387: true, // Gnomeregan Auto-Blocker 600
 	29996: true, // Rod of the Sun King
 	30032: true, // Red Belt of Battle
 	31139: true, // Fist of Reckoning
@@ -360,6 +361,7 @@ var allowList = map[int]bool{
 	34472: true, // Shard of Contempt
 	37574: true, // Libram of Furious Blows
 	38287: true, // Empty Mug of Direbrew
+	38289: true, // Coren's Lucky Coin
 	39208: true, // Sigil of the Dark Rider
 
 	6360: true, // Steelscale Crushfish
