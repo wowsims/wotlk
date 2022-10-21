@@ -326,7 +326,7 @@ dps_results: {
  key: "TestFeral-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 7226.61846
-  tps: 5522.77224
+  tps: 5522.64373
  }
 }
 dps_results: {
@@ -522,7 +522,7 @@ dps_results: {
  key: "TestFeral-AllItems-SparkofLife-37657"
  value: {
   dps: 7186.89371
-  tps: 5480.49118
+  tps: 5480.81604
  }
 }
 dps_results: {

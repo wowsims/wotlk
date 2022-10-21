@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3135.62641
-  tps: 7525.32814
+  dps: 3135.59481
+  tps: 7525.24681
  }
 }
 dps_results: {
@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 3103.39099
-  tps: 7454.33267
+  dps: 3103.35896
+  tps: 7454.25022
  }
 }
 dps_results: {
@@ -326,7 +326,7 @@ dps_results: {
  key: "TestProtection-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 3179.93477
-  tps: 7658.48832
+  tps: 7657.58761
  }
 }
 dps_results: {
@@ -556,8 +556,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
-  dps: 3165.24175
-  tps: 7594.64483
+  dps: 3161.61961
+  tps: 7597.55715
  }
 }
 dps_results: {
