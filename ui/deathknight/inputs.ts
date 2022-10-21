@@ -111,6 +111,14 @@ export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.S
 	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 });
 
+export const HoldErwArmy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'holdErwArmy',
+	label: 'Hold ERW for AotD',
+	labelTooltip: 'Hold Empower Rune Weapon for after Summon Gargoyle to guarantee maximized snapshot for Army of the Dead.',
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useEmpowerRuneWeapon && player.getRotation().armyOfTheDead == ArmyOfTheDead.AsMajorCd,
+});
+
 export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
 	fieldName: 'blPresence',
 	label: 'Bloodlust Presence',
@@ -291,6 +299,7 @@ export const DeathKnightRotationConfig = {
 		UseAutoRotation,
 		BloodTapGhoulFrenzy,
 		UseEmpowerRuneWeapon,
+		HoldErwArmy,
 		BloodTapInput,
 		ArmyOfTheDeadInput,
 		FirstDiseaseInput,
