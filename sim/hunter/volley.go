@@ -20,15 +20,20 @@ func (hunter *Hunter) registerVolleySpell() {
 		NumberOfTicks:       6,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncAOESnapshotCapped(hunter.Env, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 353 + 0.0837*spell.RangedAttackPower(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-			IsPeriodic:     true,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 353 + 0.0837*dot.Spell.RangedAttackPower(target)
+			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
+
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeRangedHitAndCritSnapshot)
+			}
+		},
 	})
 
 	hunter.Volley = hunter.RegisterSpell(core.SpellConfig{

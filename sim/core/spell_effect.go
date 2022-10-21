@@ -125,6 +125,10 @@ func (spell *Spell) physicalCritRating(target *Unit) float64 {
 		spell.BonusCritRating +
 		target.PseudoStats.BonusCritRatingTaken
 }
+func (spell *Spell) PhysicalCritChance(target *Unit, attackTable *AttackTable) float64 {
+	critRating := spell.physicalCritRating(target)
+	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
+}
 
 func (spell *Spell) SpellPower() float64 {
 	return spell.Unit.GetStat(stats.SpellPower) +

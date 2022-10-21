@@ -89,6 +89,21 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellEffect, attack
 	}
 }
 
+// TODO: Delete this, it's identical to OutcomeSnapshotCrit except it uses a different RNG string to preserve test results.
+func (dot *Dot) OutcomeSnapshotCritPhysical(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
+	} else {
+		result.Outcome = OutcomeHit
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
+	}
+}
+
 func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	if dot.Spell.CritMultiplier == 0 {
 		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
@@ -455,6 +470,27 @@ func (spell *Spell) OutcomeRangedHitAndCrit(sim *Simulation, result *SpellEffect
 		}
 	}
 }
+func (dot *Dot) OutcomeRangedHitAndCritSnapshot(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if dot.Spell.Unit.PseudoStats.InFrontOfTarget {
+		if !result.applyAttackTableMissNoDWPenalty(dot.Spell, attackTable, roll, &chance) {
+			if result.applyAttackTableCritSeparateRollSnapshot(sim, dot) {
+				result.applyAttackTableBlock(dot.Spell, attackTable, roll, &chance)
+			} else {
+				if !result.applyAttackTableBlock(dot.Spell, attackTable, roll, &chance) {
+					result.applyAttackTableHit(dot.Spell)
+				}
+			}
+		}
+	} else {
+		if !result.applyAttackTableMissNoDWPenalty(dot.Spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableCritSeparateRollSnapshot(sim, dot) {
+			result.applyAttackTableHit(dot.Spell)
+		}
+	}
+}
 func (spell *Spell) CalcAndDealDamageRangedHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 	spell.DealDamage(sim, &result)
@@ -633,6 +669,18 @@ func (spellEffect *SpellEffect) applyAttackTableCritSeparateRoll(sim *Simulation
 		spellEffect.Outcome = OutcomeCrit
 		spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 		spellEffect.Damage *= spell.CritMultiplier
+		return true
+	}
+	return false
+}
+func (result *SpellEffect) applyAttackTableCritSeparateRollSnapshot(sim *Simulation, dot *Dot) bool {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		return true
 	}
 	return false
