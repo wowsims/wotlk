@@ -851,12 +851,12 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mhDamageEffects(sim, target, spell)
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			mhDamageEffects(sim, target, dot.Spell)
 			if warrior.BladestormOH != nil {
 				ohDamageEffects(sim, target, warrior.BladestormOH)
 			}
-		}),
+		},
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{

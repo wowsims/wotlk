@@ -49,13 +49,13 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		}),
 	})
 	target := warrior.CurrentTarget
-	snapshotCalculator := func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-		tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
-		if sim.GetRemainingDurationPercent() > 0.75 {
-			return tickDamage * 1.35
-		}
-		return tickDamage
-	}
+	//snapshotCalculator := func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+	//	tickDamage := (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
+	//	if sim.GetRemainingDurationPercent() > 0.75 {
+	//		return tickDamage * 1.35
+	//	}
+	//	return tickDamage
+	//}
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
 		Aura: target.RegisterAura(core.Aura{
@@ -64,11 +64,19 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		}),
 		NumberOfTicks: core.TernaryInt(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending), 7, 5),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfig{Calculator: snapshotCalculator},
-			OutcomeApplier: warrior.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = (380 + 0.2*5*warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
+			if sim.GetRemainingDurationPercent() > 0.75 {
+				dot.SnapshotBaseDamage *= 1.35
+			}
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			if sim.Log != nil {
+				sim.Log("Snapshot rend multiplier: %0.04f", dot.SnapshotAttackerMultiplier)
+			}
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 
 	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)
