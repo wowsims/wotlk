@@ -178,8 +178,8 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
-		// TODO: Verify this effect behaves like Toughness (base from gear only)
-		fivePercentOfArmor := character.Equip.Stats()[stats.Armor]*0.05
+		// Modify only gear armor, including from agility
+		fivePercentOfArmor := (character.Equip.Stats()[stats.Armor] + 2.0*character.Equip.Stats()[stats.Agility]) * 0.05
 		procAuraMH := character.NewTemporaryStatsAura("Berserking MH Proc", core.ActionID{SpellID: 59620, Tag: 1}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 
