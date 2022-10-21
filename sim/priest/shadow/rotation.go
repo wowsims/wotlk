@@ -700,23 +700,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			spriest.WaitUntil(sim, sim.CurrentTime+nextCD)
 			return
 		}
-
-		if numTicks == 3 {
-			// IF TROLL IS ALSO USING STUN RESIST META GEM, THEN THEY LOSE THE LAST TICK OF MF
-			reduc1 := 0
-			reduc2 := 0
-			for _, gem := range spriest.Equip[proto.ItemSlot_ItemSlotHead].Gems {
-				if gem.ID == 25895 || gem.ID == 41335 {
-					reduc1 = 1
-					if spriest.GetCharacter().Race == proto.Race_RaceTroll {
-						reduc2 = 1
-					}
-				}
-			}
-			if reduc1+reduc2 == 2 {
-				numTicks = numTicks - 1
-			}
-		}
 		spell = spriest.MindFlay[numTicks]
 	} else {
 
