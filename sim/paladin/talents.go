@@ -199,6 +199,7 @@ func (paladin *Paladin) applyReckoning() {
 				ProcMask:         core.ProcMaskMeleeMH,
 				Flags:            core.SpellFlagMeleeMetrics,
 				CritMultiplier:   paladin.MeleeCritMultiplier(),
+				ThreatMultiplier: 1,
 				DamageMultiplier: 1,
 				ApplyEffects:     paladin.AutoAttacks.MHConfig.ApplyEffects,
 			})

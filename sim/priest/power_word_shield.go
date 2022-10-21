@@ -35,12 +35,10 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			DamageMultiplier: 0.2 * multiplier,
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				IsHealing: true,
-
-				BaseDamage:     core.BaseDamageConfigHealingNoRoll(2230, coeff),
-				OutcomeApplier: priest.OutcomeFuncAlwaysHit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseHealing := 2230 + coeff*spell.HealingPower()
+				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeAlwaysHit)
+			},
 		})
 	}
 

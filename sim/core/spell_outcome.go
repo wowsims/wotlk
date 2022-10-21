@@ -89,6 +89,26 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellEffect, attack
 	}
 }
 
+func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if dot.Spell.MagicHitCheck(sim, attackTable) {
+		if sim.RandomFloat("Magical Crit Roll") < dot.SnapshotCritChance {
+			result.Outcome = OutcomeCrit
+			result.Damage *= dot.Spell.CritMultiplier
+			dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
+		} else {
+			result.Outcome = OutcomeHit
+			dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
+		}
+	} else {
+		result.Outcome = OutcomeMiss
+		result.Damage = 0
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Misses++
+	}
+}
+
 func (spell *Spell) OutcomeMagicHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
@@ -152,15 +172,6 @@ func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellEffect, att
 	} else {
 		result.Outcome = OutcomeHit
 		spell.SpellMetrics[result.Target.UnitIndex].Hits++
-	}
-}
-func (spell *Spell) CalcAndDealHealingCrit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
-	spell.DealHealing(sim, &result)
-}
-func (unit *Unit) OutcomeFuncHealingCrit() OutcomeApplier {
-	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		spell.OutcomeHealingCrit(sim, spellEffect, attackTable)
 	}
 }
 

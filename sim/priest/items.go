@@ -174,15 +174,13 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 						}),
 						NumberOfTicks: 3,
 						TickLength:    time.Second * 3,
-						TickEffects: core.TickFuncSnapshot(unit, core.SpellEffect{
-							IsPeriodic: true,
-							IsHealing:  true,
-
-							BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-								return curAmount * 0.33
-							}),
-							OutcomeApplier: priest.OutcomeFuncTick(),
-						}),
+						OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+							dot.SnapshotBaseDamage = curAmount * 0.33
+							dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+						},
+						OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+							dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+						},
 					})
 				}
 			}

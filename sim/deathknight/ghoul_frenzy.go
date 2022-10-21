@@ -35,17 +35,13 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		}),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 6,
-		TickEffects: core.TickFuncSnapshot(&dk.Ghoul.Unit, core.SpellEffect{
-			IsPeriodic: true,
-			IsHealing:  true,
-
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.06 * dk.Ghoul.MaxHealth()
-				},
-			},
-			OutcomeApplier: dk.OutcomeFuncTick(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 0.06 * dk.Ghoul.MaxHealth()
+			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotHealing(sim, &dk.Ghoul.Unit, dot.OutcomeTick)
+		},
 	})
 
 	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
