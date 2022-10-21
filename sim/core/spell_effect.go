@@ -307,9 +307,23 @@ func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHeali
 		Damage: baseHealing,
 	}
 
-	result.Damage *= casterMultiplier
-	result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
-	outcomeApplier(sim, &result, attackTable)
+	if sim.Log == nil {
+		result.Damage *= casterMultiplier
+		result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
+		outcomeApplier(sim, &result, attackTable)
+	} else {
+		result.Damage *= casterMultiplier
+		afterCasterMods := result.Damage
+		result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
+		afterTargetMods := result.Damage
+		outcomeApplier(sim, &result, attackTable)
+		afterOutcome := result.Damage
+
+		spell.Unit.Log(
+			sim,
+			"%s %s [DEBUG] HealingPower: %0.01f, BaseHealing:%0.01f, AfterCasterMods:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
+			target.LogLabel(), spell.ActionID, spell.HealingPower(), baseHealing, afterCasterMods, afterTargetMods, afterOutcome)
+	}
 
 	return result
 }

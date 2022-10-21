@@ -40,7 +40,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+			dot.CalcAndDealPeriodicSnapshotHealing(sim, &dk.Ghoul.Unit, dot.OutcomeTick)
 		},
 	})
 
