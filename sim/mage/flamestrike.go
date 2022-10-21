@@ -55,10 +55,14 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		}),
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncAOESnapshot(mage.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(780/4, 0.122),
-			OutcomeApplier: mage.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 780.0/4 + 0.122*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+			}
+		},
 	})
 }

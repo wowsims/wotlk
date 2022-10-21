@@ -19,11 +19,16 @@ func (mage *Mage) registerBlizzardSpell() {
 		NumberOfTicks:       8,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncAOESnapshotCapped(mage.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(352, 0.119),
-			OutcomeApplier: mage.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 352 + 0.119*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+			}
+		},
 	})
 
 	mage.Blizzard = mage.RegisterSpell(core.SpellConfig{
