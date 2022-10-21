@@ -181,7 +181,13 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 45416, Phase: 2},
 
 	// Other items Wowhead has the wrong phase listed for
-	{ID: 49812, Phase: 4}, // Purloined Wedding Ring
+	// Ick's loot table from Pit of Saron
+	{ID: 49812, Phase: 4},
+	{ID: 49808, Phase: 4},
+	{ID: 49811, Phase: 4},
+	{ID: 49807, Phase: 4},
+	{ID: 49810, Phase: 4},
+	{ID: 49809, Phase: 4},
 
 	// Include the items we want icons for here.
 	{ID: 43005}, // Pet foods
