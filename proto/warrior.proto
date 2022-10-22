@@ -198,6 +198,7 @@ message Warrior {
 	message Options {
 		double starting_rage = 1;
 		bool use_recklessness = 2;
+		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
 	}
 	Options options = 3;

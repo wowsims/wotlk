@@ -99,6 +99,10 @@ func (war *DpsWarrior) Initialize() {
 		war.RegisterRecklessnessCD()
 	}
 
+	if war.Options.UseShatteringThrow {
+		war.RegisterShatteringThrowCD()
+	}
+
 	// This makes the behavior of these options more intuitive in the individual sim.
 	if war.Env.Raid.Size() == 1 {
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorHelpStack {
