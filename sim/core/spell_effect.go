@@ -46,6 +46,8 @@ type SpellEffect struct {
 
 	ResistanceMultiplier float64 // Partial Resists / Armor multiplier
 	PreOutcomeDamage     float64 // Damage done by this cast before Outcome is applied
+
+	inUse bool
 }
 
 func (spellEffect *SpellEffect) Validate() {
@@ -208,9 +210,13 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
 	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellEffect{}
+	}
 	result.Target = target
 	result.Damage = baseDamage
 	result.Outcome = OutcomeEmpty // for blocks
+	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= attackerMultiplier
@@ -280,6 +286,8 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		spell.Unit.OnSpellHitDealt(sim, spell, result)
 		result.Target.OnSpellHitTaken(sim, spell, result)
 	}
+
+	result.inUse = false
 }
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellEffect) {
 	spell.dealDamageInternal(sim, false, result)
@@ -308,8 +316,12 @@ func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHeali
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
 	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellEffect{}
+	}
 	result.Target = target
 	result.Damage = baseHealing
+	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= casterMultiplier

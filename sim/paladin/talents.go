@@ -446,14 +446,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 }
 
 func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
-	var applier core.OutcomeApplier
-
-	if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
-		// Crits using melee crit.
-		applier = paladin.OutcomeFuncMeleeSpecialCritOnly()
-	} else {
-		applier = paladin.OutcomeFuncAlwaysHit()
-	}
+	canCrit := paladin.HasTuralyonsOrLiadrinsBattlegear2Pc
 
 	return core.NewDot(core.Dot{
 		Spell: paladin.RighteousVengeanceSpell,
@@ -467,19 +460,15 @@ func (paladin *Paladin) makeRighteousVengeanceDot(target *core.Unit) *core.Dot {
 		}),
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
-		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
-			return func() {
-				core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					IsPeriodic:     true,
-					OutcomeApplier: applier,
-					BaseDamage: core.BaseDamageConfig{
-						Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-							tick := paladin.RighteousVengeanceDamage[target.Index]
-							paladin.RighteousVengeancePools[target.Index] -= tick
-							return tick
-						},
-					},
-				})(sim, target, dot.Spell)
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDmg := paladin.RighteousVengeanceDamage[target.Index]
+			paladin.RighteousVengeancePools[target.Index] -= baseDmg
+
+			if canCrit {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.Spell.OutcomeMeleeSpecialCritOnly)
+			} else {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.Spell.OutcomeAlwaysHit)
 			}
 		},
 	})

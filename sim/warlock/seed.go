@@ -22,6 +22,7 @@ func (warlock *Warlock) registerSeedSpell() {
 }
 
 func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
+	target := warlock.Env.GetTargetUnit(int32(targetIdx))
 	baseCost := 0.34 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47836, Tag: 1}
 	spellSchool := core.SpellSchoolShadow
@@ -85,8 +86,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
 	})
 
-	target := warlock.Env.GetTargetUnit(int32(targetIdx))
-
 	seedDmgTracker := 0.0
 	trySeedPop := func(sim *core.Simulation, dmg float64) {
 		seedDmgTracker += dmg
@@ -123,11 +122,13 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
 
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1518/6, 0.25),
-			OutcomeApplier: warlock.OutcomeFuncTick(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 1518/6 + 0.25*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }

@@ -59,11 +59,13 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigFlat(tickAmount),
-			OutcomeApplier: character.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = tickAmount
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 
 	MakeProcTriggerAura(&character.Unit, ProcTrigger{

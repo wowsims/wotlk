@@ -9,6 +9,10 @@ import (
 )
 
 func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
+	if rogue.Talents.Mutilate && sim.GetNumTargets() <= 3 {
+		rogue.OnCanAct(sim)
+		return
+	}
 	if rogue.KillingSpreeAura.IsActive() {
 		rogue.DoNothing()
 		return
@@ -20,6 +24,10 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
+	if rogue.Talents.Mutilate && sim.GetNumTargets() <= 3 {
+		rogue.OnCanAct(sim)
+		return
+	}
 	if rogue.KillingSpreeAura.IsActive() {
 		rogue.DoNothing()
 		return
@@ -242,6 +250,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	if rogue.Talents.Mutilate {
 		rogue.Builder = rogue.Mutilate
 		rogue.BuilderPoints = 2
+		rogue.setupAssassinationRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() > 3
 	// Slice and Dice

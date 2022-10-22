@@ -18,10 +18,7 @@ func (druid *Druid) registerMoonfireSpell() {
 	moonfireGlyphDotDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
 
 	// T9-2P
-	dotOutcomeApplier := druid.OutcomeFuncTick()
-	if druid.setBonuses.balance_t9_2 {
-		dotOutcomeApplier = druid.OutcomeFuncMagicHitAndCrit()
-	}
+	dotCanCrit := druid.setBonuses.balance_t9_2
 
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 
@@ -60,7 +57,6 @@ func (druid *Druid) registerMoonfireSpell() {
 		},
 	})
 
-	target := druid.CurrentTarget
 	druid.MoonfireDot = core.NewDot(core.Dot{
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 48463},
@@ -76,7 +72,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 			ThreatMultiplier: 1,
 		}),
-		Aura: target.RegisterAura(core.Aura{
+		Aura: druid.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Moonfire Dot",
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -88,11 +84,21 @@ func (druid *Druid) registerMoonfireSpell() {
 		}),
 		NumberOfTicks: 4 + core.TernaryInt(druid.setBonuses.balance_t6_2, 1, 0) + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(200, 0.13),
-			OutcomeApplier: dotOutcomeApplier,
-			IsPeriodic:     true,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 200 + 0.13*dot.Spell.SpellPower()
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if dotCanCrit {
+				// TODO: This allows misses... probably a bug.
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
 }
 

@@ -573,14 +573,13 @@ func (druid *Druid) registerLasherweaveDot() {
 		}),
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return druid.GetStat(stats.SpellPower) * 0.07
-				},
-			},
-			OutcomeApplier: druid.OutcomeFuncTick(),
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }

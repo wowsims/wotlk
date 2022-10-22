@@ -62,6 +62,7 @@ func (druid *Druid) registerRakeSpell() {
 		}),
 	})
 
+	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:    "Rake-" + strconv.Itoa(int(druid.Index)),
 		ActionID: actionID,
@@ -72,13 +73,15 @@ func (druid *Druid) registerRakeSpell() {
 		Aura:          dotAura,
 		NumberOfTicks: 3 + t9bonus,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: core.BaseDamageFuncMelee(358, 358, 0.06),
-			},
-			OutcomeApplier: core.Ternary(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4), druid.OutcomeFuncTickHitAndCrit(), druid.OutcomeFuncTick()),
-		})),
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDmg := 358 + 0.06*dot.Spell.MeleeAttackPower()
+			if dotCanCrit {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTickPhysicalCrit)
+			} else {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+			}
+		},
 	})
 }
 
