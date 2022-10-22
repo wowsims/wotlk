@@ -654,7 +654,7 @@ dps_results: {
 dps_results: {
  key: "TestFury-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6268.58345
-  tps: 4618.06139
+  dps: 6221.98982
+  tps: 4591.48028
  }
 }

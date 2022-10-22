@@ -45,7 +45,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 			if result.Landed() && dk.Talents.UnholyBlight {
 				dk.procUnholyBlight(sim, target, result.Damage)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.DeathCoil.IsReady(sim)

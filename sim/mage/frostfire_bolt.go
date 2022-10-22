@@ -51,7 +51,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 				if result.Landed() {
 					mage.FrostfireDot.Apply(sim)
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})

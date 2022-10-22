@@ -91,7 +91,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 				lvbdotDmg = result.Damage * 0.1 // TODO: does this dot pool with the previous dot?
 				lvbDot.Apply(sim)               // will resnapshot dmg
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

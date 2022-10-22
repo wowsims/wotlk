@@ -270,7 +270,7 @@ func init() {
 				if result.Landed() {
 					debuffs[target.Index].Activate(sim)
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			},
 		})
 

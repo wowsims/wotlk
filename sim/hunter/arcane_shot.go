@@ -53,7 +53,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			if hasGlyph && result.Landed() && (hunter.SerpentStingDot.IsActive() || hunter.ScorpidStingAura.IsActive()) {
 				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics, false)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

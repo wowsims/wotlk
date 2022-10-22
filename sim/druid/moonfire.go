@@ -53,7 +53,7 @@ func (druid *Druid) registerMoonfireSpell() {
 					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
 				}
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

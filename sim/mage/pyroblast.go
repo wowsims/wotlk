@@ -56,7 +56,7 @@ func (mage *Mage) registerPyroblastSpell() {
 				if result.Landed() {
 					mage.PyroblastDot.Apply(sim)
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})

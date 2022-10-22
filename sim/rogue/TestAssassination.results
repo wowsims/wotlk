@@ -871,7 +871,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6825.94499
-  tps: 4846.42094
+  dps: 6815.11372
+  tps: 4838.73074
  }
 }
