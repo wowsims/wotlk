@@ -318,15 +318,14 @@ func (dk *Deathknight) applyUnholyBlight() {
 			}),
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic: true,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(_ *core.Simulation, se *core.SpellEffect, _ *core.Spell) float64 {
-						return dk.UnholyBlightTickDamage[se.Target.Index] * glyphDmgBonus
-					},
-				},
-				OutcomeApplier: dk.OutcomeFuncTick(),
-			}),
+
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = dk.UnholyBlightTickDamage[target.Index] * glyphDmgBonus
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		})
 	}
 }

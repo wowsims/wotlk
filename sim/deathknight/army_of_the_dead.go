@@ -42,10 +42,10 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		NumberOfTicks:       8,
 		TickLength:          time.Millisecond * 500,
 		AffectedByCastSpeed: false,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
 			ghoulIndex++
-		}),
+		},
 	})
 
 	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
