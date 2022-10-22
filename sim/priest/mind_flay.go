@@ -19,15 +19,6 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	baseCost := priest.BaseMana * 0.09
 
 	channelTime := time.Second * time.Duration(numTicks)
-	for _, gem := range priest.Equip[proto.ItemSlot_ItemSlotHead].Gems {
-		if gem.ID == 25895 || gem.ID == 41335 {
-			channelTime -= time.Duration(numTicks) * (time.Millisecond * 100)
-		}
-	}
-	// ADDED TROLL MF BUG 15% REDUCED CHANNEL TIME DUE TO DA VOODOO SHUFFLE
-	if priest.GetCharacter().Race == proto.Race_RaceTroll {
-		channelTime -= time.Duration(numTicks) * (time.Millisecond * 150)
-	}
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		channelTime -= time.Duration(numTicks) * (time.Millisecond * 170)
 	}
@@ -100,21 +91,6 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	var mfReducTime time.Duration
-	mfReducTime = time.Millisecond * 0
-	// ADDED Bug where root resist gem reduces MF by 10%
-	// ADDED TROLL MF BUG 15% REDUCED CHANNEL TIME DUE TO DA VOODOO SHUFFLE
-	if priest.GetCharacter().Race == proto.Race_RaceTroll {
-		mfReducTime = time.Millisecond * 150
-	}
-
-	for _, gem := range priest.Equip[proto.ItemSlot_ItemSlotHead].Gems {
-		if gem.ID == 25895 || gem.ID == 41335 {
-			mfReducTime = time.Millisecond * 100
-			if priest.GetCharacter().Race == proto.Race_RaceTroll {
-				mfReducTime = time.Millisecond*150 + time.Millisecond*100
-			}
-		}
-	}
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		mfReducTime = mfReducTime + time.Millisecond*170
 	}
@@ -165,11 +141,5 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 }
 
 func (priest *Priest) MindFlayTickDuration() time.Duration {
-	mfReducTime := time.Millisecond * 0
-	for _, gem := range priest.Equip[proto.ItemSlot_ItemSlotHead].Gems {
-		if gem.ID == 25895 || gem.ID == 41335 {
-			mfReducTime = time.Millisecond * 100
-		}
-	}
-	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0) - core.TernaryDuration(priest.GetCharacter().Race == proto.Race_RaceTroll, time.Millisecond*150, 0) - mfReducTime)
+	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0))
 }

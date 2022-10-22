@@ -290,6 +290,15 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		} else {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 		}
+	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
+		dk.RotationSequence.Clear()
+		dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
+
+		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
+		} else {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
+		}
 	}
 }
 

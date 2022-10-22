@@ -69,7 +69,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			damage := spellEffect.Damage
 			if spellEffect.Outcome.Matches(OutcomeDodge | OutcomeParry) {
 				// Rage is still generated for dodges/parries, based on the damage it WOULD have done.
-				damage = spellEffect.PreoutcomeDamage
+				damage = spellEffect.PreOutcomeDamage
 			}
 
 			// generatedRage is capped for very low damage swings

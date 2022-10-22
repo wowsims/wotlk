@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -23,10 +22,6 @@ func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) registerArmyOfTheDeadCD() {
-	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
-		return
-	}
-
 	aotdAura := dk.RegisterAura(core.Aura{
 		Label:    "Army of the Dead",
 		ActionID: core.ActionID{SpellID: 42650},
