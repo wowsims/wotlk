@@ -229,17 +229,16 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3, // ticking every three seconds for a grand total of 15s of duration
 
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					tickValue := 0 +
-						.013*spell.SpellPower() +
-						.025*spell.MeleeAttackPower()
-					return tickValue * float64(paladin.SealOfVengeanceDots[hitEffect.Target.Index].GetStacks())
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncAlwaysHit(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			tickValue := 0 +
+				.013*dot.Spell.SpellPower() +
+				.025*dot.Spell.MeleeAttackPower()
+			dot.SnapshotBaseDamage = tickValue * float64(paladin.SealOfVengeanceDots[target.Index].GetStacks())
+
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+		},
 	})
 }

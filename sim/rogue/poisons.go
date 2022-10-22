@@ -102,34 +102,29 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			}
 		},
 	}
-	deadlyPoisonTickBaseDamage := core.BaseDamageConfig{
-		Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return 74 + 0.03*spell.MeleeAttackPower()
-		},
-	}
+
 	numTargets := rogue.Env.GetNumTargets()
 	for i := int32(0); i < numTargets; i++ {
 		target := rogue.Env.GetTargetUnit(i)
-		dotAura := target.RegisterAura(deadlyPoisonDebuffAura)
 		dot := core.NewDot(core.Dot{
 			Spell:         rogue.DeadlyPoison,
-			Aura:          dotAura,
+			Aura:          target.RegisterAura(deadlyPoisonDebuffAura),
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
-			TickEffects: core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				IsPeriodic:     false, // hack to get attacker modifiers applied
-				BaseDamage:     core.MultiplyByStacks(deadlyPoisonTickBaseDamage, dotAura),
-				OutcomeApplier: rogue.OutcomeFuncTickMagicHit(),
-			})),
+			// TODO: MAP part snapshots
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
+				dot.Spell.CalcAndDealDamage(sim, target, baseDmg, dot.Spell.OutcomeTickMagicHit)
+			},
 		})
+
 		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
 			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
 			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 				rogue.AddEnergy(sim, 1, metrics)
 			}
 		}
-		// Would like to do this for the snapshotting but it also shots the aura
-		//dot.TickEffects = core.TickFuncSnapshot(target, deadlyPoisonTickEffect)
+
 		rogue.deadlyPoisonDots = append(rogue.deadlyPoisonDots, dot)
 	}
 }

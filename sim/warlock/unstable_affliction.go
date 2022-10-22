@@ -13,6 +13,8 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47843}
 	spellSchool := core.SpellSchoolShadow
+	spellCoeff := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
+	canCrit := warlock.Talents.Pandemic
 
 	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -42,25 +44,26 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		}),
 	})
 
-	target := warlock.CurrentTarget
-	spellCoefficient := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
-	applier := warlock.OutcomeFuncTick()
-	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit()
-	}
-
 	warlock.UnstableAfflictionDot = core.NewDot(core.Dot{
 		Spell: warlock.UnstableAffliction,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "UnstableAffliction-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: core.ActionID{SpellID: 47843},
 		}),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1150/5, spellCoefficient),
-			OutcomeApplier: applier,
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 1150/5 + spellCoeff*dot.Spell.SpellPower()
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if canCrit {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
 }

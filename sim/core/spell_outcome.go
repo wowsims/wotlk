@@ -35,6 +35,15 @@ func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellEffect, attackTable *A
 	result.Outcome = OutcomeHit
 }
 
+func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if result.physicalCritRoll(sim, dot.Spell, attackTable) {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+	} else {
+		result.Outcome = OutcomeHit
+	}
+}
+
 func (unit *Unit) OutcomeFuncTickHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spell.CritMultiplier == 0 {
@@ -101,6 +110,28 @@ func (dot *Dot) OutcomeSnapshotCritPhysical(sim *Simulation, result *SpellEffect
 	} else {
 		result.Outcome = OutcomeHit
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
+	}
+}
+
+// TODO: Remove this
+func (dot *Dot) OutcomeTickSnapshotCritPhysical(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+
+	roll := sim.RandomFloat("Physical Tick Hit")
+	chance := 0.0
+	missChance := attackTable.BaseMissChance - dot.Spell.PhysicalHitChance(result.Target)
+	chance = MaxFloat(0, missChance)
+	if roll < chance {
+		result.Outcome = OutcomeHit
+	} else {
+		if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+			result.Outcome = OutcomeCrit
+			result.Damage *= dot.Spell.CritMultiplier
+		} else {
+			result.Outcome = OutcomeHit
+		}
 	}
 }
 
@@ -206,6 +237,14 @@ func (spell *Spell) OutcomeCritFixedChance(critChance float64) NewOutcomeApplier
 	}
 }
 
+func (spell *Spell) OutcomeTickMagicHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if spell.MagicHitCheck(sim, attackTable) {
+		result.Outcome = OutcomeHit
+	} else {
+		result.Outcome = OutcomeMiss
+		result.Damage = 0
+	}
+}
 func (unit *Unit) OutcomeFuncTickMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spell.MagicHitCheck(sim, attackTable) {

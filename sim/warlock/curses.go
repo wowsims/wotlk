@@ -114,7 +114,6 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
 	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.1 * warlock.BaseMana
-	target := warlock.CurrentTarget
 	numberOfTicks := 12
 	totalBaseDmg := 1740.0
 	agonyEffect := totalBaseDmg * 0.056
@@ -123,11 +122,6 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
 	}
 
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagicNoRoll(totalBaseDmg/float64(numberOfTicks), 0.1), // Ignored: CoA ramp up effect
-		OutcomeApplier: warlock.OutcomeFuncTick(),
-		IsPeriodic:     true,
-	}
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
@@ -157,13 +151,20 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	})
 	warlock.CurseOfAgonyDot = core.NewDot(core.Dot{
 		Spell: warlock.CurseOfAgony,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "CurseofAgony-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    time.Second * 2,
-		TickEffects:   core.TickFuncSnapshot(target, effect),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			// Ignored: CoA ramp up effect
+			dot.SnapshotBaseDamage = totalBaseDmg/float64(numberOfTicks) + 0.1*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }
 
@@ -171,12 +172,6 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 	actionID := core.ActionID{SpellID: 47867}
 	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.15 * warlock.BaseMana
-
-	target := warlock.CurrentTarget
-	effect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMagicNoRoll(7300, 2),
-		OutcomeApplier: warlock.OutcomeFuncTick(),
-	}
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -213,13 +208,19 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 
 	warlock.CurseOfDoomDot = core.NewDot(core.Dot{
 		Spell: warlock.CurseOfDoom,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "CurseofDoom-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 1,
 		TickLength:    time.Minute,
-		TickEffects:   core.TickFuncSnapshot(target, effect),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 7300 + 2*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }
 
