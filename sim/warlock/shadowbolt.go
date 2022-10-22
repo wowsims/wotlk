@@ -58,7 +58,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 						core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
 					}
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})

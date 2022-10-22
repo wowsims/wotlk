@@ -50,7 +50,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

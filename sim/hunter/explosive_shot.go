@@ -53,7 +53,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			if result.Landed() {
 				hunter.ExplosiveShotDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

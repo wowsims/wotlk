@@ -69,7 +69,7 @@ func (druid *Druid) registerWrathSpell() {
 						druid.SwiftStarfireAura.Activate(sim)
 					}
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})

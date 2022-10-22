@@ -10,7 +10,8 @@ import (
 )
 
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
-//  The first never deals damage, so the latter should probably be used as ActionID here.
+//
+//	The first never deals damage, so the latter should probably be used as ActionID here.
 func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
 }
@@ -125,7 +126,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
-			dot.Spell.DealPeriodicDamage(sim, &result)
+			dot.Spell.DealPeriodicDamage(sim, result)
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)

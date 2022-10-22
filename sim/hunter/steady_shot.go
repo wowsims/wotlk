@@ -90,7 +90,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			if result.Landed() && impSSProcChance > 0 && sim.RandomFloat("Imp Steady Shot") < impSSProcChance {
 				hunter.ImprovedSteadyShotAura.Activate(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

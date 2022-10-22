@@ -52,7 +52,7 @@ func (mage *Mage) registerFireballSpell() {
 				if result.Landed() && !hasGlyph {
 					mage.FireballDot.Apply(sim)
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})
