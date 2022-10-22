@@ -14,8 +14,6 @@ type Dot struct {
 	// Embed Aura so we can use IsActive/Refresh/etc directly.
 	*Aura
 
-	defaultTarget *Unit
-
 	NumberOfTicks int           // number of ticks over the whole duration
 	TickLength    time.Duration // time between each tick
 
