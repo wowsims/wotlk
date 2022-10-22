@@ -1,6 +1,8 @@
 package retribution
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -101,7 +103,7 @@ func (ret *RetributionPaladin) Initialize() {
 	ret.Paladin.Initialize()
 	ret.RegisterAvengingWrathCD()
 
-	ret.DelayDPSCooldownsForArmorDebuffs()
+	ret.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {

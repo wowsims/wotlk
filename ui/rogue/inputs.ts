@@ -69,36 +69,6 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
-			fieldName: 'assassinationFinisherPriority',
-			label: 'Finisher Priority (Assassination)',
-			labelTooltip: 'Priority of Assassination finisher usage.',
-			values: [
-				{ name: 'Envenom > Rupture', value: AssassinationPriority.EnvenomRupture },
-				{ name: 'Rupture > Envenom', value: AssassinationPriority.RuptureEnvenom },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
-			fieldName: 'combatFinisherPriority',
-			label: 'Finisher Priority (Combat)',
-			labelTooltip: 'Priority of Combat finisher usage.',
-			values: [
-				{ name: 'Rupture > Eviscerate', value: CombatPriority.RuptureEviscerate },
-				{ name: 'Eviscerate > Rupture', value: CombatPriority.EviscerateRupture },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => !player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'minimumComboPointsPrimaryFinisher',
-			label: 'Minimum CP (Finisher)',
-			labelTooltip: 'Primary finisher will not be cast with less than this many combo points.',
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'minimumComboPointsSecondaryFinisher',
-			label: 'Minimum CP (Filler)',
-			labelTooltip: 'Secondary finisher/filler will not be cast with less than this many combo points.\nSet the value to > 5 to prevent fillers.',
-		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomPoolAmount',
 			label: 'Energy Pooled (Envenom)',
@@ -123,9 +93,19 @@ export const RogueRotationConfig = {
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: "useFeint",
+			fieldName: 'useFeint',
 			label: 'Use Feint',
 			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'allowCpUndercap',
+			label: 'Undercap CP',
+			labelTooltip: 'Cast Envenom at 3 cp if the Envenom buff is missing.'
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'allowCpOvercap',
+			label: 'Overcap CP',
+			labelTooltip: 'Cast Mutilate at 4 cp if the Envenom buff will last long enough.'
 		}),
 	],
 };

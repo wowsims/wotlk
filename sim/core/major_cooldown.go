@@ -211,13 +211,12 @@ func (mcdm *majorCooldownManager) finalize(character *Character) {
 // to be applied. MCDs that have a user-specified timing are not delayed.
 //
 // This function should be called from Agent.Init().
-func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs() {
+func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
 	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
 		return
 	}
 
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		const delay = time.Second * 10
 		for i, _ := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
