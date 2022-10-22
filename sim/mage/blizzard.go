@@ -19,7 +19,8 @@ func (mage *Mage) registerBlizzardSpell() {
 		NumberOfTicks:       8,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := mage.CurrentTarget
 			dot.SnapshotBaseDamage = 352 + 0.119*dot.Spell.SpellPower()
 			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])

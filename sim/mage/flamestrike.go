@@ -55,7 +55,8 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		}),
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 2,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := mage.CurrentTarget
 			dot.SnapshotBaseDamage = 780.0/4 + 0.122*dot.Spell.SpellPower()
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},

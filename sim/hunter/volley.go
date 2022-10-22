@@ -21,7 +21,8 @@ func (hunter *Hunter) registerVolleySpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := hunter.CurrentTarget
 			dot.SnapshotBaseDamage = 353 + 0.0837*dot.Spell.RangedAttackPower(target)
 			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
 

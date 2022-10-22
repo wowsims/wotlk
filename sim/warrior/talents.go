@@ -851,7 +851,8 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+			target := warrior.CurrentTarget
 			mhDamageEffects(sim, target, dot.Spell)
 			if warrior.BladestormOH != nil {
 				ohDamageEffects(sim, target, warrior.BladestormOH)
