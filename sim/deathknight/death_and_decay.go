@@ -57,15 +57,11 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			target := dk.CurrentTarget
 			dot.SnapshotBaseDamage = 62 + 0.0475*dk.getImpurityBonus(dot.Spell)
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			for _, aoeTarget := range sim.Encounter.Targets {
-				// TODO: Clean this up
-				rorts := dk.RoRTSBonus(&aoeTarget.Unit)
-				dot.SnapshotBaseDamage *= rorts
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[aoeTarget.UnitIndex]) * dk.RoRTSBonus(&aoeTarget.Unit)
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
-				dot.SnapshotBaseDamage /= rorts
 			}
 		},
 	})
