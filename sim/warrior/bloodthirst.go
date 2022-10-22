@@ -37,20 +37,27 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.5 * spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
+		//ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
+		//	BaseDamage: core.BaseDamageConfig{
+		//		Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
+		//			return 0.5 * spell.MeleeAttackPower()
+		//		},
+		//	},
+		//	OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				}
-			},
-		}),
+		//	OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		//		if !spellEffect.Landed() {
+		//			warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+		//		}
+		//	},
+		//}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.5 * spell.MeleeAttackPower()
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			if !result.Landed() {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+		},
 	})
 }
 
