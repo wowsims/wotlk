@@ -65,20 +65,17 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		}),
 		NumberOfTicks: dotTicks,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, spell *core.Spell) float64 {
-					tickDamage := (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
-					// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
-					if sim.GetRemainingDurationPercent() > 0.75 {
-						return tickDamage * 1.35
-					}
-					return tickDamage
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
+			// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
+			if sim.GetRemainingDurationPercent() > 0.75 {
+				dot.SnapshotBaseDamage *= 1.35
+			}
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 
 	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)

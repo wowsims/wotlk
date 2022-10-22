@@ -606,7 +606,7 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, deferFinaliz
 			effect.Damage *= capMultiplier
 			effect.applyAttackerModifiers(spell, attackTable)
 			effect.applyTargetModifiers(spell, attackTable, effect.IsPeriodic)
-			effect.applyResistances(sim, spell, attackTable)
+			effect.applyResistances(sim, spell, effect.IsPeriodic, attackTable)
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			if !deferFinalization {
 				effect.finalize(sim, spell)
@@ -658,7 +658,7 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 				effect.Damage *= capMultiplier
 				effect.applyAttackerModifiers(spell, attackTable)
 				effect.applyTargetModifiers(spell, attackTable, effect.IsPeriodic)
-				effect.applyResistances(sim, spell, attackTable)
+				effect.applyResistances(sim, spell, effect.IsPeriodic, attackTable)
 				effect.OutcomeApplier(sim, spell, effect, attackTable)
 				if i == 0 {
 					onOutcome(sim, effect.Outcome)

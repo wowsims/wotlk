@@ -113,10 +113,7 @@ func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 		dot.isRollover = false
 	} else {
 		if dot.OnSnapshot != nil {
-			// TODO: This matches current behavior, and is probably fine for all the sims right now,
-			// but will be incorrect if we start allowing target swaps.
-			target := dot.Spell.Unit.CurrentTarget
-			dot.OnSnapshot(sim, target, dot, doRollover)
+			dot.OnSnapshot(sim, dot.Unit, dot, doRollover)
 		}
 	}
 }
@@ -127,10 +124,7 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	if dot.OnTick == nil {
 		dot.tickFn()
 	} else {
-		// TODO: This matches current behavior, and is probably fine for all the sims right now,
-		// but will be incorrect if we start allowing target swaps.
-		target := dot.Spell.Unit.CurrentTarget
-		dot.OnTick(sim, target, dot)
+		dot.OnTick(sim, dot.Unit, dot)
 	}
 }
 

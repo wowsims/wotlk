@@ -68,13 +68,13 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		}),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 			// scales slightly better (11.5%) than the tooltip implies (10%), but isn't affected by Hunter's Mark
-			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return 553 + 0.023*(spell.Unit.GetStat(stats.RangedAttackPower)+spell.Unit.PseudoStats.MobTypeAttackPower)
-			}),
-			OutcomeApplier: hunter.OutcomeFuncTick(),
-		}),
+			dot.SnapshotBaseDamage = 553 + 0.023*(dot.Spell.Unit.GetStat(stats.RangedAttackPower)+dot.Spell.Unit.PseudoStats.MobTypeAttackPower)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }

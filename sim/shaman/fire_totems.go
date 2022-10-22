@@ -102,6 +102,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
+
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			baseDamage := 371 + 0.1*dot.Spell.SpellPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()

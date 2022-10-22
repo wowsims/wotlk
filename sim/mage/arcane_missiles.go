@@ -97,9 +97,9 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 362 + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
-		}),
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
+			dot.Spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		},
 	})
 }
