@@ -39,7 +39,9 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 			core.ShatteringThrowAura(target).Activate(sim)
 			warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.AutoAttacks.MainhandSwingSpeed())
 			// To desync same speed weapon
-			warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed()+warrior.AutoAttacks.OffhandSwingSpeed()/2)
+			if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
+				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed()+warrior.AutoAttacks.OffhandSwingSpeed()/2)
+			}
 		},
 	})
 
