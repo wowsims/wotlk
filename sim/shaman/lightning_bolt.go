@@ -100,7 +100,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			}
 		}
 
-		spell.DealDamage(sim, &result)
+		spell.DealDamage(sim, result)
 	}
 
 	return shaman.RegisterSpell(spellConfig)

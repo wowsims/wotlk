@@ -220,7 +220,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			if impFelhunter && result.Landed() {
 				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

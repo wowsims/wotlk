@@ -43,7 +43,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			if result.Landed() {
 				priest.HolyFireDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

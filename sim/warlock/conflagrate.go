@@ -61,7 +61,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			if result.Landed() {
 				warlock.ConflagrateDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

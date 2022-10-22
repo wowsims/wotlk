@@ -37,12 +37,15 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	priorityItems []roguePriorityItem
-	rotationItems []rogueRotationItem
+	priorityItems      []roguePriorityItem
+	rotationItems      []rogueRotationItem
+	assassinationPrios []assassinationPrio
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
+
+	maxEnergy float64
 
 	initialArmorDebuffAura *core.Aura
 
@@ -163,7 +166,7 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs()
+	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
 }
 
 func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
@@ -226,6 +229,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
 		maxEnergy += 10
 	}
+	rogue.maxEnergy = maxEnergy
 	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
 	rogue.ApplyEnergyTickMultiplier([]float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 

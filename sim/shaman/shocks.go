@@ -78,7 +78,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		if result.Landed() {
 			shaman.FlameShockDot.Apply(sim)
 		}
-		spell.DealDamage(sim, &result)
+		spell.DealDamage(sim, result)
 	}
 
 	target := shaman.CurrentTarget

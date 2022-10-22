@@ -110,7 +110,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			if result.Landed() {
 				dk.RuneWeapon.FrostFeverSpell.Cast(sim, target)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

@@ -36,7 +36,8 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 }
 
 // diseaseMultiplier calculates the bonus based on if you have DarkrunedBattlegear 4p.
-//  This function is slow so should only be used during initialization.
+//
+//	This function is slow so should only be used during initialization.
 func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 	if dk.Env.IsFinalized() {
 		panic("dont call dk.diseaseMultiplier function during runtime, cache result during initialization")
@@ -113,7 +114,7 @@ func (dk *Deathknight) registerFrostFever() {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
-				dk.doWanderingPlague(sim, dot.Spell, &result)
+				dk.doWanderingPlague(sim, dot.Spell, result)
 			},
 		})
 
@@ -181,13 +182,13 @@ func (dk *Deathknight) registerBloodPlague() {
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				var result core.SpellEffect
+				var result *core.SpellEffect
 				if canCrit {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
 				}
-				dk.doWanderingPlague(sim, dot.Spell, &result)
+				dk.doWanderingPlague(sim, dot.Spell, result)
 			},
 		})
 
@@ -290,13 +291,13 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				var result core.SpellEffect
+				var result *core.SpellEffect
 				if canCrit {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
 				}
-				dk.doWanderingPlague(sim, dot.Spell, &result)
+				dk.doWanderingPlague(sim, dot.Spell, result)
 			},
 		})
 

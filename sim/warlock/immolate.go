@@ -45,7 +45,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			if result.Landed() {
 				warlock.ImmolateDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 

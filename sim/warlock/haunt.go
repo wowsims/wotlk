@@ -67,7 +67,7 @@ func (warlock *Warlock) registerHauntSpell() {
 				if result.Landed() {
 					HauntDebuffAura.Activate(sim)
 				}
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			})
 		},
 	})

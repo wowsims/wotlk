@@ -46,6 +46,8 @@ type SpellEffect struct {
 
 	ResistanceMultiplier float64 // Partial Resists / Armor multiplier
 	PreOutcomeDamage     float64 // Damage done by this cast before Outcome is applied
+
+	inUse bool
 }
 
 func (spellEffect *SpellEffect) Validate() {
@@ -204,19 +206,24 @@ func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier Ne
 	return result
 }
 
-func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage float64, attackerMultiplier float64, isPeriodic bool, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage float64, attackerMultiplier float64, isPeriodic bool, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-	result := SpellEffect{
-		Target: target,
-		Damage: baseDamage,
+
+	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellEffect{}
 	}
+	result.Target = target
+	result.Damage = baseDamage
+	result.Outcome = OutcomeEmpty // for blocks
+	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= attackerMultiplier
 		result.applyTargetModifiers(spell, attackTable, isPeriodic)
 		result.applyResistances(sim, spell, isPeriodic, attackTable)
-		outcomeApplier(sim, &result, attackTable)
-		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
+		outcomeApplier(sim, result, attackTable)
+		spell.ApplyPostOutcomeDamageModifiers(sim, result)
 	} else {
 		result.Damage *= attackerMultiplier
 		afterAttackMods := result.Damage
@@ -224,9 +231,9 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 		afterTargetMods := result.Damage
 		result.applyResistances(sim, spell, isPeriodic, attackTable)
 		afterResistances := result.Damage
-		outcomeApplier(sim, &result, attackTable)
+		outcomeApplier(sim, result, attackTable)
 		afterOutcome := result.Damage
-		spell.ApplyPostOutcomeDamageModifiers(sim, &result)
+		spell.ApplyPostOutcomeDamageModifiers(sim, result)
 		afterPostOutcome := result.Damage
 
 		spell.Unit.Log(
@@ -237,15 +244,15 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 
 	return result
 }
-func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	attackerMultiplier := spell.AttackerDamageMultiplier(spell.Unit.AttackTables[target.UnitIndex])
 	return spell.calcDamageInternal(sim, target, baseDamage, attackerMultiplier, false, outcomeApplier)
 }
-func (spell *Spell) CalcPeriodicDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcPeriodicDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	attackerMultiplier := spell.AttackerDamageMultiplier(spell.Unit.AttackTables[target.UnitIndex])
 	return spell.calcDamageInternal(sim, target, baseDamage, attackerMultiplier, true, outcomeApplier)
 }
-func (dot *Dot) CalcSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (dot *Dot) CalcSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	return dot.Spell.calcDamageInternal(sim, target, dot.SnapshotBaseDamage, dot.SnapshotAttackerMultiplier, true, outcomeApplier)
 }
 
@@ -279,6 +286,8 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		spell.Unit.OnSpellHitDealt(sim, spell, result)
 		result.Target.OnSpellHitTaken(sim, spell, result)
 	}
+
+	result.inUse = false
 }
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellEffect) {
 	spell.dealDamageInternal(sim, false, result)
@@ -287,39 +296,43 @@ func (spell *Spell) DealPeriodicDamage(sim *Simulation, result *SpellEffect) {
 	spell.dealDamageInternal(sim, true, result)
 }
 
-func (spell *Spell) CalcAndDealDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcAndDealDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 	return result
 }
-func (spell *Spell) CalcAndDealPeriodicDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcAndDealPeriodicDamage(sim *Simulation, target *Unit, baseDamage float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	result := spell.CalcPeriodicDamage(sim, target, baseDamage, outcomeApplier)
-	spell.DealPeriodicDamage(sim, &result)
+	spell.DealPeriodicDamage(sim, result)
 	return result
 }
-func (dot *Dot) CalcAndDealPeriodicSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (dot *Dot) CalcAndDealPeriodicSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	result := dot.CalcSnapshotDamage(sim, target, outcomeApplier)
-	dot.Spell.DealPeriodicDamage(sim, &result)
+	dot.Spell.DealPeriodicDamage(sim, result)
 	return result
 }
 
-func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHealing float64, casterMultiplier float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHealing float64, casterMultiplier float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-	result := SpellEffect{
-		Target: target,
-		Damage: baseHealing,
+
+	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellEffect{}
 	}
+	result.Target = target
+	result.Damage = baseHealing
+	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= casterMultiplier
 		result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
-		outcomeApplier(sim, &result, attackTable)
+		outcomeApplier(sim, result, attackTable)
 	} else {
 		result.Damage *= casterMultiplier
 		afterCasterMods := result.Damage
 		result.Damage = spell.applyTargetHealingModifiers(result.Damage, attackTable)
 		afterTargetMods := result.Damage
-		outcomeApplier(sim, &result, attackTable)
+		outcomeApplier(sim, result, attackTable)
 		afterOutcome := result.Damage
 
 		spell.Unit.Log(
@@ -330,10 +343,10 @@ func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHeali
 
 	return result
 }
-func (spell *Spell) CalcHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	return spell.calcHealingInternal(sim, target, baseHealing, spell.CasterHealingMultiplier(), outcomeApplier)
 }
-func (dot *Dot) CalcSnapshotHealing(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (dot *Dot) CalcSnapshotHealing(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	return dot.Spell.calcHealingInternal(sim, target, dot.SnapshotBaseDamage, dot.SnapshotAttackerMultiplier, outcomeApplier)
 }
 
@@ -360,6 +373,8 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		spell.Unit.OnHealDealt(sim, spell, result)
 		result.Target.OnHealTaken(sim, spell, result)
 	}
+	
+	result.inUse = false
 }
 func (spell *Spell) DealHealing(sim *Simulation, result *SpellEffect) {
 	spell.dealHealingInternal(sim, false, result)
@@ -368,18 +383,18 @@ func (spell *Spell) DealPeriodicHealing(sim *Simulation, result *SpellEffect) {
 	spell.dealHealingInternal(sim, true, result)
 }
 
-func (spell *Spell) CalcAndDealHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcAndDealHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	result := spell.CalcHealing(sim, target, baseHealing, outcomeApplier)
-	spell.DealHealing(sim, &result)
+	spell.DealHealing(sim, result)
 	return result
 }
-func (spell *Spell) CalcAndDealPeriodicHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcAndDealPeriodicHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	// This is currently identical to CalcAndDealHealing, but keeping it separate in case they become different in the future.
 	return spell.CalcAndDealHealing(sim, target, baseHealing, outcomeApplier)
 }
-func (dot *Dot) CalcAndDealPeriodicSnapshotHealing(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (dot *Dot) CalcAndDealPeriodicSnapshotHealing(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	result := dot.CalcSnapshotHealing(sim, target, outcomeApplier)
-	dot.Spell.DealPeriodicHealing(sim, &result)
+	dot.Spell.DealPeriodicHealing(sim, result)
 	return result
 }
 
@@ -408,6 +423,7 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		afterTargetMods := spellEffect.Damage
 		spellEffect.applyResistances(sim, spell, spellEffect.IsPeriodic, attackTable)
 		afterResistances := spellEffect.Damage
+		spellEffect.Outcome = OutcomeEmpty // for blocks
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 		afterOutcome := spellEffect.Damage
 		spell.Unit.Log(
@@ -418,12 +434,14 @@ func (spellEffect *SpellEffect) calcDamageSingle(sim *Simulation, spell *Spell, 
 		spellEffect.applyAttackerModifiers(spell, attackTable)
 		spellEffect.applyTargetModifiers(spell, attackTable, spellEffect.IsPeriodic)
 		spellEffect.applyResistances(sim, spell, spellEffect.IsPeriodic, attackTable)
+		spellEffect.Outcome = OutcomeEmpty
 		spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 	}
 }
 func (spellEffect *SpellEffect) calcDamageTargetOnly(sim *Simulation, spell *Spell, attackTable *AttackTable) {
 	spellEffect.applyTargetModifiers(spell, attackTable, spellEffect.IsPeriodic)
 	spellEffect.applyResistances(sim, spell, spellEffect.IsPeriodic, attackTable)
+	spellEffect.Outcome = OutcomeEmpty // for blocks
 	spellEffect.OutcomeApplier(sim, spell, spellEffect, attackTable)
 }
 
@@ -493,7 +511,7 @@ func (spellEffect *SpellEffect) HealingString() string {
 }
 
 func (spellEffect *SpellEffect) applyAttackerModifiers(spell *Spell, attackTable *AttackTable) {
-	// For dot snapshots, everything has already been stored in spellEffect.snapshotDamageMultiplier.
+	// For dot snapshots, everything has already been stored in resultCache.snapshotDamageMultiplier.
 	if spellEffect.isSnapshot {
 		spellEffect.Damage *= spellEffect.snapshotDamageMultiplier
 		return

@@ -400,7 +400,7 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(95, 115)
 				result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 			},
 		})
 		outcomeApplier = procSpell.OutcomeCritFixedChance(0.03)

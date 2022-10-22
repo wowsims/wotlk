@@ -58,7 +58,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 					hunter.ScorpidStingAura.Refresh(sim)
 				}
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

@@ -89,7 +89,7 @@ func (druid *Druid) registerStarfireSpell() {
 					druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
 				}
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

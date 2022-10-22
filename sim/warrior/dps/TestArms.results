@@ -654,7 +654,7 @@ dps_results: {
 dps_results: {
  key: "TestArms-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7868.00969
-  tps: 6433.03162
+  dps: 7883.65448
+  tps: 6451.53105
  }
 }
