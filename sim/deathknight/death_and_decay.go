@@ -8,31 +8,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (dk *Deathknight) OutcomeDeathAndDecaySpecial() core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if spell.MagicHitCheck(sim, attackTable) {
-			if sim.RandomFloat("Fixed Crit Roll") < dk.dndCritSnapshot {
-				spellEffect.Outcome = core.OutcomeCrit
-				spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
-				spellEffect.Damage *= dk.DefaultMeleeCritMultiplier()
-			} else {
-				spellEffect.Outcome = core.OutcomeHit
-				spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
-			}
-		} else {
-			spellEffect.Outcome = core.OutcomeMiss
-			spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
-			spellEffect.Damage = 0
-		}
-	}
-}
-
 func (dk *Deathknight) registerDeathAndDecaySpell() {
-
 	actionID := core.ActionID{SpellID: 49938}
 	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
 
-	doSnapshot := false
 	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))
 	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID:     actionID,
@@ -57,11 +36,9 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 
 		DamageMultiplier: glyphBonus * dk.scourgelordsPlateDamageBonus(),
 		ThreatMultiplier: 1.9,
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			doSnapshot = true
-			dk.dndApSnapshot = 0.0
-			dk.dndCritSnapshot = 0.0
 			dk.DeathAndDecayDot.Apply(sim)
 			dk.DeathAndDecayDot.TickOnce(sim)
 		},
@@ -76,20 +53,21 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamage(dk.Env, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					if doSnapshot {
-						dk.dndCritSnapshot = hitEffect.SpellCritChance(spell)
-						dk.dndApSnapshot = 62.0 + 0.0475*dk.getImpurityBonus(spell)
-						doSnapshot = false
-					}
-					return dk.dndApSnapshot * dk.RoRTSBonus(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: dk.OutcomeDeathAndDecaySpecial(),
-		})),
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := dk.CurrentTarget
+			dot.SnapshotBaseDamage = 62 + 0.0475*dk.getImpurityBonus(dot.Spell)
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				// TODO: Clean this up
+				rorts := dk.RoRTSBonus(&aoeTarget.Unit)
+				dot.SnapshotBaseDamage *= rorts
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
+				dot.SnapshotBaseDamage /= rorts
+			}
+		},
 	})
 	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay.Spell
 }
