@@ -373,6 +373,8 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		spell.Unit.OnHealDealt(sim, spell, result)
 		result.Target.OnHealTaken(sim, spell, result)
 	}
+	
+	result.inUse = false
 }
 func (spell *Spell) DealHealing(sim *Simulation, result *SpellEffect) {
 	spell.dealHealingInternal(sim, false, result)
