@@ -59,11 +59,16 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			NumberOfTicks:       6,
 			TickLength:          time.Second * 3,
 			AffectedByCastSpeed: true,
-			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
-				BaseDamage:     BaseDamageConfigMagicNoRoll(100, 1),
-				OutcomeApplier: fa.OutcomeFuncAlwaysHit(),
-				IsPeriodic:     true,
-			}),
+			OnSnapshot: func(sim *Simulation, target *Unit, dot *Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = 100 + 1*dot.Spell.SpellPower()
+				if !isRollover {
+					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				}
+			},
+			OnTick: func(sim *Simulation, target *Unit, dot *Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		})
 	}
 
