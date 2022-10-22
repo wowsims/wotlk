@@ -116,7 +116,7 @@ export const HoldErwArmy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathk
 	label: 'Hold ERW for AotD',
 	labelTooltip: 'Hold Empower Rune Weapon for after Summon Gargoyle to guarantee maximized snapshot for Army of the Dead.',
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useEmpowerRuneWeapon && player.getRotation().armyOfTheDead == ArmyOfTheDead.AsMajorCd,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().useEmpowerRuneWeapon && player.getRotation().armyOfTheDead == ArmyOfTheDead.AsMajorCd,
 });
 
 export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
@@ -160,6 +160,8 @@ export const ArmyOfTheDeadInput = InputHelpers.makeRotationEnumInput<Spec.SpecDe
 		{ name: 'Pre pull', value: ArmyOfTheDead.PreCast },
 		{ name: 'As Major CD', value: ArmyOfTheDead.AsMajorCd },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const StartingPresenceInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
