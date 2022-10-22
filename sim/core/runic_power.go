@@ -150,6 +150,10 @@ func (unit *Unit) HasRunicPowerBar() bool {
 	return unit.RunicPowerBar.unit != nil
 }
 
+func (rp *RunicPowerBar) SetRuneCd(runeCd time.Duration) {
+	rp.runeCD = runeCd
+}
+
 func (rp *RunicPowerBar) BloodRuneGainMetrics() *ResourceMetrics {
 	return rp.bloodRuneGainMetrics
 }
