@@ -120,7 +120,7 @@ func (war *DpsWarrior) Initialize() {
 		}
 	}
 
-	war.DelayDPSCooldownsForArmorDebuffs()
+	war.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (war *DpsWarrior) Reset(sim *core.Simulation) {
