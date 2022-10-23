@@ -82,6 +82,7 @@ func (rogue *Rogue) registerRupture() {
 		Spell: rogue.Rupture[0],
 		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Rupture-" + strconv.Itoa(int(rogue.Index)),
+			Tag:      RogueBleedTag,
 			ActionID: rogue.Rupture[0].ActionID,
 		}),
 		NumberOfTicks: 0, // Set dynamically

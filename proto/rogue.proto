@@ -185,6 +185,8 @@ message Rogue {
 		bool allow_cp_undercap = 13;
 
 		bool open_with_garrote = 14;
+
+		bool rupture_for_bleed = 15;
 	}
 	Rotation rotation = 1;
 

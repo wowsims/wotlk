@@ -115,5 +115,11 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Cast Mutilate at 4 cp if the Envenom buff will last long enough.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'ruptureForBleed',
+			label: 'Rupture for Bleed',
+			labelTooltip: 'Cast Rupture as needed to apply a bleed effect for Hunger for Blood',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
+		}),
 	],
 };

@@ -25,6 +25,10 @@ type assassinationPrio struct {
 	cost  float64
 }
 
+func (rogue *Rogue) targetHasBleed(sim *core.Simulation) bool {
+	return rogue.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
+}
+
 func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	rogue.assassinationPrios = make([]assassinationPrio, 0)
 
@@ -48,7 +52,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				}
 				return casted
 			},
-			rogue.HungerForBlood.DefaultCast.Cost,
+			rogue.Garrote.DefaultCast.Cost,
 		})
 	}
 
@@ -127,20 +131,45 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		})
 	}
 
+	// Rupture
+	if rogue.Rotation.RuptureForBleed {
+		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+			func(s *core.Simulation, r *Rogue) PriorityAction {
+				if r.targetHasBleed(s) {
+					return Skip
+				}
+				if rogue.HungerForBloodAura.IsActive() {
+					return Skip
+				}
+				if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {
+					return Cast
+				}
+				if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+					return Build
+				}
+				return Wait
+			},
+			func(s *core.Simulation, r *Rogue) bool {
+				return rogue.Rupture[rogue.ComboPoints()].Cast(sim, rogue.CurrentTarget)
+			},
+			rogue.Rupture[1].DefaultCast.Cost,
+		})
+	}
+
 	// Hunger for Blood
 	if rogue.Talents.HungerForBlood {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
 
-				if rogue.HungerForBloodAura.IsActive() {
+				if r.HungerForBloodAura.IsActive() {
 					return Skip
 				}
 
-				if !rogue.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
+				if !r.targetHasBleed(s) {
 					return Skip
 				}
 
-				if rogue.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) && rogue.CurrentEnergy() > rogue.HungerForBlood.DefaultCast.Cost {
+				if r.targetHasBleed(s) && r.CurrentEnergy() > r.HungerForBlood.DefaultCast.Cost {
 					return Cast
 				}
 				return Wait
