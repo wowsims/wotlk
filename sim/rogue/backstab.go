@@ -42,17 +42,18 @@ func (rogue *Rogue) registerBackstabSpell() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 310, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 330 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				} else {
-					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
-				}
-			},
-		}),
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+			} else {
+				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+			}
+		},
 	})
 }

@@ -42,12 +42,13 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			DamageMultiplier: 1.5,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-				OutcomeApplier: fa.OutcomeFuncMagicHit(),
-				OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+				result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+				if result.Landed() {
 					fa.Dot.Apply(sim)
-				},
-			}),
+				}
+				spell.DealOutcome(sim, result)
+			},
 		})
 
 		fa.Dot = NewDot(Dot{

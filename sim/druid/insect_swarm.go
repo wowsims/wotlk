@@ -14,6 +14,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
+	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -35,17 +36,16 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 0.3, 0),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.InsectSwarmDot.Apply(sim)
-					if !druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm) {
-						missAura.Activate(sim)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				druid.InsectSwarmDot.Apply(sim)
+				if !hasGlyph {
+					missAura.Activate(sim)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	druid.InsectSwarmDot = core.NewDot(core.Dot{

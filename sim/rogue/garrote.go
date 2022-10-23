@@ -44,22 +44,21 @@ func (rogue *Rogue) registerGarrote() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.garroteDot.Spell = spell
-					rogue.garroteDot.NumberOfTicks = int(numTicks)
-					rogue.garroteDot.RecomputeAuraDuration()
-					rogue.garroteDot.Apply(sim)
-					rogue.ApplyFinisher(sim, spell)
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				rogue.garroteDot.Spell = spell
+				rogue.garroteDot.NumberOfTicks = int(numTicks)
+				rogue.garroteDot.RecomputeAuraDuration()
+				rogue.garroteDot.Apply(sim)
+				rogue.ApplyFinisher(sim, spell)
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	rogue.garroteDot = core.NewDot(core.Dot{

@@ -40,10 +40,9 @@ func (rogue *Rogue) registerFeintSpell() {
 		DamageMultiplier: 0.0,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigFlat(0.0),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialNoBlockDodgeParryNoCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
+		},
 	})
 	// Feint
 	if rogue.Rotation.UseFeint {

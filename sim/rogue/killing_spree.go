@@ -17,10 +17,13 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		DamageMultiplier: 1 + 0.02*float64(rogue.Talents.FindWeakness),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+		},
 	})
 	ohWeaponSwing := rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 51690, Tag: 2}, // actual spellID is 57842
@@ -30,10 +33,13 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		DamageMultiplier: (1 + 0.02*float64(rogue.Talents.FindWeakness)) * rogue.dwsMultiplier(),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+		},
 	})
 	rogue.KillingSpreeAura = rogue.RegisterAura(core.Aura{
 		Label:    "Killing Spree",

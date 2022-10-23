@@ -51,21 +51,20 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
-					if !dot.IsActive() {
-						dot.Apply(sim)
-					}
-					dot.AddStack(sim)
-					dot.TakeSnapshot(sim, false)
-					dot.Activate(sim)
-					return 0 // Does no damage, just applies dot and rolls.
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dot := paladin.SealOfVengeanceDots[target.Index]
+			if !dot.IsActive() {
+				dot.Apply(sim)
+			}
+			dot.AddStack(sim)
+			dot.TakeSnapshot(sim, false)
+			dot.Activate(sim)
+
+			// Does no damage, just applies dot and rolls.
+			// TODO: This should use CalcAndDealOutcome instead, and probably check for
+			// landed before applying dot.
+			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeMeleeSpecialHit)
+		},
 	})
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
@@ -84,23 +83,19 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// i = 1 + 0.22 * HolP + 0.14 * AP
-					damage := 1 +
-						.22*spell.SpellPower() +
-						.14*spell.MeleeAttackPower()
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// i = 1 + 0.22 * HolP + 0.14 * AP
+			baseDamage := 1 +
+				.22*spell.SpellPower() +
+				.14*spell.MeleeAttackPower()
 
-					// i = i * (1 + (0.10 * stacks))
-					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
-					damage *= 1 + .1*float64(dot.GetStacks())
+			// i = i * (1 + (0.10 * stacks))
+			dot := paladin.SealOfVengeanceDots[target.Index]
+			baseDamage *= 1 + .1*float64(dot.GetStacks())
 
-					return damage
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
-		}),
+			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
@@ -114,15 +109,14 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dot := paladin.SealOfVengeanceDots[hitEffect.Target.Index]
-					return core.MultiplyByStacks(core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, false), dot.Aura).Calculator(sim, hitEffect, spell)
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // can't miss if melee swing landed, but can crit
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dot := paladin.SealOfVengeanceDots[target.Index]
+			baseDamage := paladin.MHWeaponDamage(sim, spell.MeleeAttackPower()) *
+				float64(dot.GetStacks())
+
+			// can't miss if melee swing landed, but can crit
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
 	})
 
 	// Seal of Vengeance aura.

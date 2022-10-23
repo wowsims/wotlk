@@ -442,15 +442,17 @@ func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry() OutcomeApplier {
 	}
 }
 
-func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParryNoCrit() OutcomeApplier {
-	unit.OutcomeFuncMagicHit()
-	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		roll := sim.RandomFloat("White Hit Table")
-		chance := 0.0
+func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParryNoCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
 
-		if !spellEffect.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) {
-			spellEffect.applyAttackTableHit(spell)
-		}
+	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) {
+		result.applyAttackTableHit(spell)
+	}
+}
+func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParryNoCrit() OutcomeApplier {
+	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
+		spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit(sim, spellEffect, attackTable)
 	}
 }
 

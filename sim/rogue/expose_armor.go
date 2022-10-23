@@ -32,20 +32,19 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.ExposeArmorAura.Duration = rogue.exposeArmorDurations[comboPoints]
-					rogue.ExposeArmorAura.Activate(sim)
-					rogue.ApplyFinisher(sim, spell)
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				rogue.ExposeArmorAura.Duration = rogue.exposeArmorDurations[comboPoints]
+				rogue.ExposeArmorAura.Activate(sim)
+				rogue.ApplyFinisher(sim, spell)
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 

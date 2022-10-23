@@ -10,27 +10,19 @@ import (
 
 const FanOfKnivesSpellID int32 = 51723
 
-func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.SpellEffect) {
+func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) *core.Spell {
 	var procMask core.ProcMask
-	var baseDamageConfig core.BaseDamageConfig
 	var weaponMultiplier float64
 	if isMH {
 		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		procMask = core.ProcMaskMeleeMHSpecial
-		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, false)
 	} else {
 		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
 		weaponMultiplier *= rogue.dwsMultiplier()
 		procMask = core.ProcMaskMeleeOHSpecial
-		baseDamageConfig = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, 0, false)
 	}
 
-	effect := core.SpellEffect{
-		BaseDamage:     baseDamageConfig,
-		OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-	}
-
-	spell := rogue.RegisterSpell(core.SpellConfig{
+	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
@@ -42,14 +34,14 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) (*core.Spell, core.
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 	})
-
-	return spell, effect
 }
 
 func (rogue *Rogue) registerFanOfKnives() {
 	energyCost := 50.0
-	mhSpell, mhHit := rogue.makeFanOfKnivesWeaponHitSpell(true)
-	ohSpell, ohHit := rogue.makeFanOfKnivesWeaponHitSpell(false)
+	mhSpell := rogue.makeFanOfKnivesWeaponHitSpell(true)
+	ohSpell := rogue.makeFanOfKnivesWeaponHitSpell(false)
+	results := make([]*core.SpellEffect, len(rogue.Env.Encounter.Targets))
+
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -68,8 +60,24 @@ func (rogue *Rogue) registerFanOfKnives() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, ohHit)(sim, unit, ohSpell)
-			core.ApplyEffectFuncAOEDamageCappedWithDeferredEffects(rogue.Env, mhHit)(sim, unit, mhSpell)
+			// Calc and apply all OH hits first, because MH hits can benefit from a OH felstriker proc.
+			for i, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := 0.5 * ohSpell.Unit.OHWeaponDamage(sim, ohSpell.MeleeAttackPower())
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				results[i] = ohSpell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, ohSpell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			}
+			for i, _ := range sim.Encounter.Targets {
+				ohSpell.DealDamage(sim, results[i])
+			}
+
+			for i, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := mhSpell.Unit.MHWeaponDamage(sim, mhSpell.MeleeAttackPower())
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				results[i] = mhSpell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, mhSpell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			}
+			for i, _ := range sim.Encounter.Targets {
+				mhSpell.DealDamage(sim, results[i])
+			}
 		},
 	})
 }
