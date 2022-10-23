@@ -27,29 +27,11 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 
 	penanceDots := make([]*core.Dot, len(priest.Env.AllUnits))
 
-	var applyEffects core.ApplySpellEffects
 	var procMask core.ProcMask
 	if isHeal {
 		procMask = core.ProcMaskSpellHealing
-		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			hot := penanceDots[target.UnitIndex]
-			hot.Apply(sim)
-			// Do immediate tick
-			hot.TickOnce(sim)
-		}
 	} else {
 		procMask = core.ProcMaskSpellDamage
-		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: priest.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					dot := penanceDots[spellEffect.Target.UnitIndex]
-					dot.Apply(sim)
-					// Do immediate tick
-					dot.TickOnce(sim)
-				}
-			},
-		})
 	}
 
 	spell := priest.RegisterSpell(core.SpellConfig{
@@ -81,7 +63,23 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 0,
 
-		ApplyEffects: applyEffects,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if isHeal {
+				hot := penanceDots[target.UnitIndex]
+				hot.Apply(sim)
+				// Do immediate tick
+				hot.TickOnce(sim)
+			} else {
+				result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+				if result.Landed() {
+					dot := penanceDots[target.UnitIndex]
+					dot.Apply(sim)
+					// Do immediate tick
+					dot.TickOnce(sim)
+				}
+				spell.DealOutcome(sim, result)
+			}
+		},
 	})
 
 	for _, unit := range priest.Env.AllUnits {

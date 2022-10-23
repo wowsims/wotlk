@@ -39,10 +39,13 @@ func (warlock *Warlock) registerCorruptionSpell() {
 
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
 		// This messes with final dmg and crit rate metrics.
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyDotOnLanded(&warlock.CorruptionDot),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CorruptionDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	warlock.CorruptionDot = core.NewDot(core.Dot{

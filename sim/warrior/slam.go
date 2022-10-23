@@ -35,16 +35,16 @@ func (warrior *Warrior) registerSlamSpell() {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  140,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 250, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 250 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				}
-			},
-		}),
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			if !result.Landed() {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+		},
 	})
 }
 

@@ -40,33 +40,13 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			return 0.05 * spell.MeleeAttackPower()
 		},
 	}
+
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
 		config.ResourceType = 0
 		config.BaseCost = 0
 		config.Cast.DefaultCast.Cost = 0
 		config.Cast.DefaultCast.GCD = 0
-	}
-
-	effect := core.SpellEffect{
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				warrior.SunderArmorAura.Activate(sim)
-				if warrior.SunderArmorAura.IsActive() {
-					warrior.SunderArmorAura.AddStack(sim)
-					if extraStack {
-						warrior.SunderArmorAura.AddStack(sim)
-					}
-				}
-			} else {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-			}
-		},
-	}
-	if isDevastateEffect {
-		effect.OutcomeApplier = warrior.OutcomeFuncAlwaysHit()
 
 		// In wrath sunder from devastate generates no threat
 		config.ThreatMultiplier = 0
@@ -74,7 +54,28 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		config.DynamicThreatBonus = nil
 	}
 
-	config.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
+	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		var result *core.SpellEffect
+		if isDevastateEffect {
+			result = spell.CalcOutcome(sim, target, spell.OutcomeAlwaysHit)
+		} else {
+			result = spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+		}
+
+		if result.Landed() {
+			warrior.SunderArmorAura.Activate(sim)
+			if warrior.SunderArmorAura.IsActive() {
+				warrior.SunderArmorAura.AddStack(sim)
+				if extraStack {
+					warrior.SunderArmorAura.AddStack(sim)
+				}
+			}
+		} else {
+			warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+		}
+
+		spell.DealOutcome(sim, result)
+	}
 	return warrior.RegisterSpell(config)
 }
 

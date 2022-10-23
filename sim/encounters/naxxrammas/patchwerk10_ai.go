@@ -78,12 +78,11 @@ func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigRoll(27750, 32250),
-			OutcomeApplier: target.OutcomeFuncEnemyMeleeWhite(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(27750, 32250)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
+		},
 	})
-
 }
 
 func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
