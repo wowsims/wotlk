@@ -27,6 +27,31 @@ type assassinationPrio struct {
 
 func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	rogue.assassinationPrios = make([]assassinationPrio, 0)
+
+	// Garrote
+	if rogue.Rotation.OpenWithGarrote {
+		hasCastGarrote := false
+		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+			func(s *core.Simulation, r *Rogue) PriorityAction {
+				if hasCastGarrote {
+					return Skip
+				}
+				if rogue.CurrentEnergy() > rogue.Garrote.DefaultCast.Cost {
+					return Cast
+				}
+				return Wait
+			},
+			func(s *core.Simulation, r *Rogue) bool {
+				casted := r.Garrote.Cast(sim, rogue.CurrentTarget)
+				if casted {
+					hasCastGarrote = true
+				}
+				return casted
+			},
+			rogue.HungerForBlood.DefaultCast.Cost,
+		})
+	}
+
 	// Slice And Dice
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 		func(s *core.Simulation, r *Rogue) PriorityAction {
@@ -50,10 +75,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Expose armor
 	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
 		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
-		stopCasting := false
+		hasCastExpose := false
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if stopCasting {
+				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
 				}
 				timeLeft := rogue.ExposeArmorAura.RemainingDuration(sim)
@@ -93,8 +118,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			},
 			func(s *core.Simulation, r *Rogue) bool {
 				casted := r.ExposeArmor[r.ComboPoints()].Cast(sim, r.CurrentTarget)
-				if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
-					stopCasting = true
+				if casted {
+					hasCastExpose = true
 				}
 				return casted
 			},

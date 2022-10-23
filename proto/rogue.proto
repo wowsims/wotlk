@@ -183,6 +183,8 @@ message Rogue {
 		bool allow_cp_overcap = 12;
 
 		bool allow_cp_undercap = 13;
+
+		bool open_with_garrote = 14;
 	}
 	Rotation rotation = 1;
 
