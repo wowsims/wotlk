@@ -79,6 +79,33 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				}
 			},
 		}),
+		//ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		//	dp := rogue.deadlyPoisonDots[target.Index]
+		//	// - 215 base is scaled by consumed doses (<= comboPoints)
+		//	// - apRatio is independent of consumed doses (== comboPoints)
+		//	consumed := core.MinInt32(dp.GetStacks(), comboPoints)
+		//	baseDamage := 215*float64(consumed) + apRatio*spell.MeleeAttackPower()
+
+		//	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+		//	if result.Landed() {
+		//		rogue.ApplyFinisher(sim, spell)
+		//		rogue.ApplyCutToTheChase(sim)
+		//		if !sim.Proc(chanceToRetainStacks, "Master Poisoner") {
+		//			if newStacks := dp.GetStacks() - comboPoints; newStacks > 0 {
+		//				dp.SetStacks(sim, newStacks)
+		//			} else {
+		//				dp.Cancel(sim)
+		//			}
+		//		}
+		//	} else {
+		//		if refundAmount > 0 {
+		//			rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
+		//		}
+		//	}
+
+		//	spell.DealDamage(sim, result)
+		//},
 	})
 }
 

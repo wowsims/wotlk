@@ -32,11 +32,9 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			constBaseDamage := spell.BonusWeaponDamage()
-			mAP := spell.MeleeAttackPower()
-			//mAP := spell.MeleeAttackPower() + apBonus
+			mAP := spell.MeleeAttackPower() + apBonus
 
 			if isMH {
-				constBaseDamage += shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 				baseDamage1 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
 				baseDamage2 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
 				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
@@ -44,7 +42,6 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 				spell.DealDamage(sim, result1)
 				spell.DealDamage(sim, result2)
 			} else {
-				constBaseDamage += shaman.AutoAttacks.OH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
 				baseDamage1 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
 				baseDamage2 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
 				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)

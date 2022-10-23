@@ -71,7 +71,7 @@ func (shaman *Shaman) registerLavaLashSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := flatDamageBonus +
-				spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
