@@ -30,6 +30,8 @@ const (
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
 
+const RogueBleedTag = "RogueBleed"
+
 type Rogue struct {
 	core.Character
 

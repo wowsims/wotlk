@@ -66,7 +66,7 @@ func (rogue *Rogue) registerGarrote() {
 		Spell: rogue.Garrote,
 		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Garrote",
-			Tag:      core.BleedDamageAuraTag,
+			Tag:      RogueBleedTag,
 			ActionID: rogue.Garrote.ActionID,
 		}),
 		NumberOfTicks: numTicks,
