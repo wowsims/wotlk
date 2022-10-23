@@ -128,9 +128,15 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 func (unit *Unit) MHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.MH.CalculateWeaponDamage(sim, attackPower)
 }
+func (unit *Unit) MHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(sim, attackPower)
+}
 
 func (unit *Unit) OHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
+}
+func (unit *Unit) OHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, attackPower)
 }
 
 func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {

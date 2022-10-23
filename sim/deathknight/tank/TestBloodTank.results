@@ -66,15 +66,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 1414.12654
-  tps: 4540.14338
+  dps: 1414.17927
+  tps: 4540.25273
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 1321.02802
-  tps: 4227.03337
+  dps: 1321.15482
+  tps: 4227.2963
  }
 }
 dps_results: {
@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 1200.7717
-  tps: 3852.3515
+  dps: 1200.82373
+  tps: 3852.4594
  }
 }
 dps_results: {
@@ -150,8 +150,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-DarkrunedPlate"
  value: {
-  dps: 1399.70817
-  tps: 4512.90976
+  dps: 1399.71863
+  tps: 4512.93146
  }
 }
 dps_results: {
@@ -346,8 +346,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 1452.34369
-  tps: 4636.78073
+  dps: 1452.38561
+  tps: 4636.86766
  }
 }
 dps_results: {
@@ -388,15 +388,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 1437.44447
-  tps: 4611.6898
+  dps: 1437.51578
+  tps: 4611.83765
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 1438.35881
-  tps: 4613.58569
+  dps: 1438.43012
+  tps: 4613.73354
  }
 }
 dps_results: {
@@ -451,8 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 1726.07008
-  tps: 5520.44927
+  dps: 1726.10346
+  tps: 5520.51848
  }
 }
 dps_results: {
@@ -507,15 +507,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-SparkofLife-37657"
  value: {
-  dps: 1434.94068
-  tps: 4567.15851
+  dps: 1434.991
+  tps: 4567.26283
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-StormshroudArmor"
  value: {
-  dps: 1183.94176
-  tps: 3823.61504
+  dps: 1184.06476
+  tps: 3823.87007
  }
 }
 dps_results: {
@@ -556,8 +556,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1442.89093
-  tps: 4591.68396
+  dps: 1442.94732
+  tps: 4591.80088
  }
 }
 dps_results: {
@@ -570,8 +570,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1478.51205
-  tps: 4709.05885
+  dps: 1478.55813
+  tps: 4709.15438
  }
 }
 dps_results: {
@@ -619,9 +619,9 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1828.45286
-  tps: 6356.42719
-  dtps: 254.81533
+  dps: 1828.18144
+  tps: 6355.62853
+  dtps: 254.9449
  }
 }
 dps_results: {

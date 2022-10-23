@@ -11,7 +11,7 @@ func (mage *Mage) registerBlizzardSpell() {
 	actionID := core.ActionID{SpellID: 42939}
 	baseCost := .74 * mage.BaseMana
 
-	results := make([]core.SpellEffect, len(mage.Env.Encounter.Targets))
+	results := make([]*core.SpellEffect, len(mage.Env.Encounter.Targets))
 	blizzardDot := core.NewDot(core.Dot{
 		Aura: mage.RegisterAura(core.Aura{
 			Label:    "Blizzard",
@@ -31,7 +31,7 @@ func (mage *Mage) registerBlizzardSpell() {
 				results[i] = dot.CalcSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
 			}
 			for i, _ := range sim.Encounter.Targets {
-				dot.Spell.DealPeriodicDamage(sim, &results[i])
+				dot.Spell.DealPeriodicDamage(sim, results[i])
 			}
 		},
 	})

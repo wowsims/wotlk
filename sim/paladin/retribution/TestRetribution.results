@@ -1340,7 +1340,7 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 5567.45245
-  tps: 5665.90767
+  dps: 5570.44877
+  tps: 5668.90399
  }
 }

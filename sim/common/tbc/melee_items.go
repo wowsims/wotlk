@@ -404,10 +404,10 @@ func init() {
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigFlat(600),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := 600.0
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			},
 		})
 
 		const procChance = 0.5 * 3.5 / 60.0
@@ -456,10 +456,10 @@ func init() {
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(513, 567),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(513, 567)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			},
 		})
 
 		character.AddMajorCooldown(core.MajorCooldown{
@@ -1048,11 +1048,11 @@ func init() {
 				CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 				ThreatMultiplier: 1,
 
-				ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-					BaseDamage: core.BaseDamageConfigRoll(333, 367),
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					baseDamage := sim.Roll(333, 367)
 					// TODO: validate this is a melee hit roll
-					OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
-				}),
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				},
 			})
 		}
 
