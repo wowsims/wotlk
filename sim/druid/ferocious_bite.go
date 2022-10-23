@@ -59,29 +59,23 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					comboPoints := float64(druid.ComboPoints())
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			comboPoints := float64(druid.ComboPoints())
+			attackPower := spell.MeleeAttackPower()
+			bonusDmg := excessEnergy * (9.4 + attackPower/410)
+			base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
+			roll := sim.RandomFloat("Ferocious Bite") * 140.0
+			baseDamage := base + roll + attackPower*0.07*comboPoints
 
-					attackPower := spell.MeleeAttackPower()
-					bonusDmg := excessEnergy * (9.4 + attackPower/410)
-					base := 120.0 + dmgPerComboPoint*comboPoints + bonusDmg
-					roll := sim.RandomFloat("Ferocious Bite") * 140.0
-					return base + roll + attackPower*0.07*comboPoints
-				},
-			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.SpendEnergy(sim, excessEnergy, spell.ResourceMetrics)
-					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-				} else if refundAmount > 0 {
-					druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
-				}
-			},
-		}),
+			if result.Landed() {
+				druid.SpendEnergy(sim, excessEnergy, spell.ResourceMetrics)
+				druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+			} else if refundAmount > 0 {
+				druid.AddEnergy(sim, refundAmount, druid.PrimalPrecisionRecoveryMetrics)
+			}
+		},
 	})
 }
 

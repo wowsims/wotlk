@@ -39,7 +39,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			if result.Landed() {
 				hunter.SerpentStingDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, &result)
+			spell.DealOutcome(sim, result)
 		},
 	})
 

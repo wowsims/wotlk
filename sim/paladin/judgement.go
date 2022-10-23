@@ -44,8 +44,7 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
-			spell.DealOutcome(sim, &result)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
 	})
 }
@@ -80,8 +79,7 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
-			spell.DealOutcome(sim, &result)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
 	})
 }

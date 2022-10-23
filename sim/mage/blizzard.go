@@ -11,6 +11,7 @@ func (mage *Mage) registerBlizzardSpell() {
 	actionID := core.ActionID{SpellID: 42939}
 	baseCost := .74 * mage.BaseMana
 
+	results := make([]*core.SpellEffect, len(mage.Env.Encounter.Targets))
 	blizzardDot := core.NewDot(core.Dot{
 		Aura: mage.RegisterAura(core.Aura{
 			Label:    "Blizzard",
@@ -26,8 +27,11 @@ func (mage *Mage) registerBlizzardSpell() {
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+			for i, aoeTarget := range sim.Encounter.Targets {
+				results[i] = dot.CalcSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+			}
+			for i, _ := range sim.Encounter.Targets {
+				dot.Spell.DealPeriodicDamage(sim, results[i])
 			}
 		},
 	})

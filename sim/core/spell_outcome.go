@@ -564,18 +564,21 @@ func (spell *Spell) CalcAndDealDamageRangedCritOnly(sim *Simulation, target *Uni
 	spell.DealDamage(sim, result)
 }
 
+func (spell *Spell) OutcomeEnemyMeleeWhite(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("Enemy White Hit Table")
+	chance := 0.0
+
+	if !result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableParry(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableBlock(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableCrit(spell, attackTable, roll, &chance) {
+		result.applyAttackTableHit(spell)
+	}
+}
 func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		roll := sim.RandomFloat("Enemy White Hit Table")
-		chance := 0.0
-
-		if !spellEffect.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableParry(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableBlock(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableCrit(spell, attackTable, roll, &chance) {
-			spellEffect.applyAttackTableHit(spell)
-		}
+		spell.OutcomeEnemyMeleeWhite(sim, spellEffect, attackTable)
 	}
 }
 

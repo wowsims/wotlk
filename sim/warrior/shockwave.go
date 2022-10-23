@@ -38,19 +38,17 @@ func (warrior *Warrior) registerShockwaveSpell() {
 		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(warrior.Env, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.75 * spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.75 * spell.MeleeAttackPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				// TODO: Should this be main target only?
+				if !result.Landed() {
 					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 				}
-			},
-		}),
+			}
+		},
 	})
 }
 

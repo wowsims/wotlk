@@ -10,6 +10,8 @@ import (
 
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	baseCost := paladin.BaseMana * 0.05
+	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0) + // Libram of Righteous Power
+		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40191, 79, 0) // Libram of Radiance
 
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 35395},
@@ -42,15 +44,12 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfigMeleeWeapon(
-				core.MainHand,
-				true, // cs is subject to normalisation
-				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0)+ // Libram of Righteous Power
-					core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40191, 79, 0), // Libram of Radiance
-				true,
-			),
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := bonusDmg +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+		},
 	})
 }

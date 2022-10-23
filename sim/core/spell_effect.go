@@ -196,13 +196,19 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 }
 
 // For spells that do no damage but still have a hit/miss check.
-func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) SpellEffect {
+func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-	result := SpellEffect{
-		Target: target,
-		Damage: 0,
+
+	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellEffect{}
 	}
-	outcomeApplier(sim, &result, attackTable)
+	result.Target = target
+	result.Damage = 0
+	result.Outcome = OutcomeEmpty // for blocks
+	result.inUse = true
+
+	outcomeApplier(sim, result, attackTable)
 	return result
 }
 
@@ -258,6 +264,11 @@ func (dot *Dot) CalcSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier
 
 func (spell *Spell) DealOutcome(sim *Simulation, result *SpellEffect) {
 	spell.DealDamage(sim, result)
+}
+func (spell *Spell) CalcAndDealOutcome(sim *Simulation, target *Unit, outcomeApplier NewOutcomeApplier) *SpellEffect {
+	result := spell.CalcOutcome(sim, target, outcomeApplier)
+	spell.DealDamage(sim, result)
+	return result
 }
 
 // Applies the fully computed spell result to the sim.
@@ -373,7 +384,7 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		spell.Unit.OnHealDealt(sim, spell, result)
 		result.Target.OnHealTaken(sim, spell, result)
 	}
-	
+
 	result.inUse = false
 }
 func (spell *Spell) DealHealing(sim *Simulation, result *SpellEffect) {

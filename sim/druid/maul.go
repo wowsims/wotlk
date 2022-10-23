@@ -11,46 +11,14 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	cost := 15.0 - float64(druid.Talents.Ferocity)
 	refundAmount := cost * 0.8
 
-	baseDamage := 578.0
+	flatBaseDamage := 578.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
-		baseDamage += 50
+		flatBaseDamage += 50
 	} else if druid.Equip[items.ItemSlotRanged].ID == 38365 { // Idol of Perspicacious Attacks
-		baseDamage += 120
+		flatBaseDamage += 120
 	}
 
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.WrapBaseDamageConfig(
-			core.BaseDamageConfigMeleeWeapon(core.MainHand, false, baseDamage, true),
-			func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-				return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-					normalDamage := oldCalculator(sim, spellEffect, spell)
-					modifier := 1.0
-					if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
-						modifier += .3
-					}
-					if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
-						modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
-					}
-
-					return normalDamage * modifier
-				}
-			}),
-		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
-			}
-		},
-	}
-
-	maxTargets := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMaul), 2, 1)
-	numHits := core.MinInt(maxTargets, int(druid.Env.GetNumTargets()))
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := 0; i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = druid.Env.GetTargetUnit(int32(i))
-	}
+	numHits := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMaul) && druid.Env.GetNumTargets() > 1, 2, 1)
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 26996},
@@ -72,7 +40,31 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  344,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			modifier := 1.0
+			if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
+				modifier += .3
+			}
+			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
+			}
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := flatBaseDamage +
+					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+				baseDamage *= modifier
+
+				result := spell.CalcAndDealDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+				if !result.Landed() {
+					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+				}
+
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 
 	druid.MaulQueueAura = druid.RegisterAura(core.Aura{

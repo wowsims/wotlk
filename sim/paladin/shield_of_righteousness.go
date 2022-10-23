@@ -50,5 +50,18 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 			},
 			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
 		}),
+		//ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		//	var baseDamage float64
+		//	// TODO: Derive or find accurate source for DR curve
+		//	bv := paladin.GetStat(stats.BlockValue)
+		//	if bv <= 2400.0 {
+		//		baseDamage = 520.0 + bv
+		//	} else {
+		//		bv = 2400.0 + (bv-2400.0)/2
+		//		baseDamage = 520.0 + core.TernaryFloat64(bv > 2760.0, 2760.0, bv)
+		//	}
+
+		//	spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+		//},
 	})
 }
