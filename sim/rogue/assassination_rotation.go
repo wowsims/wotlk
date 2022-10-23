@@ -18,7 +18,6 @@ const (
 
 type GetAction func(*core.Simulation, *Rogue) PriorityAction
 type DoAction func(*core.Simulation, *Rogue) bool
-type BuildPriority func(*core.Simulation, *Rogue)
 
 type assassinationPrio struct {
 	check GetAction
@@ -109,6 +108,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			func(s *core.Simulation, r *Rogue) PriorityAction {
 
 				if rogue.HungerForBloodAura.IsActive() {
+					return Skip
+				}
+
+				if !rogue.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
 					return Skip
 				}
 
