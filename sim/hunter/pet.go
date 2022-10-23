@@ -166,14 +166,6 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-func (hp *HunterPet) specialDamageMod(baseDamageConfig core.BaseDamageConfig) core.BaseDamageConfig {
-	return core.WrapBaseDamageConfig(baseDamageConfig, func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-		return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-			normalDamage := oldCalculator(sim, hitEffect, spell)
-			return normalDamage * hp.killCommandMult()
-		}
-	})
-}
 func (hp *HunterPet) killCommandMult() float64 {
 	return 1 + 0.2*float64(hp.KillCommandAura.GetStacks())
 }

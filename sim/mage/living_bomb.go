@@ -56,12 +56,14 @@ func (mage *Mage) registerLivingBombSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: mage.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mage.LivingBombDots[mage.CurrentTarget.Index].Apply(sim)
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			// TODO: Uncomment this
+			// if result.Landed() {
+			mage.LivingBombDots[mage.CurrentTarget.Index].Apply(sim)
+			// }
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	livingBombDotSpell := mage.RegisterSpell(core.SpellConfig{

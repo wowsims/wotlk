@@ -39,14 +39,12 @@ func (warrior *Warrior) registerDevastateSpell() {
 		}))
 	}
 
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
-
 	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
+	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
-	normalBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0, false)
 	weaponMulti := 1.2
 
 	warrior.Devastate = warrior.RegisterSpell(core.SpellConfig{
@@ -75,31 +73,27 @@ func (warrior *Warrior) registerDevastateSpell() {
 			return dynaThreatBonus * spell.MeleeAttackPower()
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// Bonus 242 damage / stack of sunder. Counts stacks AFTER cast but only if stacks > 0.
-					sunderBonus := 0.0
-					saStacks := warrior.SunderArmorAura.GetStacks()
-					if saStacks != 0 {
-						sunderBonus = 242 * float64(core.MinInt32(saStacks+1, 5))
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Bonus 242 damage / stack of sunder. Counts stacks AFTER cast but only if stacks > 0.
+			sunderBonus := 0.0
+			saStacks := warrior.SunderArmorAura.GetStacks()
+			if saStacks != 0 {
+				sunderBonus = 242 * float64(core.MinInt32(saStacks+1, 5))
+			}
 
-					return normalBaseDamage(sim, hitEffect, spell) + sunderBonus
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
+			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) + sunderBonus
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					if !warrior.ExposeArmorAura.IsActive() {
-						warrior.SunderArmorDevastate.Cast(sim, spellEffect.Target)
-					}
-				} else {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			spell.DealDamage(sim, result)
+
+			if result.Landed() {
+				if !warrior.ExposeArmorAura.IsActive() {
+					warrior.SunderArmorDevastate.Cast(sim, target)
 				}
-			},
-		}),
+			} else {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+		},
 	})
 }
 

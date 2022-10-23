@@ -746,14 +746,12 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
-				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() {
-						dot.Apply(sim)
-					}
-				},
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+				if result.Landed() {
+					dot.Apply(sim)
+				}
+			},
 		}),
 	}
 

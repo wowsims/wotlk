@@ -54,17 +54,6 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		},
 	})
 
-	effect := core.SpellEffect{
-		OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-		OnSpellHitDealt: applyDotOnLanded(&warlock.SeedDots[targetIdx]),
-	}
-	if warlock.Rotation.DetonateSeed {
-		// Replace dot application with explosion.
-		effect.OnSpellHitDealt = func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			seedExplosion.Cast(sim, spellEffect.Target)
-		}
-	}
-
 	warlock.Seeds[targetIdx] = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  spellSchool,
@@ -83,7 +72,17 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				if warlock.Rotation.DetonateSeed {
+					seedExplosion.Cast(sim, target)
+				} else {
+					warlock.SeedDots[targetIdx].Apply(sim)
+				}
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	seedDmgTracker := 0.0

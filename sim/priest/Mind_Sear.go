@@ -19,16 +19,6 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	baseCost := priest.BaseMana * 0.28
 	channelTime := time.Second * time.Duration(numTicks)
 
-	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-			priest.MindSearDot[numTicks].Apply(sim)
-		},
-	}
-
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindSearActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
@@ -50,7 +40,14 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := spell.CalcAndDealOutcome(sim, &aoeTarget.Unit, spell.OutcomeMagicHit)
+				if result.Landed() {
+					priest.MindSearDot[numTicks].Apply(sim)
+				}
+			}
+		},
 	})
 }
 

@@ -58,21 +58,19 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles), .25, 0)),
 		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: mage.OutcomeFuncMagicHit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					mage.PseudoStats.NoCost = false
-					if mage.MissileBarrageAura.IsActive() {
-						mage.isMissilesBarrage = true
-						mage.MultiplyCastSpeed(2)
-					}
-
-					mage.ArcaneMissilesDot.Apply(sim)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				mage.PseudoStats.NoCost = false
+				if mage.MissileBarrageAura.IsActive() {
+					mage.isMissilesBarrage = true
+					mage.MultiplyCastSpeed(2)
 				}
-			},
-		}),
+
+				mage.ArcaneMissilesDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	target := mage.CurrentTarget

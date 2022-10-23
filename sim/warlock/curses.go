@@ -35,10 +35,13 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		FlatThreatBonus:  0, // TODO
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfElementsAura),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CurseOfElementsAura.Activate(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
@@ -68,10 +71,13 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		FlatThreatBonus:  0, // TODO
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfWeaknessAura),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CurseOfWeaknessAura.Activate(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
@@ -103,10 +109,13 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		FlatThreatBonus:  0, // TODO
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyAuraOnLanded(warlock.CurseOfTonguesAura),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CurseOfTonguesAura.Activate(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
@@ -139,15 +148,14 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		FlatThreatBonus:          0, // TODO : curses flat threat on application
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					warlock.CurseOfDoomDot.Cancel(sim)
-					warlock.CurseOfAgonyDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CurseOfDoomDot.Cancel(sim)
+				warlock.CurseOfAgonyDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 	warlock.CurseOfAgonyDot = core.NewDot(core.Dot{
 		Spell: warlock.CurseOfAgony,
@@ -195,15 +203,14 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 		FlatThreatBonus:          0, // TODO
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					warlock.CurseOfAgonyDot.Cancel(sim)
-					warlock.CurseOfDoomDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CurseOfAgonyDot.Cancel(sim)
+				warlock.CurseOfDoomDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	warlock.CurseOfDoomDot = core.NewDot(core.Dot{

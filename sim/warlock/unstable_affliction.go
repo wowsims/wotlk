@@ -38,10 +38,13 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		CritMultiplier:           warlock.SpellCritMultiplier(1, 1),
 		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyDotOnLanded(&warlock.UnstableAfflictionDot),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.UnstableAfflictionDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	warlock.UnstableAfflictionDot = core.NewDot(core.Dot{

@@ -43,23 +43,22 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					warrior.RendDots.Apply(sim)
-					warrior.procBloodFrenzy(sim, spellEffect, dotDuration)
-					warrior.rendValidUntil = sim.CurrentTime + dotDuration
-				} else {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				warrior.RendDots.Apply(sim)
+				warrior.procBloodFrenzy(sim, result, dotDuration)
+				warrior.rendValidUntil = sim.CurrentTime + dotDuration
+			} else {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
-	target := warrior.CurrentTarget
+
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warrior.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),
 			ActionID: actionID,
 		}),
