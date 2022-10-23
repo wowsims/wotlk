@@ -73,9 +73,17 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 				Label:    "Dreadnaught Battlegear 4pc Proc",
 				ActionID: core.ActionID{SpellID: 61571},
 				Duration: time.Second * 30,
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					warrior.AddRage(sim, 5, rageMetrics)
-					aura.Deactivate(sim)
+				OnGain: func(_ *core.Aura, sim *core.Simulation) {
+					warrior.PseudoStats.CostReduction = 5
+				},
+				OnExpire: func(_ *core.Aura, sim *core.Simulation) {
+					rageMetrics.AddEvent(5, 5) // this is only "mostly correct", but should suffice for statistics
+					warrior.PseudoStats.CostReduction = 0
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+					if spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+						aura.Deactivate(sim)
+					}
 				},
 			})
 
@@ -86,7 +94,7 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
 					if spellEffect.Landed() && sim.RandomFloat("Dreadnaught Battlegear 4pc") < 0.1 {
 						procAura.Activate(sim)
 					}

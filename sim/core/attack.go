@@ -246,7 +246,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
 		SpellSchool: unit.AutoAttacks.MH.GetSpellSchool(),
 		ProcMask:    ProcMaskMeleeMHAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage | SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   options.MainHand.CritMultiplier,
@@ -264,7 +264,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
 		SpellSchool: unit.AutoAttacks.OH.GetSpellSchool(),
 		ProcMask:    ProcMaskMeleeOHAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage | SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   options.OffHand.CritMultiplier,

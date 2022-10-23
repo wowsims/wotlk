@@ -220,8 +220,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 5812.74139
-  tps: 5911.14391
+  dps: 5812.67523
+  tps: 5911.07775
  }
 }
 dps_results: {
@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 5758.5599
-  tps: 5856.98538
+  dps: 5758.49796
+  tps: 5856.92344
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 5810.82845
-  tps: 5911.02731
+  dps: 5810.73901
+  tps: 5910.77993
  }
 }
 dps_results: {
@@ -542,8 +542,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SparkofLife-37657"
  value: {
-  dps: 5764.44046
-  tps: 5858.47197
+  dps: 5753.98484
+  tps: 5848.48236
  }
 }
 dps_results: {

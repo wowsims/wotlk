@@ -208,8 +208,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 2159.44466
-  tps: 6186.20329
+  dps: 2152.0769
+  tps: 6159.72388
  }
 }
 dps_results: {

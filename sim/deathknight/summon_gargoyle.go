@@ -139,7 +139,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 				CastTime: time.Millisecond * 2000,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				// Gargoyle doesnt use GCD so we recast the spell over and over
+				// Gargoyle doesn't use GCD, so we recast the spell over and over
 				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 			},
 		},
