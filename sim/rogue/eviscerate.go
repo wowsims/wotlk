@@ -9,8 +9,7 @@ import (
 )
 
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
-	baseDamage := 127.0 + 370*float64(comboPoints)
-	//flatBaseDamage := 127.0 + 370*float64(comboPoints)
+	flatBaseDamage := 127.0 + 370*float64(comboPoints)
 	// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
 	apRatio := 0.07 * float64(comboPoints)
 
@@ -43,46 +42,25 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return baseDamage +
-						254.0*sim.RandomFloat("Eviscerate") +
-						apRatio*spell.MeleeAttackPower() +
-						spell.BonusWeaponDamage()
-				},
-			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.ApplyFinisher(sim, spell)
-					rogue.ApplyCutToTheChase(sim)
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := flatBaseDamage +
+				254.0*sim.RandomFloat("Eviscerate") +
+				apRatio*spell.MeleeAttackPower() +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.ApplyFinisher(sim, spell)
+				rogue.ApplyCutToTheChase(sim)
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
 				}
-			},
-		}),
-		//ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		//	baseDamage := flatBaseDamage +
-		//		254.0*sim.RandomFloat("Eviscerate") +
-		//		apRatio*spell.MeleeAttackPower() +
-		//		spell.BonusWeaponDamage()
+			}
 
-		//	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-
-		//	if result.Landed() {
-		//		rogue.ApplyFinisher(sim, spell)
-		//		rogue.ApplyCutToTheChase(sim)
-		//	} else {
-		//		if refundAmount > 0 {
-		//			rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-		//		}
-		//	}
-
-		//	spell.DealDamage(sim, result)
-		//},
+			spell.DealDamage(sim, result)
+		},
 	})
 }
 

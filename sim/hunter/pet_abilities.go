@@ -168,10 +168,11 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 			CritMultiplier:   2,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(118, 168, 0.07)),
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(118, 168) + 0.07*spell.MeleeAttackPower()
+				baseDamage *= hp.killCommandMult()
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			},
 		}),
 	}
 }
@@ -207,11 +208,11 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 	if config.School == core.SpellSchoolPhysical {
 		flags = core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage
 		procMask = core.ProcMaskSpellDamage
-		applyEffects = core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:      hp.specialDamageMod(core.BaseDamageConfigMelee(config.MinDmg, config.MaxDmg, config.APRatio)),
-			OutcomeApplier:  hp.OutcomeFuncMeleeSpecialHitAndCrit(),
-			OnSpellHitDealt: config.OnSpellHitDealt,
-		})
+		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(config.MinDmg, config.MaxDmg) + config.APRatio*spell.MeleeAttackPower()
+			baseDamage *= hp.killCommandMult()
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+		}
 	} else {
 		procMask = core.ProcMaskMeleeMHSpecial
 		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -494,14 +495,12 @@ func (hp *HunterPet) newPin() PetAbility {
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
-				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() {
-						dot.Apply(sim)
-					}
-				},
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+				if result.Landed() {
+					dot.Apply(sim)
+				}
+			},
 		}),
 	}
 
@@ -554,14 +553,12 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
-				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() {
-						dot.Apply(sim)
-					}
-				},
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+				if result.Landed() {
+					dot.Apply(sim)
+				}
+			},
 		}),
 	}
 
@@ -677,20 +674,19 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(59, 83, 0.07)),
-			OutcomeApplier: hp.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(59, 83) + 0.07*spell.MeleeAttackPower()
+			baseDamage *= hp.killCommandMult()
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				hp.SpendFocus(sim, cost, actionID)
-				if spellEffect.Landed() {
-					dot.Apply(sim)
-					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-						procAura.Activate(sim)
-					}
+			hp.SpendFocus(sim, cost, actionID)
+			if result.Landed() {
+				dot.Apply(sim)
+				if result.DidCrit() {
+					procAura.Activate(sim)
 				}
-			},
-		}),
+			}
+		},
 	})
 
 	target := hp.CurrentTarget
@@ -1008,14 +1004,12 @@ func (hp *HunterPet) newVenomWebSpray() PetAbility {
 			DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				OutcomeApplier: hp.OutcomeFuncMeleeSpecialHit(),
-				OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() {
-						dot.Apply(sim)
-					}
-				},
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+				if result.Landed() {
+					dot.Apply(sim)
+				}
+			},
 		}),
 	}
 

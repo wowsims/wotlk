@@ -38,28 +38,21 @@ func (druid *Druid) registerRakeSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := 176 + 0.01*spell.MeleeAttackPower()
-					if mangleAura.IsActive() {
-						return damage * 1.3
-					} else {
-						return damage
-					}
-				},
-			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
+			if mangleAura.IsActive() {
+				baseDamage *= 1.3
+			}
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-					druid.RakeDot.Apply(sim)
-				} else {
-					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
-				}
-			},
-		}),
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				druid.RakeDot.Apply(sim)
+			} else {
+				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+			}
+		},
 	})
 
 	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)

@@ -175,7 +175,7 @@ func init() {
 						debuffAuras[target.Index].Activate(sim)
 					}
 					spell.DealDamage(sim, result)
-					curTarget = sim.Environment.NextTargetUnit(target)
+					curTarget = sim.Environment.NextTargetUnit(curTarget)
 				}
 			},
 		})

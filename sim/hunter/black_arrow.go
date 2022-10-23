@@ -49,7 +49,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 			if result.Landed() {
 				hunter.BlackArrowDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, &result)
+			spell.DealOutcome(sim, result)
 		},
 	})
 

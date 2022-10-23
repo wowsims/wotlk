@@ -25,18 +25,8 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 *   - CAN MISS, BE DODGED/PARRIED/BLOCKED.
 	 */
 
-	baseEffect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		mhEffect := baseEffect
-		mhEffect.Target = paladin.Env.GetTargetUnit(i)
-		effects = append(effects, mhEffect)
-	}
+	results := make([]*core.SpellEffect, numHits)
 
 	baseMultiplierAdditive := 1 +
 		paladin.getItemSetLightswornBattlegearBonus4() +
@@ -54,7 +44,23 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		CritMultiplier:           paladin.MeleeCritMultiplier(),
 		ThreatMultiplier:         1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := 0 +
+					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
@@ -68,7 +74,13 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		CritMultiplier:           paladin.MeleeCritMultiplier(),
 		ThreatMultiplier:         1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(baseEffect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+		},
 	})
 
 	var glyphManaMetrics *core.ResourceMetrics
@@ -161,15 +173,16 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 0.19*core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 0, true).Calculator(sim, hitEffect, spell) +
-						0.08*spell.MeleeAttackPower() +
-						0.13*spell.SpellPower()
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mhWeaponDamage := 0 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+			baseDamage := 0.19*mhWeaponDamage +
+				0.08*spell.MeleeAttackPower() +
+				0.13*spell.SpellPower()
+
+			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
 	})
 }

@@ -11,23 +11,16 @@ import (
 func (druid *Druid) registerSwipeBearSpell() {
 	cost := 20.0 - float64(druid.Talents.Ferocity)
 
-	baseDamage := 108.0
+	flatBaseDamage := 108.0
 	if druid.Equip[items.ItemSlotRanged].ID == 23198 { // Idol of Brutality
-		baseDamage += 10
+		flatBaseDamage += 10
 	} else if druid.Equip[items.ItemSlotRanged].ID == 38365 { // Idol of Perspicacious Attacks
-		baseDamage += 24
+		flatBaseDamage += 24
 	}
 
 	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
 	thdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0)
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
-
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: core.BaseDamageFuncMelee(baseDamage, baseDamage, 0.07),
-		},
-		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
 
 	druid.SwipeBear = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48562},
@@ -50,25 +43,21 @@ func (druid *Druid) registerSwipeBearSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(druid.Env, baseEffect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := flatBaseDamage + 0.07*spell.MeleeAttackPower()
+			baseDamage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			}
+		},
 	})
 }
 
 func (druid *Druid) registerSwipeCatSpell() {
 	cost := 50.0 - float64(druid.Talents.Ferocity)
 
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 0.0, false)
 	weaponMulti := 2.5
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
-
-	baseEffect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell)
-			},
-		},
-		OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
 
 	druid.SwipeCat = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 62078},
@@ -91,7 +80,13 @@ func (druid *Druid) registerSwipeCatSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(druid.Env, baseEffect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			}
+		},
 	})
 }
 

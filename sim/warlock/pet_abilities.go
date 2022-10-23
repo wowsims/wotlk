@@ -121,7 +121,7 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 				baseDamage := constBaseDamage + spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower())
 				spell.CalcAndDealDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-				curTarget = sim.Environment.NextTargetUnit(target)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
 		},
 	})
