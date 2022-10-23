@@ -1,26 +1,11 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-
-import { BalanceDruid, BalanceDruid_Rotation as BalanceDruidRotation, DruidTalents as DruidTalents, BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -86,6 +71,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				individualBuffs: Presets.DefaultIndividualBuffs,
 
 				debuffs: Presets.DefaultDebuffs,
+
+				other: Presets.OtherDefaults,
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -110,6 +97,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
+					OtherInputs.DistanceFromTarget,
 				],
 			},
 			encounterPicker: {
