@@ -56,6 +56,7 @@ type Rogue struct {
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
 	Feint            *core.Spell
+	Garrote          *core.Spell
 	Hemorrhage       *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
@@ -74,9 +75,10 @@ type Rogue struct {
 	lastDeadlyPoisonProcMask    core.ProcMask
 	deadlyPoisonProcChanceBonus float64
 	deadlyPoisonDots            []*core.Dot
+	garroteDot                  *core.Dot
 	instantPoisonPPMM           core.PPMManager
-	woundPoisonPPMM             core.PPMManager
 	ruptureDot                  *core.Dot
+	woundPoisonPPMM             core.PPMManager
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
@@ -150,6 +152,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerExposeArmorSpell()
 	rogue.registerFanOfKnives()
 	rogue.registerFeintSpell()
+	rogue.registerGarrote()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerWoundPoisonSpell()

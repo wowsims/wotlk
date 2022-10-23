@@ -93,6 +93,12 @@ export const RogueRotationConfig = {
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'openWithGarrote',
+			label: 'Open with Garrote',
+			labelTooltip: 'Open the encounter by casting Garrote.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'useFeint',
 			label: 'Use Feint',
 			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
@@ -100,12 +106,14 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'allowCpUndercap',
 			label: 'Undercap CP',
-			labelTooltip: 'Cast Envenom at 3 cp if the Envenom buff is missing.'
+			labelTooltip: 'Cast Envenom at 3 cp if the Envenom buff is missing.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'allowCpOvercap',
 			label: 'Overcap CP',
-			labelTooltip: 'Cast Mutilate at 4 cp if the Envenom buff will last long enough.'
+			labelTooltip: 'Cast Mutilate at 4 cp if the Envenom buff will last long enough.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 	],
 };
