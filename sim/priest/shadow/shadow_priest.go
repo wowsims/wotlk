@@ -47,6 +47,8 @@ func NewShadowPriest(character core.Character, options proto.Player) *ShadowPrie
 }
 
 type ShadowPriest struct {
+	PrevTicks float64
+
 	DPstatH  float64
 	DPstatpH float64
 	DPstatSp float64

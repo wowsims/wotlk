@@ -43,42 +43,38 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					warrior.RendDots.Apply(sim)
-					warrior.procBloodFrenzy(sim, spellEffect, dotDuration)
-					warrior.rendValidUntil = sim.CurrentTime + dotDuration
-				} else {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				warrior.RendDots.Apply(sim)
+				warrior.procBloodFrenzy(sim, result, dotDuration)
+				warrior.rendValidUntil = sim.CurrentTime + dotDuration
+			} else {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
-	target := warrior.CurrentTarget
+
 	warrior.RendDots = core.NewDot(core.Dot{
 		Spell: warrior.Rend,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warrior.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: dotTicks,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, spell *core.Spell) float64 {
-					tickDamage := (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower())) / 5
-					// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
-					if sim.GetRemainingDurationPercent() > 0.75 {
-						return tickDamage * 1.35
-					}
-					return tickDamage
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
+			// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
+			if sim.GetRemainingDurationPercent() > 0.75 {
+				dot.SnapshotBaseDamage *= 1.35
+			}
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 
 	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)

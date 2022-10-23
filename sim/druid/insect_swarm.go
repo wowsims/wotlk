@@ -62,20 +62,22 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		}),
 		NumberOfTicks: 6 + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(215, 0.2),
-			OutcomeApplier: druid.OutcomeFuncTick(),
-			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.setBonuses.balance_t8_4 {
-					tierProc := druid.GetOrRegisterAura(core.Aura{
-						Label:    "Elune's Wrath",
-						ActionID: core.ActionID{SpellID: 64823},
-						Duration: time.Second * 10,
-					})
-					tierProc.Activate(sim)
-				}
-			},
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 215 + 0.2*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+
+			if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.setBonuses.balance_t8_4 {
+				tierProc := druid.GetOrRegisterAura(core.Aura{
+					Label:    "Elune's Wrath",
+					ActionID: core.ActionID{SpellID: 64823},
+					Duration: time.Second * 10,
+				})
+				tierProc.Activate(sim)
+			}
+		},
 	})
 }

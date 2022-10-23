@@ -10,7 +10,8 @@ import (
 )
 
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
-//  The first never deals damage, so the latter should probably be used as ActionID here.
+//
+//	The first never deals damage, so the latter should probably be used as ActionID here.
 func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
 	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
 }
@@ -21,23 +22,6 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	channelTime := time.Second * time.Duration(numTicks)
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		channelTime -= time.Duration(numTicks) * (time.Millisecond * 170)
-	}
-
-	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-			if priest.ShadowWordPainDot.IsActive() {
-				if priest.Talents.PainAndSuffering == 3 {
-					priest.ShadowWordPainDot.Rollover(sim)
-				} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
-					priest.ShadowWordPainDot.Rollover(sim)
-				}
-			}
-			priest.MindFlayDot[numTicks].Apply(sim)
-		},
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
@@ -73,7 +57,20 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				if priest.ShadowWordPainDot.IsActive() {
+					if priest.Talents.PainAndSuffering == 3 {
+						priest.ShadowWordPainDot.Rollover(sim)
+					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+						priest.ShadowWordPainDot.Rollover(sim)
+					}
+				}
+				priest.MindFlayDot[numTicks].Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
@@ -125,7 +122,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
-			dot.Spell.DealPeriodicDamage(sim, &result)
+			dot.Spell.DealPeriodicDamage(sim, result)
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)

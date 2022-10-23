@@ -20,28 +20,8 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		apBonus += 212
 	}
 
-	actionID := core.ActionID{SpellID: 58804}
-
-	baseEffect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-	if isMH {
-		bonusApDmg := shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
-		actionID.Tag = 1
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, bonusApDmg, true)
-	} else {
-		bonusApDmg := shaman.AutoAttacks.OH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
-		actionID.Tag = 2
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, bonusApDmg, true)
-	}
-
-	effects := []core.SpellEffect{
-		baseEffect,
-		baseEffect,
-	}
-
-	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+	spellConfig := core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 58804}.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMelee,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
@@ -50,8 +30,29 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		CritMultiplier:   shaman.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultipleTargeted(effects),
-	})
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			constBaseDamage := spell.BonusWeaponDamage()
+			mAP := spell.MeleeAttackPower() + apBonus
+
+			if isMH {
+				baseDamage1 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
+				baseDamage2 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
+				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
+				result2 := spell.CalcDamage(sim, target, baseDamage2, spell.OutcomeMeleeSpecialHitAndCrit)
+				spell.DealDamage(sim, result1)
+				spell.DealDamage(sim, result2)
+			} else {
+				baseDamage1 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
+				baseDamage2 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
+				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
+				result2 := spell.CalcDamage(sim, target, baseDamage2, spell.OutcomeMeleeSpecialHitAndCrit)
+				spell.DealDamage(sim, result1)
+				spell.DealDamage(sim, result2)
+			}
+		},
+	}
+
+	return shaman.RegisterSpell(spellConfig)
 }
 
 func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {

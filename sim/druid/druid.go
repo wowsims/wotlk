@@ -174,14 +174,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
-func (druid *Druid) PrimalGoreOutcomeFuncTick() core.OutcomeApplier {
-	if druid.Talents.PrimalGore {
-		return druid.OutcomeFuncTickHitAndCrit()
-	} else {
-		return druid.OutcomeFuncTick()
-	}
-}
-
 func (druid *Druid) MeleeCritMultiplier() float64 {
 	// Assumes that Predatory Instincts is a primary rather than secondary modifier for now, but this needs to confirmed!
 	primaryModifier := 1.0

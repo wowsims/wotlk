@@ -12,7 +12,6 @@ import (
 func (warlock *Warlock) registerConflagrateSpell() {
 	actionID := core.ActionID{SpellID: 17962}
 	spellSchool := core.SpellSchoolFire
-	target := warlock.CurrentTarget
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
 	baseCost := 0.16 * warlock.BaseMana
@@ -62,7 +61,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			if result.Landed() {
 				warlock.ConflagrateDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
@@ -77,16 +76,21 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 			ThreatMultiplier:         warlock.Conflagrate.ThreatMultiplier,
 		}),
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 3,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(dotFlatDamage, dotSpellCoeff),
-			OutcomeApplier: warlock.OutcomeFuncMagicCrit(),
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = dotFlatDamage + dotSpellCoeff*dot.Spell.SpellPower()
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+		},
 	})
 }

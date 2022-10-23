@@ -257,6 +257,7 @@ func (hunter *Hunter) applyPiercingShots() {
 	actionID := core.ActionID{SpellID: 53238}
 	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
 	var psDot *core.Dot
+	var currentTickDmg float64
 
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -282,9 +283,14 @@ func (hunter *Hunter) applyPiercingShots() {
 		}),
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = currentTickDmg
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
-
-	var currentTickDmg float64
 
 	hunter.RegisterAura(core.Aura{
 		Label:    "Piercing Shots Talent",
@@ -311,13 +317,6 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			currentTickDmg = totalDmg / 8
-
-			// Reassign tick effect to update the damage.
-			psDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic:     true,
-				BaseDamage:     core.BaseDamageConfigFlat(currentTickDmg),
-				OutcomeApplier: hunter.OutcomeFuncTick(),
-			})
 
 			psSpell.Cast(sim, spellEffect.Target)
 		},

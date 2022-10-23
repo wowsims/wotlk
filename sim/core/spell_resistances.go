@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, attackTable *AttackTable) {
+func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
 	// TODO check why spellEffect.Outcome isn't updated with resists anymore
-	resistanceMultiplier := spell.ResistanceMultiplier(sim, spellEffect.IsPeriodic, attackTable)
+	resistanceMultiplier := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
 	spellEffect.Damage *= resistanceMultiplier
 
 	spellEffect.ResistanceMultiplier = resistanceMultiplier

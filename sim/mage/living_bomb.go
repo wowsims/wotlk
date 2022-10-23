@@ -38,11 +38,7 @@ func (mage *Mage) registerLivingBombSpell() {
 	})
 
 	target := mage.CurrentTarget
-
-	lbOutcomeApplier := mage.OutcomeFuncTick()
-	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb) {
-		lbOutcomeApplier = mage.OutcomeFuncMagicHitAndCrit()
-	}
+	hasGlyphOfLivingBomb := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb)
 
 	mage.LivingBomb = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionIDSpell,
@@ -60,12 +56,14 @@ func (mage *Mage) registerLivingBombSpell() {
 			},
 		},
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: mage.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				mage.LivingBombDots[mage.CurrentTarget.Index].Apply(sim)
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			// TODO: Uncomment this
+			// if result.Landed() {
+			mage.LivingBombDots[mage.CurrentTarget.Index].Apply(sim)
+			// }
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	livingBombDotSpell := mage.RegisterSpell(core.SpellConfig{
@@ -99,11 +97,17 @@ func (mage *Mage) registerLivingBombSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: false,
 
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(345, .2),
-			OutcomeApplier: lbOutcomeApplier,
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 345 + 0.2*dot.Spell.SpellPower()
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if hasGlyphOfLivingBomb {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
-
 }

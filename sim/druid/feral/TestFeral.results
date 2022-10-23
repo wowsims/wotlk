@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 7655.54701
-  tps: 5805.0048
+  dps: 7745.24085
+  tps: 5877.76951
  }
 }
 dps_results: {
@@ -675,7 +675,7 @@ dps_results: {
 dps_results: {
  key: "TestFeral-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6258.5392
-  tps: 4757.50799
+  dps: 6227.03048
+  tps: 4736.57195
  }
 }

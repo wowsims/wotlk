@@ -234,6 +234,8 @@ message Deathknight {
 		Presence bl_presence = 18;
 
 		Presence presence = 21;
+
+		bool hold_erw_army = 22;
 	}
 	Rotation rotation = 1;
 

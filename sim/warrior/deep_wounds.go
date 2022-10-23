@@ -18,7 +18,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		ActionID:    DeepWoundsActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -40,11 +40,6 @@ func (warrior *Warrior) applyDeepWounds() {
 				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
 			}
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warrior.DeepWounds {
-				warrior.DeepWoundsDamageBuffer[spellEffect.Target.Index] -= warrior.DeepWoundsTickDamage[spellEffect.Target.Index]
-			}
-		},
 	})
 }
 
@@ -57,6 +52,13 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := warrior.DeepWoundsTickDamage[target.Index]
+			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.OutcomeTick)
+			// TODO: This probably can go before the calc now (after we assign baseDamage) but it breaks 1 test.
+			warrior.DeepWoundsDamageBuffer[target.Index] -= warrior.DeepWoundsTickDamage[target.Index]
+		},
 	})
 }
 
@@ -74,14 +76,8 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage
 	}
 
-	newTickDamage := warrior.DeepWoundsDamageBuffer[target.Index] / 6
-	warrior.DeepWoundsTickDamage[target.Index] = newTickDamage
+	warrior.DeepWoundsTickDamage[target.Index] = warrior.DeepWoundsDamageBuffer[target.Index] / 6
 	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
-	dot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-		IsPeriodic:     true,
-		BaseDamage:     core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier: warrior.OutcomeFuncTick(),
-	}))
 	dot.Apply(sim)
 }

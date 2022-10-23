@@ -45,50 +45,19 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		DamageMultiplier: (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					return
-				}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
 				warlock.DrainSoulDot.Apply(sim)
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
-
-	target := warlock.CurrentTarget
-
-	effect := core.SpellEffect{
-		IsPeriodic:     true,
-		OutcomeApplier: warlock.OutcomeFuncTick(),
-		BaseDamage: core.WrapBaseDamageConfig(core.BaseDamageConfigMagicNoRoll(142, 0.429),
-			func(oldCalc core.BaseDamageCalculator) core.BaseDamageCalculator {
-				return func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					w := warlock
-					auras := []*core.Aura{
-						w.HauntDebuffAura(target),
-						w.UnstableAfflictionDot.Aura, w.CorruptionDot.Aura,
-						w.SeedDots[hitEffect.Target.Index].Aura, w.CurseOfAgonyDot.Aura,
-						w.CurseOfDoomDot.Aura, w.CurseOfElementsAura, w.CurseOfWeaknessAura,
-						w.CurseOfTonguesAura,
-						// missing: death coil
-					}
-					counter := 0
-					for _, aura := range auras {
-						if aura.IsActive() {
-							counter++
-						}
-					}
-					return oldCalc(sim, hitEffect, spell) *
-						(1.0 + float64(core.MinInt(3, counter))*soulSiphonMultiplier)
-				}
-			}),
-	}
 
 	warlock.DrainSoulDot = core.NewDot(core.Dot{
 		Spell: warlock.DrainSoul,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Drain Soul-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
@@ -97,7 +66,34 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		TickLength:          3 * time.Second,
 		AffectedByCastSpeed: true,
 
-		TickEffects: core.TickFuncSnapshot(target, effect),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			baseDmg := 142 + 0.429*dot.Spell.SpellPower()
+
+			auras := []*core.Aura{
+				warlock.HauntDebuffAura(target),
+				warlock.UnstableAfflictionDot.Aura,
+				warlock.CorruptionDot.Aura,
+				warlock.SeedDots[target.Index].Aura,
+				warlock.CurseOfAgonyDot.Aura,
+				warlock.CurseOfDoomDot.Aura,
+				warlock.CurseOfElementsAura,
+				warlock.CurseOfWeaknessAura,
+				warlock.CurseOfTonguesAura,
+				// missing: death coil
+			}
+			numActive := 0
+			for _, aura := range auras {
+				if aura.IsActive() {
+					numActive++
+				}
+			}
+			dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier)
+
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 
 	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{

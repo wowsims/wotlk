@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // ReplaceMHSwing is called right before an auto attack fires
@@ -127,9 +128,15 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 func (unit *Unit) MHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.MH.CalculateWeaponDamage(sim, attackPower)
 }
+func (unit *Unit) MHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(sim, attackPower)
+}
 
 func (unit *Unit) OHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
+}
+func (unit *Unit) OHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, attackPower)
 }
 
 func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {
@@ -296,13 +303,17 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	}
 
 	if unit.Type == EnemyUnit {
-		unit.AutoAttacks.MHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigEnemyWeapon(MainHand),
-			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
+		unit.AutoAttacks.MHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
+			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap)
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
-		unit.AutoAttacks.OHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigEnemyWeapon(OffHand),
-			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
+		unit.AutoAttacks.OHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
+			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap) * 0.5
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
 	}
 }
@@ -319,10 +330,6 @@ func (aa *AutoAttacks) finalize() {
 		return
 	}
 
-	if aa.unit.Type == EnemyUnit {
-		aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
-		aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
-	}
 	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 

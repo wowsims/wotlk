@@ -59,10 +59,10 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 				shaman.ChainLightningLOs[hitIndex].Cast(sim, curTarget)
 			}
 
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 
 			bounceCoeff *= dmgReductionPerBounce
-			curTarget = sim.Environment.NextTargetUnit(target)
+			curTarget = sim.Environment.NextTargetUnit(curTarget)
 		}
 	}
 

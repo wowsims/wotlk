@@ -146,6 +146,8 @@ type Spell struct {
 	initialCritMultiplier           float64
 	initialThreatMultiplier         float64
 	// Note that bonus expertise and armor pen are static, so we don't bother resetting them.
+
+	resultCache SpellEffect
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -295,7 +297,7 @@ func (spell *Spell) finalize() {
 	spell.initialThreatMultiplier = spell.ThreatMultiplier
 }
 
-func (spell *Spell) reset(sim *Simulation) {
+func (spell *Spell) reset(_ *Simulation) {
 	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
 		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
 	} else {
@@ -435,7 +437,7 @@ func ApplyEffectFuncDirectDamage(baseEffect SpellEffect) ApplySpellEffects {
 			effect := &baseEffect
 			effect.Target = target
 			attackTable := spell.Unit.AttackTables[target.UnitIndex]
-
+			effect.Outcome = OutcomeEmpty
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			effect.finalize(sim, spell)
 		}
@@ -538,7 +540,7 @@ func applyAOECap(effects []SpellEffect, outcomeMultipliers []float64, aoeCap flo
 	// Increased damage from crits doesn't count towards the cap, so need to
 	// tally pre-crit damage.
 	totalTowardsCap := 0.0
-	for i, _ := range effects {
+	for i := range effects {
 		effect := &effects[i]
 		if effect.Outcome.Matches(OutcomeCrit) {
 			totalTowardsCap += effect.Damage / outcomeMultipliers[i]
@@ -552,7 +554,7 @@ func applyAOECap(effects []SpellEffect, outcomeMultipliers []float64, aoeCap flo
 	}
 
 	capMultiplier := aoeCap / totalTowardsCap
-	for i, _ := range effects {
+	for i := range effects {
 		effect := &effects[i]
 		effect.Damage *= capMultiplier
 	}
@@ -565,7 +567,7 @@ func ApplyEffectFuncAOEDamageCapped(env *Environment, baseEffect SpellEffect) Ap
 	} else if numHits == 1 {
 		return ApplyEffectFuncDirectDamage(baseEffect)
 	} else if numHits < 4 {
-		// Just assume its impossible to hit AOE cap with <4 targets.
+		// Just assume it's impossible to hit AOE cap with <4 targets.
 		return ApplyEffectFuncAOEDamage(env, baseEffect)
 	}
 
@@ -606,7 +608,8 @@ func ApplyEffectFuncMultipleDamageCapped(baseEffects []SpellEffect, deferFinaliz
 			effect.Damage *= capMultiplier
 			effect.applyAttackerModifiers(spell, attackTable)
 			effect.applyTargetModifiers(spell, attackTable, effect.IsPeriodic)
-			effect.applyResistances(sim, spell, attackTable)
+			effect.applyResistances(sim, spell, effect.IsPeriodic, attackTable)
+			effect.Outcome = OutcomeEmpty
 			effect.OutcomeApplier(sim, spell, effect, attackTable)
 			if !deferFinalization {
 				effect.finalize(sim, spell)
@@ -630,6 +633,7 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 				effect := &baseEffects[0]
 				effect.Target = target
 				attackTable := spell.Unit.AttackTables[target.UnitIndex]
+				effect.Outcome = OutcomeEmpty
 				effect.OutcomeApplier(sim, spell, effect, attackTable)
 				onOutcome(sim, effect.Outcome)
 				effect.finalize(sim, spell)
@@ -658,7 +662,8 @@ func ApplyEffectFuncWithOutcome(baseEffects []SpellEffect, onOutcome func(*Simul
 				effect.Damage *= capMultiplier
 				effect.applyAttackerModifiers(spell, attackTable)
 				effect.applyTargetModifiers(spell, attackTable, effect.IsPeriodic)
-				effect.applyResistances(sim, spell, attackTable)
+				effect.applyResistances(sim, spell, effect.IsPeriodic, attackTable)
+				effect.Outcome = OutcomeEmpty
 				effect.OutcomeApplier(sim, spell, effect, attackTable)
 				if i == 0 {
 					onOutcome(sim, effect.Outcome)

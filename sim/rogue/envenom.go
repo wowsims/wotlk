@@ -8,7 +8,6 @@ import (
 )
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
-	baseDamage := 215.0
 	apRatio := 0.09 * float64(comboPoints)
 
 	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
@@ -49,36 +48,33 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					dp := rogue.deadlyPoisonDots[hitEffect.Target.Index]
-					// - base damage is scaled by consumed doses (<= comboPoints)
-					// - apRatio is independent of consumed doses (== comboPoints)
-					consumed := core.MinInt32(dp.GetStacks(), comboPoints)
-					return baseDamage*float64(consumed) + apRatio*spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.ApplyFinisher(sim, spell)
-					rogue.ApplyCutToTheChase(sim)
-					if !sim.Proc(chanceToRetainStacks, "Master Poisoner") {
-						dp := rogue.deadlyPoisonDots[spellEffect.Target.Index]
-						if newStacks := dp.GetStacks() - comboPoints; newStacks > 0 {
-							dp.SetStacks(sim, newStacks)
-						} else {
-							dp.Cancel(sim)
-						}
-					}
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dp := rogue.deadlyPoisonDots[target.Index]
+			// - 215 base is scaled by consumed doses (<= comboPoints)
+			// - apRatio is independent of consumed doses (== comboPoints)
+			consumed := core.MinInt32(dp.GetStacks(), comboPoints)
+			baseDamage := 215*float64(consumed) + apRatio*spell.MeleeAttackPower()
+
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.ApplyFinisher(sim, spell)
+				rogue.ApplyCutToTheChase(sim)
+				if !sim.Proc(chanceToRetainStacks, "Master Poisoner") {
+					if newStacks := dp.GetStacks() - comboPoints; newStacks > 0 {
+						dp.SetStacks(sim, newStacks)
+					} else {
+						dp.Cancel(sim)
 					}
 				}
-			},
-		}),
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
+				}
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	})
 }
 

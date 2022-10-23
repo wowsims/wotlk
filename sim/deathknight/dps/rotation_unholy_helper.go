@@ -151,6 +151,11 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 		return false
 	}
 
+	// Save ERW for best Army Snapshot after Garg
+	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.Rotation.HoldErwArmy && dk.ArmyOfTheDead.IsReady(sim) {
+		return false
+	}
+
 	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 || dk.CurrentDeathRunes() > 0 {
 		return false
 	}

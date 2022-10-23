@@ -58,7 +58,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 			if result.Landed() {
 				druid.FaerieFireAura.Activate(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

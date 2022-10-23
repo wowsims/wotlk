@@ -179,6 +179,10 @@ message Rogue {
 		int32 envenom_pool_amount = 10;
 
 		bool use_feint = 11;
+
+		bool allow_cp_overcap = 12;
+
+		bool allow_cp_undercap = 13;
 	}
 	Rotation rotation = 1;
 

@@ -119,8 +119,6 @@ type Deathknight struct {
 
 	DeathAndDecay    *RuneSpell
 	DeathAndDecayDot *core.Dot
-	dndCritSnapshot  float64
-	dndApSnapshot    float64
 
 	HowlingBlast *RuneSpell
 
@@ -388,11 +386,9 @@ func NewDeathknight(character core.Character, talents proto.DeathknightTalents, 
 		dk.Gargoyle = dk.NewGargoyle()
 	}
 
-	if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse {
-		dk.ArmyGhoul = make([]*GhoulPet, 8)
-		for i := 0; i < 8; i++ {
-			dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
-		}
+	dk.ArmyGhoul = make([]*GhoulPet, 8)
+	for i := 0; i < 8; i++ {
+		dk.ArmyGhoul[i] = dk.NewArmyGhoulPet(i)
 	}
 
 	if dk.Talents.Bloodworms > 0 {

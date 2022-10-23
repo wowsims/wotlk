@@ -122,10 +122,10 @@ func init() {
 			CritMultiplier:   character.DefaultMeleeCritMultiplier(),
 			ThreatMultiplier: 1,
 
-			ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigRoll(45, 67),
-				OutcomeApplier: character.OutcomeFuncMeleeSpecialHitAndCrit(),
-			}),
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(45, 67)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			},
 		})
 
 		character.RegisterAura(core.Aura{

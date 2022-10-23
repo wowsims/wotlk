@@ -626,7 +626,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		//spriest.Log(sim, "dpDamage %d", dpDamage)
 		//spriest.Log(sim, "currentWait %d", currentWait)
 		//}
-
+		if spriest.PrevTicks == 4 {
+			castMf2 = 1
+			bestIdx = 4
+			spriest.PrevTicks = 0
+		}
 		if currentWait > 0 && bestIdx != 5 && bestIdx != 4 {
 			spriest.WaitUntil(sim, sim.CurrentTime+currentWait)
 			return
@@ -887,6 +891,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				addedgcdtime := addedgcd - time.Duration(2)*tickLength
 				mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength+2*addedgcdtime)
 			}
+			deltaTime := allCDs[bestIdx] - mfTime
 			cdDiffs = []time.Duration{
 				core.MaxDuration(0, allCDs[0]-mfTime),
 				core.MaxDuration(0, allCDs[1]-mfTime),
@@ -899,7 +904,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				//spriest.Log(sim, "cdDiffs[bestIdx] %d", cdDiffs[bestIdx])
 				//spriest.Log(sim, "mid_ticks2 %d", numTicks)
 			}
-			if float64(cdDiffs[bestIdx]) < float64(-0.33) {
+			if float64(deltaTime.Seconds()) < float64(-0.33) {
 				numTicks = numTicks - 1
 				cdDiffs[bestIdx] = cdDiffs[bestIdx] + tickLength
 			}
@@ -1119,9 +1124,12 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 
 			if numTicks == 1 {
 				numTicks = 1
-			} else if numTicks == 0 {
-				numTicks = 2
 			} else if numTicks == 2 || numTicks == 4 {
+				if numTicks == 4 {
+					spriest.PrevTicks = 4
+				}
+				numTicks = 2
+			} else if numTicks == 0 {
 				numTicks = 2
 			} else {
 				numTicks = 3

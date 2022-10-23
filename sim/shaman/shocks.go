@@ -78,7 +78,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		if result.Landed() {
 			shaman.FlameShockDot.Apply(sim)
 		}
-		spell.DealDamage(sim, &result)
+		spell.DealDamage(sim, result)
 	}
 
 	target := shaman.CurrentTarget
@@ -108,6 +108,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		NumberOfTicks:       6 + core.TernaryInt(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
+
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dot.SnapshotBaseDamage = 834/6 + 0.1*dot.Spell.SpellPower()
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)

@@ -769,22 +769,9 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	results := make([]*core.SpellEffect, numHits)
 
-	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
-		baseEffectOH := core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-		}
-
-		effects := make([]core.SpellEffect, 0, numHits)
-		for i := int32(0); i < numHits; i++ {
-			effect := baseEffectOH
-			effect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, effect)
-		}
-		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
-
 		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
@@ -796,19 +783,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			ThreatMultiplier: 1.25,
 		})
 	}
-
-	baseEffectMH := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-	}
-
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effect := baseEffectMH
-		effect.Target = warrior.Env.GetTargetUnit(i)
-		effects = append(effects, effect)
-	}
-	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -851,12 +825,44 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mhDamageEffects(sim, target, spell)
-			if warrior.BladestormOH != nil {
-				ohDamageEffects(sim, target, warrior.BladestormOH)
+		OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+			target := warrior.CurrentTarget
+			spell := dot.Spell
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := 0 +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
-		}),
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			if warrior.BladestormOH != nil {
+				curTarget = target
+				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+					baseDamage := 0 +
+						0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+						spell.BonusWeaponDamage()
+					results[hitIndex] = warrior.BladestormOH.CalcDamage(sim, curTarget, baseDamage, warrior.BladestormOH.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+					curTarget = sim.Environment.NextTargetUnit(curTarget)
+				}
+
+				curTarget = target
+				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+					warrior.BladestormOH.DealDamage(sim, results[hitIndex])
+					curTarget = sim.Environment.NextTargetUnit(curTarget)
+				}
+			}
+		},
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{

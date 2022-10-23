@@ -32,7 +32,7 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 			if result.Landed() {
 				hunter.ScorpidStingAura.Activate(sim)
 			}
-			spell.DealOutcome(sim, &result)
+			spell.DealOutcome(sim, result)
 		},
 	})
 }

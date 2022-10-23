@@ -48,13 +48,11 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 
-		TickEffects: func(sim *core.Simulation, _ *core.Dot) func() {
-			return func() {
-				if paladin.PleaManaMetrics == nil {
-					paladin.PleaManaMetrics = paladin.NewManaMetrics(actionID)
-				}
-				paladin.AddMana(sim, paladin.MaxMana()*0.05, paladin.PleaManaMetrics, false)
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if paladin.PleaManaMetrics == nil {
+				paladin.PleaManaMetrics = paladin.NewManaMetrics(actionID)
 			}
+			paladin.AddMana(sim, paladin.MaxMana()*0.05, paladin.PleaManaMetrics, false)
 		},
 	})
 

@@ -17,7 +17,7 @@ func (spell *Spell) OutcomeAlwaysHit(_ *Simulation, result *SpellEffect, _ *Atta
 }
 func (spell *Spell) CalcAndDealDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncAlwaysHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -33,6 +33,15 @@ func (unit *Unit) OutcomeFuncTick() OutcomeApplier {
 }
 func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	result.Outcome = OutcomeHit
+}
+
+func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if result.physicalCritRoll(sim, dot.Spell, attackTable) {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+	} else {
+		result.Outcome = OutcomeHit
+	}
 }
 
 func (unit *Unit) OutcomeFuncTickHitAndCrit() OutcomeApplier {
@@ -89,6 +98,43 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellEffect, attack
 	}
 }
 
+// TODO: Delete this, it's identical to OutcomeSnapshotCrit except it uses a different RNG string to preserve test results.
+func (dot *Dot) OutcomeSnapshotCritPhysical(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
+	} else {
+		result.Outcome = OutcomeHit
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
+	}
+}
+
+// TODO: Remove this
+func (dot *Dot) OutcomeTickSnapshotCritPhysical(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+
+	roll := sim.RandomFloat("Physical Tick Hit")
+	chance := 0.0
+	missChance := attackTable.BaseMissChance - dot.Spell.PhysicalHitChance(result.Target)
+	chance = MaxFloat(0, missChance)
+	if roll < chance {
+		result.Outcome = OutcomeHit
+	} else {
+		if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+			result.Outcome = OutcomeCrit
+			result.Damage *= dot.Spell.CritMultiplier
+		} else {
+			result.Outcome = OutcomeHit
+		}
+	}
+}
+
 func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	if dot.Spell.CritMultiplier == 0 {
 		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
@@ -130,7 +176,7 @@ func (spell *Spell) OutcomeMagicHitAndCrit(sim *Simulation, result *SpellEffect,
 }
 func (spell *Spell) CalcAndDealDamageMagicHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMagicHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -153,7 +199,7 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellEffect, attac
 }
 func (spell *Spell) CalcAndDealDamageMagicCrit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMagicCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -191,6 +237,14 @@ func (spell *Spell) OutcomeCritFixedChance(critChance float64) NewOutcomeApplier
 	}
 }
 
+func (spell *Spell) OutcomeTickMagicHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	if spell.MagicHitCheck(sim, attackTable) {
+		result.Outcome = OutcomeHit
+	} else {
+		result.Outcome = OutcomeMiss
+		result.Damage = 0
+	}
+}
 func (unit *Unit) OutcomeFuncTickMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
 		if spell.MagicHitCheck(sim, attackTable) {
@@ -214,7 +268,7 @@ func (spell *Spell) OutcomeMagicHit(sim *Simulation, result *SpellEffect, attack
 }
 func (spell *Spell) CalcAndDealDamageMagicHit(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMagicHit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMagicHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -247,7 +301,7 @@ func (spell *Spell) OutcomeMeleeWhite(sim *Simulation, result *SpellEffect, atta
 }
 func (spell *Spell) CalcAndDealDamageMeleeWhite(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWhite)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeMeleeSpecialHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -270,7 +324,7 @@ func (spell *Spell) OutcomeMeleeSpecialHit(sim *Simulation, result *SpellEffect,
 }
 func (spell *Spell) CalcAndDealDamageMeleeSpecialHit(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMeleeSpecialHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -305,7 +359,7 @@ func (spell *Spell) OutcomeMeleeSpecialHitAndCrit(sim *Simulation, result *Spell
 }
 func (spell *Spell) CalcAndDealDamageMeleeSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHitAndCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMeleeSpecialHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -332,7 +386,7 @@ func (spell *Spell) OutcomeMeleeWeaponSpecialHitAndCrit(sim *Simulation, result 
 }
 func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMeleeWeaponSpecialHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -361,7 +415,7 @@ func (spell *Spell) OutcomeMeleeWeaponSpecialNoCrit(sim *Simulation, result *Spe
 }
 func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialNoCrit(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialNoCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMeleeWeaponSpecialNoCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -380,7 +434,7 @@ func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParry(sim *Simulation, result
 }
 func (spell *Spell) CalcAndDealDamageMeleeSpecialNoBlockDodgeParry(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncMeleeSpecialNoBlockDodgeParry() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -407,7 +461,7 @@ func (spell *Spell) OutcomeMeleeSpecialCritOnly(sim *Simulation, result *SpellEf
 }
 func (spell *Spell) CalcAndDealDamageMeleeSpecialCritOnly(sim *Simulation, target *Unit, baseHealing float64) {
 	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialCritOnly)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 
 func (unit *Unit) OutcomeFuncMeleeSpecialCritOnly() OutcomeApplier {
@@ -426,7 +480,7 @@ func (spell *Spell) OutcomeRangedHit(sim *Simulation, result *SpellEffect, attac
 }
 func (spell *Spell) CalcAndDealDamageRangedHit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncRangedHit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -455,9 +509,30 @@ func (spell *Spell) OutcomeRangedHitAndCrit(sim *Simulation, result *SpellEffect
 		}
 	}
 }
+func (dot *Dot) OutcomeRangedHitAndCritSnapshot(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if dot.Spell.Unit.PseudoStats.InFrontOfTarget {
+		if !result.applyAttackTableMissNoDWPenalty(dot.Spell, attackTable, roll, &chance) {
+			if result.applyAttackTableCritSeparateRollSnapshot(sim, dot) {
+				result.applyAttackTableBlock(dot.Spell, attackTable, roll, &chance)
+			} else {
+				if !result.applyAttackTableBlock(dot.Spell, attackTable, roll, &chance) {
+					result.applyAttackTableHit(dot.Spell)
+				}
+			}
+		}
+	} else {
+		if !result.applyAttackTableMissNoDWPenalty(dot.Spell, attackTable, roll, &chance) &&
+			!result.applyAttackTableCritSeparateRollSnapshot(sim, dot) {
+			result.applyAttackTableHit(dot.Spell)
+		}
+	}
+}
 func (spell *Spell) CalcAndDealDamageRangedHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 func (unit *Unit) OutcomeFuncRangedHitAndCrit() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
@@ -486,21 +561,24 @@ func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellEffect, 
 }
 func (spell *Spell) CalcAndDealDamageRangedCritOnly(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedCritOnly)
-	spell.DealDamage(sim, &result)
+	spell.DealDamage(sim, result)
 }
 
+func (spell *Spell) OutcomeEnemyMeleeWhite(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
+	roll := sim.RandomFloat("Enemy White Hit Table")
+	chance := 0.0
+
+	if !result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableParry(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableBlock(spell, attackTable, roll, &chance) &&
+		!result.applyEnemyAttackTableCrit(spell, attackTable, roll, &chance) {
+		result.applyAttackTableHit(spell)
+	}
+}
 func (unit *Unit) OutcomeFuncEnemyMeleeWhite() OutcomeApplier {
 	return func(sim *Simulation, spell *Spell, spellEffect *SpellEffect, attackTable *AttackTable) {
-		roll := sim.RandomFloat("Enemy White Hit Table")
-		chance := 0.0
-
-		if !spellEffect.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableParry(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableBlock(spell, attackTable, roll, &chance) &&
-			!spellEffect.applyEnemyAttackTableCrit(spell, attackTable, roll, &chance) {
-			spellEffect.applyAttackTableHit(spell)
-		}
+		spell.OutcomeEnemyMeleeWhite(sim, spellEffect, attackTable)
 	}
 }
 
@@ -633,6 +711,18 @@ func (spellEffect *SpellEffect) applyAttackTableCritSeparateRoll(sim *Simulation
 		spellEffect.Outcome = OutcomeCrit
 		spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
 		spellEffect.Damage *= spell.CritMultiplier
+		return true
+	}
+	return false
+}
+func (result *SpellEffect) applyAttackTableCritSeparateRollSnapshot(sim *Simulation, dot *Dot) bool {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		return true
 	}
 	return false

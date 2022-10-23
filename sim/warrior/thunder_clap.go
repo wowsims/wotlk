@@ -52,7 +52,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 
 			for _, aoeTarget := range sim.Encounter.Targets {
 				result := spell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
-				spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
 				if result.Landed() {
 					tcAuras[aoeTarget.Index].Activate(sim)
 				}

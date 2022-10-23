@@ -50,7 +50,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
@@ -90,7 +90,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			if priest.Talents.Shadowform {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeMagicCrit)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 			} else {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			}

@@ -53,7 +53,7 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			if result.Landed() {
 				hunter.ExplosiveShotDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
@@ -66,15 +66,14 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		}),
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return core.DamageRoll(sim, 386, 464) +
-						0.14*spell.RangedAttackPower(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: hunter.OutcomeFuncRangedHitAndCrit(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = sim.Roll(386, 464) + 0.14*dot.Spell.RangedAttackPower(target)
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeRangedHitAndCritSnapshot)
+		},
 	})
 }
