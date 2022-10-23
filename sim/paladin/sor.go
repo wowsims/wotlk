@@ -43,17 +43,15 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// i = 1 + 0.2 * AP + 0.32 * HolP
-					return 1 +
-						.20*spell.MeleeAttackPower() +
-						.32*spell.SpellPower()
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// i = 1 + 0.2 * AP + 0.32 * HolP
+			baseDamage := 1 +
+				.20*spell.MeleeAttackPower() +
+				.32*spell.SpellPower()
+
+			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{

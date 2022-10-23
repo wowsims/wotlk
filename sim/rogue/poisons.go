@@ -40,45 +40,43 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		DamageMultiplier: []float64{1, 1.07, 1.14, 1.20}[rogue.Talents.VilePoisons],
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				target := spellEffect.Target
-				if spellEffect.Landed() {
-					dot := rogue.deadlyPoisonDots[target.Index]
-					if dot.IsActive() {
-						if dot.GetStacks() == 5 {
-							if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
-								switch rogue.Options.OhImbue {
-								case proto.Rogue_Options_DeadlyPoison:
-									dot.Refresh(sim)
-								case proto.Rogue_Options_InstantPoison:
-									rogue.InstantPoison[DeadlyProc].Cast(sim, target)
-								case proto.Rogue_Options_WoundPoison:
-									rogue.WoundPoison[DeadlyProc].Cast(sim, target)
-								}
-							}
-							if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
-								switch rogue.Options.MhImbue {
-								case proto.Rogue_Options_DeadlyPoison:
-									dot.Refresh(sim)
-								case proto.Rogue_Options_InstantPoison:
-									rogue.InstantPoison[DeadlyProc].Cast(sim, target)
-								case proto.Rogue_Options_WoundPoison:
-									rogue.WoundPoison[DeadlyProc].Cast(sim, target)
-								}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+
+			if result.Landed() {
+				dot := rogue.deadlyPoisonDots[target.Index]
+				if dot.IsActive() {
+					if dot.GetStacks() == 5 {
+						if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
+							switch rogue.Options.OhImbue {
+							case proto.Rogue_Options_DeadlyPoison:
+								dot.Refresh(sim)
+							case proto.Rogue_Options_InstantPoison:
+								rogue.InstantPoison[DeadlyProc].Cast(sim, target)
+							case proto.Rogue_Options_WoundPoison:
+								rogue.WoundPoison[DeadlyProc].Cast(sim, target)
 							}
 						}
-						dot.Refresh(sim)
-						dot.AddStack(sim)
-					} else {
-						dot.Apply(sim)
-						dot.SetStacks(sim, 1)
+						if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
+							switch rogue.Options.MhImbue {
+							case proto.Rogue_Options_DeadlyPoison:
+								dot.Refresh(sim)
+							case proto.Rogue_Options_InstantPoison:
+								rogue.InstantPoison[DeadlyProc].Cast(sim, target)
+							case proto.Rogue_Options_WoundPoison:
+								rogue.WoundPoison[DeadlyProc].Cast(sim, target)
+							}
+						}
 					}
+					dot.Refresh(sim)
+					dot.AddStack(sim)
+				} else {
+					dot.Apply(sim)
+					dot.SetStacks(sim, 1)
 				}
-				rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
-			},
-		}),
+			}
+			rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
+		},
 	})
 	deadlyPoisonDebuffAura := core.Aura{
 		Label:     "DeadlyPoison-" + strconv.Itoa(int(rogue.Index)),
@@ -198,10 +196,7 @@ const (
 )
 
 func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
-	outcomeApplier := rogue.OutcomeFuncMagicHitAndCrit()
-	if procSource == ShivProc {
-		outcomeApplier = rogue.OutcomeFuncMagicHit()
-	}
+	isShivProc := procSource == ShivProc
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57968, Tag: int32(procSource)},
@@ -212,23 +207,19 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 		CritMultiplier:   rogue.SpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-					return 300 + 0.1*spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: outcomeApplier,
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 300 + 0.1*spell.MeleeAttackPower()
+			if isShivProc {
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+			} else {
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			}
+		},
 	})
-
 }
 
 func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
-	outcomeApplier := rogue.OutcomeFuncMagicHitAndCrit()
-	if procSource == ShivProc {
-		outcomeApplier = rogue.OutcomeFuncMagicHit()
-	}
+	isShivProc := procSource == ShivProc
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57975, Tag: int32(procSource)},
@@ -239,19 +230,20 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 		CritMultiplier:   rogue.SpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-					return 231 + 0.04*spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: outcomeApplier,
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.woundPoisonDebuffAuras[spellEffect.Target.Index].Activate(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 231 + 0.04*spell.MeleeAttackPower()
+
+			var result *core.SpellEffect
+			if isShivProc {
+				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+			} else {
+				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			}
+
+			if result.Landed() {
+				rogue.woundPoisonDebuffAuras[target.Index].Activate(sim)
+			}
+		},
 	})
 }
 

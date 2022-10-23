@@ -48,18 +48,17 @@ func (druid *Druid) registerRipSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.RipDot.NumberOfTicks = ripBaseNumTicks
-					druid.RipDot.Apply(sim)
-					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-				} else if refundPercent > 0 {
-					druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				druid.RipDot.NumberOfTicks = ripBaseNumTicks
+				druid.RipDot.Apply(sim)
+				druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+			} else if refundPercent > 0 {
+				druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	druid.RipDot = core.NewDot(core.Dot{

@@ -43,17 +43,12 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
-					deltaDamage := 1257.0 - 1139.0
-					return 1139.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
-						.15*spell.SpellPower() +
-						.15*spell.MeleeAttackPower()
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1139, 1257) +
+				.15*spell.SpellPower() +
+				.15*spell.MeleeAttackPower()
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+		},
 	})
 }

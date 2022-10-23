@@ -66,19 +66,20 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfigMeleeWeapon(
-				core.MainHand, true, 0, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-					hemoAura.Activate(sim)
-					hemoAura.SetStacks(sim, 10)
-				} else {
-					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				hemoAura.Activate(sim)
+				hemoAura.SetStacks(sim, 10)
+			} else {
+				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+			}
+		},
 	})
 }

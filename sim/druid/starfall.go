@@ -46,15 +46,13 @@ func (druid *Druid) registerStarfallSpell() {
 		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.StarfallDot.Apply(sim)
-					druid.StarfallDotSplash.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				druid.StarfallDot.Apply(sim)
+				druid.StarfallDotSplash.Apply(sim)
+			}
+		},
 	})
 
 	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{

@@ -43,22 +43,21 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.ruptureDot.Spell = spell
-					rogue.ruptureDot.NumberOfTicks = int(numTicks)
-					rogue.ruptureDot.RecomputeAuraDuration()
-					rogue.ruptureDot.Apply(sim)
-					rogue.ApplyFinisher(sim, spell)
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				rogue.ruptureDot.Spell = spell
+				rogue.ruptureDot.NumberOfTicks = int(numTicks)
+				rogue.ruptureDot.RecomputeAuraDuration()
+				rogue.ruptureDot.Apply(sim)
+				rogue.ApplyFinisher(sim, spell)
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
