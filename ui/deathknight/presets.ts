@@ -108,7 +108,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useDeathAndDecay: true,
 	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
-  useGargoyle: true,
+	useGargoyle: false,
 	useEmpowerRuneWeapon: true,
 	holdErwArmy: false,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
