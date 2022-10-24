@@ -8,13 +8,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (rogue *Rogue) SinisterStrikeEnergyCost() float64 {
-	return []float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike]
-}
-
 func (rogue *Rogue) registerSinisterStrikeSpell() {
-	energyCost := rogue.SinisterStrikeEnergyCost()
-	refundAmount := energyCost * 0.8
+	baseCost := rogue.costModifier([]float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike])
+	refundAmount := baseCost * 0.8
 	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
 
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
@@ -23,15 +19,14 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     energyCost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +

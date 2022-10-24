@@ -9,24 +9,23 @@ import (
 )
 
 func (rogue *Rogue) registerFeintSpell() {
-	cost := 20.0
-	castModifier := rogue.CastModifier
+	resourceType := stats.Energy
+	baseCost := 20.0
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFeint) {
-		castModifier = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-			cast.Cost = 0
-		}
+		resourceType = 0
+		baseCost = 0
 	}
 	rogue.Feint = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48659},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		ResourceType: resourceType,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			CD: core.Cooldown{
@@ -34,14 +33,13 @@ func (rogue *Rogue) registerFeintSpell() {
 				Duration: time.Second * 10,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  castModifier,
 		},
 
-		DamageMultiplier: 0.0,
+		DamageMultiplier: 0,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 		},
 	})
 	// Feint

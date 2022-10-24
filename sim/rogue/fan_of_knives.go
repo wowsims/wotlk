@@ -37,7 +37,7 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) *core.Spell {
 }
 
 func (rogue *Rogue) registerFanOfKnives() {
-	energyCost := 50.0
+	baseCost := 50.0
 	mhSpell := rogue.makeFanOfKnivesWeaponHitSpell(true)
 	ohSpell := rogue.makeFanOfKnivesWeaponHitSpell(false)
 	results := make([]*core.SpellEffect, len(rogue.Env.Encounter.Targets))
@@ -48,14 +48,13 @@ func (rogue *Rogue) registerFanOfKnives() {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Energy,
-		BaseCost:     energyCost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 

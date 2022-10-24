@@ -8,7 +8,7 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
-	baseCost := 60.0 - 4.0*float64(rogue.Talents.SlaughterFromTheShadows)
+	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
 	refundAmount := baseCost * 0.8
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
@@ -25,7 +25,6 @@ func (rogue *Rogue) registerBackstabSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
