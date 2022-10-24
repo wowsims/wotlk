@@ -108,6 +108,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useDeathAndDecay: true,
 	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
+  useGargoyle: true,
 	useEmpowerRuneWeapon: true,
 	holdErwArmy: false,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
@@ -119,7 +120,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 export const DefaultUnholyOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastGhoulFrenzy: true,
+	precastGhoulFrenzy: false,
 	precastHornOfWinter: true,
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.

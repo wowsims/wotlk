@@ -99,6 +99,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.Rotation.BtGhoulFrenzy = true
 			dk.Rotation.UseEmpowerRuneWeapon = true
 			dk.Rotation.HoldErwArmy = false
+			dk.Rotation.UseGargoyle = true
 			dk.Rotation.ArmyOfTheDead = proto.Deathknight_Rotation_AsMajorCd
 			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy
 			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
@@ -184,6 +185,8 @@ func (dk *DpsDeathknight) Initialize() {
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 
+	dk.SetupRotations()
+
 	dk.Presence = deathknight.UnsetPresence
 
 	b, f, u := deathknight.PointsInTalents(dk.Talents)
@@ -199,7 +202,7 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	}
 
 	if u > f && u > b {
-		if dk.Inputs.StartingPresence == proto.Deathknight_Rotation_Unholy {
+		if dk.Rotation.StartingPresence == proto.Deathknight_Rotation_Unholy {
 			dk.ChangePresence(sim, deathknight.UnholyPresence)
 		} else if dk.Talents.SummonGargoyle {
 			dk.ChangePresence(sim, deathknight.BloodPresence)
@@ -209,6 +212,4 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.sr.Reset(sim)
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
-
-	dk.SetupRotations()
 }
