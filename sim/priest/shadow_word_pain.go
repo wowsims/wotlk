@@ -52,10 +52,9 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		},
 	})
 
-	target := priest.CurrentTarget
 	priest.ShadowWordPainDot = core.NewDot(core.Dot{
 		Spell: priest.ShadowWordPain,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: priest.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "ShadowWordPain-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,
 		}),

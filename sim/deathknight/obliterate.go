@@ -33,7 +33,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool, onhit func(sim *core.Sim
 	}
 
 	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
-	effect.OutcomeApplier = dk.deathchillOutcomeMod(effect.OutcomeApplier)
 
 	conf := core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),

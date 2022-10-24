@@ -30,7 +30,6 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 	}
 
 	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
-	effect.OutcomeApplier = dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(effect.OutcomeApplier))
 
 	conf := core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
