@@ -69,6 +69,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate) {
 		baseCost -= 5
 	}
+	baseCost = rogue.costModifier(baseCost)
 	refundAmount := baseCost * 0.8
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
@@ -85,7 +86,6 @@ func (rogue *Rogue) registerMutilateSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		ThreatMultiplier: 1,

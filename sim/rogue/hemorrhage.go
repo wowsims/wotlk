@@ -38,7 +38,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		},
 	})
 
-	baseCost := 35.0 - float64(rogue.Talents.SlaughterFromTheShadows)
+	baseCost := rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows))
 	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
@@ -55,7 +55,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0),

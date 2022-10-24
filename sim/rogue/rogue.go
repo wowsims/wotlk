@@ -84,7 +84,6 @@ type Rogue struct {
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
-	VanCleefsProcAura    *core.Aura
 	EnvenomAura          *core.Aura
 	ExposeArmorAura      *core.Aura
 	HungerForBloodAura   *core.Aura
@@ -99,7 +98,7 @@ type Rogue struct {
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
-	CastModifier               func(*core.Simulation, *core.Spell, *core.Cast)
+	costModifier               func(float64) float64
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
 }
 
@@ -145,7 +144,7 @@ func (rogue *Rogue) Initialize() {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
 	}
 
-	rogue.CastModifier = rogue.makeCastModifier()
+	rogue.costModifier = rogue.makeCostModifier()
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()

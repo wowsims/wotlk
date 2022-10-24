@@ -1,7 +1,6 @@
 package warrior
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -10,20 +9,24 @@ import (
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage)
-	if warrior.Talents.ImprovedExecute == 1 {
-		cost -= 2
-	} else if warrior.Talents.ImprovedExecute == 2 {
-		cost -= 5
-	}
+	const maxRage = 30
+
+	cost := 15 - float64(warrior.Talents.FocusedRage) - []float64{0, 2, 5}[warrior.Talents.ImprovedExecute]
 	if warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 2) {
 		cost -= 3
 	}
-	refundAmount := cost * 0.8
-	gcd := core.GCDDefault - core.TernaryDuration(warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4), 500, 0)*time.Millisecond
 
-	var extraRage float64
-	extraRageBonus := core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution), 10, 0)
+	refundAmount := 0.8 * cost
+
+	gcd := core.GCDDefault
+	if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
+		gcd = time.Second
+	}
+
+	var extraRageBonus float64
+	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution) {
+		extraRageBonus = 10
+	}
 
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47471},
@@ -40,10 +43,6 @@ func (warrior *Warrior) registerExecuteSpell() {
 				GCD:  gcd,
 			},
 			IgnoreHaste: true,
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.Cost = math.Min(spell.Unit.CurrentRage(), 30)
-				extraRage = cast.Cost - spell.BaseCost
-			},
 		},
 
 		DamageMultiplier: 1,
@@ -51,6 +50,13 @@ func (warrior *Warrior) registerExecuteSpell() {
 		ThreatMultiplier: 1.25,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			extraRage := spell.Unit.CurrentRage()
+			if extraRage > maxRage-spell.CurCast.Cost {
+				extraRage = maxRage - spell.CurCast.Cost
+			}
+			warrior.SpendRage(sim, extraRage, spell.ResourceMetrics)
+			spell.ResourceMetrics.Events--
+
 			baseDamage := 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 

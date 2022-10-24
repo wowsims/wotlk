@@ -13,7 +13,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
 	apRatio := 0.07 * float64(comboPoints)
 
-	cost := 35.0
+	baseCost := 35.0
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	return rogue.RegisterSpell(core.SpellConfig{
@@ -22,14 +22,13 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 

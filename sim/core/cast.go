@@ -111,12 +111,6 @@ func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSucce
 
 func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
 	if spell.ResourceType == 0 || config.DefaultCast.Cost == 0 {
-		if spell.ResourceType != 0 {
-			panic("ResourceType set for spell " + spell.ActionID.String() + " but no cost")
-		}
-		if config.DefaultCast.Cost != 0 {
-			panic("Cost set for spell " + spell.ActionID.String() + " but no ResourceType")
-		}
 		return func(sim *Simulation, target *Unit) bool {
 			onCastComplete(sim, target)
 			return true

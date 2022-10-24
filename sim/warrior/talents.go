@@ -557,20 +557,10 @@ func (warrior *Warrior) applySuddenDeath() {
 		return
 	}
 
-	var rage_refund float64
-	var procChance float64
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 29724})
 
-	if warrior.Talents.SuddenDeath == 1 {
-		rage_refund = 3.0
-		procChance = 0.03
-	} else if warrior.Talents.SuddenDeath == 2 {
-		rage_refund = 7.0
-		procChance = 0.06
-	} else if warrior.Talents.SuddenDeath == 3 {
-		rage_refund = 10.0
-		procChance = 0.09
-	}
+	rageRefund := []float64{0, 3, 7, 10}[warrior.Talents.SuddenDeath]
+	procChance := []float64{0, 0.03, 0.06, 0.09}[warrior.Talents.SuddenDeath]
 
 	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
 
@@ -590,7 +580,7 @@ func (warrior *Warrior) applySuddenDeath() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
 			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
 				warrior.SuddenDeathAura.RemoveStack(sim)
-				warrior.AddRage(sim, rage_refund, rageMetrics)
+				warrior.AddRage(sim, rageRefund, rageMetrics)
 			}
 
 			if !spellEffect.Landed() {
