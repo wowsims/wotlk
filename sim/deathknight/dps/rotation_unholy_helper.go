@@ -171,11 +171,15 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 
 // Save up Runic Power for Summon Gargoyle - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
-	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100
+	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
 }
 
 // Combined checks for casting gargoyle sequence & going back to blood presence after
 func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
+	if !dk.Rotation.UseGargoyle {
+		return false
+	}
+
 	if dk.uhGargoyleCanCast(sim, castTime) {
 		if !dk.PresenceMatches(deathknight.UnholyPresence) {
 			if dk.CurrentUnholyRunes() == 0 {
