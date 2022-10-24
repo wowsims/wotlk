@@ -248,8 +248,8 @@ func (dk *Deathknight) applyDeathchill() {
 			dk.IcyTouch.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			dk.FrostStrikeMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			dk.FrostStrikeOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.ObliterateMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.ObliterateOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.ObliterateMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.ObliterateOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			if dk.HowlingBlast != nil {
 				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
