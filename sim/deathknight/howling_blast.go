@@ -20,7 +20,9 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfHowlingBlast)
 
-	howlingBlast := &RuneSpell{}
+	howlingBlast := &RuneSpell{
+		Refundable: true,
+	}
 	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
 		ActionID:     HowlingBlastActionID,
 		SpellSchool:  core.SpellSchoolFrost,
@@ -50,36 +52,41 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: dk.withRuneRefund(howlingBlast, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-					return (roll + 0.2*dk.getImpurityBonus(spell)) *
-						dk.glacielRotBonus(hitEffect.Target) *
-						dk.RoRTSBonus(hitEffect.Target) *
-						dk.mercilessCombatBonus(sim)
-				},
-			},
-			OutcomeApplier: dk.deathchillOutcomeMod(dk.killingMachineOutcomeMod(dk.OutcomeFuncMagicHitAndCrit())),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastOutcome = spellEffect.Outcome
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				aoeUnit := &aoeTarget.Unit
+
+				// TODO: Use sim.Roll() here, will just change RNG
+				roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
+				baseDamage := (roll + 0.2*dk.getImpurityBonus(spell)) *
+					dk.glacielRotBonus(aoeUnit) *
+					dk.RoRTSBonus(aoeUnit) *
+					dk.mercilessCombatBonus(sim) *
+					sim.Encounter.AOECapMultiplier()
+
+				result := spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+				if aoeUnit == dk.CurrentTarget {
+					howlingBlast.OnResult(sim, result)
+					dk.LastOutcome = result.Outcome
 				}
-				if dk.Talents.ChillOfTheGrave > 0 && spellEffect.Outcome.Matches(core.OutcomeLanded) {
+				if dk.Talents.ChillOfTheGrave > 0 && result.Landed() {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
 				}
 
 				if hasGlyph {
-					dk.FrostFeverSpell.Cast(sim, spellEffect.Target)
+					dk.FrostFeverSpell.Cast(sim, aoeUnit)
 					if dk.Talents.CryptFever > 0 {
-						dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
+						dk.CryptFeverAura[aoeUnit.Index].Activate(sim)
 					}
 					if dk.Talents.EbonPlaguebringer > 0 {
-						dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
+						dk.EbonPlagueAura[aoeUnit.Index].Activate(sim)
 					}
 				}
-			},
-		}, true),
+
+				spell.DealDamage(sim, result)
+			}
+		},
 	}, func(sim *core.Simulation) bool {
 		if dk.RimeAura.IsActive() {
 			return dk.HowlingBlast.IsReady(sim)
