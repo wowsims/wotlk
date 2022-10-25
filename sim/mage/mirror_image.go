@@ -149,7 +149,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
 			baseDamage := 163*3 + 0.9*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
@@ -182,7 +182,7 @@ func (mi *MirrorImage) registerFireblastSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
 			baseDamage := 88*3 + 0.45*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }

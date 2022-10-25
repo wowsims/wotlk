@@ -71,7 +71,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1185, 1377) + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }

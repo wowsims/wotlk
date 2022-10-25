@@ -218,7 +218,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(config.MinDmg, config.MaxDmg) + config.APRatio*spell.MeleeAttackPower()
 			baseDamage *= 1 + 0.2*float64(hp.KillCommandAura.GetStacks())
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		}
 	}
 

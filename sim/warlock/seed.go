@@ -49,7 +49,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 
 				baseDamage := sim.Roll(1633, 1897) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})

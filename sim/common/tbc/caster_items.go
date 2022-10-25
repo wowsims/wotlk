@@ -92,7 +92,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(285, 475))
+				spell.CalcAndDealDamage(sim, target, sim.Roll(285, 475), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -141,7 +141,7 @@ func init() {
 				ThreatMultiplier: 1,
 
 				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-					spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(333, 367))
+					spell.CalcAndDealDamage(sim, target, sim.Roll(333, 367), spell.OutcomeMagicHitAndCrit)
 				},
 			})
 		}

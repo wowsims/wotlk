@@ -49,7 +49,7 @@ func (shaman *Shaman) registerFireNovaSpell() {
 				baseDamage := sim.Roll(893, 997) + dmgFromSP
 				// TODO: Uncomment this
 				//baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})

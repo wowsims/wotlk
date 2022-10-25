@@ -41,7 +41,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(876, 1071) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 			mage.FlamestrikeDot.Apply(sim)
 		},

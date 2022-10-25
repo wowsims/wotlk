@@ -49,7 +49,7 @@ func (shaman *Shaman) registerThunderstormSpell() {
 				for _, aoeTarget := range sim.Encounter.Targets {
 					baseDamage := sim.Roll(1450, 1656) + dmgFromSP
 					baseDamage *= sim.Encounter.AOECapMultiplier()
-					spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+					spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 				}
 			}
 		},
