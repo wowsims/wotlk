@@ -69,9 +69,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  flatThreatBonus,
-		DynamicThreatBonus: func(result *core.SpellResult, spell *core.Spell) float64 {
-			return dynaThreatBonus * spell.MeleeAttackPower()
-		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Bonus 242 damage / stack of sunder. Counts stacks AFTER cast but only if stacks > 0.
@@ -84,6 +81,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) + sunderBonus
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage+dynaThreatBonus*spell.MeleeAttackPower())
 			spell.DealDamage(sim, result)
 
 			if result.Landed() {

@@ -150,12 +150,16 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			aura.Unit.EnableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier *= 7
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			aura.Unit.DisableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier /= 7
 		},
 	})
 }
