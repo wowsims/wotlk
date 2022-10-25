@@ -28,7 +28,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 
-			applyProcAura := func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) bool {
+			applyProcAura := func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) bool {
 				if !spell.Flags.Matches(BarrageSpells) {
 					return false
 				}

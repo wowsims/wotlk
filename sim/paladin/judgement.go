@@ -94,8 +94,8 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 // 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 // 			aura.Activate(sim)
 // 		},
-// 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-// 			if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+// 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+// 			if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 // 				if paladin.CurrentJudgement != nil && paladin.CurrentJudgement.IsActive() {
 // 					// Refresh the judgement
 // 					paladin.CurrentJudgement.Refresh(sim)

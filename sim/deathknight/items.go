@@ -346,8 +346,8 @@ func init() {
 				aura.Unit.PseudoStats.FrostDamageDealtMultiplier /= cinderBonusCoeff
 				dk.modifyShadowDamageModifier(-0.2)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Outcome.Matches(core.OutcomeLanded) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Outcome.Matches(core.OutcomeLanded) {
 					return
 				}
 
@@ -367,8 +367,8 @@ func init() {
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
 			Label: "Rune of Cinderglacier",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 

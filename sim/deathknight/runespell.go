@@ -28,7 +28,7 @@ type RuneSpell struct {
 	onCast  RuneSpellOnCast
 }
 
-func (rs *RuneSpell) OnResult(sim *core.Simulation, result *core.SpellEffect) {
+func (rs *RuneSpell) OnResult(sim *core.Simulation, result *core.SpellResult) {
 	cost := core.RuneCost(rs.Spell.CurCast.Cost) // cost was already optimized in RuneSpell.Cast
 	if cost == 0 {
 		return // it was free this time. we don't care

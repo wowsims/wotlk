@@ -73,11 +73,11 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
-				if !icd.IsReady(sim) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				if !icd.IsReady(sim) || !result.Outcome.Matches(core.OutcomeCrit) {
 					return
 				}
 				if sim.RandomFloat("Shiffar's Nexus-Horn") > 0.2 {
@@ -99,20 +99,20 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
-				if !spellEffect.Outcome.Matches(core.OutcomeMiss) {
+				if !result.Outcome.Matches(core.OutcomeMiss) {
 					return
 				}
 				procAura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
-				if !spellEffect.Outcome.Matches(core.OutcomeMiss) {
+				if !result.Outcome.Matches(core.OutcomeMiss) {
 					return
 				}
 				procAura.Activate(sim)
@@ -135,11 +135,11 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
-				if !spellEffect.Outcome.Matches(core.OutcomeCrit) || !icd.IsReady(sim) {
+				if !result.Outcome.Matches(core.OutcomeCrit) || !icd.IsReady(sim) {
 					return
 				}
 				if sim.RandomFloat("Sextant of Unstable Currents") > 0.2 {
@@ -188,13 +188,13 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					apAura.Activate(sim)
 					apAura.AddStack(sim)
 					apAura.Refresh(sim)
 				} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
-					if !spellEffect.Landed() {
+					if !result.Landed() {
 						return
 					}
 					spAura.Activate(sim)

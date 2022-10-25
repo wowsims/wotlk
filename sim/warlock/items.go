@@ -54,7 +54,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == warlock.Corruption || spell == warlock.Immolate {
 						if sim.RandomFloat("2pT7") < 0.15 {
 							DemonicSoulAura.Activate(sim)
@@ -171,7 +171,7 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == warlock.UnstableAffliction || spell == warlock.ImmolateDot.Spell {
 						if sim.RandomFloat("4pT10") < 0.15 {
 							DeviousMindsAura.Activate(sim)
@@ -255,7 +255,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell == warlock.Corruption && sim.RandomFloat("Ashtongue Talisman of Insight") < 0.2 {
 					procAura.Activate(sim)
 				}

@@ -34,7 +34,7 @@ func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(713, 799) + 0.7143*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }

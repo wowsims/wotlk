@@ -39,7 +39,7 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 					rogue.PseudoStats.CostReduction -= 40
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellEffect) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
 					if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
 						return
 					}
@@ -63,8 +63,8 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
 						return
 					}
 					if !spell.ActionID.IsSpellAction(RuptureSpellID) {
@@ -120,8 +120,8 @@ var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
 						return
 					}
 					if !spell.Flags.Matches(SpellFlagFinisher) {
@@ -182,8 +182,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 
@@ -234,7 +234,7 @@ func init() {
 					}
 				}
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.Flags.Matches(SpellFlagFinisher) {
 					return
 				}

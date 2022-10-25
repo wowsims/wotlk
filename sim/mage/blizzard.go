@@ -11,7 +11,7 @@ func (mage *Mage) registerBlizzardSpell() {
 	actionID := core.ActionID{SpellID: 42939}
 	baseCost := .74 * mage.BaseMana
 
-	results := make([]*core.SpellEffect, len(mage.Env.Encounter.Targets))
+	results := make([]*core.SpellResult, len(mage.Env.Encounter.Targets))
 	blizzardDot := core.NewDot(core.Dot{
 		Aura: mage.RegisterAura(core.Aura{
 			Label:    "Blizzard",
@@ -56,7 +56,9 @@ func (mage *Mage) registerBlizzardSpell() {
 		DamageMultiplier: mage.spellDamageMultiplier,
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
-		ApplyEffects: core.ApplyEffectFuncDot(blizzardDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			blizzardDot.Apply(sim)
+		},
 	})
 	blizzardDot.Spell = mage.Blizzard
 }

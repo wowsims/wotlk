@@ -190,9 +190,6 @@ type AutoAttacks struct {
 	OHConfig     SpellConfig
 	RangedConfig SpellConfig
 
-	MHEffect SpellEffect
-	OHEffect SpellEffect
-
 	MHAuto     *Spell
 	OHAuto     *Spell
 	RangedAuto *Spell
@@ -256,7 +253,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)
 		},
 	}
 
@@ -274,7 +271,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := 0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)
 		},
 	}
 
@@ -298,7 +295,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 		},
 	}
 
@@ -719,8 +716,8 @@ func (unit *Unit) applyParryHaste() {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.Outcome.Matches(OutcomeParry) {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Outcome.Matches(OutcomeParry) {
 				return
 			}
 

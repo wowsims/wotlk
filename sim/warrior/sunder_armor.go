@@ -36,9 +36,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
-		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-			return 0.05 * spell.MeleeAttackPower()
-		},
 	}
 
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
@@ -51,15 +48,15 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		// In wrath sunder from devastate generates no threat
 		config.ThreatMultiplier = 0
 		config.FlatThreatBonus = 0
-		config.DynamicThreatBonus = nil
 	}
 
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		var result *core.SpellEffect
+		var result *core.SpellResult
 		if isDevastateEffect {
 			result = spell.CalcOutcome(sim, target, spell.OutcomeAlwaysHit)
 		} else {
 			result = spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			result.Threat = spell.ThreatFromDamage(result.Outcome, 0.05*spell.MeleeAttackPower())
 		}
 
 		if result.Landed() {

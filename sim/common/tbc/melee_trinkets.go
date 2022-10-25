@@ -90,9 +90,9 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// https://wotlk.wowhead.com/spell=15600/hand-of-justice, proc mask = 20.
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
@@ -105,7 +105,7 @@ func init() {
 				}
 				icd.Use(sim)
 
-				aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, handOfJusticeSpell).Cast(sim, spellEffect.Target)
+				aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, handOfJusticeSpell).Cast(sim, result.Target)
 			},
 		})
 	})
@@ -156,8 +156,8 @@ func init() {
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				procAura.Deactivate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 				if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
@@ -218,8 +218,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Outcome.Matches(core.OutcomeCrit) {
 					return
 				}
 				if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
@@ -251,7 +251,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(222, 332))
+				spell.CalcAndDealDamage(sim, target, sim.Roll(222, 332), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -263,16 +263,16 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// mask 340
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !ppmm.Proc(sim, spell.ProcMask, "RomulosPoisonVial") {
 					return
 				}
 
-				procSpell.Cast(sim, spellEffect.Target)
+				procSpell.Cast(sim, result.Target)
 			},
 		})
 	})
@@ -293,9 +293,9 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// mask: 340
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !icd.IsReady(sim) {
@@ -327,8 +327,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Outcome.Matches(core.OutcomeCrit) {
 					return
 				}
 				if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
@@ -367,13 +367,13 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// mask 340
 				if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 
-				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				if result.Outcome.Matches(core.OutcomeCrit) {
 					procAura.Deactivate(sim)
 				} else {
 					procAura.Activate(sim)
@@ -386,7 +386,7 @@ func init() {
 	core.NewItemEffect(31858, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 31858}
-		var outcomeApplier core.NewOutcomeApplier
+		var outcomeApplier core.OutcomeApplier
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -421,9 +421,9 @@ func init() {
 		// Can also proc when the player's melee attacks trigger a Seal of Light proc.
 		var onSpellHitDealt core.OnSpellHit
 		if procChanceOnHitDealt > 0 {
-			onSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("DMC Vengeance") < procChanceOnHitDealt {
-					procSpell.Cast(sim, spellEffect.Target)
+			onSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("DMC Vengeance") < procChanceOnHitDealt {
+					procSpell.Cast(sim, result.Target)
 				}
 			}
 		}
@@ -434,8 +434,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && sim.RandomFloat("DMC Vengeance") < procChance {
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Landed() && sim.RandomFloat("DMC Vengeance") < procChance {
 					procSpell.Cast(sim, spell.Unit)
 				}
 			},
@@ -455,9 +455,9 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// mask 340
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !ppmm.Proc(sim, spell.ProcMask, "Madness of the Betrayer") {
@@ -484,8 +484,8 @@ func init() {
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 				character.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					aura.AddStack(sim)
 				}
 			},
@@ -504,9 +504,9 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				// mask 340
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !icd.IsReady(sim) {
@@ -538,8 +538,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
 				if !icd.IsReady(sim) {

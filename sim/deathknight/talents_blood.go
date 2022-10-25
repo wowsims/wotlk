@@ -95,12 +95,12 @@ func (dk *Deathknight) applySpellDeflection() {
 		return
 	}
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 		if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 			procChance := dk.PseudoStats.BaseParry + dk.Unit.GetDiminishedParryChance()
 			dmgMult := 1.0 - 0.15*float64(dk.Talents.SpellDeflection)
 			if sim.RandomFloat("Spell Deflection Roll") < procChance {
-				spellEffect.Damage *= dmgMult
+				result.Damage *= dmgMult
 			}
 		}
 	})
@@ -118,10 +118,10 @@ func (dk *Deathknight) applyWillOfTheNecropolis() {
 		Duration: core.NeverExpires,
 	})
 
-	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
-		if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
-			spellEffect.Damage *= 0.85
-			if (dk.CurrentHealth()-spellEffect.Damage)/dk.MaxHealth() <= 0.35 {
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+		if (dk.CurrentHealth()-result.Damage)/dk.MaxHealth() <= 0.35 {
+			result.Damage *= 0.85
+			if (dk.CurrentHealth()-result.Damage)/dk.MaxHealth() <= 0.35 {
 				dk.WillOfTheNecropolis.Activate(sim)
 				return
 			}
@@ -149,7 +149,7 @@ func (dk *Deathknight) applyScentOfBlood() {
 			aura.SetStacks(sim, aura.MaxStacks)
 		},
 
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
@@ -161,7 +161,7 @@ func (dk *Deathknight) applyScentOfBlood() {
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Scent of Blood",
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if sim.RandomFloat("Scent Of Blood Proc Chance") <= procChance {
 				dk.ScentOfBloodAura.Activate(sim)
 			}
@@ -273,8 +273,8 @@ func (dk *Deathknight) applyBloodyVengeance() {
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Bloody Vengeance",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -303,8 +303,8 @@ func (dk *Deathknight) applySuddenDoom() {
 
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Sudden Doom",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -345,7 +345,7 @@ func (dk *Deathknight) applyBloodGorged() {
 
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Blood Gorged",
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			isActive := procAura.IsActive()
 			shouldBeActive := aura.Unit.CurrentHealthPercent() >= 0.75
 			if isActive && !shouldBeActive {
@@ -383,7 +383,7 @@ func (dk *Deathknight) applyBloodworms() {
 
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Bloodworms Proc",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
@@ -394,7 +394,7 @@ func (dk *Deathknight) applyBloodworms() {
 
 			if sim.RandomFloat("Bloodworms proc") < procChance {
 				icd.Use(sim)
-				procSpell.Cast(sim, spellEffect.Target)
+				procSpell.Cast(sim, result.Target)
 			}
 		},
 	}))

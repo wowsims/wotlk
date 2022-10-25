@@ -110,8 +110,8 @@ func (priest *Priest) makePrayerOfMendingAura(target *core.Unit) *core.Aura {
 				})
 			}
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !autoProc && spellEffect.Damage > 0 {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !autoProc && result.Damage > 0 {
 				priest.ProcPrayerOfMending(sim, aura.Unit, priest.PrayerOfMending)
 			}
 		},

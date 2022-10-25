@@ -25,7 +25,7 @@ const (
 	RunicPower
 )
 
-type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, spellEffect *SpellEffect)
+type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, result *SpellResult)
 
 // Unit is an abstraction of a Character/Boss/Pet/etc, containing functionality
 // shared by all of them.

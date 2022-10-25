@@ -81,14 +81,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
 	}, nil)
-
-	dk.IcyTouch.DynamicThreatMultiplier = func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-		if dk.FrostPresenceAura.IsActive() {
-			return 7.0
-		}
-
-		return 1.0
-	}
 }
 func (dk *Deathknight) registerDrwIcyTouchSpell() {
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()

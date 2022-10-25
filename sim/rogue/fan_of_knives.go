@@ -40,7 +40,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 	baseCost := 50.0
 	mhSpell := rogue.makeFanOfKnivesWeaponHitSpell(true)
 	ohSpell := rogue.makeFanOfKnivesWeaponHitSpell(false)
-	results := make([]*core.SpellEffect, len(rogue.Env.Encounter.Targets))
+	results := make([]*core.SpellResult, len(rogue.Env.Encounter.Targets))
 
 	rogue.FanOfKnives = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},

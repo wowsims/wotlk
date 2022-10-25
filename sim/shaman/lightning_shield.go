@@ -36,7 +36,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 380 + 0.267*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 		},
 	})
 
@@ -56,18 +56,18 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, 3+(2*shaman.Talents.StaticShock))
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.Landed() {
 				return
 			}
 			if sim.RandomFloat("Static Shock") > procChance {
 				return
 			}
-			procSpell.Cast(sim, spellEffect.Target)
+			procSpell.Cast(sim, result.Target)
 			aura.RemoveStack(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.Landed() {
 				return
 			}
 

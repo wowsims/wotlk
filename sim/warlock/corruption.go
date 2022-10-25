@@ -76,9 +76,9 @@ func (warlock *Warlock) registerCorruptionSpell() {
 	})
 }
 
-func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
+func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+	return func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		if result.Landed() {
 			(*dot).Apply(sim)
 		}
 	}

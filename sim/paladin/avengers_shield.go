@@ -14,7 +14,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
 	// Glyph to single target, OR apply to up to 3 targets
 	numHits := core.TernaryInt32(glyphedSingleTargetAS, 1, core.MinInt32(3, paladin.Env.GetNumTargets()))
-	results := make([]*core.SpellEffect, numHits)
+	results := make([]*core.SpellResult, numHits)
 
 	paladin.AvengersShield = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48827},

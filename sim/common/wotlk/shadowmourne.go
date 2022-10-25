@@ -32,7 +32,7 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(1900, 2100)
 				// can miss, can't crit
-				spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 			},
 		})
 
@@ -48,7 +48,7 @@ func init() {
 
 		core.MakePermanent(player.GetOrRegisterAura(core.Aura{
 			Label: "Shadowmourne",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}

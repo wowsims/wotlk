@@ -43,3 +43,8 @@ const (
 	ItemIDJadePendantOfBlasting = 20966
 	ItemIDTheLightningCapacitor = 28785
 )
+
+type Hand bool
+
+const MainHand Hand = true
+const OffHand Hand = false

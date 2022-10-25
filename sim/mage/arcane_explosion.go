@@ -36,7 +36,7 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(538, 582) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})

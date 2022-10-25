@@ -186,8 +186,8 @@ func (dk *Deathknight) applyKillingMachine() {
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Killing Machine",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -254,8 +254,8 @@ func (dk *Deathknight) applyDeathchill() {
 				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -316,7 +316,7 @@ func (dk *Deathknight) threatOfThassarianProcMask(isMH bool) core.ProcMask {
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianOutcomeApplier(spell *core.Spell) core.NewOutcomeApplier {
+func (dk *Deathknight) threatOfThassarianOutcomeApplier(spell *core.Spell) core.OutcomeApplier {
 	if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 		return spell.OutcomeMeleeSpecialHitAndCrit
 	} else {
@@ -324,8 +324,8 @@ func (dk *Deathknight) threatOfThassarianOutcomeApplier(spell *core.Spell) core.
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, ohSpell *RuneSpell) {
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, result *core.SpellResult, ohSpell *RuneSpell) {
 	if dk.threatOfThassarianWillProc(sim) && dk.GetOHWeapon() != nil {
-		ohSpell.Cast(sim, spellEffect.Target)
+		ohSpell.Cast(sim, result.Target)
 	}
 }

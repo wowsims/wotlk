@@ -97,7 +97,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
-			dot.Spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }

@@ -102,9 +102,9 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	}
 
 	if !isDps {
-		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage > 0 {
-				healthGain := (0.04 * spellEffect.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (0.04 * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
 				dk.GainHealth(sim, healthGain, healthMetrics)
 			}
 		}
@@ -150,12 +150,16 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			aura.Unit.EnableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier *= 7
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			aura.Unit.DisableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier /= 7
 		},
 	})
 }

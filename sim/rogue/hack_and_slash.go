@@ -36,8 +36,8 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 			if !spell.ProcMask.Matches(mask) {
@@ -50,7 +50,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 				return
 			}
 			icd.Use(sim)
-			hackAndSlashSpell.Cast(sim, spellEffect.Target)
+			hackAndSlashSpell.Cast(sim, result.Target)
 		},
 	})
 }

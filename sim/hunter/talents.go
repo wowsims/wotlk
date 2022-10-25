@@ -178,12 +178,12 @@ func (hunter *Hunter) applyInvigoration() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -219,7 +219,7 @@ func (hunter *Hunter) applyCobraStrikes() {
 				hunter.pet.specialAbility.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeSpecial | core.ProcMaskSpellDamage) {
 				aura.RemoveStack(sim)
 			}
@@ -232,8 +232,8 @@ func (hunter *Hunter) applyCobraStrikes() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -298,18 +298,18 @@ func (hunter *Hunter) applyPiercingShots() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if spell != hunter.AimedShot && spell != hunter.SteadyShot && spell != hunter.ChimeraShot {
 				return
 			}
 
-			totalDmg := spellEffect.Damage * dmgMultiplier
+			totalDmg := result.Damage * dmgMultiplier
 			// Specifically account for bleed modifiers, since it still affects the spell
 			// but we're ignoring all modifiers.
-			totalDmg *= spellEffect.Target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			totalDmg *= result.Target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 
 			if psDot.IsActive() {
 				remainingTicks := 8 - psDot.TickCount
@@ -318,7 +318,7 @@ func (hunter *Hunter) applyPiercingShots() {
 
 			currentTickDmg = totalDmg / 8
 
-			psSpell.Cast(sim, spellEffect.Target)
+			psSpell.Cast(sim, result.Target)
 		},
 	})
 }
@@ -344,7 +344,7 @@ func (hunter *Hunter) applyWildQuiver() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 		},
 	})
 
@@ -354,13 +354,13 @@ func (hunter *Hunter) applyWildQuiver() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell != hunter.AutoAttacks.RangedAuto {
 				return
 			}
 
 			if sim.RandomFloat("Wild Quiver") < procChance {
-				wqSpell.Cast(sim, spellEffect.Target)
+				wqSpell.Cast(sim, result.Target)
 			}
 		},
 	})
@@ -399,8 +399,8 @@ func (hunter *Hunter) applyFrenzy() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if sim.Proc(procChance, "Frenzy") {
@@ -502,8 +502,8 @@ func (hunter *Hunter) applyGoForTheThroat() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if !hunter.pet.IsEnabled() {
@@ -572,7 +572,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 				hunter.ExplosiveShot.CostMultiplier += 1
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == hunter.ArcaneShot || spell == hunter.ExplosiveShot {
 				aura.RemoveStack(sim)
 				hunter.ArcaneShot.CD.Reset() // Shares the CD with explosive shot.
@@ -586,7 +586,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell != hunter.BlackArrow && spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
@@ -618,13 +618,13 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// mask 256
 			if !spell.ProcMask.Matches(core.ProcMaskRangedSpecial) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -665,12 +665,12 @@ func (hunter *Hunter) applyExposeWeakness() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskRanged) && spell != hunter.ExplosiveTrap {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -678,12 +678,12 @@ func (hunter *Hunter) applyExposeWeakness() {
 				procAura.Activate(sim)
 			}
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell != hunter.ExplosiveTrapDot.Spell {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -710,8 +710,8 @@ func (hunter *Hunter) applyMasterTactician() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !result.Landed() {
 				return
 			}
 

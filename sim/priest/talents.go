@@ -110,10 +110,10 @@ func (priest *Priest) applyDivineAegis() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				shield := shields[spellEffect.Target.UnitIndex]
-				shield.Apply(sim, spellEffect.Damage*multiplier)
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
+				shield := shields[result.Target.UnitIndex]
+				shield.Apply(sim, result.Damage*multiplier)
 			}
 		},
 	})
@@ -149,10 +149,10 @@ func (priest *Priest) applyGrace() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.PenanceHeal {
 				if sim.Proc(procChance, "Grace") {
-					aura := auras[spellEffect.Target.UnitIndex]
+					aura := auras[result.Target.UnitIndex]
 					aura.Activate(sim)
 					aura.AddStack(sim)
 				}
@@ -215,7 +215,7 @@ func (priest *Priest) applyInspiration() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == priest.FlashHeal ||
 				spell == priest.GreaterHeal ||
 				spell == priest.BindingHeal ||
@@ -223,7 +223,7 @@ func (priest *Priest) applyInspiration() {
 				spell == priest.PrayerOfHealing ||
 				spell == priest.CircleOfHealing ||
 				spell == priest.PenanceHeal {
-				auras[spellEffect.Target.UnitIndex].Activate(sim)
+				auras[result.Target.UnitIndex].Activate(sim)
 			}
 		},
 	})
@@ -254,8 +254,8 @@ func (priest *Priest) applyHolyConcentration() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.DidCrit() &&
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() &&
 				(spell == priest.FlashHeal || spell == priest.GreaterHeal || spell == priest.EmpoweredRenew) {
 				procAura.Activate(sim)
 			}
@@ -329,7 +329,7 @@ func (priest *Priest) applySurgeOfLight() {
 				priest.FlashHeal.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == priest.Smite || (priest.FlashHeal != nil && spell == priest.FlashHeal) {
 				aura.Deactivate(sim)
 			}
@@ -348,8 +348,8 @@ func (priest *Priest) applySurgeOfLight() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if icd.IsReady(sim) && spellEffect.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if icd.IsReady(sim) && result.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
 				icd.Use(sim)
 				priest.SurgeOfLightProcAura.Activate(sim)
 			}
@@ -425,7 +425,7 @@ func (priest *Priest) registerInnerFocus() {
 			priest.AddStatDynamic(sim, stats.SpellCrit, -25*core.CritRatingPerCritChance)
 			priest.PseudoStats.NoCost = false
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Remove the buff and put skill on CD
 			aura.Deactivate(sim)
 			priest.InnerFocus.CD.Use(sim)

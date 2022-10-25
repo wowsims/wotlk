@@ -118,7 +118,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 
 		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
 			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
-			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				rogue.AddEnergy(sim, 1, metrics)
 			}
 		}
@@ -127,9 +127,9 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	}
 }
 
-func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 	rogue.lastDeadlyPoisonProcMask = spell.ProcMask
-	rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
+	rogue.DeadlyPoison.Cast(sim, result.Target)
 }
 
 func (rogue *Rogue) applyDeadlyPoison() {
@@ -146,14 +146,14 @@ func (rogue *Rogue) applyDeadlyPoison() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 			if sim.RandomFloat("Deadly Poison") > rogue.GetDeadlyPoisonProcChance(procMask) {
 				return
 			}
-			rogue.procDeadlyPoison(sim, spell, spellEffect)
+			rogue.procDeadlyPoison(sim, spell, result)
 		},
 	})
 }
@@ -176,12 +176,12 @@ func (rogue *Rogue) applyWoundPoison() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 			if rogue.woundPoisonPPMM.Proc(sim, spell.ProcMask, "Wound Poison") {
-				rogue.WoundPoison[NormalProc].Cast(sim, spellEffect.Target)
+				rogue.WoundPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})
@@ -233,7 +233,7 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 231 + 0.04*spell.MeleeAttackPower()
 
-			var result *core.SpellEffect
+			var result *core.SpellResult
 			if isShivProc {
 				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 			} else {
@@ -327,12 +327,12 @@ func (rogue *Rogue) applyInstantPoison() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 			if rogue.instantPoisonPPMM.Proc(sim, spell.ProcMask, "Instant Poison") {
-				rogue.InstantPoison[NormalProc].Cast(sim, spellEffect.Target)
+				rogue.InstantPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})

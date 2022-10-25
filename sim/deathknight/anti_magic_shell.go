@@ -64,7 +64,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 						ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 							baseDamage := dk.Inputs.AvgAMSHit * sim.Roll(0.9, 1.1)
-							spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+							spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 						},
 					})
 				}
@@ -105,13 +105,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier /= spellDmgTakenMult
 		},
 
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage > 0 && physDmgTakenMult != 1.0 {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 && physDmgTakenMult != 1.0 {
 				coeff := core.TernaryFloat64(spell.SpellSchool == core.SpellSchoolPhysical, physDmgTakenMult, spellDmgTakenMult)
-				absorbedDmg := (1.0 - coeff) * spellEffect.Damage / coeff
+				absorbedDmg := (1.0 - coeff) * result.Damage / coeff
 				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
-			} else if spellEffect.Damage > 0 && spell.SpellSchool != core.SpellSchoolPhysical {
-				absorbedDmg := (1.0 - spellDmgTakenMult) * spellEffect.Damage / spellDmgTakenMult
+			} else if result.Damage > 0 && spell.SpellSchool != core.SpellSchoolPhysical {
+				absorbedDmg := (1.0 - spellDmgTakenMult) * result.Damage / spellDmgTakenMult
 				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
 			}
 		},
