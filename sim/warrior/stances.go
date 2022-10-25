@@ -56,7 +56,6 @@ func (warrior *Warrior) registerBattleStanceAura() {
 
 	actionID := core.ActionID{SpellID: 2457}
 	armorPenBonus := core.ArmorPenPerPercentArmor * (10 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 6, 0))
-	impBerserkerMalus := warrior.NewDynamicMultiplyStat(stats.Strength, 1/(1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance)))
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Battle Stance",
@@ -67,12 +66,10 @@ func (warrior *Warrior) registerBattleStanceAura() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, armorPenBonus)
-			aura.Unit.EnableDynamicStatDep(sim, impBerserkerMalus)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, -armorPenBonus)
-			aura.Unit.DisableDynamicStatDep(sim, impBerserkerMalus)
 		},
 	})
 }
@@ -81,8 +78,6 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 	const threatMult = 2.0735
 
 	actionID := core.ActionID{SpellID: 71}
-	impBerserkerMalus := warrior.NewDynamicMultiplyStat(stats.Strength, 1/(1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance)))
-
 	if warrior.Talents.ImprovedDefensiveStance > 0 {
 		enrageAura := warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Enrage",
@@ -90,11 +85,9 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			Duration: 12 * time.Second,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
-				aura.Unit.EnableDynamicStatDep(sim, impBerserkerMalus)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
-				aura.Unit.DisableDynamicStatDep(sim, impBerserkerMalus)
 			},
 		})
 
@@ -170,10 +163,12 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, critBonus)
+			warrior.enteringBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -critBonus)
+			warrior.leavingBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 	})
 }
