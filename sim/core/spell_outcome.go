@@ -138,10 +138,6 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellEffect, attac
 		spell.SpellMetrics[result.Target.UnitIndex].Hits++
 	}
 }
-func (spell *Spell) CalcAndDealDamageMagicCrit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicCrit)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	if spell.CritMultiplier == 0 {

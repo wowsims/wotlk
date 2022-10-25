@@ -128,7 +128,7 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(68, 70) + dmgFromSP
 				//baseDamage *= sim.Encounter.AOECapMultiplier()
-				dot.Spell.CalcAndDealDamageMagicCrit(sim, &aoeTarget.Unit, baseDamage)
+				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicCrit)
 			}
 		},
 	})
