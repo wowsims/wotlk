@@ -47,7 +47,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 				baseDamage += 157 //  145 to 169 averages to 157
 			}
 
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }

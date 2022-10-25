@@ -35,7 +35,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 3)
+				spell.CalcAndDealDamage(sim, target, 3, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -69,7 +69,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 2)
+				spell.CalcAndDealDamage(sim, target, 2, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -135,7 +135,7 @@ func init() {
 			ThreatMultiplier: 0.5,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 300)
+				spell.CalcAndDealDamage(sim, target, 300, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -482,7 +482,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(285, 315))
+				spell.CalcAndDealDamage(sim, target, sim.Roll(285, 315), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -792,7 +792,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(48, 54)+1*spell.SpellPower())
+				spell.CalcAndDealDamage(sim, target, sim.Roll(48, 54)+1*spell.SpellPower(), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -939,7 +939,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 20)
+				spell.CalcAndDealDamage(sim, target, 20, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 

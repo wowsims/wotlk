@@ -281,8 +281,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 				ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 					debuffAuras[target.Index].Activate(sim)
-					// TODO: Make a function for "hit+threat" that doesn't do full damage calcs.
-					spell.CalcAndDealDamageAlwaysHit(sim, target, 0)
+					spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 				},
 			})
 
@@ -1046,7 +1045,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, 40)
+				spell.CalcAndDealDamage(sim, target, 40, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -1226,7 +1225,7 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			// TODO: AOE Cap
 			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, sim.Roll(minDamage, maxDamage))
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, sim.Roll(minDamage, maxDamage), spell.OutcomeMagicHitAndCrit)
 			}
 			// TODO: Deal self-damage
 		},

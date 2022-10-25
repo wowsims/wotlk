@@ -119,7 +119,6 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		}
 	}
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
-	character.addEffectPets()
 
 	return character
 }

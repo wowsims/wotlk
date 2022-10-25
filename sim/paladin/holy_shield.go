@@ -27,7 +27,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 				0.0732*spell.MeleeAttackPower() +
 				0.117*spell.SpellPower()
 
-			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 		},
 	})
 

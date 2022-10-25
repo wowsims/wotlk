@@ -81,7 +81,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 242 + 0.04*spell.RangedAttackPower(target)
-			spell.CalcAndDealDamageRangedCritOnly(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedCritOnly)
 		},
 	})
 }
