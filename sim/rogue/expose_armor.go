@@ -26,7 +26,6 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 

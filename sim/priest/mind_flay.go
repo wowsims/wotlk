@@ -122,7 +122,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
-			dot.Spell.DealPeriodicDamage(sim, result)
+			dot.Spell.DealDamage(sim, result)
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)

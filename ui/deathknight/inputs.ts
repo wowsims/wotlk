@@ -111,6 +111,14 @@ export const UseEmpowerRuneWeapon = InputHelpers.makeRotationBooleanInput<Spec.S
 	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
 });
 
+export const UseGargoyle = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'useGargoyle',
+	label: 'Summon Gargoyle',
+	labelTooltip: 'Use Summon Gargoyle in rotation.',
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+});
+
 export const HoldErwArmy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'holdErwArmy',
 	label: 'Hold ERW for AotD',
@@ -300,6 +308,7 @@ export const DeathKnightRotationConfig = {
 		Presence,
 		UseAutoRotation,
 		BloodTapGhoulFrenzy,
+		UseGargoyle,
 		UseEmpowerRuneWeapon,
 		HoldErwArmy,
 		BloodTapInput,

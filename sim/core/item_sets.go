@@ -97,14 +97,17 @@ func (character *Character) HasSetBonus(itemSet *ItemSet, numItems int32) bool {
 		panic(fmt.Sprintf("Item set %s does not have a bonus with %d pieces.", itemSet.Name, numItems))
 	}
 
-	count := int32(0)
+	var count int32
 	for _, item := range character.Equip {
 		if itemSet.ItemIsInSet(item.ID) {
 			count++
+			if count >= numItems {
+				return true
+			}
 		}
 	}
 
-	return count >= numItems
+	return false
 }
 
 type ActiveSetBonus struct {

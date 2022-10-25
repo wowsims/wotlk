@@ -9,9 +9,9 @@ import (
 )
 
 func (rogue *Rogue) registerShivSpell() {
-	cost := 20.0
-	if rogue.GetOHWeapon() != nil {
-		cost = 20 + 10*rogue.GetOHWeapon().SwingSpeed
+	baseCost := 20.0
+	if ohWeapon := rogue.GetOHWeapon(); ohWeapon != nil {
+		baseCost = rogue.costModifier(20 + 10*ohWeapon.SwingSpeed)
 	}
 
 	rogue.Shiv = rogue.RegisterSpell(core.SpellConfig{
@@ -20,15 +20,14 @@ func (rogue *Rogue) registerShivSpell() {
 		ProcMask:     core.ProcMaskMeleeOHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		DamageMultiplier: (1 +

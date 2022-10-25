@@ -12,7 +12,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 
 	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
 
-	cost := 35.0
+	baseCost := 35.0
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	// TODO Envenom can only be cast if the target is afflicted by Deadly Poison
@@ -24,11 +24,11 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ProcMask:     core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
 		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -37,7 +37,6 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				// See: https://github.com/where-fore/rogue-wotlk/issues/32
 				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
 				rogue.EnvenomAura.Activate(sim)
-				rogue.CastModifier(sim, spell, cast)
 			},
 			IgnoreHaste: true,
 		},

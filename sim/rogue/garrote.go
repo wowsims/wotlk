@@ -8,13 +8,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-const GarroteEnergyCost = 50.0
 const GarroteSpellID = 48676
 
 func (rogue *Rogue) registerGarrote() {
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 	numTicks := 6
-	baseCost := GarroteEnergyCost
+	baseCost := rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds))
 	totalDamageMod := 1.0
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGarrote) {
 		numTicks = 5
@@ -34,7 +33,6 @@ func (rogue *Rogue) registerGarrote() {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
@@ -65,7 +63,7 @@ func (rogue *Rogue) registerGarrote() {
 		Spell: rogue.Garrote,
 		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Garrote",
-			Tag:      core.BleedDamageAuraTag,
+			Tag:      RogueBleedTag,
 			ActionID: rogue.Garrote.ActionID,
 		}),
 		NumberOfTicks: numTicks,

@@ -74,14 +74,23 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 				ActionID: core.ActionID{SpellID: 61571},
 				Duration: time.Second * 30,
 				OnGain: func(_ *core.Aura, sim *core.Simulation) {
-					warrior.PseudoStats.CostReduction = 5
+					warrior.PseudoStats.CostReduction += 5
 				},
 				OnExpire: func(_ *core.Aura, sim *core.Simulation) {
-					rageMetrics.AddEvent(5, 5) // this is only "mostly correct", but should suffice for statistics
-					warrior.PseudoStats.CostReduction = 0
+					warrior.PseudoStats.CostReduction -= 5
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellEffect) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+						return
+					}
+
+					// one-shot cost reductions cannot be reliably reset, since both OnCastComplete and OnSpellHit
+					//  are too late (e.g. there might be a proc after Slam cast, but before either callback),
+					//  or happen to often (e.g. internal 0-cost casts like Mutilate, or multiple Whirlwind hits, in case of OnSpellHit)
+
+					// doesn't handle multiple dynamic cost reductions at once, or 0-cost default casts
+					if actualGain := spell.DefaultCast.Cost - spell.CurCast.Cost; actualGain > 0 {
+						rageMetrics.AddEvent(5, actualGain)
 						aura.Deactivate(sim)
 					}
 				},

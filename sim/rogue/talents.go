@@ -76,23 +76,14 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	}
 }
 
-func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
-	builderCostMultiplier := 1.0
-	costReduction := 40.0
+func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
-		builderCostMultiplier -= 0.05
+		return func(baseCost float64) float64 {
+			return math.RoundToEven(0.95 * baseCost)
+		}
 	}
-	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		costMultiplier := 1.0
-		if spell.Flags.Matches(SpellFlagBuilder) { // note: this also applies to openers, as per https://www.wowhead.com/wotlk/spell=60163/cheaper-combo-moves
-			costMultiplier *= builderCostMultiplier
-		}
-		cast.Cost *= costMultiplier
-		cast.Cost = math.Ceil(cast.Cost)
-		if rogue.VanCleefsProcAura.IsActive() {
-			cast.Cost = core.MaxFloat(0, cast.Cost-costReduction)
-			rogue.VanCleefsProcAura.Deactivate(sim)
-		}
+	return func(baseCost float64) float64 {
+		return baseCost
 	}
 }
 
