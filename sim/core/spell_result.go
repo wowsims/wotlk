@@ -8,16 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// Callback for after a spell hits the target and after damage is calculated. Use it for proc effects
-// or anything that comes from the final result of the spell.
-type OnSpellHit func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult)
-type EffectOnSpellHitDealt func(sim *Simulation, spell *Spell, result *SpellResult)
-
-// OnPeriodicDamage is called when dots tick, after damage is calculated. Use it for proc effects
-// or anything that comes from the final result of a tick.
-type OnPeriodicDamage func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult)
-type EffectOnPeriodicDamageDealt func(sim *Simulation, spell *Spell, result *SpellResult)
-
 type SpellResult struct {
 	// Target of the spell.
 	Target *Unit
