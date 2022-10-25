@@ -44,34 +44,21 @@ func (paladin *Paladin) registerExorcismSpell() {
 			paladin.getItemSetAegisBattlegearBonus2(),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
+		CritMultiplier:   paladin.SpellCritMultiplier(),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// TODO: discuss exporting or adding to core for damageRollOptimized hybrid scaling.
-					deltaDamage := 1146.0 - 1028.0
-					return 1028.0 + deltaDamage*sim.RandomFloat("Damage Roll") +
-						.15*spell.SpellPower() +
-						.15*spell.MeleeAttackPower()
-				},
-			},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(1028, 1146) +
+				.15*spell.SpellPower() +
+				.15*spell.MeleeAttackPower()
 
-			OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-				if spell.MagicHitCheck(sim, attackTable) {
-					if spellEffect.Target.MobType == proto.MobType_MobTypeDemon || spellEffect.Target.MobType == proto.MobType_MobTypeUndead || spellEffect.MagicCritCheck(sim, spell, attackTable) {
-						spellEffect.Outcome = core.OutcomeCrit
-						spell.SpellMetrics[spellEffect.Target.UnitIndex].Crits++
-						spellEffect.Damage *= paladin.SpellCritMultiplier()
-					} else {
-						spellEffect.Outcome = core.OutcomeHit
-						spell.SpellMetrics[spellEffect.Target.UnitIndex].Hits++
-					}
-				} else {
-					spellEffect.Outcome = core.OutcomeMiss
-					spell.SpellMetrics[spellEffect.Target.UnitIndex].Misses++
-					spellEffect.Damage = 0
-				}
-			},
-		}),
+			isDemonOrUndead := target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead
+			if isDemonOrUndead {
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			if isDemonOrUndead {
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
+		},
 	})
 }

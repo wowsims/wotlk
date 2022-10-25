@@ -15,6 +15,11 @@ func (spell *Spell) OutcomeAlwaysHit(_ *Simulation, result *SpellEffect, _ *Atta
 	result.Outcome = OutcomeHit
 	spell.SpellMetrics[result.Target.UnitIndex].Hits++
 }
+func (spell *Spell) OutcomeAlwaysMiss(_ *Simulation, result *SpellEffect, _ *AttackTable) {
+	result.Outcome = OutcomeMiss
+	result.Damage = 0
+	spell.SpellMetrics[result.Target.UnitIndex].Misses++
+}
 func (spell *Spell) CalcAndDealDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) {
 	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 	spell.DealDamage(sim, result)
