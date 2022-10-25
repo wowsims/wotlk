@@ -225,14 +225,14 @@ export const P1_FURY_PRESET = {
         {
           "id": 44664,
           "gems": [
-            40037
+            39996
           ]
         },
         {
           "id": 40530,
           "enchant": 44871,
           "gems": [
-            42149
+            40037
           ]
         },
         {
@@ -243,14 +243,14 @@ export const P1_FURY_PRESET = {
           "id": 40539,
           "enchant": 44489,
           "gems": [
-            40037
+            42142
           ]
         },
         {
           "id": 39765,
           "enchant": 44484,
           "gems": [
-            40037
+            39996
           ]
         },
         {
@@ -263,15 +263,15 @@ export const P1_FURY_PRESET = {
         {
           "id": 40205,
           "gems": [
-            42149
+            42142
           ]
         },
         {
           "id": 40529,
           "enchant": 38374,
           "gems": [
-            40037,
-            40086
+            39996,
+            40022
           ]
         },
         {
@@ -281,7 +281,7 @@ export const P1_FURY_PRESET = {
         {
           "id": 43993,
           "gems": [
-            42149
+            42142
           ]
         },
         {
