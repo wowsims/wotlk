@@ -70,7 +70,7 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 		})
 
 		config.Trigger.Name = config.Name + " Trigger"
-		config.Trigger.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+		config.Trigger.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			capacitorAura.Activate(sim)
 			capacitorAura.AddStack(sim)
 		}
@@ -227,7 +227,7 @@ func init() {
 				ProcMask:   core.ProcMaskMelee,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.45,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					capacitorAura.Activate(sim)
 					capacitorAura.AddStack(sim)
 				},

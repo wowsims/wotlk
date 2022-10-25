@@ -26,14 +26,14 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 			shaman.AttackTables[aura.Unit.UnitIndex].NatureDamageTakenMultiplier /= core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfStormstrike), 1.28, 1.2)
 
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.Unit != &shaman.Unit {
 				return
 			}
 			if spell.SpellSchool != core.SpellSchoolNature {
 				return
 			}
-			if !spellEffect.Landed() || spellEffect.Damage == 0 {
+			if !result.Landed() || result.Damage == 0 {
 				return
 			}
 			aura.RemoveStack(sim)

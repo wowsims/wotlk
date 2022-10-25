@@ -36,7 +36,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
-		DynamicThreatBonus: func(spellEffect *core.SpellEffect, spell *core.Spell) float64 {
+		DynamicThreatBonus: func(result *core.SpellResult, spell *core.Spell) float64 {
 			return 0.05 * spell.MeleeAttackPower()
 		},
 	}
@@ -55,7 +55,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	}
 
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		var result *core.SpellEffect
+		var result *core.SpellResult
 		if isDevastateEffect {
 			result = spell.CalcOutcome(sim, target, spell.OutcomeAlwaysHit)
 		} else {

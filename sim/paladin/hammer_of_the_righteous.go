@@ -12,7 +12,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 	baseCost := paladin.BaseMana * 0.06
 
 	numHits := core.MinInt32(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous), 4, 3), paladin.Env.GetNumTargets())
-	results := make([]*core.SpellEffect, numHits)
+	results := make([]*core.SpellResult, numHits)
 
 	paladin.HammerOfTheRighteous = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 53595},

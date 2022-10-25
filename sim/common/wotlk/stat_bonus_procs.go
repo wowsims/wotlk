@@ -29,12 +29,12 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
 
-		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			procAura.Activate(sim)
 		}
 		if config.IgnoreSpellID != 0 {
 			ignoreSpellID := config.IgnoreSpellID
-			handler = func(sim *core.Simulation, spell *core.Spell, _ *core.SpellEffect) {
+			handler = func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
 				if !spell.IsSpellAction(ignoreSpellID) {
 					procAura.Activate(sim)
 				}

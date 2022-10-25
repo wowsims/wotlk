@@ -19,8 +19,8 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(outcomeMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(outcomeMask) {
 				warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
 			}
 		},

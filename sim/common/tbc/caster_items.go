@@ -30,11 +30,11 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !spellEffect.Landed() {
+				if !result.Landed() {
 					return
 				}
 				if !icd.IsReady(sim) || sim.RandomFloat("Robe of the Elder Scribe") > proc { // can't activate if on CD or didn't proc
@@ -63,11 +63,11 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 					return
 				}
-				if !spellEffect.Landed() {
+				if !result.Landed() {
 					return
 				}
 				if !icd.IsReady(sim) || sim.RandomFloat("Band of the Eternal Sage") > proc { // can't activate if on CD or didn't proc
@@ -110,13 +110,13 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !icd.IsReady(sim) || sim.RandomFloat("timbals") > proc { // can't activate if on CD or didn't proc
 					return
 				}
 				icd.Use(sim)
 
-				timbalsSpell.Cast(sim, spellEffect.Target)
+				timbalsSpell.Cast(sim, result.Target)
 			},
 		})
 	})
@@ -158,11 +158,11 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 					return
 				}
-				if !spellEffect.Landed() {
+				if !result.Landed() {
 					return
 				}
 				if !icd.IsReady(sim) || sim.RandomFloat("pendant of acumen") > proc { // can't activate if on CD or didn't proc
@@ -173,7 +173,7 @@ func init() {
 				if character.ShattFaction == proto.ShattrathFaction_ShattrathFactionAldor {
 					aldorAura.Activate(sim)
 				} else if character.ShattFaction == proto.ShattrathFaction_ShattrathFactionScryer {
-					scryerSpell.Cast(sim, spellEffect.Target)
+					scryerSpell.Cast(sim, result.Target)
 				}
 			},
 		})

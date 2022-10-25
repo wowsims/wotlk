@@ -40,7 +40,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 					hunter.ChimeraShot.CostMultiplier += 0.2
 				}
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell == hunter.AimedShot || spell == hunter.ArcaneShot || spell == hunter.ChimeraShot {
 					aura.Deactivate(sim)
 				}

@@ -291,8 +291,8 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 				OnReset: func(aura *Aura, sim *Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-					if spellEffect.Landed() &&
+				OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+					if result.Landed() &&
 						spell.SpellSchool == SpellSchoolPhysical &&
 						sim.RandomFloat("Gift of Arthas") < 0.3 {
 						goaProc.Cast(sim, spell.Unit)
@@ -1073,15 +1073,15 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				}
 			},
 		})
-		flameCapAura.OnSpellHitDealt = func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+		flameCapAura.OnSpellHitDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
 				return
 			}
 			if sim.RandomFloat("Flame Cap Melee") > procChance {
 				return
 			}
 
-			flameCapProc.Cast(sim, spellEffect.Target)
+			flameCapProc.Cast(sim, result.Target)
 		}
 
 		return MajorCooldown{

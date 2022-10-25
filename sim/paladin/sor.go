@@ -81,25 +81,25 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ActionID: auraActionID,
 		Duration: SealDuration,
 
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Don't proc on misses or our own procs.
-			if !spellEffect.Landed() || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
+			if !result.Landed() || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
 				return
 			}
 
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				// SoR is the only seal that can proc off its own judgement.
-				onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
-				onJudgementProc.Cast(sim, spellEffect.Target)
+				onSpecialOrSwingProc.Cast(sim, result.Target)
+				onJudgementProc.Cast(sim, result.Target)
 				if paladin.Talents.JudgementsOfTheJust > 0 {
 					// Special JoJ talent behavior, procs swing seal on judgements
 					// Yes, for SoR this means it proces TWICE on one judgement.
-					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+					onSpecialOrSwingProc.Cast(sim, result.Target)
 				}
 			} else {
 				if spell.IsMelee() {
-					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+					onSpecialOrSwingProc.Cast(sim, result.Target)
 				}
 			}
 		},

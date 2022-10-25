@@ -140,34 +140,34 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			}
 		},
 
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Don't proc on misses or our own procs.
-			dot := paladin.SealOfVengeanceDots[spellEffect.Target.Index]
+			dot := paladin.SealOfVengeanceDots[result.Target.Index]
 
-			if !spellEffect.Landed() || spell.SpellID == onSwingProc.SpellID || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
+			if !result.Landed() || spell.SpellID == onSwingProc.SpellID || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
 				return
 			}
 
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
-				onJudgementProc.Cast(sim, spellEffect.Target)
+				onJudgementProc.Cast(sim, result.Target)
 				if paladin.Talents.JudgementsOfTheJust > 0 {
 					// Special JoJ talent behavior, procs swing seal on judgements
 					if dot.GetStacks() > 0 {
-						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+						onSpecialOrSwingProc.Cast(sim, result.Target)
 					}
 				}
 			} else {
 				if spell.IsMelee() {
 					if dot.GetStacks() > 0 {
-						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+						onSpecialOrSwingProc.Cast(sim, result.Target)
 					}
 				}
 			}
 
 			// Only white hits and HotR can trigger this. (SoV dot)
 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell.SpellID == paladin.HammerOfTheRighteous.SpellID {
-				onSwingProc.Cast(sim, spellEffect.Target)
+				onSwingProc.Cast(sim, result.Target)
 			}
 
 		},

@@ -180,8 +180,8 @@ func (warlock *Warlock) setupEmpoweredImp() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				aura.Deactivate(sim)
 			}
 		},
@@ -193,8 +193,8 @@ func (warlock *Warlock) setupEmpoweredImp() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				warlock.EmpoweredImpAura.Activate(sim)
 				warlock.EmpoweredImpAura.Refresh(sim)
 			}
@@ -212,7 +212,7 @@ func (warlock *Warlock) setupDecimation() {
 	decimation := warlock.RegisterAura(core.Aura{
 		Label:    "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
 				warlock.DecimationAura.Activate(sim)
 				warlock.DecimationAura.Refresh(sim)
@@ -252,8 +252,8 @@ func (warlock *Warlock) setupPyroclasm() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warlock.Conflagrate && spellEffect.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell == warlock.Conflagrate && result.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
@@ -283,7 +283,7 @@ func (warlock *Warlock) setupEradication() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.Corruption {
 				if sim.RandomFloat("Eradication") < 0.06 {
 					warlock.EradicationAura.Activate(sim)
@@ -317,7 +317,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
 				if !ShadowEmbraceAura.IsActive() {
 					ShadowEmbraceAura.Activate(sim)
@@ -353,7 +353,7 @@ func (warlock *Warlock) setupNightfall() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.Corruption { // TODO: also works on drain life...
 				if sim.RandomFloat("Nightfall") < nightfallProcChance {
 					warlock.NightfallProcAura.Activate(sim)
@@ -402,7 +402,7 @@ func (warlock *Warlock) setupMoltenCore() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.Corruption {
 				if sim.RandomFloat("Molten Core") < 0.04*float64(warlock.Talents.MoltenCore) {
 					warlock.MoltenCoreAura.Activate(sim)
@@ -433,7 +433,7 @@ func (warlock *Warlock) setupBackdraft() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.Conflagrate {
 				warlock.BackdraftAura.Activate(sim)
 				warlock.BackdraftAura.SetStacks(sim, 3)
@@ -459,8 +459,8 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
@@ -494,7 +494,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
 				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
@@ -547,8 +547,8 @@ func (warlock *Warlock) setupDemonicPact() {
 				}
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) && icd.IsReady(sim) {
 				icd.Use(sim)
 				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
 				for i, party := range warlock.Party.Raid.Parties {

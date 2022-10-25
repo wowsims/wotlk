@@ -62,8 +62,8 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label:    "Rune Strike Trigger",
 		Duration: core.NeverExpires,
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeDodge | core.OutcomeParry) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeDodge | core.OutcomeParry) {
 				dk.RuneStrikeAura.Activate(sim)
 			}
 		},

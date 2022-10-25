@@ -716,8 +716,8 @@ func (unit *Unit) applyParryHaste() {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.Outcome.Matches(OutcomeParry) {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Outcome.Matches(OutcomeParry) {
 				return
 			}
 

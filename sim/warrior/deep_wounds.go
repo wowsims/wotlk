@@ -30,14 +30,14 @@ func (warrior *Warrior) applyDeepWounds() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskEmpty) || !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
 				return
 			}
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				warrior.DeepWounds.Cast(sim, nil)
-				warrior.procDeepWounds(sim, spellEffect.Target, spell.IsMH())
-				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
+				warrior.procDeepWounds(sim, result.Target, spell.IsMH())
+				warrior.procBloodFrenzy(sim, result, time.Second*6)
 			}
 		},
 	})

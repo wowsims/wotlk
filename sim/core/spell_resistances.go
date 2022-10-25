@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-func (spellEffect *SpellEffect) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
-	// TODO check why spellEffect.Outcome isn't updated with resists anymore
+func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
+	// TODO check why result.Outcome isn't updated with resists anymore
 	resistanceMultiplier := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
-	spellEffect.Damage *= resistanceMultiplier
+	result.Damage *= resistanceMultiplier
 
-	spellEffect.ResistanceMultiplier = resistanceMultiplier
-	spellEffect.PreOutcomeDamage = spellEffect.Damage
+	result.ResistanceMultiplier = resistanceMultiplier
+	result.PreOutcomeDamage = result.Damage
 }
 
 // Modifies damage based on Armor or Magic resistances, depending on the damage type.

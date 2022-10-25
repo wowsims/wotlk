@@ -48,7 +48,7 @@ func init() {
 
 		core.MakePermanent(player.GetOrRegisterAura(core.Aura{
 			Label: "Shadowmourne",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}

@@ -153,8 +153,8 @@ func (paladin *Paladin) applyRedoubt() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			paladin.AddStatDynamic(sim, stats.Block, -bonusBlockRating)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeBlock) {
 				aura.RemoveStack(sim)
 			}
 		},
@@ -166,8 +166,8 @@ func (paladin *Paladin) applyRedoubt() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				if sim.RandomFloat("Redoubt") < 0.1 {
 					procAura.Activate(sim)
 					procAura.SetStacks(sim, 5)
@@ -204,9 +204,9 @@ func (paladin *Paladin) applyReckoning() {
 				ApplyEffects:     paladin.AutoAttacks.MHConfig.ApplyEffects,
 			})
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == paladin.AutoAttacks.MHAuto {
-				reckoningSpell.Cast(sim, spellEffect.Target)
+				reckoningSpell.Cast(sim, result.Target)
 			}
 		},
 	})
@@ -217,8 +217,8 @@ func (paladin *Paladin) applyReckoning() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() && sim.RandomFloat("Reckoning") < procChance {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && sim.RandomFloat("Reckoning") < procChance {
 				procAura.Activate(sim)
 				procAura.SetStacks(sim, 4)
 			}
@@ -252,7 +252,7 @@ func (paladin *Paladin) applyArdentDefender() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if aura.Unit.CurrentHealthPercent() < 0.35 {
 				procAura.Activate(sim)
 			}
@@ -346,8 +346,8 @@ func (paladin *Paladin) applyVengeance() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			}
@@ -366,11 +366,11 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
-			debuffAura := core.HeartoftheCrusaderDebuff(spellEffect.Target, float64(paladin.Talents.HeartOfTheCrusader))
+			debuffAura := core.HeartoftheCrusaderDebuff(result.Target, float64(paladin.Talents.HeartOfTheCrusader))
 			debuffAura.Activate(sim)
 		},
 	})
@@ -393,12 +393,12 @@ func (paladin *Paladin) applyArtOfWar() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -428,8 +428,8 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) || !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) || !result.Landed() {
 				return
 			}
 
@@ -504,20 +504,20 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.DidCrit() || !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.DidCrit() || !result.Landed() {
 				return
 			}
 
 			if spell.SpellID == paladin.CrusaderStrike.SpellID || spell.SpellID == paladin.DivineStorm.SpellID || spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-				paladin.RighteousVengeancePools[spellEffect.Target.Index] += spellEffect.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
-				paladin.RighteousVengeanceDamage[spellEffect.Target.Index] = paladin.RighteousVengeancePools[spellEffect.Target.Index] / 4
+				paladin.RighteousVengeancePools[result.Target.Index] += result.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
+				paladin.RighteousVengeanceDamage[result.Target.Index] = paladin.RighteousVengeancePools[result.Target.Index] / 4
 
-				if !paladin.RighteousVengeanceDots[spellEffect.Target.Index].IsActive() {
-					paladin.RighteousVengeanceDots[spellEffect.Target.Index].Apply(sim)
+				if !paladin.RighteousVengeanceDots[result.Target.Index].IsActive() {
+					paladin.RighteousVengeanceDots[result.Target.Index].Apply(sim)
 				}
 
-				paladin.RighteousVengeanceDots[spellEffect.Target.Index].Refresh(sim)
+				paladin.RighteousVengeanceDots[result.Target.Index].Refresh(sim)
 			}
 		},
 	})
@@ -550,8 +550,8 @@ func (paladin *Paladin) applyGuardedByTheLight() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 

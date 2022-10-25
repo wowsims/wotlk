@@ -38,7 +38,7 @@ func init() {
 				charges = 0
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !icd.IsReady(sim) {
 					return
 				}
@@ -47,14 +47,14 @@ func init() {
 					return
 				}
 
-				if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				if !result.Outcome.Matches(core.OutcomeCrit) {
 					return
 				}
 
 				icd.Use(sim)
 				charges++
 				if charges >= 3 {
-					tlcSpell.Cast(sim, spellEffect.Target)
+					tlcSpell.Cast(sim, result.Target)
 					charges = 0
 				}
 			},

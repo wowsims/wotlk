@@ -59,7 +59,7 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == shaman.LavaBurst && shaman.FlameShockDot.IsActive() { // Doesn't have to hit from tooltip
 						// Modify dot to last 6 more seconds than it has left, and refresh aura
 						shaman.FlameShockDot.Duration = shaman.FlameShockDot.RemainingDuration(sim) + time.Second*6
@@ -142,8 +142,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() { //TODO: verify it needs to land
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() { //TODO: verify it needs to land
 					return
 				}
 				if spell == shaman.Stormstrike {
@@ -176,7 +176,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.ActionID.SpellID == FlameshockID {
 					procAura.Activate(sim)
 					procAura.AddStack(sim)
