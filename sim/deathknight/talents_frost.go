@@ -308,18 +308,6 @@ func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect) core.ProcMask {
-	var procMask core.ProcMask
-	if isMH {
-		procMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialHitAndCrit()
-	} else {
-		procMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialCritOnly()
-	}
-	return procMask
-}
-
 func (dk *Deathknight) threatOfThassarianProcMask(isMH bool) core.ProcMask {
 	if isMH {
 		return core.ProcMaskMeleeMHSpecial

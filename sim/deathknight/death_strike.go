@@ -18,9 +18,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 		healthMetrics = dk.NewHealthMetrics(DeathStrikeActionID)
 	}
 
-	rs := &RuneSpell{
-		Refundable: isMH,
-	}
+	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -52,9 +50,10 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
 			}
 
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
+			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
+				rs.OnResult(sim, result)
 				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
@@ -64,9 +63,9 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 				}
 
 				dk.threatOfThassarianProc(sim, result, dk.DeathStrikeOhHit)
-
-				rs.OnResult(sim, result)
 			}
+
+			spell.DealDamage(sim, result)
 		},
 	}
 
@@ -83,13 +82,13 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 			},
 			IgnoreHaste: true,
 		}
-		//conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		rs.Refundable = true
+		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 		if dk.Talents.DeathRuneMastery == 3 {
 			rs.DeathConvertChance = 1.0
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
 		}
-		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 	}
 
 	if isMH {

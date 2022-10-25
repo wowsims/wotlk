@@ -8,29 +8,15 @@ import (
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 
-func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
-	if !isMH {
-		// SpellID 66992
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 189, true)
+func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
+	rs := &RuneSpell{
+		Refundable: isMH,
 	}
-
-	effect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
-			},
-		},
-
-		OnSpellHitDealt: onhit,
-	}
-
-	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    procMask,
+		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
@@ -41,9 +27,41 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			var baseDamage float64
+			if isMH {
+				baseDamage = 378 +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else {
+				// SpellID 66992
+				baseDamage = 189 +
+					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			}
+			baseDamage *= dk.RoRTSBonus(target)
+
+			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
+
+			if isMH {
+				rs.OnResult(sim, result)
+				dk.threatOfThassarianProc(sim, result, dk.PlagueStrikeOhHit)
+				dk.LastOutcome = result.Outcome
+				if result.Landed() {
+					dk.BloodPlagueExtended[target.Index] = 0
+					dk.BloodPlagueSpell.Cast(sim, target)
+					if dk.Talents.CryptFever > 0 {
+						dk.CryptFeverAura[target.Index].Activate(sim)
+					}
+					if dk.Talents.EbonPlaguebringer > 0 {
+						dk.EbonPlagueAura[target.Index].Activate(sim)
+					}
+				}
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	}
-	rs := &RuneSpell{}
 	if isMH { // only MH has cost & gcd
 		rpGen := 10.0 + 2.5*float64(dk.Talents.Dirge)
 		conf.ResourceType = stats.RunicPower
@@ -58,7 +76,6 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 			},
 			IgnoreHaste: true,
 		}
-		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
 	}
 
 	if isMH {
@@ -71,26 +88,11 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool, onhit func(sim *core.Simu
 }
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {
-	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.threatOfThassarianProc(sim, spellEffect, dk.PlagueStrikeOhHit)
-		dk.LastOutcome = spellEffect.Outcome
-		if spellEffect.Landed() {
-			dk.BloodPlagueExtended[spellEffect.Target.Index] = 0
-			dk.BloodPlagueSpell.Cast(sim, spellEffect.Target)
-			if dk.Talents.CryptFever > 0 {
-				dk.CryptFeverAura[spellEffect.Target.Index].Activate(sim)
-			}
-			if dk.Talents.EbonPlaguebringer > 0 {
-				dk.EbonPlagueAura[spellEffect.Target.Index].Activate(sim)
-			}
-		}
-	})
-	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false, nil)
+	dk.PlagueStrikeMhHit = dk.newPlagueStrikeSpell(true)
+	dk.PlagueStrikeOhHit = dk.newPlagueStrikeSpell(false)
 	dk.PlagueStrike = dk.PlagueStrikeMhHit
 }
 func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 378.0, true)
-
 	dk.RuneWeapon.PlagueStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -103,18 +105,16 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell)
-				},
-			},
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					dk.RuneWeapon.BloodPlagueSpell.Cast(sim, spellEffect.Target)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 378 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				dk.RuneWeapon.BloodPlagueSpell.Cast(sim, target)
+			}
+		},
 	})
 }

@@ -200,6 +200,22 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 			},
 			OutcomeApplier: dk.OutcomeFuncMeleeWeaponSpecialNoCrit(),
 		}),
+		// TODO: Commit this separately because it breaks 1 test.
+		//ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		//	var baseDamage float64
+		//	if isMh {
+		//		baseDamage = 0 +
+		//			spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+		//			spell.BonusWeaponDamage()
+		//	} else {
+		//		baseDamage = 0 +
+		//			0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+		//			spell.BonusWeaponDamage()
+		//	}
+		//	baseDamage *= 0.25 + 0.125*dk.dkCountActiveDiseases(target)
+
+		//	spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialNoCrit)
+		//},
 	})
 }
 

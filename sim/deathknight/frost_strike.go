@@ -8,33 +8,13 @@ import (
 
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
-func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
+func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 250+bonusBaseDamage, true)
-	if !isMH {
-		// SpellID 66962
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 125+bonusBaseDamage, true)
-	}
-
-	effect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					dk.glacielRotBonus(hitEffect.Target) *
-					dk.RoRTSBonus(hitEffect.Target) *
-					dk.mercilessCombatBonus(sim)
-			},
-		},
-
-		OnSpellHitDealt: onhit,
-	}
-
-	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
 
 	conf := core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolFrost,
-		ProcMask:    procMask,
+		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
@@ -44,7 +24,33 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			var baseDamage float64
+			if isMH {
+				baseDamage = 250 +
+					bonusBaseDamage +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else {
+				// SpellID 66962
+				baseDamage = 125 +
+					bonusBaseDamage +
+					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			}
+			baseDamage *= dk.glacielRotBonus(target) *
+				dk.RoRTSBonus(target) *
+				dk.mercilessCombatBonus(sim)
+
+			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
+
+			if isMH {
+				dk.LastOutcome = result.Outcome
+				dk.threatOfThassarianProc(sim, result, dk.FrostStrikeOhHit)
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	}
 
 	rs := &RuneSpell{}
@@ -63,7 +69,6 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 			},
 			IgnoreHaste: true,
 		}
-		conf.ApplyEffects = core.ApplyEffectFuncDirectDamage(effect)
 	}
 
 	if isMH {
@@ -77,10 +82,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool, onhit func(sim *core.Si
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {
-	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.LastOutcome = spellEffect.Outcome
-		dk.threatOfThassarianProc(sim, spellEffect, dk.FrostStrikeOhHit)
-	})
-	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false, nil)
+	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true)
+	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false)
 	dk.FrostStrike = dk.FrostStrikeMhHit
 }

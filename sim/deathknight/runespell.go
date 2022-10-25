@@ -29,14 +29,11 @@ type RuneSpell struct {
 }
 
 func (rs *RuneSpell) OnResult(sim *core.Simulation, result *core.SpellEffect) {
-	rs.OnOutcome(sim, result.Outcome)
-}
-func (rs *RuneSpell) OnOutcome(sim *core.Simulation, outcome core.HitOutcome) {
 	cost := core.RuneCost(rs.Spell.CurCast.Cost) // cost was already optimized in RuneSpell.Cast
 	if cost == 0 {
 		return // it was free this time. we don't care
 	}
-	if outcome.Matches(core.OutcomeLanded) {
+	if result.Landed() {
 		slot1, slot2, slot3 := rs.Spell.Unit.SpendRuneCost(sim, rs.Spell, cost)
 		if !sim.Proc(rs.DeathConvertChance, "Blood of The North / Reaping / DRM") {
 			return
@@ -112,22 +109,4 @@ func (dk *Deathknight) RegisterSpell(rs *RuneSpell, spellConfig core.SpellConfig
 	rs.onCast = onCast
 	rs.Spell = dk.Character.RegisterSpell(spellConfig)
 	return rs
-}
-
-// withRuneRefund is a wrapper around spell effects that on a miss provides a rune refund.
-func (dk *Deathknight) withRuneRefund(rs *RuneSpell, baseEffect core.SpellEffect, isAOE bool) core.ApplySpellEffects {
-	var baseEffects []core.SpellEffect
-	if isAOE && dk.Env.GetNumTargets() > 1 {
-		numTargets := dk.Env.GetNumTargets()
-		baseEffects = make([]core.SpellEffect, numTargets)
-		for i := range baseEffects {
-			baseEffects[i] = baseEffect
-			baseEffects[i].Target = dk.Env.GetTargetUnit(int32(i))
-		}
-	} else {
-		baseEffects = []core.SpellEffect{baseEffect}
-	}
-
-	rs.Refundable = true
-	return core.ApplyEffectFuncWithOutcome(baseEffects, rs.OnOutcome)
 }

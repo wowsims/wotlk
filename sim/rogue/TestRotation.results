@@ -1432,10 +1432,6 @@ casts_results: {
    value: 0
   }
   casts: {
-   key: "spell_id:48676"
-   value: 0
-  }
-  casts: {
    key: "spell_id:51690"
    value: 3
   }
@@ -1639,10 +1635,6 @@ casts_results: {
   casts: {
    key: "spell_id:48672 tag:5"
    value: 4.5
-  }
-  casts: {
-   key: "spell_id:48676"
-   value: 0
   }
   casts: {
    key: "spell_id:48676"
@@ -2276,10 +2268,6 @@ casts_results: {
    value: 0
   }
   casts: {
-   key: "spell_id:48676"
-   value: 0
-  }
-  casts: {
    key: "spell_id:51690"
    value: 3
   }
@@ -2483,10 +2471,6 @@ casts_results: {
   casts: {
    key: "spell_id:48672 tag:5"
    value: 5.6
-  }
-  casts: {
-   key: "spell_id:48676"
-   value: 0
   }
   casts: {
    key: "spell_id:48676"

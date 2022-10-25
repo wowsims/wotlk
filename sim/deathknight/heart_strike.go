@@ -7,30 +7,16 @@ import (
 
 var HeartStrikeActionID = core.ActionID{SpellID: 55262}
 
-func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
+func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 736.0+bonusBaseDamage, true)
-
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
 	critMultiplier := dk.bonusCritMultiplier(dk.Talents.MightOfMograine)
-	outcomeApplier := dk.OutcomeFuncMeleeSpecialHitAndCrit()
 	if isDrw {
 		critMultiplier = dk.RuneWeapon.DefaultMeleeCritMultiplier()
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMeleeSpecialHitAndCrit()
 	}
 
-	effect := core.SpellEffect{
-		OutcomeApplier: outcomeApplier,
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(hitEffect.Target), dk.dkCountActiveDiseases(hitEffect.Target))
-				return weaponBaseDamage(sim, hitEffect, spell) * (1.0 + activeDiseases*diseaseMulti)
-			},
-		},
-		OnSpellHitDealt: onhit,
-	}
-
+	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    HeartStrikeActionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -46,9 +32,33 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 		CritMultiplier:   critMultiplier,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 736 +
+				bonusBaseDamage +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(target), dk.dkCountActiveDiseases(target))
+			baseDamage *= 1 + activeDiseases*diseaseMulti
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if isMainTarget {
+				if isDrw {
+					if dk.Env.GetNumTargets() > 1 {
+						dk.RuneWeapon.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
+					}
+				} else {
+					rs.OnResult(sim, result)
+
+					if dk.Env.GetNumTargets() > 1 {
+						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
+					}
+					dk.LastOutcome = result.Outcome
+				}
+			}
+		},
 	}
-	rs := &RuneSpell{}
 	if isMainTarget && !isDrw { // off target doesnt need GCD
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(10, 1, 0, 0, 0))
@@ -62,7 +72,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool, onhit 
 			},
 			IgnoreHaste: true,
 		}
-		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		rs.Refundable = true
 	}
 
 	if isDrw {
@@ -80,20 +90,11 @@ func (dk *Deathknight) registerHeartStrikeSpell() {
 		return
 	}
 
-	dk.HeartStrike = dk.newHeartStrikeSpell(true, false, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Env.GetNumTargets() > 1 {
-			dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
-		}
-		dk.LastOutcome = spellEffect.Outcome
-	})
-	dk.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, false, nil)
+	dk.HeartStrike = dk.newHeartStrikeSpell(true, false)
+	dk.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, false)
 }
 
 func (dk *Deathknight) registerDrwHeartStrikeSpell() {
-	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if dk.Env.GetNumTargets() > 1 {
-			dk.RuneWeapon.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
-		}
-	}).Spell
-	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true, nil).Spell
+	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true).Spell
+	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true).Spell
 }
