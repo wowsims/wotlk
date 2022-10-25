@@ -64,7 +64,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 						ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 							baseDamage := dk.Inputs.AvgAMSHit * sim.Roll(0.9, 1.1)
-							spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+							spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 						},
 					})
 				}

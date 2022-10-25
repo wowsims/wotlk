@@ -104,7 +104,7 @@ func (warrior *Warrior) applyDamageShield() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := coeff * warrior.GetStat(stats.BlockValue)
-			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 		},
 	})
 

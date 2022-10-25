@@ -98,7 +98,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 			baseDamage := dk.LastDiseaseDamage * dk.bonusCoeffs.wanderingPlagueMultiplier
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamageAlwaysHit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeAlwaysHit)
 			}
 		},
 	})
@@ -121,7 +121,7 @@ func (dk *Deathknight) applyNecrosis() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg*coeff)
+			spell.CalcAndDealDamage(sim, target, curDmg*coeff, spell.OutcomeAlwaysHit)
 		},
 	})
 

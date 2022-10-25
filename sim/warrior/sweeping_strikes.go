@@ -26,7 +26,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
+			spell.CalcAndDealDamage(sim, target, curDmg, spell.OutcomeAlwaysHit)
 		},
 	})
 

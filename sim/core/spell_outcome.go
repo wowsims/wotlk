@@ -19,10 +19,6 @@ func (spell *Spell) OutcomeAlwaysMiss(_ *Simulation, result *SpellEffect, _ *Att
 	result.Damage = 0
 	spell.SpellMetrics[result.Target.UnitIndex].Misses++
 }
-func (spell *Spell) CalcAndDealDamageAlwaysHit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
-	spell.DealDamage(sim, result)
-}
 
 // A tick always hits, but we don't count them as hits in the metrics.
 func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
