@@ -10,7 +10,7 @@ import (
 )
 
 // TODO (maybe) https://github.com/magey/wotlk-warrior/issues/23 - Rend is not benefitting from Two-Handed Weapon Specialization
-func (warrior *Warrior) RegisterRendSpell(healthThreshold float64) {
+func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
 	actionID := core.ActionID{SpellID: 47465}
 
 	cost := 10.0
@@ -78,6 +78,7 @@ func (warrior *Warrior) RegisterRendSpell(healthThreshold float64) {
 	})
 
 	warrior.RendHealthThresholdAbove = healthThreshold / 100
+	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
