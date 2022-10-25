@@ -187,10 +187,6 @@ func (spell *Spell) OutcomeMagicHit(sim *Simulation, result *SpellEffect, attack
 		spell.SpellMetrics[result.Target.UnitIndex].Misses++
 	}
 }
-func (spell *Spell) CalcAndDealDamageMagicHit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMagicHit)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeMeleeWhite(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	unit := spell.Unit
@@ -215,10 +211,6 @@ func (spell *Spell) OutcomeMeleeWhite(sim *Simulation, result *SpellEffect, atta
 		}
 	}
 }
-func (spell *Spell) CalcAndDealDamageMeleeWhite(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWhite)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeMeleeSpecialHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	unit := spell.Unit
@@ -237,10 +229,6 @@ func (spell *Spell) OutcomeMeleeSpecialHit(sim *Simulation, result *SpellEffect,
 			result.applyAttackTableHit(spell)
 		}
 	}
-}
-func (spell *Spell) CalcAndDealDamageMeleeSpecialHit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHit)
-	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeMeleeSpecialHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -268,10 +256,6 @@ func (spell *Spell) OutcomeMeleeSpecialHitAndCrit(sim *Simulation, result *Spell
 		}
 	}
 }
-func (spell *Spell) CalcAndDealDamageMeleeSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialHitAndCrit)
-	spell.DealDamage(sim, result)
-}
 
 // Like OutcomeMeleeSpecialHitAndCrit, but blocks prevent crits (all weapon damage based attacks).
 func (spell *Spell) OutcomeMeleeWeaponSpecialHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -289,10 +273,6 @@ func (spell *Spell) OutcomeMeleeWeaponSpecialHitAndCrit(sim *Simulation, result 
 	} else {
 		spell.OutcomeMeleeSpecialHitAndCrit(sim, result, attackTable)
 	}
-}
-func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialHitAndCrit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeMeleeWeaponSpecialNoCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -314,10 +294,6 @@ func (spell *Spell) OutcomeMeleeWeaponSpecialNoCrit(sim *Simulation, result *Spe
 		}
 	}
 }
-func (spell *Spell) CalcAndDealDamageMeleeWeaponSpecialNoCrit(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeWeaponSpecialNoCrit)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParry(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	roll := sim.RandomFloat("White Hit Table")
@@ -327,10 +303,6 @@ func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParry(sim *Simulation, result
 		!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
 		result.applyAttackTableHit(spell)
 	}
-}
-func (spell *Spell) CalcAndDealDamageMeleeSpecialNoBlockDodgeParry(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
-	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeMeleeSpecialNoBlockDodgeParryNoCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -347,10 +319,6 @@ func (spell *Spell) OutcomeMeleeSpecialCritOnly(sim *Simulation, result *SpellEf
 		result.applyAttackTableHit(spell)
 	}
 }
-func (spell *Spell) CalcAndDealDamageMeleeSpecialCritOnly(sim *Simulation, target *Unit, baseHealing float64) {
-	result := spell.CalcDamage(sim, target, baseHealing, spell.OutcomeMeleeSpecialCritOnly)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeRangedHit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	roll := sim.RandomFloat("White Hit Table")
@@ -359,10 +327,6 @@ func (spell *Spell) OutcomeRangedHit(sim *Simulation, result *SpellEffect, attac
 	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) {
 		result.applyAttackTableHit(spell)
 	}
-}
-func (spell *Spell) CalcAndDealDamageRangedHit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHit)
-	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeRangedHitAndCrit(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
@@ -407,10 +371,6 @@ func (dot *Dot) OutcomeRangedHitAndCritSnapshot(sim *Simulation, result *SpellEf
 		}
 	}
 }
-func (spell *Spell) CalcAndDealDamageRangedHitAndCrit(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-	spell.DealDamage(sim, result)
-}
 
 func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {
 	// Block already checks for this, but we can skip the RNG roll which is expensive.
@@ -430,10 +390,6 @@ func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellEffect, 
 			result.applyAttackTableHit(spell)
 		}
 	}
-}
-func (spell *Spell) CalcAndDealDamageRangedCritOnly(sim *Simulation, target *Unit, baseDamage float64) {
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedCritOnly)
-	spell.DealDamage(sim, result)
 }
 
 func (spell *Spell) OutcomeEnemyMeleeWhite(sim *Simulation, result *SpellEffect, attackTable *AttackTable) {

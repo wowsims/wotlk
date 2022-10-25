@@ -32,7 +32,7 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(1900, 2100)
 				// can miss, can't crit
-				spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 			},
 		})
 

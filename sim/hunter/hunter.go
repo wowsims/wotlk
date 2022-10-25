@@ -221,7 +221,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 			hunter.AmmoDamageBonus +
 			spell.BonusWeaponDamage()
-		spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 	}
 
 	hunter.pet = hunter.NewHunterPet()

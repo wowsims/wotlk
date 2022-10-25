@@ -42,7 +42,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(&aoeTarget.Unit)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageRangedHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
 			}
 			hunter.ExplosiveTrapDot.Apply(sim)
 		},

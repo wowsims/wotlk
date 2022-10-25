@@ -232,7 +232,7 @@ func init() {
 							hunter.AmmoDamageBonus +
 							spell.BonusWeaponDamage()
 
-						spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+						spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 					},
 				})
 			}
