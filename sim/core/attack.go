@@ -190,9 +190,6 @@ type AutoAttacks struct {
 	OHConfig     SpellConfig
 	RangedConfig SpellConfig
 
-	MHEffect SpellEffect
-	OHEffect SpellEffect
-
 	MHAuto     *Spell
 	OHAuto     *Spell
 	RangedAuto *Spell

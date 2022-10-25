@@ -102,7 +102,9 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(warlock.ImmolationAuraDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			warlock.ImmolationAuraDot.Apply(sim)
+		},
 	})
 	warlock.ImmolationAuraDot.Spell = warlock.ImmolationAura
 }

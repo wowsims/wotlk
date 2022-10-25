@@ -58,7 +58,9 @@ func (druid *Druid) registerHurricaneSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(hurricaneDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			hurricaneDot.Apply(sim)
+		},
 	})
 	hurricaneDot.Spell = druid.Hurricane
 }

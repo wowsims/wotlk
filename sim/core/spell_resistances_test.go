@@ -65,7 +65,7 @@ func Test_PartialResistsVsPlayer(t *testing.T) {
 				Damage:  1000,
 			}
 
-			spellEffect.applyResistances(sim, spell, spellEffect.IsPeriodic, attackTable)
+			spellEffect.applyResistances(sim, spell, false, attackTable)
 
 			outcomes[spellEffect.Outcome]++
 			totalDamage += spellEffect.Damage
@@ -135,7 +135,7 @@ func Test_PartialResistsVsBoss(t *testing.T) {
 				Damage:  1000,
 			}
 
-			spellEffect.applyResistances(sim, spell, spellEffect.IsPeriodic, attackTable)
+			spellEffect.applyResistances(sim, spell, false, attackTable)
 
 			outcomes[spellEffect.Outcome]++
 			totalDamage += spellEffect.Damage

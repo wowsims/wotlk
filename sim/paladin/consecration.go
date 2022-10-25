@@ -65,7 +65,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(consecrationDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			consecrationDot.Apply(sim)
+		},
 	})
 
 	consecrationDot.Spell = paladin.Consecration
