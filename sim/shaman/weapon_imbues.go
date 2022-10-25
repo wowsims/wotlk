@@ -42,8 +42,8 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 				spell.DealDamage(sim, result1)
 				spell.DealDamage(sim, result2)
 			} else {
-				baseDamage1 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
-				baseDamage2 := constBaseDamage + spell.Unit.OHWeaponDamage(sim, mAP)
+				baseDamage1 := constBaseDamage + 0.5*spell.Unit.OHWeaponDamage(sim, mAP)
+				baseDamage2 := constBaseDamage + 0.5*spell.Unit.OHWeaponDamage(sim, mAP)
 				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
 				result2 := spell.CalcDamage(sim, target, baseDamage2, spell.OutcomeMeleeSpecialHitAndCrit)
 				spell.DealDamage(sim, result1)
