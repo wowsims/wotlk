@@ -31,8 +31,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
 					return
 				}
 				hunter.AddMana(sim, manaGain, manaMetrics, false)
@@ -52,7 +52,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell != hunter.SteadyShot {
 					return
 				}

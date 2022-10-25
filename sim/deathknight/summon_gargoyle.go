@@ -127,7 +127,7 @@ var gargoyleBaseStats = stats.Stats{
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
-	var outcomeApplier core.NewOutcomeApplier
+	var outcomeApplier core.OutcomeApplier
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51963},

@@ -198,12 +198,12 @@ type PetSpecialAbilityConfig struct {
 	MaxDmg  float64
 	APRatio float64
 
-	OnSpellHitDealt func(*core.Simulation, *core.Spell, *core.SpellEffect)
+	OnSpellHitDealt func(*core.Simulation, *core.Spell, *core.SpellResult)
 }
 
 func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbility {
 	var flags core.SpellFlag
-	var applyEffects core.ApplySpellEffects
+	var applyEffects core.ApplySpellResults
 	var procMask core.ProcMask
 	if config.School == core.SpellSchoolPhysical {
 		flags = core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage
@@ -281,8 +281,8 @@ func (hp *HunterPet) newDemoralizingScreech() PetAbility {
 		MinDmg:  85,
 		MaxDmg:  129,
 		APRatio: 0.07,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				for _, debuff := range debuffs {
 					debuff.Activate(sim)
 				}
@@ -305,8 +305,8 @@ func (hp *HunterPet) newFireBreath() PetAbility {
 		MinDmg:  43,
 		MaxDmg:  57,
 		APRatio: 0.049,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				dot.Apply(sim)
 			}
 		},
@@ -445,8 +445,8 @@ func (hp *HunterPet) newMonstrousBite() PetAbility {
 		MinDmg:  91,
 		MaxDmg:  123,
 		APRatio: 0.07,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			}
@@ -598,8 +598,8 @@ func (hp *HunterPet) newRake() PetAbility {
 		MinDmg:  47,
 		MaxDmg:  67,
 		APRatio: 0.0175,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				dot.Apply(sim)
 			}
 		},
@@ -817,8 +817,8 @@ func (hp *HunterPet) newSpiritStrike() PetAbility {
 		MinDmg:  49,
 		MaxDmg:  65,
 		APRatio: 0.04,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				dot.Apply(sim)
 			}
 		},
@@ -922,8 +922,8 @@ func (hp *HunterPet) newStampede() PetAbility {
 		MinDmg:  182,
 		MaxDmg:  264,
 		APRatio: 0.07,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				debuff.Activate(sim)
 			}
 		},
@@ -942,8 +942,8 @@ func (hp *HunterPet) newSting() PetAbility {
 		MinDmg:  64,
 		MaxDmg:  86,
 		APRatio: 0.049,
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
 				debuff.Activate(sim)
 			}
 		},

@@ -99,17 +99,17 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Seed-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 				if spell.ActionID.SpellID == actionID.SpellID {
 					return // Seed can't pop seed.
 				}
-				trySeedPop(sim, spellEffect.Damage)
+				trySeedPop(sim, result.Damage)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				trySeedPop(sim, spellEffect.Damage)
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				trySeedPop(sim, result.Damage)
 			},
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				seedDmgTracker = 0

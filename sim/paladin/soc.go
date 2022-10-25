@@ -26,7 +26,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 */
 
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
-	results := make([]*core.SpellEffect, numHits)
+	results := make([]*core.SpellResult, numHits)
 
 	baseMultiplierAdditive := 1 +
 		paladin.getItemSetLightswornBattlegearBonus4() +
@@ -99,31 +99,31 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ActionID: auraActionID,
 		Duration: SealDuration,
 
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if glyphManaMetrics != nil && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics, false)
 			}
 
 			// Don't proc on misses or our own procs.
-			if !spellEffect.Landed() || spell == onJudgementProc || spell.SameAction(onSpecialOrSwingActionID) {
+			if !result.Landed() || spell == onJudgementProc || spell.SameAction(onSpecialOrSwingActionID) {
 				return
 			}
 
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
-				onJudgementProc.Cast(sim, spellEffect.Target)
+				onJudgementProc.Cast(sim, result.Target)
 				if paladin.Talents.JudgementsOfTheJust > 0 {
 					// Special JoJ talent behavior, procs swing seal on judgements
 					// For SoC this is a cleave.
-					onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
+					onSpecialOrSwingProcCleave.Cast(sim, result.Target)
 				}
 			} else {
 				if spell.IsMelee() {
 					// Temporary check to avoid AOE double procing.
 					if spell.SpellID == paladin.HammerOfTheRighteous.SpellID || spell.SpellID == paladin.DivineStorm.SpellID {
-						onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+						onSpecialOrSwingProc.Cast(sim, result.Target)
 					} else {
-						onSpecialOrSwingProcCleave.Cast(sim, spellEffect.Target)
+						onSpecialOrSwingProcCleave.Cast(sim, result.Target)
 					}
 				}
 			}

@@ -13,7 +13,7 @@ func (paladin *Paladin) registerDivineStormSpell() {
 	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0) + // Libram of Discord
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0) // Venture Co. Libram of Retribution
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
-	results := make([]*core.SpellEffect, numHits)
+	results := make([]*core.SpellResult, numHits)
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 53385},

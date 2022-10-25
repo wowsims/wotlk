@@ -21,7 +21,7 @@ const (
 	OnCastComplete
 )
 
-type ProcHandler func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
+type ProcHandler func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult)
 
 type ProcTrigger struct {
 	Name       string
@@ -51,14 +51,14 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 	}
 
 	handler := config.Handler
-	callback := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+	callback := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 		if config.ProcMask != core.ProcMaskUnknown && !spell.ProcMask.Matches(config.ProcMask) {
 			return
 		}
-		if config.Outcome != core.OutcomeEmpty && !spellEffect.Outcome.Matches(config.Outcome) {
+		if config.Outcome != core.OutcomeEmpty && !result.Outcome.Matches(config.Outcome) {
 			return
 		}
-		if config.Harmful && spellEffect.Damage == 0 {
+		if config.Harmful && result.Damage == 0 {
 			return
 		}
 		if icd.Duration != 0 && !icd.IsReady(sim) {
@@ -73,7 +73,7 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 		if icd.Duration != 0 {
 			icd.Use(sim)
 		}
-		handler(sim, spell, spellEffect)
+		handler(sim, spell, result)
 	}
 
 	if config.Callback.Matches(OnSpellHitDealt) {

@@ -128,13 +128,13 @@ func (dk *Deathknight) applyNecrosis() {
 	dk.NecrosisAura = core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Necrosis",
 		// ActionID: core.ActionID{SpellID: 51465}, // hide from metrics
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
-			curDmg = spellEffect.Damage
-			necrosisHit.Cast(sim, spellEffect.Target)
+			curDmg = result.Damage
+			necrosisHit.Cast(sim, result.Target)
 		},
 	}))
 }
@@ -151,17 +151,17 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 	dk.BloodCakedBladeAura = core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Blood-Caked Blade",
 		// ActionID: core.ActionID{SpellID: 49628}, // Hide from metrics
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				return
 			}
 
 			if sim.RandomFloat("Blood-Caked Blade Roll") < procChance {
 				isMh := spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto)
 				if isMh {
-					bloodCakedBladeHitMh.Cast(sim, spellEffect.Target)
+					bloodCakedBladeHitMh.Cast(sim, result.Target)
 				} else {
-					bloodCakedBladeHitOh.Cast(sim, spellEffect.Target)
+					bloodCakedBladeHitOh.Cast(sim, result.Target)
 				}
 			}
 		},

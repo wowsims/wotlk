@@ -11,7 +11,7 @@ import (
 func (paladin *Paladin) registerHolyWrathSpell() {
 	// From the perspective of max rank.
 	baseCost := paladin.BaseMana * 0.20
-	results := make([]*core.SpellEffect, len(paladin.Env.Encounter.Targets))
+	results := make([]*core.SpellResult, len(paladin.Env.Encounter.Targets))
 
 	paladin.HolyWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48817},

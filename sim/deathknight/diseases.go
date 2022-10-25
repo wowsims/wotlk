@@ -182,7 +182,7 @@ func (dk *Deathknight) registerBloodPlague() {
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				var result *core.SpellEffect
+				var result *core.SpellResult
 				if canCrit {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
@@ -291,7 +291,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				var result *core.SpellEffect
+				var result *core.SpellResult
 				if canCrit {
 					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
@@ -305,7 +305,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 	}
 }
 
-func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellEffect) {
+func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 	if dk.Talents.WanderingPlague == 0 {
 		return
 	}

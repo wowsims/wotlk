@@ -95,8 +95,8 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 		core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Enrage Trigger",
 			Duration: core.NeverExpires,
-			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
 					if sim.RandomFloat("Enrage Trigger Chance") <= 0.5*float64(warrior.Talents.ImprovedDefensiveStance) {
 						enrageAura.Activate(sim)
 					}

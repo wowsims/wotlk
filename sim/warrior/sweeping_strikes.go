@@ -38,8 +38,8 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, 5)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if aura.GetStacks() == 0 || spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if aura.GetStacks() == 0 || result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -47,10 +47,10 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			//  do a normalized MH hit instead. This is true for Sudden Death procs as well.
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / spellEffect.ResistanceMultiplier
+			curDmg = result.Damage / result.ResistanceMultiplier
 
-			ssHit.Cast(sim, warrior.Env.NextTargetUnit(spellEffect.Target))
-			ssHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--
+			ssHit.Cast(sim, warrior.Env.NextTargetUnit(result.Target))
+			ssHit.SpellMetrics[result.Target.UnitIndex].Casts--
 			if aura.GetStacks() > 0 {
 				aura.RemoveStack(sim)
 			}

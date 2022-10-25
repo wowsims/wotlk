@@ -75,7 +75,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
 	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
-	results := make([]*core.SpellEffect, numHits)
+	results := make([]*core.SpellResult, numHits)
 
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},

@@ -170,7 +170,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			for _, affectedSpell := range affectedSpells {
 				if spell == affectedSpell {
 					aura.Deactivate(sim)
@@ -214,12 +214,12 @@ func (rogue *Rogue) applySealFate() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagBuilder) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -290,8 +290,8 @@ func (rogue *Rogue) applyCombatPotency() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -328,8 +328,8 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.DidCrit() {
 				return
 			}
 			// Fan of Knives OH hits do not trigger focused attacks
@@ -381,11 +381,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.MultiplyMeleeSpeed(sim, inverseHasteBonus)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if sim.GetNumTargets() < 2 {
 				return
 			}
-			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 			// Fan of Knives off-hand hits are not cloned
@@ -394,10 +394,10 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			}
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / spellEffect.ResistanceMultiplier
+			curDmg = result.Damage / result.ResistanceMultiplier
 
-			bfHit.Cast(sim, rogue.Env.NextTargetUnit(spellEffect.Target))
-			bfHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--
+			bfHit.Cast(sim, rogue.Env.NextTargetUnit(result.Target))
+			bfHit.SpellMetrics[result.Target.UnitIndex].Casts--
 		},
 	})
 

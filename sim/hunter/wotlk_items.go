@@ -65,8 +65,8 @@ var ItemSetScourgestalkerBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || spell != hunter.SteadyShot {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || spell != hunter.SteadyShot {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -109,8 +109,8 @@ var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -154,7 +154,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == hunter.AutoAttacks.RangedAuto && sim.RandomFloat("AhnKahar 2pc") < procChance {
 						procAura.Activate(sim)
 					}
@@ -190,7 +190,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == hunter.SerpentSting && sim.RandomFloat("AhnKahar 4pc") < procChance {
 						procAura.Activate(sim)
 					}
@@ -243,7 +243,7 @@ func init() {
 				ProcMask:   core.ProcMaskRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: procChance,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					rangedSpell.Cast(sim, hunter.CurrentTarget)
 				},
 			})

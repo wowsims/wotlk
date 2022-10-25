@@ -79,12 +79,12 @@ func (mage *Mage) applyIgnite() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if spell.SpellSchool.Matches(core.SpellSchoolFire) && spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				mage.procIgnite(sim, spellEffect.Target, spellEffect.Damage)
+			if spell.SpellSchool.Matches(core.SpellSchoolFire) && result.Outcome.Matches(core.OutcomeCrit) {
+				mage.procIgnite(sim, result.Target, result.Damage)
 			}
 		},
 	})

@@ -92,12 +92,12 @@ func (mage *Mage) applyHotStreak() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(HotStreakSpells) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				heatingUp = false
 				return
 			} else {
@@ -139,7 +139,7 @@ func (mage *Mage) applyArcaneConcentration() {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 			mage.PseudoStats.NoCost = false
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
@@ -169,7 +169,7 @@ func (mage *Mage) applyArcaneConcentration() {
 			}
 			curCastIdx++
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
@@ -180,7 +180,7 @@ func (mage *Mage) applyArcaneConcentration() {
 			}
 			lastCheckedCastIdx = curCastIdx
 
-			if !spellEffect.Landed() {
+			if !result.Landed() {
 				return
 			}
 
@@ -352,11 +352,11 @@ func (mage *Mage) applyMasterOfElements() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				if refundCoeff < 0 {
 					mage.SpendMana(sim, spell.BaseCost*refundCoeff, manaMetrics)
 				} else {
@@ -417,14 +417,14 @@ func (mage *Mage) registerCombustionCD() {
 				spell.BonusCritRating += bonusCrit
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
 			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) || spell.SameAction(core.ActionID{SpellID: 44457}) { //LB dot action should be ignored
 				return
 			}
-			if !spellEffect.Landed() {
+			if !result.Landed() {
 				return
 			}
 			if numCrits >= 3 {
@@ -434,7 +434,7 @@ func (mage *Mage) registerCombustionCD() {
 			// TODO: This wont work properly with flamestrike
 			aura.AddStack(sim)
 
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				numCrits++
 				if numCrits == 3 {
 					aura.Deactivate(sim)
@@ -617,7 +617,7 @@ func (mage *Mage) applyFingersOfFrost() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			aura.RemoveStack(sim)
 		},
 	})
@@ -629,7 +629,7 @@ func (mage *Mage) applyFingersOfFrost() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if mage.hasChillEffect(spell) && sim.RandomFloat("Fingers of Frost") < procChance {
 				mage.FingersOfFrostAura.Activate(sim)
 				mage.FingersOfFrostAura.SetStacks(sim, 2)
@@ -663,7 +663,7 @@ func (mage *Mage) applyBrainFreeze() {
 			mage.FrostfireBolt.CostMultiplier += 1
 			mage.FrostfireBolt.CastTimeMultiplier += 1
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == mage.FrostfireBolt || spell == mage.Fireball {
 				aura.Deactivate(sim)
 				mage.BrainFreezeActivatedAt = 0
@@ -678,7 +678,7 @@ func (mage *Mage) applyBrainFreeze() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if mage.hasChillEffect(spell) && sim.RandomFloat("Brain Freeze") < procChance {
 				mage.BrainFreezeAura.Activate(sim)
 				if mage.BrainFreezeActivatedAt == 0 {

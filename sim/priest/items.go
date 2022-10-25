@@ -191,13 +191,13 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell != priest.FlashHeal || sim.RandomFloat("Crimson Acolytes Raiment 2pc") >= 0.33 {
 						return
 					}
 
-					curAmount = spellEffect.Damage
-					hot := hots[spellEffect.Target.UnitIndex]
+					curAmount = result.Damage
+					hot := hots[result.Target.UnitIndex]
 					hot.Apply(sim)
 				},
 			})
@@ -248,7 +248,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell != priest.ShadowWordPain {
 					return
 				}

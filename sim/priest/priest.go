@@ -68,7 +68,7 @@ type Priest struct {
 	PWSShields    []*core.Shield
 	WeakenedSouls []*core.Aura
 
-	ProcPrayerOfMending core.ApplySpellEffects
+	ProcPrayerOfMending core.ApplySpellResults
 
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.

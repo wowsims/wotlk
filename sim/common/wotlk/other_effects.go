@@ -19,9 +19,9 @@ func init() {
 			Duration: time.Second * 10,
 		})
 
-		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if procAura.IsActive() {
-				spellEffect.Damage = core.MaxFloat(0, spellEffect.Damage-140)
+				result.Damage = core.MaxFloat(0, result.Damage-140)
 			}
 		})
 
@@ -32,7 +32,7 @@ func init() {
 			Harmful:    true,
 			ProcChance: 0.05,
 			ICD:        time.Second * 50,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
 		})
@@ -98,7 +98,7 @@ func init() {
 				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.35,
 				ICD:        time.Second * 105,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					rand := sim.RandomFloat("Deathbringer's Will")
 					if rand < 1.0/3.0 {
 						auras[0].Activate(sim)
@@ -124,7 +124,7 @@ func init() {
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				character.AddMana(sim, 900, manaMetrics, false)
 			},
 		})
@@ -202,7 +202,7 @@ func init() {
 			Callback: OnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				activeAura.RemoveStack(sim)
 			},
 		})
@@ -294,7 +294,7 @@ func init() {
 				Callback: OnSpellHitTaken,
 				ProcMask: core.ProcMaskMelee,
 				Harmful:  true,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					if icd.IsReady(sim) && character.CurrentHealthPercent() < 0.35 {
 						icd.Use(sim)
 						procAura.Activate(sim)
@@ -335,7 +335,7 @@ func init() {
 				Harmful:    true,
 				ProcChance: 0.10,
 				ICD:        time.Second * 45,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					procAura.Activate(sim)
 					core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 						NumTicks:        10,

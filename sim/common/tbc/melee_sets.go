@@ -38,15 +38,15 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					if !ppmm.Proc(sim, spell.ProcMask, "The Fists of Fury") {
 						return
 					}
 
-					procSpell.Cast(sim, spellEffect.Target)
+					procSpell.Cast(sim, result.Target)
 				},
 			})
 		},
@@ -78,15 +78,15 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					chance := 0.05
 					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
 						return
 					}
-					proc.Cast(sim, spellEffect.Target)
+					proc.Cast(sim, result.Target)
 				},
 			})
 		},
@@ -110,15 +110,15 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
 					chance := 0.02
 					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
 						return
 					}
-					proc.Cast(sim, spellEffect.Target)
+					proc.Cast(sim, result.Target)
 				},
 			})
 
@@ -152,8 +152,8 @@ var ItemSetTwinBladesOfAzzinoth = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
 						return
 					}
 

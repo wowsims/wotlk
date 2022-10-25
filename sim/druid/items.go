@@ -170,7 +170,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					isLacerate := druid.LacerateDot != nil && druid.LacerateDot.Spell == spell
 					if spell != druid.Rake && spell != druid.Rip && !isLacerate {
 						return
@@ -266,7 +266,7 @@ func init() {
 					procAura.Activate(sim)
 				}
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
@@ -298,7 +298,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Ashtongue Talisman",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell == druid.Starfire {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.25 {
 						procAura.Activate(sim)
@@ -320,7 +320,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the White Stag",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if druid.IsMangle(spell) {
 					procAura.Activate(sim)
 				}
@@ -342,7 +342,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of Terror",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}
@@ -371,7 +371,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell == druid.Moonfire {
 					if sim.RandomFloat("Idol of the Unseen Moon") > 0.5 {
 						return
@@ -404,7 +404,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			},
@@ -434,7 +434,7 @@ func init() {
 		}
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Plainstalker",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}
@@ -461,7 +461,7 @@ func init() {
 		procChance := 0.85
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Corruptor",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}
@@ -485,7 +485,7 @@ func init() {
 		}
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Wastes",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if druid.Shred != spell && druid.IsSwipeSpell(spell) {
 					return
 				}
@@ -510,7 +510,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Savage Gladiator's Idol of Resolve",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}
@@ -526,7 +526,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Hateful Gladiator's Idol of Resolve",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}
@@ -542,7 +542,7 @@ func init() {
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Deadly Gladiator's Idol of Resolve",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !druid.IsMangle(spell) {
 					return
 				}

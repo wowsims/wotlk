@@ -26,11 +26,11 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			target.PseudoStats.BonusPhysicalDamageTaken -= bonusDamage
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.SpellSchool != core.SpellSchoolPhysical {
 				return
 			}
-			if !spellEffect.Landed() || spellEffect.Damage == 0 {
+			if !result.Landed() || result.Damage == 0 {
 				return
 			}
 

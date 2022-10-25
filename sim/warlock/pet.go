@@ -150,8 +150,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 				DemonicFrenzyAura.Activate(sim)

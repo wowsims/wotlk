@@ -820,70 +820,70 @@ func (at *auraTracker) AfterCast(sim *Simulation, spell *Spell) {
 }
 
 // Invokes the OnSpellHit event for all tracked Auras.
-func (at *auraTracker) OnSpellHitDealt(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnSpellHitDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onSpellHitDealtAuras {
 		// this check is to handle a case where auras are deactivated during iteration.
 		if !aura.active {
 			continue
 		}
-		aura.OnSpellHitDealt(aura, sim, spell, spellEffect)
+		aura.OnSpellHitDealt(aura, sim, spell, result)
 	}
 }
-func (at *auraTracker) OnSpellHitTaken(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnSpellHitTaken(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onSpellHitTakenAuras {
 		// this check is to handle a case where auras are deactivated during iteration.
 		if !aura.active {
 			continue
 		}
-		aura.OnSpellHitTaken(aura, sim, spell, spellEffect)
+		aura.OnSpellHitTaken(aura, sim, spell, result)
 	}
 }
 
 // Invokes the OnPeriodicDamage
 //   As a debuff when target is being hit by dot.
 //   As a buff when caster's dots are ticking.
-func (at *auraTracker) OnPeriodicDamageDealt(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnPeriodicDamageDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicDamageDealtAuras {
-		aura.OnPeriodicDamageDealt(aura, sim, spell, spellEffect)
+		aura.OnPeriodicDamageDealt(aura, sim, spell, result)
 	}
 }
-func (at *auraTracker) OnPeriodicDamageTaken(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnPeriodicDamageTaken(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicDamageTakenAuras {
-		aura.OnPeriodicDamageTaken(aura, sim, spell, spellEffect)
+		aura.OnPeriodicDamageTaken(aura, sim, spell, result)
 	}
 }
 
 // Invokes the OnHeal event for all tracked Auras.
-func (at *auraTracker) OnHealDealt(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnHealDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onHealDealtAuras {
 		// this check is to handle a case where auras are deactivated during iteration.
 		if !aura.active {
 			continue
 		}
-		aura.OnHealDealt(aura, sim, spell, spellEffect)
+		aura.OnHealDealt(aura, sim, spell, result)
 	}
 }
-func (at *auraTracker) OnHealTaken(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnHealTaken(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onHealTakenAuras {
 		// this check is to handle a case where auras are deactivated during iteration.
 		if !aura.active {
 			continue
 		}
-		aura.OnHealTaken(aura, sim, spell, spellEffect)
+		aura.OnHealTaken(aura, sim, spell, result)
 	}
 }
 
 // Invokes the OnPeriodicHeal
 //   As a debuff when target is being hit by dot.
 //   As a buff when caster's dots are ticking.
-func (at *auraTracker) OnPeriodicHealDealt(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnPeriodicHealDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicHealDealtAuras {
-		aura.OnPeriodicHealDealt(aura, sim, spell, spellEffect)
+		aura.OnPeriodicHealDealt(aura, sim, spell, result)
 	}
 }
-func (at *auraTracker) OnPeriodicHealTaken(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+func (at *auraTracker) OnPeriodicHealTaken(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicHealTakenAuras {
-		aura.OnPeriodicHealTaken(aura, sim, spell, spellEffect)
+		aura.OnPeriodicHealTaken(aura, sim, spell, result)
 	}
 }
 
@@ -918,7 +918,7 @@ func MakePermanent(aura *Aura) *Aura {
 
 func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
 	tempStats stats.Stats, duration time.Duration, cooldown time.Duration,
-	applyProcAura func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) bool) {
+	applyProcAura func(sim *Simulation, spell *Spell, result *SpellResult) bool) {
 
 	icd := Cooldown{
 		Timer:    character.NewTimer(),
@@ -933,12 +933,12 @@ func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if !icd.IsReady(sim) {
 				return
 			}
 
-			if applyProcAura(sim, spell, spellEffect) {
+			if applyProcAura(sim, spell, result) {
 				icd.Use(sim)
 				procAura.Activate(sim)
 			}

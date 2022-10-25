@@ -75,7 +75,7 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.25,
 		ICD:        time.Second * 50,
-		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			dot.Apply(sim)
 		},
 	})

@@ -65,7 +65,7 @@ func init() {
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					hsa.Get(character).Activate(sim)
 				},
 			})
@@ -98,7 +98,7 @@ func init() {
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					hsa.Get(character).Activate(sim)
 				},
 			})

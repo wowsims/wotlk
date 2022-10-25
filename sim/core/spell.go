@@ -7,9 +7,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type ApplySpellEffects func(sim *Simulation, target *Unit, spell *Spell)
-type DynamicThreatBonusFunc func(spellEffect *SpellEffect, spell *Spell) float64
-type DynamicThreatMultiplierFunc func(spellEffect *SpellEffect, spell *Spell) float64
+type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
+type DynamicThreatBonusFunc func(result *SpellResult, spell *Spell) float64
+type DynamicThreatMultiplierFunc func(result *SpellResult, spell *Spell) float64
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -23,7 +23,7 @@ type SpellConfig struct {
 
 	Cast CastConfig
 
-	ApplyEffects ApplySpellEffects
+	ApplyEffects ApplySpellResults
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -109,7 +109,7 @@ type Spell struct {
 
 	SpellMetrics []SpellMetrics
 
-	ApplyEffects ApplySpellEffects
+	ApplyEffects ApplySpellResults
 
 	// The current or most recent cast data.
 	CurCast Cast
@@ -146,7 +146,7 @@ type Spell struct {
 	initialThreatMultiplier         float64
 	// Note that bonus expertise and armor pen are static, so we don't bother resetting them.
 
-	resultCache SpellEffect
+	resultCache SpellResult
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
