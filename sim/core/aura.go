@@ -20,6 +20,14 @@ type OnExpire func(aura *Aura, sim *Simulation)
 type OnStacksChange func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32)
 type OnStatsChange func(aura *Aura, sim *Simulation, oldStats stats.Stats, newStats stats.Stats)
 
+// Callback for after a spell hits the target and after damage is calculated. Use it for proc effects
+// or anything that comes from the final result of the spell.
+type OnSpellHit func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult)
+
+// OnPeriodicDamage is called when dots tick, after damage is calculated. Use it for proc effects
+// or anything that comes from the final result of a tick.
+type OnPeriodicDamage func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult)
+
 const Inactive = -1
 
 // Aura lifecycle:
