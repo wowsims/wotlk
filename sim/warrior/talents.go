@@ -265,8 +265,7 @@ func (warrior *Warrior) applyBloodsurge() {
 				return
 			}
 
-			// Using heroic strike SpellID for now as Cleave and HS is a single spell variable
-			if spell.ActionID.SpellID != 47450 && spell != warrior.Bloodthirst && spell != warrior.Whirlwind && spell != warrior.WhirlwindOH {
+			if !spell.Flags.Matches(SpellFlagBloodsurge) {
 				return
 			}
 

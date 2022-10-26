@@ -601,8 +601,10 @@ func init() {
 		paladin := agent.(PaladinAgent).GetPaladin()
 		actionID := core.ActionID{ItemID: 32489}
 
+		// The spell effect is https://www.wowhead.com/wotlk/spell=40472/enduring-judgement, most likely
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
 			ActionID:         actionID,
+			SpellSchool:      core.SpellSchoolHoly,
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

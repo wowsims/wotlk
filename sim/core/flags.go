@@ -232,11 +232,9 @@ func (ss SpellSchool) ResistanceStat() stats.Stat {
 		return stats.NatureResistance
 	case SpellSchoolShadow:
 		return stats.ShadowResistance
-	case SpellSchoolPhysical:
-		return stats.Armor
+	default:
+		return 0 // This applies to spell school combinations, which supposedly use the "path of the least resistance", so 0 is a good fit.
 	}
-
-	return 0
 }
 
 func SpellSchoolFromProto(p proto.SpellSchool) SpellSchool {

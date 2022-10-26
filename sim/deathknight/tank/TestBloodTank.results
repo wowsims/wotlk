@@ -619,8 +619,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1828.31909
-  tps: 6356.34398
+  dps: 1826.70169
+  tps: 6352.99029
   dtps: 254.68901
  }
 }
@@ -711,8 +711,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1864.49519
-  tps: 6379.7413
+  dps: 1863.30399
+  tps: 6377.27135
   dtps: 255.19743
  }
 }

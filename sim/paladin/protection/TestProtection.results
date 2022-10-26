@@ -59,8 +59,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-AshtongueTalismanofZeal-32489"
  value: {
-  dps: 3109.77239
-  tps: 7442.62049
+  dps: 3111.28978
+  tps: 7474.66416
  }
 }
 dps_results: {
@@ -675,8 +675,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 3556.2573
-  tps: 8526.49181
+  dps: 3551.75551
+  tps: 8517.12527
   dtps: 14.93471
  }
 }
@@ -935,8 +935,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3709.36689
-  tps: 8874.17494
+  dps: 3705.96281
+  tps: 8867.26398
   dtps: 14.43555
  }
 }

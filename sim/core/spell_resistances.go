@@ -32,16 +32,24 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 		return attackTable.GetArmorDamageModifier(spell)
 	}
 
-	if spell.Flags.Matches(SpellFlagBinary) {
-		// actually result in a full resist in averageResist of all cases
-		return 1
+	if spell.SpellSchool.Matches(SpellSchoolNone) {
+		panic(fmt.Sprintf("damaging spell %v has no school set", spell.ActionID))
 	}
 
 	// Magical resistance.
-	thresholds := attackTable.GetPartialResistThresholds(spell.SpellSchool)
-	//if sim.Log != nil {
-	//	sim.Log("Resist thresholds: %s", thresholds)
-	//}
+	averageResist := attackTable.Defender.averageResist(spell.SpellSchool, attackTable.Attacker)
+	if averageResist == 0 { // for equal or lower level mobs
+		return 1
+	}
+
+	if spell.Flags.Matches(SpellFlagBinary) {
+		if resistanceRoll := sim.RandomFloat("Binary Resist"); resistanceRoll < averageResist {
+			return 0
+		}
+		return 1
+	}
+
+	thresholds := attackTable.Defender.partialResistRollThresholds(averageResist)
 
 	switch resistanceRoll := sim.RandomFloat("Partial Resist"); {
 	case resistanceRoll < thresholds[0].cumulativeChance:
@@ -64,33 +72,6 @@ func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	return 1 - effectiveArmor/(effectiveArmor+armorConstant)
 }
 
-func (at *AttackTable) UpdatePartialResists() {
-	at.PartialResistArcaneThresholds = at.Defender.partialResistRollThresholds(SpellSchoolArcane, at.Attacker)
-	at.PartialResistHolyThresholds = at.Defender.partialResistRollThresholds(SpellSchoolHoly, at.Attacker)
-	at.PartialResistFireThresholds = at.Defender.partialResistRollThresholds(SpellSchoolFire, at.Attacker)
-	at.PartialResistFrostThresholds = at.Defender.partialResistRollThresholds(SpellSchoolFrost, at.Attacker)
-	at.PartialResistNatureThresholds = at.Defender.partialResistRollThresholds(SpellSchoolNature, at.Attacker)
-	at.PartialResistShadowThresholds = at.Defender.partialResistRollThresholds(SpellSchoolShadow, at.Attacker)
-}
-
-func (at *AttackTable) GetPartialResistThresholds(ss SpellSchool) Thresholds {
-	switch ss {
-	case SpellSchoolArcane:
-		return at.PartialResistArcaneThresholds
-	case SpellSchoolHoly:
-		return at.PartialResistHolyThresholds
-	case SpellSchoolFire:
-		return at.PartialResistFireThresholds
-	case SpellSchoolFrost:
-		return at.PartialResistFrostThresholds
-	case SpellSchoolNature:
-		return at.PartialResistNatureThresholds
-	case SpellSchoolShadow:
-		return at.PartialResistShadowThresholds
-	}
-	return Thresholds{{cumulativeChance: 1, bracket: 0}}
-}
-
 /*
  The following calculations are based on
  https://web.archive.org/web/20110207221537/http://elitistjerks.com/f15/t44675-resistance_mechanics_wotlk/
@@ -106,10 +87,10 @@ func (at *AttackTable) GetPartialResistThresholds(ss SpellSchool) Thresholds {
   - the resulting numbers have been verified in game (55% for 0%, 30% for 10%, 15% for 20% resists)
 */
 
-func (unit *Unit) averageResist(school SpellSchool, attacker *Unit, binary bool) float64 {
-	resistance := MaxFloat(0, unit.GetStat(school.ResistanceStat())-attacker.stats[stats.SpellPenetration])
-	if resistance == 0 {
-		return unit.levelBasedResist(attacker, binary)
+func (unit *Unit) averageResist(school SpellSchool, attacker *Unit) float64 {
+	resistance := unit.GetStat(school.ResistanceStat()) - attacker.stats[stats.SpellPenetration]
+	if resistance <= 0 {
+		return unit.levelBasedResist(attacker)
 	}
 
 	c := 5 * float64(attacker.Level)
@@ -117,11 +98,11 @@ func (unit *Unit) averageResist(school SpellSchool, attacker *Unit, binary bool)
 		c = 510 // other values TBD, but not very useful in practice
 	}
 
-	return resistance/(c+resistance) + unit.levelBasedResist(attacker, binary) // these may stack differently, but that's irrelevant in practice
+	return resistance/(c+resistance) + unit.levelBasedResist(attacker) // these may stack differently, but that's irrelevant in practice
 }
 
-func (unit *Unit) levelBasedResist(attacker *Unit, binary bool) float64 {
-	if !binary && unit.Type == EnemyUnit && unit.Level > attacker.Level {
+func (unit *Unit) levelBasedResist(attacker *Unit) float64 {
+	if unit.Type == EnemyUnit && unit.Level > attacker.Level {
 		return 0.02 * float64(unit.Level-attacker.Level)
 	}
 	return 0
@@ -151,9 +132,7 @@ func (x Thresholds) String() string {
 	return sb.String()
 }
 
-func (unit *Unit) partialResistRollThresholds(school SpellSchool, attacker *Unit) Thresholds {
-	ar := unit.averageResist(school, attacker, false)
-
+func (unit *Unit) partialResistRollThresholds(ar float64) Thresholds {
 	if ar <= 0.1 { // always 0%, 10%, or 20%; this covers all player vs. mob cases, in practice
 		return Thresholds{
 			{cumulativeChance: 1 - 7.5*ar, bracket: 0},

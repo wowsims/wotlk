@@ -18,6 +18,10 @@ type WarriorInputs struct {
 	RendCdThreshold      time.Duration
 }
 
+const (
+	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
+)
+
 type Warrior struct {
 	core.Character
 
