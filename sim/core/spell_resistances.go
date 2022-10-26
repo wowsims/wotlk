@@ -30,25 +30,28 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 
 		// Physical resistance (armor).
 		return attackTable.GetArmorDamageModifier(spell)
-	} else if !spell.Flags.Matches(SpellFlagBinary) {
-		// Magical resistance.
-		thresholds := attackTable.GetPartialResistThresholds(spell.SpellSchool)
-		//if sim.Log != nil {
-		//	sim.Log("Resist thresholds: %s", thresholds)
-		//}
+	}
 
-		switch resistanceRoll := sim.RandomFloat("Partial Resist"); {
-		case resistanceRoll < thresholds[0].cumulativeChance:
-			return thresholds[0].damageMultiplier()
-		case resistanceRoll < thresholds[1].cumulativeChance:
-			return thresholds[1].damageMultiplier()
-		case resistanceRoll < thresholds[2].cumulativeChance:
-			return thresholds[2].damageMultiplier()
-		default:
-			return thresholds[3].damageMultiplier()
-		}
-	} else {
+	if spell.Flags.Matches(SpellFlagBinary) {
+		// actually result in a full resist in averageResist of all cases
 		return 1
+	}
+
+	// Magical resistance.
+	thresholds := attackTable.GetPartialResistThresholds(spell.SpellSchool)
+	//if sim.Log != nil {
+	//	sim.Log("Resist thresholds: %s", thresholds)
+	//}
+
+	switch resistanceRoll := sim.RandomFloat("Partial Resist"); {
+	case resistanceRoll < thresholds[0].cumulativeChance:
+		return thresholds[0].damageMultiplier()
+	case resistanceRoll < thresholds[1].cumulativeChance:
+		return thresholds[1].damageMultiplier()
+	case resistanceRoll < thresholds[2].cumulativeChance:
+		return thresholds[2].damageMultiplier()
+	default:
+		return thresholds[3].damageMultiplier()
 	}
 }
 

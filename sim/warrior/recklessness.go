@@ -59,14 +59,6 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		},
 	})
 
-	cooldownDur := time.Minute * 30
-	if warrior.Talents.IntensifyRage == 1 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
-	} else if warrior.Talents.IntensifyRage == 2 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
-	} else if warrior.Talents.IntensifyRage == 3 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
-	}
 	reckSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
@@ -77,7 +69,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cooldownDur,
+				Duration: warrior.intensifyRageCooldown(time.Minute * 5),
 			},
 		},
 

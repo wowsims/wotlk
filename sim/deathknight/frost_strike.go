@@ -35,7 +35,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 				// SpellID 66962
 				baseDamage = 125 +
 					bonusBaseDamage +
-					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= dk.glacielRotBonus(target) *

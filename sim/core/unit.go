@@ -398,7 +398,7 @@ func (unit *Unit) finalize() {
 		panic("Unit already finalized!")
 	}
 
-	// Make sure we dont accidentally set initial stats instead of stats.
+	// Make sure we don't accidentally set initial stats instead of stats.
 	if !unit.initialStats.Equals(stats.Stats{}) {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}

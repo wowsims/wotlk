@@ -72,7 +72,7 @@ func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 					spell.BonusWeaponDamage()
 			} else {
 				baseDamage = flatDamageBonus +
-					0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 

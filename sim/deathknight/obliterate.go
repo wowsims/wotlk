@@ -40,7 +40,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 				// SpellID 66974
 				baseDamage = 292 +
 					bonusBaseDamage +
-					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= dk.RoRTSBonus(target) *

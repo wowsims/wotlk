@@ -61,7 +61,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			// Calc and apply all OH hits first, because MH hits can benefit from a OH felstriker proc.
 			for i, aoeTarget := range sim.Encounter.Targets {
-				baseDamage := 0.5 * ohSpell.Unit.OHWeaponDamage(sim, ohSpell.MeleeAttackPower())
+				baseDamage := ohSpell.Unit.OHWeaponDamage(sim, ohSpell.MeleeAttackPower())
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				results[i] = ohSpell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, ohSpell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			}

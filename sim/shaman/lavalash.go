@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-//Totem IDs
+// Totem IDs
 const (
 	VentureCoFlameSlicer                      = 38367
 	DeadlyGladiatorsTotemOfIndomitability     = 42607
@@ -71,7 +71,7 @@ func (shaman *Shaman) registerLavaLashSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := flatDamageBonus +
-				0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)

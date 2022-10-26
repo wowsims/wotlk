@@ -43,7 +43,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 			if isMH {
 				baseDamage = 181 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 			} else {
-				baseDamage = 181 + 0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+				baseDamage = 181 + spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 			}
 			// TODO: Add support for all poison effects
 			if rogue.deadlyPoisonDots[target.Index].IsActive() || rogue.woundPoisonDebuffAuras[target.Index].IsActive() {
