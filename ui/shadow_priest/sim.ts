@@ -32,6 +32,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			cssClass: 'shadow-priest-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"'Basic' rotation incorrectly removes Mind Flay from rotation instead of clipping #1212",
 			],
 
 			// All stats for which EP should be calculated.
