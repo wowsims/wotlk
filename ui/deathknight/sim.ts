@@ -29,9 +29,9 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssClass: 'deathknight-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Blood dps is not implemented.</p>\
-				<p>Rotation logic is not fully tuned yet.</p>\
-				<p>Pet scaling is likely to not be properly working until further beta testing.</p>"
+				"Blood dps is not implemented.",
+				"Frost Rotation logic is not fully tuned yet.",
+				"Army of the Dead scaling needs to be fine-tuned."
 			],
 
 			// All stats for which EP should be calculated.
@@ -68,7 +68,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_FROST_BIS_PRESET.gear,
+				gear: Presets.P1_UNHOLY_DW_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.88,
@@ -86,11 +86,11 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultFrostRotation,
+				rotation: Presets.DefaultUnholyRotation,
 				// Default talents.
-				talents: Presets.FrostTalents.data,
+				talents: Presets.UnholyDualWieldTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.DefaultFrostOptions,
+				specOptions: Presets.DefaultUnholyOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
