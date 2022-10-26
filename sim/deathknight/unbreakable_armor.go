@@ -45,7 +45,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
-				// TODO: does not invoke the GCD?
+				// No GCD
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,

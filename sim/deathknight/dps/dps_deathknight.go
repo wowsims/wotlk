@@ -185,6 +185,10 @@ func (dk *DpsDeathknight) Initialize() {
 func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 
+	dk.sr.Reset(sim)
+	dk.fr.Reset(sim)
+	dk.ur.Reset(sim)
+
 	dk.SetupRotations()
 
 	dk.Presence = deathknight.UnsetPresence
@@ -208,8 +212,4 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 			dk.ChangePresence(sim, deathknight.BloodPresence)
 		}
 	}
-
-	dk.sr.Reset(sim)
-	dk.fr.Reset(sim)
-	dk.ur.Reset(sim)
 }
