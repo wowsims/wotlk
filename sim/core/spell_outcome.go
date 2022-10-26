@@ -589,3 +589,39 @@ func (result *SpellResult) applyEnemyAttackTableCrit(spell *Spell, _ *AttackTabl
 	}
 	return false
 }
+
+func (spell *Spell) OutcomeExpectedTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	// result.Damage *= 1
+}
+func (spell *Spell) OutcomeExpectedMagicAlwaysHit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	// result.Damage *= 1
+}
+func (spell *Spell) OutcomeExpectedMagicHit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	averageMultiplier := 1.0
+	averageMultiplier -= spell.SpellChanceToMiss(attackTable)
+
+	result.Damage *= averageMultiplier
+}
+
+func (spell *Spell) OutcomeExpectedMagicCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	if spell.CritMultiplier == 0 {
+		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
+	}
+
+	averageMultiplier := 1.0
+	averageMultiplier += spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
+
+	result.Damage *= averageMultiplier
+}
+
+func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	if spell.CritMultiplier == 0 {
+		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
+	}
+
+	averageMultiplier := 1.0
+	averageMultiplier -= spell.SpellChanceToMiss(attackTable)
+	averageMultiplier += spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
+
+	result.Damage *= averageMultiplier
+}

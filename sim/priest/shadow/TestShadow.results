@@ -122,8 +122,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 5300.21374
-  tps: 4105.76214
+  dps: 5306.07252
+  tps: 4111.62091
  }
 }
 dps_results: {
@@ -206,8 +206,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 5324.74286
-  tps: 4124.9213
+  dps: 5331.21409
+  tps: 4131.39252
  }
 }
 dps_results: {

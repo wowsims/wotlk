@@ -115,7 +115,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 			} else {
 				dmg *= normMod
 			}
-			dot.SnapshotBaseDamage = dmg * (1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks()))
+			dot.SnapshotBaseDamage = dmg
 
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
