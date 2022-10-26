@@ -621,7 +621,7 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *Spel
 
 	averageMultiplier := 1.0
 	averageMultiplier -= spell.SpellChanceToMiss(attackTable)
-	averageMultiplier += spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
+	averageMultiplier += averageMultiplier * spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
 
 	result.Damage *= averageMultiplier
 }
