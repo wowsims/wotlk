@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 6750.73883
-  tps: 6593.66662
+  dps: 6747.21054
+  tps: 6590.08084
  }
 }
 dps_results: {
@@ -486,8 +486,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sRegalia"
  value: {
-  dps: 6750.73883
-  tps: 6593.66662
+  dps: 6747.21054
+  tps: 6590.08084
  }
 }
 dps_results: {

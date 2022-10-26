@@ -52,18 +52,18 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dot := paladin.SealOfVengeanceDots[target.Index]
-			if !dot.IsActive() {
-				dot.Apply(sim)
-			}
-			dot.AddStack(sim)
-			dot.TakeSnapshot(sim, false)
-			dot.Activate(sim)
-
 			// Does no damage, just applies dot and rolls.
-			// TODO: This should use CalcAndDealOutcome instead, and probably check for
-			// landed before applying dot.
-			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeMeleeSpecialHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+
+			if result.Landed() {
+				dot := paladin.SealOfVengeanceDots[target.Index]
+				if !dot.IsActive() {
+					dot.Apply(sim)
+				}
+				dot.AddStack(sim)
+				dot.TakeSnapshot(sim, false)
+				dot.Activate(sim)
+			}
 		},
 	})
 

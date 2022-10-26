@@ -50,9 +50,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// TODO: Use sim.Roll instead, will just change RNG
-			roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-			baseDamage := (roll + 0.1*dk.getImpurityBonus(spell)) *
+			baseDamage := (sim.Roll(227, 245) + sigilBonus + 0.1*dk.getImpurityBonus(spell)) *
 				dk.glacielRotBonus(target) *
 				dk.RoRTSBonus(target) *
 				dk.mercilessCombatBonus(sim)
@@ -96,9 +94,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		ThreatMultiplier: 7,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// TODO: Use sim.Roll instead, will just change RNG
-			roll := (245.0-227.0)*sim.RandomFloat("Icy Touch") + 227.0 + sigilBonus
-			baseDamage := roll + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
+			baseDamage := sim.Roll(227, 245) + sigilBonus + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
