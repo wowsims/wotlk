@@ -31,6 +31,17 @@ func (result *SpellResult) DidCrit() bool {
 	return result.Outcome.Matches(OutcomeCrit)
 }
 
+func (result *SpellResult) DamageString() string {
+	outcomeStr := result.Outcome.String()
+	if !result.Landed() {
+		return outcomeStr
+	}
+	return fmt.Sprintf("%s for %0.3f damage", outcomeStr, result.Damage)
+}
+func (result *SpellResult) HealingString() string {
+	return fmt.Sprintf("%s for %0.3f healing", result.Outcome.String(), result.Damage)
+}
+
 func (spell *Spell) ThreatFromDamage(outcome HitOutcome, damage float64) float64 {
 	if outcome.Matches(OutcomeLanded) {
 		return (damage*spell.ThreatMultiplier + spell.FlatThreatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
@@ -359,22 +370,11 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 	})
 }
 
-func (result *SpellResult) DamageString() string {
-	outcomeStr := result.Outcome.String()
-	if !result.Landed() {
-		return outcomeStr
-	}
-	return fmt.Sprintf("%s for %0.3f damage", outcomeStr, result.Damage)
-}
-func (result *SpellResult) HealingString() string {
-	return fmt.Sprintf("%s for %0.3f healing", result.Outcome.String(), result.Damage)
-}
-
 func (result *SpellResult) applyAttackerModifiers(spell *Spell, attackTable *AttackTable) {
 	result.Damage *= spell.AttackerDamageMultiplier(attackTable)
 }
 
-// Returns the combined attacker modifiers. For snapshot dots, these are precomputed and stored.
+// Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
 	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
 	multiplier := spell.DamageMultiplier * spell.DamageMultiplierAdditive

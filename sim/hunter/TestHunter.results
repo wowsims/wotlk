@@ -535,8 +535,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Windrunner'sPursuit"
  value: {
-  dps: 6869.52952
-  tps: 5866.0679
+  dps: 6894.92033
+  tps: 5891.24881
  }
 }
 dps_results: {

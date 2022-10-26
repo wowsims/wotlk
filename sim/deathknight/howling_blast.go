@@ -56,9 +56,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				aoeUnit := &aoeTarget.Unit
 
-				// TODO: Use sim.Roll() here, will just change RNG
-				roll := (562.0-518.0)*sim.RandomFloat("Howling Blast") + 518.0
-				baseDamage := (roll + 0.2*dk.getImpurityBonus(spell)) *
+				baseDamage := (sim.Roll(518, 562) + 0.2*dk.getImpurityBonus(spell)) *
 					dk.glacielRotBonus(aoeUnit) *
 					dk.RoRTSBonus(aoeUnit) *
 					dk.mercilessCombatBonus(sim) *
