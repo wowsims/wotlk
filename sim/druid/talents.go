@@ -279,27 +279,47 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell == druid.Moonfire || spell == druid.InsectSwarm {
+				return
+			}
+			chanceToProc := 0.0875 // https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
+			if spell == druid.Hurricane {
+				chanceToProc *= 0.223
+			} else {
+				chanceToProc *= 0.666
+			}
+			if sim.RandomFloat("Clearcasting") <= 0.0175 {
+				druid.ClearcastingAura.Activate(sim)
+			}
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
 				return
 			}
-			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
+			if spell.ProcMask.Matches(core.ProcMaskMelee) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
-				if spell == druid.Starfire || spell == druid.Wrath {
-					if sim.RandomFloat("Clearcasting") <= 1.75/(60/spell.CurCast.CastTime.Seconds()) { // 1.75 PPM emulation : https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1178282422
-						druid.ClearcastingAura.Activate(sim)
-						if druid.setBonuses.balance_t10_2 {
-							lasherweave2P.Activate(sim)
-						}
-					}
+				chanceToProc := 0.0875
+				if spell == druid.Typhoon { // Add Wild Growth
+					chanceToProc *= 0.25
+				} else if spell == druid.Moonfire { // Add GotW
+					chanceToProc *= 0.076
+				} else {
+					chanceToProc *= 0.666
 				}
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ClearcastingAura.Activate(sim)
+				}
+			}
+			if druid.setBonuses.balance_t10_2 {
+				lasherweave2P.Activate(sim)
 			}
 		},
 	})
 }
 
-func (druid *Druid) ApplyClearcasting(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+func (druid *Druid) ApplyClearcasting(sim *core.Simulation, _ *core.Spell, cast *core.Cast) {
 	if druid.ClearcastingAura.IsActive() {
 		cast.Cost = 0
 		druid.ClearcastingAura.Deactivate(sim)
