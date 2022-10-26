@@ -6,7 +6,7 @@ import { Profession } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
 import { Stats } from '../proto_utils/stats.js';
 import { Gear } from '../proto_utils/gear.js';
-import { statNames, statOrder } from '../proto_utils/names.js';
+import { getClassStatName, statOrder } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
@@ -142,14 +142,17 @@ class EpWeightsMenu extends Popup {
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), new Stats(weightsFunc()));
 			});
 		};
+
+		const epRefStatName = getClassStatName(this.epReferenceStat, this.simUI.player.getClass());
+		const armorStatName = getClassStatName(Stat.StatArmor, this.simUI.player.getClass());
 		makeUpdateWeights(colActionButtons[0], 'Per-point increase in DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.weights);
-		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
+		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
 		makeUpdateWeights(colActionButtons[2], 'Per-point increase in HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.weights);
-		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
+		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
 		makeUpdateWeights(colActionButtons[4], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
-		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${statNames[this.epReferenceStat]}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
+		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
-		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${statNames[Stat.StatArmor]}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
+		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${armorStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
 		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
@@ -213,7 +216,7 @@ class EpWeightsMenu extends Popup {
 	private makeTableRow(stat: Stat, iterations: number, result: StatWeightsResult): HTMLElement {
 		const row = document.createElement('tr');
 		row.innerHTML = `
-			<td>${statNames[stat]}</td>
+			<td>${getClassStatName(stat, this.simUI.player.getClass())}</td>
 			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
