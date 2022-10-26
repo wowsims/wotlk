@@ -148,16 +148,21 @@ message BalanceDruid {
 		enum Type {
 			Unknown = 0;
 			Adaptive = 1;
+			Manual = 2;
 		}
 		Type type = 1;
 		bool use_battle_res = 2;
 		bool use_is = 3;
 		bool use_mf = 4;
-		float mf_inside_eclipse_threshold = 5;
-		float is_inside_eclipse_threshold = 6;
-		bool use_smart_cooldowns = 7;
-		bool maximize_mf_uptime = 8;
-		bool maximize_is_uptime = 9;
+		bool use_wrath = 5;
+		bool use_starfire = 6;
+		bool use_typhoon = 7;
+		bool use_hurricane = 8;
+		float mf_inside_eclipse_threshold = 9;
+		float is_inside_eclipse_threshold = 10;
+		bool use_smart_cooldowns = 11;
+		bool maximize_mf_uptime = 12;
+		bool maximize_is_uptime = 13;
 	}
 
   Rotation rotation = 1;

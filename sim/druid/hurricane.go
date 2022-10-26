@@ -4,13 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerHurricaneSpell() {
 	actionID := core.ActionID{SpellID: 48467}
-	baseCost := 1905.0
+	baseCost := 0.81 * druid.BaseMana
 
 	hurricaneDot := core.NewDot(core.Dot{
 		Aura: druid.RegisterAura(core.Aura{
@@ -23,9 +22,11 @@ func (druid *Druid) registerHurricaneSpell() {
 
 		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
 			target := druid.CurrentTarget
-			dot.SnapshotBaseDamage = 206 + 0.107*dot.Spell.SpellPower()
-			//dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			dot.SnapshotBaseDamage = 451 + 0.129*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			for _, aoeTarget := range sim.Encounter.Targets {
@@ -49,22 +50,19 @@ func (druid *Druid) registerHurricaneSpell() {
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 10,
 			},
-			CD: core.Cooldown{
-				Timer:    druid.NewTimer(),
-				Duration: time.Second * 60,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				druid.applyNaturesSwiftness(cast)
+				druid.ApplyClearcasting(sim, spell, cast)
 			},
 		},
 
-		DamageMultiplier: 1,
+		DamageMultiplier: 1 + druid.talentBonuses.galeWinds,
 		ThreatMultiplier: 1,
+		CritMultiplier:   1,
 
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hurricaneDot.Apply(sim)
 		},
 	})
 	hurricaneDot.Spell = druid.Hurricane
-}
-
-func (druid *Druid) ShouldCastHurricane(sim *core.Simulation, rotation proto.BalanceDruid_Rotation) bool {
-	return len(druid.Env.Encounter.Targets) > 1 && druid.Hurricane.IsReady(sim)
 }

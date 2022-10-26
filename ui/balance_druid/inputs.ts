@@ -4,10 +4,7 @@ import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -37,48 +34,87 @@ export const BalanceDruidRotationConfig = {
 			label: 'Type',
 			labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation.',
 			values: [
-				{ name: 'Adaptive', value: RotationType.Adaptive },
+				{
+					name: 'Adaptive', value: RotationType.Adaptive,
+					tooltip: 'Dynamically adapts based on available mana to maximize CL casts without going OOM.',
+				},
+				{
+					name: 'Manual', value: RotationType.Manual,
+					tooltip: 'Allows custom selection of which spells to use, dot managment and CD usage.',
+				},
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'useBattleRes',
 			label: 'Use Battle Res',
 			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'useMf',
 			label: 'Use Moonfire',
 			labelTooltip: 'Should the rotation use Moonfire.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'useIs',
 			label: 'Use Insect Swarm',
 			labelTooltip: 'Should the rotation use Insect Swarm.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useStarfire',
+			label: 'Use Starfire',
+			labelTooltip: 'Should the rotation use Starfire.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useWrath',
+			label: 'Use Wrath',
+			labelTooltip: 'Should the rotation use Wrath.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useTyphoon',
+			label: 'Use Typhoon',
+			labelTooltip: 'Should the rotation use Typhoon.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'useHurricane',
+			label: 'Use Hurricane',
+			labelTooltip: 'Should the rotation use Hurricane.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'mfInsideEclipseThreshold',
 			label: 'Moonfire inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Moonfire can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'isInsideEclipseThreshold',
 			label: 'Insect Swarm inside eclipse max timing',
 			labelTooltip: 'Max eclipse uptime at which Insect Swarm can be applied/refreshed. 15 = never refresh,  0= always refresh.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'useSmartCooldowns',
 			label: 'Smart Cooldowns usage',
 			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'maximizeMfUptime',
 			label: 'Maximize Moonfire uptime',
 			labelTooltip: 'Rotation will try to keep Moonfire up without clipping',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
 			fieldName: 'maximizeIsUptime',
 			label: 'Maximize Insect Swarm uptime',
 			labelTooltip: 'Rotation will try to keep Insect Swarm up without clipping',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 
 	],
