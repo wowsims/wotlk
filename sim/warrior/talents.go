@@ -58,40 +58,6 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.RegisterBladestormCD()
 	warrior.applyDamageShield()
 	warrior.applyCriticalBlock()
-	warrior.applyImprovedBerserkerStance()
-}
-
-func (warrior *Warrior) applyImprovedBerserkerStance() {
-	if warrior.Talents.ImprovedBerserkerStance == 0 {
-		return
-	}
-	// The bonus strength is applied here so the stat weight could account for it. Then there's an "inactive" aura to remove the bonus when outside of the stance.
-	// The "inactive" aura is added 10ms after leaving berserker stance and removed 10ms after entering berserker stance.
-	// This is to accurately implemment rend receiving the bonus if stance
-	warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
-
-	malusAura := warrior.RegisterAura(core.Aura{
-		Label:    "Improved Berserker Stance Inactive Aura",
-		Duration: core.NeverExpires,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, 1/(1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, (1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
-		},
-	})
-
-	warrior.RegisterAura(core.Aura{
-		Label:    "Improved Berserker Stance",
-		Duration: core.NeverExpires,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if warrior.leavingBerserkerStance > warrior.enteringBerserkerStance && !malusAura.IsActive() {
-				malusAura.Activate(sim)
-			} else if warrior.enteringBerserkerStance > warrior.leavingBerserkerStance && malusAura.IsActive() {
-				malusAura.Deactivate(sim)
-			}
-		},
-	})
 }
 
 func (warrior *Warrior) applyCriticalBlock() {
@@ -175,14 +141,7 @@ func (warrior *Warrior) applyTasteForBlood() {
 		return
 	}
 
-	var procChance float64
-	if warrior.Talents.TasteForBlood == 1 {
-		procChance = 0.33
-	} else if warrior.Talents.TasteForBlood == 2 {
-		procChance = 0.66
-	} else if warrior.Talents.TasteForBlood == 3 {
-		procChance = 1
-	}
+	procChance := []float64{0, 0.33, 0.66, 1}[warrior.Talents.TasteForBlood]
 
 	icd := core.Cooldown{
 		Timer:    warrior.NewTimer(),
@@ -242,29 +201,58 @@ func (warrior *Warrior) applyTrauma() {
 	})
 }
 
+func (warrior *Warrior) isBloodsurgeActive() bool {
+	return warrior.BloodsurgeAura.IsActive() || (warrior.Talents.Bloodsurge > 0 && warrior.Ymirjar4pcProcAura.IsActive())
+}
+
 func (warrior *Warrior) applyBloodsurge() {
 	if warrior.Talents.Bloodsurge == 0 {
 		return
 	}
-	procChance := 0.0
 
-	if warrior.Talents.Bloodsurge == 1 {
-		procChance = 0.07
-	} else if warrior.Talents.Bloodsurge == 2 {
-		procChance = 0.13
-	} else if warrior.Talents.Bloodsurge == 3 {
-		procChance = 0.20
-	}
-
-	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+	procChance := []float64{0, 0.07, 0.13, 0.2}[warrior.Talents.Bloodsurge]
 
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge Proc",
 		ActionID: core.ActionID{SpellID: 46916},
 		Duration: time.Second * 5,
-		// 2 stacks to accomodate T10 4 pc
-		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warrior.Slam.DefaultCast.CastTime = 0
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warrior.Slam.DefaultCast.CastTime = 1500 * time.Millisecond
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell == warrior.Slam { // removed even if slam doesn't land
+				aura.Deactivate(sim)
+			}
+		},
 	})
+
+	ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
+	if ymirjar4Set {
+		warrior.Ymirjar4pcProcAura = warrior.RegisterAura(core.Aura{
+			Label:     "Ymirjar 4pc (Bloodsurge) Proc",
+			ActionID:  core.ActionID{SpellID: 70847},
+			Duration:  time.Second * 10,
+			MaxStacks: 2,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, aura.MaxStacks)
+				warrior.Slam.DefaultCast.CastTime = 0
+				warrior.Slam.DefaultCast.GCD = core.GCDMin
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				warrior.Slam.DefaultCast.CastTime = 1500 * time.Millisecond
+				warrior.Slam.DefaultCast.GCD = core.GCDDefault
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell == warrior.Slam {
+					aura.RemoveStack(sim)
+				}
+			},
+		})
+	}
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge",
@@ -273,11 +261,6 @@ func (warrior *Warrior) applyBloodsurge() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warrior.Slam && warrior.BloodsurgeAura.IsActive() {
-				warrior.BloodsurgeAura.RemoveStack(sim)
-				return
-			}
-
 			if !result.Landed() {
 				return
 			}
@@ -291,24 +274,16 @@ func (warrior *Warrior) applyBloodsurge() {
 				return
 			}
 
-			warrior.BloodsurgeAura.Activate(sim)
-			if Ymirjar4Set {
-				if sim.RandomFloat("T10 4 set") < 0.2 {
-
-					warrior.BloodsurgeAura.Duration = time.Second * 10
-					warrior.BloodsurgeAura.SetStacks(sim, 2)
-					warrior.Ymirjar4pcProcAura.Activate(sim)
-					warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
-					return
-				}
-			}
-
-			if warrior.BloodsurgeAura.GetStacks() <= 1 {
-				warrior.BloodsurgeAura.Duration = time.Second * 5
-				warrior.BloodsurgeAura.SetStacks(sim, 1)
-			}
-
 			warrior.lastBloodsurgeProc = sim.CurrentTime
+
+			// as per https://www.wowhead.com/wotlk/spell=70847/item-warrior-t10-melee-4p-bonus#comments,
+			//  the improved aura is not overwritten by the regular one, but simply refreshed
+			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
+				warrior.Ymirjar4pcProcAura.Activate(sim)
+				return
+			}
+
+			warrior.BloodsurgeAura.Activate(sim)
 		},
 	})
 }
@@ -581,6 +556,10 @@ func (warrior *Warrior) applyWreckingCrew() {
 	})
 }
 
+func (warrior *Warrior) isSuddenDeathActive() bool {
+	return warrior.SuddenDeathAura.IsActive() || (warrior.Talents.SuddenDeath > 0 && warrior.Ymirjar4pcProcAura.IsActive())
+}
+
 func (warrior *Warrior) applySuddenDeath() {
 	if warrior.Talents.SuddenDeath == 0 {
 		return
@@ -588,18 +567,51 @@ func (warrior *Warrior) applySuddenDeath() {
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 29724})
 
-	rageRefund := []float64{0, 3, 7, 10}[warrior.Talents.SuddenDeath]
+	minRageKept := []float64{0, 3, 7, 10}[warrior.Talents.SuddenDeath]
 	procChance := []float64{0, 0.03, 0.06, 0.09}[warrior.Talents.SuddenDeath]
-
-	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
 
 	warrior.SuddenDeathAura = warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death Proc",
 		ActionID: core.ActionID{SpellID: 29724},
 		Duration: time.Second * 10,
-		// 2 stacks to accommodate T10 4 pc
-		MaxStacks: 2,
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || spell != warrior.Execute { // removed only when landed
+				return
+			}
+			if rageRefund := minRageKept - warrior.CurrentRage(); rageRefund > 0 { // refund only when below minRageKept
+				warrior.AddRage(sim, rageRefund, rageMetrics)
+			}
+			aura.Deactivate(sim)
+		},
 	})
+
+	ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
+	if ymirjar4Set {
+		warrior.Ymirjar4pcProcAura = warrior.RegisterAura(core.Aura{
+			Label:     "Ymirjar 4pc (Sudden Death) Proc",
+			ActionID:  core.ActionID{SpellID: 70847},
+			Duration:  time.Second * 20,
+			MaxStacks: 2,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, aura.MaxStacks)
+				warrior.Execute.DefaultCast.GCD = core.GCDMin
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				warrior.Execute.DefaultCast.GCD = core.GCDDefault
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || spell != warrior.Execute {
+					return
+				}
+				if rageRefund := minRageKept - warrior.CurrentRage(); rageRefund > 0 {
+					warrior.AddRage(sim, rageRefund, rageMetrics)
+				}
+				aura.RemoveStack(sim)
+			},
+		})
+	}
+
 	warrior.RegisterAura(core.Aura{
 		Label:    "Sudden Death",
 		Duration: core.NeverExpires,
@@ -607,33 +619,22 @@ func (warrior *Warrior) applySuddenDeath() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
-				warrior.SuddenDeathAura.RemoveStack(sim)
-				warrior.AddRage(sim, rageRefund, rageMetrics)
-			}
-
-			if !result.Landed() {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			if spell.ProcMask.Matches(core.ProcMaskMelee) && sim.RandomFloat("Sudden Death") < procChance {
-				warrior.SuddenDeathAura.Activate(sim)
-				if Ymirjar4Set {
-					if sim.RandomFloat("T10 4 set") < 0.2 {
-						warrior.SuddenDeathAura.Activate(sim)
-						warrior.SuddenDeathAura.Duration = time.Second * 20
-						warrior.SuddenDeathAura.SetStacks(sim, 2)
-						warrior.Ymirjar4pcProcAura.Activate(sim)
-						warrior.Ymirjar4pcProcAura.SetStacks(sim, 2)
-						return
-					}
-				}
-
-				if warrior.SuddenDeathAura.GetStacks() <= 1 {
-					warrior.SuddenDeathAura.Duration = time.Second * 10
-					warrior.SuddenDeathAura.SetStacks(sim, 1)
-				}
+			if sim.RandomFloat("Sudden Death") > procChance {
+				return
 			}
+
+			// as per https://www.wowhead.com/wotlk/spell=70847/item-warrior-t10-melee-4p-bonus#comments,
+			//  the improved aura is not overwritten by the regular one, but simply refreshed
+			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
+				warrior.Ymirjar4pcProcAura.Activate(sim)
+				return
+			}
+
+			warrior.SuddenDeathAura.Activate(sim)
 		},
 	})
 }
@@ -671,8 +672,6 @@ func (warrior *Warrior) registerDeathWishCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 12292}
-	const hasteBonus = 1.2
-	const inverseHasteBonus = 1 / 1.2
 
 	deathWishAura := warrior.RegisterAura(core.Aura{
 		Label:    "Death Wish",
@@ -689,14 +688,6 @@ func (warrior *Warrior) registerDeathWishCD() {
 	})
 
 	cost := 10.0
-	cooldownDur := time.Minute * 3
-	if warrior.Talents.IntensifyRage == 1 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
-	} else if warrior.Talents.IntensifyRage == 2 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
-	} else if warrior.Talents.IntensifyRage == 3 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
-	}
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
@@ -711,7 +702,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cooldownDur,
+				Duration: warrior.intensifyRageCooldown(time.Minute * 3),
 			},
 		},
 
@@ -868,7 +859,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 				curTarget = target
 				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 					baseDamage := 0 +
-						0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+						spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 						spell.BonusWeaponDamage()
 					results[hitIndex] = warrior.BladestormOH.CalcDamage(sim, curTarget, baseDamage, warrior.BladestormOH.OutcomeMeleeWeaponSpecialHitAndCrit)
 

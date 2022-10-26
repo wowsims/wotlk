@@ -10,14 +10,7 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 	actionID := core.ActionID{SpellID: 18499}
 	rageBonus := 10 * float64(warrior.Talents.ImprovedBerserkerRage)
 	rageMetrics := warrior.NewRageMetrics(actionID)
-	cooldownDur := time.Second * 30
-	if warrior.Talents.IntensifyRage == 1 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.89)
-	} else if warrior.Talents.IntensifyRage == 2 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.78)
-	} else if warrior.Talents.IntensifyRage == 3 {
-		cooldownDur = time.Duration(float64(cooldownDur) * 0.67)
-	}
+
 	warrior.BerserkerRage = warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
@@ -28,7 +21,7 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cooldownDur,
+				Duration: warrior.intensifyRageCooldown(time.Second * 30),
 			},
 		},
 

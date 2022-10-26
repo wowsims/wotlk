@@ -38,7 +38,7 @@ const Inactive = -1
 // myAura.Refresh(sim)
 // myAura.Deactivate(sim)
 type Aura struct {
-	// String label for this Aura. Gauranteed to be unique among the Auras for a single Unit.
+	// String label for this Aura. Guaranteed to be unique among the Auras for a single Unit.
 	Label string
 
 	// For easily grouping auras.
@@ -229,7 +229,7 @@ type AuraFactory func(*Simulation) *Aura
 type ResetEffect func(*Simulation)
 
 // auraTracker is a centralized implementation of CD and Aura tracking.
-//  This is used by all Units.
+//	This is used by all Units.
 type auraTracker struct {
 	// Effects to invoke on every sim reset.
 	resetEffects []ResetEffect
@@ -848,8 +848,8 @@ func (at *auraTracker) OnSpellHitTaken(sim *Simulation, spell *Spell, result *Sp
 }
 
 // Invokes the OnPeriodicDamage
-//   As a debuff when target is being hit by dot.
-//   As a buff when caster's dots are ticking.
+//	As a debuff when target is being hit by dot.
+//	As a buff when caster's dots are ticking.
 func (at *auraTracker) OnPeriodicDamageDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicDamageDealtAuras {
 		aura.OnPeriodicDamageDealt(aura, sim, spell, result)
@@ -882,8 +882,8 @@ func (at *auraTracker) OnHealTaken(sim *Simulation, spell *Spell, result *SpellR
 }
 
 // Invokes the OnPeriodicHeal
-//   As a debuff when target is being hit by dot.
-//   As a buff when caster's dots are ticking.
+//	As a debuff when target is being hit by dot.
+//	As a buff when caster's dots are ticking.
 func (at *auraTracker) OnPeriodicHealDealt(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicHealDealtAuras {
 		aura.OnPeriodicHealDealt(aura, sim, spell, result)
@@ -961,64 +961,23 @@ func (character *Character) NewTemporaryStatsAura(auraLabel string, actionID Act
 }
 
 // Alternative that allows modifying the Aura config.
-func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actionID ActionID, tempStats stats.Stats, duration time.Duration, modConfig func(*Aura)) *Aura {
-	var buffs stats.Stats
-	var unbuffs stats.Stats
-
-	// Try to use 'AddStatDynamic' if possible... requires less iterating.
-	var found bool
-	var statFound stats.Stat
-	var statAmount float64
-	for k, v := range tempStats {
-		if v > 0 {
-			if found {
-				found = false
-				break
-			}
-			statFound = stats.Stat(k)
-			statAmount = v
-			found = true
-		}
-	}
-	var gain func(aura *Aura, sim *Simulation)
-	var expire func(aura *Aura, sim *Simulation)
-	if found {
-		expire = func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Lost {\"%s\":%0.1f} from fading %s.", statFound.StatName(), statAmount, actionID)
-			}
-			character.AddStatDynamic(sim, statFound, -statAmount)
-		}
-		gain = func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Gained {\"%s\":%0.1f} from %s.", statFound.StatName(), statAmount, actionID)
-			}
-			character.AddStatDynamic(sim, statFound, statAmount)
-		}
-	} else {
-		expire = func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
-			}
-			character.AddStatsDynamic(sim, unbuffs)
-		}
-		gain = func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
-			}
-			character.AddStatsDynamic(sim, buffs)
-		}
-	}
+func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actionID ActionID, buffs stats.Stats, duration time.Duration, modConfig func(*Aura)) *Aura {
 	config := Aura{
 		Label:    auraLabel,
 		ActionID: actionID,
 		Duration: duration,
-		OnInit: func(aura *Aura, sim *Simulation) {
-			buffs = tempStats
-			unbuffs = buffs.Multiply(-1)
+		OnGain: func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
+			}
+			character.AddStatsDynamic(sim, buffs)
 		},
-		OnGain:   gain,
-		OnExpire: expire,
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if sim.Log != nil {
+				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
+			}
+			character.AddStatsDynamic(sim, buffs.Multiply(-1))
+		},
 	}
 
 	if modConfig != nil {
