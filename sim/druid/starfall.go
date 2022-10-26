@@ -46,15 +46,13 @@ func (druid *Druid) registerStarfallSpell() {
 		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.StarfallDot.Apply(sim)
-					druid.StarfallDotSplash.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				druid.StarfallDot.Apply(sim)
+				druid.StarfallDotSplash.Apply(sim)
+			}
+		},
 	})
 
 	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
@@ -74,10 +72,11 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(563, 653) + 0.3*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
-		}),
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := sim.Roll(563, 653) + 0.3*dot.Spell.SpellPower()
+			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+		},
 	})
 
 	druid.StarfallDotSplash = core.NewDot(core.Dot{
@@ -88,12 +87,12 @@ func (druid *Druid) registerStarfallSpell() {
 		}),
 		NumberOfTicks: numberOfTicks,
 		TickLength:    tickLength,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 101 + 0.13*spell.SpellPower()
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := 101 + 0.13*dot.Spell.SpellPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			}
-		}),
+		},
 	})
 }

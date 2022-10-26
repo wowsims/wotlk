@@ -52,7 +52,7 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 				hunter.AmmoDamageBonus +
 				spell.BonusWeaponDamage() +
 				408
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 		},
 	})
 }

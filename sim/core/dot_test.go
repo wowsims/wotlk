@@ -42,12 +42,13 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			DamageMultiplier: 1.5,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: ApplyEffectFuncDirectDamage(SpellEffect{
-				OutcomeApplier: fa.OutcomeFuncMagicHit(),
-				OnSpellHitDealt: func(sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+			ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+				result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+				if result.Landed() {
 					fa.Dot.Apply(sim)
-				},
-			}),
+				}
+				spell.DealOutcome(sim, result)
+			},
 		})
 
 		fa.Dot = NewDot(Dot{
@@ -59,11 +60,16 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 			NumberOfTicks:       6,
 			TickLength:          time.Second * 3,
 			AffectedByCastSpeed: true,
-			TickEffects: TickFuncSnapshot(fa.CurrentTarget, SpellEffect{
-				BaseDamage:     BaseDamageConfigMagicNoRoll(100, 1),
-				OutcomeApplier: fa.OutcomeFuncAlwaysHit(),
-				IsPeriodic:     true,
-			}),
+			OnSnapshot: func(sim *Simulation, target *Unit, dot *Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = 100 + 1*dot.Spell.SpellPower()
+				if !isRollover {
+					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				}
+			},
+			OnTick: func(sim *Simulation, target *Unit, dot *Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		})
 	}
 
@@ -104,9 +110,9 @@ func SetupFakeSim() *Simulation {
 	return sim
 }
 
-func expectDotTickDamage(t *testing.T, dot *Dot, expectedDamage float64) {
+func expectDotTickDamage(t *testing.T, sim *Simulation, dot *Dot, expectedDamage float64) {
 	damageBefore := dot.Spell.SpellMetrics[0].TotalDamage
-	dot.TickOnce()
+	dot.TickOnce(sim)
 	damageAfter := dot.Spell.SpellMetrics[0].TotalDamage
 	delta := damageAfter - damageBefore
 
@@ -120,10 +126,10 @@ func TestDotSnapshot(t *testing.T) {
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Rollover(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 }
 
 func TestDotSnapshotSpellPower(t *testing.T) {
@@ -131,15 +137,15 @@ func TestDotSnapshotSpellPower(t *testing.T) {
 	fa := sim.Raid.Parties[0].Players[0].(*FakeAgent)
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	// Spell power shouldn't get applied because dot was already snapshot.
 	fa.GetCharacter().AddStatDynamic(sim, stats.SpellPower, 100)
-	expectDotTickDamage(t, fa.Dot, 150) // (100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Deactivate(sim)
 	fa.Dot.Activate(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100 + 100) * 1.5
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100 + 100) * 1.5
 }
 
 func TestDotSnapshotSpellMultiplier(t *testing.T) {
@@ -149,8 +155,8 @@ func TestDotSnapshotSpellMultiplier(t *testing.T) {
 	spell.DamageMultiplier *= 2
 
 	fa.Dot.Apply(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100) * 1.5 * 2
 
 	fa.Dot.Rollover(sim)
-	expectDotTickDamage(t, fa.Dot, 300) // (100) * 1.5 * 2
+	expectDotTickDamage(t, sim, fa.Dot, 300) // (100) * 1.5 * 2
 }

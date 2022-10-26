@@ -39,15 +39,11 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			if result.Landed() {
 				hunter.SerpentStingDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, &result)
+			spell.DealOutcome(sim, result)
 		},
 	})
 
-	dotOutcome := hunter.OutcomeFuncTick()
-	if hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2) {
-		dotOutcome = hunter.OutcomeFuncMeleeSpecialCritOnly()
-	}
-
+	canCrit := hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2)
 	noxiousStingsMultiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
 	huntersWithGlyphOfSteadyShot := hunter.GetAllHuntersWithGlyphOfSteadyShot()
 
@@ -78,14 +74,22 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		}),
 		NumberOfTicks: 5 + int(core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0)),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
 
-			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return 242 + 0.04*spell.RangedAttackPower(spellEffect.Target)
-			}),
-			OutcomeApplier: dotOutcome,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 242 + 0.04*dot.Spell.RangedAttackPower(target)
+			if !isRollover {
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			}
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if canCrit {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
 }
 

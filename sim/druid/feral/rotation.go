@@ -60,9 +60,9 @@ func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
 		lacerateNext = !cat.LacerateDot.IsActive() || (cat.LacerateDot.GetStacks() < 5) || (cat.LacerateDot.RemainingDuration(sim) <= lacerateLeeway)
 		emergencyLeeway := gcdTimeToRdy + (3 * time.Second) + (2 * cat.latency)
 		emergencyLacerateNext = cat.LacerateDot.IsActive() && (cat.LacerateDot.RemainingDuration(sim) <= emergencyLeeway)
-		mangleNext = !lacerateNext && (!cat.MangleAura.IsActive() || (cat.MangleAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3))
+		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.MangleAura.IsActive() || (cat.MangleAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3))
 	} else {
-		mangleNext = cat.MangleBear.TimeToReady(sim) < gcdTimeToRdy
+		mangleNext = cat.MangleBear != nil && cat.MangleBear.TimeToReady(sim) < gcdTimeToRdy
 		lacerateNext = cat.LacerateDot.IsActive() && (cat.LacerateDot.GetStacks() < 5 || cat.LacerateDot.RemainingDuration(sim) < gcdTimeToRdy+(time.Second*4))
 	}
 
@@ -243,7 +243,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	ripNow := (curCp >= rotation.MinCombosForRip) && !cat.RipDot.IsActive() && (simTimeRemain >= endThresh) && !isClearcast
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (cat.RipDot.IsActive() && (simTimeRemain-cat.RipDot.RemainingDuration(sim) < endThresh)))
-	mangleNow := !ripNow && !cat.MangleAura.IsActive()
+	mangleNow := !ripNow && !cat.MangleAura.IsActive() && cat.MangleCat != nil
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && cat.RipDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
 	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast
@@ -426,7 +426,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	} else if bearweaveNow {
 		cat.readyToShift = true
 	} else if (rotation.MangleSpam && !isClearcast) || cat.PseudoStats.InFrontOfTarget {
-		if excessE >= cat.CurrentMangleCatCost() {
+		if cat.MangleCat != nil && excessE >= cat.CurrentMangleCatCost() {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
 		} else {

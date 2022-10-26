@@ -20,11 +20,18 @@ func (druid *Druid) registerHurricaneSpell() {
 		NumberOfTicks:       10,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncAOESnapshot(druid.Env, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(206, 0.107),
-			OutcomeApplier: druid.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := druid.CurrentTarget
+			dot.SnapshotBaseDamage = 206 + 0.107*dot.Spell.SpellPower()
+			//dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+			}
+		},
 	})
 
 	druid.Hurricane = druid.RegisterSpell(core.SpellConfig{
@@ -51,7 +58,9 @@ func (druid *Druid) registerHurricaneSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(hurricaneDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			hurricaneDot.Apply(sim)
+		},
 	})
 	hurricaneDot.Spell = druid.Hurricane
 }

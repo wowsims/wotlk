@@ -42,7 +42,7 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 				hunter.AmmoDamageBonus +
 				spell.BonusWeaponDamage()
 
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 
 			// Add a check for later so we use ASAP when it comes off CD.
 			core.StartDelayedAction(sim, core.DelayedActionOptions{

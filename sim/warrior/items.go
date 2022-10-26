@@ -73,9 +73,26 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 				Label:    "Dreadnaught Battlegear 4pc Proc",
 				ActionID: core.ActionID{SpellID: 61571},
 				Duration: time.Second * 30,
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					warrior.AddRage(sim, 5, rageMetrics)
-					aura.Deactivate(sim)
+				OnGain: func(_ *core.Aura, sim *core.Simulation) {
+					warrior.PseudoStats.CostReduction += 5
+				},
+				OnExpire: func(_ *core.Aura, sim *core.Simulation) {
+					warrior.PseudoStats.CostReduction -= 5
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+						return
+					}
+
+					// one-shot cost reductions cannot be reliably reset, since both OnCastComplete and OnSpellHit
+					//  are too late (e.g. there might be a proc after Slam cast, but before either callback),
+					//  or happen to often (e.g. internal 0-cost casts like Mutilate, or multiple Whirlwind hits, in case of OnSpellHit)
+
+					// doesn't handle multiple dynamic cost reductions at once, or 0-cost default casts
+					if actualGain := spell.DefaultCast.Cost - spell.CurCast.Cost; actualGain > 0 {
+						rageMetrics.AddEvent(5, actualGain)
+						aura.Deactivate(sim)
+					}
 				},
 			})
 
@@ -86,8 +103,8 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() && sim.RandomFloat("Dreadnaught Battlegear 4pc") < 0.1 {
+				OnPeriodicDamageDealt: func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					if result.Landed() && sim.RandomFloat("Dreadnaught Battlegear 4pc") < 0.1 {
 						procAura.Activate(sim)
 					}
 				},
@@ -121,11 +138,11 @@ var ItemSetSiegebreakerBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell.ActionID.SpellID != 47450 && spell != warrior.Slam {
 						return
 					}
-					if spellEffect.Landed() && sim.RandomFloat("Siegebreaker Battlegear 2pc") < 0.4 {
+					if result.Landed() && sim.RandomFloat("Siegebreaker Battlegear 2pc") < 0.4 {
 						procAura.Activate(sim)
 					}
 				},
@@ -180,11 +197,11 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell != warrior.DeepWounds {
 						return
 					}
-					if spellEffect.Landed() && sim.RandomFloat("Ymirjar Lord's Battlegear 2pc") < 0.03 {
+					if result.Landed() && sim.RandomFloat("Ymirjar Lord's Battlegear 2pc") < 0.03 {
 						procAura.Activate(sim)
 					}
 				},
@@ -216,7 +233,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell != warrior.ShieldSlam && spell != warrior.Bloodthirst && spell != warrior.MortalStrike {
 					return
 				}

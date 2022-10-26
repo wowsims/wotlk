@@ -25,6 +25,7 @@ func (druid *Druid) registerWrathSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+		MissileSpeed: 20,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -50,22 +51,26 @@ func (druid *Druid) registerWrathSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := bonusFlatDamage + sim.Roll(557, 627) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			if result.DidCrit() {
-				if druid.Talents.MoonkinForm {
-					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
-				}
-				if druid.setBonuses.balance_t10_4 {
-					if druid.LasherweaveDot.IsActive() {
-						druid.LasherweaveDot.Refresh(sim)
-					} else {
-						druid.LasherweaveDot.Apply(sim)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					if result.DidCrit() {
+						if druid.Talents.MoonkinForm {
+							druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
+						}
+						if druid.setBonuses.balance_t10_4 {
+							if druid.LasherweaveDot.IsActive() {
+								druid.LasherweaveDot.Refresh(sim)
+							} else {
+								druid.LasherweaveDot.Apply(sim)
+							}
+						}
+					}
+					if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.setBonuses.balance_pvp_4 {
+						druid.SwiftStarfireAura.Activate(sim)
 					}
 				}
-			}
-			if sim.RandomFloat("Swift Starfire proc") > 0.85 && druid.setBonuses.balance_pvp_4 {
-				druid.SwiftStarfireAura.Activate(sim)
-			}
-			spell.DealDamage(sim, &result)
+				spell.DealDamage(sim, result)
+			})
 		},
 	})
 }

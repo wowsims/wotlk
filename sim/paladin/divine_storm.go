@@ -10,26 +10,10 @@ import (
 
 func (paladin *Paladin) registerDivineStormSpell() {
 	baseCost := paladin.BaseMana * 0.12
-
-	baseEffectMH := core.SpellEffect{ // wait how will this work, something like whirlwind
-		BaseDamage: core.BaseDamageConfigMeleeWeapon(
-			core.MainHand,
-			false, // ds is not subject to normalisation
-			core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0)+ // Libram of Discord
-				core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0), // Venture Co. Libram of Retribution
-			// (much akin to what stuff like hs or ms have intrinsically)
-			true,
-		),
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-
+	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0) + // Libram of Discord
+		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0) // Venture Co. Libram of Retribution
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		mhEffect := baseEffectMH
-		mhEffect.Target = paladin.Env.GetTargetUnit(i)
-		effects = append(effects, mhEffect)
-	}
+	results := make([]*core.SpellResult, numHits)
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 53385},
@@ -60,6 +44,22 @@ func (paladin *Paladin) registerDivineStormSpell() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := bonusDmg +
+					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 }

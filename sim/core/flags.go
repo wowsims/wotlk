@@ -185,7 +185,7 @@ const (
 	SpellFlagChanneled                                      // Spell is channeled
 	SpellFlagDisease                                        // Spell is categorized as disease
 	SpellFlagMeleeMetrics                                   // Marks a spell as a melee ability for metrics.
-	SpellFlagNoOnCastComplete                               // Disables OnCastComplete callbacks.
+	SpellFlagNoOnCastComplete                               // Disables OnCastComplete and AfterCast callbacks.
 	SpellFlagNoMetrics                                      // Disables metrics for a spell.
 	SpellFlagNoLogs                                         // Disables logs for a spell.
 

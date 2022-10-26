@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -23,10 +22,6 @@ func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) registerArmyOfTheDeadCD() {
-	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_DoNotUse {
-		return
-	}
-
 	aotdAura := dk.RegisterAura(core.Aura{
 		Label:    "Army of the Dead",
 		ActionID: core.ActionID{SpellID: 42650},
@@ -47,10 +42,10 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		NumberOfTicks:       8,
 		TickLength:          time.Millisecond * 500,
 		AffectedByCastSpeed: false,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
 			ghoulIndex++
-		}),
+		},
 	})
 
 	baseCost := float64(core.NewRuneCost(15, 1, 1, 1, 0))

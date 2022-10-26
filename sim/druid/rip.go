@@ -19,6 +19,13 @@ func (druid *Druid) registerRipSpell() {
 		core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
 		core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
+	comboPointCoeff := 93.0
+	if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
+		comboPointCoeff += 7
+	} else if druid.Equip[items.ItemSlotRanged].ID == 39757 { // Idol of Worship
+		comboPointCoeff += 21
+	}
+
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -41,46 +48,47 @@ func (druid *Druid) registerRipSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.RipDot.NumberOfTicks = ripBaseNumTicks
-					druid.RipDot.Apply(sim)
-					druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-				} else if refundPercent > 0 {
-					druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				druid.RipDot.NumberOfTicks = ripBaseNumTicks
+				druid.RipDot.Apply(sim)
+				druid.SpendComboPoints(sim, spell.ComboPointMetrics())
+			} else if refundPercent > 0 {
+				druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
-	target := druid.CurrentTarget
 	druid.RipDot = core.NewDot(core.Dot{
 		Spell: druid.Rip,
-		Aura: target.RegisterAura(druid.applyRendAndTear(core.Aura{
+		Aura: druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 			Label:    "Rip-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 		})),
 		NumberOfTicks: ripBaseNumTicks,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				comboPoints := float64(druid.ComboPoints())
-				attackPower := spell.MeleeAttackPower()
 
-				bonusTickDamage := 0.0
-				if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
-					bonusTickDamage += 7 * float64(comboPoints)
-				} else if druid.Equip[items.ItemSlotRanged].ID == 39757 { // Idol of Worship
-					bonusTickDamage += 21 * float64(comboPoints)
-				}
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			cp := float64(druid.ComboPoints())
+			ap := dot.Spell.MeleeAttackPower()
 
-				return (36.0 + 93.0*comboPoints + 0.01*comboPoints*attackPower) + bonusTickDamage
-			}),
-			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
-		}),
+			dot.SnapshotBaseDamage = 36 + comboPointCoeff*cp + 0.01*cp*ap
+
+			if !isRollover {
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			}
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if druid.Talents.PrimalGore {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+			}
+		},
 	})
 }
 

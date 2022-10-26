@@ -30,6 +30,8 @@ const (
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
 
+const RogueBleedTag = "RogueBleed"
+
 type Rogue struct {
 	core.Character
 
@@ -37,12 +39,15 @@ type Rogue struct {
 	Options  proto.Rogue_Options
 	Rotation proto.Rogue_Rotation
 
-	priorityItems []roguePriorityItem
-	rotationItems []rogueRotationItem
+	priorityItems      []roguePriorityItem
+	rotationItems      []rogueRotationItem
+	assassinationPrios []assassinationPrio
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
 	disabledMCDs          []*core.MajorCooldown
+
+	maxEnergy float64
 
 	initialArmorDebuffAura *core.Aura
 
@@ -52,6 +57,8 @@ type Rogue struct {
 	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
 	FanOfKnives      *core.Spell
+	Feint            *core.Spell
+	Garrote          *core.Spell
 	Hemorrhage       *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
@@ -70,13 +77,13 @@ type Rogue struct {
 	lastDeadlyPoisonProcMask    core.ProcMask
 	deadlyPoisonProcChanceBonus float64
 	deadlyPoisonDots            []*core.Dot
+	garroteDot                  *core.Dot
 	instantPoisonPPMM           core.PPMManager
-	woundPoisonPPMM             core.PPMManager
 	ruptureDot                  *core.Dot
+	woundPoisonPPMM             core.PPMManager
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
-	VanCleefsProcAura    *core.Aura
 	EnvenomAura          *core.Aura
 	ExposeArmorAura      *core.Aura
 	HungerForBloodAura   *core.Aura
@@ -91,7 +98,7 @@ type Rogue struct {
 
 	QuickRecoveryMetrics *core.ResourceMetrics
 
-	CastModifier               func(*core.Simulation, *core.Spell, *core.Cast)
+	costModifier               func(float64) float64
 	finishingMoveEffectApplier func(sim *core.Simulation, numPoints int32)
 }
 
@@ -137,7 +144,7 @@ func (rogue *Rogue) Initialize() {
 		rogue.QuickRecoveryMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 31245})
 	}
 
-	rogue.CastModifier = rogue.makeCastModifier()
+	rogue.costModifier = rogue.makeCostModifier()
 
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
@@ -145,6 +152,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEviscerate()
 	rogue.registerExposeArmorSpell()
 	rogue.registerFanOfKnives()
+	rogue.registerFeintSpell()
+	rogue.registerGarrote()
 	rogue.registerHemorrhageSpell()
 	rogue.registerInstantPoisonSpell()
 	rogue.registerWoundPoisonSpell()
@@ -161,7 +170,7 @@ func (rogue *Rogue) Initialize() {
 	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs()
+	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
 }
 
 func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
@@ -224,6 +233,7 @@ func NewRogue(character core.Character, options proto.Player) *Rogue {
 	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
 		maxEnergy += 10
 	}
+	rogue.maxEnergy = maxEnergy
 	rogue.EnableEnergyBar(maxEnergy, rogue.OnEnergyGain)
 	rogue.ApplyEnergyTickMultiplier([]float64{0, 0.08, 0.16, 0.25}[rogue.Talents.Vitality])
 

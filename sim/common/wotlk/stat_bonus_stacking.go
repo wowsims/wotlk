@@ -57,7 +57,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			},
@@ -101,7 +101,7 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				buffAura.AddStack(sim)
 			},
 		})
@@ -150,8 +150,8 @@ func init() {
 				ActionID:  core.ActionID{ItemID: 38212},
 				Duration:  time.Second * 20,
 				MaxStacks: 10,
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if spellEffect.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 						aura.AddStack(sim)
 					}
 				},
@@ -166,7 +166,7 @@ func init() {
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.1,
 			ICD:        time.Second * 45,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
 		})

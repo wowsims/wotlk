@@ -30,7 +30,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := dk.LastScourgeStrikeDamage * diseaseMulti * dk.dkCountActiveDiseases(target) * dk.bonusCoeffs.scourgeStrikeShadowMultiplier
-			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 		},
 	})
 }
@@ -38,12 +38,13 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 func (dk *Deathknight) registerScourgeStrikeSpell() {
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 800.0+bonusBaseDamage, true)
 	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
 
 	baseCost := float64(core.NewRuneCost(uint8(rpGain), 0, 1, 1, 0))
-	rs := &RuneSpell{}
+	rs := &RuneSpell{
+		Refundable: true,
+	}
 	dk.ScourgeStrike = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     ScourgeStrikeActionID.WithTag(1),
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -70,36 +71,38 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target)
-				},
-			},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 800 +
+				bonusBaseDamage +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+			baseDamage *= dk.RoRTSBonus(target)
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialHitAndCrit(),
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				dk.LastOutcome = spellEffect.Outcome
-				if spellEffect.Landed() && dk.DiseasesAreActive(spellEffect.Target) {
-					dk.LastScourgeStrikeDamage = spellEffect.Damage
-					shadowDamageSpell.Cast(sim, spellEffect.Target)
+			rs.OnResult(sim, result)
 
-					if hasGlyph {
-						// Extend FF by 3
-						if dk.FrostFeverDisease[spellEffect.Target.Index].IsActive() && dk.FrostFeverExtended[spellEffect.Target.Index] < 3 {
-							dk.FrostFeverExtended[spellEffect.Target.Index]++
-							dk.FrostFeverDisease[spellEffect.Target.Index].UpdateExpires(dk.FrostFeverDisease[spellEffect.Target.Index].ExpiresAt() + 3*time.Second)
-						}
-						// Extend BP by 3
-						if dk.BloodPlagueDisease[spellEffect.Target.Index].IsActive() && dk.BloodPlagueExtended[spellEffect.Target.Index] < 3 {
-							dk.BloodPlagueExtended[spellEffect.Target.Index]++
-							dk.BloodPlagueDisease[spellEffect.Target.Index].UpdateExpires(dk.BloodPlagueDisease[spellEffect.Target.Index].ExpiresAt() + 3*time.Second)
-						}
+			dk.LastOutcome = result.Outcome
+			if result.Landed() && dk.DiseasesAreActive(target) {
+				dk.LastScourgeStrikeDamage = result.Damage
+				shadowDamageSpell.Cast(sim, target)
+
+				if hasGlyph {
+					// Extend FF by 3
+					if dk.FrostFeverDisease[target.Index].IsActive() && dk.FrostFeverExtended[target.Index] < 3 {
+						dk.FrostFeverExtended[target.Index]++
+						dk.FrostFeverDisease[target.Index].UpdateExpires(dk.FrostFeverDisease[target.Index].ExpiresAt() + 3*time.Second)
+					}
+					// Extend BP by 3
+					if dk.BloodPlagueDisease[target.Index].IsActive() && dk.BloodPlagueExtended[target.Index] < 3 {
+						dk.BloodPlagueExtended[target.Index]++
+						dk.BloodPlagueDisease[target.Index].UpdateExpires(dk.BloodPlagueDisease[target.Index].ExpiresAt() + 3*time.Second)
 					}
 				}
-			},
-		}, false),
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	}, func(sim *core.Simulation) bool {
 		return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
 	}, nil)

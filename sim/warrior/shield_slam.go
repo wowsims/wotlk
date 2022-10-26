@@ -29,8 +29,6 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		})
 	}
 
-	damageRollFunc := core.DamageRollFunc(990, 1040)
-
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47488},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -65,26 +63,19 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		ThreatMultiplier: 1.3,
 		FlatThreatBonus:  770,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-					sbv := warrior.GetStat(stats.BlockValue)
-					sbvBonus := sbv //core.TernaryFloat64(sbv <= 1960.0, sbv, 0.0) + core.TernaryFloat64(sbv > 1960.0 && sbv <= 3160.0, 0.09333333333*sbv+1777.06666667, 0.0) + core.TernaryFloat64(sbv > 3160.0, 2072.0, 0.0)
-					return damageRollFunc(sim) + sbvBonus
-				},
-			},
-			OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			//core.TernaryFloat64(sbv <= 1960.0, sbv, 0.0) + core.TernaryFloat64(sbv > 1960.0 && sbv <= 3160.0, 0.09333333333*sbv+1777.06666667, 0.0) + core.TernaryFloat64(sbv > 3160.0, 2072.0, 0.0)
+			baseDamage := sim.Roll(990, 1040) + warrior.GetStat(stats.BlockValue)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				} else {
-					if glyphOfBlockingAura != nil {
-						glyphOfBlockingAura.Activate(sim)
-					}
+			if result.Landed() {
+				if glyphOfBlockingAura != nil {
+					glyphOfBlockingAura.Activate(sim)
 				}
-			},
-		}),
+			} else {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+		},
 	})
 }
 

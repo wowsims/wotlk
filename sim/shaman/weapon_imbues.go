@@ -20,28 +20,8 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		apBonus += 212
 	}
 
-	actionID := core.ActionID{SpellID: 58804}
-
-	baseEffect := core.SpellEffect{
-		OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-	if isMH {
-		bonusApDmg := shaman.AutoAttacks.MH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
-		actionID.Tag = 1
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.MainHand, false, bonusApDmg, true)
-	} else {
-		bonusApDmg := shaman.AutoAttacks.OH.SwingSpeed * apBonus / core.MeleeAttackRatingPerDamage
-		actionID.Tag = 2
-		baseEffect.BaseDamage = core.BaseDamageConfigMeleeWeapon(core.OffHand, false, bonusApDmg, true)
-	}
-
-	effects := []core.SpellEffect{
-		baseEffect,
-		baseEffect,
-	}
-
-	return shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+	spellConfig := core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 58804}.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMelee,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
@@ -50,8 +30,29 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		CritMultiplier:   shaman.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultipleTargeted(effects),
-	})
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			constBaseDamage := spell.BonusWeaponDamage()
+			mAP := spell.MeleeAttackPower() + apBonus
+
+			if isMH {
+				baseDamage1 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
+				baseDamage2 := constBaseDamage + spell.Unit.MHWeaponDamage(sim, mAP)
+				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
+				result2 := spell.CalcDamage(sim, target, baseDamage2, spell.OutcomeMeleeSpecialHitAndCrit)
+				spell.DealDamage(sim, result1)
+				spell.DealDamage(sim, result2)
+			} else {
+				baseDamage1 := constBaseDamage + 0.5*spell.Unit.OHWeaponDamage(sim, mAP)
+				baseDamage2 := constBaseDamage + 0.5*spell.Unit.OHWeaponDamage(sim, mAP)
+				result1 := spell.CalcDamage(sim, target, baseDamage1, spell.OutcomeMeleeSpecialHitAndCrit)
+				result2 := spell.CalcDamage(sim, target, baseDamage2, spell.OutcomeMeleeSpecialHitAndCrit)
+				spell.DealDamage(sim, result1)
+				spell.DealDamage(sim, result2)
+			}
+		},
+	}
+
+	return shaman.RegisterSpell(spellConfig)
 }
 
 func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
@@ -81,9 +82,9 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// ProcMask: 20
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -100,9 +101,9 @@ func (shaman *Shaman) ApplyWindfuryImbue(mh bool, oh bool) {
 			icd.Use(sim)
 
 			if isMHHit {
-				mhSpell.Cast(sim, spellEffect.Target)
+				mhSpell.Cast(sim, result.Target)
 			} else {
-				ohSpell.Cast(sim, spellEffect.Target)
+				ohSpell.Cast(sim, result.Target)
 			}
 		},
 	})
@@ -135,7 +136,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
@@ -170,8 +171,8 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -185,9 +186,9 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 			ftIcd.Use(sim)
 
 			if isMHHit {
-				mhSpell.Cast(sim, spellEffect.Target)
+				mhSpell.Cast(sim, result.Target)
 			} else {
-				ohSpell.Cast(sim, spellEffect.Target)
+				ohSpell.Cast(sim, result.Target)
 			}
 		},
 	})
@@ -220,7 +221,7 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
@@ -255,8 +256,8 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
@@ -270,9 +271,9 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 			ftDownrankIcd.Use(sim)
 
 			if isMHHit {
-				mhSpell.Cast(sim, spellEffect.Target)
+				mhSpell.Cast(sim, result.Target)
 			} else {
-				ohSpell.Cast(sim, spellEffect.Target)
+				ohSpell.Cast(sim, result.Target)
 			}
 		},
 	})
@@ -283,7 +284,7 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 		Label:    "Frostbrand Attack-" + shaman.Label,
 		ActionID: core.ActionID{SpellID: 58799},
 		Duration: time.Second * 8,
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.Unit != &shaman.Unit {
 				return
 			}
@@ -309,7 +310,7 @@ func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 530 + 0.1*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
@@ -330,8 +331,8 @@ func (shaman *Shaman) ApplyFrostbrandImbue(mh bool, oh bool) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(procMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 
@@ -340,9 +341,9 @@ func (shaman *Shaman) ApplyFrostbrandImbue(mh bool, oh bool) {
 			}
 
 			if spell.IsMH() {
-				mhSpell.Cast(sim, spellEffect.Target)
+				mhSpell.Cast(sim, result.Target)
 			} else {
-				ohSpell.Cast(sim, spellEffect.Target)
+				ohSpell.Cast(sim, result.Target)
 			}
 			shaman.FrostbrandDebuffAura(shaman.CurrentTarget).Activate(sim)
 		},

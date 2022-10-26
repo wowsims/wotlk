@@ -54,7 +54,7 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 				}
 			}
 
-			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell != hunter.AutoAttacks.RangedAuto {
 					return
 				}
@@ -114,7 +114,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 			tickPA.Cancel(sim)
 			tickPA = nil
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskRanged) {
 				hunter.AddMana(sim, manaPerRangedHit, hunter.AspectOfTheViper.ResourceMetrics, false)
 			} else if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {

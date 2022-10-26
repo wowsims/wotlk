@@ -53,7 +53,7 @@ func (mage *Mage) registerScorchSpell() {
 					mage.ScorchAura.Activate(sim)
 				}
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

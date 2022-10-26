@@ -30,7 +30,6 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  rogue.CastModifier,
 			IgnoreHaste: true,
 		},
 
@@ -43,22 +42,21 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.ruptureDot.Spell = spell
-					rogue.ruptureDot.NumberOfTicks = int(numTicks)
-					rogue.ruptureDot.RecomputeAuraDuration()
-					rogue.ruptureDot.Apply(sim)
-					rogue.ApplyFinisher(sim, spell)
-				} else {
-					if refundAmount > 0 {
-						rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				rogue.ruptureDot.Spell = spell
+				rogue.ruptureDot.NumberOfTicks = int(numTicks)
+				rogue.ruptureDot.RecomputeAuraDuration()
+				rogue.ruptureDot.Apply(sim)
+				rogue.ApplyFinisher(sim, spell)
+			} else {
+				if refundAmount > 0 {
+					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 }
 
@@ -78,24 +76,28 @@ func (rogue *Rogue) registerRupture() {
 		rogue.makeRupture(5),
 	}
 
-	target := rogue.CurrentTarget
 	rogue.ruptureDot = core.NewDot(core.Dot{
 		Spell: rogue.Rupture[0],
-		Aura: target.RegisterAura(core.Aura{
+		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Rupture-" + strconv.Itoa(int(rogue.Index)),
+			Tag:      RogueBleedTag,
 			ActionID: rogue.Rupture[0].ActionID,
 		}),
 		NumberOfTicks: 0, // Set dynamically
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				comboPoints := rogue.ComboPoints()
-				return 127 +
-					18*float64(comboPoints) +
-					[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*spell.MeleeAttackPower()
-			}),
-			OutcomeApplier: rogue.OutcomeFuncTickHitAndCrit(),
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			comboPoints := rogue.ComboPoints()
+			dot.SnapshotBaseDamage = 127 +
+				18*float64(comboPoints) +
+				[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*dot.Spell.MeleeAttackPower()
+
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+		},
 	})
 }

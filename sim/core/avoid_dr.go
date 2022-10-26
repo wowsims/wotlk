@@ -21,16 +21,15 @@ const Diminish_kCm_Nondruid = (Diminish_k_Nondruid * Diminish_Cm)
 // Diminishing Returns for tank avoidance
 // Non-diminishing sources are added separately in spell outcome funcs
 
+func (unit *Unit) GetDiminishedDodgeChance() float64 {
 
-func (unit *Unit) GetDiminishedDodgeChance() (float64) {
-	
 	// undiminished Dodge % = D
 	// diminished Dodge % = (D * Cd)/((k*Cd) + D)
 
-	dodgeChance := 
+	dodgeChance :=
 		unit.stats[stats.Dodge]/DodgeRatingPerDodgeChance/100 +
-		unit.stats[stats.Defense]*DefenseRatingToChanceReduction
-		
+			unit.stats[stats.Defense]*DefenseRatingToChanceReduction
+
 	if unit.PseudoStats.CanParry {
 		return (dodgeChance * Diminish_Cd_Nondruid) / (Diminish_kCd_Nondruid + dodgeChance)
 	} else {
@@ -38,30 +37,29 @@ func (unit *Unit) GetDiminishedDodgeChance() (float64) {
 	}
 }
 
-func (unit *Unit) GetDiminishedParryChance() (float64) {
-	
+func (unit *Unit) GetDiminishedParryChance() float64 {
+
 	// undiminished Parry % = P
 	// diminished Parry % = (P * Cp)/((k*Cp) + P)
 
-	parryChance :=  
+	parryChance :=
 		unit.stats[stats.Parry]/ParryRatingPerParryChance/100 +
-		unit.stats[stats.Defense]*DefenseRatingToChanceReduction
+			unit.stats[stats.Defense]*DefenseRatingToChanceReduction
 
 	return (parryChance * Diminish_Cp) / (Diminish_kCp + parryChance)
-	
+
 }
 
-func (unit *Unit) GetDiminishedMissChance() (float64) {
-	
+func (unit *Unit) GetDiminishedMissChance() float64 {
+
 	// undiminished Miss % = M
 	// diminished Miss % = (M * Cm)/((k*Cm) + M)
 
-	missChance := unit.stats[stats.Defense]*DefenseRatingToChanceReduction
-		
+	missChance := unit.stats[stats.Defense] * DefenseRatingToChanceReduction
+
 	if unit.PseudoStats.CanParry {
 		return (missChance * Diminish_Cm) / (Diminish_kCm_Nondruid + missChance)
 	} else {
 		return (missChance * Diminish_Cm) / (Diminish_kCm_Druid + missChance)
 	}
 }
-

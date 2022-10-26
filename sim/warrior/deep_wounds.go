@@ -18,7 +18,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		ActionID:    DeepWoundsActionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -30,19 +30,14 @@ func (warrior *Warrior) applyDeepWounds() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskEmpty) || !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
 				return
 			}
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				warrior.DeepWounds.Cast(sim, nil)
-				warrior.procDeepWounds(sim, spellEffect.Target, spell.IsMH())
-				warrior.procBloodFrenzy(sim, spellEffect, time.Second*6)
-			}
-		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spell == warrior.DeepWounds {
-				warrior.DeepwoundsDamageBuffer[spellEffect.Target.Index] -= warrior.DeepWoundsTickDamage[spellEffect.Target.Index]
+				warrior.procDeepWounds(sim, result.Target, spell.IsMH())
+				warrior.procBloodFrenzy(sim, result, time.Second*6)
 			}
 		},
 	})
@@ -57,30 +52,32 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := warrior.DeepWoundsTickDamage[target.Index]
+			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.OutcomeTick)
+			// TODO: This probably can go before the calc now (after we assign baseDamage) but it breaks 1 test.
+			warrior.DeepWoundsDamageBuffer[target.Index] -= warrior.DeepWoundsTickDamage[target.Index]
+		},
 	})
 }
 
+// TODO (maybe) https://github.com/magey/wotlk-warrior/issues/26 - Deep Wounds is not benefitting from Blood Frenzy
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isMh bool) {
 	dot := warrior.DeepWoundsDots[target.Index]
 
 	dotDamageMultiplier := 0.16 * float64(warrior.Talents.DeepWounds) * warrior.PseudoStats.DamageDealtMultiplier * warrior.PseudoStats.PhysicalDamageDealtMultiplier
 	if isMh {
 		dotDamage := (warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * dotDamageMultiplier
-		warrior.DeepwoundsDamageBuffer[target.Index] += dotDamage
+		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage
 	} else {
 		dwsMultiplier := 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 		dotDamage := ((warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) * 0.5) + dot.Spell.BonusWeaponDamage()) * dwsMultiplier * dotDamageMultiplier
-		warrior.DeepwoundsDamageBuffer[target.Index] += dotDamage
+		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage
 	}
 
-	newTickDamage := warrior.DeepwoundsDamageBuffer[target.Index] / 6
-	warrior.DeepWoundsTickDamage[target.Index] = newTickDamage
+	warrior.DeepWoundsTickDamage[target.Index] = warrior.DeepWoundsDamageBuffer[target.Index] / 6
 	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
 
-	dot.TickEffects = core.TickFuncApplyEffectsToUnit(target, core.ApplyEffectFuncDirectDamageTargetModifiersOnly(core.SpellEffect{
-		IsPeriodic:     true,
-		BaseDamage:     core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier: warrior.OutcomeFuncTick(),
-	}))
 	dot.Apply(sim)
 }

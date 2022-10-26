@@ -19,16 +19,6 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	baseCost := priest.BaseMana * 0.28
 	channelTime := time.Second * time.Duration(numTicks)
 
-	effect := core.SpellEffect{
-		OutcomeApplier: priest.OutcomeFuncMagicHit(),
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				return
-			}
-			priest.MindSearDot[numTicks].Apply(sim)
-		},
-	}
-
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindSearActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
@@ -50,45 +40,25 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
-		ApplyEffects: core.ApplyEffectFuncAOEDamageCapped(priest.Env, effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := spell.CalcAndDealOutcome(sim, &aoeTarget.Unit, spell.OutcomeMagicHit)
+				if result.Landed() {
+					priest.MindSearDot[numTicks].Apply(sim)
+				}
+			}
+		},
 	})
 }
 
 func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
-	effect := core.SpellEffect{
-		IsPeriodic:     true,
-		OutcomeApplier: priest.OutcomeFuncMagicHit(),
-		OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Landed() {
-				priest.AddShadowWeavingStack(sim)
-			}
-			if spellEffect.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
-				priest.ShadowyInsightAura.Activate(sim)
-			}
-		},
-	}
-
-	normalCalc := core.BaseDamageFuncMagic(212, 228, 0.2861)
-	miseryCalc := core.BaseDamageFuncMagic(212, 228, (1+float64(priest.Talents.Misery)*0.05)*0.2861)
+	normalCoeff := 0.2861
+	miseryCoeff := normalCoeff * (1 + 0.05*float64(priest.Talents.Misery))
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) // initialize modifier
-
-	effect.BaseDamage = core.BaseDamageConfig{
-		Calculator: func(sim *core.Simulation, effect *core.SpellEffect, spell *core.Spell) float64 {
-			var dmg float64
-			shadowWeavingMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-
-			if priest.MiseryAura.IsActive() {
-				dmg = miseryCalc(sim, effect, spell)
-			} else {
-				dmg = normalCalc(sim, effect, spell)
-			}
-			dmg *= normMod // multiply the damage
-			return dmg * shadowWeavingMod
-		},
-	}
 
 	return core.NewDot(core.Dot{
 		Spell: priest.MindSear[numTicks],
@@ -100,6 +70,27 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 		NumberOfTicks:       numTicks,
 		TickLength:          time.Second,
 		AffectedByCastSpeed: true,
-		TickEffects:         core.TickFuncAOESnapshotCapped(priest.Env, effect),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dmg := sim.Roll(212, 228)
+			if priest.MiseryAura.IsActive() {
+				dmg += miseryCoeff * dot.Spell.SpellPower()
+			} else {
+				dmg += normalCoeff * dot.Spell.SpellPower()
+			}
+			dot.SnapshotBaseDamage = dmg * normMod * (1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks()))
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.Spell.OutcomeMagicHit)
+				if result.Landed() {
+					priest.AddShadowWeavingStack(sim)
+				}
+				if result.DidCrit() && hasGlyphOfShadow {
+					priest.ShadowyInsightAura.Activate(sim)
+				}
+			}
+		},
 	})
 }

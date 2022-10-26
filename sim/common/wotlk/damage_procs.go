@@ -31,12 +31,12 @@ func newProcDamageEffect(config ProcDamageEffect) {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, target, sim.Roll(minDmg, maxDmg))
+				spell.CalcAndDealDamage(sim, target, sim.Roll(minDmg, maxDmg), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
 		triggerConfig := config.Trigger
-		triggerConfig.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellEffect) {
+		triggerConfig.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			damageSpell.Cast(sim, character.CurrentTarget)
 		}
 		MakeProcTriggerAura(&character.Unit, triggerConfig)

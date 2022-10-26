@@ -385,7 +385,7 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 		},
 	})
 
@@ -396,8 +396,8 @@ func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.Landed() && spell.SpellSchool == SpellSchoolPhysical {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if result.Landed() && spell.SpellSchool == SpellSchoolPhysical {
 				procSpell.Cast(sim, spell.Unit)
 			}
 		},
@@ -418,7 +418,7 @@ func ThornsAura(character *Character, points int32) *Aura {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 		},
 	})
 
@@ -429,8 +429,8 @@ func ThornsAura(character *Character, points int32) *Aura {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.Landed() && spell.SpellSchool == SpellSchoolPhysical {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if result.Landed() && spell.SpellSchool == SpellSchoolPhysical {
 				procSpell.Cast(sim, spell.Unit)
 			}
 		},
@@ -451,8 +451,8 @@ func BlessingOfSanctuaryAura(character *Character) {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if result.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
 				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics, false)
 			}
 		},

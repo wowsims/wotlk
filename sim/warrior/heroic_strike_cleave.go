@@ -47,41 +47,35 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  259,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 495, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 495 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if sim.CurrentTime < warrior.disableHsCleaveUntil {
-					return
-				}
-				if !spellEffect.Landed() {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-				}
-				if spellEffect.DidCrit() && hasGlyph {
-					warrior.AddRage(sim, 10, rageMetrics)
-				}
-			},
-		}),
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if sim.CurrentTime < warrior.disableHsCleaveUntil {
+				return
+			}
+			if !result.Landed() {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+			if result.DidCrit() && hasGlyph {
+				warrior.AddRage(sim, 10, rageMetrics)
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	})
 }
 
 func (warrior *Warrior) registerCleaveSpell() {
 	cost := 20.0 - float64(warrior.Talents.FocusedRage)
-
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
-	baseEffect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-	}
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
 	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = warrior.Env.GetTargetUnit(i)
-	}
+	results := make([]*core.SpellResult, numHits)
 
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},
@@ -104,7 +98,23 @@ func (warrior *Warrior) registerCleaveSpell() {
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  225,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := flatDamageBonus +
+					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 }
 

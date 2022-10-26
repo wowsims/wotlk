@@ -46,22 +46,23 @@ func (druid *Druid) registerMangleBearSpell() {
 		ThreatMultiplier: (1.5 / 1.15) *
 			core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 299/1.15, true),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 299/1.15 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.MangleAura.Activate(sim)
-				} else {
-					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
-				}
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-				if druid.BerserkAura.IsActive() {
-					spell.CD.Reset()
-				}
-			},
-		}),
+			if result.Landed() {
+				druid.MangleAura.Activate(sim)
+			} else {
+				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+			}
+
+			if druid.BerserkAura.IsActive() {
+				spell.CD.Reset()
+			}
+		},
 	})
 }
 
@@ -96,19 +97,20 @@ func (druid *Druid) registerMangleCatSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 566/2.0, true),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 566/2.0 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-					druid.MangleAura.Activate(sim)
-				} else {
-					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
-				}
-			},
-		}),
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				druid.MangleAura.Activate(sim)
+			} else {
+				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+			}
+		},
 	})
 }
 

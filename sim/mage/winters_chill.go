@@ -25,7 +25,7 @@ func (mage *Mage) registerWintersChillSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcDamage(sim, target, 0, spell.OutcomeMagicHit)
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 
 			if result.Landed() {
 				aura := wcAuras[target.Index]
@@ -51,14 +51,14 @@ func (mage *Mage) applyWintersChill() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
 			if spell.SpellSchool == core.SpellSchoolFrost && spell != mage.WintersChill {
 				if sim.Proc(procChance, "Winters Chill") {
-					mage.WintersChill.Cast(sim, spellEffect.Target)
+					mage.WintersChill.Cast(sim, result.Target)
 				}
 			}
 		},

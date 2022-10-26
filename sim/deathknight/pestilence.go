@@ -7,10 +7,13 @@ import (
 )
 
 func (dk *Deathknight) registerPestilenceSpell() {
-
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
-	rs := &RuneSpell{}
+
+	rs := &RuneSpell{
+		Refundable: true,
+	}
+
 	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 50842},
 		SpellSchool:  core.SpellSchoolShadow,
@@ -31,58 +34,59 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		DamageMultiplier: 0,
 		ThreatMultiplier: 0,
 
-		ApplyEffects: dk.withRuneRefund(rs, core.SpellEffect{
-			// Zero damage spell with a Hit mechanic, thanks blizz!
-			BaseDamage:     core.BaseDamageConfigFlat(0),
-			OutcomeApplier: dk.OutcomeFuncMagicHit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				aoeUnit := &aoeTarget.Unit
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Target == dk.CurrentTarget {
-					dk.LastOutcome = spellEffect.Outcome
+				// Zero damage spell with a Hit mechanic, thanks blizz!
+				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
+
+				if aoeUnit == dk.CurrentTarget {
+					rs.OnResult(sim, result)
+					dk.LastOutcome = result.Outcome
 				}
-				if spellEffect.Landed() {
-					unitHit := spellEffect.Target
+				if result.Landed() {
 					// Main target
-					if unitHit == dk.CurrentTarget {
+					if aoeUnit == dk.CurrentTarget {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverDisease[unitHit.Index].IsActive() {
-								dk.FrostFeverDisease[unitHit.Index].Rollover(sim)
+							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
+								dk.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
 								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
-								dk.FrostFeverDebuffAura[unitHit.Index].Activate(sim)
+								dk.FrostFeverDebuffAura[aoeUnit.Index].Activate(sim)
 							}
 
-							if dk.BloodPlagueDisease[unitHit.Index].IsActive() {
-								dk.BloodPlagueDisease[unitHit.Index].Rollover(sim)
+							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
+								dk.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
 							}
 						}
 					} else {
 						applyCryptEbon := false
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.FrostFeverExtended[unitHit.Index] = 0
-							dk.FrostFeverDisease[unitHit.Index].Apply(sim)
+							dk.FrostFeverExtended[aoeUnit.Index] = 0
+							dk.FrostFeverDisease[aoeUnit.Index].Apply(sim)
 							applyCryptEbon = true
 						}
 						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.BloodPlagueExtended[unitHit.Index] = 0
-							dk.BloodPlagueDisease[unitHit.Index].Apply(sim)
+							dk.BloodPlagueExtended[aoeUnit.Index] = 0
+							dk.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
 							applyCryptEbon = true
 						}
 						if applyCryptEbon {
 							if dk.Talents.CryptFever > 0 {
-								dk.CryptFeverAura[unitHit.Index].Activate(sim)
+								dk.CryptFeverAura[aoeUnit.Index].Activate(sim)
 							}
 							if dk.Talents.EbonPlaguebringer > 0 {
-								dk.EbonPlagueAura[unitHit.Index].Activate(sim)
+								dk.EbonPlagueAura[aoeUnit.Index].Activate(sim)
 							}
 						}
 					}
 				}
-			},
-		}, true),
+			}
+		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
 	}, nil)

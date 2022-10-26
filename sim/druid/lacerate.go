@@ -50,43 +50,32 @@ func (druid *Druid) registerLacerateSpell() {
 		ThreatMultiplier: 0.5,
 		FlatThreatBonus:  267,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					damage := initialDamage + 0.01*spell.MeleeAttackPower()
-					if mangleAura.IsActive() {
-						return damage * 1.3
-					} else {
-						return damage
-					}
-				},
-			},
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := initialDamage + 0.01*spell.MeleeAttackPower()
+			if mangleAura.IsActive() {
+				baseDamage *= 1.3
+			}
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					if druid.LacerateDot.IsActive() {
-						druid.LacerateDot.Refresh(sim)
-						druid.LacerateDot.AddStack(sim)
-						druid.LacerateDot.TakeSnapshot(sim, true)
-					} else {
-						druid.LacerateDot.Activate(sim)
-						druid.LacerateDot.SetStacks(sim, 1)
-						druid.LacerateDot.TakeSnapshot(sim, true)
-					}
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				if druid.LacerateDot.IsActive() {
+					druid.LacerateDot.Refresh(sim)
+					druid.LacerateDot.AddStack(sim)
+					druid.LacerateDot.TakeSnapshot(sim, true)
 				} else {
-					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+					druid.LacerateDot.Activate(sim)
+					druid.LacerateDot.SetStacks(sim, 1)
+					druid.LacerateDot.TakeSnapshot(sim, true)
 				}
-			},
-		}),
+			} else {
+				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	})
 
-	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
-		Label:     "Lacerate-" + strconv.Itoa(int(druid.Index)),
-		ActionID:  actionID,
-		MaxStacks: 5,
-		Duration:  time.Second * 15,
-	}))
 	druid.LacerateDot = core.NewDot(core.Dot{
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
@@ -98,16 +87,32 @@ func (druid *Druid) registerLacerateSpell() {
 			CritMultiplier:   druid.MeleeCritMultiplier(),
 			ThreatMultiplier: 0.5,
 		}),
-		Aura:          dotAura,
+		Aura: druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
+			Label:     "Lacerate-" + strconv.Itoa(int(druid.Index)),
+			ActionID:  actionID,
+			MaxStacks: 5,
+			Duration:  time.Second * 15,
+		})),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(druid.CurrentTarget, core.SpellEffect{
-			IsPeriodic: true,
-			BaseDamage: core.MultiplyByStacks(core.BaseDamageConfig{
-				Calculator: core.BaseDamageFuncMelee(tickDamage, tickDamage, 0.01),
-			}, dotAura),
-			OutcomeApplier: druid.PrimalGoreOutcomeFuncTick(),
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = tickDamage + 0.01*dot.Spell.MeleeAttackPower()
+			dot.SnapshotBaseDamage *= float64(dot.Aura.GetStacks())
+
+			if !isRollover {
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			}
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if druid.Talents.PrimalGore {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+			}
+		},
 	})
 }
 

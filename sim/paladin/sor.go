@@ -43,17 +43,15 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// i = 1 + 0.2 * AP + 0.32 * HolP
-					return 1 +
-						.20*spell.MeleeAttackPower() +
-						.32*spell.SpellPower()
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMeleeSpecialCritOnly(), // Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// i = 1 + 0.2 * AP + 0.32 * HolP
+			baseDamage := 1 +
+				.20*spell.MeleeAttackPower() +
+				.32*spell.SpellPower()
+
+			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
@@ -71,7 +69,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// weapon_speed * (0.022* AP + 0.044*HolP)
 			baseDamage := paladin.GetMHWeapon().SwingSpeed * (.022*spell.MeleeAttackPower() + .044*spell.SpellPower())
-			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 		},
 	})
 
@@ -83,25 +81,25 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ActionID: auraActionID,
 		Duration: SealDuration,
 
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Don't proc on misses or our own procs.
-			if !spellEffect.Landed() || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
+			if !result.Landed() || spell.SpellID == onJudgementProc.SpellID || spell.SpellID == onSpecialOrSwingProc.SpellID {
 				return
 			}
 
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				// SoR is the only seal that can proc off its own judgement.
-				onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
-				onJudgementProc.Cast(sim, spellEffect.Target)
+				onSpecialOrSwingProc.Cast(sim, result.Target)
+				onJudgementProc.Cast(sim, result.Target)
 				if paladin.Talents.JudgementsOfTheJust > 0 {
 					// Special JoJ talent behavior, procs swing seal on judgements
 					// Yes, for SoR this means it proces TWICE on one judgement.
-					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+					onSpecialOrSwingProc.Cast(sim, result.Target)
 				}
 			} else {
 				if spell.IsMelee() {
-					onSpecialOrSwingProc.Cast(sim, spellEffect.Target)
+					onSpecialOrSwingProc.Cast(sim, result.Target)
 				}
 			}
 		},

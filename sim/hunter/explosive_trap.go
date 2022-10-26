@@ -42,16 +42,11 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(&aoeTarget.Unit)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamageRangedHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
 			}
 			hunter.ExplosiveTrapDot.Apply(sim)
 		},
 	})
-
-	periodicOutcomeFunc := hunter.OutcomeFuncRangedHit()
-	if hasGlyph {
-		periodicOutcomeFunc = hunter.OutcomeFuncRangedHitAndCrit()
-	}
 
 	hunter.ExplosiveTrapDot = core.NewDot(core.Dot{
 		Spell: hunter.RegisterSpell(core.SpellConfig{
@@ -71,16 +66,24 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncAOESnapshot(hunter.Env, core.SpellEffect{
-			IsPeriodic: true,
 
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					return 90 + 0.1*spell.RangedAttackPower(hitEffect.Target)
-				},
-			},
-			OutcomeApplier: periodicOutcomeFunc,
-		}),
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := hunter.CurrentTarget
+			dot.SnapshotBaseDamage = 90 + 0.1*dot.Spell.RangedAttackPower(target)
+
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				if hasGlyph {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeRangedHitAndCritSnapshot)
+				} else {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.Spell.OutcomeRangedHit)
+				}
+			}
+		},
 	})
 
 	timeToTrapWeave := time.Millisecond * time.Duration(hunter.Rotation.TimeToTrapWeaveMs)

@@ -60,15 +60,15 @@ func Test_PartialResistsVsPlayer(t *testing.T) {
 		outcomes := make(map[HitOutcome]int, n)
 		var totalDamage float64
 		for iter := 0; iter < n; iter++ {
-			spellEffect := SpellEffect{
+			result := SpellResult{
 				Outcome: OutcomeHit,
 				Damage:  1000,
 			}
 
-			spellEffect.applyResistances(sim, spell, attackTable)
+			result.applyResistances(sim, spell, false, attackTable)
 
-			outcomes[spellEffect.Outcome]++
-			totalDamage += spellEffect.Damage
+			outcomes[result.Outcome]++
+			totalDamage += result.Damage
 		}
 
 		if math.Abs(expectedAr-(1-totalDamage/float64(1000*n))) > 0.01 {
@@ -130,15 +130,15 @@ func Test_PartialResistsVsBoss(t *testing.T) {
 		outcomes := make(map[HitOutcome]int, n)
 		var totalDamage float64
 		for iter := 0; iter < n; iter++ {
-			spellEffect := SpellEffect{
+			result := SpellResult{
 				Outcome: OutcomeHit,
 				Damage:  1000,
 			}
 
-			spellEffect.applyResistances(sim, spell, attackTable)
+			result.applyResistances(sim, spell, false, attackTable)
 
-			outcomes[spellEffect.Outcome]++
-			totalDamage += spellEffect.Damage
+			outcomes[result.Outcome]++
+			totalDamage += result.Damage
 		}
 
 		if math.Abs(expectedAr-(1-totalDamage/float64(1000*n))) > 0.01 {

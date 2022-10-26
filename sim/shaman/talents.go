@@ -102,11 +102,11 @@ func (shaman *Shaman) applyElementalFocus() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return
 			}
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			shaman.ClearcastingAura.Activate(sim)
@@ -143,11 +143,11 @@ func (shaman *Shaman) applyElementalDevastation() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			procAura.Activate(sim)
@@ -187,7 +187,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		Label:    "Elemental Mastery",
 		ActionID: eleMasterActionID,
 		Duration: core.NeverExpires,
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
 				// Only LB / CL / LvB use EM
 				if spell != shaman.LavaBurst {
@@ -228,7 +228,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if (spell == shaman.LightningBolt || spell == shaman.ChainLightning) && !eleMastSpell.CD.IsReady(sim) {
 					*eleMastSpell.CD.Timer = core.Timer(time.Duration(*eleMastSpell.CD.Timer) - time.Second*2)
 					shaman.UpdateMajorCooldowns() // this could get expensive because it will be called all the time.
@@ -324,12 +324,12 @@ func (shaman *Shaman) applyFlurry() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				procAura.Activate(sim)
 				procAura.SetStacks(sim, 3)
 				icd.Reset() // the "charge protection" ICD isn't up yet
@@ -386,7 +386,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 				}
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagElectric) {
 				return
 			}
@@ -404,8 +404,8 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.Landed() {
 				return
 			}
 			if !ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {

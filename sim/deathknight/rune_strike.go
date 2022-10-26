@@ -36,24 +36,18 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1.75,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					bonusDmg := 0.15 * spell.MeleeAttackPower()
-					weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, false, bonusDmg, true)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				0.15*spell.MeleeAttackPower() +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+			baseDamage *= dk.RoRTSBonus(target)
 
-					return weaponBaseDamage(sim, hitEffect, spell) *
-						dk.RoRTSBonus(hitEffect.Target)
-				},
-			},
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 
-			OutcomeApplier: dk.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				rs.DoCost(sim)
-				dk.RuneStrikeAura.Deactivate(sim)
-			},
-		}),
+			rs.DoCost(sim)
+			dk.RuneStrikeAura.Deactivate(sim)
+		},
 	}, func(sim *core.Simulation) bool {
 		runeCost := core.RuneCost(dk.RuneStrike.BaseCost)
 		return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.RuneStrike.IsReady(sim) && dk.RuneStrikeAura.IsActive() && dk.CurrentRunicPower() >= float64(runeCost.RunicPower())
@@ -68,8 +62,8 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label:    "Rune Strike Trigger",
 		Duration: core.NeverExpires,
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeDodge | core.OutcomeParry) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeDodge | core.OutcomeParry) {
 				dk.RuneStrikeAura.Activate(sim)
 			}
 		},

@@ -58,16 +58,13 @@ func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, damageFrom
 	mage.Ignite.SpellMetrics[target.UnitIndex].Hits++
 
 	// Reassign the effect to apply the new damage value.
-	igniteDot.TickEffects = core.TickFuncSnapshot(target, core.SpellEffect{
-		IsPeriodic: true,
-		BaseDamage: core.BaseDamageConfigFlat(newTickDamage),
-		OutcomeApplier: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-			if float64(mage.Talents.EmpoweredFire)/3.0 > sim.RandomFloat("EmpoweredFireIgniteMana") {
-				mage.AddMana(sim, mage.Unit.BaseMana*.02, manaMetrics, false)
-			}
-			mage.OutcomeFuncTick()
-		},
-	})
+	igniteDot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		baseDamage := newTickDamage
+		dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.OutcomeTick)
+		if float64(mage.Talents.EmpoweredFire)/3.0 > sim.RandomFloat("EmpoweredFireIgniteMana") {
+			mage.AddMana(sim, mage.Unit.BaseMana*.02, manaMetrics, false)
+		}
+	}
 	igniteDot.Apply(sim)
 }
 
@@ -82,12 +79,12 @@ func (mage *Mage) applyIgnite() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if spell.SpellSchool.Matches(core.SpellSchoolFire) && spellEffect.Outcome.Matches(core.OutcomeCrit) {
-				mage.procIgnite(sim, spellEffect.Target, spellEffect.Damage)
+			if spell.SpellSchool.Matches(core.SpellSchoolFire) && result.Outcome.Matches(core.OutcomeCrit) {
+				mage.procIgnite(sim, result.Target, result.Damage)
 			}
 		},
 	})

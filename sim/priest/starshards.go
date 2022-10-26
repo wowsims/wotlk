@@ -27,14 +27,13 @@ func (priest *Priest) registerStarshardsSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: priest.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					priest.StarshardsDot.Apply(sim)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				priest.StarshardsDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	target := priest.CurrentTarget
@@ -48,10 +47,12 @@ func (priest *Priest) registerStarshardsSpell() {
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,
 
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, 0.167),
-			OutcomeApplier: priest.OutcomeFuncTick(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 785/5 + 0.167*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }

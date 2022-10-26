@@ -32,7 +32,7 @@ func (priest *Priest) registerRenewSpell() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseHealing := 280 + spellCoeff*spell.HealingPower()
-				spell.CalcAndDealHealingCrit(sim, target, baseHealing)
+				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 			},
 		})
 	}
@@ -74,6 +74,7 @@ func (priest *Priest) registerRenewSpell() {
 }
 
 func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
+	healingCoeff := priest.renewSpellCoefficient()
 	return core.NewDot(core.Dot{
 		Spell: priest.Renew,
 		Aura: target.RegisterAura(core.Aura{
@@ -82,13 +83,13 @@ func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
 		}),
 		NumberOfTicks: priest.renewTicks(),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-			IsHealing:  true,
-
-			BaseDamage:     core.BaseDamageConfigHealingNoRoll(280, priest.renewSpellCoefficient()),
-			OutcomeApplier: priest.OutcomeFuncTick(),
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 280 + healingCoeff*dot.Spell.HealingPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+		},
 	})
 }
 

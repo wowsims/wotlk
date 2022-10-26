@@ -112,8 +112,8 @@ func (druid *Druid) setupNaturesGrace() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if (spell == druid.Starfire || spell == druid.Wrath) && float64(druid.Talents.NaturesGrace)*(1.0/3.0) >= sim.RandomFloat("Natures Grace") {
@@ -191,16 +191,16 @@ func (druid *Druid) applyPrimalFury() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if druid.InForm(Bear) {
-				if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+				if result.Outcome.Matches(core.OutcomeCrit) {
 					if sim.Proc(procChance, "Primal Fury") {
 						druid.AddRage(sim, 5, rageMetrics)
 					}
 				}
 			} else if druid.InForm(Cat) {
 				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
-					if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+					if result.Outcome.Matches(core.OutcomeCrit) {
 						if sim.Proc(procChance, "Primal Fury") {
 							druid.AddComboPoints(sim, 1, cpMetrics)
 						}
@@ -279,8 +279,8 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
@@ -336,8 +336,8 @@ func (druid *Druid) applyEclipse() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if spell != druid.Starfire {
@@ -378,8 +378,8 @@ func (druid *Druid) applyEclipse() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if spell != druid.Wrath {
@@ -418,11 +418,11 @@ func (druid *Druid) applyImprovedLotp() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 			if !icd.IsReady(sim) {

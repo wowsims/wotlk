@@ -27,11 +27,31 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			// Your Rupture ability has a chance each time it deals damage to reduce the cost of your next ability by 40 energy.
 			rogue := agent.(RogueAgent).GetRogue()
-			rogue.VanCleefsProcAura = rogue.RegisterAura(core.Aura{
+			energyMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 67209})
+
+			procAura := rogue.RegisterAura(core.Aura{
 				Label:    "VanCleef's 2pc Proc",
 				ActionID: core.ActionID{SpellID: 67209},
-				Duration: core.NeverExpires,
+				Duration: time.Second * 15,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					rogue.PseudoStats.CostReduction += 40
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					rogue.PseudoStats.CostReduction -= 40
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+					if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+						return
+					}
+
+					// doesn't handle multiple dynamic cost reductions at once, or 0-cost default casts
+					if actualGain := spell.DefaultCast.Cost - spell.CurCast.Cost; actualGain > 0 {
+						energyMetrics.AddEvent(40, actualGain)
+						aura.Deactivate(sim)
+					}
+				},
 			})
+
 			icd := core.Cooldown{
 				Timer:    rogue.NewTimer(),
 				Duration: time.Second * 15,
@@ -43,8 +63,8 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() {
+				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
 						return
 					}
 					if !spell.ActionID.IsSpellAction(RuptureSpellID) {
@@ -57,7 +77,7 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 						return
 					}
 					icd.Use(sim)
-					rogue.VanCleefsProcAura.Activate(sim)
+					procAura.Activate(sim)
 				},
 			})
 		},
@@ -100,8 +120,8 @@ var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-					if !spellEffect.Landed() {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
 						return
 					}
 					if !spell.Flags.Matches(SpellFlagFinisher) {
@@ -162,8 +182,8 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 
@@ -214,7 +234,7 @@ func init() {
 					}
 				}
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !spell.Flags.Matches(SpellFlagFinisher) {
 					return
 				}

@@ -40,15 +40,13 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 			}),
 			TickLength:    time.Second * 2,
 			NumberOfTicks: 3,
-			TickEffects: core.TickFuncSnapshot(shaman.CurrentTarget, core.SpellEffect{
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(_ *core.Simulation, _ *core.SpellEffect, _ *core.Spell) float64 {
-						return lvbdotDmg / 3 //spread dot over 3 ticks
-					},
-				},
-				IsPeriodic:     true,
-				OutcomeApplier: shaman.OutcomeFuncTick(),
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = lvbdotDmg / 3 // spread dot over 3 ticks
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		})
 	}
 
@@ -93,7 +91,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 				lvbdotDmg = result.Damage * 0.1 // TODO: does this dot pool with the previous dot?
 				lvbDot.Apply(sim)               // will resnapshot dmg
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

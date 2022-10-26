@@ -166,12 +166,28 @@ func (dk *Deathknight) applyKillingMachine() {
 		Label:    "Killing Machine Proc",
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			dk.IcyTouch.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			dk.IcyTouch.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
+		},
 	})
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Killing Machine",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -218,47 +234,39 @@ func (dk *Deathknight) applyDeathchill() {
 		Label:    "Deathchill",
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
-	})
-
-	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
-		Label: "Deathchill Proc",
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			dk.IcyTouch.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.ObliterateMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.ObliterateOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			dk.IcyTouch.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.ObliterateMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.ObliterateOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
-			if dk.DeathchillAura.IsActive() && (dk.runeSpellComp(spell, dk.IcyTouch) ||
+			if dk.runeSpellComp(spell, dk.IcyTouch) ||
 				dk.runeSpellComp(spell, dk.HowlingBlast) ||
 				dk.runeSpellComp(spell, dk.FrostStrike) ||
-				dk.runeSpellComp(spell, dk.Obliterate)) {
+				dk.runeSpellComp(spell, dk.Obliterate) {
 				dk.DeathchillAura.Deactivate(sim)
 			}
 		},
-	}))
-}
-
-func (dk *Deathknight) killingMachineOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if dk.KillingMachineAura != nil && dk.KillingMachineAura.IsActive() {
-			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
-}
-
-func (dk *Deathknight) deathchillOutcomeMod(outcomeApplier core.OutcomeApplier) core.OutcomeApplier {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect, attackTable *core.AttackTable) {
-		if dk.DeathchillAura != nil && dk.DeathchillAura.IsActive() {
-			spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-			spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-		} else {
-			outcomeApplier(sim, spell, spellEffect, attackTable)
-		}
-	}
+	})
 }
 
 func (dk *Deathknight) applyIcyTalons() {
@@ -300,20 +308,24 @@ func (dk *Deathknight) threatOfThassarianWillProc(sim *core.Simulation) bool {
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProcMasks(isMH bool, effect *core.SpellEffect) core.ProcMask {
-	var procMask core.ProcMask
+func (dk *Deathknight) threatOfThassarianProcMask(isMH bool) core.ProcMask {
 	if isMH {
-		procMask = core.ProcMaskMeleeMHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialHitAndCrit()
+		return core.ProcMaskMeleeMHSpecial
 	} else {
-		procMask = core.ProcMaskMeleeOHSpecial
-		effect.OutcomeApplier = dk.OutcomeFuncMeleeSpecialCritOnly()
+		return core.ProcMaskMeleeOHSpecial
 	}
-	return procMask
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, spellEffect *core.SpellEffect, ohSpell *RuneSpell) {
+func (dk *Deathknight) threatOfThassarianOutcomeApplier(spell *core.Spell) core.OutcomeApplier {
+	if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+		return spell.OutcomeMeleeSpecialHitAndCrit
+	} else {
+		return spell.OutcomeMeleeSpecialCritOnly
+	}
+}
+
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, result *core.SpellResult, ohSpell *RuneSpell) {
 	if dk.threatOfThassarianWillProc(sim) && dk.GetOHWeapon() != nil {
-		ohSpell.Cast(sim, spellEffect.Target)
+		ohSpell.Cast(sim, result.Target)
 	}
 }

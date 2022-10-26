@@ -26,18 +26,22 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		}),
 		NumberOfTicks: 8 + core.TernaryInt(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncAOESnapshot(paladin.Env, core.SpellEffect{
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					// i = 113 + 0.04*HolP + 0.04*AP
-					return 113 +
-						.04*spell.MeleeAttackPower() +
-						.04*(spell.SpellPower()+bonusSpellPower)
-				},
-			},
-			OutcomeApplier: paladin.OutcomeFuncMagicHit(),
-			IsPeriodic:     true,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+			target := paladin.CurrentTarget
+
+			// i = 113 + 0.04*HolP + 0.04*AP
+			dot.SnapshotBaseDamage = 113 +
+				.04*dot.Spell.MeleeAttackPower() +
+				.04*(dot.Spell.SpellPower()+bonusSpellPower)
+
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.Spell.OutcomeMagicHit)
+			}
+		},
 	})
 
 	paladin.Consecration = paladin.RegisterSpell(core.SpellConfig{
@@ -61,7 +65,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(consecrationDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			consecrationDot.Apply(sim)
+		},
 	})
 
 	consecrationDot.Spell = paladin.Consecration

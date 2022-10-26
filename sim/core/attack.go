@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // ReplaceMHSwing is called right before an auto attack fires
@@ -127,9 +128,15 @@ func (weapon Weapon) CalculateNormalizedWeaponDamage(sim *Simulation, attackPowe
 func (unit *Unit) MHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.MH.CalculateWeaponDamage(sim, attackPower)
 }
+func (unit *Unit) MHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.MH.CalculateNormalizedWeaponDamage(sim, attackPower)
+}
 
 func (unit *Unit) OHWeaponDamage(sim *Simulation, attackPower float64) float64 {
 	return unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
+}
+func (unit *Unit) OHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
+	return unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, attackPower)
 }
 
 func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {
@@ -182,9 +189,6 @@ type AutoAttacks struct {
 	MHConfig     SpellConfig
 	OHConfig     SpellConfig
 	RangedConfig SpellConfig
-
-	MHEffect SpellEffect
-	OHEffect SpellEffect
 
 	MHAuto     *Spell
 	OHAuto     *Spell
@@ -239,7 +243,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 1},
 		SpellSchool: unit.AutoAttacks.MH.GetSpellSchool(),
 		ProcMask:    ProcMaskMeleeMHAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage | SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   options.MainHand.CritMultiplier,
@@ -249,7 +253,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)
 		},
 	}
 
@@ -257,7 +261,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ActionID:    ActionID{OtherID: proto.OtherAction_OtherActionAttack, Tag: 2},
 		SpellSchool: unit.AutoAttacks.OH.GetSpellSchool(),
 		ProcMask:    ProcMaskMeleeOHAuto,
-		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
+		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage | SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		CritMultiplier:   options.OffHand.CritMultiplier,
@@ -267,7 +271,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := 0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			spell.CalcAndDealDamageMeleeWhite(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)
 		},
 	}
 
@@ -291,18 +295,22 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 		},
 	}
 
 	if unit.Type == EnemyUnit {
-		unit.AutoAttacks.MHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigEnemyWeapon(MainHand),
-			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
+		unit.AutoAttacks.MHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
+			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap)
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
-		unit.AutoAttacks.OHEffect = SpellEffect{
-			BaseDamage:     BaseDamageConfigEnemyWeapon(OffHand),
-			OutcomeApplier: unit.OutcomeFuncEnemyMeleeWhite(),
+		unit.AutoAttacks.OHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
+			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap) * 0.5
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
 	}
 }
@@ -319,10 +327,6 @@ func (aa *AutoAttacks) finalize() {
 		return
 	}
 
-	if aa.unit.Type == EnemyUnit {
-		aa.MHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.MHEffect)
-		aa.OHConfig.ApplyEffects = ApplyEffectFuncDirectDamage(aa.OHEffect)
-	}
 	aa.MHAuto = aa.unit.GetOrRegisterSpell(aa.MHConfig)
 	aa.OHAuto = aa.unit.GetOrRegisterSpell(aa.OHConfig)
 
@@ -712,8 +716,8 @@ func (unit *Unit) applyParryHaste() {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spellEffect.Outcome.Matches(OutcomeParry) {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Outcome.Matches(OutcomeParry) {
 				return
 			}
 

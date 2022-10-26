@@ -57,7 +57,7 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	config := shaman.newShockSpellConfig(49231, core.SpellSchoolNature, baseMana*0.18, shockTimer)
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(854, 900) + 0.386*spell.SpellPower()
-		spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 	}
 
 	shaman.EarthShock = shaman.RegisterSpell(config)
@@ -78,7 +78,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		if result.Landed() {
 			shaman.FlameShockDot.Apply(sim)
 		}
-		spell.DealDamage(sim, &result)
+		spell.DealDamage(sim, result)
 	}
 
 	target := shaman.CurrentTarget
@@ -108,11 +108,15 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		NumberOfTicks:       6 + core.TernaryInt(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(834/6, 0.1),
-			OutcomeApplier: shaman.OutcomeFuncMagicCrit(),
-			IsPeriodic:     true,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 834/6 + 0.1*dot.Spell.SpellPower()
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+		},
 	})
 
 	// Apply this talent after creating DoT spell so it doesn't get copied into periodic DamageMultiplier.
@@ -127,7 +131,7 @@ func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config.ThreatMultiplier *= 2
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(812, 858) + 0.386*spell.SpellPower()
-		spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 	}
 
 	shaman.FrostShock = shaman.RegisterSpell(config)

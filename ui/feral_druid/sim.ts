@@ -128,7 +128,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
-				DruidInputs.SelfInnervate,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: DruidInputs.FeralDruidRotationConfig,

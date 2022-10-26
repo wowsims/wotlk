@@ -31,8 +31,8 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
 				warrior.revengeProcAura.Activate(sim)
 			}
 		},
@@ -41,31 +41,8 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	cost := 5.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
-	// TODO: This janky stuff is working but making an array of the enemy units does not??
-	baseEffect := core.SpellEffect{}
-	targets := core.TernaryInt32(warrior.Talents.ImprovedRevenge > 0, 2, 1)
-	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = warrior.Env.GetTargetUnit(i)
-	}
-
+	extraHit := warrior.Talents.ImprovedRevenge > 0 && warrior.Env.GetNumTargets() > 1
 	rollMultiplier := 1 + 0.3*float64(warrior.Talents.ImprovedRevenge)
-	applyEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return core.DamageRoll(sim, 1636, 1998)*rollMultiplier + 0.31*spell.MeleeAttackPower()
-			},
-		},
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialHitAndCrit(),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-			}
-		},
-	})
 
 	warrior.Revenge = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -94,17 +71,25 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		FlatThreatBonus:  121,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			applyEffect(sim, target, spell)
+			dmgFromAP := 0.31 * spell.MeleeAttackPower()
+			baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			if !result.Landed() {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
+
+			if extraHit {
+				if sim.RandomFloat("Revenge Target Roll") <= 0.5*float64(warrior.Talents.ImprovedRevenge) {
+					otherTarget := sim.Environment.NextTargetUnit(target)
+					baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+					spell.CalcAndDealDamage(sim, otherTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				}
+			}
+
 			warrior.revengeProcAura.Deactivate(sim)
 
 			if warrior.glyphOfRevengeProcAura != nil {
 				warrior.glyphOfRevengeProcAura.Activate(sim)
-			}
-
-			if target == warrior.CurrentTarget && numHits > 1 {
-				if sim.RandomFloat("Revenge Target Roll") <= 0.5*float64(warrior.Talents.ImprovedRevenge) {
-					applyEffect(sim, effects[1].Target, spell)
-				}
 			}
 		},
 	})

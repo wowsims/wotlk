@@ -27,11 +27,6 @@ func (warrior *Warrior) ApplyTalents() {
 		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	}
 
-	// TODO: This should only be applied while berserker stance is active.
-	if warrior.Talents.ImprovedBerserkerStance > 0 {
-		warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
-	}
-
 	if warrior.Talents.ShieldMastery > 0 {
 		warrior.MultiplyStat(stats.BlockValue, 1.0+0.15*float64(warrior.Talents.ShieldMastery))
 	}
@@ -63,6 +58,40 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.RegisterBladestormCD()
 	warrior.applyDamageShield()
 	warrior.applyCriticalBlock()
+	warrior.applyImprovedBerserkerStance()
+}
+
+func (warrior *Warrior) applyImprovedBerserkerStance() {
+	if warrior.Talents.ImprovedBerserkerStance == 0 {
+		return
+	}
+	// The bonus strength is applied here so the stat weight could account for it. Then there's an "inactive" aura to remove the bonus when outside of the stance.
+	// The "inactive" aura is added 10ms after leaving berserker stance and removed 10ms after entering berserker stance.
+	// This is to accurately implemment rend receiving the bonus if stance
+	warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
+
+	malusAura := warrior.RegisterAura(core.Aura{
+		Label:    "Improved Berserker Stance Inactive Aura",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, 1/(1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, (1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
+		},
+	})
+
+	warrior.RegisterAura(core.Aura{
+		Label:    "Improved Berserker Stance",
+		Duration: core.NeverExpires,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if warrior.leavingBerserkerStance > warrior.enteringBerserkerStance && !malusAura.IsActive() {
+				malusAura.Activate(sim)
+			} else if warrior.enteringBerserkerStance > warrior.leavingBerserkerStance && malusAura.IsActive() {
+				malusAura.Deactivate(sim)
+			}
+		},
+	})
 }
 
 func (warrior *Warrior) applyCriticalBlock() {
@@ -75,12 +104,12 @@ func (warrior *Warrior) applyCriticalBlock() {
 		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 	})
 
-	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Outcome.Matches(core.OutcomeBlock) && !spellEffect.Outcome.Matches(core.OutcomeMiss) && !spellEffect.Outcome.Matches(core.OutcomeParry) && !spellEffect.Outcome.Matches(core.OutcomeDodge) {
+	warrior.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+		if result.Outcome.Matches(core.OutcomeBlock) && !result.Outcome.Matches(core.OutcomeMiss) && !result.Outcome.Matches(core.OutcomeParry) && !result.Outcome.Matches(core.OutcomeDodge) {
 			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
 			if sim.RandomFloat("Critical Block Roll") <= procChance {
 				blockValue := warrior.GetStat(stats.BlockValue)
-				spellEffect.Damage = core.MaxFloat(0, spellEffect.Damage-blockValue)
+				result.Damage = core.MaxFloat(0, result.Damage-blockValue)
 				dummyCriticalBlockSpell.Cast(sim, warrior.CurrentTarget)
 			}
 		}
@@ -104,15 +133,15 @@ func (warrior *Warrior) applyDamageShield() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := coeff * warrior.GetStat(stats.BlockValue)
-			spell.CalcAndDealDamageAlwaysHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 		},
 	})
 
 	core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Damage Shield Trigger",
 		Duration: core.NeverExpires,
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() && !spellEffect.Outcome.Matches(core.OutcomeBlock) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() && !result.Outcome.Matches(core.OutcomeBlock) {
 				return
 			}
 
@@ -166,7 +195,7 @@ func (warrior *Warrior) applyTasteForBlood() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell != warrior.Rend {
 				return
 			}
@@ -202,11 +231,11 @@ func (warrior *Warrior) applyTrauma() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			proc := warrior.TraumaAuras[spellEffect.Target.Index]
+			proc := warrior.TraumaAuras[result.Target.Index]
 			proc.Duration = time.Minute * 1
 			proc.Activate(sim)
 		},
@@ -243,13 +272,13 @@ func (warrior *Warrior) applyBloodsurge() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warrior.Slam && warrior.BloodsurgeAura.IsActive() {
 				warrior.BloodsurgeAura.RemoveStack(sim)
 				return
 			}
 
-			if !spellEffect.Landed() {
+			if !result.Landed() {
 				return
 			}
 
@@ -296,12 +325,12 @@ func (warrior *Warrior) applyBloodFrenzy() {
 	warrior.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.05*float64(warrior.Talents.BloodFrenzy)
 }
 
-func (warrior *Warrior) procBloodFrenzy(sim *core.Simulation, effect *core.SpellEffect, dur time.Duration) {
+func (warrior *Warrior) procBloodFrenzy(sim *core.Simulation, result *core.SpellResult, dur time.Duration) {
 	if warrior.Talents.BloodFrenzy == 0 {
 		return
 	}
 
-	aura := warrior.BloodFrenzyAuras[effect.Target.Index]
+	aura := warrior.BloodFrenzyAuras[result.Target.Index]
 	aura.Duration = dur
 	aura.Activate(sim)
 }
@@ -407,8 +436,8 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
 					return
 				}
 
@@ -430,7 +459,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 				}
 				icd.Use(sim)
 
-				aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, swordSpecializationSpell).Cast(sim, spellEffect.Target)
+				aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, swordSpecializationSpell).Cast(sim, result.Target)
 			},
 		})
 	}
@@ -450,8 +479,8 @@ func (warrior *Warrior) applyUnbridledWrath() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage == 0 {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage == 0 {
 				return
 			}
 
@@ -495,12 +524,12 @@ func (warrior *Warrior) applyFlurry() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if result.Outcome.Matches(core.OutcomeCrit) {
 				procAura.Activate(sim)
 				procAura.SetStacks(sim, 3)
 				return
@@ -526,10 +555,10 @@ func (warrior *Warrior) applyWreckingCrew() {
 		ActionID: core.ActionID{SpellID: 57518},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= bonus
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= bonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonus
+			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= bonus
 		},
 	})
 	warrior.RegisterAura(core.Aura{
@@ -538,12 +567,12 @@ func (warrior *Warrior) applyWreckingCrew() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -557,20 +586,10 @@ func (warrior *Warrior) applySuddenDeath() {
 		return
 	}
 
-	var rage_refund float64
-	var procChance float64
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 29724})
 
-	if warrior.Talents.SuddenDeath == 1 {
-		rage_refund = 3.0
-		procChance = 0.03
-	} else if warrior.Talents.SuddenDeath == 2 {
-		rage_refund = 7.0
-		procChance = 0.06
-	} else if warrior.Talents.SuddenDeath == 3 {
-		rage_refund = 10.0
-		procChance = 0.09
-	}
+	rageRefund := []float64{0, 3, 7, 10}[warrior.Talents.SuddenDeath]
+	procChance := []float64{0, 0.03, 0.06, 0.09}[warrior.Talents.SuddenDeath]
 
 	Ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
 
@@ -587,13 +606,13 @@ func (warrior *Warrior) applySuddenDeath() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if warrior.SuddenDeathAura.IsActive() && spell == warrior.Execute {
 				warrior.SuddenDeathAura.RemoveStack(sim)
-				warrior.AddRage(sim, rage_refund, rageMetrics)
+				warrior.AddRage(sim, rageRefund, rageMetrics)
 			}
 
-			if !spellEffect.Landed() {
+			if !result.Landed() {
 				return
 			}
 
@@ -636,8 +655,8 @@ func (warrior *Warrior) applyShieldSpecialization() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
 				if sim.Proc(procChance, "Shield Specialization") {
 					warrior.AddRage(sim, rageAdded, rageMetrics)
 				}
@@ -769,22 +788,9 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	actionID := core.ActionID{SpellID: 46924}
 	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	results := make([]*core.SpellResult, numHits)
 
-	var ohDamageEffects core.ApplySpellEffects
 	if warrior.AutoAttacks.IsDualWielding {
-		baseEffectOH := core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, true),
-			OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-		}
-
-		effects := make([]core.SpellEffect, 0, numHits)
-		for i := int32(0); i < numHits; i++ {
-			effect := baseEffectOH
-			effect.Target = warrior.Env.GetTargetUnit(i)
-			effects = append(effects, effect)
-		}
-		ohDamageEffects = core.ApplyEffectFuncDamageMultiple(effects)
-
 		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
@@ -796,19 +802,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 			ThreatMultiplier: 1.25,
 		})
 	}
-
-	baseEffectMH := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-	}
-
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effect := baseEffectMH
-		effect.Target = warrior.Env.GetTargetUnit(i)
-		effects = append(effects, effect)
-	}
-	mhDamageEffects := core.ApplyEffectFuncDamageMultiple(effects)
 
 	warrior.Bladestorm = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -835,7 +828,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
-			bladestormDot.TickOnce()
+			bladestormDot.TickOnce(sim)
 
 			// Using regular cast/channel options would disable melee swings, so do it manually instead.
 			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
@@ -851,12 +844,44 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		}),
 		NumberOfTicks: 6,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mhDamageEffects(sim, target, spell)
-			if warrior.BladestormOH != nil {
-				ohDamageEffects(sim, target, warrior.BladestormOH)
+		OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+			target := warrior.CurrentTarget
+			spell := dot.Spell
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := 0 +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
-		}),
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			if warrior.BladestormOH != nil {
+				curTarget = target
+				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+					baseDamage := 0 +
+						0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+						spell.BonusWeaponDamage()
+					results[hitIndex] = warrior.BladestormOH.CalcDamage(sim, curTarget, baseDamage, warrior.BladestormOH.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+					curTarget = sim.Environment.NextTargetUnit(curTarget)
+				}
+
+				curTarget = target
+				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+					warrior.BladestormOH.DealDamage(sim, results[hitIndex])
+					curTarget = sim.Environment.NextTargetUnit(curTarget)
+				}
+			}
+		},
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{

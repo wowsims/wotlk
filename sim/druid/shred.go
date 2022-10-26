@@ -40,41 +40,36 @@ func (druid *Druid) registerShredSpell() {
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfigMeleeWeapon(core.MainHand, false, flatDamageBonus/2.25, true),
-				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						normalDamage := oldCalculator(sim, spellEffect, spell)
-						modifier := 1.0
-						if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
-							modifier += .3
-						}
-						if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
-							modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
-						}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := flatDamageBonus/2.25 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
 
-						return normalDamage * modifier
+			modifier := 1.0
+			if druid.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) {
+				modifier += .3
+			}
+			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
+			}
+			baseDamage *= modifier
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() {
+				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+
+				if hasGlyphofShred && druid.RipDot.IsActive() {
+					if druid.RipDot.NumberOfTicks < maxRipTicks {
+						druid.RipDot.NumberOfTicks += 1
+						druid.RipDot.RecomputeAuraDuration()
+						druid.RipDot.UpdateExpires(druid.RipDot.ExpiresAt() + time.Second*2)
 					}
-				}),
-			OutcomeApplier: druid.OutcomeFuncMeleeSpecialHitAndCrit(),
-
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-
-					if hasGlyphofShred && druid.RipDot.IsActive() {
-						if druid.RipDot.NumberOfTicks < maxRipTicks {
-							druid.RipDot.NumberOfTicks += 1
-							druid.RipDot.RecomputeAuraDuration()
-							druid.RipDot.UpdateExpires(druid.RipDot.ExpiresAt() + time.Second*2)
-						}
-					}
-				} else {
-					druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 				}
-			},
-		}),
+			} else {
+				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+			}
+		},
 	})
 }
 

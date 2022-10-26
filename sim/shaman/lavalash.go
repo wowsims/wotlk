@@ -69,18 +69,19 @@ func (shaman *Shaman) registerLavaLashSpell() {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, false, flatDamageBonus, true),
-			OutcomeApplier: shaman.OutcomeFuncMeleeSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if !spellEffect.Landed() { //TODO: verify that it actually needs to hit
-					return
-				}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := flatDamageBonus +
+				0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			if result.Landed() { //TODO: verify that it actually needs to hit
 				if indomitabilityAura != nil {
 					indomitabilityAura.Activate(sim)
 				}
-			},
-		}),
+			}
+		},
 	})
 }
 

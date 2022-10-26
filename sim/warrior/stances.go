@@ -52,8 +52,9 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 }
 
 func (warrior *Warrior) registerBattleStanceAura() {
+	const threatMult = 0.8
+
 	actionID := core.ActionID{SpellID: 2457}
-	threatMult := 0.8
 	armorPenBonus := core.ArmorPenPerPercentArmor * (10 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 6, 0))
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
@@ -74,12 +75,9 @@ func (warrior *Warrior) registerBattleStanceAura() {
 }
 
 func (warrior *Warrior) registerDefensiveStanceAura() {
-	actionID := core.ActionID{SpellID: 71}
-	threatMult := 2.0735
-	// TODO: Imp def stance
-	impDefStanceMultiplier := 1 - 0.03*float64(warrior.Talents.ImprovedDefensiveStance)
-	tacMasteryThreatMultiplier := 1 + 0.21*float64(warrior.Talents.TacticalMastery)
+	const threatMult = 2.0735
 
+	actionID := core.ActionID{SpellID: 71}
 	if warrior.Talents.ImprovedDefensiveStance > 0 {
 		enrageAura := warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Enrage",
@@ -87,37 +85,27 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			Duration: 12 * time.Second,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
-				if warrior.Bloodthirst != nil {
-					warrior.Bloodthirst.ThreatMultiplier *= tacMasteryThreatMultiplier
-				}
-				if warrior.MortalStrike != nil {
-					warrior.MortalStrike.ThreatMultiplier *= tacMasteryThreatMultiplier
-				}
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
-				if warrior.Bloodthirst != nil {
-					warrior.Bloodthirst.ThreatMultiplier /= tacMasteryThreatMultiplier
-				}
-				if warrior.MortalStrike != nil {
-					warrior.MortalStrike.ThreatMultiplier /= tacMasteryThreatMultiplier
-				}
 			},
 		})
 
 		core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Enrage Trigger",
 			Duration: core.NeverExpires,
-			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Outcome.Matches(core.OutcomeBlock | core.OutcomeDodge | core.OutcomeParry) {
 					if sim.RandomFloat("Enrage Trigger Chance") <= 0.5*float64(warrior.Talents.ImprovedDefensiveStance) {
 						enrageAura.Activate(sim)
 					}
 				}
 			},
 		}))
-
 	}
+
+	impDefStanceMultiplier := 1 - 0.03*float64(warrior.Talents.ImprovedDefensiveStance)
+	tacMasteryThreatMultiplier := 1 + 0.21*float64(warrior.Talents.TacticalMastery)
 
 	warrior.DefensiveStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Defensive Stance",
@@ -127,23 +115,37 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.9
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.95
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.90
 			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= impDefStanceMultiplier
 			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= impDefStanceMultiplier
 			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= impDefStanceMultiplier
 			aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= impDefStanceMultiplier
 			aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= impDefStanceMultiplier
 			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= impDefStanceMultiplier
+			if warrior.Bloodthirst != nil {
+				warrior.Bloodthirst.ThreatMultiplier *= tacMasteryThreatMultiplier
+			}
+			if warrior.MortalStrike != nil {
+				warrior.MortalStrike.ThreatMultiplier *= tacMasteryThreatMultiplier
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.9
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.95
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.9
 			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= impDefStanceMultiplier
 			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= impDefStanceMultiplier
 			aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= impDefStanceMultiplier
 			aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= impDefStanceMultiplier
 			aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= impDefStanceMultiplier
 			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= impDefStanceMultiplier
+			if warrior.Bloodthirst != nil {
+				warrior.Bloodthirst.ThreatMultiplier /= tacMasteryThreatMultiplier
+			}
+			if warrior.MortalStrike != nil {
+				warrior.MortalStrike.ThreatMultiplier /= tacMasteryThreatMultiplier
+			}
 		},
 	})
 }
@@ -161,10 +163,12 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, critBonus)
+			warrior.enteringBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -critBonus)
+			warrior.leavingBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 	})
 }

@@ -7,32 +7,15 @@ import (
 
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 
-func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
+func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 764.0+bonusBaseDamage, true)
-	if !isMH {
-		// SpellID 66979
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 382.0+bonusBaseDamage, true)
-	}
-
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
 
-	effect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				return weaponBaseDamage(sim, hitEffect, spell) *
-					(1.0 + dk.dkCountActiveDiseases(hitEffect.Target)*diseaseMulti) * dk.RoRTSBonus(hitEffect.Target)
-			},
-		},
-		OnSpellHitDealt: onhit,
-	}
-
-	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
-
+	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    procMask,
+		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
@@ -44,10 +27,41 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			var baseDamage float64
+			if isMH {
+				baseDamage = 764 +
+					bonusBaseDamage +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else {
+				// SpellID 66979
+				baseDamage = 382 +
+					bonusBaseDamage +
+					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			}
+			baseDamage *= dk.RoRTSBonus(target) *
+				(1.0 + dk.dkCountActiveDiseases(target)*diseaseMulti)
+
+			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
+
+			if isMH {
+				rs.OnResult(sim, result)
+				dk.threatOfThassarianProc(sim, result, dk.BloodStrikeOhHit)
+				dk.LastOutcome = result.Outcome
+
+				if result.Landed() {
+					if dk.DesolationAura != nil {
+						dk.DesolationAura.Activate(sim)
+					}
+				}
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	}
 
-	rs := &RuneSpell{}
 	if isMH { // offhand doesn't need GCD
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(10, 1, 0, 0, 0))
@@ -61,13 +75,13 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 			},
 			IgnoreHaste: true,
 		}
-		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		rs.Refundable = true
+		rs.ConvertType = RuneTypeBlood
 		if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
 			rs.DeathConvertChance = 1.0
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
 		}
-		rs.ConvertType = RuneTypeBlood
 	}
 
 	if isMH {
@@ -80,16 +94,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool, onhit func(sim *core.Simul
 }
 
 func (dk *Deathknight) registerBloodStrikeSpell() {
-	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.threatOfThassarianProc(sim, spellEffect, dk.BloodStrikeOhHit)
-		dk.LastOutcome = spellEffect.Outcome
-
-		if spellEffect.Outcome.Matches(core.OutcomeLanded) {
-			if dk.DesolationAura != nil {
-				dk.DesolationAura.Activate(sim)
-			}
-		}
-	})
-	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false, nil)
+	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true)
+	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false)
 	dk.BloodStrike = dk.BloodStrikeMhHit
 }

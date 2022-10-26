@@ -81,25 +81,14 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(203, 227) + 0.571*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
 
 func (wp *WarlockPet) newCleave() *core.Spell {
 	baseCost := 439.0 // 10% of base
-
-	baseEffect := core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, false, 124, true),
-		OutcomeApplier: wp.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-
 	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		effects = append(effects, baseEffect)
-		effects[i].Target = wp.Env.GetTargetUnit(i)
-	}
 
 	return wp.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47994},
@@ -125,7 +114,16 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			constBaseDamage := 124 + spell.BonusWeaponDamage()
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := constBaseDamage + spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower())
+				spell.CalcAndDealDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 }
 
@@ -158,7 +156,7 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
 			baseDamage := 237 + 0.429*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
@@ -220,7 +218,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 			if impFelhunter && result.Landed() {
 				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

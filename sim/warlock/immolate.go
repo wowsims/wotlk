@@ -45,11 +45,10 @@ func (warlock *Warlock) registerImmolateSpell() {
 			if result.Landed() {
 				warlock.ImmolateDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
-	target := warlock.CurrentTarget
 	fireAndBrimstoneBonus := 0.02 * float64(warlock.Talents.FireAndBrimstone)
 
 	warlock.ImmolateDot = core.NewDot(core.Dot{
@@ -63,7 +62,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 			ThreatMultiplier:         warlock.Immolate.ThreatMultiplier,
 		}),
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Immolate-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -77,10 +76,15 @@ func (warlock *Warlock) registerImmolateSpell() {
 		}),
 		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore),
 		TickLength:    time.Second * 3,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(785/5, 0.2),
-			OutcomeApplier: warlock.OutcomeFuncMagicCrit(),
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 785/5 + 0.2*dot.Spell.SpellPower()
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+		},
 	})
 }

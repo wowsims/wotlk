@@ -25,7 +25,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	var remainingJumps int
 	priest.ProcPrayerOfMending = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseHealing := 1043 + 0.8057*spell.HealingPower()
-		priest.PrayerOfMending.CalcAndDealHealingCrit(sim, target, baseHealing)
+		priest.PrayerOfMending.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 
 		pomAuras[target.UnitIndex].Deactivate(sim)
 		curTarget = nil
@@ -110,8 +110,8 @@ func (priest *Priest) makePrayerOfMendingAura(target *core.Unit) *core.Aura {
 				})
 			}
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !autoProc && spellEffect.Damage > 0 {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !autoProc && result.Damage > 0 {
 				priest.ProcPrayerOfMending(sim, aura.Unit, priest.PrayerOfMending)
 			}
 		},

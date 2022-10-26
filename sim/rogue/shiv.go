@@ -9,9 +9,9 @@ import (
 )
 
 func (rogue *Rogue) registerShivSpell() {
-	cost := 20.0
-	if rogue.GetOHWeapon() != nil {
-		cost = 20 + 10*rogue.GetOHWeapon().SwingSpeed
+	baseCost := 20.0
+	if ohWeapon := rogue.GetOHWeapon(); ohWeapon != nil {
+		baseCost = rogue.costModifier(20 + 10*ohWeapon.SwingSpeed)
 	}
 
 	rogue.Shiv = rogue.RegisterSpell(core.SpellConfig{
@@ -20,15 +20,14 @@ func (rogue *Rogue) registerShivSpell() {
 		ProcMask:     core.ProcMaskMeleeOHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		DamageMultiplier: (1 +
@@ -37,23 +36,23 @@ func (rogue *Rogue) registerShivSpell() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.OffHand, true, 0, false),
-			OutcomeApplier: rogue.OutcomeFuncMeleeSpecialNoBlockDodgeParryNoCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.5 * spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 
-					switch rogue.Options.OhImbue {
-					case proto.Rogue_Options_DeadlyPoison:
-						rogue.DeadlyPoison.Cast(sim, spellEffect.Target)
-					case proto.Rogue_Options_InstantPoison:
-						rogue.InstantPoison[ShivProc].Cast(sim, spellEffect.Target)
-					case proto.Rogue_Options_WoundPoison:
-						rogue.WoundPoison[ShivProc].Cast(sim, spellEffect.Target)
-					}
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+
+				switch rogue.Options.OhImbue {
+				case proto.Rogue_Options_DeadlyPoison:
+					rogue.DeadlyPoison.Cast(sim, target)
+				case proto.Rogue_Options_InstantPoison:
+					rogue.InstantPoison[ShivProc].Cast(sim, target)
+				case proto.Rogue_Options_WoundPoison:
+					rogue.WoundPoison[ShivProc].Cast(sim, target)
 				}
-			},
-		}),
+			}
+		},
 	})
 }

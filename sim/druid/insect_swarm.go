@@ -14,6 +14,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
+	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -35,17 +36,16 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 0.3, 0),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: druid.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					druid.InsectSwarmDot.Apply(sim)
-					if !druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm) {
-						missAura.Activate(sim)
-					}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				druid.InsectSwarmDot.Apply(sim)
+				if !hasGlyph {
+					missAura.Activate(sim)
 				}
-			},
-		}),
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
 
 	druid.InsectSwarmDot = core.NewDot(core.Dot{
@@ -62,20 +62,22 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		}),
 		NumberOfTicks: 6 + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(215, 0.2),
-			OutcomeApplier: druid.OutcomeFuncTick(),
-			OnPeriodicDamageDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.setBonuses.balance_t8_4 {
-					tierProc := druid.GetOrRegisterAura(core.Aura{
-						Label:    "Elune's Wrath",
-						ActionID: core.ActionID{SpellID: 64823},
-						Duration: time.Second * 10,
-					})
-					tierProc.Activate(sim)
-				}
-			},
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 215 + 0.2*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+
+			if sim.RandomFloat("Elune's Wrath proc") > (1-0.08) && druid.setBonuses.balance_t8_4 {
+				tierProc := druid.GetOrRegisterAura(core.Aura{
+					Label:    "Elune's Wrath",
+					ActionID: core.ActionID{SpellID: 64823},
+					Duration: time.Second * 10,
+				})
+				tierProc.Activate(sim)
+			}
+		},
 	})
 }

@@ -148,7 +148,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	hunter.DelayDPSCooldownsForArmorDebuffs()
+	hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 
 	hunter.CustomRotation = hunter.makeCustomRotation()
 	if hunter.CustomRotation == nil {
@@ -221,7 +221,7 @@ func NewHunter(character core.Character, options proto.Player) *Hunter {
 		baseDamage := hunter.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 			hunter.AmmoDamageBonus +
 			spell.BonusWeaponDamage()
-		spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 	}
 
 	hunter.pet = hunter.NewHunterPet()

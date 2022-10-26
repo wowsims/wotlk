@@ -19,8 +19,8 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(outcomeMask) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(outcomeMask) {
 				warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
 			}
 		},
@@ -29,16 +29,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	cost := 5 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
-	damageEffect := core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-		BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 0, true),
-		OutcomeApplier: warrior.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
-
-		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-			}
-		},
-	})
 	cooldownDur := time.Second * 5
 	gcdDur := core.GCDDefault
 
@@ -76,7 +66,15 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			warrior.overpowerValidUntil = 0
-			damageEffect(sim, target, spell)
+
+			baseDamage := 0 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+			if !result.Landed() {
+				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			}
 		},
 	})
 }

@@ -72,7 +72,7 @@ func (hp *HunterPet) applyOwlsFocus() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			hp.PseudoStats.NoCost = false
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskSpecial) {
 				aura.Deactivate(sim)
 			}
@@ -85,7 +85,7 @@ func (hp *HunterPet) applyOwlsFocus() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskSpecial) && sim.RandomFloat("Owls Focus") < procChance {
 				procAura.Activate(sim)
 			}
@@ -122,8 +122,8 @@ func (hp *HunterPet) applyCullingTheHerd() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeCrit) && (spell.IsSpellAction(BiteSpellID) || spell.IsSpellAction(ClawSpellID) || spell.IsSpellAction(SmackSpellID)) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeCrit) && (spell.IsSpellAction(BiteSpellID) || spell.IsSpellAction(ClawSpellID) || spell.IsSpellAction(SmackSpellID)) {
 				petAura.Activate(sim)
 				ownerAura.Activate(sim)
 			}
@@ -222,8 +222,8 @@ func (hp *HunterPet) registerRabidCD() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			procAura.Deactivate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
@@ -336,8 +336,8 @@ func (hp *HunterPet) registerWolverineBite() {
 			wbValidUntil = 0
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.DidCrit() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
 				wbValidUntil = sim.CurrentTime + time.Second*5
 			}
 		},
@@ -364,14 +364,13 @@ func (hp *HunterPet) registerWolverineBite() {
 		CritMultiplier:   2,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     hp.specialDamageMod(core.BaseDamageConfigMelee(5*80, 5*80, .07)),
-			OutcomeApplier: hp.OutcomeFuncMeleeSpecialNoBlockDodgeParry(),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 5*80 + 0.07*spell.MeleeAttackPower()
+			baseDamage *= hp.killCommandMult()
 
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				wbValidUntil = 0
-			},
-		}),
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+			wbValidUntil = 0
+		},
 	})
 
 	hp.AddMajorCooldown(core.MajorCooldown{

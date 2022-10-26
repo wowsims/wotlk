@@ -18,7 +18,9 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 	}
 
-	dk.setupGargoyleCooldowns()
+	if dk.Rotation.UseGargoyle {
+		dk.setupGargoyleCooldowns()
+	}
 
 	dk.RotationSequence.Clear().
 		NewAction(dk.getFirstDiseaseAction()).
@@ -147,7 +149,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	// Gargoyle cast needs to be checked more often then default rotation on gcd/resource gain checks
-	if dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
+	if dk.Rotation.UseGargoyle && dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
 		return sim.CurrentTime + 100*time.Millisecond
 	}
 
@@ -249,7 +251,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	}
 
 	// Gargoyle cast needs to be checked more often then default rotation on gcd/resource gain checks
-	if dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
+	if dk.Rotation.UseGargoyle && dk.SummonGargoyle.IsReady(sim) && dk.GCD.IsReady(sim) {
 		return sim.CurrentTime + 100*time.Millisecond
 	}
 
@@ -284,6 +286,15 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 					NewAction(dk.RotationActionUH_CancelBT)
 			}
 		}
+
+		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
+		} else {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
+		}
+	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
+		dk.RotationSequence.Clear()
+		dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
 
 		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)

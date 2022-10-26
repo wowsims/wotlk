@@ -36,7 +36,8 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 }
 
 // diseaseMultiplier calculates the bonus based on if you have DarkrunedBattlegear 4p.
-//  This function is slow so should only be used during initialization.
+//
+//	This function is slow so should only be used during initialization.
 func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 	if dk.Env.IsFinalized() {
 		panic("dont call dk.diseaseMultiplier function during runtime, cache result during initialization")
@@ -80,10 +81,6 @@ func (dk *Deathknight) registerFrostFever() {
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
 
-	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
-	if dk.Talents.WanderingPlague > 0 {
-		wpWrapper = dk.wpWrapper
-	}
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 		aura := core.Aura{
@@ -104,20 +101,21 @@ func (dk *Deathknight) registerFrostFever() {
 			Aura:          target.RegisterAura(aura),
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic:            true,
-				OnPeriodicDamageDealt: wpWrapper,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						firstTsApply := !flagTs[hitEffect.Target.Index]
-						flagTs[hitEffect.Target.Index] = true
-						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
-						return (29.44 + 0.06325*dk.getImpurityBonus(spell)) *
-							core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
-					},
-				},
-				OutcomeApplier: dk.OutcomeFuncAlwaysHit(),
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				firstTsApply := !flagTs[target.Index]
+				flagTs[target.Index] = true
+				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
+				dot.SnapshotBaseDamage = (29.44 + 0.06325*dk.getImpurityBonus(dot.Spell)) *
+					core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(target))
+
+				if !isRollover {
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+				dk.doWanderingPlague(sim, dot.Spell, result)
+			},
 		})
 
 		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell.Spell
@@ -153,15 +151,8 @@ func (dk *Deathknight) registerBloodPlague() {
 	dk.BloodPlagueExtended = make([]int, dk.Env.GetNumTargets())
 
 	// Tier9 4Piece
-	outcomeApplier := dk.OutcomeFuncAlwaysHit()
-	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.OutcomeFuncMagicCrit()
-	}
+	canCrit := dk.HasSetBonus(ItemSetThassariansBattlegear, 4)
 
-	var wpWrapper func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)
-	if dk.Talents.WanderingPlague > 0 {
-		wpWrapper = dk.wpWrapper
-	}
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 
@@ -178,20 +169,27 @@ func (dk *Deathknight) registerBloodPlague() {
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
 
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic:            true,
-				OnPeriodicDamageDealt: wpWrapper,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						firstRorApply := !flagRor[hitEffect.Target.Index]
-						flagRor[hitEffect.Target.Index] = true
-						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-						return (36.248 + 0.06325*dk.getImpurityBonus(spell)) *
-							core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(hitEffect.Target))
-					},
-				},
-				OutcomeApplier: outcomeApplier,
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				firstRorApply := !flagRor[target.Index]
+				flagRor[target.Index] = true
+				// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
+				dot.SnapshotBaseDamage = (36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)) *
+					core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(target))
+
+				if !isRollover {
+					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				var result *core.SpellResult
+				if canCrit {
+					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+				} else {
+					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+				}
+				dk.doWanderingPlague(sim, dot.Spell, result)
+			},
 		})
 
 		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell.Spell
@@ -231,16 +229,17 @@ func (dk *Deathknight) registerDrwFrostFever() {
 			}),
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic: true,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
-						return 29.44 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
-					},
-				},
-				OutcomeApplier: dk.RuneWeapon.OutcomeFuncAlwaysHit(),
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
+				dot.SnapshotBaseDamage = 29.44 + 0.06325*dk.getImpurityBonus(dot.Spell)
+
+				if !isRollover {
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+			},
 		})
 
 		dk.RuneWeapon.FrostFeverDisease[target.Index].Spell = dk.RuneWeapon.FrostFeverSpell
@@ -269,10 +268,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 	dk.RuneWeapon.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 
 	// Tier9 4Piece
-	outcomeApplier := dk.RuneWeapon.OutcomeFuncAlwaysHit()
-	if dk.HasSetBonus(ItemSetThassariansBattlegear, 4) {
-		outcomeApplier = dk.RuneWeapon.OutcomeFuncMagicCrit()
-	}
+	canCrit := dk.HasSetBonus(ItemSetThassariansBattlegear, 4)
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
@@ -285,27 +281,31 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
 			TickLength:    time.Second * 3,
 
-			TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-				IsPeriodic: true,
-				BaseDamage: core.BaseDamageConfig{
-					Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-						// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-						return 36.248 + 0.06325*dk.RuneWeapon.getImpurityBonus(spell)
-					},
-				},
-				OutcomeApplier: outcomeApplier,
-			}),
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
+				dot.SnapshotBaseDamage = 36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)
+
+				if !isRollover {
+					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				var result *core.SpellResult
+				if canCrit {
+					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+				} else {
+					result = dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+				}
+				dk.doWanderingPlague(sim, dot.Spell, result)
+			},
 		})
 
 		dk.RuneWeapon.BloodPlagueDisease[target.Index].Spell = dk.RuneWeapon.BloodPlagueSpell
 	}
 }
 
-func (dk *Deathknight) wpWrapper(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	dk.doWanderingPlague(sim, spell, spellEffect)
-}
-
-func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 	if dk.Talents.WanderingPlague == 0 {
 		return
 	}
@@ -314,11 +314,11 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
-	attackTable := dk.AttackTables[spellEffect.Target.UnitIndex]
-	physCritChance := spellEffect.PhysicalCritChance(spell, attackTable)
+	attackTable := dk.AttackTables[result.Target.UnitIndex]
+	physCritChance := spell.PhysicalCritChance(result.Target, attackTable)
 	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
 		dk.LastTickTime = sim.CurrentTime
-		dk.LastDiseaseDamage = spellEffect.Damage / dk.WanderingPlague.TargetDamageMultiplier(attackTable, false)
-		dk.WanderingPlague.Cast(sim, spellEffect.Target)
+		dk.LastDiseaseDamage = result.Damage / dk.WanderingPlague.TargetDamageMultiplier(attackTable, false)
+		dk.WanderingPlague.Cast(sim, result.Target)
 	}
 }

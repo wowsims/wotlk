@@ -9,34 +9,20 @@ import (
 // TODO: Cleanup death strike the same way we did for plague strike
 var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 
-func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect)) *RuneSpell {
+func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
-	if !isMH {
-		// SpellID 66953
-		weaponBaseDamage = core.BaseDamageFuncMeleeWeapon(core.OffHand, true, 148.0+bonusBaseDamage, true)
-	}
-
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 
-	effect := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				glyphDmgMultiplier := core.TernaryFloat64(hasGlyph, 1.0+0.01*core.MinFloat(dk.CurrentRunicPower(), 25.0), 1.0)
-
-				return weaponBaseDamage(sim, hitEffect, spell) * dk.RoRTSBonus(hitEffect.Target) * glyphDmgMultiplier
-			},
-		},
-
-		OnSpellHitDealt: onhit,
+	var healthMetrics *core.ResourceMetrics
+	if isMH {
+		healthMetrics = dk.NewHealthMetrics(DeathStrikeActionID)
 	}
 
-	procMask := dk.threatOfThassarianProcMasks(isMH, &effect)
-
+	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    procMask,
+		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
@@ -46,10 +32,43 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(effect),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			var baseDamage float64
+			if isMH {
+				baseDamage = 297 +
+					bonusBaseDamage +
+					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else {
+				baseDamage = 148 +
+					bonusBaseDamage +
+					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			}
+			baseDamage *= dk.RoRTSBonus(target)
+			if hasGlyph {
+				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
+			}
+
+			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
+
+			if isMH {
+				rs.OnResult(sim, result)
+				dk.LastOutcome = result.Outcome
+
+				if result.Landed() {
+					healingAmount := 0.05 * dk.dkCountActiveDiseases(target) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike)) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+					dk.GainHealth(sim, healingAmount, healthMetrics)
+					dk.DeathStrikeHeals = append(dk.DeathStrikeHeals, healingAmount)
+				}
+
+				dk.threatOfThassarianProc(sim, result, dk.DeathStrikeOhHit)
+			}
+
+			spell.DealDamage(sim, result)
+		},
 	}
 
-	rs := &RuneSpell{}
 	if isMH {
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(uint8(15.0+2.5*float64(dk.Talents.Dirge)), 0, 1, 1, 0))
@@ -63,13 +82,13 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 			},
 			IgnoreHaste: true,
 		}
-		conf.ApplyEffects = dk.withRuneRefund(rs, effect, false)
+		rs.Refundable = true
+		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 		if dk.Talents.DeathRuneMastery == 3 {
 			rs.DeathConvertChance = 1.0
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
 		}
-		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 	}
 
 	if isMH {
@@ -82,27 +101,13 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool, onhit func(sim *core.Simul
 }
 
 func (dk *Deathknight) registerDeathStrikeSpell() {
-	healthMetrics := dk.NewHealthMetrics(DeathStrikeActionID)
-
-	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false, nil)
-	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true, func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		dk.LastOutcome = spellEffect.Outcome
-
-		if spellEffect.Landed() {
-			healingAmount := 0.05 * dk.dkCountActiveDiseases(dk.CurrentTarget) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike)) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
-			dk.GainHealth(sim, healingAmount, healthMetrics)
-			dk.DeathStrikeHeals = append(dk.DeathStrikeHeals, healingAmount)
-		}
-
-		dk.threatOfThassarianProc(sim, spellEffect, dk.DeathStrikeOhHit)
-	})
+	dk.DeathStrikeOhHit = dk.newDeathStrikeSpell(false)
+	dk.DeathStrikeMhHit = dk.newDeathStrikeSpell(true)
 	dk.DeathStrike = dk.DeathStrikeMhHit
 }
 
 func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
-	weaponBaseDamage := core.BaseDamageFuncMeleeWeapon(core.MainHand, true, 297.0+bonusBaseDamage, true)
-
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
@@ -116,14 +121,16 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier: dk.RuneWeapon.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-			BaseDamage: core.BaseDamageConfig{
-				Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-					bonusDamage := core.TernaryFloat64(hasGlyph, 1.0+core.MinFloat(0.25, dk.CurrentRunicPower()/100.0), 1.0)
-					return weaponBaseDamage(sim, hitEffect, spell) * bonusDamage
-				},
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 297 +
+				bonusBaseDamage +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+			if hasGlyph {
+				baseDamage *= 1 + core.MinFloat(0.25, dk.CurrentRunicPower()/100.0)
+			}
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+		},
 	})
 }

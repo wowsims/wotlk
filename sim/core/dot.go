@@ -4,7 +4,8 @@ import (
 	"time"
 )
 
-type TickEffects func(*Simulation, *Dot) func()
+type OnSnapshot func(sim *Simulation, target *Unit, dot *Dot, isRollover bool)
+type OnTick func(sim *Simulation, target *Unit, dot *Dot)
 
 type Dot struct {
 	Spell *Spell
@@ -18,13 +19,13 @@ type Dot struct {
 	// If true, tick length will be shortened based on casting speed.
 	AffectedByCastSpeed bool
 
-	TickEffects    TickEffects
-	snapshotEffect *SpellEffect
+	OnSnapshot OnSnapshot
+	OnTick     OnTick
 
-	// Determines how to compute a snapshot.
-	isRollover bool
+	SnapshotBaseDamage         float64
+	SnapshotCritChance         float64
+	SnapshotAttackerMultiplier float64
 
-	tickFn     func()
 	tickAction *PendingAction
 	tickPeriod time.Duration
 
@@ -97,15 +98,15 @@ func (dot *Dot) RecomputeAuraDuration() {
 //
 //	doRollover will apply previously snapshotted crit/%dmg instead of recalculating.
 func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
-	dot.isRollover = doRollover
-	dot.tickFn = dot.TickEffects(sim, dot)
-	dot.isRollover = false
+	if dot.OnSnapshot != nil {
+		dot.OnSnapshot(sim, dot.Unit, dot, doRollover)
+	}
 }
 
 // Forces an instant tick. Does not reset the tick timer or aura duration,
 // the tick is simply an extra tick.
-func (dot *Dot) TickOnce() {
-	dot.tickFn()
+func (dot *Dot) TickOnce(sim *Simulation) {
+	dot.OnTick(sim, dot.Unit, dot)
 }
 
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
@@ -114,7 +115,7 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 			if dot.lastTickTime != sim.CurrentTime {
 				dot.lastTickTime = sim.CurrentTime
 				dot.TickCount++
-				dot.tickFn()
+				dot.TickOnce(sim)
 			}
 		},
 		CleanUp: func(sim *Simulation) {
@@ -124,12 +125,11 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 				if dot.lastTickTime != sim.CurrentTime {
 					dot.lastTickTime = sim.CurrentTime
 					dot.TickCount++
-					dot.tickFn()
+					dot.TickOnce(sim)
 				}
 			}
 		},
 	}
-
 }
 
 func NewDot(config Dot) *Dot {
@@ -163,91 +163,6 @@ func NewDot(config Dot) *Dot {
 			oldOnExpire(aura, sim)
 		}
 	}
-	dot.snapshotEffect = &SpellEffect{}
 
 	return dot
-}
-
-func (dot *Dot) updateSnapshotEffect(sim *Simulation, target *Unit, baseEffect SpellEffect) {
-	var snapshotDmgMult, snapshotCrit, snapshotSpellCrit float64
-	if dot.isRollover {
-		snapshotDmgMult = dot.snapshotEffect.snapshotDamageMultiplier
-		snapshotCrit = dot.snapshotEffect.snapshotMeleeCritRating
-		snapshotSpellCrit = dot.snapshotEffect.snapshotSpellCritRating
-	}
-
-	*dot.snapshotEffect = baseEffect
-	dot.snapshotEffect.Target = target
-	dot.snapshotEffect.isSnapshot = true
-	if dot.isRollover {
-		dot.snapshotEffect.snapshotDamageMultiplier = snapshotDmgMult
-		dot.snapshotEffect.snapshotMeleeCritRating = snapshotCrit
-		dot.snapshotEffect.snapshotSpellCritRating = snapshotSpellCrit
-	} else {
-		attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-		dot.snapshotEffect.snapshotDamageMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-		dot.snapshotEffect.snapshotMeleeCritRating = dot.Spell.physicalCritRating(target)
-		dot.snapshotEffect.snapshotSpellCritRating = dot.Spell.spellCritRating(target)
-	}
-	//if sim.Log != nil {
-	//	dot.Spell.Unit.Log(sim, "[DEBUG] Snapshot spell crit for spell %s: Rating: %0.02f, Chance: %0.02f, statCrit: %0.02f, spellBonus: %0.02f, effectBonus: %0.02f, target: %0.02f, targetSpell: %0.02f",
-	//		dot.Spell.ActionID.String(),
-	//		dot.snapshotEffect.snapshotSpellCritRating,
-	//		dot.snapshotEffect.snapshotSpellCritRating/(100*CritRatingPerCritChance),
-	//		dot.Spell.Unit.stats[stats.SpellCrit],
-	//		dot.Spell.BonusCritRating,
-	//		baseEffect.BonusCritRating,
-	//		target.PseudoStats.BonusCritRatingTaken,
-	//		target.PseudoStats.BonusSpellCritRatingTaken)
-	//}
-
-	baseDamage := dot.snapshotEffect.calculateBaseDamage(sim, dot.Spell)
-	dot.snapshotEffect.BaseDamage = BaseDamageConfigFlat(baseDamage)
-}
-
-func TickFuncSnapshot(target *Unit, baseEffect SpellEffect) TickEffects {
-	return func(sim *Simulation, dot *Dot) func() {
-		dot.updateSnapshotEffect(sim, target, baseEffect)
-		effectsFunc := ApplyEffectFuncDirectDamage(*dot.snapshotEffect)
-		return func() {
-			effectsFunc(sim, target, dot.Spell)
-		}
-	}
-}
-
-func TickFuncAOESnapshot(env *Environment, baseEffect SpellEffect) TickEffects {
-	return func(sim *Simulation, dot *Dot) func() {
-		target := dot.Spell.Unit.CurrentTarget
-		dot.updateSnapshotEffect(sim, target, baseEffect)
-		effectsFunc := ApplyEffectFuncAOEDamage(env, *dot.snapshotEffect)
-		return func() {
-			effectsFunc(sim, target, dot.Spell)
-		}
-	}
-}
-func TickFuncAOESnapshotCapped(env *Environment, baseEffect SpellEffect) TickEffects {
-	return func(sim *Simulation, dot *Dot) func() {
-		target := dot.Spell.Unit.CurrentTarget
-		dot.updateSnapshotEffect(sim, target, baseEffect)
-		effectsFunc := ApplyEffectFuncAOEDamageCapped(env, *dot.snapshotEffect)
-		return func() {
-			effectsFunc(sim, target, dot.Spell)
-		}
-	}
-}
-
-func TickFuncApplyEffects(effectsFunc ApplySpellEffects) TickEffects {
-	return func(sim *Simulation, dot *Dot) func() {
-		return func() {
-			effectsFunc(sim, dot.Spell.Unit.CurrentTarget, dot.Spell)
-		}
-	}
-}
-
-func TickFuncApplyEffectsToUnit(unit *Unit, effectsFunc ApplySpellEffects) TickEffects {
-	return func(sim *Simulation, dot *Dot) func() {
-		return func() {
-			effectsFunc(sim, unit, dot.Spell)
-		}
-	}
 }

@@ -68,7 +68,7 @@ func (priest *Priest) registerMindBlastSpell() {
 			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
 				priest.ImprovedSpiritTap.Activate(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 }

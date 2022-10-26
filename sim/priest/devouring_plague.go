@@ -13,11 +13,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
 
-	applier := priest.OutcomeFuncTick()
-	if priest.Talents.Shadowform {
-		applier = priest.OutcomeFuncMagicCrit()
-	}
-
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
@@ -55,7 +50,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
@@ -87,20 +82,18 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic: true,
-
-			BaseDamage: core.WrapBaseDamageConfig(
-				core.BaseDamageConfigMagicNoRoll(1376/8, 0.1849),
-				func(oldCalculator core.BaseDamageCalculator) core.BaseDamageCalculator {
-					return func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-						swMod := 1 + float64(priest.ShadowWeavingAura.GetStacks())*0.02
-						dmg := oldCalculator(sim, spellEffect, spell)
-
-						return dmg * swMod
-					}
-				}),
-			OutcomeApplier: applier,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 1376/8 + 0.1849*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
+			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if priest.Talents.Shadowform {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
 }

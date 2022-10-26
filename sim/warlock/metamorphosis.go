@@ -70,18 +70,14 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		NumberOfTicks:       15,
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
-		// TODO: obey the AoE cap
-		TickEffects: func(sim *core.Simulation, dot *core.Dot) func() {
-			effectsFunc := core.ApplyEffectFuncAOEDamage(warlock.Env, core.SpellEffect{
-				BaseDamage:     core.BaseDamageConfigMagicNoRoll(251+20*11.5, 0.143),
-				OutcomeApplier: warlock.OutcomeFuncMagicHit(),
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDmg := 251 + 20*11.5 + 0.143*dot.Spell.SpellPower()
+			// TODO: obey the AoE cap
+			//baseDmg *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.Targets {
 				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
-				// adding IsPeriodic should be correct?
-				IsPeriodic: false,
-			})
-
-			return func() {
-				effectsFunc(sim, dot.Spell.Unit.CurrentTarget, dot.Spell)
+				// calling CalcAndDealDamage should be correct?
+				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
 			}
 		},
 	})
@@ -106,7 +102,9 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDot(warlock.ImmolationAuraDot),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			warlock.ImmolationAuraDot.Apply(sim)
+		},
 	})
 	warlock.ImmolationAuraDot.Spell = warlock.ImmolationAura
 }

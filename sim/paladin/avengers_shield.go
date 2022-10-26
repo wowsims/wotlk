@@ -10,30 +10,11 @@ import (
 
 func (paladin *Paladin) registerAvengersShieldSpell() {
 	baseCost := paladin.BaseMana * 0.26
+
 	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
-
-	baseEffectMH := core.SpellEffect{
-		BaseDamage: core.BaseDamageConfig{
-			Calculator: func(sim *core.Simulation, hitEffect *core.SpellEffect, spell *core.Spell) float64 {
-				damage := 1100.0 +
-					(1344.0-1100.0)*sim.RandomFloat("Damage Roll") +
-					.07*spell.SpellPower() +
-					.07*spell.MeleeAttackPower()
-				return damage
-			},
-		},
-		// TODO: Check if it uses spellhit/crit or something crazy (probably not!)
-		OutcomeApplier: paladin.OutcomeFuncMeleeSpecialHitAndCrit(),
-	}
-
 	// Glyph to single target, OR apply to up to 3 targets
 	numHits := core.TernaryInt32(glyphedSingleTargetAS, 1, core.MinInt32(3, paladin.Env.GetNumTargets()))
-	effects := make([]core.SpellEffect, 0, numHits)
-	for i := int32(0); i < numHits; i++ {
-		mhEffect := baseEffectMH
-		mhEffect.Target = paladin.Env.GetTargetUnit(i)
-		effects = append(effects, mhEffect)
-	}
+	results := make([]*core.SpellResult, numHits)
 
 	paladin.AvengersShield = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48827},
@@ -57,10 +38,26 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 
 		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
-		// TODO: Why is this here?
-		BonusCritRating:  1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDamageMultiple(effects),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			constBaseDamage := 1100.0 +
+				.07*spell.SpellPower() +
+				.07*spell.MeleeAttackPower()
+
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := constBaseDamage + sim.Roll(1100, 1344)
+
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+		},
 	})
 }

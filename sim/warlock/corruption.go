@@ -13,6 +13,8 @@ func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
 	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.14 * warlock.BaseMana
+	spellCoeff := 0.2 + 0.12*float64(warlock.Talents.EmpoweredCorruption)/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
+	canCrit := warlock.Talents.Pandemic
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -37,39 +39,46 @@ func (warlock *Warlock) registerCorruptionSpell() {
 
 		// TODO: The application of the dot here is counting as a hit for 0 damage (not crit)
 		// This messes with final dmg and crit rate metrics.
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			OutcomeApplier:  warlock.OutcomeFuncMagicHit(),
-			OnSpellHitDealt: applyDotOnLanded(&warlock.CorruptionDot),
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			if result.Landed() {
+				warlock.CorruptionDot.Apply(sim)
+			}
+			spell.DealOutcome(sim, result)
+		},
 	})
-
-	target := warlock.CurrentTarget
-	spellCoefficient := 0.2 + 0.12*float64(warlock.Talents.EmpoweredCorruption)/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
-	applier := warlock.OutcomeFuncTick()
-	if warlock.Talents.Pandemic {
-		applier = warlock.OutcomeFuncMagicCrit()
-	}
 
 	warlock.CorruptionDot = core.NewDot(core.Dot{
 		Spell: warlock.Corruption,
-		Aura: target.RegisterAura(core.Aura{
+		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Corruption-" + strconv.Itoa(int(warlock.Index)),
 			ActionID: actionID,
 		}),
 		NumberOfTicks:       6,
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			IsPeriodic:     true,
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(1080/6, spellCoefficient),
-			OutcomeApplier: applier,
-		}),
+
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 1080/6 + spellCoeff*dot.Spell.SpellPower()
+			if !isRollover {
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			}
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			if canCrit {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			} else {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+		},
 	})
 }
 
-func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-	return func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-		if spellEffect.Landed() {
+func applyDotOnLanded(dot **core.Dot) func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+	return func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		if result.Landed() {
 			(*dot).Apply(sim)
 		}
 	}

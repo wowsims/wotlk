@@ -51,8 +51,8 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				}
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || spellEffect.Damage <= 0 {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || result.Damage <= 0 {
 				return
 			}
 			aura.RemoveStack(sim)

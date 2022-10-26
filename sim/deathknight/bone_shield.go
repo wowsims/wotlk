@@ -27,7 +27,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 			dk.BoneShieldAura.UpdateExpires(sim.CurrentTime + time.Minute*5)
 			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			aura.RemoveStack(sim)
 			if aura.GetStacks() == 0 {
 				aura.Deactivate(sim)

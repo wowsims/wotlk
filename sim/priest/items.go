@@ -174,15 +174,13 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 						}),
 						NumberOfTicks: 3,
 						TickLength:    time.Second * 3,
-						TickEffects: core.TickFuncSnapshot(unit, core.SpellEffect{
-							IsPeriodic: true,
-							IsHealing:  true,
-
-							BaseDamage: core.BuildBaseDamageConfig(func(sim *core.Simulation, spellEffect *core.SpellEffect, spell *core.Spell) float64 {
-								return curAmount * 0.33
-							}),
-							OutcomeApplier: priest.OutcomeFuncTick(),
-						}),
+						OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+							dot.SnapshotBaseDamage = curAmount * 0.33
+							dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+						},
+						OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+							dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+						},
 					})
 				}
 			}
@@ -193,13 +191,13 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+				OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell != priest.FlashHeal || sim.RandomFloat("Crimson Acolytes Raiment 2pc") >= 0.33 {
 						return
 					}
 
-					curAmount = spellEffect.Damage
-					hot := hots[spellEffect.Target.UnitIndex]
+					curAmount = result.Damage
+					hot := hots[result.Target.UnitIndex]
 					hot.Apply(sim)
 				},
 			})
@@ -250,7 +248,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell != priest.ShadowWordPain {
 					return
 				}

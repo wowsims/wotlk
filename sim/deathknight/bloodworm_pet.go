@@ -42,7 +42,7 @@ func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
 		baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 			spell.BonusWeaponDamage()
 
-		spell.CalcAndDealDamageMeleeSpecialCritOnly(sim, target, baseDamage)
+		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 	}
 
 	bloodworm.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)

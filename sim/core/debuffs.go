@@ -235,13 +235,13 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 		Label:    JudgementOfWisdomAuraLabel,
 		ActionID: actionID,
 		Duration: time.Second * 20,
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if spell.ProcMask.Matches(ProcMaskEmpty) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
 			// Melee claim that wisdom can proc on misses.
-			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !spellEffect.Landed() {
+			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !result.Landed() {
 				return
 			}
 
@@ -270,8 +270,8 @@ func JudgementOfLightAura(target *Unit) *Aura {
 		Label:    JudgementOfLightAuraLabel,
 		ActionID: actionID,
 		Duration: time.Second * 20,
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if !spell.ProcMask.Matches(ProcMaskMelee) || !spellEffect.Landed() {
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !spell.ProcMask.Matches(ProcMaskMelee) || !result.Landed() {
 				return
 			}
 
@@ -401,11 +401,10 @@ func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
 	})
 }
 
-var BloodFrenzyActionID = ActionID{SpellID: 29859}
 var phyDmgDebuff = `4%phydmg`
 
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
-	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", BloodFrenzyActionID, points)
+	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", ActionID{SpellID: 29859}, points)
 }
 func SavageCombatAura(target *Unit, points int32) *Aura {
 	return bloodFrenzySavageCombatAura(target, "Savage Combat", ActionID{SpellID: 58413}, points)
@@ -943,7 +942,7 @@ func MarkOfBloodAura(target *Unit) *Aura {
 				healthMetrics = target.NewHealthMetrics(actionId)
 			}
 		},
-		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			target := aura.Unit.CurrentTarget
 
 			// TODO: Does vampiric blood make it so this health gain is increased?

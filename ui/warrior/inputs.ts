@@ -29,6 +29,11 @@ export const Recklessness = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Sp
 	id: ActionId.fromSpellId(1719),
 });
 
+export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecWarrior>({
+	fieldName: 'useShatteringThrow',
+	id: ActionId.fromSpellId(64382),
+});
+
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWarrior>({
 	fieldName: 'startingRage',
 	label: 'Starting Rage',

@@ -8,13 +8,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (rogue *Rogue) SinisterStrikeEnergyCost() float64 {
-	return []float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike]
-}
-
 func (rogue *Rogue) registerSinisterStrikeSpell() {
-	energyCost := rogue.SinisterStrikeEnergyCost()
-	refundAmount := energyCost * 0.8
+	baseCost := rogue.costModifier([]float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike])
+	refundAmount := baseCost * 0.8
 	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
 
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
@@ -23,15 +19,14 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     energyCost,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
+				Cost: baseCost,
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
@@ -45,22 +40,24 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMeleeWeapon(core.MainHand, true, 180, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					points := int32(1)
-					if hasGlyphOfSinisterStrike && spellEffect.DidCrit() {
-						if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
-							points += 1
-						}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 180 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				points := int32(1)
+				if hasGlyphOfSinisterStrike && result.DidCrit() {
+					if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
+						points += 1
 					}
-					rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
-				} else {
-					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 				}
-			},
-		}),
+				rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
+			} else {
+				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+			}
+		},
 	})
 }

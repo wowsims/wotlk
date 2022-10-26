@@ -27,7 +27,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 				0.0732*spell.MeleeAttackPower() +
 				0.117*spell.SpellPower()
 
-			spell.CalcAndDealDamageMagicHit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 		},
 	})
 
@@ -45,9 +45,8 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			paladin.AddStatDynamic(sim, stats.Block, -blockBonus)
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Outcome.Matches(core.OutcomeBlock) {
-				// TODO: Shouldn't this be spellEffect.Target instead of spell.Unit?
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeBlock) {
 				procSpell.Cast(sim, spell.Unit)
 				aura.RemoveStack(sim)
 			}

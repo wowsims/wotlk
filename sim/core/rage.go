@@ -39,8 +39,8 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			if spellEffect.Outcome.Matches(OutcomeMiss) {
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if result.Outcome.Matches(OutcomeMiss) {
 				return
 			}
 			if !spell.ProcMask.Matches(ProcMaskWhiteHit) {
@@ -62,14 +62,14 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 				speed = options.OHSwingSpeed
 			}
 
-			if spellEffect.Outcome.Matches(OutcomeCrit) {
+			if result.Outcome.Matches(OutcomeCrit) {
 				hitFactor *= 2
 			}
 
-			damage := spellEffect.Damage
-			if spellEffect.Outcome.Matches(OutcomeDodge | OutcomeParry) {
+			damage := result.Damage
+			if result.Outcome.Matches(OutcomeDodge | OutcomeParry) {
 				// Rage is still generated for dodges/parries, based on the damage it WOULD have done.
-				damage = spellEffect.PreoutcomeDamage
+				damage = result.PreOutcomeDamage
 			}
 
 			// generatedRage is capped for very low damage swings
@@ -82,8 +82,8 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			}
 			unit.AddRage(sim, generatedRage, spell.ResourceMetrics)
 		},
-		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, spellEffect *SpellEffect) {
-			generatedRage := spellEffect.Damage * 2.5 / RageFactor
+		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			generatedRage := result.Damage * 2.5 / RageFactor
 			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
 		},
 	})

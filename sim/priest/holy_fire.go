@@ -43,7 +43,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 			if result.Landed() {
 				priest.HolyFireDot.Apply(sim)
 			}
-			spell.DealDamage(sim, &result)
+			spell.DealDamage(sim, result)
 		},
 	})
 
@@ -75,10 +75,12 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		}),
 		NumberOfTicks: 7,
 		TickLength:    time.Second * 1,
-		TickEffects: core.TickFuncSnapshot(target, core.SpellEffect{
-			BaseDamage:     core.BaseDamageConfigMagicNoRoll(50, 0.024),
-			OutcomeApplier: priest.OutcomeFuncTick(),
-			IsPeriodic:     true,
-		}),
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+			dot.SnapshotBaseDamage = 50 + 0.024*dot.Spell.SpellPower()
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+		},
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		},
 	})
 }

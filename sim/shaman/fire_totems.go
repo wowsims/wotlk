@@ -55,10 +55,10 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		//TickLength:           time.Second * 2.2,
 		NumberOfTicks: 24,
 		TickLength:    time.Second * 60 / 24,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(90, 120) + 0.167*spell.SpellPower()
-			spell.CalcAndDealDamageMagicHitAndCrit(sim, target, baseDamage)
-		}),
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := sim.Roll(90, 120) + 0.167*dot.Spell.SpellPower()
+			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+		},
 	})
 }
 
@@ -102,70 +102,13 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		}),
 		NumberOfTicks: 10,
 		TickLength:    time.Second * 2,
-		TickEffects: core.TickFuncApplyEffects(func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 371 + 0.1*spell.SpellPower()
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDamage := 371 + 0.1*dot.Spell.SpellPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			}
-		}),
+		},
 	})
 }
-
-// func (shaman *Shaman) FireNovaTickLength() time.Duration {
-// 	return time.Second * time.Duration(4-shaman.Talents.ImprovedFireTotems)
-// }
-
-// func (shaman *Shaman) registerNovaTotemSpell() {
-// 	actionID := core.ActionID{SpellID: 25537}
-// 	baseCost := 765.0
-
-// 	tickLength := shaman.FireNovaTickLength()
-// 	shaman.FireNovaTotem = shaman.RegisterSpell(core.SpellConfig{
-// 		ActionID:    actionID,
-// 		SpellSchool: core.SpellSchoolFire,
-// 		Flags:       SpellFlagTotem,
-
-// 		ResourceType: stats.Mana,
-// 		BaseCost:     baseCost,
-
-// 		Cast: core.CastConfig{
-// 			DefaultCast: core.Cast{
-// 				Cost: baseCost -
-// 					baseCost*float64(shaman.Talents.TotemicFocus)*0.05 -
-// 					baseCost*float64(shaman.Talents.MentalQuickness)*0.02,
-// 				GCD: time.Second,
-// 			},
-// 			CD: core.Cooldown{
-// 				Timer:    shaman.NewTimer(),
-// 				Duration: time.Second * 15,
-// 			},
-// 		},
-
-// 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-// 			shaman.MagmaTotemDot.Cancel(sim)
-// 			shaman.SearingTotemDot.Cancel(sim)
-// 			shaman.FireNovaTotemDot.Apply(sim)
-// 			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + tickLength + 1
-// 			shaman.tryTwistFireNova(sim)
-// 		},
-// 	})
-
-// 	target := shaman.CurrentTarget
-// 	shaman.FireNovaTotemDot = core.NewDot(core.Dot{
-// 		Spell: shaman.FireNovaTotem,
-// 		Aura: target.RegisterAura(core.Aura{
-// 			Label:    "FireNovaTotem-" + strconv.Itoa(int(shaman.Index)),
-// 			ActionID: actionID,
-// 		}),
-// 		NumberOfTicks: 1,
-// 		TickLength:    tickLength,
-// 		TickEffects: core.TickFuncApplyEffects(core.ApplyEffectFuncAOEDamageCapped(shaman.Env, 9975, core.SpellEffect{
-// 			ProcMask:            core.ProcMaskEmpty,
-// 			BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-// 			DamageMultiplier:    1 + float64(shaman.Talents.CallOfFlame)*0.05,
-// 			BaseDamage:          core.BaseDamageConfigMagic(654, 730, 0.214),
-// 			OutcomeApplier:      shaman.OutcomeFuncMagicHitAndCrit(shaman.ElementalCritMultiplier()),
-// 		})),
-// 	})
-// }

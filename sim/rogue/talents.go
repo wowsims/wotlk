@@ -76,23 +76,14 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	}
 }
 
-func (rogue *Rogue) makeCastModifier() func(*core.Simulation, *core.Spell, *core.Cast) {
-	builderCostMultiplier := 1.0
-	costReduction := 40.0
+func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
 	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
-		builderCostMultiplier -= 0.05
+		return func(baseCost float64) float64 {
+			return math.RoundToEven(0.95 * baseCost)
+		}
 	}
-	return func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		costMultiplier := 1.0
-		if spell.Flags.Matches(SpellFlagBuilder) { // note: this also applies to openers, as per https://www.wowhead.com/wotlk/spell=60163/cheaper-combo-moves
-			costMultiplier *= builderCostMultiplier
-		}
-		cast.Cost *= costMultiplier
-		cast.Cost = math.Ceil(cast.Cost)
-		if rogue.VanCleefsProcAura.IsActive() {
-			cast.Cost = core.MaxFloat(0, cast.Cost-costReduction)
-			rogue.VanCleefsProcAura.Deactivate(sim)
-		}
+	return func(baseCost float64) float64 {
+		return baseCost
 	}
 }
 
@@ -179,7 +170,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			for _, affectedSpell := range affectedSpells {
 				if spell == affectedSpell {
 					aura.Deactivate(sim)
@@ -223,12 +214,12 @@ func (rogue *Rogue) applySealFate() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagBuilder) {
 				return
 			}
 
-			if !spellEffect.Outcome.Matches(core.OutcomeCrit) {
+			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
 
@@ -299,8 +290,8 @@ func (rogue *Rogue) applyCombatPotency() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spellEffect.Landed() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
 				return
 			}
 
@@ -337,8 +328,8 @@ func (rogue *Rogue) applyFocusedAttacks() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !spellEffect.DidCrit() {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.DidCrit() {
 				return
 			}
 			// Fan of Knives OH hits do not trigger focused attacks
@@ -370,7 +361,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamageAlwaysHit(sim, target, curDmg)
+			spell.CalcAndDealDamage(sim, target, curDmg, spell.OutcomeAlwaysHit)
 		},
 	})
 
@@ -390,11 +381,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.MultiplyMeleeSpeed(sim, inverseHasteBonus)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if sim.GetNumTargets() < 2 {
 				return
 			}
-			if spellEffect.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 			// Fan of Knives off-hand hits are not cloned
@@ -403,10 +394,10 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			}
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = spellEffect.Damage / rogue.AttackTables[spellEffect.Target.Index].GetArmorDamageModifier(spell)
+			curDmg = result.Damage / result.ResistanceMultiplier
 
-			bfHit.Cast(sim, rogue.Env.NextTargetUnit(spellEffect.Target))
-			bfHit.SpellMetrics[spellEffect.Target.UnitIndex].Casts--
+			bfHit.Cast(sim, rogue.Env.NextTargetUnit(result.Target))
+			bfHit.SpellMetrics[result.Target.UnitIndex].Casts--
 		},
 	})
 

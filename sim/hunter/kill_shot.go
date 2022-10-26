@@ -46,7 +46,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 				spell.BonusWeaponDamage() +
 				325
 			baseDamage *= 2
-			spell.CalcAndDealDamageRangedHitAndCrit(sim, target, baseDamage)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 		},
 	})
 }

@@ -26,11 +26,11 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			target.PseudoStats.BonusPhysicalDamageTaken -= bonusDamage
 		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.SpellSchool != core.SpellSchoolPhysical {
 				return
 			}
-			if !spellEffect.Landed() || spellEffect.Damage == 0 {
+			if !result.Landed() || result.Damage == 0 {
 				return
 			}
 
@@ -38,7 +38,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		},
 	})
 
-	baseCost := 35.0 - float64(rogue.Talents.SlaughterFromTheShadows)
+	baseCost := rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows))
 	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
@@ -55,7 +55,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 				GCD:  time.Second,
 			},
 			IgnoreHaste: true,
-			ModifyCast:  rogue.CastModifier,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0),
@@ -66,19 +65,20 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
-		ApplyEffects: core.ApplyEffectFuncDirectDamage(core.SpellEffect{
-			BaseDamage: core.BaseDamageConfigMeleeWeapon(
-				core.MainHand, true, 0, true),
-			OutcomeApplier: rogue.OutcomeFuncMeleeWeaponSpecialHitAndCrit(),
-			OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-				if spellEffect.Landed() {
-					rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-					hemoAura.Activate(sim)
-					hemoAura.SetStacks(sim, 10)
-				} else {
-					rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
-				}
-			},
-		}),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 +
+				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				hemoAura.Activate(sim)
+				hemoAura.SetStacks(sim, 10)
+			} else {
+				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+			}
+		},
 	})
 }

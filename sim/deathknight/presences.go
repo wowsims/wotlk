@@ -102,9 +102,9 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	}
 
 	if !isDps {
-		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, spellEffect *core.SpellEffect) {
-			if spellEffect.Damage > 0 {
-				healthGain := (0.04 * spellEffect.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (0.04 * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
 				dk.GainHealth(sim, healthGain, healthMetrics)
 			}
 		}
@@ -150,12 +150,16 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			aura.Unit.EnableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier *= 7
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			aura.Unit.DisableDynamicStatDep(sim, armorDep)
+
+			dk.IcyTouch.ThreatMultiplier /= 7
 		},
 	})
 }
@@ -184,6 +188,8 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
 	}, nil)
 
+	runeCd := 10 * time.Second
+	impUp := 500 * time.Millisecond * time.Duration(dk.Talents.ImprovedUnholyPresence)
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
@@ -192,11 +198,17 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if dk.Talents.ImprovedUnholyPresence > 0 {
+				aura.Unit.SetRuneCd(runeCd - impUp)
+			}
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMultSubversion
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			dk.MultiplyMeleeSpeed(sim, 1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if dk.Talents.ImprovedUnholyPresence > 0 {
+				aura.Unit.SetRuneCd(runeCd)
+			}
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMultSubversion
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			dk.MultiplyMeleeSpeed(sim, 1/1.15)
