@@ -42,8 +42,8 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:              120,
-			BaseDamageMax:              160,
+			BaseDamageMin:              70,
+			BaseDamageMax:              110,
 			SwingSpeed:                 2,
 			SwingDuration:              time.Second * 2,
 			CritMultiplier:             2,
@@ -53,6 +53,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	})
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
+	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
 	return ghoulPet
@@ -229,7 +230,7 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 var armyGhoulPetBaseStats = stats.Stats{
 	stats.Agility:     856,
 	stats.Strength:    0,
-	stats.AttackPower: 0,
+	stats.AttackPower: -20,
 
 	stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 }
@@ -247,7 +248,7 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 
 		return stats.Stats{
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength]*(glyphBonus+0.7*ravenousDead)*0.1 - 20,
+			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead) * 0.05,
 
 			stats.MeleeHit: hitRatingFromOwner,
 			stats.SpellHit: hitRatingFromOwner,

@@ -111,7 +111,7 @@ var frostRotation = &proto.Deathknight_Rotation{}
 var deathKnightOptions = &proto.Deathknight_Options{
 	StartingRunicPower:  0,
 	PetUptime:           1,
-	PrecastGhoulFrenzy:  true,
+	PrecastGhoulFrenzy:  false,
 	PrecastHornOfWinter: true,
 }
 

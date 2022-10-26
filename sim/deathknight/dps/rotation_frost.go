@@ -101,7 +101,7 @@ func (dk *DpsDeathknight) setupUnbreakableArmorCooldowns() {
 
 func (dk *DpsDeathknight) castMajorCooldown(mcd *core.MajorCooldown, sim *core.Simulation, target *core.Unit) {
 	if mcd != nil {
-		if mcd.Spell.IsReady(sim) && dk.GCD.IsReady(sim) {
+		if mcd.Spell.IsReady(sim) && (dk.GCD.IsReady(sim) || mcd.Spell.DefaultCast.GCD == 0) {
 			mcd.Spell.Cast(sim, target)
 		}
 	}
