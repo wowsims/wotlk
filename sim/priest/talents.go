@@ -363,6 +363,23 @@ func (priest *Priest) applyMisery() {
 	}
 
 	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
+
+	priest.RegisterAura(core.Aura{
+		Label:    "Priest Shadow Effects",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if spell == priest.ShadowWordPain || spell == priest.VampiricTouch || spell.ActionID.SpellID == priest.MindFlay[1].ActionID.SpellID {
+				priest.MiseryAura.Activate(sim)
+			}
+		},
+	})
 }
 
 func (priest *Priest) applyShadowWeaving() {
@@ -375,11 +392,10 @@ func (priest *Priest) applyShadowWeaving() {
 		ActionID:  core.ActionID{SpellID: 15258},
 		Duration:  time.Second * 15,
 		MaxStacks: 5,
-		// TODO: This affects all spells not just direct damage. Dot damage should omit multipliers since it's snapshot at cast time.
-		// OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-		// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
-		// 	aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
-		// },
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
+			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
+		},
 	})
 }
 

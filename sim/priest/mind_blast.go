@@ -51,7 +51,6 @@ func (priest *Priest) registerMindBlastSpell() {
 				baseDamage += normalSpellCoeff * spell.SpellPower()
 			}
 
-			baseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 			if priest.ShadowWordPainDot.IsActive() {
 				baseDamage *= swpMod
 			} else {

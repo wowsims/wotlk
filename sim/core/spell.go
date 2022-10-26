@@ -8,6 +8,7 @@ import (
 )
 
 type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
+type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell) *SpellResult
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -20,8 +21,6 @@ type SpellConfig struct {
 	BaseCost     float64
 
 	Cast CastConfig
-
-	ApplyEffects ApplySpellResults
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -36,6 +35,12 @@ type SpellConfig struct {
 	ThreatMultiplier float64
 
 	FlatThreatBonus float64
+
+	// Performs the actions of this spell.
+	ApplyEffects ApplySpellResults
+
+	// Optional field. Calculates expected average damage.
+	ExpectedDamage ExpectedDamageCalculator
 }
 
 // Metric totals for a spell against a specific target, for the current iteration.
@@ -105,7 +110,11 @@ type Spell struct {
 
 	SpellMetrics []SpellMetrics
 
+	// Performs the actions of this spell.
 	ApplyEffects ApplySpellResults
+
+	// Optional field. Calculates expected average damage.
+	expectedDamageInternal ExpectedDamageCalculator
 
 	// The current or most recent cast data.
 	CurCast Cast
@@ -175,6 +184,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		SharedCD:    config.Cast.SharedCD,
 
 		ApplyEffects: config.ApplyEffects,
+
+		expectedDamageInternal: config.ExpectedDamage,
 
 		BonusHitRating:           config.BonusHitRating,
 		BonusCritRating:          config.BonusCritRating,
@@ -423,4 +434,10 @@ func (spell *Spell) ApplyAOEThreatIgnoreMultipliers(threatAmount float64) {
 }
 func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 	spell.ApplyAOEThreatIgnoreMultipliers(threatAmount * spell.Unit.PseudoStats.ThreatMultiplier)
+}
+
+func (spell *Spell) ExpectedDamage(sim *Simulation, target *Unit) float64 {
+	result := spell.expectedDamageInternal(sim, target, spell)
+	result.inUse = false
+	return result.Damage
 }

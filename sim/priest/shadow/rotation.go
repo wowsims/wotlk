@@ -1,6 +1,7 @@
 package shadow
 
 import (
+	//"fmt"
 	"math"
 	"time"
 
@@ -220,6 +221,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// VT dmg
 		vtDamage = (170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
 			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
+
+		//newVtDamage := spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget)
+		//if newVtDamage != vtDamage {
+		//	panic(fmt.Sprintf("Old vt: %0.01f, new vt: %0.01f", vtDamage, newVtDamage))
+		//}
 
 		// If there is at least 2 VT ticks then it's worth using
 		if deltaTimeBL > gcd.Seconds() && numVTbeforeBL < 2 && float64(sim.CurrentTime.Seconds()) < float64(BLusedat) {
