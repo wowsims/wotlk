@@ -149,7 +149,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := ((69.0-51.0)*sim.RandomFloat("Gargoyle Strike")+51.0)*2.05 + attackPowerModifier*spell.MeleeAttackPower()
+			baseDamage := 2.05*sim.Roll(51, 69) + attackPowerModifier*spell.MeleeAttackPower()
 			result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
 			spell.DealDamage(sim, result)
 		},

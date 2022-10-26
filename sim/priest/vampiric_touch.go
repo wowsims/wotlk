@@ -11,6 +11,7 @@ import (
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
 	baseCost := priest.BaseMana * 0.16
+	numTicks := 5 + core.TernaryInt(priest.HasSetBonus(ItemSetZabras, 2), 2, 0)
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -41,6 +42,16 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+			baseDamage := 850/5 + 0.4*spell.SpellPower()
+			baseDamage *= float64(numTicks)
+
+			if priest.Talents.Shadowform {
+				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+			} else {
+				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+			}
+		},
 	})
 
 	target := priest.CurrentTarget
@@ -52,13 +63,12 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			ActionID: actionID,
 		}),
 
-		NumberOfTicks:       5 + core.TernaryInt(priest.HasSetBonus(ItemSetZabras, 2), 2, 0),
+		NumberOfTicks:       numTicks,
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dot.SnapshotBaseDamage = 850/5 + 0.4*dot.Spell.SpellPower()
-			dot.SnapshotBaseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},

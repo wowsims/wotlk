@@ -1,7 +1,7 @@
 import { PlayerStats } from '..//proto/api.js';
 import { Stat, Class } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
-import { statNames, statOrder } from '..//proto_utils/names.js';
+import { getClassStatName, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';
 import { Player } from '..//player.js';
 import { EventID, TypedEvent } from '..//typed_event.js';
@@ -39,7 +39,7 @@ export class CharacterStats extends Component {
 			row.classList.add('character-stats-table-row');
 			row.innerHTML = `
 				<td class="character-stats-table-label">
-					<span>${statNames[stat].toUpperCase()}<span>
+					<span>${getClassStatName(stat, player.getClass()).toUpperCase()}<span>
 					<span class="character-stats-table-tooltip fas fa-search"></span>
 				</td>
 				<td class="character-stats-table-value"></td>

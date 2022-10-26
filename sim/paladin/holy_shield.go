@@ -47,7 +47,6 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Outcome.Matches(core.OutcomeBlock) {
-				// TODO: Shouldn't this be result.Target instead of spell.Unit?
 				procSpell.Cast(sim, spell.Unit)
 				aura.RemoveStack(sim)
 			}

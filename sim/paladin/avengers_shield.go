@@ -38,8 +38,6 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 
 		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
-		// TODO: Why is this here?
-		BonusCritRating:  1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -49,7 +47,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 
 			curTarget := target
 			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
-				baseDamage := constBaseDamage + (1344.0-1100.0)*sim.RandomFloat("Damage Roll")
+				baseDamage := constBaseDamage + sim.Roll(1100, 1344)
 
 				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 				curTarget = sim.Environment.NextTargetUnit(curTarget)

@@ -1,5 +1,5 @@
 import { Stat } from '../proto/common.js';
-import { statNames, statOrder } from '../proto_utils/names.js';
+import { getClassStatName, statOrder } from '../proto_utils/names.js';
 import { Stats } from '../proto_utils/stats.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
@@ -27,7 +27,7 @@ export class BonusStatsPicker extends Component {
 		this.rootElem.appendChild(label);
 
 		this.statPickers = statOrder.filter(stat => this.stats.includes(stat)).map(stat => new NumberPicker(this.rootElem, player, {
-			label: statNames[stat],
+			label: getClassStatName(stat, player.getClass()),
 			changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
 			getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {

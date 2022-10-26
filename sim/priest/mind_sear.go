@@ -78,7 +78,7 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 			} else {
 				dmg += normalCoeff * dot.Spell.SpellPower()
 			}
-			dot.SnapshotBaseDamage = dmg * normMod * (1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks()))
+			dot.SnapshotBaseDamage = dmg * normMod
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
