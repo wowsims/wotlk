@@ -54,8 +54,7 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
-	normalCoeff := 0.2861
-	miseryCoeff := normalCoeff * (1 + 0.05*float64(priest.Talents.Misery))
+	miseryCoeff := 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) // initialize modifier
@@ -72,12 +71,8 @@ func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
 		AffectedByCastSpeed: true,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dmg := sim.Roll(212, 228)
-			if priest.MiseryAura.IsActive() {
-				dmg += miseryCoeff * dot.Spell.SpellPower()
-			} else {
-				dmg += normalCoeff * dot.Spell.SpellPower()
-			}
+			dmg := sim.Roll(212, 228) + miseryCoeff*dot.Spell.SpellPower()
+
 			dot.SnapshotBaseDamage = dmg * normMod
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
