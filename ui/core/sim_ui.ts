@@ -182,6 +182,17 @@ export abstract class SimUI extends Component {
 			});
 		}
 
+		const patreon = document.createElement('span');
+		patreon.classList.add('patreon-link', 'fa', 'fa-brands', 'fa-patreon');
+		tippy(patreon, {
+			'content': 'Support our devs on Patreon',
+			'allowHTML': true,
+		});
+		patreon.addEventListener('click', event => {
+			window.open('https://patreon.com/wowsims', '_blank');
+		});
+		this.addToolbarItem(patreon);
+
 		const downloadBinary = document.createElement('span');
 		// downloadBinary.src = "/wotlk/assets/img/gauge.svg"
 		downloadBinary.classList.add('downbin', 'hide');
