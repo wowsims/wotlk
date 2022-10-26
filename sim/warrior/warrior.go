@@ -26,15 +26,17 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                 Stance
-	overpowerValidUntil    time.Duration
-	rendValidUntil         time.Duration
-	shoutExpiresAt         time.Duration
-	revengeProcAura        *core.Aura
-	glyphOfRevengeProcAura *core.Aura
-	disableHsCleaveUntil   time.Duration
-	lastTasteForBloodProc  time.Duration
-	Ymirjar4pcProcAura     *core.Aura
+	Stance                  Stance
+	overpowerValidUntil     time.Duration
+	rendValidUntil          time.Duration
+	shoutExpiresAt          time.Duration
+	revengeProcAura         *core.Aura
+	glyphOfRevengeProcAura  *core.Aura
+	disableHsCleaveUntil    time.Duration
+	lastTasteForBloodProc   time.Duration
+	Ymirjar4pcProcAura      *core.Aura
+	leavingBerserkerStance  time.Duration
+	enteringBerserkerStance time.Duration
 
 	// Reaction time values
 	reactionTime       time.Duration

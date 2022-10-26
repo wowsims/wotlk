@@ -78,7 +78,6 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 	const threatMult = 2.0735
 
 	actionID := core.ActionID{SpellID: 71}
-
 	if warrior.Talents.ImprovedDefensiveStance > 0 {
 		enrageAura := warrior.GetOrRegisterAura(core.Aura{
 			Label:    "Enrage",
@@ -164,10 +163,12 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, critBonus)
+			warrior.enteringBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -critBonus)
+			warrior.leavingBerserkerStance = sim.CurrentTime + time.Millisecond*10
 		},
 	})
 }

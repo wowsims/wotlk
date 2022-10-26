@@ -27,11 +27,6 @@ func (warrior *Warrior) ApplyTalents() {
 		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	}
 
-	// TODO: This should only be applied while berserker stance is active.
-	if warrior.Talents.ImprovedBerserkerStance > 0 {
-		warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
-	}
-
 	if warrior.Talents.ShieldMastery > 0 {
 		warrior.MultiplyStat(stats.BlockValue, 1.0+0.15*float64(warrior.Talents.ShieldMastery))
 	}
@@ -63,6 +58,40 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.RegisterBladestormCD()
 	warrior.applyDamageShield()
 	warrior.applyCriticalBlock()
+	warrior.applyImprovedBerserkerStance()
+}
+
+func (warrior *Warrior) applyImprovedBerserkerStance() {
+	if warrior.Talents.ImprovedBerserkerStance == 0 {
+		return
+	}
+	// The bonus strength is applied here so the stat weight could account for it. Then there's an "inactive" aura to remove the bonus when outside of the stance.
+	// The "inactive" aura is added 10ms after leaving berserker stance and removed 10ms after entering berserker stance.
+	// This is to accurately implemment rend receiving the bonus if stance
+	warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
+
+	malusAura := warrior.RegisterAura(core.Aura{
+		Label:    "Improved Berserker Stance Inactive Aura",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, 1/(1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.EnableDynamicStatDep(sim, warrior.NewDynamicMultiplyStat(stats.Strength, (1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))))
+		},
+	})
+
+	warrior.RegisterAura(core.Aura{
+		Label:    "Improved Berserker Stance",
+		Duration: core.NeverExpires,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if warrior.leavingBerserkerStance > warrior.enteringBerserkerStance && !malusAura.IsActive() {
+				malusAura.Activate(sim)
+			} else if warrior.enteringBerserkerStance > warrior.leavingBerserkerStance && malusAura.IsActive() {
+				malusAura.Deactivate(sim)
+			}
+		},
+	})
 }
 
 func (warrior *Warrior) applyCriticalBlock() {
