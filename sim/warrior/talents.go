@@ -67,7 +67,7 @@ func (warrior *Warrior) applyImprovedBerserkerStance() {
 	}
 	// The bonus strength is applied here so the stat weight could account for it. Then there's an "inactive" aura to remove the bonus when outside of the stance.
 	// The "inactive" aura is added 10ms after leaving berserker stance and removed 10ms after entering berserker stance.
-	// This is to accurately implemment rend receiving the bonus if stance
+	// This is to accurately implemment rend receiving the bonus of imp berserker stance when stanced danced from berserker stance with a macro
 	warrior.MultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
 
 	malusAura := warrior.RegisterAura(core.Aura{
