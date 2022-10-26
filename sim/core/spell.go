@@ -206,6 +206,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic("Unknown proc mask on " + spell.ActionID.String())
 	}
 
+	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.SpellSchool == SpellSchoolNone {
+		panic("SpellSchool for spell " + spell.ActionID.String() + " not set")
+	}
+
 	switch spell.ResourceType {
 	case stats.Mana:
 		spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
@@ -230,7 +234,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	}
 
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
-		panic("Cost set for spell " + spell.ActionID.String() + " but no ResourceType")
+		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)

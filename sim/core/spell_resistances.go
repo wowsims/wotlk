@@ -32,10 +32,6 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 		return attackTable.GetArmorDamageModifier(spell)
 	}
 
-	if spell.SpellSchool.Matches(SpellSchoolNone) {
-		panic(fmt.Sprintf("damaging spell %v has no school set", spell.ActionID))
-	}
-
 	// Magical resistance.
 	averageResist := attackTable.Defender.averageResist(spell.SpellSchool, attackTable.Attacker)
 	if averageResist == 0 { // for equal or lower level mobs
