@@ -380,6 +380,8 @@ var allowList = map[int]bool{
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
 
+	41752: true, // Brunnhildar Axe
+
 	// Undead Slaying Sets
 	// Plate
 	43068: true,
