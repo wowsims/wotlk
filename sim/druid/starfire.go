@@ -24,13 +24,12 @@ func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cas
 func (druid *Druid) registerStarfireSpell() {
 	actionID := core.ActionID{SpellID: 48465}
 	baseCost := 0.16 * druid.BaseMana
-	spellCoeff := 1.0 + (0.04 * float64(druid.Talents.WrathOfCenarius))
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
+	spellCoeff := 1.0
+	bonusCoeff := 0.04 * float64(druid.Talents.WrathOfCenarius)
 
-	// This seems to be unaffected by wrath of cenarius so it needs to come first.
-	// TODO: This was reordered at some point and is benefitting from wrath of cenarius which isn't intended.
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55*spellCoeff, 0) +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165*spellCoeff, 0)
+	idolSpellPower := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55, 0) +
+		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165, 0)
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 
@@ -69,7 +68,7 @@ func (druid *Druid) registerStarfireSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := bonusFlatDamage + sim.Roll(1038, 1222) + spellCoeff*spell.SpellPower()
+			baseDamage := sim.Roll(1038, 1222) + ((spell.SpellPower() + idolSpellPower) * spellCoeff) + (spell.SpellPower() * bonusCoeff)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				if result.DidCrit() {

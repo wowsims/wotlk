@@ -45,6 +45,7 @@ type Druid struct {
 	SwipeBear        *core.Spell
 	SwipeCat         *core.Spell
 	TigersFury       *core.Spell
+	Typhoon          *core.Spell
 	Wrath            *core.Spell
 
 	CatForm  *core.Spell
@@ -91,13 +92,13 @@ type Druid struct {
 }
 
 type talentBonuses struct {
-	moonfury        float64
-	vengeance       float64
+	galeWinds       float64
 	genesis         float64
+	moonfury        float64
 	moonglow        float64
-	iffBonusCrit    float64
-	naturesSplendor int
 	naturesMajesty  float64
+	vengeance       float64
+	naturesSplendor int
 	starlightWrath  time.Duration
 }
 
@@ -122,8 +123,9 @@ type SelfBuffs struct {
 // Registering non-unique Talent effects
 func (druid *Druid) RegisterTalentsBonuses() {
 	druid.talentBonuses = talentBonuses{
-		moonfury:        []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury], // additive damage bonus
+		galeWinds:       0.15 * float64(druid.Talents.GaleWinds),
 		genesis:         0.01 * float64(druid.Talents.Genesis),                   // additive damage bonus
+		moonfury:        []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury], // additive damage bonus
 		moonglow:        1 - 0.03*float64(druid.Talents.Moonglow),                // cost reduction
 		naturesMajesty:  2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
 		vengeance:       0.2 * float64(druid.Talents.Vengeance),
@@ -221,6 +223,7 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerStarfireSpell()
 	druid.registerWrathSpell()
 	druid.registerStarfallSpell()
+	druid.registerTyphoonSpell()
 	druid.registerForceOfNatureCD()
 	druid.registerLasherweaveDot()
 }

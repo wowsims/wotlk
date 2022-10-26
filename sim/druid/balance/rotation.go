@@ -2,6 +2,7 @@ package balance
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
 )
 
@@ -10,10 +11,22 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
-	// TODO add rotation choice here
+	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
+		moonkin.Rotation.UseBattleRes = false
+		moonkin.Rotation.UseMf = false
+		moonkin.Rotation.UseIs = true
+		moonkin.Rotation.UseStarfire = true
+		moonkin.Rotation.UseWrath = true
+		moonkin.Rotation.UseTyphoon = false
+		moonkin.Rotation.UseHurricane = false
+		moonkin.Rotation.MfInsideEclipseThreshold = 0
+		moonkin.Rotation.IsInsideEclipseThreshold = 15.0
+		moonkin.Rotation.UseSmartCooldowns = true
+		moonkin.Rotation.MaximizeMfUptime = false
+		moonkin.Rotation.MaximizeIsUptime = true
+	}
 
 	var spell *core.Spell
-
 	spell = moonkin.rotation(sim)
 
 	if success := spell.Cast(sim, moonkin.CurrentTarget); !success {
@@ -47,9 +60,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
 		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
 		return moonkin.Starfall
+	} else if moonkin.Typhoon.IsReady(sim) && rotation.UseTyphoon {
+		return moonkin.Typhoon
+	} else if rotation.UseHurricane {
+		return moonkin.Hurricane
 	}
-
 	if moonkin.Talents.Eclipse > 0 {
+
 		// Eclipse stuff
 		lunarIsActive := lunarICD > time.Millisecond*15000
 		solarIsActive := solarICD > time.Millisecond*15000
@@ -72,11 +89,11 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if maximizeIsUptime && insectSwarmUptime <= 0 {
 					return moonkin.InsectSwarm
 				}
-				if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
-					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
-					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
-				}
-				if moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds() {
+				if moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds() && rotation.UseStarfire {
+					if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+						moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+						moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+					}
 					return moonkin.Starfire
 				} else if rotation.UseMf {
 					return moonkin.Moonfire
@@ -85,10 +102,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if maximizeMfUptime && moonfireUptime <= 0 {
 					return moonkin.Moonfire
 				}
-				if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
-					moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
-				}
-				if insectSwarmUptime > 0 || float64(rotation.IsInsideEclipseThreshold) >= solarUptime.Seconds() {
+				if insectSwarmUptime > 0 || float64(rotation.IsInsideEclipseThreshold) >= solarUptime.Seconds() && rotation.UseWrath {
+					if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
+					}
 					return moonkin.Wrath
 				} else if rotation.UseIs {
 					return moonkin.InsectSwarm
@@ -104,7 +121,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		return moonkin.Moonfire
 	} else if rotation.UseIs && insectSwarmUptime <= 0 && (fishingForSolar || maximizeIsUptime) {
 		return moonkin.InsectSwarm
-	} else if fishingForLunar {
+	} else if fishingForLunar && rotation.UseWrath {
 		return moonkin.Wrath
 	} else {
 		return moonkin.Starfire
