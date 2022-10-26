@@ -159,6 +159,15 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatShadowResistance]: 'Shadow Resistance',
 };
 
+export function getClassStatName(stat: Stat, playerClass: Class): string {
+	const statName = statNames[stat];
+	if (playerClass == Class.ClassHunter) {
+		return statName.replace('Melee', 'Ranged');
+	} else {
+		return statName;
+	}
+}
+
 export const slotNames: Record<ItemSlot, string> = {
 	[ItemSlot.ItemSlotHead]: 'Head',
 	[ItemSlot.ItemSlotNeck]: 'Neck',
