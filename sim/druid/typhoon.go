@@ -47,7 +47,7 @@ func (druid *Druid) registerTyphoonSpell() {
 				baseDamage := 1190 + (spellCoeff * spell.SpellPower())
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				for _, aoeTarget := range sim.Encounter.Targets {
-					spell.CalcAndDealDamageMagicHitAndCrit(sim, &aoeTarget.Unit, baseDamage)
+					spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 				}
 			})
 		},

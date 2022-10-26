@@ -297,7 +297,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
-			if spell.ProcMask.Matches(core.ProcMaskMelee) && ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
+			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
 				chanceToProc := 0.0875

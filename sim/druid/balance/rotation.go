@@ -56,10 +56,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
 		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
 		return moonkin.ForceOfNature
-		//} else if moonkin.Starfall.IsReady(sim) {
-		//	moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-		//	moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
-		//	return moonkin.Starfall
+	} else if moonkin.Starfall.IsReady(sim) {
+		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
+		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+		return moonkin.Starfall
 	} else if moonkin.Typhoon.IsReady(sim) && rotation.UseTyphoon {
 		return moonkin.Typhoon
 	} else if rotation.UseHurricane {
