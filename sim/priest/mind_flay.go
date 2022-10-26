@@ -77,8 +77,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	target := priest.CurrentTarget
 
-	normalCoeff := 0.257
-	miseryCoeff := normalCoeff * (1 + 0.05*float64(priest.Talents.Misery))
+	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
 
 	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
 	swpMod := normMod * (1 +
@@ -104,12 +103,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 		AffectedByCastSpeed: true,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dmg := 588.0 / 3
-			if priest.MiseryAura.IsActive() {
-				dmg += miseryCoeff * dot.Spell.SpellPower()
-			} else {
-				dmg += normalCoeff * dot.Spell.SpellPower()
-			}
+			dmg := 588.0/3 + miseryCoeff*dot.Spell.SpellPower()
 			if priest.ShadowWordPainDot.IsActive() {
 				dmg *= swpMod
 			} else {
