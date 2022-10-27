@@ -112,7 +112,6 @@ type Unit struct {
 	cdTimers []*Timer
 
 	AttackTables                []*AttackTable
-	DefenseTables               []*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
 	GCD       *Timer
@@ -230,24 +229,6 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
 	}
-	if bonus[stats.SpellPenetration] != 0 {
-		unit.updateSpellPen()
-	}
-	if bonus[stats.ArcaneResistance] != 0 {
-		unit.updateResistances()
-	}
-	if bonus[stats.FireResistance] != 0 {
-		unit.updateResistances()
-	}
-	if bonus[stats.FrostResistance] != 0 {
-		unit.updateResistances()
-	}
-	if bonus[stats.NatureResistance] != 0 {
-		unit.updateResistances()
-	}
-	if bonus[stats.ShadowResistance] != 0 {
-		unit.updateResistances()
-	}
 
 	if len(unit.Pets) > 0 {
 		for _, petAgent := range unit.Pets {
@@ -275,21 +256,6 @@ func (unit *Unit) DisableDynamicStatDep(sim *Simulation, dep *stats.StatDependen
 
 		if sim.Log != nil {
 			unit.Log(sim, "Dynamic dep disabled (%s): %s", dep.String(), unit.stats.Subtract(oldStats).FlatString())
-		}
-	}
-}
-
-func (unit *Unit) updateResistances() {
-	for _, table := range unit.DefenseTables {
-		if table != nil {
-			table.UpdatePartialResists()
-		}
-	}
-}
-func (unit *Unit) updateSpellPen() {
-	for _, table := range unit.AttackTables {
-		if table != nil {
-			table.UpdatePartialResists()
 		}
 	}
 }
@@ -398,7 +364,7 @@ func (unit *Unit) finalize() {
 		panic("Unit already finalized!")
 	}
 
-	// Make sure we dont accidentally set initial stats instead of stats.
+	// Make sure we don't accidentally set initial stats instead of stats.
 	if !unit.initialStats.Equals(stats.Stats{}) {
 		panic("Initial stats may not be set before finalized: " + unit.initialStats.String())
 	}

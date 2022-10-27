@@ -44,8 +44,12 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 				warrior.SpendRage(sim, warrior.CurrentRage()-maxRetainedRage, rageMetrics)
 			}
 
-			// Add new stance aura.
-			aura.Activate(sim)
+			// Delayed, so same-GCD casts are affected by the current aura.
+			//  Alternatively, those casts could just (artificially) happen before the stance change.
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt:     sim.CurrentTime + 10*time.Millisecond,
+				OnAction: aura.Activate,
+			})
 			warrior.Stance = stance
 		},
 	})
@@ -154,6 +158,12 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 	threatMult := 0.8 - 0.02*float64(warrior.Talents.ImprovedBerserkerStance)
 	critBonus := core.CritRatingPerCritChance * (3 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 2, 0))
 
+	var dep *stats.StatDependency
+	if warrior.Talents.ImprovedBerserkerStance > 0 {
+		// alternatively, this could be default on
+		dep = warrior.NewDynamicMultiplyStat(stats.Strength, 1.0+0.04*float64(warrior.Talents.ImprovedBerserkerStance))
+	}
+
 	warrior.BerserkerStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Berserker Stance",
 		Tag:      "Stance",
@@ -163,12 +173,16 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, critBonus)
-			warrior.enteringBerserkerStance = sim.CurrentTime + time.Millisecond*10
+			if dep != nil {
+				warrior.EnableDynamicStatDep(sim, dep)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -critBonus)
-			warrior.leavingBerserkerStance = sim.CurrentTime + time.Millisecond*10
+			if dep != nil {
+				warrior.DisableDynamicStatDep(sim, dep)
+			}
 		},
 	})
 }

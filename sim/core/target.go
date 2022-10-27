@@ -219,13 +219,6 @@ type AttackTable struct {
 	GlanceMultiplier float64
 	CritSuppression  float64
 
-	PartialResistArcaneThresholds Thresholds
-	PartialResistHolyThresholds   Thresholds
-	PartialResistFireThresholds   Thresholds
-	PartialResistFrostThresholds  Thresholds
-	PartialResistNatureThresholds Thresholds
-	PartialResistShadowThresholds Thresholds
-
 	DamageDealtMultiplier               float64 // attacker buff, applied in applyAttackerModifiers()
 	DamageTakenMultiplier               float64 // defender debuff, applied in applyTargetModifiers()
 	NatureDamageTakenMultiplier         float64
@@ -264,8 +257,6 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseDodgeChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
 		table.BaseParryChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
 	}
-
-	table.UpdatePartialResists()
 
 	return table
 }

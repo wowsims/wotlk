@@ -192,7 +192,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 					spell.BonusWeaponDamage()
 			} else {
 				baseDamage = 0 +
-					0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= 0.25 + 0.125*dk.dkCountActiveDiseases(target)

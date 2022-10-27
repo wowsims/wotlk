@@ -60,8 +60,9 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 		},
 		Rotation: &proto.BalanceDruid_Rotation{
 			Type:                     proto.BalanceDruid_Rotation_Adaptive,
-			UseMf:                    true,
 			UseIs:                    true,
+			UseStarfire:              true,
+			UseWrath:                 true,
 			UseBattleRes:             true,
 			IsInsideEclipseThreshold: 15.0,
 			UseSmartCooldowns:        true,

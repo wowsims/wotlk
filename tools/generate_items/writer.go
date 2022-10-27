@@ -316,6 +316,7 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
+	// 33510: true, // Unseen moon idol
 	29994: true, // Thalassian Wildercloak
 	30627: true, // Tsunami Talisman
 	38212: true, // Death Knight's Anguish
@@ -378,6 +379,8 @@ var allowList = map[int]bool{
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
+
+	41752: true, // Brunnhildar Axe
 
 	// Undead Slaying Sets
 	// Plate

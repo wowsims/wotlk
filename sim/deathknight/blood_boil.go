@@ -39,9 +39,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				aoeUnit := &aoeTarget.Unit
 
-				// TODO: Use sim.Roll(), will just change RNG
-				roll := (220.0-180.0)*sim.RandomFloat("Blood Boil") + 180.0
-				baseDamage := (roll + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(aoeUnit) * core.TernaryFloat64(dk.DiseasesAreActive(aoeUnit), 1.5, 1.0)
+				baseDamage := (sim.Roll(180, 220) + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(aoeUnit) * core.TernaryFloat64(dk.DiseasesAreActive(aoeUnit), 1.5, 1.0)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 
 				result := spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)

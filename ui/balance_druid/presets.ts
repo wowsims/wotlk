@@ -105,6 +105,10 @@ export const DefaultDebuffs = Debuffs.create({
 	totemOfWrath: true,
 });
 
+export const OtherDefaults = {
+	distanceFromTarget: 18,
+};
+
 export const P1_PRESET = {
     name: 'P1 Preset',
     tooltip: Tooltips.BASIC_BIS_DISCLAIMER,

@@ -11,7 +11,6 @@ import (
 func (priest *Priest) registerMindBlastSpell() {
 	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
 
-	normalSpellCoeff := 0.429
 	miserySpellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
 
 	normMod := (1 + 0.02*float64(priest.Talents.Darkness)) *
@@ -44,14 +43,8 @@ func (priest *Priest) registerMindBlastSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(997, 1053)
-			if priest.MiseryAura.IsActive() {
-				baseDamage += miserySpellCoeff * spell.SpellPower()
-			} else {
-				baseDamage += normalSpellCoeff * spell.SpellPower()
-			}
+			baseDamage := sim.Roll(997, 1053) + miserySpellCoeff*spell.SpellPower()
 
-			baseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 			if priest.ShadowWordPainDot.IsActive() {
 				baseDamage *= swpMod
 			} else {

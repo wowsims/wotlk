@@ -61,19 +61,13 @@ export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.
 	label: 'Pre-Cast Ghoul Frenzy',
 	labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().ghoulFrenzy,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'precastHornOfWinter',
 	label: 'Pre-Cast Horn of Winter',
 	labelTooltip: 'Precast Horn of Winter for 10 extra runic power before fight.',
-});
-
-export const RefreshHornOfWinter = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'refreshHornOfWinter',
-	label: 'Refresh Horn of Winter',
-	labelTooltip: 'Refresh Horn of Winter on free GCDs.',
 });
 
 export const DiseaseRefreshDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({

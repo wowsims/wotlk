@@ -9,7 +9,7 @@ import (
 //
 // Note that many stats are omitted from this list, because they are not used
 // in any dependencies.
-var safeDepsOrder []Stat = []Stat{
+var safeDepsOrder = []Stat{
 	Strength,
 	Agility,
 	Stamina,
@@ -30,28 +30,6 @@ var safeDepsOrder []Stat = []Stat{
 	Dodge,
 	Parry,
 }
-
-const invalidDep = -1
-
-// Returns a list where each element is an index in safeDepsOrder, for the
-// corresponding stat. -1 is used if the stat is not in the list.
-func makeSafeDepsIndexList() [Len]int {
-	var indexList [Len]int
-
-	for i := 0; i < int(Len); i++ {
-		indexList[i] = invalidDep
-		for safeDepIdx, safeDepStat := range safeDepsOrder {
-			if Stat(i) == safeDepStat {
-				indexList[i] = safeDepIdx
-				break
-			}
-		}
-	}
-
-	return indexList
-}
-
-var safeDepsIndexList = makeSafeDepsIndexList()
 
 func isSafeDep(s Stat) bool {
 	for _, v := range safeDepsOrder {
@@ -187,9 +165,9 @@ func (sdm *StatDependencyManager) NewDynamicMultiplyStat(s Stat, amount float64)
 }
 
 func (sdm *StatDependencyManager) sortDeps() {
-	deps := []*StatDependency{}
+	var deps []*StatDependency
 
-	// By looping through the stats in order of safeDeps, we gaurantee proper
+	// By looping through the stats in order of safeDeps, we guarantee proper
 	// sorting of dependencies.
 	for _, srcStat := range safeDepsOrder {
 		for _, dstStat := range safeDepsOrder {
@@ -210,7 +188,7 @@ func (sdm *StatDependencyManager) sortDeps() {
 				}
 
 				if dep.dynamic {
-					// Dynamic deps (those with enabled == false) need to remain separate so
+					// Dynamic deps (those with enabled == false) need to remain separate, so
 					// they can be turned on/off.
 					deps = append(deps, dep)
 				} else {

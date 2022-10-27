@@ -42,8 +42,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := (1376/8 + 0.1849*spell.SpellPower()) *
-				(8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)) *
-				(1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks()))
+				(8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague))
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
@@ -84,7 +83,6 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dot.SnapshotBaseDamage = 1376/8 + 0.1849*dot.Spell.SpellPower()
-			dot.SnapshotBaseDamage *= 1 + 0.02*float64(priest.ShadowWeavingAura.GetStacks())
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},

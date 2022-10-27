@@ -36,7 +36,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 			} else {
 				// SpellID 66992
 				baseDamage = 189 +
-					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= dk.RoRTSBonus(target)

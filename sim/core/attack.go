@@ -133,10 +133,10 @@ func (unit *Unit) MHNormalizedWeaponDamage(sim *Simulation, attackPower float64)
 }
 
 func (unit *Unit) OHWeaponDamage(sim *Simulation, attackPower float64) float64 {
-	return unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
+	return 0.5 * unit.AutoAttacks.OH.CalculateWeaponDamage(sim, attackPower)
 }
 func (unit *Unit) OHNormalizedWeaponDamage(sim *Simulation, attackPower float64) float64 {
-	return unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, attackPower)
+	return 0.5 * unit.AutoAttacks.OH.CalculateNormalizedWeaponDamage(sim, attackPower)
 }
 
 func (unit *Unit) RangedWeaponDamage(sim *Simulation, attackPower float64) float64 {
@@ -268,7 +268,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			baseDamage := 0.5*spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+			baseDamage := spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)

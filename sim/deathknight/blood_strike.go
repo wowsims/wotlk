@@ -38,7 +38,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 				// SpellID 66979
 				baseDamage = 382 +
 					bonusBaseDamage +
-					0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= dk.RoRTSBonus(target) *

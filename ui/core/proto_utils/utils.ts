@@ -1508,9 +1508,11 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 	[Spec.SpecBalanceDruid]: (gem, playerStats) => {
 		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
 			// TODO: Fix this
-			return (((playerStats.getStat(Stat.StatSpellPower) * 0.795) + 603) * 2 * (playerStats.getStat(Stat.StatSpellCrit) / 2208) * 0.045) / 0.795;
+			return (12 * 0.65) + (3 * 45);
 		}
-
+		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
+			return (21 * 0.65) + (3 * 45);
+		}
 		return 0;
 	},
 	[Spec.SpecElementalShaman]: (gem, playerStats) => {

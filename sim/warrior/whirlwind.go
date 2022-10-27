@@ -20,7 +20,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskMeleeOHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | SpellFlagBloodsurge,
 
 			DamageMultiplier: 1 *
 				(1 + 0.02*float64(warrior.Talents.UnendingFury) + 0.1*float64(warrior.Talents.ImprovedWhirlwind)) *
@@ -34,7 +34,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -77,7 +77,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 				curTarget = target
 				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 					baseDamage := 0 +
-						0.5*spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+						spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 						spell.BonusWeaponDamage()
 					results[hitIndex] = warrior.WhirlwindOH.CalcDamage(sim, curTarget, baseDamage, warrior.WhirlwindOH.OutcomeMeleeWeaponSpecialHitAndCrit)
 

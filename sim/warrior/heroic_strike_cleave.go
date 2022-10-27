@@ -20,7 +20,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | SpellFlagBloodsurge,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,

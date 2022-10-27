@@ -49,7 +49,7 @@ func (warrior *Warrior) registerSlamSpell() {
 }
 
 func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.BloodsurgeAura.IsActive() &&
+	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.isBloodsurgeActive() &&
 		sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime)
 }
 
@@ -58,16 +58,6 @@ func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {
 }
 
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
-	if warrior.BloodsurgeAura.IsActive() {
-		warrior.Slam.DefaultCast.CastTime = 0
-		if warrior.Ymirjar4pcProcAura.IsActive() {
-			warrior.Slam.DefaultCast.GCD = time.Second * 1
-			warrior.Ymirjar4pcProcAura.RemoveStack(sim)
-		} else {
-			warrior.Slam.DefaultCast.GCD = core.GCDDefault
-		}
-	}
-
 	warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
 	if warrior.AutoAttacks.IsDualWielding {
 		warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.Slam.DefaultCast.CastTime)

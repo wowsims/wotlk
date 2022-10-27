@@ -18,6 +18,10 @@ type WarriorInputs struct {
 	RendCdThreshold      time.Duration
 }
 
+const (
+	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
+)
+
 type Warrior struct {
 	core.Character
 
@@ -26,17 +30,15 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                  Stance
-	overpowerValidUntil     time.Duration
-	rendValidUntil          time.Duration
-	shoutExpiresAt          time.Duration
-	revengeProcAura         *core.Aura
-	glyphOfRevengeProcAura  *core.Aura
-	disableHsCleaveUntil    time.Duration
-	lastTasteForBloodProc   time.Duration
-	Ymirjar4pcProcAura      *core.Aura
-	leavingBerserkerStance  time.Duration
-	enteringBerserkerStance time.Duration
+	Stance                 Stance
+	overpowerValidUntil    time.Duration
+	rendValidUntil         time.Duration
+	shoutExpiresAt         time.Duration
+	revengeProcAura        *core.Aura
+	glyphOfRevengeProcAura *core.Aura
+	disableHsCleaveUntil   time.Duration
+	lastTasteForBloodProc  time.Duration
+	Ymirjar4pcProcAura     *core.Aura
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -237,8 +239,9 @@ func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
 }
 
-func (warrior *Warrior) attackPowerMultiplier(spell *core.Spell, coeff float64) float64 {
-	return spell.MeleeAttackPower() * coeff
+func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duration {
+	baseCd /= 100
+	return []time.Duration{baseCd * 100, baseCd * 89, baseCd * 78, baseCd * 67}[warrior.Talents.IntensifyRage]
 }
 
 func init() {

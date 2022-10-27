@@ -55,8 +55,8 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 	lbdotDmg := 0.0 // dynamically changing dmg
 	if applyDot {
 		spell := shaman.RegisterSpell(core.SpellConfig{
-			ActionID: core.ActionID{SpellID: 64930},
-			// TODO: Spell school?
+			ActionID:         core.ActionID{SpellID: 64930},
+			SpellSchool:      core.SpellSchoolNature,
 			ProcMask:         core.ProcMaskEmpty,
 			Flags:            core.SpellFlagIgnoreModifiers,
 			DamageMultiplier: 1,

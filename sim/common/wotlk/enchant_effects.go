@@ -373,7 +373,7 @@ func init() {
 	core.NewItemEffect(53343, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53343
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53343
+		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53343
 		if !mh && !oh {
 			return
 		}
