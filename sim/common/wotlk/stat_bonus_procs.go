@@ -177,10 +177,9 @@ func init() {
 		Callback:   OnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
 		Outcome:    core.OutcomeCrit,
+		Harmful:    true,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
-
-		IgnoreSpellID: 60053,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sonic Booster",
