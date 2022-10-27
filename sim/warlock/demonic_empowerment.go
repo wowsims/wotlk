@@ -9,13 +9,7 @@ import (
 )
 
 func (warlock *Warlock) registerDemonicEmpowermentSpell() {
-
-	petAura := core.Aura{
-		Label:    "Demonic Empowerment Aura",
-		ActionID: core.ActionID{SpellID: 47193},
-		Duration: time.Second * 30,
-	}
-
+	var petAura core.Aura
 	switch warlock.Options.Summon {
 	case proto.Warlock_Options_Imp:
 		petAura = core.Aura{
@@ -52,6 +46,7 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 			Duration: time.Second * 15,
 		}
 	}
+
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(
 			petAura,

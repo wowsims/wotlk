@@ -48,7 +48,6 @@ func (party *Party) IsFull() bool {
 
 func (party *Party) GetPartyBuffs(basePartyBuffs *proto.PartyBuffs) *proto.PartyBuffs {
 	// Compute the full party buffs for this party.
-	// TODO(vigo) cloning required?
 	partyBuffs := &proto.PartyBuffs{}
 	if basePartyBuffs != nil {
 		partyBuffs = googleProto.Clone(basePartyBuffs).(*proto.PartyBuffs)
@@ -417,7 +416,7 @@ func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
 func SinglePlayerRaidProto(player *proto.Player, partyBuffs *proto.PartyBuffs, raidBuffs *proto.RaidBuffs, debuffs *proto.Debuffs) *proto.Raid {
 	return &proto.Raid{
 		Parties: []*proto.Party{
-			&proto.Party{
+			{
 				Players: []*proto.Player{
 					player,
 				},

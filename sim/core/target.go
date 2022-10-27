@@ -91,7 +91,7 @@ func (encounter *Encounter) updateAOECapMultiplier() {
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {
-	for i, _ := range encounter.Targets {
+	for i := range encounter.Targets {
 		target := encounter.Targets[i]
 		target.doneIteration(sim)
 	}

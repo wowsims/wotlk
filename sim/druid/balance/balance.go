@@ -81,7 +81,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
-	if moonkin.Rotation.UseSmartCooldowns == true {
+	if moonkin.Rotation.UseSmartCooldowns {
 		moonkin.potionUsed = false
 		consumes := moonkin.Consumes
 

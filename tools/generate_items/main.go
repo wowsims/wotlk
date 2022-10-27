@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -86,8 +85,8 @@ func main() {
 	// 	}
 	// }
 
-	// ioutil.WriteFile("all_item_ids", []byte(items.String()), 0666)
-	// ioutil.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
+	// os.WriteFile("all_item_ids", []byte(items.String()), 0666)
+	// os.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
 
 	// panic("done")
 
@@ -181,7 +180,7 @@ func main() {
 		log.Fatalf("failed to marshal: %s", err)
 	}
 	itemDB.Write(v)
-	ioutil.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
+	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
 func getGemDeclarations() []GemDeclaration {

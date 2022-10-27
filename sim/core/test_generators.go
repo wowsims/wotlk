@@ -132,7 +132,6 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	testNameParts = append(testNameParts, buffsCombo.Label)
 
 	encounterIdx := testIdx % len(combos.Encounters)
-	testIdx /= len(combos.Encounters)
 	encounterCombo := combos.Encounters[encounterIdx]
 	testNameParts = append(testNameParts, encounterCombo.Label)
 
@@ -501,7 +500,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	generator := &CombinedTestGenerator{
 		subgenerators: []SubGenerator{
-			SubGenerator{
+			{
 				name: "CharacterStats",
 				generator: &SingleCharacterStatsTestGenerator{
 					Name: "Default",
@@ -510,7 +509,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					},
 				},
 			},
-			SubGenerator{
+			{
 				name: "Settings",
 				generator: &SettingsCombos{
 					Class:       config.Class,
@@ -518,10 +517,10 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					GearSets:    allGearSets,
 					SpecOptions: allSpecOptions,
 					Buffs: []BuffsCombo{
-						BuffsCombo{
+						{
 							Label: "NoBuffs",
 						},
-						BuffsCombo{
+						{
 							Label:    "FullBuffs",
 							Raid:     FullRaidBuffs,
 							Party:    FullPartyBuffs,
@@ -535,7 +534,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					SimOptions: DefaultSimTestOptions,
 				},
 			},
-			SubGenerator{
+			{
 				name: "AllItems",
 				generator: &ItemsTestGenerator{
 					Player:     defaultPlayer,

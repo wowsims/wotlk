@@ -229,13 +229,11 @@ type AuraFactory func(*Simulation) *Aura
 type ResetEffect func(*Simulation)
 
 // auraTracker is a centralized implementation of CD and Aura tracking.
+//
 //	This is used by all Units.
 type auraTracker struct {
 	// Effects to invoke on every sim reset.
 	resetEffects []ResetEffect
-
-	// Maps MagicIDs to sim duration at which CD is done. Using array for perf.
-	cooldowns []time.Duration
 
 	// All registered auras, both active and inactive.
 	auras []*Aura
@@ -848,6 +846,7 @@ func (at *auraTracker) OnSpellHitTaken(sim *Simulation, spell *Spell, result *Sp
 }
 
 // Invokes the OnPeriodicDamage
+//
 //	As a debuff when target is being hit by dot.
 //	As a buff when caster's dots are ticking.
 func (at *auraTracker) OnPeriodicDamageDealt(sim *Simulation, spell *Spell, result *SpellResult) {
@@ -882,6 +881,7 @@ func (at *auraTracker) OnHealTaken(sim *Simulation, spell *Spell, result *SpellR
 }
 
 // Invokes the OnPeriodicHeal
+//
 //	As a debuff when target is being hit by dot.
 //	As a buff when caster's dots are ticking.
 func (at *auraTracker) OnPeriodicHealDealt(sim *Simulation, spell *Spell, result *SpellResult) {

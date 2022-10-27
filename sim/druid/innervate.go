@@ -94,11 +94,7 @@ func (druid *Druid) registerInnervateCD() {
 			// innervate gives so much mana that it can cause Super Mana Potion or Dark Rune usages
 			// to be delayed, if they come off CD soon after innervate. This delay is minimized by
 			// activating innervate from the smallest amount of mana possible.
-			if innervateTarget.CurrentMana() > innervateManaThreshold {
-				return false
-			}
-
-			return true
+			return innervateTarget.CurrentMana() <= innervateManaThreshold
 		},
 	})
 }

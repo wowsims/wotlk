@@ -183,7 +183,7 @@ func (gs *GCDScheduler) ScheduleGroup(newAbilities []ScheduledAbility) time.Dura
 
 	// Update internals for the individual abilities, now that we know when they'll be cast.
 	nextCastAt := groupCastAt
-	for i, _ := range newAbilities {
+	for i := range newAbilities {
 		newAbilities[i].castAt = nextCastAt
 		newAbilities[i].doneAt = nextCastAt + newAbilities[i].Duration
 		nextCastAt = newAbilities[i].doneAt

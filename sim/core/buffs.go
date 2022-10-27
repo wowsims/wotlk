@@ -1,9 +1,10 @@
 package core
 
 import (
-	googleProto "google.golang.org/protobuf/proto"
 	"math"
 	"time"
+
+	googleProto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -886,10 +887,7 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only cast innervate when very low on mana, to make sure all other mana CDs are prioritized.
-				if character.CurrentMana() > innervateThreshold {
-					return false
-				}
-				return true
+				return character.CurrentMana() <= innervateThreshold
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				innervateAura.Activate(sim)
@@ -976,10 +974,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// A normal resto shaman would wait to use MTT.
-				if sim.CurrentTime < initialDelay {
-					return false
-				}
-				return true
+				return sim.CurrentTime >= initialDelay
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				mttAura.Activate(sim)

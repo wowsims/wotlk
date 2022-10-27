@@ -1,10 +1,11 @@
 package core
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"math"
 	"testing"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func Test_PartialResistsVsPlayer(t *testing.T) {

@@ -47,8 +47,6 @@ type Hunter struct {
 	manaSpentPerSecondAtFirstAspectSwap float64
 	permaHawk                           bool
 
-	serpentStingDamageMultiplier float64
-
 	// The most recent time at which moving could have started, for trap weaving.
 	mayMoveAt time.Duration
 

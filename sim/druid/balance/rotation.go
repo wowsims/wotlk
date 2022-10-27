@@ -1,9 +1,10 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"time"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -26,8 +27,7 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 		moonkin.Rotation.MaximizeIsUptime = true
 	}
 
-	var spell *core.Spell
-	spell = moonkin.rotation(sim)
+	spell := moonkin.rotation(sim)
 
 	if success := spell.Cast(sim, moonkin.CurrentTarget); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)

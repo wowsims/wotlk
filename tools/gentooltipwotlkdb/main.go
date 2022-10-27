@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -53,7 +53,7 @@ func main() {
 					fmt.Printf("Error fetching %d: %s\n", i, err)
 					continue
 				}
-				body, _ := ioutil.ReadAll(resp.Body)
+				body, _ := io.ReadAll(resp.Body)
 				bodyString := string(body)
 				bstr := strings.Replace(bodyString, fmt.Sprintf("$WowheadPower.registerItem('%d', 0, ", i), "", 1)
 				bstr = strings.TrimSuffix(bstr, ";")

@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-//Default Priority Order
+// Default Priority Order
 const (
 	LightningBolt = iota
 	StormstrikeApplyDebuff
@@ -32,7 +32,7 @@ type Cast func(sim *core.Simulation, target *core.Unit) bool
 type Condition func(sim *core.Simulation, target *core.Unit) bool
 type ReadyAt func() time.Duration
 
-//Holds all the spell info we need to make decisions
+// Holds all the spell info we need to make decisions
 type Spell struct {
 	readyAt ReadyAt
 	cast    Cast

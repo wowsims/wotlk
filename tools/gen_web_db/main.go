@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
@@ -55,7 +54,7 @@ func main() {
 	})
 
 	file, _ := json.Marshal(items)
-	_ = ioutil.WriteFile(*outfile, file, 0644)
+	_ = os.WriteFile(*outfile, file, 0644)
 }
 
 type ItemData struct {

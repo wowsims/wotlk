@@ -26,13 +26,7 @@ func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
 }
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	// TODO: probably do something different instead of making it global?
-	const (
-		dudidx int = iota
-		mfidx
-		// TFmod
-	)
-
-	// some global variables used througout the code
+	// some global variables used throughout the code
 	var currentWait time.Duration
 	var mbDamage float64
 	var dpDamage float64

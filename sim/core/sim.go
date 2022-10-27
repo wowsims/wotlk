@@ -28,8 +28,7 @@ type Simulation struct {
 
 	ProgressReport func(*proto.ProgressMetrics)
 
-	Log  func(string, ...interface{})
-	logs []string
+	Log func(string, ...interface{})
 
 	executePhase20        bool
 	executePhase25        bool

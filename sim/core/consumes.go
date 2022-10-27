@@ -698,11 +698,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				if character.MaxMana()-(character.CurrentMana()+totalRegen) < 3000 {
-					return false
-				}
-
-				return true
+				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 3000
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -803,11 +799,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have low enough mana. The potion takes effect over 24
 				// seconds so we can pop it a little earlier than the full value.
-				if character.MaxMana()-character.CurrentMana() < 2000 {
-					return false
-				}
-
-				return true
+				return character.MaxMana()-character.CurrentMana() >= 2000
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -1004,10 +996,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				ShouldActivate: func(sim *Simulation, character *Character) bool {
 					// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 					totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-					if character.MaxMana()-(character.CurrentMana()+totalRegen) < 1500 {
-						return false
-					}
-					return true
+					return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 1500
 				},
 			},
 			character.RegisterSpell(SpellConfig{

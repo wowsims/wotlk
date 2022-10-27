@@ -112,20 +112,19 @@ var FullDebuffs = &proto.Debuffs{
 }
 
 func NewDefaultTarget() *proto.Target {
-	// TODO(vigo) cloning required?
-	return googleProto.Clone(DefaultTargetProto).(*proto.Target)
+	return DefaultTargetProto // seems to be read-only
 }
 
 func MakeDefaultEncounterCombos() []EncounterCombo {
 	var DefaultTarget = NewDefaultTarget()
 
-	multipleTargets := []*proto.Target{}
-	for i := 0; i < 20; i++ {
-		multipleTargets = append(multipleTargets, DefaultTarget)
+	multipleTargets := make([]*proto.Target, 20)
+	for i := range multipleTargets {
+		multipleTargets[i] = DefaultTarget
 	}
 
 	return []EncounterCombo{
-		EncounterCombo{
+		{
 			Label: "ShortSingleTarget",
 			Encounter: &proto.Encounter{
 				Duration:             ShortDuration,
@@ -137,7 +136,7 @@ func MakeDefaultEncounterCombos() []EncounterCombo {
 				},
 			},
 		},
-		EncounterCombo{
+		{
 			Label: "LongSingleTarget",
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,
@@ -149,7 +148,7 @@ func MakeDefaultEncounterCombos() []EncounterCombo {
 				},
 			},
 		},
-		EncounterCombo{
+		{
 			Label: "LongMultiTarget",
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,

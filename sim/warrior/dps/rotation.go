@@ -65,11 +65,12 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 
 	if war.GCD.IsReady(sim) && !war.thunderClapNext {
 		// We didn't cast anything, so wait for the next CD.
-		// Note that BT/MS share a CD timer so we don't need to check MS.
+		// Note that BT/MS share a CD timer, so we don't need to check MS.
 		nextCD := core.MinDuration(war.Bloodthirst.CD.ReadyAt(), war.Whirlwind.CD.ReadyAt())
 
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
 			nextSunderAt := war.SunderArmorAura.ExpiresAt() - SunderWindow
+			// TODO nextCD is unused
 			nextCD = core.MinDuration(nextCD, nextSunderAt)
 		}
 	}

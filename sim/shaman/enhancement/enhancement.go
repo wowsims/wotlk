@@ -45,9 +45,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		Shaman: shaman.NewShaman(character, enhOptions.Talents, totems, selfBuffs, true),
 	}
 
-	var rotation Rotation
-	rotation = NewPriorityRotation(enh, enhOptions.Rotation)
-	enh.rotation = rotation
+	enh.rotation = NewPriorityRotation(enh, enhOptions.Rotation)
 
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{

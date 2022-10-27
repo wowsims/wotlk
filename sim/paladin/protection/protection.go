@@ -8,10 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/paladin"
 )
 
-// Do 1 less millisecond to solve for sim order of operation problems
-// Buffs are removed before melee swing is processed
-const twistWindow = 399 * time.Millisecond
-
 func RegisterProtectionPaladin() {
 	core.RegisterAgentFactory(
 		proto.Player_ProtectionPaladin{},

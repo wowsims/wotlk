@@ -117,31 +117,25 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		var localIterations int32
 		var errorStr string
 		var simResult *proto.RaidSimResult
-	statsim:
-		for {
-			select {
-			case metrics, ok := <-reporter:
-				if !ok {
-					break statsim
+
+		for metrics := range reporter {
+			atomic.AddInt32(&iterationsDone, metrics.CompletedIterations-localIterations)
+			localIterations = metrics.CompletedIterations
+			if metrics.FinalRaidResult != nil {
+				atomic.AddInt32(&simsCompleted, 1)
+				simResult = metrics.FinalRaidResult
+			}
+			if progress != nil {
+				progress <- &proto.ProgressMetrics{
+					TotalIterations:     atomic.LoadInt32(&iterationsTotal),
+					CompletedIterations: atomic.LoadInt32(&iterationsDone),
+					CompletedSims:       atomic.LoadInt32(&simsCompleted),
+					TotalSims:           atomic.LoadInt32(&simsTotal),
 				}
-				atomic.AddInt32(&iterationsDone, (metrics.CompletedIterations - localIterations))
-				localIterations = metrics.CompletedIterations
-				if metrics.FinalRaidResult != nil {
-					atomic.AddInt32(&simsCompleted, 1)
-					simResult = metrics.FinalRaidResult
-				}
-				if progress != nil {
-					progress <- &proto.ProgressMetrics{
-						TotalIterations:     atomic.LoadInt32(&iterationsTotal),
-						CompletedIterations: atomic.LoadInt32(&iterationsDone),
-						CompletedSims:       atomic.LoadInt32(&simsCompleted),
-						TotalSims:           atomic.LoadInt32(&simsTotal),
-					}
-				}
-				if metrics.FinalRaidResult != nil {
-					errorStr = metrics.FinalRaidResult.ErrorResult
-					break statsim
-				}
+			}
+			if metrics.FinalRaidResult != nil {
+				errorStr = metrics.FinalRaidResult.ErrorResult
+				break
 			}
 		}
 		// TODO: get stack trace out if final result error is set.
@@ -226,24 +220,26 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 			statMod = meleeHitStatMod
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
 				panic("no")
-				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - melee2HHitCap
-				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
-				} else {
-					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
-				}
-				continue
+				/*
+					// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+					newMod := baseStats[stat] - melee2HHitCap
+					if newMod > 0.5*statMod {
+						statModsHigh[stat] = newMod
+						statModsLow[stat] = -newMod
+					} else {
+						// Otherwise we go the opposite way of cap
+						statModsHigh[stat] = -statMod
+						statModsLow[stat] = -statMod
+					}
+					continue
+				*/
 			}
 		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod
 	}
 
-	for stat, _ := range statModsLow {
+	for stat := range statModsLow {
 		if statModsLow[stat] == 0 {
 			continue
 		}
@@ -286,7 +282,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 	}
 
 	result := StatWeightsResult{}
-	for statIdx, _ := range statModsLow {
+	for statIdx := range statModsLow {
 		stat := stats.Stat(statIdx)
 		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
 			continue
@@ -303,7 +299,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2
 	}
 
-	for statIdx, _ := range statModsLow {
+	for statIdx := range statModsLow {
 		stat := stats.Stat(statIdx)
 		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
 			continue

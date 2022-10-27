@@ -266,7 +266,7 @@ func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
 
 	if len(actionMetrics.Targets) == 0 {
 		actionMetrics.Targets = make([]TargetedActionMetrics, len(spell.SpellMetrics))
-		for i, _ := range actionMetrics.Targets {
+		for i := range actionMetrics.Targets {
 			tam := &actionMetrics.Targets[i]
 			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.UnitIndex
 		}

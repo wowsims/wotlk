@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -85,7 +85,7 @@ func getAccessToken(clientId string, clientSecret string) string {
 
 	defer result.Body.Close()
 
-	resultBody, err := ioutil.ReadAll(result.Body)
+	resultBody, err := io.ReadAll(result.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -118,7 +118,7 @@ func getItemData(itemId int, accessToken string) BlizzardItemResponse {
 
 	defer result.Body.Close()
 
-	resultBody, err := ioutil.ReadAll(result.Body)
+	resultBody, err := io.ReadAll(result.Body)
 	if err != nil {
 		log.Fatal(err)
 	}

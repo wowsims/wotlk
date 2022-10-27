@@ -450,7 +450,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 	//The loop that filters the currently ready Priority Spells, and decides on which to cast based on Priority.
 	nextSpell := core.NeverExpires               // declaration convention, don't worry, just breathe
-	currentSpell := core.NeverExpires            // in..... and out, breath in fully....
+	var currentSpell time.Duration               // in..... and out, breath in fully....
 	currentSpellPrio := math.MaxInt64            // Lowest priority for a filler spell, oh btw, remember to keep breathing
 	for _, RSI := range warlock.SpellsRotation { // For all the spells off cooldown (aka. castIn = 0, check the explanations in warlock.SpellsReady if this makes no sense )
 		currentSpell = RSI.CastIn(sim)

@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"testing"
@@ -69,7 +69,8 @@ func init() {
 }
 
 // TestIndividualSim is just a smoke test to make sure the http server works as expected.
-//   Don't modify this test unless the proto defintions change and this no longer compiles.
+//
+//	Don't modify this test unless the proto defintions change and this no longer compiles.
 func TestIndividualSim(t *testing.T) {
 	req := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
@@ -85,7 +86,7 @@ func TestIndividualSim(t *testing.T) {
 		Encounter: &proto.Encounter{
 			Duration: 120,
 			Targets: []*proto.Target{
-				&proto.Target{},
+				{},
 			},
 		},
 		SimOptions: &proto.SimOptions{
@@ -105,7 +106,7 @@ func TestIndividualSim(t *testing.T) {
 		t.Fatalf("Failed to POST request: %s", err.Error())
 	}
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		t.Fatalf("Failed to read result body: %s", err.Error())
 		return

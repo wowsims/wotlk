@@ -227,7 +227,8 @@ func (rp *RunicPowerBar) spendRunicPower(sim *Simulation, amount float64, metric
 }
 
 // DeathRuneRegenAt returns the time the given death rune will regen at.
-//  If the rune is not death or not spent it returns NeverExpires
+//
+//	If the rune is not death or not spent it returns NeverExpires
 func (rp *RunicPowerBar) DeathRuneRegenAt(slot int32) time.Duration {
 	// If not death or not spent, no regen time
 	if isSpentDeath[slot]&rp.runeStates != isSpentDeath[slot] {
@@ -237,7 +238,8 @@ func (rp *RunicPowerBar) DeathRuneRegenAt(slot int32) time.Duration {
 }
 
 // DeathRuneRevertAt returns the next time that a death rune will revert.
-//  If there is no deathrune that needs to revert it returns `NeverExpires`.
+//
+//	If there is no deathrune that needs to revert it returns `NeverExpires`.
 func (rp *RunicPowerBar) DeathRuneRevertAt() time.Duration {
 	readyAt := NeverExpires
 	for i := int32(0); i < 6; i++ {
@@ -378,7 +380,8 @@ func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 }
 
 // AnySpentRuneReadyAt returns the next time that a rune will regenerate.
-//  It will be NeverExpires if there is no rune pending regeneration.
+//
+//	It will be NeverExpires if there is no rune pending regeneration.
 func (rp *RunicPowerBar) AnySpentRuneReadyAt() time.Duration {
 	return MinDuration(MinDuration(rp.SpentBloodRuneReadyAt(), rp.SpentFrostRuneReadyAt()), rp.SpentUnholyRuneReadyAt())
 }
@@ -606,33 +609,17 @@ func (rp *RunicPowerBar) CastCostPossible(sim *Simulation, runicPowerAmount floa
 		return false
 	}
 
-	totalDeathRunes := rp.CurrentDeathRunes()
-
-	if rp.CurrentBloodRunes() < bloodAmount {
-		if totalDeathRunes > 0 {
-			totalDeathRunes -= 1
-		} else {
-			return false
-		}
+	var deficit int8
+	if d := bloodAmount - rp.CurrentBloodRunes(); d > 0 {
+		deficit += d
 	}
-
-	if rp.CurrentFrostRunes() < frostAmount {
-		if totalDeathRunes > 0 {
-			totalDeathRunes -= 1
-		} else {
-			return false
-		}
+	if d := frostAmount - rp.CurrentFrostRunes(); d > 0 {
+		deficit += d
 	}
-
-	if rp.CurrentUnholyRunes() < unholyAmount {
-		if totalDeathRunes > 0 {
-			totalDeathRunes -= 1
-		} else {
-			return false
-		}
+	if d := unholyAmount - rp.CurrentUnholyRunes(); d > 0 {
+		deficit += d
 	}
-
-	return true
+	return deficit <= rp.CurrentDeathRunes()
 }
 
 func (rp *RunicPowerBar) OptimalRuneCost(cost RuneCost) RuneCost {
@@ -938,7 +925,7 @@ func (rp *RunicPowerBar) launchPA(sim *Simulation, at time.Duration) {
 
 // Constants for finding runes
 
-//                    |DS|DS|DS|DS|DS|DS|
+// |DS|DS|DS|DS|DS|DS|
 const checkDeath = int16(0b101010101010)
 const checkSpent = int16(0b010101010101)
 
@@ -1062,7 +1049,8 @@ func (rp *RunicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 }
 
 // ReadyDeathRune returns the slot of first available death rune.
-//  Returns -1 if there are no ready death runes
+//
+//	Returns -1 if there are no ready death runes
 func (rp *RunicPowerBar) ReadyDeathRune() int8 {
 	for i := int8(0); i < 6; i++ {
 		if rp.runeStates&isDeaths[i] != 0 && rp.runeStates&isSpents[i] == 0 {
