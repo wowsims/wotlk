@@ -958,11 +958,7 @@ export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig([
 				"spellIds": [
 					11958
 				],
-				"maxPoints": 1,
-				"prereqLocation": {
-					"rowIdx": 4,
-					"colIdx": 1
-				}
+				"maxPoints": 1
 			},
 			{
 				"fieldName": "improvedConeOfCold",
