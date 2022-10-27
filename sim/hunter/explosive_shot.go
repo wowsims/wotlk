@@ -47,13 +47,15 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(386, 464) + 0.14*spell.RangedAttackPower(target)
+			// Note that normally having a crit roll for a pure-outcome hit is useless, but
+			// this allows the behavior to match in-game (procs crit-based hunter talents, but
+			// doesn't proc trinkets with Harmful requirements).
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHitAndCrit)
 
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 			if result.Landed() {
 				hunter.ExplosiveShotDot.Apply(sim)
+				hunter.ExplosiveShotDot.TickOnce(sim)
 			}
-			spell.DealDamage(sim, result)
 		},
 	})
 

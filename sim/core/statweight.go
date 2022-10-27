@@ -4,6 +4,7 @@ import (
 	"math"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -54,6 +55,17 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 	simOptions := swr.SimOptions
 
+	// Cut in half since we're doing above and below separately.
+	// This number needs to be the same for the baseline sim too, so that RNG lines up perfectly.
+	simOptions.Iterations /= 2
+
+	// Make sure a RNG seed is always set because it gives more consistent results.
+	// When there is no user-supplied seed it needs to be a randomly-selected seed
+	// though, so that run-run differences still exist.
+	if simOptions.RandomSeed == 0 {
+		simOptions.RandomSeed = time.Now().UnixNano()
+	}
+
 	baseStatsResult := ComputeStats(&proto.ComputeStatsRequest{
 		Raid: raidProto,
 	})
@@ -98,7 +110,6 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 
 		simRequest := googleProto.Clone(baseSimRequest).(*proto.RaidSimRequest)
 		simRequest.Raid.Parties[0].Players[0].BonusStats[stat] += value
-		simRequest.SimOptions.Iterations /= 2 // Cut in half since we're doing above and below separately.
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
 		go RunSim(*simRequest, reporter) // RunRaidSim(simRequest)
@@ -214,6 +225,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		} else if stat == stats.MeleeHit {
 			statMod = meleeHitStatMod
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
+				panic("no")
 				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
 				newMod := baseStats[stat] - melee2HHitCap
 				if newMod > 0.5*statMod {
@@ -236,7 +248,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 			continue
 		}
 		waitGroup.Add(2)
-		atomic.AddInt32(&iterationsTotal, swr.SimOptions.Iterations)
+		atomic.AddInt32(&iterationsTotal, swr.SimOptions.Iterations*2)
 		atomic.AddInt32(&simsTotal, 2)
 
 		go doStat(stats.Stat(stat), statModsLow[stat], true)
@@ -246,12 +258,10 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	waitGroup.Wait()
 
 	for _, stat := range statsToWeigh {
-		// Check for hard caps.
-		if stat == stats.SpellHit || stat == stats.MeleeHit || stat == stats.Expertise {
-			if resultHigh.Dps.Weights[stat] < 0.1 {
-				statModsHigh[stat] = 0
-				continue
-			}
+		// Check for hard caps. Hard caps will have a high diff of exactly 0 because RNG is fixed.
+		if resultHigh.Dps.Weights[stat] == 0 {
+			statModsHigh[stat] = 0
+			continue
 		}
 
 		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
