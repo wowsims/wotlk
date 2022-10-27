@@ -11,7 +11,7 @@ func RegisterDpsDeathknight() {
 	core.RegisterAgentFactory(
 		proto.Player_Deathknight{},
 		proto.Spec_SpecDeathknight,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewDpsDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -33,14 +33,14 @@ type DpsDeathknight struct {
 
 	CustomRotation *common.CustomRotation
 
-	Rotation proto.Deathknight_Rotation
+	Rotation *proto.Deathknight_Rotation
 }
 
-func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathknight {
+func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeathknight {
 	dk := player.GetDeathknight()
 
 	dpsDk := &DpsDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, *dk.Talents, deathknight.DeathknightInputs{
+		Deathknight: deathknight.NewDeathknight(character, dk.Talents, deathknight.DeathknightInputs{
 			StartingRunicPower:  dk.Options.StartingRunicPower,
 			PrecastGhoulFrenzy:  dk.Options.PrecastGhoulFrenzy,
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
@@ -54,13 +54,12 @@ func NewDpsDeathknight(character core.Character, player proto.Player) *DpsDeathk
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
 		}),
-		Rotation: *dk.Rotation,
+		Rotation: dk.Rotation,
 	}
 
+	dpsDk.Inputs.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
 	if dk.Options.UnholyFrenzyTarget != nil {
-		dpsDk.Inputs.UnholyFrenzyTarget = *dk.Options.UnholyFrenzyTarget
-	} else {
-		dpsDk.Inputs.UnholyFrenzyTarget.TargetIndex = -1
+		dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
 	}
 
 	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{

@@ -28,7 +28,7 @@ type Encounter struct {
 	aoeCapMultiplier float64
 }
 
-func NewEncounter(options proto.Encounter) Encounter {
+func NewEncounter(options *proto.Encounter) Encounter {
 	if options.ExecuteProportion_20 == 0 {
 		options.ExecuteProportion_20 = 0.2
 	}
@@ -60,14 +60,14 @@ func NewEncounter(options proto.Encounter) Encounter {
 	}
 
 	for targetIndex, targetOptions := range options.Targets {
-		target := NewTarget(*targetOptions, int32(targetIndex))
+		target := NewTarget(targetOptions, int32(targetIndex))
 		encounter.Targets = append(encounter.Targets, target)
 		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
 	if len(encounter.Targets) == 0 {
 		// Add a dummy target. The only case where targets aren't specified is when
 		// computing character stats, and targets won't matter there.
-		target := NewTarget(proto.Target{}, 0)
+		target := NewTarget(&proto.Target{}, 0)
 		encounter.Targets = append(encounter.Targets, target)
 		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
@@ -118,7 +118,7 @@ type Target struct {
 	AI TargetAI
 }
 
-func NewTarget(options proto.Target, targetIndex int32) *Target {
+func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	unitStats := stats.Stats{}
 	if options.Stats != nil {
 		copy(unitStats[:], options.Stats[:])

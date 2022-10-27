@@ -8,7 +8,7 @@ import (
 )
 
 // Registers all consume-related effects to the Agent.
-func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs) {
+func applyConsumeEffects(agent Agent) {
 	character := agent.GetCharacter()
 	consumes := character.Consumes
 
@@ -420,7 +420,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 	registerExplosivesCD(agent, consumes)
 }
 
-func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
+func ApplyPetConsumeEffects(pet *Character, ownerConsumes *proto.Consumes) {
 	switch ownerConsumes.PetFood {
 	case proto.PetFood_PetFoodSpicedMammothTreats:
 		pet.AddStats(stats.Stats{
@@ -440,7 +440,7 @@ func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 
 var PotionAuraTag = "Potion"
 
-func registerPotionCD(agent Agent, consumes proto.Consumes) {
+func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
 	defaultPotion := consumes.DefaultPotion
 	startingPotion := consumes.PrepopPotion
@@ -907,7 +907,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 
 var ConjuredAuraTag = "Conjured"
 
-func registerConjuredCD(agent Agent, consumes proto.Consumes) {
+func registerConjuredCD(agent Agent, consumes *proto.Consumes) {
 	if consumes.DefaultConjured == consumes.StartingConjured {
 		// Starting conjured is redundant in this case.
 		consumes.StartingConjured = proto.Conjured_ConjuredUnknown
@@ -1142,7 +1142,7 @@ var ExplosiveDecoyActionID = ActionID{ItemID: 40536}
 var SaroniteBombActionID = ActionID{ItemID: 41119}
 var CobaltFragBombActionID = ActionID{ItemID: 40771}
 
-func registerExplosivesCD(agent Agent, consumes proto.Consumes) {
+func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
 	if !character.HasProfession(proto.Profession_Engineering) {
 		return

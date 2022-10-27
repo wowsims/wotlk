@@ -31,7 +31,7 @@ var AverageDefaultSimTestOptions = &proto.SimOptions{
 const ShortDuration = 60
 const LongDuration = 300
 
-var DefaultTargetProto = proto.Target{
+var DefaultTargetProto = &proto.Target{
 	Level: CharacterLevel + 3,
 	Stats: stats.Stats{
 		stats.Armor:       10643,
@@ -112,9 +112,8 @@ var FullDebuffs = &proto.Debuffs{
 }
 
 func NewDefaultTarget() *proto.Target {
-	var target = &proto.Target{}
-	*target = DefaultTargetProto
-	return target
+	// TODO(vigo) cloning required?
+	return googleProto.Clone(DefaultTargetProto).(*proto.Target)
 }
 
 func MakeDefaultEncounterCombos() []EncounterCombo {

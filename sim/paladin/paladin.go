@@ -16,7 +16,7 @@ type Paladin struct {
 
 	PaladinAura proto.PaladinAura
 
-	Talents proto.PaladinTalents
+	Talents *proto.PaladinTalents
 
 	CurrentSeal      *core.Aura
 	CurrentJudgement *core.Aura
@@ -179,7 +179,7 @@ func (paladin *Paladin) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 }
 
 // maybe need to add stat dependencies
-func NewPaladin(character core.Character, talents proto.PaladinTalents) *Paladin {
+func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladin {
 	paladin := &Paladin{
 		Character: character,
 		Talents:   talents,

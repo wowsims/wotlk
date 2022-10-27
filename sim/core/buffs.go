@@ -1,6 +1,7 @@
 package core
 
 import (
+	googleProto "google.golang.org/protobuf/proto"
 	"math"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // Applies buffs that affect individual players.
-func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
+func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
 	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
@@ -293,11 +294,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 }
 
 // Applies buffs to pets.
-func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
+func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
 	if petAgent.GetPet().IsGuardian() {
 		return
 	}
+
+	raidBuffs = googleProto.Clone(raidBuffs).(*proto.RaidBuffs)
+	partyBuffs = googleProto.Clone(partyBuffs).(*proto.PartyBuffs)
+	individualBuffs = googleProto.Clone(individualBuffs).(*proto.IndividualBuffs)
 
 	// We need to modify the buffs a bit because some things are applied to pets by
 	// the owner during combat (Bloodlust) or don't make sense for a pet.

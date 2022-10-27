@@ -20,7 +20,7 @@ const (
 	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
-func NewShaman(character core.Character, talents proto.ShamanTalents, totems proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
+func NewShaman(character core.Character, talents *proto.ShamanTalents, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
 		totems.Fire = proto.FireTotem_NoFireTotem
 	}
@@ -72,10 +72,10 @@ type Shaman struct {
 
 	ShamanisticRageManaThreshold float64 //% of mana to use sham. rage at
 
-	Talents   proto.ShamanTalents
+	Talents   *proto.ShamanTalents
 	SelfBuffs SelfBuffs
 
-	Totems proto.ShamanTotems
+	Totems *proto.ShamanTotems
 
 	// The type of totem which should be dropped next and time to drop it, for
 	// each totem type (earth, air, fire, water).

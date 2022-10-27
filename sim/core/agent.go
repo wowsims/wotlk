@@ -125,7 +125,7 @@ func (actionID ActionID) ToProto() *proto.ActionID {
 	return protoID
 }
 
-func ProtoToActionID(protoID proto.ActionID) ActionID {
+func ProtoToActionID(protoID *proto.ActionID) ActionID {
 	return ActionID{
 		ItemID:  protoID.GetItemId(),
 		SpellID: protoID.GetSpellId(),
@@ -134,14 +134,14 @@ func ProtoToActionID(protoID proto.ActionID) ActionID {
 	}
 }
 
-type AgentFactory func(Character, proto.Player) Agent
+type AgentFactory func(Character, *proto.Player) Agent
 type SpecSetter func(*proto.Player, interface{})
 
 var agentFactories = make(map[string]AgentFactory)
 var specSetters = make(map[string]SpecSetter)
 var configSpecs = make(map[string]proto.Spec)
 
-func PlayerProtoToSpec(player proto.Player) proto.Spec {
+func PlayerProtoToSpec(player *proto.Player) proto.Spec {
 	typeName := reflect.TypeOf(player.GetSpec()).Elem().Name()
 	return configSpecs[typeName]
 }
@@ -159,7 +159,7 @@ func RegisterAgentFactory(emptyOptions interface{}, spec proto.Spec, factory Age
 }
 
 // Constructs a new Agent.
-func NewAgent(party *Party, partyIndex int, player proto.Player) Agent {
+func NewAgent(party *Party, partyIndex int, player *proto.Player) Agent {
 	typeName := reflect.TypeOf(player.GetSpec()).Elem().Name()
 
 	factory, ok := agentFactories[typeName]

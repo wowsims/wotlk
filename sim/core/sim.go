@@ -13,7 +13,7 @@ import (
 type Simulation struct {
 	*Environment
 
-	Options proto.SimOptions
+	Options *proto.SimOptions
 
 	rand Rand
 
@@ -37,11 +37,11 @@ type Simulation struct {
 	executePhaseCallbacks []func(*Simulation, int) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
 }
 
-func RunSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (result *proto.RaidSimResult) {
+func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (result *proto.RaidSimResult) {
 	return runSim(rsr, progress, false)
 }
 
-func runSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) (result *proto.RaidSimResult) {
+func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) (result *proto.RaidSimResult) {
 	defer func() {
 		if err := recover(); err != nil {
 			errStr := ""
@@ -111,14 +111,14 @@ func runSim(rsr proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skip
 	return result
 }
 
-func NewSim(rsr proto.RaidSimRequest) *Simulation {
-	simOptions := *rsr.SimOptions
+func NewSim(rsr *proto.RaidSimRequest) *Simulation {
+	simOptions := rsr.SimOptions
 	rseed := simOptions.RandomSeed
 	if rseed == 0 {
 		rseed = time.Now().UnixNano()
 	}
 
-	env, _ := NewEnvironment(*rsr.Raid, *rsr.Encounter)
+	env, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
 	return &Simulation{
 		Environment: env,
 		Options:     simOptions,
@@ -192,7 +192,7 @@ func (sim *Simulation) reset() {
 	sim.Duration = sim.BaseDuration
 	if sim.DurationVariation != 0 {
 		variation := sim.DurationVariation * 2
-		sim.Duration += time.Duration((sim.RandomFloat("sim duration") * float64(variation))) - sim.DurationVariation
+		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
 	}
 
 	sim.CurrentTime = 0.0

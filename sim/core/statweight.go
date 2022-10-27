@@ -45,7 +45,7 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	}
 }
 
-func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
+func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
 	if swr.Player.BonusStats == nil {
 		swr.Player.BonusStats = make([]float64, stats.Len)
 	}
@@ -112,7 +112,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		simRequest.Raid.Parties[0].Players[0].BonusStats[stat] += value
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
-		go RunSim(*simRequest, reporter) // RunRaidSim(simRequest)
+		go RunSim(simRequest, reporter) // RunRaidSim(simRequest)
 
 		var localIterations int32
 		var errorStr string

@@ -238,7 +238,7 @@ func (equipment *Equipment) ToEquipmentSpecProto() *proto.EquipmentSpec {
 // Structs used for looking up items/gems/enchants
 type EquipmentSpec [proto.ItemSlot_ItemSlotRanged + 1]ItemSpec
 
-func ProtoToEquipmentSpec(es proto.EquipmentSpec) EquipmentSpec {
+func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 	coreEquip := EquipmentSpec{}
 
 	for i, item := range es.Items {
@@ -300,7 +300,7 @@ func NewEquipmentSet(equipSpec EquipmentSpec) Equipment {
 	return equipment
 }
 
-func ProtoToEquipment(es proto.EquipmentSpec) Equipment {
+func ProtoToEquipment(es *proto.EquipmentSpec) Equipment {
 	return NewEquipmentSet(ProtoToEquipmentSpec(es))
 }
 

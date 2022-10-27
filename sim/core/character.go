@@ -24,7 +24,7 @@ type Character struct {
 	Equip items.Equipment
 
 	// Consumables this Character will be using.
-	Consumes proto.Consumes
+	Consumes *proto.Consumes
 
 	// Base stats for this Character.
 	baseStats stats.Stats
@@ -52,7 +52,7 @@ type Character struct {
 	conjuredCD         *Timer
 }
 
-func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
+func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {
 	character := Character{
 		Unit: Unit{
 			Type:        PlayerUnit,
@@ -71,7 +71,7 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		Race:         player.Race,
 		ShattFaction: player.ShattFaction,
 		Class:        player.Class,
-		Equip:        items.ProtoToEquipment(*player.Equipment),
+		Equip:        items.ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,
 			player.Profession2,
@@ -98,8 +98,9 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		}
 	}
 
+	character.Consumes = &proto.Consumes{}
 	if player.Consumes != nil {
-		character.Consumes = *player.Consumes
+		character.Consumes = player.Consumes
 	}
 
 	character.baseStats = BaseStats[BaseStatsKey{Race: character.Race, Class: character.Class}]
@@ -132,7 +133,7 @@ func (character *Character) addUniversalStatDependencies() {
 func (character *Character) ApplyGearBonuses() {}
 
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
-func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) *proto.PlayerStats {
+func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
 	applyRaceEffects(agent)
@@ -151,7 +152,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
 	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
-	applyConsumeEffects(agent, raidBuffs, partyBuffs)
+	applyConsumeEffects(agent)
 	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {

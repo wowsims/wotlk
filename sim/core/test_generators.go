@@ -354,7 +354,7 @@ func (generator *ItemsTestGenerator) init() {
 	generator.items = generator.ItemFilter.FindAllItems()
 	generator.sets = generator.ItemFilter.FindAllSets()
 
-	baseEquipment := items.ProtoToEquipment(*generator.Player.Equipment)
+	baseEquipment := items.ProtoToEquipment(generator.Player.Equipment)
 	generator.metaSocketIdx = -1
 	for i, socketColor := range baseEquipment[proto.ItemSlot_ItemSlotHead].GemSockets {
 		if socketColor == proto.GemColor_GemColorMeta {
@@ -378,7 +378,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	label := ""
 
 	playerCopy := googleProto.Clone(generator.Player).(*proto.Player)
-	equipment := items.ProtoToEquipment(*playerCopy.Equipment)
+	equipment := items.ProtoToEquipment(playerCopy.Equipment)
 	if testIdx < len(generator.items) {
 		testItem := generator.items[testIdx]
 		equipment.EquipItem(generator.items[testIdx])

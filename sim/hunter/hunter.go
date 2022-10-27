@@ -15,7 +15,7 @@ func RegisterHunter() {
 	core.RegisterAgentFactory(
 		proto.Player_Hunter{},
 		proto.Spec_SpecHunter,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewHunter(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -31,9 +31,9 @@ func RegisterHunter() {
 type Hunter struct {
 	core.Character
 
-	Talents  proto.HunterTalents
-	Options  proto.Hunter_Options
-	Rotation proto.Hunter_Rotation
+	Talents  *proto.HunterTalents
+	Options  *proto.Hunter_Options
+	Rotation *proto.Hunter_Rotation
 
 	pet *HunterPet
 
@@ -167,14 +167,14 @@ func (hunter *Hunter) Reset(sim *core.Simulation) {
 	}
 }
 
-func NewHunter(character core.Character, options proto.Player) *Hunter {
+func NewHunter(character core.Character, options *proto.Player) *Hunter {
 	hunterOptions := options.GetHunter()
 
 	hunter := &Hunter{
 		Character: character,
-		Talents:   *hunterOptions.Talents,
-		Options:   *hunterOptions.Options,
-		Rotation:  *hunterOptions.Rotation,
+		Talents:   hunterOptions.Talents,
+		Options:   hunterOptions.Options,
+		Rotation:  hunterOptions.Rotation,
 	}
 	hunter.EnableManaBar()
 

@@ -121,7 +121,6 @@ func (gs *GCDScheduler) scheduleBefore(newAbility ScheduledAbility, desiredIndex
 			gs.schedule[curIndex] = newAbility
 
 			return newAbility.castAt
-			break
 		}
 	}
 
@@ -150,7 +149,6 @@ func (gs *GCDScheduler) scheduleAfter(newAbility ScheduledAbility, desiredIndex 
 			gs.schedule[curIndex] = newAbility
 
 			return newAbility.castAt
-			break
 		}
 	}
 

@@ -151,7 +151,7 @@ type majorCooldownManager struct {
 	character *Character
 
 	// User-specified cooldown configs.
-	cooldownConfigs proto.Cooldowns
+	cooldownConfigs *proto.Cooldowns
 
 	// Cached list of major cooldowns sorted by priority, for resetting quickly.
 	initialMajorCooldowns []MajorCooldown
@@ -166,9 +166,9 @@ type majorCooldownManager struct {
 }
 
 func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
-	cds := proto.Cooldowns{}
+	cds := &proto.Cooldowns{}
 	if cooldowns != nil {
-		cds = *cooldowns
+		cds = cooldowns
 	}
 
 	return majorCooldownManager{
@@ -185,14 +185,18 @@ func (mcdm *majorCooldownManager) finalize(character *Character) {
 		mcdm.initialMajorCooldowns = []MajorCooldown{}
 	}
 
+	if mcdm.cooldownConfigs == nil {
+		mcdm.cooldownConfigs = &proto.Cooldowns{}
+	}
+
 	// Match user-specified cooldown configs to existing cooldowns.
-	for i, _ := range mcdm.initialMajorCooldowns {
+	for i := range mcdm.initialMajorCooldowns {
 		mcd := &mcdm.initialMajorCooldowns[i]
 		mcd.timings = []time.Duration{}
 
 		if mcdm.cooldownConfigs.Cooldowns != nil {
 			for _, cooldownConfig := range mcdm.cooldownConfigs.Cooldowns {
-				configID := ProtoToActionID(*cooldownConfig.Id)
+				configID := ProtoToActionID(cooldownConfig.Id)
 				if configID.SameAction(mcd.Spell.ActionID) {
 					mcd.timings = make([]time.Duration, len(cooldownConfig.Timings))
 					for t, timing := range cooldownConfig.Timings {
@@ -217,7 +221,7 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 	}
 
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-		for i, _ := range mcdm.initialMajorCooldowns {
+		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
 				mcd.timings = append(mcd.timings, delay)
@@ -229,13 +233,13 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 func (mcdm *majorCooldownManager) reset(sim *Simulation) {
 	// Need to create all cooldowns before calling ActivationFactory on any of them,
 	// so that any cooldown can do lookups on other cooldowns.
-	for i, _ := range mcdm.majorCooldowns {
+	for i := range mcdm.majorCooldowns {
 		newMCD := &MajorCooldown{}
 		*newMCD = mcdm.initialMajorCooldowns[i]
 		mcdm.majorCooldowns[i] = newMCD
 	}
 
-	for i, _ := range mcdm.majorCooldowns {
+	for i := range mcdm.majorCooldowns {
 		mcdm.majorCooldowns[i].activate = mcdm.majorCooldowns[i].ActivationFactory(sim)
 		if mcdm.majorCooldowns[i].activate == nil {
 			panic("Nil cooldown activation returned!")
@@ -391,6 +395,7 @@ func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
 
 // sortOne will take the given mcd and attempt to sort it towards the back.
 // If it finds a linked CD (like trinkets that share offensive CD) it will sort them backwards first.
+//
 //	If while sorting it finds something further back with lower CD than the previous one (for example, after activating cold snap)
 //	it will mark that the whole slice needs to be re-sorted "mcdm.fullSort" and returns immediately.
 func (mcdm *majorCooldownManager) sortOne(mcd *MajorCooldown, curIdx int) bool {

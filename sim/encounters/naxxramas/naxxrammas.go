@@ -1,4 +1,4 @@
-package naxxrammas
+package naxxramas
 
 func Register() {
 	addPatchwerk25("Naxxrammas")

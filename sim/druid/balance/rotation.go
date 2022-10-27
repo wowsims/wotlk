@@ -35,8 +35,7 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
-
-	rotation := &moonkin.Rotation
+	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)

@@ -422,10 +422,10 @@ func (auraMetrics *AuraMetrics) ToProto(numIterations int32) *proto.AuraMetrics 
 }
 
 // Calculates DPS for an action.
-func GetActionDPS(playerMetrics proto.UnitMetrics, iterations int32, duration time.Duration, actionID ActionID, ignoreTag bool) float64 {
+func GetActionDPS(playerMetrics *proto.UnitMetrics, iterations int32, duration time.Duration, actionID ActionID, ignoreTag bool) float64 {
 	totalDPS := 0.0
 	for _, action := range playerMetrics.Actions {
-		metricsActionID := ProtoToActionID(*action.Id)
+		metricsActionID := ProtoToActionID(action.Id)
 		if actionID.SameAction(metricsActionID) || (ignoreTag && actionID.SameActionIgnoreTag(metricsActionID)) {
 			for _, tam := range action.Targets {
 				totalDPS += tam.Damage / float64(iterations) / duration.Seconds()
@@ -436,9 +436,9 @@ func GetActionDPS(playerMetrics proto.UnitMetrics, iterations int32, duration ti
 }
 
 // Calculates average cast damage for an action.
-func GetActionAvgCast(playerMetrics proto.UnitMetrics, actionID ActionID) float64 {
+func GetActionAvgCast(playerMetrics *proto.UnitMetrics, actionID ActionID) float64 {
 	for _, action := range playerMetrics.Actions {
-		if actionID.SameAction(ProtoToActionID(*action.Id)) {
+		if actionID.SameAction(ProtoToActionID(action.Id)) {
 			casts := int32(0)
 			damage := 0.0
 			for _, tam := range action.Targets {

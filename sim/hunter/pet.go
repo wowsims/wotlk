@@ -87,13 +87,11 @@ func (hp *HunterPet) GetPet() *core.Pet {
 	return &hp.Pet
 }
 
-func (hp *HunterPet) Talents() proto.HunterPetTalents {
-	talents := hp.hunterOwner.Options.PetTalents
-	if talents == nil {
-		return proto.HunterPetTalents{}
-	} else {
-		return *talents
+func (hp *HunterPet) Talents() *proto.HunterPetTalents {
+	if talents := hp.hunterOwner.Options.PetTalents; talents != nil {
+		return talents
 	}
+	return &proto.HunterPetTalents{}
 }
 
 func (hp *HunterPet) Initialize() {

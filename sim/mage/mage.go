@@ -20,7 +20,7 @@ func RegisterMage() {
 	core.RegisterAgentFactory(
 		proto.Player_Mage{},
 		proto.Spec_SpecMage,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewMage(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -46,10 +46,10 @@ type MageTierSets struct {
 
 type Mage struct {
 	core.Character
-	Talents proto.MageTalents
+	Talents *proto.MageTalents
 
-	Options  proto.Mage_Options
-	Rotation proto.Mage_Rotation
+	Options  *proto.Mage_Options
+	Rotation *proto.Mage_Rotation
 
 	isMissilesBarrage        bool
 	isMissilesBarrageVisible bool
@@ -246,14 +246,14 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 	}
 }
 
-func NewMage(character core.Character, options proto.Player) *Mage {
+func NewMage(character core.Character, options *proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
 	mage := &Mage{
 		Character: character,
-		Talents:   *mageOptions.Talents,
-		Options:   *mageOptions.Options,
-		Rotation:  *mageOptions.Rotation,
+		Talents:   mageOptions.Talents,
+		Options:   mageOptions.Options,
+		Rotation:  mageOptions.Rotation,
 
 		spellDamageMultiplier: 1.0,
 		manaTracker:           common.NewManaSpendingRateTracker(),

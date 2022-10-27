@@ -129,11 +129,11 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 	})
 
 	if healingModel.Hps != 0 {
-		character.applyHealingModel(*healingModel)
+		character.applyHealingModel(healingModel)
 	}
 }
 
-func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
+func (character *Character) applyHealingModel(healingModel *proto.HealingModel) {
 	cadence := DurationFromSeconds(healingModel.CadenceSeconds)
 	if cadence == 0 {
 		cadence = time.Millisecond * 2500
@@ -164,7 +164,7 @@ func (character *Character) applyHealingModel(healingModel proto.HealingModel) {
 	})
 }
 
-func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimOptions {
+func (character *Character) GetPresimOptions(playerConfig *proto.Player) *PresimOptions {
 	healingModel := playerConfig.HealingModel
 	if healingModel == nil || healingModel.Hps != 0 {
 		// If Hps is not 0, then we don't need to run the presim.
@@ -174,8 +174,8 @@ func (character *Character) GetPresimOptions(playerConfig proto.Player) *PresimO
 		SetPresimPlayerOptions: func(player *proto.Player) {
 			player.HealingModel = nil
 		},
-		OnPresimResult: func(presimResult proto.UnitMetrics, iterations int32, duration time.Duration) bool {
-			character.applyHealingModel(proto.HealingModel{
+		OnPresimResult: func(presimResult *proto.UnitMetrics, iterations int32, duration time.Duration) bool {
+			character.applyHealingModel(&proto.HealingModel{
 				Hps:            presimResult.Dtps.Avg * 1.25,
 				CadenceSeconds: healingModel.CadenceSeconds,
 			})
