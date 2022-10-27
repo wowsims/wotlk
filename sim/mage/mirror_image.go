@@ -22,10 +22,7 @@ func (mage *Mage) registerMirrorImageCD() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
-				// GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				spell.DefaultCast.GCD = core.GCDDefault
+				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
