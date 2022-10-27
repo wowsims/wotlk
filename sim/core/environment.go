@@ -149,18 +149,10 @@ func (env *Environment) setupAttackTables() {
 		return
 	}
 
-	for _, unit := range env.AllUnits {
-		unit.AttackTables = make([]*AttackTable, len(env.AllUnits))
-		unit.DefenseTables = make([]*AttackTable, len(env.AllUnits))
-	}
-
-	for i := 0; i < len(env.AllUnits); i++ {
-		for j := 0; j < len(env.AllUnits); j++ {
-			attacker := env.AllUnits[i]
-			defender := env.AllUnits[j]
-			attackTable := NewAttackTable(attacker, defender)
-			attacker.AttackTables[j] = attackTable
-			defender.DefenseTables[i] = attackTable
+	for _, attacker := range env.AllUnits {
+		attacker.AttackTables = make([]*AttackTable, len(env.AllUnits))
+		for idx, defender := range env.AllUnits {
+			attacker.AttackTables[idx] = NewAttackTable(attacker, defender)
 		}
 	}
 }

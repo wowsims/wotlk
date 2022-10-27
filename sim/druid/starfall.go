@@ -57,6 +57,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 53190},
+		SpellSchool:      core.SpellSchoolArcane,
 		ProcMask:         core.ProcMaskSpellDamage,
 		BonusCritRating:  naturesMajestyCritBonus,
 		DamageMultiplier: 1 * (1 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFocus), 0.1, 0)),

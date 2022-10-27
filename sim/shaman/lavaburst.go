@@ -24,10 +24,10 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 	var lvbDot *core.Dot
 	if applyDot {
 		dotSpell := shaman.RegisterSpell(core.SpellConfig{
-			ActionID: core.ActionID{SpellID: 71824},
-			// TODO: No spell school?
-			ProcMask: core.ProcMaskEmpty,
-			Flags:    core.SpellFlagIgnoreModifiers,
+			ActionID:    core.ActionID{SpellID: 71824},
+			SpellSchool: core.SpellSchoolFire,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagIgnoreModifiers,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

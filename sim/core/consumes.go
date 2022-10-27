@@ -273,8 +273,9 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 
 			actionID := ActionID{SpellID: 11374}
 			goaProc := character.RegisterSpell(SpellConfig{
-				ActionID: actionID,
-				ProcMask: ProcMaskEmpty,
+				ActionID:    actionID,
+				SpellSchool: SpellSchoolNature,
+				ProcMask:    ProcMaskEmpty,
 
 				ThreatMultiplier: 1,
 				FlatThreatBonus:  90,

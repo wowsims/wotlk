@@ -33,9 +33,9 @@ func Test_PartialResistsVsPlayer(t *testing.T) {
 
 	for resist := 0; resist < 5_000; resist += 1 {
 		defender.stats[stats.FireResistance] = float64(resist)
-		attackTable.UpdatePartialResists()
 
-		thresholds := attackTable.GetPartialResistThresholds(SpellSchoolFire)
+		averageResist := attackTable.Defender.averageResist(SpellSchoolFire, attackTable.Attacker)
+		thresholds := attackTable.Defender.partialResistRollThresholds(averageResist)
 
 		var chance float64
 		var resultingAr float64
@@ -103,9 +103,9 @@ func Test_PartialResistsVsBoss(t *testing.T) {
 
 	for resist := 0.0; resist < 50; resist += 0.01 {
 		defender.stats[stats.NatureResistance] = resist
-		attackTable.UpdatePartialResists()
 
-		thresholds := attackTable.GetPartialResistThresholds(SpellSchoolNature)
+		averageResist := attackTable.Defender.averageResist(SpellSchoolNature, attackTable.Attacker)
+		thresholds := attackTable.Defender.partialResistRollThresholds(averageResist)
 
 		var chance float64
 		var resultingAr float64
