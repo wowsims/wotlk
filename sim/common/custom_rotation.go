@@ -1,6 +1,8 @@
 package common
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -58,6 +60,7 @@ func (cr *CustomRotation) Cast(sim *core.Simulation) bool {
 	spell := cr.ChooseSpell(sim)
 
 	if spell == nil {
+		cr.character.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 		return false
 	}
 
