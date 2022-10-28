@@ -12,9 +12,7 @@ func init() {
 	RegisterAgentFactory(
 		proto.Player_ElementalShaman{},
 		proto.Spec_SpecElementalShaman,
-		func(character Character, options *proto.Player) Agent {
-			return NewFakeElementalShaman(character, options)
-		},
+		NewFakeElementalShaman,
 		func(player *proto.Player, spec interface{}) {
 			playerSpec, ok := spec.(*proto.Player_ElementalShaman)
 			if !ok {

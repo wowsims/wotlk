@@ -107,7 +107,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	bonusStats := stats.Stats{}
 	if player.BonusStats != nil {
-		copy(bonusStats[:], player.BonusStats[:])
+		copy(bonusStats[:], player.BonusStats)
 	}
 
 	character.AddStats(character.baseStats)

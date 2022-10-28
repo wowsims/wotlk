@@ -283,7 +283,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if spell == druid.Moonfire || spell == druid.InsectSwarm {
 				return
 			}
-			// TODO chanceToProc is unused
+			// TODO looks fishy, chanceToProc is unused
 			chanceToProc := 0.0875 // https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if spell == druid.Hurricane {
 				chanceToProc *= 0.223

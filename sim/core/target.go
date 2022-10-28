@@ -121,7 +121,7 @@ type Target struct {
 func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	unitStats := stats.Stats{}
 	if options.Stats != nil {
-		copy(unitStats[:], options.Stats[:])
+		copy(unitStats[:], options.Stats)
 	}
 
 	target := &Target{

@@ -418,7 +418,7 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpen
 	if slot == -1 {
 		return
 	}
-	rp.runeStates = rp.runeStates | isDeaths[slot]
+	rp.runeStates |= isDeaths[slot]
 
 	// revertOnSpend == true overrides anything
 	rp.runeMeta[slot].revertOnSpend = rp.runeMeta[slot].revertOnSpend || revertOnSpend
@@ -639,33 +639,33 @@ func (rp *RunicPowerBar) OptimalRuneCost(cost RuneCost) RuneCost {
 	if c := cost.Blood(); bh < c {
 		neededDeath += c - bh
 	} else if c == 1 {
-		newCost = newCost | 0b01
+		newCost |= 0b01
 	} else if c == 2 {
-		newCost = newCost | 0b11
+		newCost |= 0b11
 	}
 
 	if c := cost.Frost(); fh < c {
 		neededDeath += c - fh
 	} else if c == 1 {
-		newCost = newCost | 0b0100
+		newCost |= 0b0100
 	} else if c == 2 {
-		newCost = newCost | 0b1100
+		newCost |= 0b1100
 	}
 
 	if c := cost.Unholy(); uh < c {
 		neededDeath += c - uh
 	} else if c == 1 {
-		newCost = newCost | 0b010000
+		newCost |= 0b010000
 	} else if c == 2 {
-		newCost = newCost | 0b110000
+		newCost |= 0b110000
 	}
 
 	if neededDeath > dh {
 		return 0 // can't cast
 	} else if neededDeath == 1 {
-		newCost = newCost | 0b01000000
+		newCost |= 0b01000000
 	} else if neededDeath == 2 {
-		newCost = newCost | 0b11000000
+		newCost |= 0b11000000
 	}
 
 	return newCost
@@ -861,10 +861,10 @@ func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int8
 	// Figure out which rune is spendable (not death and not spent)
 	// Then mark the spend bit for that rune.
 	if rp.runeStates&spendable1 == 0 {
-		rp.runeStates = rp.runeStates | spent1
+		rp.runeStates |= spent1
 		slot = rb
 	} else if rp.runeStates&spendable2 == 0 {
-		rp.runeStates = rp.runeStates | spent2
+		rp.runeStates |= spent2
 		slot = rb + 1
 	} else {
 		panic("Trying to spend rune that does not exist!")
@@ -1075,7 +1075,7 @@ func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	// mark spent bit to spend
-	rp.runeStates = rp.runeStates | isSpents[slot]
+	rp.runeStates |= isSpents[slot]
 	rp.runeMeta[slot].lastSpendTime = sim.CurrentTime
 
 	rp.SpendRuneMetrics(sim, metrics, 1)

@@ -65,7 +65,7 @@ func (fireElemental *FireElemental) registerFireNova() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    fireElemental.NewTimer(),
-				Duration: time.Second, // TODO estimated from from log diggig,
+				Duration: time.Second, // TODO estimated from log digging,
 			},
 			ModifyCast: func(sim *core.Simulation, _ *core.Spell, _ *core.Cast) {
 				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed()*2)

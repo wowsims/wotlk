@@ -12,7 +12,7 @@ import (
  */
 func GetGearList(request *proto.GearListRequest) *proto.GearListResult {
 	result := &proto.GearListResult{
-		Encounters: presetEncounters[:],
+		Encounters: presetEncounters,
 	}
 
 	for i := range items.Items {

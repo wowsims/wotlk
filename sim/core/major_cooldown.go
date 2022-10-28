@@ -100,7 +100,7 @@ func (mcd *MajorCooldown) IsEnabled() bool {
 }
 
 func (mcd *MajorCooldown) GetTimings() []time.Duration {
-	return mcd.timings[:]
+	return mcd.timings
 }
 
 // Public version of TryActivate for manual activation by Agent code.

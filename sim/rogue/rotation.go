@@ -177,7 +177,7 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 		if prio.Aura != nil {
 			expiresAt = prio.Aura.ExpiresAt()
 		} else if prio.MaxCasts == 1 {
-			expiresAt = sim.CurrentTime
+			expiresAt = sim.CurrentTime // TODO looks fishy, repeated expiresAt = sim.CurrentTime
 		} else {
 			expiresAt = sim.CurrentTime
 		}

@@ -70,7 +70,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
 			nextSunderAt := war.SunderArmorAura.ExpiresAt() - SunderWindow
-			// TODO nextCD is unused
+			// TODO looks fishy, nextCD is unused
 			nextCD = core.MinDuration(nextCD, nextSunderAt)
 		}
 	}

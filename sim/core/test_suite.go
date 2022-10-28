@@ -96,7 +96,7 @@ func (testSuite *IndividualTestSuite) TestCasts(testName string, rsr *proto.Raid
 		}
 		castsByAction[name] /= float64(rsr.SimOptions.Iterations)
 		castsByAction[name] *= 10
-		castsByAction[name] = float64(math.Round(castsByAction[name])) / 10.0
+		castsByAction[name] = math.Round(castsByAction[name]) / 10.0
 	}
 	casts := &proto.CastsTestResult{Casts: castsByAction}
 	testSuite.testResults.CastsResults[testName] = casts

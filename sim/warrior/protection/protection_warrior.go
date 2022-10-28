@@ -92,7 +92,7 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(false, float64(war.Rotation.HsRageThreshold))
+	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 

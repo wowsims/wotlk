@@ -57,7 +57,7 @@ func (bear *FeralTankDruid) shouldSwipe(sim *core.Simulation) bool {
 		bear.CanSwipeBear() &&
 		bear.LacerateDot.GetStacks() == 5 &&
 		bear.LacerateDot.RemainingDuration(sim) > time.Millisecond*3000 &&
-		ap >= float64(bear.Rotation.SwipeApThreshold)
+		ap >= bear.Rotation.SwipeApThreshold
 }
 
 func (bear *FeralTankDruid) tryQueueMaul(sim *core.Simulation) {

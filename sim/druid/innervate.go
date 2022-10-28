@@ -14,7 +14,7 @@ func (druid *Druid) registerInnervateCD() {
 	}
 	innervateTarget := innervateTargetAgent.GetCharacter()
 
-	actionID := core.ActionID{SpellID: 29166, Tag: int32(druid.Index)}
+	actionID := core.ActionID{SpellID: 29166, Tag: druid.Index}
 
 	baseCost := druid.BaseMana * 0.04
 	innervateCD := core.InnervateCD

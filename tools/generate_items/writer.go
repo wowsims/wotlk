@@ -157,7 +157,7 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) stri
 	}
 	gemStr += fmt.Sprintf("Phase:%d, ", phase)
 	gemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(gemResponse.GetQuality()).String())
-	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", proto.GemColor(gemResponse.GetSocketColor()).String())
+	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", gemResponse.GetSocketColor().String())
 	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemDeclaration.Stats))
 
 	if gemResponse.GetUnique() {

@@ -479,7 +479,7 @@ func (item WowheadItemResponse) GetWeaponSpeed() float64 {
 	return 0
 }
 
-var gemColorsRegex, _ = regexp.Compile("(Meta|Yellow|Blue|Red) Socket")
+var gemColorsRegex = regexp.MustCompile("(Meta|Yellow|Blue|Red) Socket")
 
 func (item WowheadItemResponse) GetGemSockets() []proto.GemColor {
 	matches := gemColorsRegex.FindAllStringSubmatch(item.Tooltip, -1)
