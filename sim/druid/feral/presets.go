@@ -52,12 +52,13 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 		Rotation: &proto.FeralDruid_Rotation{
 			BearWeaveType:      proto.FeralDruid_Rotation_Lacerate,
 			UseRake:            true,
+			UseBite:            true,
 			MinCombosForRip:    5,
 			MinCombosForBite:   5,
 			BiteTime:           10.0,
 			MaintainFaerieFire: true,
 			BerserkBiteThresh:  30.0,
-			MaxRoarClip:        10.0,
+			MaxRoarOffset:      14.0,
 		},
 	},
 }

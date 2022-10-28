@@ -280,6 +280,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// Ignore melee bleeds
+			if spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
 			if spell == druid.Moonfire || spell == druid.InsectSwarm {
 				return
 			}

@@ -78,9 +78,9 @@ export const FeralDruidRotationConfig = {
 			percent: true
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'maxRoarClip',
-			label: 'Roar Clip',
-			labelTooltip: 'Max seconds to clip roar',
+			fieldName: 'maxRoarOffset',
+			label: 'Roar Offset',
+			labelTooltip: 'Targeted offset in Rip/Roar timings',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'useBite',

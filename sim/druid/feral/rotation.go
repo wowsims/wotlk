@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -134,56 +133,26 @@ func (cat *FeralDruid) berserkExpectedAt(sim *core.Simulation, futureTime time.D
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
-	// For now, consider only the case where Rip will expire after Roar
 	ripdotRemaining := cat.RipDot.RemainingDuration(sim)
-	if !cat.RipDot.IsActive() || (ripdotRemaining <= cat.SavageRoarAura.RemainingDuration(sim)) || (sim.GetRemainingDuration()-ripdotRemaining < 10*time.Second) {
+	if !cat.RipDot.IsActive() || (ripdotRemaining < 10*time.Second) {
 		return false
 	}
 
-	// Calculate how much Energy we expect to accumulate after Roar expires
-	// but before Rip expires.
+	// Project Rip end time assuming full Glyph of Shred extensions
 	maxRipDur := time.Duration(cat.maxRipTicks) * cat.RipDot.TickLength
-
 	ripDur := cat.RipDot.Aura.StartedAt() + maxRipDur - sim.CurrentTime
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
-	availableTime := ripDur - roarDur
-	expectedEnergyGain := 10.0 * availableTime.Seconds()
 
-	shredCost := cat.Shred.BaseCost
-
-	if cat.tfExpectedBefore(sim, cat.RipDot.ExpiresAt()) {
-		expectedEnergyGain += 60.0
-	}
-	if cat.Talents.OmenOfClarity {
-		expectedEnergyGain += float64(availableTime/cat.AutoAttacks.MainhandSwingSpeed()) * (3.5 / 60. * (1.0 - cat.missChance) * shredCost)
-	}
-
-	if cat.ClearcastingAura.IsActive() {
-		expectedEnergyGain += shredCost
-	}
-
-	expectedEnergyGain += availableTime.Seconds() / cat.Rotation.RevitFreq * 0.15 * 8.0
-
-	// Add current Energy minus cost of Roaring now
-	roarCost := cat.CurrentSavageRoarCost()
-	availableEnergy := cat.CurrentEnergy() - roarCost + expectedEnergyGain
-
-	// Now calculate the effective Energy cost for building back 5 CPs once
-	// Roar expires and casting Rip
-	ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.RipDot.ExpiresAt()), cat.Rip.BaseCost*0.5, cat.Rip.BaseCost)
-	cpPerBuilder := 1 + ((cat.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance) / 100)
-	costPerBuilder := (shredCost + shredCost + cat.Rake.BaseCost) / 3. * (1 + 0.2*cat.missChance)
-	ripRefreshCost := 5./cpPerBuilder*costPerBuilder + ripCost
-
-	// If the cost is less than the expected Energy gain in the available
-	// time, then there's no reason to clip Roar.
-	if ripRefreshCost <= availableEnergy {
+	if roarDur > ripDur {
 		return false
 	}
 
-	// On the other hand, if there is a time conflict, then use the
-	// empirical parameter for how much we're willing to clip Roar.
-	return roarDur <= cat.Rotation.MaxRoarClip
+	// Calculate when roar would end if casted now
+	newRoarDur := cat.SavageRoarDurationTable()[cat.ComboPoints()]
+
+	// Clip as soon as we have enough CPs for the new roar to expire well
+	// after the current rip
+	return newRoarDur >= (ripDur + cat.Rotation.MaxRoarOffset)
 }
 
 func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Duration) bool {
@@ -295,7 +264,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		weaveEnergy -= 15.0
 	}
 
-	weaveEnd := time.Duration(float64(sim.CurrentTime) + ((float64(4.5)+2)*latencySecs)*float64(time.Second))
+	weaveEnd := time.Duration(float64(sim.CurrentTime) + (4.5+2*latencySecs)*float64(time.Second))
 
 	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!ripRefreshPending || cat.RipDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
 
@@ -478,7 +447,7 @@ type FeralDruidRotation struct {
 	MangleSpam         bool
 	BerserkBiteThresh  float64
 	Powerbear          bool
-	MaxRoarClip        time.Duration
+	MaxRoarOffset      time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
 }
@@ -495,7 +464,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
-		MaxRoarClip:        time.Duration(float64(rotation.MaxRoarClip) * float64(time.Second)),
+		MaxRoarOffset:      time.Duration(float64(rotation.MaxRoarOffset) * float64(time.Second)),
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 	}

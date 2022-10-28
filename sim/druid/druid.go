@@ -114,6 +114,9 @@ type druidTierSets struct {
 	balance_t10_4 bool
 	balance_pvp_2 bool
 	balance_pvp_4 bool
+
+	feral_t8_2 bool
+	feral_t8_4 bool
 }
 
 type SelfBuffs struct {
@@ -213,6 +216,9 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
 		druid.HasSetBonus(ItemSetGladiatorsWildhide, 2),
 		druid.HasSetBonus(ItemSetGladiatorsWildhide, 4),
+
+		druid.HasSetBonus(ItemSetNightsongBattlegear, 2),
+		druid.HasSetBonus(ItemSetNightsongBattlegear, 4),
 	}
 }
 
