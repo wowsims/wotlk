@@ -4,6 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/warrior"
 )
 
 func (war *ProtectionWarrior) OnGCDReady(sim *core.Simulation) {
@@ -15,6 +16,7 @@ func (war *ProtectionWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spe
 }
 
 func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
+	war.trySwapToDefensive(sim)
 	if war.CustomRotation != nil {
 		war.CustomRotation.Cast(sim)
 	} else {
@@ -63,6 +65,14 @@ func (war *ProtectionWarrior) shouldThunderClap(sim *core.Simulation) bool {
 		war.Rotation.ThunderClapChoice == proto.ProtectionWarrior_Rotation_ThunderClapChoiceOnCD,
 		war.Rotation.ThunderClapChoice == proto.ProtectionWarrior_Rotation_ThunderClapChoiceMaintain,
 		false)
+}
+
+func (war *ProtectionWarrior) trySwapToDefensive(sim *core.Simulation) bool {
+	if !war.StanceMatches(warrior.DefensiveStance) && war.DefensiveStance.IsReady(sim) {
+		war.DefensiveStance.Cast(sim, nil)
+		return true
+	}
+	return false
 }
 
 func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
