@@ -25,13 +25,6 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	 *   - CANNOT CRIT.
 	 */
 
-	baseMultiplier := 1 *
-		(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
-		(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus())
-
-	judgementMultiplier := baseMultiplier *
-		(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus())
-
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
@@ -41,7 +34,10 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
 			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 
-		DamageMultiplier: judgementMultiplier,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -62,7 +58,9 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		DamageMultiplier: baseMultiplier,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

@@ -28,13 +28,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
 	results := make([]*core.SpellResult, numHits)
 
-	baseModifiers := 1 *
-		(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
-		(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus())
-
-	judgementModifiers := baseModifiers *
-		(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus())
-
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
@@ -44,7 +37,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
 			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 
-		DamageMultiplier: judgementModifiers,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -68,7 +64,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		DamageMultiplier: baseModifiers * 0.36, // Only 36% of weapon damage.
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			0.36, // Only 36% of weapon damage.
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -97,7 +96,10 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		DamageMultiplier: baseModifiers * 0.36, // Only 36% of weapon damage.
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			0.36, // Only 36% of weapon damage.
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
