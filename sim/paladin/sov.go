@@ -38,10 +38,13 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *  - Add set bonus and talent related modifiers.
 	 *  - Fix expertise rating on glyph application.
 	 */
-	baseMultiplier := (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
-		(1 + paladin.getItemSetLightswornBattlegearBonus4() +
-			paladin.getTalentSealsOfThePureBonus() +
-			paladin.getItemSetAegisPlateBonus2())
+	baseMultiplier := 1 *
+		(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()) *
+		(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus())
+
+	judgementMultiplier := baseMultiplier *
+		(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus())
+
 	// TODO: Test whether T8 Prot 2pc also affects Judgement, once available
 	// TODO: Verify whether these bonuses should indeed be additive with similar
 
@@ -75,11 +78,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
 			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
-		DamageMultiplierAdditive: 1 +
-			paladin.getMajorGlyphOfJudgementBonus() +
-			paladin.getTalentTheArtOfWarBonus(),
-		DamageMultiplier: (1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
-			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getTalentSealsOfThePureBonus()),
+		DamageMultiplier: judgementMultiplier,
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -104,7 +103,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		// (baseMult * weaponScaling / stacks)
+		// (mult * weaponScaling / stacks)
 		DamageMultiplier: baseMultiplier * .33 / 5,
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -200,6 +199,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 }
 
 func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
+	// DoT is unaffected by 2h spec
+	baseMultiplier := 1 *
+		(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus())
+
 	dotActionID := core.ActionID{SpellID: 31803, Tag: 2} // Holy Vengeance
 	return core.NewDot(core.Dot{
 		Spell: paladin.RegisterSpell(core.SpellConfig{
@@ -207,11 +210,7 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 			SpellSchool: core.SpellSchoolHoly,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			DamageMultiplierAdditive: 1 +
-				paladin.getItemSetLightswornBattlegearBonus4() +
-				paladin.getTalentSealsOfThePureBonus() +
-				paladin.getItemSetAegisPlateBonus2(),
-			DamageMultiplier: 1,
+			DamageMultiplier: baseMultiplier,
 			ThreatMultiplier: 1,
 		}),
 		Aura: target.RegisterAura(core.Aura{
