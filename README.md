@@ -6,6 +6,8 @@ This project is licensed with MIT license. We request that anyone using this sof
 
 [Live sims can be found here.](https://wowsims.github.io/wotlk "https://wowsims.github.io/wotlk")
 
+[Support our devs via Patreon.](https://www.patreon.com/wowsims)
+
 # Installation
 This project has dependencies on Go >=1.18, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
 
