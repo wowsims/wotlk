@@ -72,7 +72,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 							const ohWeaponSpeed = simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed;
 							const mhImbue = simUI.player.getSpecOptions().mhImbue;
 							const ohImbue = simUI.player.getSpecOptions().ohImbue;
-							if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
+							if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined' || !simUI.player.getSpecOptions().applyPoisonsManually) {
 								return '';
 							}
 							if ((mhWeaponSpeed < ohWeaponSpeed) && (ohImbue == Rogue_Options_PoisonImbue.DeadlyPoison)) {
@@ -185,6 +185,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					RogueInputs.ApplyPoisonsManually,
 					RogueInputs.StartingOverkillDuration,
 					OtherInputs.StartingConjured,
 					OtherInputs.TankAssignment,
@@ -215,6 +216,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 		})
 		this.player.changeEmitter.on((c) => {
 			const rotation = this.player.getRotation()
+			const options = this.player.getSpecOptions()
 			if (this.player.getTalents().mutilate) {
 				if (rotation.assassinationFinisherPriority == AssassinationPriority.AssassinationPriorityUnknown) {
 					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
@@ -227,6 +229,21 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				}
 			}
 			this.player.setRotation(c, rotation)
+			if (!options.applyPoisonsManually) {
+				const mhWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;
+				const ohWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed;
+				if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
+					return
+				}
+				if (mhWeaponSpeed < ohWeaponSpeed) { 
+					options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison 
+					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
+				} else {
+					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
+					options.ohImbue = Rogue_Options_PoisonImbue.DeadlyPoison
+				}
+			}
+			this.player.setSpecOptions(c, options)
 		});
 		this.sim.encounter.changeEmitter.on((c) => {
 			const rotation = this.player.getRotation()
