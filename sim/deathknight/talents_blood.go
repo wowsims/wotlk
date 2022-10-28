@@ -308,7 +308,7 @@ func (dk *Deathknight) applySuddenDoom() {
 				return
 			}
 
-			if dk.runeSpellComp(spell, dk.HeartStrike) && dk.runeSpellComp(spell, dk.BloodStrike) {
+			if !dk.runeSpellComp(spell, dk.HeartStrike) && !dk.runeSpellComp(spell, dk.BloodStrike) {
 				return
 			}
 
