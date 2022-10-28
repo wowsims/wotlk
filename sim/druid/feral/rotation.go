@@ -264,7 +264,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		weaveEnergy -= 15.0
 	}
 
-	weaveEnd := time.Duration(float64(sim.CurrentTime) + ((float64(4.5)+2)*latencySecs)*float64(time.Second))
+	weaveEnd := time.Duration(float64(sim.CurrentTime) + (4.5+2*latencySecs)*float64(time.Second))
 
 	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!ripRefreshPending || cat.RipDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
 
