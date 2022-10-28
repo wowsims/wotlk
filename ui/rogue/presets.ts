@@ -59,6 +59,7 @@ export const DefaultRotation = RogueRotation.create({
 export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,
 	ohImbue: Poison.InstantPoison,
+  applyPoisonsManually: false,
 });
 
 export const DefaultConsumes = Consumes.create({

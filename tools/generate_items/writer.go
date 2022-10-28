@@ -380,6 +380,12 @@ var allowList = map[int]bool{
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
 
+	// Grand Marshal / High Warlord Weapons
+	18843: true,
+	18844: true,
+	18847: true,
+	18848: true,
+
 	41752: true, // Brunnhildar Axe
 
 	// Undead Slaying Sets
