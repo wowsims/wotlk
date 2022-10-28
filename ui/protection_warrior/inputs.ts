@@ -46,6 +46,11 @@ export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecPr
 	],
 });
 
+export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecProtectionWarrior>({
+	fieldName: 'useShatteringThrow',
+	id: ActionId.fromSpellId(64382),
+});
+
 export const PrecastShout = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionWarrior>({
 	fieldName: 'precastShout',
 	label: 'Precast Shout',

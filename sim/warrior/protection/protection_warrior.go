@@ -97,6 +97,9 @@ func (war *ProtectionWarrior) Initialize() {
 	war.RegisterShieldBlockCD()
 
 	war.CustomRotation = war.makeCustomRotation()
+	if war.Options.UseShatteringThrow {
+		war.RegisterShatteringThrowCD()
+	}
 }
 
 func (war *ProtectionWarrior) Reset(sim *core.Simulation) {

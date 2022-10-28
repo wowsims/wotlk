@@ -81,6 +81,7 @@ export const DefaultOptions = ProtectionWarriorOptions.create({
 	precastShout: true,
 	precastShoutSapphire: false,
 	precastShoutT2: false,
+  useShatteringThrow: false,
 
 	startingRage: 0,
 });

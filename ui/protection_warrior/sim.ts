@@ -146,6 +146,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ProtectionWarriorInputs.ShoutPicker,
+				ProtectionWarriorInputs.ShatteringThrow,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,
