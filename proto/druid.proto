@@ -196,7 +196,7 @@ message FeralDruid {
 	int32 min_combos_for_bite = 8;
 	int32 berserk_bite_thresh = 9;
 	bool powerbear = 10;
-	float max_roar_clip = 11;
+	float max_roar_offset = 11;
 	BiteModeType bite_mode_type = 12;
 	float hot_uptime = 13;
   }

@@ -18,7 +18,7 @@ func (druid *Druid) registerSavageRoarSpell() {
 	baseCost := 25.0
 
 	srm := druid.getSavageRoarMultiplier()
-	durationBonus := core.TernaryDuration(druid.HasSetBonus(ItemSetNightsongBattlegear, 4), time.Second*8.0, 0.0)
+	durTable := druid.SavageRoarDurationTable()
 
 	druid.SavageRoarAura = druid.RegisterAura(core.Aura{
 		Label:    "Savage Roar Aura",
@@ -49,13 +49,25 @@ func (druid *Druid) registerSavageRoarSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			druid.SavageRoarAura.Duration = durationBonus + time.Duration(float64(time.Second)*(9.0+(5.0)*float64(druid.ComboPoints())))
+			druid.SavageRoarAura.Duration = durTable[druid.ComboPoints()]
 			druid.SavageRoarAura.Activate(sim)
 			druid.SpendComboPoints(sim, spell.ComboPointMetrics())
 		},
 	})
 
 	druid.SavageRoar = srSpell
+}
+
+func (druid *Druid) SavageRoarDurationTable() [6]time.Duration {
+	durBonus := core.TernaryDuration(druid.setBonuses.feral_t8_4, time.Second*8, 0)
+	return [6]time.Duration{
+		0,
+		durBonus + time.Second*(9+5),
+		durBonus + time.Second*(9+10),
+		durBonus + time.Second*(9+15),
+		durBonus + time.Second*(9+20),
+		durBonus + time.Second*(9+25),
+	}
 }
 
 func (druid *Druid) CanSavageRoar() bool {

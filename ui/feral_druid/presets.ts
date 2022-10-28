@@ -44,13 +44,13 @@ export const DefaultRotation = FeralDruidRotation.create({
 	minCombosForBite: 5,
 
 	useRake: true,
-	useBite: false,
+	useBite: true,
 	mangleSpam: false,
 	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
 	biteTime: 10.0,
 	berserkBiteThresh: 30.0,
 	powerbear: false,
-	maxRoarClip: 10.0,
+	maxRoarOffset: 14.0,
 	maintainFaerieFire: true,
 	hotUptime: 0.0
 });
