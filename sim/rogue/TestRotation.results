@@ -11,11 +11,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -43,15 +43,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 48.2
+   value: 63.1
   }
   casts: {
    key: "spell_id:48665"
-   value: 48.2
+   value: 63.1
   }
   casts: {
    key: "spell_id:48666"
-   value: 48.2
+   value: 63.1
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -123,11 +123,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 159.7
+   value: 170.5
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 300.4
+   value: 308.6
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -135,7 +135,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 305.4
+   value: 313.6
   }
   casts: {
    key: "spell_id:57975"
@@ -151,23 +151,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 23.2
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 2.4
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 16.2
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 6.6
+   value: 16.3
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 2.4
+   value: 14.3
   }
   casts: {
    key: "spell_id:58426"
@@ -183,7 +183,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.1
+   value: 0.2
   }
   casts: {
    key: "spell_id:6774 tag:3"
@@ -195,27 +195,27 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:5"
-   value: 0
+   value: 0.1
   }
   casts: {
    key: "spell_id:8647 tag:1"
-   value: 1.8
+   value: 1.9
   }
   casts: {
    key: "spell_id:8647 tag:2"
-   value: 0.6
+   value: 0.5
   }
   casts: {
    key: "spell_id:8647 tag:3"
-   value: 3.5
+   value: 3.9
   }
   casts: {
    key: "spell_id:8647 tag:4"
-   value: 3
+   value: 3.8
   }
   casts: {
    key: "spell_id:8647 tag:5"
-   value: 4.7
+   value: 3.8
   }
  }
 }
@@ -232,11 +232,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -264,15 +264,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48665"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48666"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -344,11 +344,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 154.9
+   value: 179.4
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 295.7
+   value: 313.9
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -356,7 +356,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 300.7
+   value: 318.9
   }
   casts: {
    key: "spell_id:57975"
@@ -372,23 +372,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 45.6
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 4.9
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 26.2
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 0
+   value: 20.1
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 0
+   value: 19.1
   }
   casts: {
    key: "spell_id:58426"
@@ -404,11 +404,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.2
+   value: 0.1
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 0.8
+   value: 0.9
   }
   casts: {
    key: "spell_id:6774 tag:4"
@@ -453,11 +453,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -485,15 +485,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48665"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48666"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -565,11 +565,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 154.9
+   value: 179.4
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 295.7
+   value: 313.9
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -577,7 +577,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 300.7
+   value: 318.9
   }
   casts: {
    key: "spell_id:57975"
@@ -593,23 +593,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 45.6
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 4.9
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 26.2
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 0
+   value: 20.1
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 0
+   value: 19.1
   }
   casts: {
    key: "spell_id:58426"
@@ -625,11 +625,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.2
+   value: 0.1
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 0.8
+   value: 0.9
   }
   casts: {
    key: "spell_id:6774 tag:4"
@@ -674,11 +674,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -706,15 +706,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 33.5
+   value: 62.8
   }
   casts: {
    key: "spell_id:48665"
-   value: 33.5
+   value: 62.8
   }
   casts: {
    key: "spell_id:48666"
-   value: 33.5
+   value: 62.8
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -766,7 +766,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:51662"
-   value: 5.3
+   value: 5.2
   }
   casts: {
    key: "spell_id:51723"
@@ -786,11 +786,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 156.5
+   value: 181.5
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 299.6
+   value: 319.8
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -798,7 +798,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 304.6
+   value: 324.8
   }
   casts: {
    key: "spell_id:57975"
@@ -814,23 +814,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 47.6
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 5.3
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 26.9
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 0
+   value: 21.2
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 0
+   value: 19.6
   }
   casts: {
    key: "spell_id:58426"
@@ -846,11 +846,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.2
+   value: 0.1
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 0.8
+   value: 0.9
   }
   casts: {
    key: "spell_id:6774 tag:4"
@@ -895,11 +895,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -927,15 +927,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48665"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48666"
-   value: 32.4
+   value: 60.4
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -1007,11 +1007,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 154.9
+   value: 179.4
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 295.7
+   value: 313.9
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1019,7 +1019,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 300.7
+   value: 318.9
   }
   casts: {
    key: "spell_id:57975"
@@ -1035,23 +1035,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 45.6
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 4.9
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 26.2
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 0
+   value: 20.1
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 0
+   value: 19.1
   }
   casts: {
    key: "spell_id:58426"
@@ -1067,11 +1067,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.2
+   value: 0.1
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 0.8
+   value: 0.9
   }
   casts: {
    key: "spell_id:6774 tag:4"
@@ -1116,11 +1116,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 423.8
+   value: 423.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 329.8
+   value: 329.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -1148,15 +1148,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 33.8
+   value: 63
   }
   casts: {
    key: "spell_id:48665"
-   value: 33.8
+   value: 63
   }
   casts: {
    key: "spell_id:48666"
-   value: 33.8
+   value: 63
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -1228,11 +1228,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 157.4
+   value: 182.1
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 299.4
+   value: 319.9
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1240,7 +1240,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 304.4
+   value: 324.9
   }
   casts: {
    key: "spell_id:57975"
@@ -1256,23 +1256,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:1"
-   value: 47
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:2"
-   value: 5.3
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:3"
-   value: 26.9
+   value: 0
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 0.4
+   value: 20.8
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 0
+   value: 19.9
   }
   casts: {
    key: "spell_id:58426"
@@ -1288,7 +1288,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 0.1
+   value: 0.2
   }
   casts: {
    key: "spell_id:6774 tag:3"
@@ -1337,11 +1337,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 477.9
+   value: 477.4
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 371.8
+   value: 371.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -1365,7 +1365,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48638"
-   value: 81.6
+   value: 80.7
   }
   casts: {
    key: "spell_id:48659"
@@ -1401,7 +1401,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48668 tag:5"
-   value: 0.2
+   value: 0.3
   }
   casts: {
    key: "spell_id:48672"
@@ -1409,7 +1409,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:1"
-   value: 21.9
+   value: 22
   }
   casts: {
    key: "spell_id:48672 tag:2"
@@ -1425,7 +1425,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:5"
-   value: 0.9
+   value: 0.7
   }
   casts: {
    key: "spell_id:48676"
@@ -1461,11 +1461,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 112.8
+   value: 113.2
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 232.8
+   value: 232.6
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1473,7 +1473,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 237.8
+   value: 237.6
   }
   casts: {
    key: "spell_id:57975"
@@ -1493,7 +1493,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:1"
-   value: 5
+   value: 4.9
   }
   casts: {
    key: "spell_id:6774 tag:2"
@@ -1501,7 +1501,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 3.6
+   value: 3.3
   }
   casts: {
    key: "spell_id:6774 tag:4"
@@ -1509,15 +1509,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:5"
-   value: 0.8
+   value: 1
   }
   casts: {
    key: "spell_id:8647 tag:1"
-   value: 15.1
+   value: 14.9
   }
   casts: {
    key: "spell_id:8647 tag:2"
-   value: 6.6
+   value: 6.9
   }
   casts: {
    key: "spell_id:8647 tag:3"
@@ -1546,11 +1546,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 476.6
+   value: 476.1
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 370.8
+   value: 370.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -1574,7 +1574,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48638"
-   value: 94.9
+   value: 94.5
   }
   casts: {
    key: "spell_id:48659"
@@ -1594,7 +1594,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48668 tag:1"
-   value: 1.4
+   value: 1.2
   }
   casts: {
    key: "spell_id:48668 tag:2"
@@ -1610,7 +1610,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48668 tag:5"
-   value: 1.5
+   value: 1.4
   }
   casts: {
    key: "spell_id:48672"
@@ -1618,7 +1618,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:1"
-   value: 6.7
+   value: 6.6
   }
   casts: {
    key: "spell_id:48672 tag:2"
@@ -1626,15 +1626,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:3"
-   value: 5.6
+   value: 5.8
   }
   casts: {
    key: "spell_id:48672 tag:4"
-   value: 4.9
+   value: 5.1
   }
   casts: {
    key: "spell_id:48672 tag:5"
-   value: 4.5
+   value: 4.4
   }
   casts: {
    key: "spell_id:48676"
@@ -1670,11 +1670,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 112.6
+   value: 113.2
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 226.6
+   value: 226
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1682,7 +1682,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 231.6
+   value: 231.1
   }
   casts: {
    key: "spell_id:57975"
@@ -1702,19 +1702,19 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:1"
-   value: 5.1
+   value: 4.6
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 3
+   value: 3.2
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 3
+   value: 3.2
   }
   casts: {
    key: "spell_id:6774 tag:4"
-   value: 2.5
+   value: 2.4
   }
   casts: {
    key: "spell_id:6774 tag:5"
@@ -1755,11 +1755,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 471.2
+   value: 470.6
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 366.6
+   value: 366.2
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -1783,7 +1783,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48638"
-   value: 40.5
+   value: 39.5
   }
   casts: {
    key: "spell_id:48659"
@@ -1803,7 +1803,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48668 tag:1"
-   value: 76.7
+   value: 76.8
   }
   casts: {
    key: "spell_id:48668 tag:2"
@@ -1879,11 +1879,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 111.1
+   value: 111.7
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 222.1
+   value: 221.5
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1891,7 +1891,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 227.2
+   value: 226.6
   }
   casts: {
    key: "spell_id:57975"
@@ -1964,11 +1964,11 @@ casts_results: {
   }
   casts: {
    key: "other_id:OtherActionAttack tag:1"
-   value: 477.7
+   value: 477.5
   }
   casts: {
    key: "other_id:OtherActionAttack tag:2"
-   value: 371.6
+   value: 371.5
   }
   casts: {
    key: "other_id:OtherActionShoot"
@@ -1992,7 +1992,425 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48638"
-   value: 98.8
+   value: 97.9
+  }
+  casts: {
+   key: "spell_id:48659"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.3
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1.8
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 6.2
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 3.9
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 5.7
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.5
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4.5
+  }
+  casts: {
+   key: "spell_id:48676"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:53307"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 113.3
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 228.2
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 233.3
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 4.9
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 3.1
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.5
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.5
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat No Expose One Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 476.1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 370.5
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 94.5
+  }
+  casts: {
+   key: "spell_id:48659"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48664"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48665"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48666"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:1"
+   value: 1.2
+  }
+  casts: {
+   key: "spell_id:48668 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48668 tag:5"
+   value: 1.4
+  }
+  casts: {
+   key: "spell_id:48672"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48672 tag:1"
+   value: 6.6
+  }
+  casts: {
+   key: "spell_id:48672 tag:2"
+   value: 4.1
+  }
+  casts: {
+   key: "spell_id:48672 tag:3"
+   value: 5.8
+  }
+  casts: {
+   key: "spell_id:48672 tag:4"
+   value: 5.1
+  }
+  casts: {
+   key: "spell_id:48672 tag:5"
+   value: 4.4
+  }
+  casts: {
+   key: "spell_id:48676"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:51690"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:51690 tag:1"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51690 tag:2"
+   value: 15
+  }
+  casts: {
+   key: "spell_id:51723"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:53307"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:54758"
+   value: 5
+  }
+  casts: {
+   key: "spell_id:57934 tag:1"
+   value: 10
+  }
+  casts: {
+   key: "spell_id:57968"
+   value: 113.2
+  }
+  casts: {
+   key: "spell_id:57968 tag:1"
+   value: 226
+  }
+  casts: {
+   key: "spell_id:57968 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57973"
+   value: 231.1
+  }
+  casts: {
+   key: "spell_id:57975"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:57975 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:5938"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:6774 tag:1"
+   value: 4.6
+  }
+  casts: {
+   key: "spell_id:6774 tag:2"
+   value: 3.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:3"
+   value: 3.2
+  }
+  casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.4
+  }
+  casts: {
+   key: "spell_id:6774 tag:5"
+   value: 1.4
+  }
+  casts: {
+   key: "spell_id:8647 tag:1"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:2"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:3"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:4"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:8647 tag:5"
+   value: 0
+  }
+ }
+}
+casts_results: {
+ key: "TestRotation-Casts-Combat One Expose No Tricks Primary"
+ value: {
+  casts: {
+   key: "item_id:40211"
+   value: 1
+  }
+  casts: {
+   key: "item_id:7676"
+   value: 1
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:1"
+   value: 477.3
+  }
+  casts: {
+   key: "other_id:OtherActionAttack tag:2"
+   value: 371.3
+  }
+  casts: {
+   key: "other_id:OtherActionShoot"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:13750"
+   value: 1
+  }
+  casts: {
+   key: "spell_id:13877"
+   value: 3
+  }
+  casts: {
+   key: "spell_id:26863"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:26864"
+   value: 0
+  }
+  casts: {
+   key: "spell_id:48638"
+   value: 97.9
   }
   casts: {
    key: "spell_id:48659"
@@ -2036,425 +2454,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:1"
-   value: 6.1
-  }
-  casts: {
-   key: "spell_id:48672 tag:2"
-   value: 3.5
-  }
-  casts: {
-   key: "spell_id:48672 tag:3"
-   value: 5.7
-  }
-  casts: {
-   key: "spell_id:48672 tag:4"
-   value: 5.4
-  }
-  casts: {
-   key: "spell_id:48672 tag:5"
-   value: 5
-  }
-  casts: {
-   key: "spell_id:48676"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:51690"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:51690 tag:1"
-   value: 15
-  }
-  casts: {
-   key: "spell_id:51690 tag:2"
-   value: 15
-  }
-  casts: {
-   key: "spell_id:51723"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:53307"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:54758"
-   value: 5
-  }
-  casts: {
-   key: "spell_id:57934 tag:1"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57968"
-   value: 112.7
-  }
-  casts: {
-   key: "spell_id:57968 tag:1"
-   value: 228.7
-  }
-  casts: {
-   key: "spell_id:57968 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57973"
-   value: 233.7
-  }
-  casts: {
-   key: "spell_id:57975"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57975 tag:1"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57975 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:5938"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:6774 tag:1"
-   value: 5
-  }
-  casts: {
-   key: "spell_id:6774 tag:2"
-   value: 3.2
-  }
-  casts: {
-   key: "spell_id:6774 tag:3"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:6774 tag:4"
-   value: 2.5
-  }
-  casts: {
-   key: "spell_id:6774 tag:5"
-   value: 1.4
-  }
-  casts: {
-   key: "spell_id:8647 tag:1"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:3"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:4"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:5"
-   value: 0
-  }
- }
-}
-casts_results: {
- key: "TestRotation-Casts-Combat No Expose One Tricks Primary"
- value: {
-  casts: {
-   key: "item_id:40211"
-   value: 1
-  }
-  casts: {
-   key: "item_id:7676"
-   value: 1
-  }
-  casts: {
-   key: "other_id:OtherActionAttack tag:1"
-   value: 476.6
-  }
-  casts: {
-   key: "other_id:OtherActionAttack tag:2"
-   value: 370.8
-  }
-  casts: {
-   key: "other_id:OtherActionShoot"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:13750"
-   value: 1
-  }
-  casts: {
-   key: "spell_id:13877"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:26863"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:26864"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48638"
-   value: 94.9
-  }
-  casts: {
-   key: "spell_id:48659"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48664"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48665"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48666"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:1"
-   value: 1.4
-  }
-  casts: {
-   key: "spell_id:48668 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:3"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:4"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:5"
-   value: 1.5
-  }
-  casts: {
-   key: "spell_id:48672"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48672 tag:1"
-   value: 6.7
-  }
-  casts: {
-   key: "spell_id:48672 tag:2"
-   value: 4.1
-  }
-  casts: {
-   key: "spell_id:48672 tag:3"
-   value: 5.6
-  }
-  casts: {
-   key: "spell_id:48672 tag:4"
-   value: 4.9
-  }
-  casts: {
-   key: "spell_id:48672 tag:5"
-   value: 4.5
-  }
-  casts: {
-   key: "spell_id:48676"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:51690"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:51690 tag:1"
-   value: 15
-  }
-  casts: {
-   key: "spell_id:51690 tag:2"
-   value: 15
-  }
-  casts: {
-   key: "spell_id:51723"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:53307"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:54758"
-   value: 5
-  }
-  casts: {
-   key: "spell_id:57934 tag:1"
-   value: 10
-  }
-  casts: {
-   key: "spell_id:57968"
-   value: 112.6
-  }
-  casts: {
-   key: "spell_id:57968 tag:1"
-   value: 226.6
-  }
-  casts: {
-   key: "spell_id:57968 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57973"
-   value: 231.6
-  }
-  casts: {
-   key: "spell_id:57975"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57975 tag:1"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:57975 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:5938"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:6774 tag:1"
-   value: 5.1
-  }
-  casts: {
-   key: "spell_id:6774 tag:2"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:6774 tag:3"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:6774 tag:4"
-   value: 2.5
-  }
-  casts: {
-   key: "spell_id:6774 tag:5"
-   value: 1.4
-  }
-  casts: {
-   key: "spell_id:8647 tag:1"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:3"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:4"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:8647 tag:5"
-   value: 0
-  }
- }
-}
-casts_results: {
- key: "TestRotation-Casts-Combat One Expose No Tricks Primary"
- value: {
-  casts: {
-   key: "item_id:40211"
-   value: 1
-  }
-  casts: {
-   key: "item_id:7676"
-   value: 1
-  }
-  casts: {
-   key: "other_id:OtherActionAttack tag:1"
-   value: 477.4
-  }
-  casts: {
-   key: "other_id:OtherActionAttack tag:2"
-   value: 371.5
-  }
-  casts: {
-   key: "other_id:OtherActionShoot"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:13750"
-   value: 1
-  }
-  casts: {
-   key: "spell_id:13877"
-   value: 3
-  }
-  casts: {
-   key: "spell_id:26863"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:26864"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48638"
-   value: 98.6
-  }
-  casts: {
-   key: "spell_id:48659"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48664"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48665"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48666"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:1"
-   value: 1.4
-  }
-  casts: {
-   key: "spell_id:48668 tag:2"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:3"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:4"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48668 tag:5"
-   value: 1.7
-  }
-  casts: {
-   key: "spell_id:48672"
-   value: 0
-  }
-  casts: {
-   key: "spell_id:48672 tag:1"
-   value: 7.1
+   value: 7.3
   }
   casts: {
    key: "spell_id:48672 tag:2"
@@ -2462,15 +2462,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48672 tag:3"
-   value: 4.6
+   value: 5
   }
   casts: {
    key: "spell_id:48672 tag:4"
-   value: 4.7
+   value: 4.6
   }
   casts: {
    key: "spell_id:48672 tag:5"
-   value: 5.6
+   value: 5.3
   }
   casts: {
    key: "spell_id:48676"
@@ -2506,11 +2506,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 112.5
+   value: 113.3
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 228.6
+   value: 228.2
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -2518,7 +2518,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 233.7
+   value: 233.3
   }
   casts: {
    key: "spell_id:57975"
@@ -2538,23 +2538,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:6774 tag:1"
-   value: 5.6
+   value: 5.2
   }
   casts: {
    key: "spell_id:6774 tag:2"
-   value: 2.8
+   value: 2.5
   }
   casts: {
    key: "spell_id:6774 tag:3"
-   value: 2.7
-  }
-  casts: {
-   key: "spell_id:6774 tag:4"
    value: 2.9
   }
   casts: {
+   key: "spell_id:6774 tag:4"
+   value: 2.5
+  }
+  casts: {
    key: "spell_id:6774 tag:5"
-   value: 1.2
+   value: 1.8
   }
   casts: {
    key: "spell_id:8647 tag:1"
