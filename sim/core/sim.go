@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,7 +16,8 @@ type Simulation struct {
 
 	Options proto.SimOptions
 
-	rand Rand
+	rand  Rand
+	rseed int64
 
 	// Used for testing only, see RandomFloat().
 	isTest    bool
@@ -123,7 +125,8 @@ func NewSim(rsr proto.RaidSimRequest) *Simulation {
 		Environment: env,
 		Options:     simOptions,
 
-		rand: NewSplitMix(uint64(rseed)),
+		rand:  NewSplitMix(uint64(rseed)),
+		rseed: rseed,
 
 		isTest:    simOptions.IsTest,
 		testRands: make(map[string]Rand),
@@ -143,7 +146,8 @@ func (sim *Simulation) RandomFloat(label string) float64 {
 
 	labelRand, isPresent := sim.testRands[label]
 	if !isPresent {
-		labelRand = NewSplitMix(uint64(hash(label)))
+		// Add rseed to the label to we still have run-run variance for stat weights.
+		labelRand = NewSplitMix(uint64(hash(label + strconv.FormatInt(sim.rseed, 16))))
 		sim.testRands[label] = labelRand
 	}
 	v := labelRand.NextFloat64()
