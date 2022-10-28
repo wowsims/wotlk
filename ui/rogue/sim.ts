@@ -38,6 +38,25 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			warnings: [
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
 					return {
+						updateOn: simUI.sim.encounter.changeEmitter,
+						getContent: () => {
+							var hasNoArmor = false
+							for (const target of simUI.sim.encounter.getTargets()) {
+								if (target.getStats().getStat(Stat.StatArmor) <= 0) {
+									hasNoArmor = true
+									break
+								}
+							}
+							if (hasNoArmor) {
+								return 'One or more targets have no armor! Check advanced encounter settings.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
 							if (
