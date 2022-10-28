@@ -146,12 +146,17 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 	return shouldActivate
 }
 
+type cooldownConfigs struct {
+	Cooldowns              []*proto.Cooldown
+	HpPercentForDefensives float64
+}
+
 type majorCooldownManager struct {
 	// The Character whose cooldowns are being managed.
 	character *Character
 
 	// User-specified cooldown configs.
-	cooldownConfigs *proto.Cooldowns
+	cooldownConfigs cooldownConfigs
 
 	// Cached list of major cooldowns sorted by priority, for resetting quickly.
 	initialMajorCooldowns []MajorCooldown
@@ -166,13 +171,15 @@ type majorCooldownManager struct {
 }
 
 func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
-	cds := &proto.Cooldowns{}
-	if cooldowns != nil {
-		cds = cooldowns
+	if cooldowns == nil {
+		return majorCooldownManager{}
 	}
 
 	return majorCooldownManager{
-		cooldownConfigs: cds,
+		cooldownConfigs: cooldownConfigs{
+			Cooldowns:              cooldowns.Cooldowns,
+			HpPercentForDefensives: cooldowns.HpPercentForDefensives,
+		},
 	}
 }
 
@@ -185,25 +192,19 @@ func (mcdm *majorCooldownManager) finalize(character *Character) {
 		mcdm.initialMajorCooldowns = []MajorCooldown{}
 	}
 
-	if mcdm.cooldownConfigs == nil {
-		mcdm.cooldownConfigs = &proto.Cooldowns{}
-	}
-
 	// Match user-specified cooldown configs to existing cooldowns.
 	for i := range mcdm.initialMajorCooldowns {
 		mcd := &mcdm.initialMajorCooldowns[i]
 		mcd.timings = []time.Duration{}
 
-		if mcdm.cooldownConfigs.Cooldowns != nil {
-			for _, cooldownConfig := range mcdm.cooldownConfigs.Cooldowns {
-				configID := ProtoToActionID(cooldownConfig.Id)
-				if configID.SameAction(mcd.Spell.ActionID) {
-					mcd.timings = make([]time.Duration, len(cooldownConfig.Timings))
-					for t, timing := range cooldownConfig.Timings {
-						mcd.timings[t] = DurationFromSeconds(timing)
-					}
-					break
+		for _, cooldownConfig := range mcdm.cooldownConfigs.Cooldowns {
+			configID := ProtoToActionID(cooldownConfig.Id)
+			if configID.SameAction(mcd.Spell.ActionID) {
+				mcd.timings = make([]time.Duration, len(cooldownConfig.Timings))
+				for t, timing := range cooldownConfig.Timings {
+					mcd.timings[t] = DurationFromSeconds(timing)
 				}
+				break
 			}
 		}
 	}

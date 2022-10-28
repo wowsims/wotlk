@@ -126,6 +126,10 @@ func (actionID ActionID) ToProto() *proto.ActionID {
 }
 
 func ProtoToActionID(protoID *proto.ActionID) ActionID {
+	if protoID == nil {
+		panic("protoID is nil")
+	}
+
 	return ActionID{
 		ItemID:  protoID.GetItemId(),
 		SpellID: protoID.GetSpellId(),

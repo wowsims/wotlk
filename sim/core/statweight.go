@@ -66,6 +66,9 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		simOptions.RandomSeed = time.Now().UnixNano()
 	}
 
+	// Reduce variance even more by using test-level RNG controls.
+	simOptions.IsTest = true
+
 	baseStatsResult := ComputeStats(&proto.ComputeStatsRequest{
 		Raid: raidProto,
 	})
@@ -188,9 +191,11 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		spellHitCap -= 3 * SpellHitRatingPerHitChance
 	}
 
-	const defaultStatMod = 50.0
-	const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
-	const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
+	const defaultStatMod = 10.0
+	const meleeHitStatMod = defaultStatMod
+	const spellHitStatMod = defaultStatMod
+	//const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
+	//const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
 	statModsLow := stats.Stats{}
 	statModsHigh := stats.Stats{}
 
@@ -219,20 +224,17 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		} else if stat == stats.MeleeHit {
 			statMod = meleeHitStatMod
 			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
-				panic("no")
-				/*
-					// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-					newMod := baseStats[stat] - melee2HHitCap
-					if newMod > 0.5*statMod {
-						statModsHigh[stat] = newMod
-						statModsLow[stat] = -newMod
-					} else {
-						// Otherwise we go the opposite way of cap
-						statModsHigh[stat] = -statMod
-						statModsLow[stat] = -statMod
-					}
-					continue
-				*/
+				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
+				newMod := baseStats[stat] - melee2HHitCap
+				if newMod > 0.5*statMod {
+					statModsHigh[stat] = newMod
+					statModsLow[stat] = -newMod
+				} else {
+					// Otherwise we go the opposite way of cap
+					statModsHigh[stat] = -statMod
+					statModsLow[stat] = -statMod
+				}
+				continue
 			}
 		}
 		statModsHigh[stat] = statMod
