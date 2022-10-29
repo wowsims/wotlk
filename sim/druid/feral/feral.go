@@ -27,12 +27,11 @@ func RegisterFeralDruid() {
 
 func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid {
 	feralOptions := options.GetFeralDruid()
-
 	selfBuffs := druid.SelfBuffs{}
+
+	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
 	if feralOptions.Options.InnervateTarget != nil {
 		selfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
-	} else {
-		selfBuffs.InnervateTarget.TargetIndex = -1
 	}
 
 	cat := &FeralDruid{

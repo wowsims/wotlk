@@ -28,12 +28,11 @@ func RegisterFeralTankDruid() {
 
 func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTankDruid {
 	tankOptions := options.GetFeralTankDruid()
-
 	selfBuffs := druid.SelfBuffs{}
+
+	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
 	if tankOptions.Options.InnervateTarget != nil {
 		selfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
-	} else {
-		selfBuffs.InnervateTarget.TargetIndex = -1
 	}
 
 	bear := &FeralTankDruid{
