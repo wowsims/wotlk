@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -31,7 +33,8 @@ type Character struct {
 
 	professions [2]proto.Profession
 
-	glyphs [6]int32
+	glyphs            [6]int32
+	PrimaryTalentTree uint8
 
 	// Provides major cooldown management behavior.
 	majorCooldownManager
@@ -97,6 +100,7 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 			player.Glyphs.Minor3,
 		}
 	}
+	character.PrimaryTalentTree = GetPrimaryTalentTreeIndex(player.TalentsString)
 
 	if player.Consumes != nil {
 		character.Consumes = *player.Consumes
@@ -516,4 +520,29 @@ func (character *Character) GetOffensiveTrinketCD() *Timer {
 }
 func (character *Character) GetConjuredCD() *Timer {
 	return character.GetOrInitTimer(&character.conjuredCD)
+}
+
+// Returns the talent tree (0, 1, or 2) of the tree with the most points.
+//
+// talentStr is expected to be a wowhead-formatted talent string, e.g.
+// "12123131-123123123-123123213"
+func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
+	trees := strings.Split(talentStr, "-")
+	bestTree := 0
+	bestTreePoints := 0
+
+	for treeIdx, treeStr := range trees {
+		points := 0
+		for talentIdx := 0; talentIdx < len(treeStr); talentIdx++ {
+			v, _ := strconv.Atoi(string(treeStr[talentIdx]))
+			points += v
+		}
+
+		if points > bestTreePoints {
+			bestTreePoints = points
+			bestTree = treeIdx
+		}
+	}
+
+	return uint8(bestTree)
 }
