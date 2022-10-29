@@ -12,9 +12,7 @@ func init() {
 	RegisterAgentFactory(
 		proto.Player_ElementalShaman{},
 		proto.Spec_SpecElementalShaman,
-		func(character Character, options proto.Player) Agent {
-			return NewFakeElementalShaman(character, options)
-		},
+		NewFakeElementalShaman,
 		func(player *proto.Player, spec interface{}) {
 			playerSpec, ok := spec.(*proto.Player_ElementalShaman)
 			if !ok {
@@ -25,7 +23,7 @@ func init() {
 	)
 }
 
-func NewFakeElementalShaman(char Character, options proto.Player) Agent {
+func NewFakeElementalShaman(char Character, options *proto.Player) Agent {
 	fa := &FakeAgent{
 		Character: char,
 	}
@@ -77,7 +75,7 @@ func NewFakeElementalShaman(char Character, options proto.Player) Agent {
 }
 
 func SetupFakeSim() *Simulation {
-	sim := NewSim(proto.RaidSimRequest{
+	sim := NewSim(&proto.RaidSimRequest{
 		SimOptions: &proto.SimOptions{
 			RandomSeed: 100,
 		},

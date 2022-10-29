@@ -283,12 +283,12 @@ Function takes the Warlock character that's used to model the client behavior, a
 Might sound complicated, worry not, things will get better.
 */
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
-	var spell *core.Spell                          //the variable we'll be returning to the sim as our final decision
-	var filler *core.Spell                         //the filler spell we'll store, we will cast this whenever we have all our priorities in check
-	var target = warlock.CurrentTarget             //our current target
-	mainSpell := warlock.Rotation.PrimarySpell     // our primary spell
-	curse := warlock.Rotation.Curse                // our curse of choice
-	dotLag := time.Duration(10 * time.Millisecond) // the lag time for dots, a small value that allows us to gap two dots properly
+	var spell *core.Spell                      //the variable we'll be returning to the sim as our final decision
+	var filler *core.Spell                     //the filler spell we'll store, we will cast this whenever we have all our priorities in check
+	var target = warlock.CurrentTarget         //our current target
+	mainSpell := warlock.Rotation.PrimarySpell // our primary spell
+	curse := warlock.Rotation.Curse            // our curse of choice
+	dotLag := 10 * time.Millisecond            // the lag time for dots, a small value that allows us to gap two dots properly
 
 	// ------------------------------------------
 	// Data
@@ -450,7 +450,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 	//The loop that filters the currently ready Priority Spells, and decides on which to cast based on Priority.
 	nextSpell := core.NeverExpires               // declaration convention, don't worry, just breathe
-	currentSpell := core.NeverExpires            // in..... and out, breath in fully....
+	var currentSpell time.Duration               // in..... and out, breath in fully....
 	currentSpellPrio := math.MaxInt64            // Lowest priority for a filler spell, oh btw, remember to keep breathing
 	for _, RSI := range warlock.SpellsRotation { // For all the spells off cooldown (aka. castIn = 0, check the explanations in warlock.SpellsReady if this makes no sense )
 		currentSpell = RSI.CastIn(sim)
@@ -475,10 +475,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var fillerCastTime time.Duration
 	if warlock.Talents.SoulSiphon > 0 { //SoulSiphon >0 is an affliction check.
 		fillerCastTime = warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime)
-		ManaSpendRate = warlock.ShadowBolt.BaseCost / float64(fillerCastTime.Seconds())
+		ManaSpendRate = warlock.ShadowBolt.BaseCost / fillerCastTime.Seconds()
 	} else {
 		fillerCastTime = warlock.ApplyCastSpeed(filler.DefaultCast.CastTime)
-		ManaSpendRate = filler.BaseCost / float64(fillerCastTime.Seconds())
+		ManaSpendRate = filler.BaseCost / fillerCastTime.Seconds()
 	}
 
 	if spell == nil {

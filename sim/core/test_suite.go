@@ -24,7 +24,7 @@ type IndividualTestSuite struct {
 	// Names of all the tests, in the order they are tested.
 	testNames []string
 
-	testResults proto.TestSuiteResult
+	testResults *proto.TestSuiteResult
 }
 
 func NewIndividualTestSuite(suiteName string) *IndividualTestSuite {
@@ -96,7 +96,7 @@ func (testSuite *IndividualTestSuite) TestCasts(testName string, rsr *proto.Raid
 		}
 		castsByAction[name] /= float64(rsr.SimOptions.Iterations)
 		castsByAction[name] *= 10
-		castsByAction[name] = float64(math.Round(castsByAction[name])) / 10.0
+		castsByAction[name] = math.Round(castsByAction[name]) / 10.0
 	}
 	casts := &proto.CastsTestResult{Casts: castsByAction}
 	testSuite.testResults.CastsResults[testName] = casts
@@ -109,7 +109,7 @@ func (testSuite *IndividualTestSuite) Done(t *testing.T) {
 const tolerance = 0.00001
 
 func (testSuite *IndividualTestSuite) writeToFile() {
-	str := prototext.Format(&testSuite.testResults)
+	str := prototext.Format(testSuite.testResults)
 	// For some reason the formatter sometimes outputs 2 spaces instead of one.
 	// Replace so we get consistent output.
 	str = strings.ReplaceAll(str, "  ", " ")
@@ -121,24 +121,24 @@ func (testSuite *IndividualTestSuite) writeToFile() {
 	}
 }
 
-func (testSuite *IndividualTestSuite) readExpectedResults() (proto.TestSuiteResult, error) {
+func (testSuite *IndividualTestSuite) readExpectedResults() (*proto.TestSuiteResult, error) {
 	data, err := os.ReadFile(testSuite.Name + ".results")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return newTestSuiteResult(), nil
 		}
-		return proto.TestSuiteResult{}, err
+		return nil, err
 	}
 
 	results := &proto.TestSuiteResult{}
 	if err = prototext.Unmarshal(data, results); err != nil {
-		return *results, err
+		return nil, err
 	}
-	return *results, err
+	return results, err
 }
 
-func newTestSuiteResult() proto.TestSuiteResult {
-	return proto.TestSuiteResult{
+func newTestSuiteResult() *proto.TestSuiteResult {
+	return &proto.TestSuiteResult{
 		CharacterStatsResults: make(map[string]*proto.CharacterStatsTestResult),
 		StatWeightsResults:    make(map[string]*proto.StatWeightsTestResult),
 		DpsResults:            make(map[string]*proto.DpsTestResult),

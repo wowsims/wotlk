@@ -25,7 +25,7 @@ const (
 type Warrior struct {
 	core.Character
 
-	Talents proto.WarriorTalents
+	Talents *proto.WarriorTalents
 
 	WarriorInputs
 
@@ -186,7 +186,7 @@ func (warrior *Warrior) Reset(sim *core.Simulation) {
 	}
 }
 
-func NewWarrior(character core.Character, talents proto.WarriorTalents, inputs WarriorInputs) *Warrior {
+func NewWarrior(character core.Character, talents *proto.WarriorTalents, inputs WarriorInputs) *Warrior {
 	warrior := &Warrior{
 		Character:     character,
 		Talents:       talents,

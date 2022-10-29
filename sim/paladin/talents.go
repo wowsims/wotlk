@@ -523,6 +523,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	})
 }
 
+//nolint:unused
 func (paladin *Paladin) applyFanaticism() {
 	// TODO: Possibly implement as aura.
 	if paladin.Talents.Fanaticism == 0 {

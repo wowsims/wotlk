@@ -1,4 +1,4 @@
-package naxxrammas
+package naxxramas
 
 import (
 	"time"
@@ -8,58 +8,58 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func addPatchwerk10(bossPrefix string) {
-	core.AddPresetTarget(core.PresetTarget{
+func addPatchwerk25(bossPrefix string) {
+	core.AddPresetTarget(&core.PresetTarget{
 		PathPrefix: bossPrefix,
-		Config: proto.Target{
+		Config: &proto.Target{
 			Id:        16028,
-			Name:      "Patchwerk 10",
+			Name:      "Patchwerk 25",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
 
 			Stats: stats.Stats{
-				stats.Health:      5_691_835,
+				stats.Health:      16_950_147,
 				stats.Armor:       10643,
 				stats.AttackPower: 640,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       1.6,
-			MinBaseDamage:    14135,
+			SwingSpeed:       0.75,
+			MinBaseDamage:    38068,
 			SuppressDodge:    false,
 			ParryHaste:       false,
-			DualWield:        true,
+			DualWield:        false,
 			DualWieldPenalty: false,
 		},
-		AI: NewPatchwerk10AI(),
+		AI: NewPatchwerk25AI(),
 	})
-	core.AddPresetEncounter("Patchwerk 10", []string{
-		bossPrefix + "/Patchwerk 10",
+	core.AddPresetEncounter("Patchwerk 25", []string{
+		bossPrefix + "/Patchwerk 25",
 	})
 }
 
-type Patchwerk10AI struct {
+type Patchwerk25AI struct {
 	Target *core.Target
 
 	HatefulStrike *core.Spell
 	Frenzy        *core.Spell
 }
 
-func NewPatchwerk10AI() core.AIFactory {
+func NewPatchwerk25AI() core.AIFactory {
 	return func() core.TargetAI {
-		return &Patchwerk10AI{}
+		return &Patchwerk25AI{}
 	}
 }
 
-func (ai *Patchwerk10AI) Initialize(target *core.Target) {
+func (ai *Patchwerk25AI) Initialize(target *core.Target) {
 	ai.Target = target
 
-	ai.registerHatefulStrikeSpell(target)
+	//ai.registerHatefulStrikeSpell(target)
 	ai.registerFrenzySpell(target)
 }
 
-func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
+func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
 	actionID := core.ActionID{SpellID: 59192}
 
 	ai.HatefulStrike = target.RegisterSpell(core.SpellConfig{
@@ -71,7 +71,7 @@ func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    target.NewTimer(),
-				Duration: time.Second * 2,
+				Duration: time.Millisecond * 1200,
 			},
 		},
 
@@ -79,13 +79,13 @@ func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(27750, 32250)
+			baseDamage := sim.Roll(79000, 81000)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		},
 	})
 }
 
-func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
+func (ai *Patchwerk25AI) registerFrenzySpell(target *core.Target) {
 	actionID := core.ActionID{SpellID: 28131}
 	frenzyAura := target.GetOrRegisterAura(core.Aura{
 		ActionID: actionID,
@@ -118,17 +118,19 @@ func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
 	})
 }
 
-func (ai *Patchwerk10AI) DoAction(sim *core.Simulation) {
+func (ai *Patchwerk25AI) DoAction(sim *core.Simulation) {
 	if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {
 		ai.Frenzy.Cast(sim, ai.Target.CurrentTarget)
 	}
 
-	if ai.HatefulStrike.IsReady(sim) {
-		ai.HatefulStrike.Cast(sim, ai.Target.CurrentTarget)
-	}
+	// TODO: Only enable Hateful Strike in solo sim if you are assigned OT instead of MT
+	// TODO: Actual targeting logic for Hateful Strike in raidsim
+	//if ai.HatefulStrike.IsReady(sim) {
+	//	ai.HatefulStrike.Cast(sim, ai.Target.CurrentTarget)
+	//}
 
-	if ai.Target.GCD.IsReady(sim) {
-		waitUntil := ai.HatefulStrike.ReadyAt()
-		ai.Target.WaitUntil(sim, waitUntil)
-	}
+	//if ai.Target.GCD.IsReady(sim) {
+	//	waitUntil := 0 //ai.HatefulStrike.ReadyAt()
+	//	ai.Target.WaitUntil(sim, waitUntil)
+	//}
 }

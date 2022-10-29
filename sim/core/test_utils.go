@@ -31,7 +31,7 @@ var AverageDefaultSimTestOptions = &proto.SimOptions{
 const ShortDuration = 60
 const LongDuration = 300
 
-var DefaultTargetProto = proto.Target{
+var DefaultTargetProto = &proto.Target{
 	Level: CharacterLevel + 3,
 	Stats: stats.Stats{
 		stats.Armor:       10643,
@@ -112,21 +112,19 @@ var FullDebuffs = &proto.Debuffs{
 }
 
 func NewDefaultTarget() *proto.Target {
-	var target = &proto.Target{}
-	*target = DefaultTargetProto
-	return target
+	return DefaultTargetProto // seems to be read-only
 }
 
 func MakeDefaultEncounterCombos() []EncounterCombo {
 	var DefaultTarget = NewDefaultTarget()
 
-	multipleTargets := []*proto.Target{}
-	for i := 0; i < 20; i++ {
-		multipleTargets = append(multipleTargets, DefaultTarget)
+	multipleTargets := make([]*proto.Target, 20)
+	for i := range multipleTargets {
+		multipleTargets[i] = DefaultTarget
 	}
 
 	return []EncounterCombo{
-		EncounterCombo{
+		{
 			Label: "ShortSingleTarget",
 			Encounter: &proto.Encounter{
 				Duration:             ShortDuration,
@@ -138,7 +136,7 @@ func MakeDefaultEncounterCombos() []EncounterCombo {
 				},
 			},
 		},
-		EncounterCombo{
+		{
 			Label: "LongSingleTarget",
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,
@@ -150,7 +148,7 @@ func MakeDefaultEncounterCombos() []EncounterCombo {
 				},
 			},
 		},
-		EncounterCombo{
+		{
 			Label: "LongMultiTarget",
 			Encounter: &proto.Encounter{
 				Duration:             LongDuration,

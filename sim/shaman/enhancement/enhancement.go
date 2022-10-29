@@ -13,7 +13,7 @@ func RegisterEnhancementShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_EnhancementShaman{},
 		proto.Spec_SpecEnhancementShaman,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewEnhancementShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,7 +26,7 @@ func RegisterEnhancementShaman() {
 	)
 }
 
-func NewEnhancementShaman(character core.Character, options proto.Player) *EnhancementShaman {
+func NewEnhancementShaman(character core.Character, options *proto.Player) *EnhancementShaman {
 	enhOptions := options.GetEnhancementShaman()
 
 	selfBuffs := shaman.SelfBuffs{
@@ -36,18 +36,16 @@ func NewEnhancementShaman(character core.Character, options proto.Player) *Enhan
 		ImbueOH:   enhOptions.Options.ImbueOh,
 	}
 
-	totems := proto.ShamanTotems{}
+	totems := &proto.ShamanTotems{}
 	if enhOptions.Rotation.Totems != nil {
-		totems = *enhOptions.Rotation.Totems
+		totems = enhOptions.Rotation.Totems
 	}
 
 	enh := &EnhancementShaman{
-		Shaman: shaman.NewShaman(character, *enhOptions.Talents, totems, selfBuffs, true),
+		Shaman: shaman.NewShaman(character, enhOptions.Talents, totems, selfBuffs, true),
 	}
 
-	var rotation Rotation
-	rotation = NewPriorityRotation(enh, enhOptions.Rotation)
-	enh.rotation = rotation
+	enh.rotation = NewPriorityRotation(enh, enhOptions.Rotation)
 
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{

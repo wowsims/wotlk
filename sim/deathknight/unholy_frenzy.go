@@ -11,7 +11,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 49016, Tag: int32(dk.Index)}
+	actionID := core.ActionID{SpellID: 49016, Tag: dk.Index}
 
 	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromRaidTarget(dk.Inputs.UnholyFrenzyTarget)
 	if unholyFrenzyTargetAgent == nil {

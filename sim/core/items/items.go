@@ -92,12 +92,12 @@ func (item Item) ToProto() *proto.Item {
 		Id:                 item.ID,
 		WowheadId:          item.WowheadID,
 		Name:               item.Name,
-		ClassAllowlist:     item.ClassAllowlist[:],
-		Type:               proto.ItemType(item.Type),
-		ArmorType:          proto.ArmorType(item.ArmorType),
-		WeaponType:         proto.WeaponType(item.WeaponType),
-		HandType:           proto.HandType(item.HandType),
-		RangedWeaponType:   proto.RangedWeaponType(item.RangedWeaponType),
+		ClassAllowlist:     item.ClassAllowlist,
+		Type:               item.Type,
+		ArmorType:          item.ArmorType,
+		WeaponType:         item.WeaponType,
+		HandType:           item.HandType,
+		RangedWeaponType:   item.RangedWeaponType,
 		WeaponDamageMin:    item.WeaponDamageMin,
 		WeaponDamageMax:    item.WeaponDamageMax,
 		WeaponSpeed:        item.SwingSpeed,
@@ -153,7 +153,7 @@ func (enchant Enchant) ToProto() *proto.Enchant {
 		Stats:          enchant.Bonus[:],
 		Quality:        enchant.Quality,
 		Phase:          enchant.Phase,
-		ClassAllowlist: enchant.ClassAllowlist[:],
+		ClassAllowlist: enchant.ClassAllowlist,
 
 		RequiredProfession: enchant.RequiredProfession,
 	}
@@ -238,7 +238,7 @@ func (equipment *Equipment) ToEquipmentSpecProto() *proto.EquipmentSpec {
 // Structs used for looking up items/gems/enchants
 type EquipmentSpec [proto.ItemSlot_ItemSlotRanged + 1]ItemSpec
 
-func ProtoToEquipmentSpec(es proto.EquipmentSpec) EquipmentSpec {
+func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 	coreEquip := EquipmentSpec{}
 
 	for i, item := range es.Items {
@@ -300,7 +300,7 @@ func NewEquipmentSet(equipSpec EquipmentSpec) Equipment {
 	return equipment
 }
 
-func ProtoToEquipment(es proto.EquipmentSpec) Equipment {
+func ProtoToEquipment(es *proto.EquipmentSpec) Equipment {
 	return NewEquipmentSet(ProtoToEquipmentSpec(es))
 }
 

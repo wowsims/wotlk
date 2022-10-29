@@ -8,7 +8,7 @@ import (
 func (shaman *Shaman) BloodlustActionID() core.ActionID {
 	return core.ActionID{
 		SpellID: 2825,
-		Tag:     int32(shaman.Index),
+		Tag:     shaman.Index,
 	}
 }
 

@@ -90,7 +90,7 @@ type PresetTarget struct {
 	// String in folder-structure format identifying a category for this unit, e.g. "Black Temple/Bosses".
 	PathPrefix string
 
-	Config proto.Target
+	Config *proto.Target
 
 	AI AIFactory
 }
@@ -99,19 +99,17 @@ func (pt PresetTarget) Path() string {
 	return pt.PathPrefix + "/" + pt.Config.Name
 }
 func (pt PresetTarget) ToProto() *proto.PresetTarget {
-	target := &proto.Target{}
-	*target = pt.Config
-
+	// CHECKME might need cloning
 	return &proto.PresetTarget{
 		Path:   pt.Path(),
-		Target: target,
+		Target: pt.Config,
 	}
 }
 
-var presetTargets = []PresetTarget{}
-var presetEncounters = []*proto.PresetEncounter{}
+var presetTargets []*PresetTarget
+var presetEncounters []*proto.PresetEncounter
 
-func AddPresetTarget(newPreset PresetTarget) {
+func AddPresetTarget(newPreset *PresetTarget) {
 	for _, preset := range presetTargets {
 		if preset.Path() == newPreset.Path() {
 			log.Fatalf("Preset Target with path %s already added!", newPreset.Path())
@@ -121,8 +119,7 @@ func AddPresetTarget(newPreset PresetTarget) {
 }
 
 func GetPresetTargetWithPath(path string) *PresetTarget {
-	for i, _ := range presetTargets {
-		preset := &presetTargets[i]
+	for _, preset := range presetTargets {
 		if preset.Path() == path {
 			return preset
 		}
@@ -131,8 +128,7 @@ func GetPresetTargetWithPath(path string) *PresetTarget {
 }
 
 func GetPresetTargetWithID(id int32) *PresetTarget {
-	for i, _ := range presetTargets {
-		preset := &presetTargets[i]
+	for _, preset := range presetTargets {
 		if preset.Config.Id == id {
 			return preset
 		}

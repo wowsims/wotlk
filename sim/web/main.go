@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -58,14 +58,19 @@ func main() {
 				return
 			}
 
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return
+			}
 
 			result := struct {
 				Tag  string `json:"tag_name"`
 				URL  string `json:"html_url"`
 				Name string `json:"name"`
 			}{}
-			json.Unmarshal(body, &result)
+			if err := json.Unmarshal(body, &result); err != nil {
+				return
+			}
 
 			if result.Tag != Version {
 				outdated = 2
@@ -97,7 +102,7 @@ var asyncAPIHandlers = map[string]asyncAPIHandler{
 }
 
 func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgReportCreator) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return
 	}
@@ -194,7 +199,7 @@ func setupAsyncServer() {
 
 	// asyncProgress will fetch the current progress of a simulation by its UUID.
 	http.HandleFunc("/asyncProgress", func(w http.ResponseWriter, r *http.Request) {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			return
 		}
@@ -369,7 +374,7 @@ var handlers = map[string]apiHandler{
 func handleAPI(w http.ResponseWriter, r *http.Request) {
 	endpoint := r.URL.Path
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 
 		return

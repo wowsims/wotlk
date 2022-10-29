@@ -72,11 +72,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		Type:  core.CooldownTypeMana,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			manaReserve := shaman.ShamanisticRageManaThreshold / 100 * shaman.MaxMana()
-			if character.CurrentMana() > manaReserve {
-				return false
-			}
-
-			return true
+			return character.CurrentMana() <= manaReserve
 		},
 	})
 }

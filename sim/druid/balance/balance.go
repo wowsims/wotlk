@@ -12,7 +12,7 @@ func RegisterBalanceDruid() {
 	core.RegisterAgentFactory(
 		proto.Player_BalanceDruid{},
 		proto.Spec_SpecBalanceDruid,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewBalanceDruid(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,19 +25,19 @@ func RegisterBalanceDruid() {
 	)
 }
 
-func NewBalanceDruid(character core.Character, options proto.Player) *BalanceDruid {
+func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDruid {
 	balanceOptions := options.GetBalanceDruid()
 	selfBuffs := druid.SelfBuffs{}
 
 	if balanceOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = *balanceOptions.Options.InnervateTarget
+		selfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
 	} else {
 		selfBuffs.InnervateTarget.TargetIndex = -1
 	}
 
 	moonkin := &BalanceDruid{
-		Druid:    druid.New(character, druid.Moonkin, selfBuffs, *balanceOptions.Talents),
-		Rotation: *balanceOptions.Rotation,
+		Druid:    druid.New(character, druid.Moonkin, selfBuffs, balanceOptions.Talents),
+		Rotation: balanceOptions.Rotation,
 	}
 
 	moonkin.ResetTalentsBonuses()
@@ -56,7 +56,7 @@ type BalanceCooldown struct {
 type BalanceDruid struct {
 	*druid.Druid
 
-	Rotation           proto.BalanceDruid_Rotation
+	Rotation           *proto.BalanceDruid_Rotation
 	CooldownsAvailable []*core.MajorCooldown
 
 	// CDS
@@ -81,9 +81,9 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
-	if moonkin.Rotation.UseSmartCooldowns == true {
+	if moonkin.Rotation.UseSmartCooldowns {
 		moonkin.potionUsed = false
-		consumes := &moonkin.Consumes
+		consumes := moonkin.Consumes
 
 		if consumes.DefaultPotion == proto.Potions_PotionOfSpeed {
 			moonkin.potionSpeedMCD = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: 40211})

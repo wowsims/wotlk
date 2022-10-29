@@ -10,7 +10,8 @@ import (
 )
 
 // TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
-//  Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
+//
+//	Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
 func (priest *Priest) MindSearActionID(numTicks int) core.ActionID {
 	return core.ActionID{SpellID: 53023, Tag: int32(numTicks)}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
+func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs) {
 	if debuffs.Misery {
 		MakePermanent(MiseryAura(target))
 	}

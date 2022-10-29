@@ -21,7 +21,7 @@ type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
 
-	UnholyFrenzyTarget proto.RaidTarget
+	UnholyFrenzyTarget *proto.RaidTarget
 
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
@@ -50,7 +50,7 @@ type DeathknightCoeffs struct {
 
 type Deathknight struct {
 	core.Character
-	Talents proto.DeathknightTalents
+	Talents *proto.DeathknightTalents
 
 	bonusCoeffs DeathknightCoeffs
 
@@ -328,7 +328,7 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, talents proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
+func NewDeathknight(character core.Character, talents *proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
 		Talents:    talents,
@@ -566,7 +566,7 @@ type DeathKnightAgent interface {
 	GetDeathKnight() *Deathknight
 }
 
-func PointsInTalents(talents proto.DeathknightTalents) (int, int, int) {
+func PointsInTalents(talents *proto.DeathknightTalents) (int, int, int) {
 	blood := 0
 	blood += int(talents.Butchery)
 	blood += int(talents.Subversion)

@@ -39,7 +39,7 @@ func NewDefaultAI(abilities []TargetAbility) core.AIFactory {
 func (ai *DefaultAI) Initialize(target *core.Target) {
 	ai.Target = target
 
-	for i, _ := range ai.Abilities {
+	for i := range ai.Abilities {
 		ability := &ai.Abilities[i]
 		if ability.MakeSpell != nil {
 			ability.Spell = ability.MakeSpell(target)
