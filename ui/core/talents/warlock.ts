@@ -1269,9 +1269,9 @@ export const warlockGlyphsConfig: GlyphsConfig = {
 			description: 'Your Drain Soul ability occasionally creates an additional soul shard.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_haunting.jpg',
 		},
-		[WarlockMinorGlyph.GlyphOfEnslaveDemon]: {
-			name: 'Glyph of Enslave Demon',
-			description: 'Reduces the cast time of your Enslave Demon spell by 50%.',
+		[WarlockMinorGlyph.GlyphOfSubjugateDemon]: {
+			name: 'Glyph of Subjugate Demon',
+			description: 'Reduces the cast time of your Subjugate Demon spell by 50%.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_enslavedemon.jpg',
 		},
 		[WarlockMinorGlyph.GlyphOfKilrogg]: {
