@@ -29,10 +29,9 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 	balanceOptions := options.GetBalanceDruid()
 	selfBuffs := druid.SelfBuffs{}
 
+	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
 	if balanceOptions.Options.InnervateTarget != nil {
 		selfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
-	} else {
-		selfBuffs.InnervateTarget.TargetIndex = -1
 	}
 
 	moonkin := &BalanceDruid{
