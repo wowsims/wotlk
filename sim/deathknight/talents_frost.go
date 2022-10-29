@@ -23,8 +23,8 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Pointless to Implement
 
 	// Black Ice
-	dk.PseudoStats.FrostDamageDealtMultiplier *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
-	dk.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
+	dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
+	dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.02*float64(dk.Talents.BlackIce)
 	dk.modifyShadowDamageModifier(0.02 * float64(dk.Talents.BlackIce))
 
 	// Nerves Of Cold Steel

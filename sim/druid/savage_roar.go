@@ -25,11 +25,11 @@ func (druid *Druid) registerSavageRoarSpell() {
 		ActionID: actionID,
 		Duration: 9,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.PseudoStats.PhysicalDamageDealtMultiplier *= srm
+			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= srm
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if druid.InForm(Cat) {
-				druid.PseudoStats.PhysicalDamageDealtMultiplier /= srm
+				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= srm
 			}
 		},
 	})

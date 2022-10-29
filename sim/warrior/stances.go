@@ -88,10 +88,10 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			ActionID: core.ActionID{SpellID: 57516},
 			Duration: 12 * time.Second,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.0 + 0.05*float64(warrior.Talents.ImprovedDefensiveStance)
 			},
 		})
 
@@ -121,12 +121,12 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.95
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.90
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= impDefStanceMultiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier *= impDefStanceMultiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= impDefStanceMultiplier
-			aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= impDefStanceMultiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= impDefStanceMultiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= impDefStanceMultiplier
 			if warrior.Bloodthirst != nil {
 				warrior.Bloodthirst.ThreatMultiplier *= tacMasteryThreatMultiplier
 			}
@@ -138,12 +138,12 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.95
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.9
-			aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= impDefStanceMultiplier
-			aura.Unit.PseudoStats.FireDamageTakenMultiplier /= impDefStanceMultiplier
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= impDefStanceMultiplier
-			aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= impDefStanceMultiplier
-			aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= impDefStanceMultiplier
-			aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= impDefStanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= impDefStanceMultiplier
 			if warrior.Bloodthirst != nil {
 				warrior.Bloodthirst.ThreatMultiplier /= tacMasteryThreatMultiplier
 			}

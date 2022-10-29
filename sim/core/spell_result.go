@@ -382,24 +382,9 @@ func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
 
 	ps := spell.Unit.PseudoStats
 
-	multiplier *= ps.DamageDealtMultiplier * attackTable.DamageDealtMultiplier
-
-	switch {
-	case spell.SpellSchool.Matches(SpellSchoolPhysical):
-		multiplier *= ps.PhysicalDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolArcane):
-		multiplier *= ps.ArcaneDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFire):
-		multiplier *= ps.FireDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFrost):
-		multiplier *= ps.FrostDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolHoly):
-		multiplier *= ps.HolyDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolNature):
-		multiplier *= ps.NatureDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolShadow):
-		multiplier *= ps.ShadowDamageDealtMultiplier
-	}
+	multiplier *= ps.DamageDealtMultiplier *
+		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
+		attackTable.DamageDealtMultiplier
 
 	return multiplier
 }
@@ -416,41 +401,27 @@ func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *Attac
 	result.Damage *= spell.TargetDamageMultiplier(attackTable, isPeriodic)
 }
 func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic bool) float64 {
-	multiplier := 1.0
-
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		return multiplier
+		return 1
 	}
 
 	ps := attackTable.Defender.PseudoStats
 
-	multiplier *= attackTable.DamageTakenMultiplier
-	multiplier *= ps.DamageTakenMultiplier
+	multiplier := ps.DamageTakenMultiplier *
+		ps.SchoolDamageTakenMultiplier[spell.SchoolIndex] *
+		attackTable.DamageTakenMultiplier
 
 	if spell.Flags.Matches(SpellFlagDisease) {
 		multiplier *= ps.DiseaseDamageTakenMultiplier
 	}
 
-	switch {
-	case spell.SpellSchool.Matches(SpellSchoolPhysical):
-		multiplier *= ps.PhysicalDamageTakenMultiplier
-		if isPeriodic {
-			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
-		}
-	case spell.SpellSchool.Matches(SpellSchoolArcane):
-		multiplier *= ps.ArcaneDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFire):
-		multiplier *= ps.FireDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFrost):
-		multiplier *= ps.FrostDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolHoly):
-		multiplier *= ps.HolyDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolNature):
-		multiplier *= ps.NatureDamageTakenMultiplier
+	if spell.SpellSchool.Matches(SpellSchoolNature) {
 		multiplier *= attackTable.NatureDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolShadow):
-		multiplier *= ps.ShadowDamageTakenMultiplier
-		if isPeriodic {
+	} else if isPeriodic {
+		switch {
+		case spell.SpellSchool.Matches(SpellSchoolPhysical):
+			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
+		case spell.SpellSchool.Matches(SpellSchoolShadow):
 			multiplier *= attackTable.PeriodicShadowDamageTakenMultiplier
 		}
 	}
