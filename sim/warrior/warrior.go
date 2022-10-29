@@ -29,6 +29,9 @@ type Warrior struct {
 
 	WarriorInputs
 
+	// Main spec talent tree
+	MainSpec string
+
 	// Current state
 	Stance                 Stance
 	overpowerValidUntil    time.Duration
@@ -130,6 +133,8 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
+	warrior.MainSpec = []string{"Arms", "Fury", "Prot"}[warrior.PrimaryTalentTree]
+
 	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
 	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
 

@@ -82,7 +82,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	if warrior.Talents.Bloodthirst {
+	if warrior.MainSpec == "Fury" {
 		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
 			warrior.CurrentRage() <= warrior.RendRageThresholdBelow && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent() &&
 			warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost

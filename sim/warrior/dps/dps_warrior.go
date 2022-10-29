@@ -69,7 +69,7 @@ func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext && war.Talents.Bloodthirst {
+		} else if !war.thunderClapNext && war.MainSpec == "Fury" {
 			war.trySwapToBerserker(sim)
 		}
 	})
@@ -113,7 +113,7 @@ func (war *DpsWarrior) Initialize() {
 	}
 
 	if war.Rotation.StanceOption == proto.Warrior_Rotation_DefaultStance {
-		if war.Talents.Bloodthirst {
+		if war.Warrior.MainSpec == "Fury" {
 			war.Rotation.StanceOption = proto.Warrior_Rotation_BerserkerStance
 		} else {
 			war.Rotation.StanceOption = proto.Warrior_Rotation_BattleStance

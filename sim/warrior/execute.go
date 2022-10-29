@@ -68,7 +68,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 }
 
 func (warrior *Warrior) SpamExecute(spam bool) bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost && spam && warrior.Talents.MortalStrike
+	return warrior.CurrentRage() >= warrior.Execute.BaseCost && spam && warrior.MainSpec == "Arms"
 }
 
 func (warrior *Warrior) CanExecute() bool {
