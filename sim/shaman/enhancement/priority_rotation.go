@@ -15,6 +15,7 @@ const (
 	WeaveLightningBolt
 	Stormstrike
 	FlameShock
+	MagmaTotem
 	EarthShock
 	FrostShock
 	LightningShield
@@ -201,6 +202,18 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
+	magmaTotem := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && enh.MagmaTotemDot.RemainingDuration(sim) <= time.Second*10
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.MagmaTotem.Cast(sim, target)
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
+
 	//Normal Priority Rotation
 	var spellPriority []Spell
 	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Priority {
@@ -216,6 +229,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		spellPriority[WeaveLightningBolt] = weaveLightningBolt
 		spellPriority[FrostShock] = frostShock
 		spellPriority[WeaveLavaBurst] = weaveLavaBurst
+		spellPriority[MagmaTotem] = magmaTotem
 	}
 
 	//Custom Priority Rotation

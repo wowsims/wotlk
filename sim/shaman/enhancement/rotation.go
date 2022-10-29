@@ -10,9 +10,9 @@ func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, spell *core.Spe
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {
 	// TODO move this into the rotation, also this uses waitForMana if it was unable to cast the totem
 	// that will need to be pulled out so we are not waiting for a magma totem mana cost.
-	if enh.TryDropTotems(sim) {
-		return
-	}
+	// if enh.TryDropTotems(sim) {
+	// 	return
+	// }
 	enh.rotation.DoAction(enh, sim)
 }
 
