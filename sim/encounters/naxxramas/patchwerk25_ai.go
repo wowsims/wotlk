@@ -92,11 +92,11 @@ func (ai *Patchwerk25AI) registerFrenzySpell(target *core.Target) {
 		Label:    "Frenzy",
 		Duration: 5 * time.Minute,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.25
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.25
 			aura.Unit.MultiplyMeleeSpeed(sim, 1.4)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.25
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.25
 			aura.Unit.MultiplyMeleeSpeed(sim, 1.0/1.4)
 		},
 	})

@@ -309,7 +309,7 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 
 	switch mhWeapon.HandType {
 	case proto.HandType_HandTypeTwoHand:
-		paladin.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
+		paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
 	case proto.HandType_HandTypeOneHand, proto.HandType_HandTypeMainHand:
 		if paladin.Talents.OneHandedWeaponSpecialization > 0 {
 			// Talent points are 4%, 7%, 10%
@@ -332,11 +332,11 @@ func (paladin *Paladin) applyVengeance() {
 		Duration:  time.Second * 30,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1 + (bonusPerStack * float64(oldStacks))
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= 1 + (bonusPerStack * float64(oldStacks))
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1 + (bonusPerStack * float64(oldStacks))
 
-			aura.Unit.PseudoStats.HolyDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1 + (bonusPerStack * float64(newStacks))
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + (bonusPerStack * float64(newStacks))
 		},
 	})
 
@@ -538,12 +538,12 @@ func (paladin *Paladin) applyGuardedByTheLight() {
 		return
 	}
 
-	paladin.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
-	paladin.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
-	paladin.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
-	paladin.PseudoStats.HolyDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
-	paladin.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
-	paladin.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
+	paladin.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= 1 - 0.03*float64(paladin.Talents.GuardedByTheLight)
 
 	paladin.RegisterAura(core.Aura{
 		Label:    "Guarded By The Light",

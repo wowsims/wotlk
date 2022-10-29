@@ -32,17 +32,17 @@ func (priest *Priest) ApplyTalents() {
 
 	priest.AddStat(stats.SpellCrit, 1*float64(priest.Talents.FocusedWill)*core.CritRatingPerCritChance)
 	priest.PseudoStats.SpiritRegenRateCasting = []float64{0.0, 0.17, 0.33, 0.5}[priest.Talents.Meditation]
-	priest.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.HolyDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.FireDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.FrostDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.NatureDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.ShadowDamageTakenMultiplier *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= 1 - .02*float64(priest.Talents.SpellWarding)
+	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.HealingDealtMultiplier *= 1 + .02*float64(priest.Talents.SpiritualHealing)
 	priest.PseudoStats.HealingDealtMultiplier *= 1 + .01*float64(priest.Talents.BlessedResilience)
 
 	if priest.Talents.Shadowform {
-		priest.PseudoStats.ShadowDamageDealtMultiplier *= 1.15
+		priest.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.15
 	}
 
 	if priest.Talents.SpiritualGuidance > 0 {
@@ -393,8 +393,8 @@ func (priest *Priest) applyShadowWeaving() {
 		Duration:  time.Second * 15,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= 1.0 + 0.02*float64(oldStacks)
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.02*float64(newStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= 1.0 + 0.02*float64(oldStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.02*float64(newStacks)
 		},
 	})
 }

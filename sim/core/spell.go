@@ -73,6 +73,7 @@ type Spell struct {
 
 	// Fire, Frost, Shadow, etc.
 	SpellSchool SpellSchool
+	SchoolIndex stats.SchoolIndex
 
 	// Controls which effects can proc from this spell.
 	ProcMask ProcMask
@@ -208,6 +209,23 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.SpellSchool == SpellSchoolNone {
 		panic("SpellSchool for spell " + spell.ActionID.String() + " not set")
+	}
+
+	switch {
+	case spell.SpellSchool.Matches(SpellSchoolPhysical):
+		spell.SchoolIndex = stats.SchoolIndexPhysical
+	case spell.SpellSchool.Matches(SpellSchoolArcane):
+		spell.SchoolIndex = stats.SchoolIndexArcane
+	case spell.SpellSchool.Matches(SpellSchoolFire):
+		spell.SchoolIndex = stats.SchoolIndexFire
+	case spell.SpellSchool.Matches(SpellSchoolFrost):
+		spell.SchoolIndex = stats.SchoolIndexFrost
+	case spell.SpellSchool.Matches(SpellSchoolHoly):
+		spell.SchoolIndex = stats.SchoolIndexHoly
+	case spell.SpellSchool.Matches(SpellSchoolNature):
+		spell.SchoolIndex = stats.SchoolIndexNature
+	case spell.SpellSchool.Matches(SpellSchoolShadow):
+		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
 	switch spell.ResourceType {

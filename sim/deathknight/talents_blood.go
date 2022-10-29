@@ -34,7 +34,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 
 	// Two Handed Specialization
 	if dk.HasMHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
-		dk.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.01*float64(dk.Talents.TwoHandedWeaponSpecialization)
+		dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.01*float64(dk.Talents.TwoHandedWeaponSpecialization)
 	}
 
 	// Rune Tap
@@ -265,8 +265,8 @@ func (dk *Deathknight) applyBloodyVengeance() {
 		MaxStacks: 3,
 		Duration:  30 * time.Second,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= 1.0 + float64(oldStacks)*physBonus
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= 1.0 + float64(newStacks)*physBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.0 + float64(oldStacks)*physBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.0 + float64(newStacks)*physBonus
 		},
 	})
 

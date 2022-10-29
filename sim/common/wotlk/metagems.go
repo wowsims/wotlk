@@ -19,12 +19,12 @@ func init() {
 
 	core.NewItemEffect(41377, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		character.PseudoStats.ArcaneDamageTakenMultiplier *= 0.98
-		character.PseudoStats.FireDamageTakenMultiplier *= 0.98
-		character.PseudoStats.FrostDamageTakenMultiplier *= 0.98
-		character.PseudoStats.HolyDamageTakenMultiplier *= 0.98
-		character.PseudoStats.NatureDamageTakenMultiplier *= 0.98
-		character.PseudoStats.ShadowDamageTakenMultiplier *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= 0.98
+		character.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= 0.98
 	})
 
 	core.NewItemEffect(41380, func(agent core.Agent) {
