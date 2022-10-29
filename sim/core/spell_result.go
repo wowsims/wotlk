@@ -23,6 +23,24 @@ type SpellResult struct {
 	inUse bool
 }
 
+func (spell *Spell) NewResult(target *Unit) *SpellResult {
+	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellResult{}
+	}
+
+	result.Target = target
+	result.Damage = 0
+	result.Threat = 0
+	result.Outcome = OutcomeEmpty // for blocks
+	result.inUse = true
+
+	return result
+}
+func (spell *Spell) DisposeResult(result *SpellResult) {
+	result.inUse = false
+}
+
 func (result *SpellResult) Landed() bool {
 	return result.Outcome.Matches(OutcomeLanded)
 }
@@ -148,15 +166,7 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 // For spells that do no damage but still have a hit/miss check.
 func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
-	result.Damage = 0
-	result.Outcome = OutcomeEmpty // for blocks
-	result.inUse = true
+	result := spell.NewResult(target)
 
 	outcomeApplier(sim, result, attackTable)
 	result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
@@ -166,14 +176,8 @@ func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier Ou
 func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage float64, attackerMultiplier float64, isPeriodic bool, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
+	result := spell.NewResult(target)
 	result.Damage = baseDamage
-	result.Outcome = OutcomeEmpty // for blocks
-	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= attackerMultiplier
@@ -251,7 +255,7 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		result.Target.OnSpellHitTaken(sim, spell, result)
 	}
 
-	result.inUse = false
+	spell.DisposeResult(result)
 }
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellResult) {
 	spell.dealDamageInternal(sim, false, result)
@@ -279,13 +283,8 @@ func (dot *Dot) CalcAndDealPeriodicSnapshotDamage(sim *Simulation, target *Unit,
 func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHealing float64, casterMultiplier float64, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
+	result := spell.NewResult(target)
 	result.Damage = baseHealing
-	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= casterMultiplier
@@ -340,7 +339,7 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		result.Target.OnHealTaken(sim, spell, result)
 	}
 
-	result.inUse = false
+	spell.DisposeResult(result)
 }
 func (spell *Spell) DealHealing(sim *Simulation, result *SpellResult) {
 	spell.dealHealingInternal(sim, false, result)
