@@ -182,7 +182,7 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 				ActionID: core.ActionID{SpellID: 70855},
 				Duration: time.Second * 10,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					bonusAP = float64(warrior.GetStat(stats.AttackPower)) * 0.16
+					bonusAP = warrior.GetStat(stats.AttackPower) * 0.16
 					aura.Unit.AddStatDynamic(sim, stats.AttackPower, bonusAP)
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {

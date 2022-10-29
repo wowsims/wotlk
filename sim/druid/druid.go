@@ -11,7 +11,7 @@ import (
 type Druid struct {
 	core.Character
 	SelfBuffs
-	Talents proto.DruidTalents
+	Talents *proto.DruidTalents
 
 	StartingForm DruidForm
 
@@ -120,7 +120,7 @@ type druidTierSets struct {
 }
 
 type SelfBuffs struct {
-	InnervateTarget proto.RaidTarget
+	InnervateTarget *proto.RaidTarget
 }
 
 // Registering non-unique Talent effects
@@ -263,7 +263,7 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.SolarICD.Timer.Reset()
 }
 
-func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents proto.DruidTalents) *Druid {
+func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents *proto.DruidTalents) *Druid {
 	druid := &Druid{
 		Character:    char,
 		SelfBuffs:    selfBuffs,

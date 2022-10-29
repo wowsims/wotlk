@@ -14,7 +14,7 @@ import (
 //
 // If you don't know what this is, you probably don't need it.
 type Presimmer interface {
-	GetPresimOptions(proto.Player) *PresimOptions
+	GetPresimOptions(*proto.Player) *PresimOptions
 }
 
 // Controls the presim behavior for 1 Agent.
@@ -28,10 +28,10 @@ type PresimOptions struct {
 	// Called once after each presim round to provide the results.
 	//
 	// Should return true if this Agent is done running presims, and false otherwise.
-	OnPresimResult func(presimResult proto.UnitMetrics, iterations int32, duration time.Duration) bool
+	OnPresimResult func(presimResult *proto.UnitMetrics, iterations int32, duration time.Duration) bool
 }
 
-func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimResult {
+func (sim *Simulation) runPresims(request *proto.RaidSimRequest) *proto.RaidSimResult {
 	const numPresimIterations = 100
 
 	// Run presims if requested.
@@ -51,7 +51,7 @@ func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimRe
 			}
 			playerConfig := partyConfig.Players[player.GetCharacter().PartyIndex]
 
-			presimOptions := presimmer.GetPresimOptions(*playerConfig)
+			presimOptions := presimmer.GetPresimOptions(playerConfig)
 			if presimOptions == nil {
 				continue
 			}
@@ -65,7 +65,7 @@ func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimRe
 	// Define this outside the loop so that, as Agents iteratively update their
 	// settings, we keep the most recent settings even after that Agent is
 	// done with presims.
-	presimRequest := googleProto.Clone(&request).(*proto.RaidSimRequest)
+	presimRequest := googleProto.Clone(request).(*proto.RaidSimRequest)
 	presimRequest.SimOptions.RandomSeed = 1
 	presimRequest.SimOptions.Debug = false
 	presimRequest.SimOptions.DebugFirstIteration = false
@@ -94,7 +94,7 @@ func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimRe
 		}
 
 		// Run the presim.
-		presimResult := runSim(*presimRequest, nil, true)
+		presimResult := runSim(presimRequest, nil, true)
 		lastResult = presimResult
 
 		if presimResult.ErrorResult != "" {
@@ -108,7 +108,7 @@ func (sim *Simulation) runPresims(request proto.RaidSimRequest) *proto.RaidSimRe
 				playerMetrics := partyMetrics.Players[player.GetCharacter().PartyIndex]
 				presimOptions := raidPresimOptions[player.GetCharacter().Index]
 				if presimOptions != nil {
-					done := presimOptions.OnPresimResult(*playerMetrics, numPresimIterations, duration)
+					done := presimOptions.OnPresimResult(playerMetrics, numPresimIterations, duration)
 					if done {
 						raidPresimOptions[player.GetCharacter().Index] = nil
 						remainingAgents--

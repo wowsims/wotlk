@@ -45,7 +45,7 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	}
 }
 
-func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
+func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
 	if swr.Player.BonusStats == nil {
 		swr.Player.BonusStats = make([]float64, stats.Len)
 	}
@@ -115,36 +115,30 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		simRequest.Raid.Parties[0].Players[0].BonusStats[stat] += value
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
-		go RunSim(*simRequest, reporter) // RunRaidSim(simRequest)
+		go RunSim(simRequest, reporter) // RunRaidSim(simRequest)
 
 		var localIterations int32
 		var errorStr string
 		var simResult *proto.RaidSimResult
-	statsim:
-		for {
-			select {
-			case metrics, ok := <-reporter:
-				if !ok {
-					break statsim
+
+		for metrics := range reporter {
+			atomic.AddInt32(&iterationsDone, metrics.CompletedIterations-localIterations)
+			localIterations = metrics.CompletedIterations
+			if metrics.FinalRaidResult != nil {
+				atomic.AddInt32(&simsCompleted, 1)
+				simResult = metrics.FinalRaidResult
+			}
+			if progress != nil {
+				progress <- &proto.ProgressMetrics{
+					TotalIterations:     atomic.LoadInt32(&iterationsTotal),
+					CompletedIterations: atomic.LoadInt32(&iterationsDone),
+					CompletedSims:       atomic.LoadInt32(&simsCompleted),
+					TotalSims:           atomic.LoadInt32(&simsTotal),
 				}
-				atomic.AddInt32(&iterationsDone, (metrics.CompletedIterations - localIterations))
-				localIterations = metrics.CompletedIterations
-				if metrics.FinalRaidResult != nil {
-					atomic.AddInt32(&simsCompleted, 1)
-					simResult = metrics.FinalRaidResult
-				}
-				if progress != nil {
-					progress <- &proto.ProgressMetrics{
-						TotalIterations:     atomic.LoadInt32(&iterationsTotal),
-						CompletedIterations: atomic.LoadInt32(&iterationsDone),
-						CompletedSims:       atomic.LoadInt32(&simsCompleted),
-						TotalSims:           atomic.LoadInt32(&simsTotal),
-					}
-				}
-				if metrics.FinalRaidResult != nil {
-					errorStr = metrics.FinalRaidResult.ErrorResult
-					break statsim
-				}
+			}
+			if metrics.FinalRaidResult != nil {
+				errorStr = metrics.FinalRaidResult.ErrorResult
+				break
 			}
 		}
 		// TODO: get stack trace out if final result error is set.
@@ -247,7 +241,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		statModsLow[stat] = -statMod
 	}
 
-	for stat, _ := range statModsLow {
+	for stat := range statModsLow {
 		if statModsLow[stat] == 0 {
 			continue
 		}
@@ -290,7 +284,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 	}
 
 	result := StatWeightsResult{}
-	for statIdx, _ := range statModsLow {
+	for statIdx := range statModsLow {
 		stat := stats.Stat(statIdx)
 		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
 			continue
@@ -307,7 +301,7 @@ func CalcStatWeight(swr proto.StatWeightsRequest, statsToWeigh []stats.Stat, ref
 		result.Dtps.WeightsStdev[stat] = (resultLow.Dtps.WeightsStdev[stat] + resultHigh.Dtps.WeightsStdev[stat]) / 2
 	}
 
-	for statIdx, _ := range statModsLow {
+	for statIdx := range statModsLow {
 		stat := stats.Stat(statIdx)
 		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
 			continue

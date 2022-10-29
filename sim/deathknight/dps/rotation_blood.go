@@ -161,7 +161,7 @@ func (dk *DpsDeathknight) RotationActionBL_DiseaseClipCheck(dot *core.Dot, grace
 	// TODO: Play around with allowing rune cd to be wasted
 	// for more disease ticks and see if its a worth option for the ui
 	//runeCdWaste := 0 * time.Millisecond
-	waitUntil := time.Duration(-1)
+	var waitUntil time.Duration
 	if dot.TickCount < dot.NumberOfTicks-1 {
 		nextTickAt := dot.ExpiresAt() - dot.TickLength*time.Duration((dot.NumberOfTicks-1)-dot.TickCount)
 		if nextTickAt > sim.CurrentTime && (nextTickAt < sim.CurrentTime+gracePeriod || nextTickAt < sim.CurrentTime+400*time.Millisecond) {

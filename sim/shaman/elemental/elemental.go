@@ -10,7 +10,7 @@ func RegisterElementalShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_ElementalShaman{},
 		proto.Spec_SpecElementalShaman,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewElementalShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -23,7 +23,7 @@ func RegisterElementalShaman() {
 	)
 }
 
-func NewElementalShaman(character core.Character, options proto.Player) *ElementalShaman {
+func NewElementalShaman(character core.Character, options *proto.Player) *ElementalShaman {
 	eleShamOptions := options.GetElementalShaman()
 
 	selfBuffs := shaman.SelfBuffs{
@@ -31,9 +31,9 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 		Shield:    eleShamOptions.Options.Shield,
 	}
 
-	totems := proto.ShamanTotems{}
+	totems := &proto.ShamanTotems{}
 	if eleShamOptions.Rotation.Totems != nil {
-		totems = *eleShamOptions.Rotation.Totems
+		totems = eleShamOptions.Rotation.Totems
 	}
 
 	var rotation Rotation
@@ -46,7 +46,7 @@ func NewElementalShaman(character core.Character, options proto.Player) *Element
 	}
 
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, *eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
+		Shaman:   shaman.NewShaman(character, eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
 		rotation: rotation,
 		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}

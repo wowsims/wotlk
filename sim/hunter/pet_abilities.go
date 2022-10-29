@@ -143,7 +143,6 @@ func (hp *HunterPet) NewPetAbility(abilityType PetAbilityType, isPrimary bool) P
 	default:
 		panic("Invalid pet ability type")
 	}
-	return PetAbility{}
 }
 
 func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility {

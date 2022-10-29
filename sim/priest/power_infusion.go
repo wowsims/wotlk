@@ -12,7 +12,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 10060, Tag: int32(priest.Index)}
+	actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
 	baseCost := priest.BaseMana * 0.16
 
 	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromRaidTarget(priest.SelfBuffs.PowerInfusionTarget)

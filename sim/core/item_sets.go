@@ -23,7 +23,7 @@ type ItemSet struct {
 
 func (set ItemSet) ItemIDs() []int32 {
 	ids := []int32{}
-	for id, _ := range set.Items {
+	for id := range set.Items {
 		ids = append(ids, id)
 	}
 	// Sort so the order of IDs is always consistent, for tests.

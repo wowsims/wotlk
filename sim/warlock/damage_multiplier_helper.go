@@ -5,7 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, spellSchool core.SpellSchool, IsPeriodic bool) float64 {
+func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, spellSchool core.SpellSchool, isPeriodic bool) float64 {
 	// actionID spellbook
 	actionID_ShadowBolt := core.ActionID{SpellID: 47809}
 	actionID_Corruption := core.ActionID{SpellID: 47813}
@@ -26,8 +26,8 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 
 	// Additive Multipliers
 	// Weapon Imbues
-	if (IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone && !(actionID == actionID_CurseOfAgony) && !(actionID == actionID_CurseOfDoom)) ||
-		(!IsPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone) {
+	if (isPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone && !(actionID == actionID_CurseOfAgony) && !(actionID == actionID_CurseOfDoom)) ||
+		(!isPeriodic && warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone) {
 		additiveDamageMultiplier += 0.01
 	}
 
@@ -42,7 +42,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 		additiveDamageMultiplier += 0.01 * float64(warlock.Talents.Contagion)
 	}
 
-	if warlock.Talents.SiphonLife && (actionID == actionID_UnstableAffliction || actionID == actionID_Corruption || (actionID == actionID_Seed && IsPeriodic)) {
+	if warlock.Talents.SiphonLife && (actionID == actionID_UnstableAffliction || actionID == actionID_Corruption || (actionID == actionID_Seed && isPeriodic)) {
 		additiveDamageMultiplier += 0.05
 	}
 
@@ -66,7 +66,7 @@ func (warlock *Warlock) staticAdditiveDamageMultiplier(actionID core.ActionID, s
 		additiveDamageMultiplier += 0.1 * float64(warlock.Talents.ImprovedImmolate)
 	}
 
-	if (actionID.SameActionIgnoreTag(actionID_Immolate) && IsPeriodic) || actionID.SameActionIgnoreTag(actionID_Conflagrate) {
+	if (actionID.SameActionIgnoreTag(actionID_Immolate) && isPeriodic) || actionID.SameActionIgnoreTag(actionID_Conflagrate) {
 		additiveDamageMultiplier += 0.03 * float64(warlock.Talents.Aftermath)
 		if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate) {
 			additiveDamageMultiplier += 0.1

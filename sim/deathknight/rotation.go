@@ -201,9 +201,9 @@ func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target
 	return -1
 }
 
-func (o *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
-	action := o.actions[o.idx]
-	return action(sim, target, o)
+func (s *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
+	action := s.actions[s.idx]
+	return action(sim, target, s)
 }
 
 func (dk *Deathknight) NextMHSwingAt(sim *core.Simulation) time.Duration {

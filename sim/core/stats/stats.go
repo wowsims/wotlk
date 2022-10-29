@@ -256,11 +256,7 @@ func (stats Stats) FlatString() string {
 }
 
 func (stats Stats) ToFloatArray() []float64 {
-	arr := make([]float64, len(stats))
-	for i, v := range stats {
-		arr[i] = v
-	}
-	return arr
+	return stats[:]
 }
 
 type PseudoStats struct {

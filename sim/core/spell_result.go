@@ -372,10 +372,6 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 	})
 }
 
-func (result *SpellResult) applyAttackerModifiers(spell *Spell, attackTable *AttackTable) {
-	result.Damage *= spell.AttackerDamageMultiplier(attackTable)
-}
-
 // Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
 	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.

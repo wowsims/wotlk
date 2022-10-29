@@ -16,6 +16,7 @@ func (prot *ProtectionPaladin) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
+//nolint:unused
 func (prot *ProtectionPaladin) nextCDAt(sim *core.Simulation) time.Duration {
 	nextCDAt := core.MinDuration(prot.HolyShield.ReadyAt(), prot.JudgementOfWisdom.ReadyAt())
 	nextCDAt = core.MinDuration(nextCDAt, prot.Consecration.ReadyAt())

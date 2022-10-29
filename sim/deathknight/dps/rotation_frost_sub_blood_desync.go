@@ -14,19 +14,13 @@ func (dk *DpsDeathknight) oblitRunesAt(sim *core.Simulation) time.Duration {
 	if f == 0 && u == 0 && d == 0 {
 		timings := [3]time.Duration{dk.NormalSpentFrostRuneReadyAt(sim), dk.NormalSpentUnholyRuneReadyAt(sim), dk.SpentDeathRuneReadyAt()}
 		if timings[0] > timings[2] {
-			temp := timings[0]
-			timings[0] = timings[2]
-			timings[2] = temp
+			timings[0], timings[2] = timings[2], timings[0]
 		}
 		if timings[0] > timings[1] {
-			temp := timings[0]
-			timings[0] = timings[1]
-			timings[1] = temp
+			timings[0], timings[1] = timings[1], timings[0]
 		}
 		if timings[1] > timings[2] {
-			temp := timings[1]
-			timings[1] = timings[2]
-			timings[2] = temp
+			timings[1], timings[2] = timings[2], timings[1]
 		}
 		return timings[1]
 	} else if f == 0 && u == 0 && d > 0 {

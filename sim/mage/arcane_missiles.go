@@ -47,7 +47,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 						bloodmageHasteAura.Activate(sim)
 					}
 					mage.PseudoStats.NoCost = true
-					cast.ChannelTime = cast.ChannelTime / 2
+					cast.ChannelTime /= 2
 				}
 			},
 		},

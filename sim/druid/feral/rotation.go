@@ -312,7 +312,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		shiftNow := (curEnergy+15.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (cat.RipDot.RemainingDuration(sim) < (3.0 * time.Second)))
 		shiftNext := (curEnergy+30.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (cat.RipDot.RemainingDuration(sim) < time.Duration(float64(4.5)*float64(time.Second))))
 
-		powerbearNow := true
+		var powerbearNow bool
 		if rotation.Powerbear {
 			powerbearNow = !shiftNow && curRage < 10
 		} else {

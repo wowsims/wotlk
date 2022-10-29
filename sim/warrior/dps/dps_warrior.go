@@ -12,7 +12,7 @@ func RegisterDpsWarrior() {
 	core.RegisterAgentFactory(
 		proto.Player_Warrior{},
 		proto.Spec_SpecWarrior,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewDpsWarrior(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -28,8 +28,8 @@ func RegisterDpsWarrior() {
 type DpsWarrior struct {
 	*warrior.Warrior
 
-	Options  proto.Warrior_Options
-	Rotation proto.Warrior_Rotation
+	Options  *proto.Warrior_Options
+	Rotation *proto.Warrior_Rotation
 
 	// Prevent swapping stances until this time, to account for human reaction time.
 	canSwapStanceAt time.Duration
@@ -40,16 +40,16 @@ type DpsWarrior struct {
 	castSlamAt time.Duration
 }
 
-func NewDpsWarrior(character core.Character, options proto.Player) *DpsWarrior {
+func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior {
 	warOptions := options.GetWarrior()
 
 	war := &DpsWarrior{
-		Warrior: warrior.NewWarrior(character, *warOptions.Talents, warrior.WarriorInputs{
+		Warrior: warrior.NewWarrior(character, warOptions.Talents, warrior.WarriorInputs{
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 		}),
-		Rotation: *warOptions.Rotation,
-		Options:  *warOptions.Options,
+		Rotation: warOptions.Rotation,
+		Options:  warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{

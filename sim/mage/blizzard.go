@@ -30,7 +30,7 @@ func (mage *Mage) registerBlizzardSpell() {
 			for i, aoeTarget := range sim.Encounter.Targets {
 				results[i] = dot.CalcSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
 			}
-			for i, _ := range sim.Encounter.Targets {
+			for i := range sim.Encounter.Targets {
 				dot.Spell.DealPeriodicDamage(sim, results[i])
 			}
 		},

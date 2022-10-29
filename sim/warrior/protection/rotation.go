@@ -77,7 +77,7 @@ func (war *ProtectionWarrior) trySwapToDefensive(sim *core.Simulation) bool {
 
 func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 	return common.NewCustomRotation(war.Rotation.CustomRotation, war.GetCharacter(), map[int32]common.CustomSpell{
-		int32(proto.ProtectionWarrior_Rotation_Revenge): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_Revenge): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.Revenge.CurCast.Cost
 				return war.Revenge.Cast(sim, target), cost
@@ -94,7 +94,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				}
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_ShieldSlam): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_ShieldSlam): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.ShieldSlam.CurCast.Cost
 				return war.ShieldSlam.Cast(sim, target), cost
@@ -111,7 +111,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				}
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_Devastate): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_Devastate): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.Devastate.CurCast.Cost
 				return war.Devastate.Cast(sim, target), cost
@@ -120,7 +120,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.CanDevastate(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_SunderArmor): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_SunderArmor): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.SunderArmor.CurCast.Cost
 				return war.SunderArmor.Cast(sim, target), cost
@@ -129,7 +129,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.CanSunderArmor(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_DemoralizingShout): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_DemoralizingShout): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.DemoralizingShout.CurCast.Cost
 				return war.DemoralizingShout.Cast(sim, target), cost
@@ -138,7 +138,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.shouldDemoShout(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_ThunderClap): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_ThunderClap): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.ThunderClap.CurCast.Cost
 				return war.ThunderClap.Cast(sim, target), cost
@@ -147,7 +147,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.shouldThunderClap(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_Shout): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_Shout): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.Shout.CurCast.Cost
 				return war.Shout.Cast(sim, target), cost
@@ -156,7 +156,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.ShouldShout(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_MortalStrike): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_MortalStrike): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.MortalStrike.CurCast.Cost
 				return war.MortalStrike.Cast(sim, target), cost
@@ -165,7 +165,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.CanMortalStrike(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_ConcussionBlow): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_ConcussionBlow): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.ConcussionBlow.CurCast.Cost
 				return war.ConcussionBlow.Cast(sim, target), cost
@@ -174,7 +174,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 				return war.CanConcussionBlow(sim)
 			},
 		},
-		int32(proto.ProtectionWarrior_Rotation_Shockwave): common.CustomSpell{
+		int32(proto.ProtectionWarrior_Rotation_Shockwave): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := war.Shockwave.CurCast.Cost
 				return war.Shockwave.Cast(sim, target), cost

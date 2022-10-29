@@ -8,7 +8,7 @@ import (
 )
 
 // Registers all consume-related effects to the Agent.
-func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs) {
+func applyConsumeEffects(agent Agent) {
 	character := agent.GetCharacter()
 	consumes := character.Consumes
 
@@ -420,7 +420,7 @@ func applyConsumeEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs prot
 	registerExplosivesCD(agent, consumes)
 }
 
-func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
+func ApplyPetConsumeEffects(pet *Character, ownerConsumes *proto.Consumes) {
 	switch ownerConsumes.PetFood {
 	case proto.PetFood_PetFoodSpicedMammothTreats:
 		pet.AddStats(stats.Stats{
@@ -440,7 +440,7 @@ func ApplyPetConsumeEffects(pet *Character, ownerConsumes proto.Consumes) {
 
 var PotionAuraTag = "Potion"
 
-func registerPotionCD(agent Agent, consumes proto.Consumes) {
+func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
 	defaultPotion := consumes.DefaultPotion
 	startingPotion := consumes.PrepopPotion
@@ -698,11 +698,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				if character.MaxMana()-(character.CurrentMana()+totalRegen) < 3000 {
-					return false
-				}
-
-				return true
+				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 3000
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -803,11 +799,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have low enough mana. The potion takes effect over 24
 				// seconds so we can pop it a little earlier than the full value.
-				if character.MaxMana()-character.CurrentMana() < 2000 {
-					return false
-				}
-
-				return true
+				return character.MaxMana()-character.CurrentMana() >= 2000
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -907,7 +899,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 
 var ConjuredAuraTag = "Conjured"
 
-func registerConjuredCD(agent Agent, consumes proto.Consumes) {
+func registerConjuredCD(agent Agent, consumes *proto.Consumes) {
 	if consumes.DefaultConjured == consumes.StartingConjured {
 		// Starting conjured is redundant in this case.
 		consumes.StartingConjured = proto.Conjured_ConjuredUnknown
@@ -1004,10 +996,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				ShouldActivate: func(sim *Simulation, character *Character) bool {
 					// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 					totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-					if character.MaxMana()-(character.CurrentMana()+totalRegen) < 1500 {
-						return false
-					}
-					return true
+					return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 1500
 				},
 			},
 			character.RegisterSpell(SpellConfig{
@@ -1142,7 +1131,7 @@ var ExplosiveDecoyActionID = ActionID{ItemID: 40536}
 var SaroniteBombActionID = ActionID{ItemID: 41119}
 var CobaltFragBombActionID = ActionID{ItemID: 40771}
 
-func registerExplosivesCD(agent Agent, consumes proto.Consumes) {
+func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
 	if !character.HasProfession(proto.Profession_Engineering) {
 		return

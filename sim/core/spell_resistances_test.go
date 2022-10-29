@@ -1,10 +1,11 @@
 package core
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"math"
 	"testing"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func Test_PartialResistsVsPlayer(t *testing.T) {
@@ -21,7 +22,7 @@ func Test_PartialResistsVsPlayer(t *testing.T) {
 
 	attackTable := NewAttackTable(attacker, defender)
 
-	sim := NewSim(proto.RaidSimRequest{
+	sim := NewSim(&proto.RaidSimRequest{
 		SimOptions: &proto.SimOptions{},
 		Encounter:  &proto.Encounter{},
 		Raid:       &proto.Raid{},
@@ -91,7 +92,7 @@ func Test_PartialResistsVsBoss(t *testing.T) {
 
 	attackTable := NewAttackTable(attacker, defender)
 
-	sim := NewSim(proto.RaidSimRequest{
+	sim := NewSim(&proto.RaidSimRequest{
 		SimOptions: &proto.SimOptions{},
 		Encounter:  &proto.Encounter{},
 		Raid:       &proto.Raid{},

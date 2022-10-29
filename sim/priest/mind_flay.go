@@ -88,7 +88,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 
 	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-		mfReducTime = mfReducTime + time.Millisecond*170
+		mfReducTime += time.Millisecond * 170
 	}
 
 	return core.NewDot(core.Dot{

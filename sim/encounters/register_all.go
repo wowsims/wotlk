@@ -2,14 +2,14 @@ package encounters
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/encounters/naxxrammas"
+	"github.com/wowsims/wotlk/sim/encounters/naxxramas"
 )
 
 func init() {
-	naxxrammas.Register()
+	naxxramas.Register()
 }
 
-func AddSingleTargetBossEncounter(presetTarget core.PresetTarget) {
+func AddSingleTargetBossEncounter(presetTarget *core.PresetTarget) {
 	core.AddPresetTarget(presetTarget)
 	core.AddPresetEncounter(presetTarget.Config.Name, []string{
 		presetTarget.Path(),
