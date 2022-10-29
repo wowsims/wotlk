@@ -75,6 +75,12 @@ const (
 	SchoolLen
 )
 
+func NewSchoolFloatArray() [SchoolLen]float64 {
+	return [SchoolLen]float64{
+		1, 1, 1, 1, 1, 1, 1, 1,
+	}
+}
+
 func ProtoArrayToStatsList(protoStats []proto.Stat) []Stat {
 	stats := make([]Stat, len(protoStats))
 	for i, v := range protoStats {
@@ -371,20 +377,16 @@ func NewPseudoStats() PseudoStats {
 
 		ThreatMultiplier: 1,
 
-		DamageDealtMultiplier: 1,
-		SchoolDamageDealtMultiplier: [SchoolLen]float64{
-			1, 1, 1, 1, 1, 1, 1, 1,
-		},
+		DamageDealtMultiplier:       1,
+		SchoolDamageDealtMultiplier: NewSchoolFloatArray(),
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 
 		HealingDealtMultiplier: 1,
 
 		// Target effects.
-		DamageTakenMultiplier: 1,
-		SchoolDamageTakenMultiplier: [SchoolLen]float64{
-			1, 1, 1, 1, 1, 1, 1, 1,
-		},
+		DamageTakenMultiplier:       1,
+		SchoolDamageTakenMultiplier: NewSchoolFloatArray(),
 
 		DiseaseDamageTakenMultiplier:          1,
 		PeriodicPhysicalDamageTakenMultiplier: 1,
