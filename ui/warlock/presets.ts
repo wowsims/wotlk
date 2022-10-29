@@ -45,7 +45,7 @@ export const AfflictionTalents = {
 			major3: MajorGlyph.GlyphOfHaunt,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
-			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+			minor3: MinorGlyph.GlyphOfSubjugateDemon,
 		}),
 	}),
 };
@@ -60,7 +60,7 @@ export const DemonologyTalents = {
 			major3: MajorGlyph.GlyphOfFelguard,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
-			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+			minor3: MinorGlyph.GlyphOfSubjugateDemon,
 		}),
 	}),
 };
@@ -75,7 +75,7 @@ export const DestructionTalents = {
 			major3: MajorGlyph.GlyphOfIncinerate,
 			minor1: MinorGlyph.GlyphOfSouls,
 			minor2: MinorGlyph.GlyphOfDrainSoul,
-			minor3: MinorGlyph.GlyphOfEnslaveDemon,
+			minor3: MinorGlyph.GlyphOfSubjugateDemon,
 		}),
 	}),
 };
