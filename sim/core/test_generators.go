@@ -451,10 +451,11 @@ func (generator *CombinedTestGenerator) GetTest(testIdx int) (string, *proto.Com
 type CharacterSuiteConfig struct {
 	Class proto.Class
 
-	Race        proto.Race
-	GearSet     GearSetCombo
-	SpecOptions SpecOptionsCombo
-	Glyphs      *proto.Glyphs
+	Race          proto.Race
+	GearSet       GearSetCombo
+	SpecOptions   SpecOptionsCombo
+	Glyphs        *proto.Glyphs
+	TalentsString string
 
 	Consumes *proto.Consumes
 
@@ -479,13 +480,14 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	defaultPlayer := WithSpec(
 		&proto.Player{
-			Class:       config.Class,
-			Race:        config.Race,
-			Equipment:   config.GearSet.GearSet,
-			Consumes:    config.Consumes,
-			Buffs:       FullIndividualBuffs,
-			Glyphs:      config.Glyphs,
-			Profession1: proto.Profession_Engineering,
+			Class:         config.Class,
+			Race:          config.Race,
+			Equipment:     config.GearSet.GearSet,
+			Consumes:      config.Consumes,
+			Buffs:         FullIndividualBuffs,
+			TalentsString: config.TalentsString,
+			Glyphs:        config.Glyphs,
+			Profession1:   proto.Profession_Engineering,
 
 			InFrontOfTarget: config.InFrontOfTarget,
 		},
