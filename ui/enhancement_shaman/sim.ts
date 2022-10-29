@@ -49,6 +49,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				Stat.StatSpellPower,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHit,
+				Stat.StatSpellHaste,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -82,6 +83,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					[Stat.StatSpellPower]: 1.117,
 					[Stat.StatSpellHit]: 0, //default EP assumes cap
 					[Stat.StatSpellCrit]: 0.897,
+					[Stat.StatSpellHaste]: 0.19,
 					[Stat.StatAttackPower]: 1.0,
 					[Stat.StatMeleeHit]: 1.42,
 					[Stat.StatMeleeCrit]: 0.805, //double check how this works with spell crit
