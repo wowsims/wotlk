@@ -68,12 +68,13 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassWarrior,
-				Equipment: FuryP1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsFury,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassWarrior,
+				Equipment:     FuryP1Gear,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsFury,
+				TalentsString: "",
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,
