@@ -39,7 +39,7 @@ These variables are used to estimate how good the roll will be, and determine if
 func (warlock *Warlock) corruptionTracker() float64 {
 	// This part tracks all the damage multiplier that roll over with corruption
 	// Shadow damage multipler (looking for DE)
-	CurrentShadowMult := warlock.PseudoStats.ShadowDamageDealtMultiplier
+	CurrentShadowMult := warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow]
 	// Damage multipler (looking for TotT)
 	CurrentDmgMult := warlock.PseudoStats.DamageDealtMultiplier
 	// Crit rating multipler (looking for Shadow Mastery (ISB Talent) and Potion of Wild Magic)

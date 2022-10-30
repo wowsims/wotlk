@@ -52,7 +52,7 @@ func (mage *Mage) ApplyTalents() {
 	mage.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(mage.Talents.NetherwindPresence)
 
 	mage.spellDamageMultiplier += .01 * float64(mage.Talents.PlayingWithFire)
-	mage.PseudoStats.FireDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.FirePower)
+	mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1 + .02*float64(mage.Talents.FirePower)
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
@@ -60,8 +60,8 @@ func (mage *Mage) ApplyTalents() {
 	mage.AddStat(stats.SpellHit, float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	mage.PseudoStats.CostMultiplier *= 1 - .01*float64(mage.Talents.Precision)
 
-	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .02*float64(mage.Talents.PiercingIce)
-	mage.PseudoStats.FrostDamageDealtMultiplier *= 1 + .01*float64(mage.Talents.ArcticWinds)
+	mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= 1 + .02*float64(mage.Talents.PiercingIce)
+	mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= 1 + .01*float64(mage.Talents.ArcticWinds)
 	mage.PseudoStats.CostMultiplier *= 1 - .04*float64(mage.Talents.FrostChanneling)
 
 	magicAbsorptionBonus := 2 * float64(mage.Talents.MagicAbsorption)

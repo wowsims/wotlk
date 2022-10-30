@@ -76,6 +76,37 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		rogue.SliceAndDice[1].DefaultCast.Cost,
 	})
 
+	// Hunger while planning
+	if rogue.Talents.HungerForBlood {
+		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+			func(s *core.Simulation, r *Rogue) PriorityAction {
+
+				prioExpose := rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
+					rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain
+				if prioExpose && !r.ExposeArmorAura.IsActive() {
+					return Skip
+				}
+
+				if r.HungerForBloodAura.IsActive() {
+					return Skip
+				}
+
+				if !r.targetHasBleed(s) {
+					return Skip
+				}
+
+				if r.targetHasBleed(s) && r.CurrentEnergy() > r.HungerForBlood.DefaultCast.Cost {
+					return Cast
+				}
+				return Wait
+			},
+			func(s *core.Simulation, r *Rogue) bool {
+				return rogue.HungerForBlood.Cast(sim, rogue.CurrentTarget)
+			},
+			rogue.HungerForBlood.DefaultCast.Cost,
+		})
+	}
+
 	// Expose armor
 	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
 		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {

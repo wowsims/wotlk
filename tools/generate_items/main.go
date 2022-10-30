@@ -190,7 +190,7 @@ func getGemDeclarations() []GemDeclaration {
 	gemsData = gemsData[1:]
 
 	gemDeclarations := make([]GemDeclaration, 0, len(gemsData))
-	for i, gemsDataRow := range gemsData {
+	for _, gemsDataRow := range gemsData {
 		gemID, err := strconv.Atoi(gemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid gem ID: " + gemsDataRow[0])
@@ -206,7 +206,7 @@ func getGemDeclarations() []GemDeclaration {
 			}
 		}
 
-		gemDeclarations[i] = declaration
+		gemDeclarations = append(gemDeclarations, declaration)
 	}
 
 	// Add any declarations that were missing from the csv file.
@@ -233,7 +233,7 @@ func getItemDeclarations() []ItemDeclaration {
 	itemsData = itemsData[1:]
 
 	itemDeclarations := make([]ItemDeclaration, 0, len(itemsData))
-	for i, itemsDataRow := range itemsData {
+	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid item ID: " + itemsDataRow[0])
@@ -249,7 +249,7 @@ func getItemDeclarations() []ItemDeclaration {
 			}
 		}
 
-		itemDeclarations[i] = declaration
+		itemDeclarations = append(itemDeclarations, declaration)
 	}
 
 	// Add any declarations that were missing from the csv file.

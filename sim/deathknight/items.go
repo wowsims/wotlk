@@ -337,13 +337,13 @@ func init() {
 			MaxStacks: 2,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				aura.SetStacks(sim, aura.MaxStacks)
-				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= cinderBonusCoeff
-				aura.Unit.PseudoStats.FrostDamageDealtMultiplier *= cinderBonusCoeff
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= cinderBonusCoeff
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= cinderBonusCoeff
 				dk.modifyShadowDamageModifier(0.2)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= cinderBonusCoeff
-				aura.Unit.PseudoStats.FrostDamageDealtMultiplier /= cinderBonusCoeff
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= cinderBonusCoeff
+				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] /= cinderBonusCoeff
 				dk.modifyShadowDamageModifier(-0.2)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

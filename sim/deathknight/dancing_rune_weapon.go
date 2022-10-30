@@ -71,10 +71,10 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 
 			//dk.RuneWeapon.PseudoStats.BonusSpellCritRating = dk.PseudoStats.BonusSpellCritRating
 
-			// dk.RuneWeapon.PseudoStats.PhysicalDamageDealtMultiplier = dk.PseudoStats.PhysicalDamageDealtMultiplier
+			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 			// dk.RuneWeapon.PseudoStats.DiseaseDamageDealtMultiplier = dk.PseudoStats.DiseaseDamageDealtMultiplier
-			// dk.RuneWeapon.PseudoStats.ShadowDamageDealtMultiplier = dk.PseudoStats.ShadowDamageDealtMultiplier
-			// dk.RuneWeapon.PseudoStats.FrostDamageDealtMultiplier = dk.PseudoStats.FrostDamageDealtMultiplier
+			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow]
+			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost]
 
 			dancingRuneWeaponAura.Activate(sim)
 		},

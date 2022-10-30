@@ -72,7 +72,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	hp.PseudoStats.DamageDealtMultiplier *= 1.25
 
 	// Pet family bonus is now the same for all pets.
-	hp.PseudoStats.PhysicalDamageDealtMultiplier *= 1.05
+	hp.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.05
 
 	hp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.77)

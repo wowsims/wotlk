@@ -60,6 +60,27 @@ const (
 	Len
 )
 
+type SchoolIndex byte
+
+const (
+	SchoolIndexNone     SchoolIndex = 0
+	SchoolIndexPhysical SchoolIndex = iota
+	SchoolIndexArcane
+	SchoolIndexFire
+	SchoolIndexFrost
+	SchoolIndexHoly
+	SchoolIndexNature
+	SchoolIndexShadow
+
+	SchoolLen
+)
+
+func NewSchoolFloatArray() [SchoolLen]float64 {
+	return [SchoolLen]float64{
+		1, 1, 1, 1, 1, 1, 1, 1,
+	}
+}
+
 func ProtoArrayToStatsList(protoStats []proto.Stat) []Stat {
 	stats := make([]Stat, len(protoStats))
 	for i, v := range protoStats {
@@ -295,14 +316,8 @@ type PseudoStats struct {
 
 	ThreatMultiplier float64 // Modulates the threat generated. Affected by things like salv.
 
-	DamageDealtMultiplier         float64 // All damage
-	PhysicalDamageDealtMultiplier float64
-	ArcaneDamageDealtMultiplier   float64
-	FireDamageDealtMultiplier     float64
-	FrostDamageDealtMultiplier    float64
-	HolyDamageDealtMultiplier     float64
-	NatureDamageDealtMultiplier   float64
-	ShadowDamageDealtMultiplier   float64
+	DamageDealtMultiplier       float64            // All damage
+	SchoolDamageDealtMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc).
 
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
@@ -333,21 +348,13 @@ type PseudoStats struct {
 
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
 
-	DamageTakenMultiplier float64 // All damage
+	DamageTakenMultiplier       float64            // All damage
+	SchoolDamageTakenMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc.)
+
+	DiseaseDamageTakenMultiplier          float64
+	PeriodicPhysicalDamageTakenMultiplier float64
 
 	ArmorMultiplier float64 // Major/minor/special multiplicative armor modifiers
-
-	PhysicalDamageTakenMultiplier float64
-	ArcaneDamageTakenMultiplier   float64
-	FireDamageTakenMultiplier     float64
-	FrostDamageTakenMultiplier    float64
-	HolyDamageTakenMultiplier     float64
-	NatureDamageTakenMultiplier   float64
-	ShadowDamageTakenMultiplier   float64
-	DiseaseDamageTakenMultiplier  float64
-
-	PeriodicPhysicalDamageTakenMultiplier float64
-	PeriodicShadowDamageTakenMultiplier   float64
 
 	ReducedPhysicalHitTakenChance float64
 	ReducedArcaneHitTakenChance   float64
@@ -370,35 +377,21 @@ func NewPseudoStats() PseudoStats {
 
 		ThreatMultiplier: 1,
 
-		DamageDealtMultiplier:         1,
-		PhysicalDamageDealtMultiplier: 1,
-		ArcaneDamageDealtMultiplier:   1,
-		FireDamageDealtMultiplier:     1,
-		FrostDamageDealtMultiplier:    1,
-		HolyDamageDealtMultiplier:     1,
-		NatureDamageDealtMultiplier:   1,
-		ShadowDamageDealtMultiplier:   1,
+		DamageDealtMultiplier:       1,
+		SchoolDamageDealtMultiplier: NewSchoolFloatArray(),
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 
 		HealingDealtMultiplier: 1,
 
 		// Target effects.
-		DamageTakenMultiplier: 1,
+		DamageTakenMultiplier:       1,
+		SchoolDamageTakenMultiplier: NewSchoolFloatArray(),
+
+		DiseaseDamageTakenMultiplier:          1,
+		PeriodicPhysicalDamageTakenMultiplier: 1,
 
 		ArmorMultiplier: 1,
-
-		PhysicalDamageTakenMultiplier: 1,
-		ArcaneDamageTakenMultiplier:   1,
-		FireDamageTakenMultiplier:     1,
-		FrostDamageTakenMultiplier:    1,
-		HolyDamageTakenMultiplier:     1,
-		NatureDamageTakenMultiplier:   1,
-		ShadowDamageTakenMultiplier:   1,
-		DiseaseDamageTakenMultiplier:  1,
-
-		PeriodicPhysicalDamageTakenMultiplier: 1,
-		PeriodicShadowDamageTakenMultiplier:   1,
 
 		HealingTakenMultiplier: 1,
 	}

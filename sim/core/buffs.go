@@ -354,10 +354,10 @@ func InspirationAura(unit *Unit, points int32) *Aura {
 		ActionID: ActionID{SpellID: 15363},
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= multiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= multiplier
 		},
 	})
 }
@@ -761,10 +761,10 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		ActionID: actionID,
 		Duration: UnholyFrenzyDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.PhysicalDamageDealtMultiplier *= 1.2
+			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.2
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
+			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 		},
 	})
 }
