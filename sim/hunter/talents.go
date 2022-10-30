@@ -812,6 +812,15 @@ func (hunter *Hunter) registerReadinessCD() {
 			if hunter.BlackArrow != nil {
 				hunter.BlackArrow.CD.Reset()
 			}
+
+			// TODO: This is needed because there are edge cases where core doesn't re-use Rapid Fire.
+			// Fix core so this isn't necessary.
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt: sim.CurrentTime + 1,
+				OnAction: func(_ *core.Simulation) {
+					hunter.UpdateMajorCooldowns()
+				},
+			})
 		},
 	})
 
