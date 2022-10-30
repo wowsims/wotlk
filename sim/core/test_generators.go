@@ -132,7 +132,6 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	testNameParts = append(testNameParts, buffsCombo.Label)
 
 	encounterIdx := testIdx % len(combos.Encounters)
-	testIdx /= len(combos.Encounters)
 	encounterCombo := combos.Encounters[encounterIdx]
 	testNameParts = append(testNameParts, encounterCombo.Label)
 
@@ -354,7 +353,7 @@ func (generator *ItemsTestGenerator) init() {
 	generator.items = generator.ItemFilter.FindAllItems()
 	generator.sets = generator.ItemFilter.FindAllSets()
 
-	baseEquipment := items.ProtoToEquipment(*generator.Player.Equipment)
+	baseEquipment := items.ProtoToEquipment(generator.Player.Equipment)
 	generator.metaSocketIdx = -1
 	for i, socketColor := range baseEquipment[proto.ItemSlot_ItemSlotHead].GemSockets {
 		if socketColor == proto.GemColor_GemColorMeta {
@@ -378,7 +377,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	label := ""
 
 	playerCopy := googleProto.Clone(generator.Player).(*proto.Player)
-	equipment := items.ProtoToEquipment(*playerCopy.Equipment)
+	equipment := items.ProtoToEquipment(playerCopy.Equipment)
 	if testIdx < len(generator.items) {
 		testItem := generator.items[testIdx]
 		equipment.EquipItem(generator.items[testIdx])
@@ -451,10 +450,11 @@ func (generator *CombinedTestGenerator) GetTest(testIdx int) (string, *proto.Com
 type CharacterSuiteConfig struct {
 	Class proto.Class
 
-	Race        proto.Race
-	GearSet     GearSetCombo
-	SpecOptions SpecOptionsCombo
-	Glyphs      *proto.Glyphs
+	Race          proto.Race
+	GearSet       GearSetCombo
+	SpecOptions   SpecOptionsCombo
+	Glyphs        *proto.Glyphs
+	TalentsString string
 
 	Consumes *proto.Consumes
 
@@ -479,13 +479,14 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	defaultPlayer := WithSpec(
 		&proto.Player{
-			Class:       config.Class,
-			Race:        config.Race,
-			Equipment:   config.GearSet.GearSet,
-			Consumes:    config.Consumes,
-			Buffs:       FullIndividualBuffs,
-			Glyphs:      config.Glyphs,
-			Profession1: proto.Profession_Engineering,
+			Class:         config.Class,
+			Race:          config.Race,
+			Equipment:     config.GearSet.GearSet,
+			Consumes:      config.Consumes,
+			Buffs:         FullIndividualBuffs,
+			TalentsString: config.TalentsString,
+			Glyphs:        config.Glyphs,
+			Profession1:   proto.Profession_Engineering,
 
 			InFrontOfTarget: config.InFrontOfTarget,
 		},
@@ -501,7 +502,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	generator := &CombinedTestGenerator{
 		subgenerators: []SubGenerator{
-			SubGenerator{
+			{
 				name: "CharacterStats",
 				generator: &SingleCharacterStatsTestGenerator{
 					Name: "Default",
@@ -510,7 +511,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					},
 				},
 			},
-			SubGenerator{
+			{
 				name: "Settings",
 				generator: &SettingsCombos{
 					Class:       config.Class,
@@ -518,10 +519,10 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					GearSets:    allGearSets,
 					SpecOptions: allSpecOptions,
 					Buffs: []BuffsCombo{
-						BuffsCombo{
+						{
 							Label: "NoBuffs",
 						},
-						BuffsCombo{
+						{
 							Label:    "FullBuffs",
 							Raid:     FullRaidBuffs,
 							Party:    FullPartyBuffs,
@@ -535,7 +536,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					SimOptions: DefaultSimTestOptions,
 				},
 			},
-			SubGenerator{
+			{
 				name: "AllItems",
 				generator: &ItemsTestGenerator{
 					Player:     defaultPlayer,

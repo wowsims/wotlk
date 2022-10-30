@@ -23,6 +23,24 @@ type SpellResult struct {
 	inUse bool
 }
 
+func (spell *Spell) NewResult(target *Unit) *SpellResult {
+	result := &spell.resultCache
+	if result.inUse {
+		result = &SpellResult{}
+	}
+
+	result.Target = target
+	result.Damage = 0
+	result.Threat = 0
+	result.Outcome = OutcomeEmpty // for blocks
+	result.inUse = true
+
+	return result
+}
+func (spell *Spell) DisposeResult(result *SpellResult) {
+	result.inUse = false
+}
+
 func (result *SpellResult) Landed() bool {
 	return result.Outcome.Matches(OutcomeLanded)
 }
@@ -148,15 +166,7 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 // For spells that do no damage but still have a hit/miss check.
 func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
-
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
-	result.Damage = 0
-	result.Outcome = OutcomeEmpty // for blocks
-	result.inUse = true
+	result := spell.NewResult(target)
 
 	outcomeApplier(sim, result, attackTable)
 	result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
@@ -166,14 +176,8 @@ func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier Ou
 func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage float64, attackerMultiplier float64, isPeriodic bool, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
+	result := spell.NewResult(target)
 	result.Damage = baseDamage
-	result.Outcome = OutcomeEmpty // for blocks
-	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= attackerMultiplier
@@ -251,7 +255,7 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		result.Target.OnSpellHitTaken(sim, spell, result)
 	}
 
-	result.inUse = false
+	spell.DisposeResult(result)
 }
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellResult) {
 	spell.dealDamageInternal(sim, false, result)
@@ -279,13 +283,8 @@ func (dot *Dot) CalcAndDealPeriodicSnapshotDamage(sim *Simulation, target *Unit,
 func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHealing float64, casterMultiplier float64, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex]
 
-	result := &spell.resultCache
-	if result.inUse {
-		result = &SpellResult{}
-	}
-	result.Target = target
+	result := spell.NewResult(target)
 	result.Damage = baseHealing
-	result.inUse = true
 
 	if sim.Log == nil {
 		result.Damage *= casterMultiplier
@@ -340,7 +339,7 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		result.Target.OnHealTaken(sim, spell, result)
 	}
 
-	result.inUse = false
+	spell.DisposeResult(result)
 }
 func (spell *Spell) DealHealing(sim *Simulation, result *SpellResult) {
 	spell.dealHealingInternal(sim, false, result)
@@ -372,10 +371,6 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 	})
 }
 
-func (result *SpellResult) applyAttackerModifiers(spell *Spell, attackTable *AttackTable) {
-	result.Damage *= spell.AttackerDamageMultiplier(attackTable)
-}
-
 // Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
 	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
@@ -387,24 +382,9 @@ func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
 
 	ps := spell.Unit.PseudoStats
 
-	multiplier *= ps.DamageDealtMultiplier * attackTable.DamageDealtMultiplier
-
-	switch {
-	case spell.SpellSchool.Matches(SpellSchoolPhysical):
-		multiplier *= ps.PhysicalDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolArcane):
-		multiplier *= ps.ArcaneDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFire):
-		multiplier *= ps.FireDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFrost):
-		multiplier *= ps.FrostDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolHoly):
-		multiplier *= ps.HolyDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolNature):
-		multiplier *= ps.NatureDamageDealtMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolShadow):
-		multiplier *= ps.ShadowDamageDealtMultiplier
-	}
+	multiplier *= ps.DamageDealtMultiplier *
+		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
+		attackTable.DamageDealtMultiplier
 
 	return multiplier
 }
@@ -421,41 +401,27 @@ func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *Attac
 	result.Damage *= spell.TargetDamageMultiplier(attackTable, isPeriodic)
 }
 func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic bool) float64 {
-	multiplier := 1.0
-
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
-		return multiplier
+		return 1
 	}
 
 	ps := attackTable.Defender.PseudoStats
 
-	multiplier *= attackTable.DamageTakenMultiplier
-	multiplier *= ps.DamageTakenMultiplier
+	multiplier := ps.DamageTakenMultiplier *
+		ps.SchoolDamageTakenMultiplier[spell.SchoolIndex] *
+		attackTable.DamageTakenMultiplier
 
 	if spell.Flags.Matches(SpellFlagDisease) {
 		multiplier *= ps.DiseaseDamageTakenMultiplier
 	}
 
-	switch {
-	case spell.SpellSchool.Matches(SpellSchoolPhysical):
-		multiplier *= ps.PhysicalDamageTakenMultiplier
-		if isPeriodic {
-			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
-		}
-	case spell.SpellSchool.Matches(SpellSchoolArcane):
-		multiplier *= ps.ArcaneDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFire):
-		multiplier *= ps.FireDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolFrost):
-		multiplier *= ps.FrostDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolHoly):
-		multiplier *= ps.HolyDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolNature):
-		multiplier *= ps.NatureDamageTakenMultiplier
+	if spell.SpellSchool.Matches(SpellSchoolNature) {
 		multiplier *= attackTable.NatureDamageTakenMultiplier
-	case spell.SpellSchool.Matches(SpellSchoolShadow):
-		multiplier *= ps.ShadowDamageTakenMultiplier
-		if isPeriodic {
+	} else if isPeriodic {
+		switch {
+		case spell.SpellSchool.Matches(SpellSchoolPhysical):
+			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
+		case spell.SpellSchool.Matches(SpellSchoolShadow):
 			multiplier *= attackTable.PeriodicShadowDamageTakenMultiplier
 		}
 	}

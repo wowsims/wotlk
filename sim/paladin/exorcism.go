@@ -33,7 +33,7 @@ func (paladin *Paladin) registerExorcismSpell() {
 				if paladin.ArtOfWarInstantCast.IsActive() {
 					paladin.ArtOfWarInstantCast.Deactivate(sim)
 					cast.CastTime = 0
-					cast.Cost = cast.Cost * (1 - 0.02*float64(paladin.Talents.Benediction))
+					cast.Cost *= 1 - 0.02*float64(paladin.Talents.Benediction)
 				}
 			},
 		},

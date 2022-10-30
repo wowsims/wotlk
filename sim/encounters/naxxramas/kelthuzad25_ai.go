@@ -1,4 +1,4 @@
-package naxxrammas
+package naxxramas
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
@@ -6,51 +6,51 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func addLoatheb25(bossPrefix string) {
-	core.AddPresetTarget(core.PresetTarget{
+func addKelThuzad25(bossPrefix string) {
+	core.AddPresetTarget(&core.PresetTarget{
 		PathPrefix: bossPrefix,
-		Config: proto.Target{
-			Id:        16011,
-			Name:      "Loatheb 25",
+		Config: &proto.Target{
+			Id:        15990,
+			Name:      "Kel'Thuzad 25",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
 
 			Stats: stats.Stats{
-				stats.Health:      26_286_324,
+				stats.Health:      19_034_924,
 				stats.Armor:       10643,
 				stats.AttackPower: 640,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
-			SwingSpeed:       1.2,
-			MinBaseDamage:    6727,
+			SwingSpeed:       2.3,
+			MinBaseDamage:    28767,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
 		},
-		AI: NewLoatheb25AI(),
+		AI: NewKelThuzad25AI(),
 	})
-	core.AddPresetEncounter("Loatheb 25", []string{
-		bossPrefix + "/Loatheb 25",
+	core.AddPresetEncounter("Kel'Thuzad 25", []string{
+		bossPrefix + "/Kel'Thuzad 25",
 	})
 }
 
-type Loatheb25AI struct {
+type KelThuzad25AI struct {
 	Target *core.Target
 }
 
-func NewLoatheb25AI() core.AIFactory {
+func NewKelThuzad25AI() core.AIFactory {
 	return func() core.TargetAI {
-		return &Loatheb25AI{}
+		return &KelThuzad25AI{}
 	}
 }
 
-func (ai *Loatheb25AI) Initialize(target *core.Target) {
+func (ai *KelThuzad25AI) Initialize(target *core.Target) {
 	ai.Target = target
 }
 
-func (ai *Loatheb25AI) DoAction(sim *core.Simulation) {
+func (ai *KelThuzad25AI) DoAction(sim *core.Simulation) {
 	ai.Target.DoNothing()
 }

@@ -75,6 +75,7 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 29994}, // Wildercloak
 	{ID: 29387}, // Gnomeregan Auto-Blocker 600
 	{ID: 38289}, // Coren's Lucky Coin
+	{ID: 34473}, // Commendation of Kaelthas
 
 	// WotLK Halloween Event items
 	{ID: 49121, Phase: 1}, // Ring of Ghoulish Glee

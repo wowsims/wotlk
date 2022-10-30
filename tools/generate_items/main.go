@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -33,7 +32,7 @@ func main() {
 		Icon string
 	}
 
-	tempItems := []tempItemIcon{}
+	var tempItems []tempItemIcon
 
 	// Generate all item/gem ids from the tooltips db
 
@@ -86,8 +85,8 @@ func main() {
 	// 	}
 	// }
 
-	// ioutil.WriteFile("all_item_ids", []byte(items.String()), 0666)
-	// ioutil.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
+	// os.WriteFile("all_item_ids", []byte(items.String()), 0666)
+	// os.WriteFile("all_gem_ids", []byte(gems.String()), 0666)
 
 	// panic("done")
 
@@ -95,7 +94,7 @@ func main() {
 	var itemsData []ItemData
 	if *db == "wowhead" {
 		gemDeclarations := getGemDeclarations()
-		gemsData = make([]GemData, len(gemDeclarations))
+		gemsData = make([]GemData, len(gemDeclarations)) // TODO looks fishy, might be sparsely populated
 		for idx, gemDeclaration := range gemDeclarations {
 			gemData := GemData{
 				Declaration: gemDeclaration,
@@ -112,7 +111,7 @@ func main() {
 
 		itemDeclarations := getItemDeclarations()
 		// qualityModifiers := getItemQualityModifiers()
-		itemsData = make([]ItemData, len(itemDeclarations))
+		itemsData = make([]ItemData, len(itemDeclarations)) // TODO looks fishy, might be sparsely populated
 		for idx, itemDeclaration := range itemDeclarations {
 			itemData := ItemData{
 				Declaration: itemDeclaration,
@@ -181,7 +180,7 @@ func main() {
 		log.Fatalf("failed to marshal: %s", err)
 	}
 	itemDB.Write(v)
-	ioutil.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
+	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
 func getGemDeclarations() []GemDeclaration {
@@ -190,8 +189,8 @@ func getGemDeclarations() []GemDeclaration {
 	// Ignore first line
 	gemsData = gemsData[1:]
 
-	gemDeclarations := make([]GemDeclaration, len(gemsData))
-	for i, gemsDataRow := range gemsData {
+	gemDeclarations := make([]GemDeclaration, 0, len(gemsData))
+	for _, gemsDataRow := range gemsData {
 		gemID, err := strconv.Atoi(gemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid gem ID: " + gemsDataRow[0])
@@ -207,7 +206,7 @@ func getGemDeclarations() []GemDeclaration {
 			}
 		}
 
-		gemDeclarations[i] = declaration
+		gemDeclarations = append(gemDeclarations, declaration)
 	}
 
 	// Add any declarations that were missing from the csv file.
@@ -233,8 +232,8 @@ func getItemDeclarations() []ItemDeclaration {
 	// Ignore first line
 	itemsData = itemsData[1:]
 
-	itemDeclarations := make([]ItemDeclaration, len(itemsData))
-	for i, itemsDataRow := range itemsData {
+	itemDeclarations := make([]ItemDeclaration, 0, len(itemsData))
+	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid item ID: " + itemsDataRow[0])
@@ -250,7 +249,7 @@ func getItemDeclarations() []ItemDeclaration {
 			}
 		}
 
-		itemDeclarations[i] = declaration
+		itemDeclarations = append(itemDeclarations, declaration)
 	}
 
 	// Add any declarations that were missing from the csv file.

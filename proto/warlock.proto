@@ -129,7 +129,7 @@ enum WarlockMinorGlyph {
 	WarlockMinorGlyphNone = 0;
 	GlyphOfCurseOfExhausion = 43392;
 	GlyphOfDrainSoul = 43390;
-	GlyphOfEnslaveDemon = 43393;
+	GlyphOfSubjugateDemon = 43393;
 	GlyphOfKilrogg = 43391;
 	GlyphOfSouls = 43394;
 	GlyphOfUnendingBreath = 43389;

@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -24,14 +26,15 @@ type Character struct {
 	Equip items.Equipment
 
 	// Consumables this Character will be using.
-	Consumes proto.Consumes
+	Consumes *proto.Consumes
 
 	// Base stats for this Character.
 	baseStats stats.Stats
 
 	professions [2]proto.Profession
 
-	glyphs [6]int32
+	glyphs            [6]int32
+	PrimaryTalentTree uint8
 
 	// Provides major cooldown management behavior.
 	majorCooldownManager
@@ -52,7 +55,7 @@ type Character struct {
 	conjuredCD         *Timer
 }
 
-func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
+func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {
 	character := Character{
 		Unit: Unit{
 			Type:        PlayerUnit,
@@ -71,7 +74,7 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 		Race:         player.Race,
 		ShattFaction: player.ShattFaction,
 		Class:        player.Class,
-		Equip:        items.ProtoToEquipment(*player.Equipment),
+		Equip:        items.ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,
 			player.Profession2,
@@ -97,16 +100,18 @@ func NewCharacter(party *Party, partyIndex int, player proto.Player) Character {
 			player.Glyphs.Minor3,
 		}
 	}
+	character.PrimaryTalentTree = GetPrimaryTalentTreeIndex(player.TalentsString)
 
+	character.Consumes = &proto.Consumes{}
 	if player.Consumes != nil {
-		character.Consumes = *player.Consumes
+		character.Consumes = player.Consumes
 	}
 
 	character.baseStats = BaseStats[BaseStatsKey{Race: character.Race, Class: character.Class}]
 
 	bonusStats := stats.Stats{}
 	if player.BonusStats != nil {
-		copy(bonusStats[:], player.BonusStats[:])
+		copy(bonusStats[:], player.BonusStats)
 	}
 
 	character.AddStats(character.baseStats)
@@ -132,7 +137,7 @@ func (character *Character) addUniversalStatDependencies() {
 func (character *Character) ApplyGearBonuses() {}
 
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
-func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) *proto.PlayerStats {
+func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
 	applyRaceEffects(agent)
@@ -151,7 +156,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs proto.RaidBuf
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
 	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
-	applyConsumeEffects(agent, raidBuffs, partyBuffs)
+	applyConsumeEffects(agent)
 	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
@@ -516,4 +521,29 @@ func (character *Character) GetOffensiveTrinketCD() *Timer {
 }
 func (character *Character) GetConjuredCD() *Timer {
 	return character.GetOrInitTimer(&character.conjuredCD)
+}
+
+// Returns the talent tree (0, 1, or 2) of the tree with the most points.
+//
+// talentStr is expected to be a wowhead-formatted talent string, e.g.
+// "12123131-123123123-123123213"
+func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
+	trees := strings.Split(talentStr, "-")
+	bestTree := 0
+	bestTreePoints := 0
+
+	for treeIdx, treeStr := range trees {
+		points := 0
+		for talentIdx := 0; talentIdx < len(treeStr); talentIdx++ {
+			v, _ := strconv.Atoi(string(treeStr[talentIdx]))
+			points += v
+		}
+
+		if points > bestTreePoints {
+			bestTreePoints = points
+			bestTree = treeIdx
+		}
+	}
+
+	return uint8(bestTree)
 }

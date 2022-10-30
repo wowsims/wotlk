@@ -18,8 +18,9 @@ func TestFury(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
+		TalentsString: "",
+		GearSet:       core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
+		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
 
 		Consumes: FullConsumes,
 
@@ -43,8 +44,9 @@ func TestArms(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
+		TalentsString: "",
+		GearSet:       core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
+		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
 		Consumes: FullConsumes,
 
@@ -66,12 +68,13 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassWarrior,
-				Equipment: FuryP1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsFury,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassWarrior,
+				Equipment:     FuryP1Gear,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsFury,
+				TalentsString: "",
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

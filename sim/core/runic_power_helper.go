@@ -45,7 +45,8 @@ func (rc RuneCost) String() string {
 }
 
 // HasRune returns if this cost includes a rune portion.
-//  If any bit is set in the rune bits it means that there is a rune cost.
+//
+//	If any bit is set in the rune bits it means that there is a rune cost.
 func (rc RuneCost) HasRune() bool {
 	const runebits = int16(0b11111111)
 	return runebits&int16(rc) > 0

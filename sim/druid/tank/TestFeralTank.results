@@ -288,6 +288,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-IdoloftheUnseenMoon-33510"
+ value: {
+  dps: 1066.80495
+  tps: 1441.96125
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheWhiteStag-32257"
  value: {
   dps: 1097.12375

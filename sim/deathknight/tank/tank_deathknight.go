@@ -10,7 +10,7 @@ func RegisterTankDeathknight() {
 	core.RegisterAgentFactory(
 		proto.Player_TankDeathknight{},
 		proto.Spec_SpecTankDeathknight,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewTankDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -29,24 +29,23 @@ type TankDeathknight struct {
 	switchIT   bool
 	BloodSpell *deathknight.RuneSpell
 
-	Rotation proto.TankDeathknight_Rotation
+	Rotation *proto.TankDeathknight_Rotation
 }
 
-func NewTankDeathknight(character core.Character, options proto.Player) *TankDeathknight {
+func NewTankDeathknight(character core.Character, options *proto.Player) *TankDeathknight {
 	dkOptions := options.GetTankDeathknight()
 
 	tankDk := &TankDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, *dkOptions.Talents, deathknight.DeathknightInputs{
+		Deathknight: deathknight.NewDeathknight(character, dkOptions.Talents, deathknight.DeathknightInputs{
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
 		}),
-		Rotation: *dkOptions.Rotation,
+		Rotation: dkOptions.Rotation,
 	}
 
+	dkOptions.Options.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
 	if dkOptions.Options.UnholyFrenzyTarget != nil {
-		tankDk.Inputs.UnholyFrenzyTarget = *dkOptions.Options.UnholyFrenzyTarget
-	} else {
-		tankDk.Inputs.UnholyFrenzyTarget.TargetIndex = -1
+		tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget
 	}
 
 	tankDk.EnableAutoAttacks(tankDk, core.AutoAttackOptions{

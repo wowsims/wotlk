@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-//Default Priority Order
+// Default Priority Order
 const (
 	LightningBolt = iota
 	StormstrikeApplyDebuff
@@ -33,7 +33,7 @@ type Cast func(sim *core.Simulation, target *core.Unit) bool
 type Condition func(sim *core.Simulation, target *core.Unit) bool
 type ReadyAt func() time.Duration
 
-//Holds all the spell info we need to make decisions
+// Holds all the spell info we need to make decisions
 type Spell struct {
 	readyAt ReadyAt
 	cast    Cast
@@ -233,8 +233,8 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 	}
 
 	//Custom Priority Rotation
-	if rotation.options.CustomRotation != nil && rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
-		spellPriority = make([]Spell, 0, len(rotation.options.CustomRotation.Spells))
+	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && rotation.options.CustomRotation != nil {
+		spellPriority := make([]Spell, 0, len(rotation.options.CustomRotation.Spells))
 
 		// Turn weaving off, will enable them if they have been added.
 		rotation.options.LightningboltWeave = false
@@ -267,7 +267,24 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 				spellPriority = append(spellPriority, weaveLavaBurst)
 			}
 		}
+
+		rotation.spellPriority = spellPriority
+		return
 	}
+
+	//Normal Priority Rotation
+	spellPriority := make([]Spell, NumberSpells)
+	spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
+	spellPriority[LightningBolt] = instantLightningBolt
+	spellPriority[Stormstrike] = stormstrike
+	spellPriority[FlameShock] = flameShock
+	spellPriority[EarthShock] = earthShock
+	spellPriority[LightningShield] = lightningShield
+	spellPriority[FireNova] = fireNova
+	spellPriority[LavaLash] = lavaLash
+	spellPriority[WeaveLightningBolt] = weaveLightningBolt
+	spellPriority[FrostShock] = frostShock
+	spellPriority[WeaveLavaBurst] = weaveLavaBurst
 
 	rotation.spellPriority = spellPriority
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -58,7 +58,7 @@ func main() {
 						fmt.Printf("Error fetching %d: %s\n", i, err)
 						continue
 					}
-					body, _ := ioutil.ReadAll(resp.Body)
+					body, _ := io.ReadAll(resp.Body)
 					bstr := string(body)
 					// fmt.Printf("Found tooltip for %d\n%s\n", i, bstr)
 					if len(bstr) < 2 {
@@ -94,7 +94,7 @@ func main() {
 						fmt.Printf("Error fetching %d: %s\n", ids[i], err)
 						continue
 					}
-					body, _ := ioutil.ReadAll(resp.Body)
+					body, _ := io.ReadAll(resp.Body)
 					bstr := string(body)
 					// fmt.Printf("Found tooltip for %d\n%s\n", i, bstr)
 					if len(bstr) < 2 {
@@ -135,7 +135,7 @@ func main() {
 }
 
 func getItemDeclarations(name string) []int {
-	itemBytes, err := ioutil.ReadFile(name)
+	itemBytes, err := os.ReadFile(name)
 
 	if err != nil {
 		log.Fatalf("failed to read item declarations file: %s", err)

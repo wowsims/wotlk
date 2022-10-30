@@ -10,7 +10,7 @@ func RegisterHealingPriest() {
 	core.RegisterAgentFactory(
 		proto.Player_HealingPriest{},
 		proto.Spec_SpecHealingPriest,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewHealingPriest(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,14 +26,14 @@ func RegisterHealingPriest() {
 type HealingPriest struct {
 	*priest.Priest
 
-	rotation proto.HealingPriest_Rotation
+	rotation *proto.HealingPriest_Rotation
 
 	// Spells to rotate through for cyclic rotation.
 	spellCycle     []*core.Spell
 	nextCycleIndex int
 }
 
-func NewHealingPriest(character core.Character, options proto.Player) *HealingPriest {
+func NewHealingPriest(character core.Character, options *proto.Player) *HealingPriest {
 	healingOptions := options.GetHealingPriest()
 
 	selfBuffs := priest.SelfBuffs{
@@ -41,17 +41,16 @@ func NewHealingPriest(character core.Character, options proto.Player) *HealingPr
 		UseShadowfiend: healingOptions.Options.UseShadowfiend,
 	}
 
+	selfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
 	if healingOptions.Talents.PowerInfusion && healingOptions.Options.PowerInfusionTarget != nil {
-		selfBuffs.PowerInfusionTarget = *healingOptions.Options.PowerInfusionTarget
-	} else {
-		selfBuffs.PowerInfusionTarget.TargetIndex = -1
+		selfBuffs.PowerInfusionTarget = healingOptions.Options.PowerInfusionTarget
 	}
 
-	basePriest := priest.New(character, selfBuffs, *healingOptions.Talents)
+	basePriest := priest.New(character, selfBuffs, healingOptions.Talents)
 
 	hpriest := &HealingPriest{
 		Priest:   basePriest,
-		rotation: *healingOptions.Rotation,
+		rotation: healingOptions.Rotation,
 	}
 
 	hpriest.EnableResumeAfterManaWait(hpriest.tryUseGCD)

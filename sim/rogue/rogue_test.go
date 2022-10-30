@@ -101,7 +101,7 @@ func GenerateCriticalDamageMultiplierTestCase(
 		Equipment: equipment,
 	}, spec), nil, nil, nil)
 	encounter := core.MakeSingleTargetEncounter(0.0)
-	env, _ := core.NewEnvironment(*raid, *encounter)
+	env, _ := core.NewEnvironment(raid, encounter)
 	agent := env.Raid.Parties[0].Players[0]
 	rog := agent.(RogueAgent).GetRogue()
 	actualMultiplier := 0.0

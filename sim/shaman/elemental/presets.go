@@ -19,10 +19,6 @@ var StandardTalents = &proto.ShamanTalents{
 	TotemOfWrath:       true,
 }
 
-var eleShamOptionsNoBuffs = &proto.ElementalShaman_Options{
-	Shield: proto.ShamanShield_WaterShield,
-}
-
 var NoTotems = &proto.ShamanTotems{}
 var BasicTotems = &proto.ShamanTotems{
 	Earth: proto.EarthTotem_TremorTotem,

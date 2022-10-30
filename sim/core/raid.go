@@ -1,6 +1,7 @@
 package core
 
 import (
+	googleProto "google.golang.org/protobuf/proto"
 	"sort"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -20,7 +21,7 @@ type Party struct {
 	hpsMetrics DistributionMetrics
 }
 
-func NewParty(raid *Raid, index int, partyConfig proto.Party) *Party {
+func NewParty(raid *Raid, index int, partyConfig *proto.Party) *Party {
 	party := &Party{
 		Raid:       raid,
 		Index:      index,
@@ -30,7 +31,7 @@ func NewParty(raid *Raid, index int, partyConfig proto.Party) *Party {
 
 	for playerIndex, playerConfig := range partyConfig.Players {
 		if playerConfig != nil && playerConfig.Class != proto.Class_ClassUnknown {
-			party.Players = append(party.Players, NewAgent(party, playerIndex, *playerConfig))
+			party.Players = append(party.Players, NewAgent(party, playerIndex, playerConfig))
 		}
 	}
 
@@ -45,15 +46,15 @@ func (party *Party) IsFull() bool {
 	return party.Size() >= 5
 }
 
-func (party *Party) GetPartyBuffs(basePartyBuffs *proto.PartyBuffs) proto.PartyBuffs {
+func (party *Party) GetPartyBuffs(basePartyBuffs *proto.PartyBuffs) *proto.PartyBuffs {
 	// Compute the full party buffs for this party.
-	partyBuffs := proto.PartyBuffs{}
+	partyBuffs := &proto.PartyBuffs{}
 	if basePartyBuffs != nil {
-		partyBuffs = *basePartyBuffs
+		partyBuffs = googleProto.Clone(basePartyBuffs).(*proto.PartyBuffs)
 	}
 	for _, player := range party.Players {
-		player.AddPartyBuffs(&partyBuffs)
-		player.GetCharacter().AddPartyBuffs(&partyBuffs)
+		player.AddPartyBuffs(partyBuffs)
+		player.GetCharacter().AddPartyBuffs(partyBuffs)
 	}
 	return partyBuffs
 }
@@ -124,7 +125,7 @@ type Raid struct {
 }
 
 // Makes a new raid.
-func NewRaid(raidConfig proto.Raid) *Raid {
+func NewRaid(raidConfig *proto.Raid) *Raid {
 	raid := &Raid{
 		dpsMetrics:   NewDistributionMetrics(),
 		hpsMetrics:   NewDistributionMetrics(),
@@ -170,7 +171,7 @@ func NewRaid(raidConfig proto.Raid) *Raid {
 
 	for partyIndex, partyConfig := range raidConfig.Parties {
 		if partyConfig != nil {
-			raid.Parties = append(raid.Parties, NewParty(raid, partyIndex, *partyConfig))
+			raid.Parties = append(raid.Parties, NewParty(raid, partyIndex, partyConfig))
 		}
 	}
 
@@ -236,16 +237,16 @@ func (raid *Raid) getNextPetIndex() int32 {
 	return petIndex
 }
 
-func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) proto.RaidBuffs {
+func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) *proto.RaidBuffs {
 	// Compute the full raid buffs from the raid.
-	raidBuffs := proto.RaidBuffs{}
+	raidBuffs := &proto.RaidBuffs{}
 	if baseRaidBuffs != nil {
-		raidBuffs = *baseRaidBuffs
+		raidBuffs = baseRaidBuffs
 	}
 	for _, party := range raid.Parties {
 		for _, player := range party.Players {
-			player.AddRaidBuffs(&raidBuffs)
-			player.GetCharacter().AddRaidBuffs(&raidBuffs)
+			player.AddRaidBuffs(raidBuffs)
+			player.GetCharacter().AddRaidBuffs(raidBuffs)
 		}
 	}
 	return raidBuffs
@@ -281,12 +282,12 @@ func (raid *Raid) updatePlayersAndPets() {
 	})
 }
 
-func (raid *Raid) applyCharacterEffects(raidConfig proto.Raid) *proto.RaidStats {
+func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats {
 	raidBuffs := raid.GetRaidBuffs(raidConfig.Buffs)
 	raidStats := &proto.RaidStats{}
 
 	for partyIdx, party := range raid.Parties {
-		partyConfig := *raidConfig.Parties[partyIdx]
+		partyConfig := raidConfig.Parties[partyIdx]
 		partyBuffs := party.GetPartyBuffs(partyConfig.Buffs)
 		partyStats := &proto.PartyStats{
 			Players: make([]*proto.PlayerStats, 5),
@@ -298,10 +299,10 @@ func (raid *Raid) applyCharacterEffects(raidConfig proto.Raid) *proto.RaidStats 
 				// This happens for target dummies.
 				continue
 			}
-			playerConfig := *partyConfig.Players[playerIdx]
-			individualBuffs := proto.IndividualBuffs{}
+			playerConfig := partyConfig.Players[playerIdx]
+			individualBuffs := &proto.IndividualBuffs{}
 			if playerConfig.Buffs != nil {
-				individualBuffs = *playerConfig.Buffs
+				individualBuffs = playerConfig.Buffs
 			}
 
 			char := player.GetCharacter()
@@ -349,7 +350,7 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetPlayerFromRaidTarget(raidTarget proto.RaidTarget) Agent {
+func (raid Raid) GetPlayerFromRaidTarget(raidTarget *proto.RaidTarget) Agent {
 	raidIndex := raidTarget.TargetIndex
 
 	partyIndex := int(raidIndex / 5)
@@ -415,7 +416,7 @@ func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
 func SinglePlayerRaidProto(player *proto.Player, partyBuffs *proto.PartyBuffs, raidBuffs *proto.RaidBuffs, debuffs *proto.Debuffs) *proto.Raid {
 	return &proto.Raid{
 		Parties: []*proto.Party{
-			&proto.Party{
+			{
 				Players: []*proto.Player{
 					player,
 				},
@@ -427,11 +428,11 @@ func SinglePlayerRaidProto(player *proto.Player, partyBuffs *proto.PartyBuffs, r
 	}
 }
 
-func RaidPlayersWithSpec(raid proto.Raid, spec proto.Spec) []*proto.Player {
+func RaidPlayersWithSpec(raid *proto.Raid, spec proto.Spec) []*proto.Player {
 	var specPlayers []*proto.Player
 	for _, party := range raid.Parties {
 		for _, player := range party.Players {
-			if player != nil && player.GetSpec() != nil && PlayerProtoToSpec(*player) == spec {
+			if player != nil && player.GetSpec() != nil && PlayerProtoToSpec(player) == spec {
 				specPlayers = append(specPlayers, player)
 			}
 		}
@@ -439,7 +440,7 @@ func RaidPlayersWithSpec(raid proto.Raid, spec proto.Spec) []*proto.Player {
 	return specPlayers
 }
 
-func RaidPlayersWithClass(raid proto.Raid, class proto.Class) []*proto.Player {
+func RaidPlayersWithClass(raid *proto.Raid, class proto.Class) []*proto.Player {
 	var players []*proto.Player
 	for _, party := range raid.Parties {
 		for _, player := range party.Players {

@@ -320,7 +320,7 @@ func (warrior *Warrior) applyTitansGrip() {
 		return
 	}
 
-	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 - 0.1
+	warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 - 0.1
 }
 
 func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
@@ -331,7 +331,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 		return
 	}
 
-	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.TwoHandedWeaponSpecialization)
+	warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(warrior.Talents.TwoHandedWeaponSpecialization)
 }
 
 func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
@@ -342,7 +342,7 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 		return
 	}
 
-	warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.OneHandedWeaponSpecialization)
+	warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(warrior.Talents.OneHandedWeaponSpecialization)
 }
 
 func (warrior *Warrior) applyWeaponSpecializations() {
@@ -529,10 +529,10 @@ func (warrior *Warrior) applyWreckingCrew() {
 		ActionID: core.ActionID{SpellID: 57518},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier *= bonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= bonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageDealtMultiplier /= bonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= bonus
 		},
 	})
 	warrior.RegisterAura(core.Aura{
@@ -677,11 +677,11 @@ func (warrior *Warrior) registerDeathWishCD() {
 		ActionID: actionID,
 		Duration: time.Second * 30,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.PhysicalDamageDealtMultiplier *= 1.2
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.2
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.05
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.05
 		},
 	})

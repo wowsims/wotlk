@@ -19,8 +19,8 @@ func TestWarlock(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
-			core.SpecOptionsCombo{Label: "Destro Warlock", SpecOptions: DefaultDestroWarlock},
+			{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
+			{Label: "Destro Warlock", SpecOptions: DefaultDestroWarlock},
 		},
 
 		Glyphs:   defaultAfflictionGlyphs,

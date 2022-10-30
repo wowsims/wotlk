@@ -22,7 +22,8 @@ type Rotation interface {
 }
 
 //	CUSTOM ROTATION (advanced) (also WIP).
-//TODO: figure out how to do this (probably too complicated to copy hunters)
+//
+// TODO: figure out how to do this (probably too complicated to copy hunters)
 type AgentAction interface {
 	GetActionID() core.ActionID
 

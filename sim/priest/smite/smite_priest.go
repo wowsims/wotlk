@@ -12,7 +12,7 @@ func RegisterSmitePriest() {
 	core.RegisterAgentFactory(
 		proto.Player_SmitePriest{},
 		proto.Spec_SpecSmitePriest,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewSmitePriest(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,7 +25,7 @@ func RegisterSmitePriest() {
 	)
 }
 
-func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest {
+func NewSmitePriest(character core.Character, options *proto.Player) *SmitePriest {
 	smiteOptions := options.GetSmitePriest()
 
 	selfBuffs := priest.SelfBuffs{
@@ -33,17 +33,16 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 		UseShadowfiend: smiteOptions.Options.UseShadowfiend,
 	}
 
+	selfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
 	if smiteOptions.Options.PowerInfusionTarget != nil {
-		selfBuffs.PowerInfusionTarget = *smiteOptions.Options.PowerInfusionTarget
-	} else {
-		selfBuffs.PowerInfusionTarget.TargetIndex = -1
+		selfBuffs.PowerInfusionTarget = smiteOptions.Options.PowerInfusionTarget
 	}
 
-	basePriest := priest.New(character, selfBuffs, *smiteOptions.Talents)
+	basePriest := priest.New(character, selfBuffs, smiteOptions.Talents)
 
 	spriest := &SmitePriest{
 		Priest:   basePriest,
-		rotation: *smiteOptions.Rotation,
+		rotation: smiteOptions.Rotation,
 
 		allowedHFDelay: time.Millisecond * time.Duration(smiteOptions.Rotation.AllowedHolyFireDelayMs),
 	}
@@ -56,7 +55,7 @@ func NewSmitePriest(character core.Character, options proto.Player) *SmitePriest
 type SmitePriest struct {
 	*priest.Priest
 
-	rotation proto.SmitePriest_Rotation
+	rotation *proto.SmitePriest_Rotation
 
 	allowedHFDelay time.Duration
 }

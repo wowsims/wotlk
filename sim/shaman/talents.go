@@ -21,7 +21,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
-	shaman.PseudoStats.PhysicalDamageDealtMultiplier *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
+	shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
 	//unleashed rage
 	shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
@@ -80,11 +80,26 @@ func (shaman *Shaman) applyElementalFocus() {
 		return
 	}
 
+	oathBonus := 1 + (0.05 * float64(shaman.Talents.ElementalOath))
 	shaman.ClearcastingAura = shaman.RegisterAura(core.Aura{
 		Label:     "Clearcasting",
 		ActionID:  core.ActionID{SpellID: 16246},
 		Duration:  time.Second * 15,
 		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if oathBonus > 1 {
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= oathBonus
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= oathBonus
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= oathBonus
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if oathBonus > 1 {
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] /= oathBonus
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] /= oathBonus
+				shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] /= oathBonus
+			}
+		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagShock | SpellFlagFocusable) {
 				return

@@ -11,7 +11,7 @@ func RegisterProtectionWarrior() {
 	core.RegisterAgentFactory(
 		proto.Player_ProtectionWarrior{},
 		proto.Spec_SpecProtectionWarrior,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewProtectionWarrior(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -27,24 +27,24 @@ func RegisterProtectionWarrior() {
 type ProtectionWarrior struct {
 	*warrior.Warrior
 
-	Rotation proto.ProtectionWarrior_Rotation
-	Options  proto.ProtectionWarrior_Options
+	Rotation *proto.ProtectionWarrior_Rotation
+	Options  *proto.ProtectionWarrior_Options
 
 	CustomRotation *common.CustomRotation
 }
 
-func NewProtectionWarrior(character core.Character, options proto.Player) *ProtectionWarrior {
+func NewProtectionWarrior(character core.Character, options *proto.Player) *ProtectionWarrior {
 	warOptions := options.GetProtectionWarrior()
 
 	war := &ProtectionWarrior{
-		Warrior: warrior.NewWarrior(character, *warOptions.Talents, warrior.WarriorInputs{
+		Warrior: warrior.NewWarrior(character, warOptions.Talents, warrior.WarriorInputs{
 			ShoutType:            warOptions.Options.Shout,
 			PrecastShout:         warOptions.Options.PrecastShout,
 			PrecastShoutSapphire: warOptions.Options.PrecastShoutSapphire,
 			PrecastShoutT2:       warOptions.Options.PrecastShoutT2,
 		}),
-		Rotation: *warOptions.Rotation,
-		Options:  *warOptions.Options,
+		Rotation: warOptions.Rotation,
+		Options:  warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
@@ -92,7 +92,7 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(false, float64(war.Rotation.HsRageThreshold))
+	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 

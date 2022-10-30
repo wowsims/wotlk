@@ -20,7 +20,7 @@ func TestArcane(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "ArcaneRotation", SpecOptions: PlayerOptionsArcane},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsArcaneAOE},
+			{Label: "AOE", SpecOptions: PlayerOptionsArcaneAOE},
 		},
 
 		Consumes: FullArcaneConsumes,
@@ -48,7 +48,7 @@ func TestFire(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "FireRotation", SpecOptions: PlayerOptionsFire},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFireAOE},
+			{Label: "AOE", SpecOptions: PlayerOptionsFireAOE},
 		},
 
 		Consumes: FullFireConsumes,
@@ -76,7 +76,7 @@ func TestFrost(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
 		SpecOptions: core.SpecOptionsCombo{Label: "FrostRotation", SpecOptions: PlayerOptionsFrost},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
+			{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
 		},
 
 		Consumes: FullFrostConsumes,

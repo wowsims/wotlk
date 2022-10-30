@@ -12,7 +12,7 @@ func RegisterRogue() {
 	core.RegisterAgentFactory(
 		proto.Player_Rogue{},
 		proto.Spec_SpecRogue,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewRogue(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -35,9 +35,9 @@ const RogueBleedTag = "RogueBleed"
 type Rogue struct {
 	core.Character
 
-	Talents  proto.RogueTalents
-	Options  proto.Rogue_Options
-	Rotation proto.Rogue_Rotation
+	Talents  *proto.RogueTalents
+	Options  *proto.Rogue_Options
+	Rotation *proto.Rogue_Rotation
 
 	priorityItems      []roguePriorityItem
 	rotationItems      []rogueRotationItem
@@ -210,14 +210,14 @@ func (rogue *Rogue) SpellCritMultiplier() float64 {
 	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
-func NewRogue(character core.Character, options proto.Player) *Rogue {
+func NewRogue(character core.Character, options *proto.Player) *Rogue {
 	rogueOptions := options.GetRogue()
 
 	rogue := &Rogue{
 		Character: character,
-		Talents:   *rogueOptions.Talents,
-		Options:   *rogueOptions.Options,
-		Rotation:  *rogueOptions.Rotation,
+		Talents:   rogueOptions.Talents,
+		Options:   rogueOptions.Options,
+		Rotation:  rogueOptions.Rotation,
 	}
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd

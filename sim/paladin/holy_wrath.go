@@ -49,7 +49,7 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 				}
 			}
 
-			for i, _ := range sim.Encounter.Targets {
+			for i := range sim.Encounter.Targets {
 				spell.DealDamage(sim, results[i])
 			}
 		},

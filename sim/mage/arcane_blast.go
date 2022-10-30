@@ -22,7 +22,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			oldMultiplier := 1 + float64(oldStacks)*abAuraMultiplierPerStack
 			newMultiplier := 1 + float64(newStacks)*abAuraMultiplierPerStack
-			mage.PseudoStats.ArcaneDamageDealtMultiplier *= newMultiplier / oldMultiplier
+			mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= newMultiplier / oldMultiplier
 		},
 	})
 

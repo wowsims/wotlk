@@ -10,9 +10,9 @@ import (
 
 type Warlock struct {
 	core.Character
-	Talents  proto.WarlockTalents
-	Options  proto.Warlock_Options
-	Rotation proto.Warlock_Rotation
+	Talents  *proto.WarlockTalents
+	Options  *proto.Warlock_Options
+	Rotation *proto.Warlock_Rotation
 
 	Pet *WarlockPet
 
@@ -142,14 +142,14 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 
 }
 
-func NewWarlock(character core.Character, options proto.Player) *Warlock {
+func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 	warlockOptions := options.GetWarlock()
 
 	warlock := &Warlock{
 		Character: character,
-		Talents:   *warlockOptions.Talents,
-		Options:   *warlockOptions.Options,
-		Rotation:  *warlockOptions.Rotation,
+		Talents:   warlockOptions.Talents,
+		Options:   warlockOptions.Options,
+		Rotation:  warlockOptions.Rotation,
 		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	warlock.EnableManaBar()
@@ -176,7 +176,7 @@ func RegisterWarlock() {
 	core.RegisterAgentFactory(
 		proto.Player_Warlock{},
 		proto.Spec_SpecWarlock,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewWarlock(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {

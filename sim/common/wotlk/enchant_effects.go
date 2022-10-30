@@ -101,8 +101,10 @@ func init() {
 
 	core.NewItemEffect(41146, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		// TODO: This should be ranged-only haste.
-		character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
+		// TODO: This should be ranged-only haste. For now just make it hunter-only.
+		if character.Class == proto.Class_ClassHunter {
+			character.AddStats(stats.Stats{stats.MeleeHaste: 40, stats.SpellHaste: 40})
+		}
 	})
 
 	core.NewItemEffect(41167, func(agent core.Agent) {

@@ -25,21 +25,19 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	 *   - CANNOT CRIT.
 	 */
 
-	baseMultiplierAdditive := 1 +
-		paladin.getItemSetLightswornBattlegearBonus4() +
-		paladin.getMajorGlyphSealOfRighteousnessBonus() +
-		paladin.getTalentSealsOfThePureBonus()
-
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
-		DamageMultiplierAdditive: baseMultiplierAdditive +
-			paladin.getMajorGlyphOfJudgementBonus() +
-			paladin.getTalentTheArtOfWarBonus(),
-		DamageMultiplier: 1,
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -60,11 +58,10 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
-		DamageMultiplierAdditive: baseMultiplierAdditive,
-		DamageMultiplier:         1,
-		ThreatMultiplier:         1,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// weapon_speed * (0.022* AP + 0.044*HolP)

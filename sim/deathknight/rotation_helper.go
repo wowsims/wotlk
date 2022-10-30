@@ -26,31 +26,31 @@ type Sequence struct {
 	actions    []RotationAction
 }
 
-func (o *Sequence) IsOngoing() bool {
-	return o.idx < o.numActions
+func (s *Sequence) IsOngoing() bool {
+	return s.idx < s.numActions
 }
 
-func (o *Sequence) RemainingActions() int {
-	return (o.numActions - 1) - o.idx
+func (s *Sequence) RemainingActions() int {
+	return (s.numActions - 1) - s.idx
 }
 
-func (o *Sequence) Reset() {
-	o.idx = 0
+func (s *Sequence) Reset() {
+	s.idx = 0
 }
 
-func (o *Sequence) Advance() {
-	o.idx += 1
+func (s *Sequence) Advance() {
+	s.idx += 1
 }
 
-func (o *Sequence) ConditionalAdvance(condition bool) {
+func (s *Sequence) ConditionalAdvance(condition bool) {
 	if condition {
-		o.idx += 1
+		s.idx += 1
 	}
 }
 
-func (o *Sequence) GetNextAction() RotationAction {
-	if o.idx+1 < o.numActions {
-		return o.actions[o.idx+1]
+func (s *Sequence) GetNextAction() RotationAction {
+	if s.idx+1 < s.numActions {
+		return s.actions[s.idx+1]
 	} else {
 		return nil
 	}

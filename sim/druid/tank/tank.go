@@ -13,7 +13,7 @@ func RegisterFeralTankDruid() {
 	core.RegisterAgentFactory(
 		proto.Player_FeralTankDruid{},
 		proto.Spec_SpecFeralTankDruid,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewFeralTankDruid(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,20 +26,19 @@ func RegisterFeralTankDruid() {
 	)
 }
 
-func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTankDruid {
+func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTankDruid {
 	tankOptions := options.GetFeralTankDruid()
-
 	selfBuffs := druid.SelfBuffs{}
+
+	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
 	if tankOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = *tankOptions.Options.InnervateTarget
-	} else {
-		selfBuffs.InnervateTarget.TargetIndex = -1
+		selfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
 	}
 
 	bear := &FeralTankDruid{
-		Druid:    druid.New(character, druid.Bear, selfBuffs, *tankOptions.Talents),
-		Rotation: *tankOptions.Rotation,
-		Options:  *tankOptions.Options,
+		Druid:    druid.New(character, druid.Bear, selfBuffs, tankOptions.Talents),
+		Rotation: tankOptions.Rotation,
+		Options:  tankOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
@@ -80,8 +79,8 @@ func NewFeralTankDruid(character core.Character, options proto.Player) *FeralTan
 type FeralTankDruid struct {
 	*druid.Druid
 
-	Rotation proto.FeralTankDruid_Rotation
-	Options  proto.FeralTankDruid_Options
+	Rotation *proto.FeralTankDruid_Rotation
+	Options  *proto.FeralTankDruid_Options
 }
 
 func (bear *FeralTankDruid) GetDruid() *druid.Druid {

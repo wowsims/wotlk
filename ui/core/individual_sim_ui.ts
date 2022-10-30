@@ -149,6 +149,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		other?: OtherDefaults,
 	},
 
+	playerInputs?: InputSection,
 	playerIconInputs: Array<IconInputConfig<Player<SpecType>, any>>,
 	petConsumeInputs?: Array<IconInputConfig<Player<SpecType>, any>>,
 	rotationInputs: InputSection;
@@ -827,6 +828,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 			});
 		};
+
+		if (this.individualConfig.playerInputs?.inputs.length) {
+			configureInputSection(this.rootElem.getElementsByClassName('race-section')[0] as HTMLElement, this.individualConfig.playerInputs);
+		}
 
 		if (this.individualConfig.rotationIconInputs?.length) {
 			const rotationIconSection = this.rootElem.getElementsByClassName('rotation-iconrow')[0] as HTMLElement;

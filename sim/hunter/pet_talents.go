@@ -20,11 +20,11 @@ func (hp *HunterPet) ApplyTalents() {
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
 	hp.AutoAttacks.MHConfig.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
-	hp.PseudoStats.ArcaneDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FireDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.FrostDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.NatureDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
-	hp.PseudoStats.ShadowDamageTakenMultiplier *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= 1 - 0.05*float64(talents.GreatResistance)
+	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= 1 - 0.05*float64(talents.GreatResistance)
 
 	if talents.GreatStamina != 0 {
 		hp.MultiplyStat(stats.Stamina, 1.0+0.04*float64(talents.GreatStamina))

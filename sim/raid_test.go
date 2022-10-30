@@ -6,8 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"google.golang.org/protobuf/encoding/protojson"
-
 	balanceDruid "github.com/wowsims/wotlk/sim/druid/balance"
 	hunter "github.com/wowsims/wotlk/sim/hunter"
 	shadowPriest "github.com/wowsims/wotlk/sim/priest/shadow"
@@ -88,7 +86,7 @@ var P1BMHunter = &proto.Player{
 
 var BasicRaid = &proto.Raid{
 	Parties: []*proto.Party{
-		&proto.Party{
+		{
 			Players: []*proto.Player{
 				P1BalanceDruid,
 				P1ElementalShaman,
@@ -96,7 +94,7 @@ var BasicRaid = &proto.Raid{
 				P1ShadowPriest,
 			},
 		},
-		&proto.Party{
+		{
 			Players: []*proto.Player{
 				P1BMHunter,
 			},
@@ -108,18 +106,18 @@ var BasicRaid = &proto.Raid{
 func TestSparseRaid(t *testing.T) {
 	sparseRaid := &proto.Raid{
 		Parties: []*proto.Party{
-			&proto.Party{},
-			&proto.Party{
+			{},
+			{
 				Players: []*proto.Player{
-					&proto.Player{},
+					{},
 					P1ElementalShaman,
-					&proto.Player{},
+					{},
 				},
 			},
-			&proto.Party{
+			{
 				Players: []*proto.Player{
-					&proto.Player{},
-					&proto.Player{},
+					{},
+					{},
 				},
 			},
 		},
@@ -146,6 +144,8 @@ func TestBasicRaid(t *testing.T) {
 	core.RaidSimTest("P1 ST", t, rsr, 6323.79)
 }
 
+// To quickly debug raid sim issues, uncomment this test and copy in a request string.
+/*
 func testRaidString(t *testing.T, raidString string) {
 	rsr := &proto.RaidSimRequest{}
 
@@ -158,8 +158,8 @@ func testRaidString(t *testing.T, raidString string) {
 	//core.RaidSimTest("Fixed Raid", t, rsr, 10000.00)
 }
 
-// To quickly debug raid sim issues, uncomment this test and copy in a request string.
-// func TestFixedRaid(t *testing.T) {
-// 	testRaidString(t, `
-// 	`)
-// }
+func TestFixedRaid(t *testing.T) {
+ 	testRaidString(t, `
+ 	`)
+}
+*/
