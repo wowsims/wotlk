@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var DeepWoundsActionID = core.ActionID{SpellID: 12867}
@@ -66,7 +67,7 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isMh bool) {
 	dot := warrior.DeepWoundsDots[target.Index]
 
-	dotDamageMultiplier := 0.16 * float64(warrior.Talents.DeepWounds) * warrior.PseudoStats.DamageDealtMultiplier * warrior.PseudoStats.PhysicalDamageDealtMultiplier
+	dotDamageMultiplier := 0.16 * float64(warrior.Talents.DeepWounds) * warrior.PseudoStats.DamageDealtMultiplier * warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 	if isMh {
 		dotDamage := (warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * dotDamageMultiplier
 		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage

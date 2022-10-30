@@ -114,7 +114,8 @@ func (shaman *Shaman) NextTotemAt(sim *core.Simulation) time.Duration {
 }
 
 // TryDropTotems will check to see if totems need to be re-cast.
-//  Returns whether we tried to cast a totem, regardless of whether it succeeded.
+//
+//	Returns whether we tried to cast a totem, regardless of whether it succeeded.
 func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 	var spell *core.Spell
 

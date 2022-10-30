@@ -42,6 +42,12 @@ export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<
 	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
 });
 
+export const ApplyPoisonsManually = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
+	fieldName: 'applyPoisonsManually',
+	label: 'Configure poisons manually',
+	labelTooltip: 'Prevent automatic poison configuration that is based on equipped weapons.',
+});
+
 export const RogueRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({

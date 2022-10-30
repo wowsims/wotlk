@@ -22,11 +22,11 @@ func (warlock *Warlock) ApplyTalents() {
 
 	// Malediction
 	maledictionMultiplier := 1. + 0.01*float64(warlock.Talents.Malediction)
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= maledictionMultiplier
-	warlock.PseudoStats.FireDamageDealtMultiplier *= maledictionMultiplier
-	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= maledictionMultiplier
-	warlock.PseudoStats.NatureDamageDealtMultiplier *= maledictionMultiplier
-	warlock.PseudoStats.HolyDamageDealtMultiplier *= maledictionMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= maledictionMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= maledictionMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= maledictionMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= maledictionMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= maledictionMultiplier
 
 	// Demonic Pact
 	if warlock.Talents.DemonicPact > 0 {
@@ -54,11 +54,11 @@ func (warlock *Warlock) ApplyTalents() {
 		if warlock.Talents.MasterDemonologist > 0 {
 			switch warlock.Options.Summon {
 			case proto.Warlock_Options_Imp:
-				warlock.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.FireDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.Pet.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Succubus:
-				warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.ShadowDamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+				warlock.Pet.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			case proto.Warlock_Options_Felguard:
 				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 				warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
@@ -139,7 +139,7 @@ func (warlock *Warlock) applyDeathsEmbrace() {
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
 			if isExecute == 35 {
-				warlock.PseudoStats.ShadowDamageDealtMultiplier *= multiplier
+				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= multiplier
 			}
 		})
 	})
@@ -237,12 +237,12 @@ func (warlock *Warlock) setupPyroclasm() {
 		ActionID: core.ActionID{SpellID: 63244},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier *= pyroclasmDamageBonus
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier *= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= pyroclasmDamageBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ShadowDamageDealtMultiplier /= pyroclasmDamageBonus
-			aura.Unit.PseudoStats.FireDamageDealtMultiplier /= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= pyroclasmDamageBonus
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] /= pyroclasmDamageBonus
 		},
 	})
 
@@ -515,11 +515,11 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 
 func (warlock *Warlock) setupDemonicPact() {
 	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.ShadowDamageDealtMultiplier *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.FireDamageDealtMultiplier *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.ArcaneDamageDealtMultiplier *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.NatureDamageDealtMultiplier *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.HolyDamageDealtMultiplier *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + demonicPactMultiplier
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + demonicPactMultiplier
 
 	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
@@ -552,7 +552,7 @@ func (warlock *Warlock) setupDemonicPact() {
 				icd.Use(sim)
 				newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
 				for i, party := range warlock.Party.Raid.Parties {
-					for j, _ := range party.Players {
+					for j := range party.Players {
 						if demonicPactAuras[i*5+j].IsActive() {
 							if demonicPactAuras[i*5+j].Priority < newSPBonus || demonicPactAuras[i*5+j].RemainingDuration(sim) < time.Second*10 {
 								demonicPactAuras[i*5+j].Deactivate(sim)

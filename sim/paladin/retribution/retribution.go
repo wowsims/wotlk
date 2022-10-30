@@ -13,7 +13,7 @@ func RegisterRetributionPaladin() {
 	core.RegisterAgentFactory(
 		proto.Player_RetributionPaladin{},
 		proto.Spec_SpecRetributionPaladin,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewRetributionPaladin(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,12 +26,12 @@ func RegisterRetributionPaladin() {
 	)
 }
 
-func NewRetributionPaladin(character core.Character, options proto.Player) *RetributionPaladin {
+func NewRetributionPaladin(character core.Character, options *proto.Player) *RetributionPaladin {
 	retOptions := options.GetRetributionPaladin()
 
 	ret := &RetributionPaladin{
-		Paladin:                    paladin.NewPaladin(character, *retOptions.Talents),
-		Rotation:                   *retOptions.Rotation,
+		Paladin:                    paladin.NewPaladin(character, retOptions.Talents),
+		Rotation:                   retOptions.Rotation,
 		Judgement:                  retOptions.Options.Judgement,
 		Seal:                       retOptions.Options.Seal,
 		UseDivinePlea:              retOptions.Rotation.UseDivinePlea,
@@ -92,7 +92,7 @@ type RetributionPaladin struct {
 	RotationInput     []*core.Spell
 	CastSequenceIndex int32
 
-	Rotation proto.RetributionPaladin_Rotation
+	Rotation *proto.RetributionPaladin_Rotation
 }
 
 func (ret *RetributionPaladin) GetPaladin() *paladin.Paladin {

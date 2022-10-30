@@ -1,8 +1,9 @@
 package deathknight
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -80,29 +81,25 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 				sim.AddPendingAction(pa)
 			}
 
-			dk.PseudoStats.PhysicalDamageTakenMultiplier *= physDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier *= physDmgTakenMult
-			dk.PseudoStats.ArcaneDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.FireDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.FrostDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.HolyDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.NatureDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.ShadowDamageTakenMultiplier *= spellDmgTakenMult
-			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= physDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= spellDmgTakenMult
 
 			rs.DoCost(sim)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.PseudoStats.PhysicalDamageTakenMultiplier /= physDmgTakenMult
-			dk.PseudoStats.PeriodicPhysicalDamageTakenMultiplier /= physDmgTakenMult
-			dk.PseudoStats.ArcaneDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.FireDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.FrostDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.HolyDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.NatureDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.ShadowDamageTakenMultiplier /= spellDmgTakenMult
-			dk.PseudoStats.PeriodicShadowDamageTakenMultiplier /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= physDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= spellDmgTakenMult
+			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= spellDmgTakenMult
 		},
 
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

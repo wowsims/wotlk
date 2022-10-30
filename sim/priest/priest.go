@@ -11,7 +11,7 @@ import (
 type Priest struct {
 	core.Character
 	SelfBuffs
-	Talents proto.PriestTalents
+	Talents *proto.PriestTalents
 
 	SurgeOfLight bool
 
@@ -93,7 +93,7 @@ type SelfBuffs struct {
 	UseShadowfiend bool
 	UseInnerFire   bool
 
-	PowerInfusionTarget proto.RaidTarget
+	PowerInfusionTarget *proto.RaidTarget
 }
 
 func (priest *Priest) GetCharacter() *core.Character {
@@ -199,7 +199,7 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 func (priest *Priest) Reset(_ *core.Simulation) {
 }
 
-func New(char core.Character, selfBuffs SelfBuffs, talents proto.PriestTalents) *Priest {
+func New(char core.Character, selfBuffs SelfBuffs, talents *proto.PriestTalents) *Priest {
 	priest := &Priest{
 		Character: char,
 		SelfBuffs: selfBuffs,

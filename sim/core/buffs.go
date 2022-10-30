@@ -4,12 +4,14 @@ import (
 	"math"
 	"time"
 
+	googleProto "google.golang.org/protobuf/proto"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Applies buffs that affect individual players.
-func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
+func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
 	if raidBuffs.ArcaneBrilliance || raidBuffs.FelIntelligence > 0 {
@@ -293,11 +295,15 @@ func applyBuffEffects(agent Agent, raidBuffs proto.RaidBuffs, partyBuffs proto.P
 }
 
 // Applies buffs to pets.
-func applyPetBuffEffects(petAgent PetAgent, raidBuffs proto.RaidBuffs, partyBuffs proto.PartyBuffs, individualBuffs proto.IndividualBuffs) {
+func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
 	if petAgent.GetPet().IsGuardian() {
 		return
 	}
+
+	raidBuffs = googleProto.Clone(raidBuffs).(*proto.RaidBuffs)
+	partyBuffs = googleProto.Clone(partyBuffs).(*proto.PartyBuffs)
+	individualBuffs = googleProto.Clone(individualBuffs).(*proto.IndividualBuffs)
 
 	// We need to modify the buffs a bit because some things are applied to pets by
 	// the owner during combat (Bloodlust) or don't make sense for a pet.
@@ -348,10 +354,10 @@ func InspirationAura(unit *Unit, points int32) *Aura {
 		ActionID: ActionID{SpellID: 15363},
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= multiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= multiplier
 		},
 	})
 }
@@ -755,10 +761,10 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		ActionID: actionID,
 		Duration: UnholyFrenzyDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.PhysicalDamageDealtMultiplier *= 1.2
+			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.2
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.PhysicalDamageDealtMultiplier /= 1.2
+			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 		},
 	})
 }
@@ -881,10 +887,7 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only cast innervate when very low on mana, to make sure all other mana CDs are prioritized.
-				if character.CurrentMana() > innervateThreshold {
-					return false
-				}
-				return true
+				return character.CurrentMana() <= innervateThreshold
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				innervateAura.Activate(sim)
@@ -971,10 +974,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// A normal resto shaman would wait to use MTT.
-				if sim.CurrentTime < initialDelay {
-					return false
-				}
-				return true
+				return sim.CurrentTime >= initialDelay
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				mttAura.Activate(sim)

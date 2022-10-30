@@ -32,7 +32,7 @@ type Environment struct {
 	postFinalizeEffects []PostFinalizeEffect
 }
 
-func NewEnvironment(raidProto proto.Raid, encounterProto proto.Encounter) (*Environment, *proto.RaidStats) {
+func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats) {
 	env := &Environment{
 		State: Created,
 	}
@@ -45,7 +45,7 @@ func NewEnvironment(raidProto proto.Raid, encounterProto proto.Encounter) (*Envi
 }
 
 // The construction phase.
-func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Encounter) {
+func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.Encounter) {
 	env.Encounter = NewEncounter(encounterProto)
 	env.BaseDuration = env.Encounter.Duration
 	env.DurationVariation = env.Encounter.DurationVariation
@@ -66,7 +66,7 @@ func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Enc
 
 	// Apply extra debuffs from raid.
 	if raidProto.Debuffs != nil && len(env.Encounter.Targets) > 0 {
-		applyDebuffEffects(&env.Encounter.Targets[0].Unit, *raidProto.Debuffs)
+		applyDebuffEffects(&env.Encounter.Targets[0].Unit, raidProto.Debuffs)
 	}
 
 	// Assign target or target using Tanks field.
@@ -76,7 +76,7 @@ func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Enc
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
 				raidTargetProto := raidProto.Tanks[targetProto.TankIndex]
 				if raidTargetProto != nil {
-					raidTarget := env.Raid.GetPlayerFromRaidTarget(*raidTargetProto)
+					raidTarget := env.Raid.GetPlayerFromRaidTarget(raidTargetProto)
 					if raidTarget != nil {
 						target.CurrentTarget = &raidTarget.GetCharacter().Unit
 					}
@@ -89,7 +89,7 @@ func (env *Environment) construct(raidProto proto.Raid, encounterProto proto.Enc
 }
 
 // The initialization phase.
-func (env *Environment) initialize(raidProto proto.Raid, encounterProto proto.Encounter) *proto.RaidStats {
+func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.Encounter) *proto.RaidStats {
 	for _, target := range env.Encounter.Targets {
 		if target.Index < int32(len(encounterProto.Targets)) {
 			target.initialize(encounterProto.Targets[target.Index])
@@ -117,7 +117,7 @@ func (env *Environment) initialize(raidProto proto.Raid, encounterProto proto.En
 }
 
 // The finalization phase.
-func (env *Environment) finalize(raidProto proto.Raid, encounterProto proto.Encounter, raidStats *proto.RaidStats) {
+func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.Encounter, raidStats *proto.RaidStats) {
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
 	}

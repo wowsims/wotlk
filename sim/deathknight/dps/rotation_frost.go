@@ -8,8 +8,6 @@ import (
 )
 
 type FrostRotation struct {
-	dk *DpsDeathknight
-
 	oblitCount int32
 	oblitDelay time.Duration
 	uaCycle    bool

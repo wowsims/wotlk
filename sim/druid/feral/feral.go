@@ -12,7 +12,7 @@ func RegisterFeralDruid() {
 	core.RegisterAgentFactory(
 		proto.Player_FeralDruid{},
 		proto.Spec_SpecFeralDruid,
-		func(character core.Character, options proto.Player) core.Agent {
+		func(character core.Character, options *proto.Player) core.Agent {
 			return NewFeralDruid(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,18 +25,17 @@ func RegisterFeralDruid() {
 	)
 }
 
-func NewFeralDruid(character core.Character, options proto.Player) *FeralDruid {
+func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid {
 	feralOptions := options.GetFeralDruid()
-
 	selfBuffs := druid.SelfBuffs{}
+
+	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
 	if feralOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = *feralOptions.Options.InnervateTarget
-	} else {
-		selfBuffs.InnervateTarget.TargetIndex = -1
+		selfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
 	}
 
 	cat := &FeralDruid{
-		Druid:   druid.New(character, druid.Cat, selfBuffs, *feralOptions.Talents),
+		Druid:   druid.New(character, druid.Cat, selfBuffs, feralOptions.Talents),
 		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
 	}
 

@@ -26,9 +26,9 @@ type focusBar struct {
 	tickAction  *core.PendingAction
 }
 
-func (hunterPet *HunterPet) EnableFocusBar(regenMultiplier float64, onFocusGain OnFocusGain) {
-	hunterPet.focusBar = focusBar{
-		hunterPet:    hunterPet,
+func (hp *HunterPet) EnableFocusBar(regenMultiplier float64, onFocusGain OnFocusGain) {
+	hp.focusBar = focusBar{
+		hunterPet:    hp,
 		focusPerTick: BaseFocusPerTick * regenMultiplier,
 		onFocusGain:  onFocusGain,
 	}

@@ -65,7 +65,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				results[i] = ohSpell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, ohSpell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			}
-			for i, _ := range sim.Encounter.Targets {
+			for i := range sim.Encounter.Targets {
 				ohSpell.DealDamage(sim, results[i])
 			}
 
@@ -74,7 +74,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				results[i] = mhSpell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, mhSpell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			}
-			for i, _ := range sim.Encounter.Targets {
+			for i := range sim.Encounter.Targets {
 				mhSpell.DealDamage(sim, results[i])
 			}
 		},

@@ -486,8 +486,7 @@ func init() {
 			},
 		})
 
-		const hasteBonus = 212.0
-		const procChance = 3.7 / 60.0
+		const procChance = 3.7 / 60
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Glaive of the Pit",

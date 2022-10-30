@@ -230,11 +230,3 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		},
 	})
 }
-
-func applyAuraOnLanded(aura *core.Aura) func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-	return func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-		if result.Landed() {
-			aura.Activate(sim)
-		}
-	}
-}

@@ -7,6 +7,8 @@ import { Consumes } from '../core/proto/common.js';
 import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
+import { Race } from '../core/proto/common.js';
+import { RangedWeaponType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
@@ -125,6 +127,17 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			modifyDisplayStats: (player: Player<Spec.SpecHunter>) => {
 				let stats = new Stats();
 				stats = stats.addStat(Stat.StatMeleeCrit, player.getTalents().lethalShots * 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+
+				const rangedWeapon = player.getEquippedItem(ItemSlot.ItemSlotRanged);
+				if (rangedWeapon?.enchant?.id == 41167) {
+					stats = stats.addStat(Stat.StatMeleeCrit, 40);
+				}
+				if (player.getRace() == Race.RaceDwarf && rangedWeapon?.item.rangedWeaponType == RangedWeaponType.RangedWeaponTypeGun) {
+					stats = stats.addStat(Stat.StatMeleeCrit, 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+				}
+				if (player.getRace() == Race.RaceTroll && rangedWeapon?.item.rangedWeaponType == RangedWeaponType.RangedWeaponTypeBow) {
+					stats = stats.addStat(Stat.StatMeleeCrit, 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
+				}
 
 				return {
 					talents: stats,

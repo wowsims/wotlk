@@ -12,7 +12,7 @@ import (
  */
 func GetGearList(request *proto.GearListRequest) *proto.GearListResult {
 	result := &proto.GearListResult{
-		Encounters: presetEncounters[:],
+		Encounters: presetEncounters,
 	}
 
 	for i := range items.Items {
@@ -35,7 +35,7 @@ func GetGearList(request *proto.GearListRequest) *proto.GearListResult {
  * Returns character stats taking into account gear / buffs / consumes / etc
  */
 func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {
-	_, raidStats := NewEnvironment(*csr.Raid, proto.Encounter{})
+	_, raidStats := NewEnvironment(csr.Raid, &proto.Encounter{})
 
 	return &proto.ComputeStatsResult{
 		RaidStats: raidStats,
@@ -48,7 +48,7 @@ func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {
 func StatWeights(request *proto.StatWeightsRequest) *proto.StatWeightsResult {
 	statsToWeigh := stats.ProtoArrayToStatsList(request.StatsToWeigh)
 
-	result := CalcStatWeight(*request, statsToWeigh, stats.Stat(request.EpReferenceStat), nil)
+	result := CalcStatWeight(request, statsToWeigh, stats.Stat(request.EpReferenceStat), nil)
 
 	return result.ToProto()
 }
@@ -56,7 +56,7 @@ func StatWeights(request *proto.StatWeightsRequest) *proto.StatWeightsResult {
 func StatWeightsAsync(request *proto.StatWeightsRequest, progress chan *proto.ProgressMetrics) {
 	statsToWeigh := stats.ProtoArrayToStatsList(request.StatsToWeigh)
 	go func() {
-		result := CalcStatWeight(*request, statsToWeigh, stats.Stat(request.EpReferenceStat), progress)
+		result := CalcStatWeight(request, statsToWeigh, stats.Stat(request.EpReferenceStat), progress)
 		progress <- &proto.ProgressMetrics{
 			FinalWeightResult: result.ToProto(),
 		}
@@ -67,9 +67,9 @@ func StatWeightsAsync(request *proto.StatWeightsRequest, progress chan *proto.Pr
  * Runs multiple iterations of the sim with a full raid.
  */
 func RunRaidSim(request *proto.RaidSimRequest) *proto.RaidSimResult {
-	return RunSim(*request, nil)
+	return RunSim(request, nil)
 }
 
 func RunRaidSimAsync(request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) {
-	go RunSim(*request, progress)
+	go RunSim(request, progress)
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func applyDebuffEffects(target *Unit, debuffs proto.Debuffs) {
+func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs) {
 	if debuffs.Misery {
 		MakePermanent(MiseryAura(target))
 	}
@@ -293,23 +293,23 @@ func CurseOfElementsAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 47865},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: -165, stats.FireResistance: -165, stats.FrostResistance: -165, stats.ShadowResistance: -165, stats.NatureResistance: -165})
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= multiplier
 			}
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.ArcaneResistance: 165, stats.FireResistance: 165, stats.FrostResistance: 165, stats.ShadowResistance: 165, stats.NatureResistance: 165})
 		},
@@ -325,22 +325,22 @@ func EarthAndMoonAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 48511},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= multiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= multiplier
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= multiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= multiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= multiplier
 			}
 		},
 	})
@@ -380,22 +380,22 @@ func EbonPlaguebringerAura(target *Unit, dkIndex int) *Aura {
 		ActionID: ActionID{SpellID: 51161},
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier *= magicMultiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier *= magicMultiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= magicMultiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier *= magicMultiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier *= magicMultiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= magicMultiplier
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if !target.HasActiveAuraWithTagExcludingAura(spelldmgtag, aura) {
-				aura.Unit.PseudoStats.ArcaneDamageTakenMultiplier /= magicMultiplier
-				aura.Unit.PseudoStats.FireDamageTakenMultiplier /= magicMultiplier
-				aura.Unit.PseudoStats.FrostDamageTakenMultiplier /= magicMultiplier
-				aura.Unit.PseudoStats.ShadowDamageTakenMultiplier /= magicMultiplier
-				aura.Unit.PseudoStats.NatureDamageTakenMultiplier /= magicMultiplier
-				aura.Unit.PseudoStats.HolyDamageTakenMultiplier /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= magicMultiplier
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= magicMultiplier
 			}
 		},
 	})
@@ -420,10 +420,10 @@ func bloodFrenzySavageCombatAura(target *Unit, label string, id ActionID, points
 		// No fixed duration, lasts as long as the bleed that activates it.
 		Duration: NeverExpires,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier *= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= multiplier
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.PhysicalDamageTakenMultiplier /= multiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= multiplier
 		},
 	})
 }
@@ -976,7 +976,7 @@ func RuneOfRazoriceVulnerabilityAura(target *Unit) *Aura {
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
 			oldMultiplier := 1.0 + float64(oldStacks)*frostVulnPerStack
 			newMultiplier := 1.0 + float64(newStacks)*frostVulnPerStack
-			aura.Unit.PseudoStats.FrostDamageTakenMultiplier *= newMultiplier / oldMultiplier
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= newMultiplier / oldMultiplier
 		},
 	})
 	return aura

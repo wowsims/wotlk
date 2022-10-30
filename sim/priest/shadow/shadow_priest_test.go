@@ -21,8 +21,8 @@ func TestShadow(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Ideal", SpecOptions: PlayerOptionsIdeal},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-			core.SpecOptionsCombo{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
+			{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+			{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
 
 		Glyphs:   DefaultGlyphs,

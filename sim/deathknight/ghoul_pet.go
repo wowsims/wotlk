@@ -120,8 +120,8 @@ func (ghoulPet *GhoulPet) IsPetGhoul() bool {
 	return ghoulPet.dkOwner.Talents.MasterOfGhouls && ghoulPet == ghoulPet.dkOwner.Ghoul
 }
 
-func (ghoul *GhoulPet) GetPet() *core.Pet {
-	return &ghoul.Pet
+func (ghoulPet *GhoulPet) GetPet() *core.Pet {
+	return &ghoulPet.Pet
 }
 
 func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {

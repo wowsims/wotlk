@@ -22,7 +22,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 
 	var spellTag int32
 	if rogue.Options.TricksOfTheTradeTarget != nil {
-		target := rogue.Env.Raid.GetPlayerFromRaidTarget(*rogue.Options.TricksOfTheTradeTarget).GetCharacter()
+		target := rogue.Env.Raid.GetPlayerFromRaidTarget(rogue.Options.TricksOfTheTradeTarget).GetCharacter()
 		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, spellTag)
 	} else {
 		target := rogue.GetCharacter()

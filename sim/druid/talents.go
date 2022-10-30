@@ -13,7 +13,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.CastSpeedMultiplier *= 1 + (float64(druid.Talents.CelestialFocus) * 0.01)
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
-	druid.PseudoStats.PhysicalDamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
+	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
 	if druid.InForm(Bear) {
 		druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.5/3)*float64(druid.Talents.ThickHide))
@@ -263,12 +263,12 @@ func (druid *Druid) applyOmenOfClarity() {
 			ActionID: core.ActionID{SpellID: 70718},
 			Duration: time.Second * 6,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				druid.PseudoStats.ArcaneDamageDealtMultiplier *= 1.15
-				druid.PseudoStats.NatureDamageDealtMultiplier *= 1.15
+				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1.15
+				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1.15
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				druid.PseudoStats.ArcaneDamageDealtMultiplier /= 1.15
-				druid.PseudoStats.NatureDamageDealtMultiplier /= 1.15
+				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] /= 1.15
+				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] /= 1.15
 			},
 		})
 	}
@@ -287,6 +287,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if spell == druid.Moonfire || spell == druid.InsectSwarm {
 				return
 			}
+			// TODO looks fishy, chanceToProc is unused
 			chanceToProc := 0.0875 // https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if spell == druid.Hurricane {
 				chanceToProc *= 0.223

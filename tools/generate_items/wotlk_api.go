@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -462,7 +462,7 @@ func getWotlkItemResponse(itemID int, tooltipsDB map[int]string) WotlkItemRespon
 		}
 		defer result.Body.Close()
 
-		body, _ := ioutil.ReadAll(result.Body)
+		body, _ := io.ReadAll(result.Body)
 		bstr := string(body)
 		bstr = strings.Replace(bstr, fmt.Sprintf("$WowheadPower.registerItem('%d', 0, ", itemID), "", 1)
 		bstr = strings.TrimSuffix(bstr, ";")

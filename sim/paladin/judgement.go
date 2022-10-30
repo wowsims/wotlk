@@ -10,6 +10,8 @@ import (
 // const JudgementDuration = time.Second * 20
 
 // Shared conditions required to be able to cast any Judgement.
+//
+//nolint:unused
 func (paladin *Paladin) canJudgement(sim *core.Simulation) bool {
 	return paladin.CurrentSeal != nil && paladin.CurrentSeal.IsActive() && paladin.JudgementOfLight.IsReady(sim)
 }

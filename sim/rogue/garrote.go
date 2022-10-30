@@ -46,7 +46,7 @@ func (rogue *Rogue) registerGarrote() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				rogue.garroteDot.Spell = spell
-				rogue.garroteDot.NumberOfTicks = int(numTicks)
+				rogue.garroteDot.NumberOfTicks = numTicks
 				rogue.garroteDot.RecomputeAuraDuration()
 				rogue.garroteDot.Apply(sim)
 				rogue.ApplyFinisher(sim, spell)

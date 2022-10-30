@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"math"
 	"strings"
+
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {

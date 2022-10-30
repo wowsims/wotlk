@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-//T7 Naxx
+// T7 Naxx
 var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
 	Name: "Frostfire Garb",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -22,7 +22,7 @@ var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-//T8 Ulduar
+// T8 Ulduar
 var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	Name: "Kirin Tor Garb",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -46,7 +46,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-//T9
+// T9
 var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Khadgar's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
@@ -59,7 +59,7 @@ var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
 	},
 })
 
-//T9 horde
+// T9 horde
 var ItemSetSunstridersRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Sunstrider's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{

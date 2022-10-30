@@ -8,6 +8,7 @@ import { IndividualSimSettings } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player.js';
 import { classNames, nameToClass, nameToRace } from '../proto_utils/names.js';
+import { specNames } from '../proto_utils/utils.js';
 import { talentSpellIdsToTalentString } from '../talents/factory.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { downloadString, getEnumValues } from '../utils.js';
@@ -140,12 +141,28 @@ class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	}
 
 	getData(): string {
-		const epValues = this.simUI.player.getEpWeights();
+		const player = this.simUI.player;
+		const epValues = player.getEpWeights();
 		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
-		return `https://eightyupgrades.com/ep/import?name=${encodeURIComponent('WoWSims Weights')}` +
-			allStats
-				.filter(stat => epValues.getStat(stat) != 0)
-				.map(stat => `&${Individual80UEPExporter.linkNames[stat]}=${epValues.getStat(stat).toFixed(3)}`).join('');
+
+		const namesToWeights: Record<string, number> = {};
+		allStats
+		.filter(stat => epValues.getStat(stat) != 0)
+		.forEach(stat => {
+			const statName = Individual80UEPExporter.linkNames[stat];
+			const weight = epValues.getStat(stat);
+
+			// Need to add together stats with the same name (e.g. hit/crit/haste).
+			if (namesToWeights[statName]) {
+				namesToWeights[statName] += weight;
+			} else {
+				namesToWeights[statName] = weight;
+			}
+		});
+
+		return `https://eightyupgrades.com/ep/import?name=${encodeURIComponent(`${specNames[player.spec]} WoWSims Weights`)}` +
+			Object.keys(namesToWeights)
+				.map(statName => `&${statName}=${namesToWeights[statName].toFixed(3)}`).join('');
 	}
 
 	static linkNames: Record<Stat, string> = {
@@ -156,9 +173,9 @@ class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatSpirit]: 'spirit',
 		[Stat.StatSpellPower]: 'spellDamage',
 		[Stat.StatMP5]: 'mp5',
-		[Stat.StatSpellHit]: 'spellHitRating',
-		[Stat.StatSpellCrit]: 'spellCritRating',
-		[Stat.StatSpellHaste]: 'spellHasteRating',
+		[Stat.StatSpellHit]: 'hitRating',
+		[Stat.StatSpellCrit]: 'critRating',
+		[Stat.StatSpellHaste]: 'hasteRating',
 		[Stat.StatSpellPenetration]: 'spellPen',
 		[Stat.StatAttackPower]: 'attackPower',
 		[Stat.StatMeleeHit]: 'hitRating',
@@ -170,7 +187,7 @@ class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatEnergy]: 'energy',
 		[Stat.StatRage]: 'rage',
 		[Stat.StatArmor]: 'armor',
-		[Stat.StatRangedAttackPower]: 'rangedAttackPower',
+		[Stat.StatRangedAttackPower]: 'attackPower',
 		[Stat.StatDefense]: 'defenseRating',
 		[Stat.StatBlock]: 'blockRating',
 		[Stat.StatBlockValue]: 'blockValue',
@@ -196,12 +213,28 @@ class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	}
 
 	getData(): string {
-		const epValues = this.simUI.player.getEpWeights();
+		const player = this.simUI.player;
+		const epValues = player.getEpWeights();
 		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
-		return `( Pawn: v1: "WoWSims Weights": Class=${classNames[this.simUI.player.getClass()]},` +
-			allStats
-				.filter(stat => epValues.getStat(stat) != 0)
-				.map(stat => `${IndividualPawnEPExporter.statNames[stat]}=${epValues.getStat(stat).toFixed(3)}`).join(',') +
+
+		const namesToWeights: Record<string, number> = {};
+		allStats
+		.filter(stat => epValues.getStat(stat) != 0)
+		.forEach(stat => {
+			const statName = IndividualPawnEPExporter.statNames[stat];
+			const weight = epValues.getStat(stat);
+
+			// Need to add together stats with the same name (e.g. hit/crit/haste).
+			if (namesToWeights[statName]) {
+				namesToWeights[statName] += weight;
+			} else {
+				namesToWeights[statName] = weight;
+			}
+		});
+
+		return `( Pawn: v1: "${specNames[player.spec]} WoWSims Weights": Class=${classNames[player.getClass()]},` +
+			Object.keys(namesToWeights)
+				.map(statName => `${statName}=${namesToWeights[statName].toFixed(3)}`).join(',') +
 			' )';
 	}
 
@@ -213,9 +246,9 @@ class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatSpirit]: 'Spirit',
 		[Stat.StatSpellPower]: 'SpellDamage',
 		[Stat.StatMP5]: 'Mp5',
-		[Stat.StatSpellHit]: 'SpellHitRating',
-		[Stat.StatSpellCrit]: 'SpellCritRating',
-		[Stat.StatSpellHaste]: 'SpellHasteRating',
+		[Stat.StatSpellHit]: 'HitRating',
+		[Stat.StatSpellCrit]: 'CritRating',
+		[Stat.StatSpellHaste]: 'HasteRating',
 		[Stat.StatSpellPenetration]: 'SpellPen',
 		[Stat.StatAttackPower]: 'Ap',
 		[Stat.StatMeleeHit]: 'HitRating',
@@ -227,7 +260,7 @@ class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatEnergy]: 'Energy',
 		[Stat.StatRage]: 'Rage',
 		[Stat.StatArmor]: 'Armor',
-		[Stat.StatRangedAttackPower]: 'Rap',
+		[Stat.StatRangedAttackPower]: 'Ap',
 		[Stat.StatDefense]: 'DefenseRating',
 		[Stat.StatBlock]: 'BlockRating',
 		[Stat.StatBlockValue]: 'BlockValue',

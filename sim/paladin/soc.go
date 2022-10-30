@@ -28,21 +28,48 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
 	results := make([]*core.SpellResult, numHits)
 
-	baseMultiplierAdditive := 1 +
-		paladin.getItemSetLightswornBattlegearBonus4() +
-		paladin.getTalentTwoHandedWeaponSpecializationBonus()
+	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
+
+		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			(1 + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()),
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mhWeaponDamage := 0 +
+				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+				spell.BonusWeaponDamage()
+			baseDamage := 0.19*mhWeaponDamage +
+				0.08*spell.MeleeAttackPower() +
+				0.13*spell.SpellPower()
+
+			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+		},
+	})
 
 	onSpecialOrSwingActionID := core.ActionID{SpellID: 20424}
 	onSpecialOrSwingProcCleave := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    onSpecialOrSwingActionID, // Seal of Command damage bonus for single target spells.
+		ActionID:    onSpecialOrSwingActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		DamageMultiplierAdditive: baseMultiplierAdditive,
-		DamageMultiplier:         0.36,
-		CritMultiplier:           paladin.MeleeCritMultiplier(),
-		ThreatMultiplier:         1,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			0.36, // Only 36% of weapon damage.
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			curTarget := target
@@ -64,15 +91,17 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	})
 
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    onSpecialOrSwingActionID, // Seal of Command damage bonus for cleaves.
+		ActionID:    onSpecialOrSwingActionID,
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		DamageMultiplierAdditive: baseMultiplierAdditive,
-		DamageMultiplier:         0.36,
-		CritMultiplier:           paladin.MeleeCritMultiplier(),
-		ThreatMultiplier:         1,
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4()) *
+			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()) *
+			0.36, // Only 36% of weapon damage.
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0 +
@@ -88,8 +117,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfCommand) {
 		glyphManaMetrics = paladin.NewManaMetrics(core.ActionID{ItemID: 41094})
 	}
-
-	var onJudgementProc *core.Spell
 
 	// Seal of Command aura.
 	auraActionID := core.ActionID{SpellID: 20375}
@@ -117,14 +144,12 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 					// For SoC this is a cleave.
 					onSpecialOrSwingProcCleave.Cast(sim, result.Target)
 				}
-			} else {
-				if spell.IsMelee() {
-					// Temporary check to avoid AOE double procing.
-					if spell.SpellID == paladin.HammerOfTheRighteous.SpellID || spell.SpellID == paladin.DivineStorm.SpellID {
-						onSpecialOrSwingProc.Cast(sim, result.Target)
-					} else {
-						onSpecialOrSwingProcCleave.Cast(sim, result.Target)
-					}
+			} else if spell.IsMelee() {
+				// Temporary check to avoid AOE double procing.
+				if spell.SpellID == paladin.HammerOfTheRighteous.SpellID || spell.SpellID == paladin.DivineStorm.SpellID {
+					onSpecialOrSwingProc.Cast(sim, result.Target)
+				} else {
+					onSpecialOrSwingProcCleave.Cast(sim, result.Target)
 				}
 			}
 		},
@@ -147,8 +172,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			},
 		},
 
-		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -157,32 +180,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 			}
 			paladin.CurrentSeal = aura
 			paladin.CurrentSeal.Activate(sim)
-		},
-	})
-
-	onJudgementProc = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
-		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
-
-		DamageMultiplierAdditive: baseMultiplierAdditive +
-			paladin.getMajorGlyphOfJudgementBonus() +
-			paladin.getTalentTheArtOfWarBonus(),
-		DamageMultiplier: 1,
-		CritMultiplier:   paladin.MeleeCritMultiplier(),
-		ThreatMultiplier: 1,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mhWeaponDamage := 0 +
-				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
-			baseDamage := 0.19*mhWeaponDamage +
-				0.08*spell.MeleeAttackPower() +
-				0.13*spell.SpellPower()
-
-			// Secondary Judgements cannot miss if the Primary Judgement hit, only roll for crit.
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 		},
 	})
 }

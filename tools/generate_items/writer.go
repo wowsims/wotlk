@@ -157,7 +157,7 @@ func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) stri
 	}
 	gemStr += fmt.Sprintf("Phase:%d, ", phase)
 	gemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(gemResponse.GetQuality()).String())
-	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", proto.GemColor(gemResponse.GetSocketColor()).String())
+	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", gemResponse.GetSocketColor().String())
 	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemDeclaration.Stats))
 
 	if gemResponse.GetUnique() {
@@ -293,25 +293,25 @@ func statsToGoString(statlist Stats, overrides Stats) string {
 
 // If any of these match the item name, don't include it.
 var denyListNameRegexes = []*regexp.Regexp{
-	regexp.MustCompile("PH\\]"),
-	regexp.MustCompile("TEST"),
-	regexp.MustCompile("Test"),
-	regexp.MustCompile("Bracer 3"),
-	regexp.MustCompile("Bracer 2"),
-	regexp.MustCompile("Bracer 1"),
-	regexp.MustCompile("Boots 3"),
-	regexp.MustCompile("Boots 2"),
-	regexp.MustCompile("Boots 1"),
-	regexp.MustCompile("zOLD"),
-	regexp.MustCompile("30 Epic"),
-	regexp.MustCompile("Indalamar"),
-	regexp.MustCompile("QR XXXX"),
-	regexp.MustCompile("Deprecated: Keanna"),
-	regexp.MustCompile("90 Epic"),
-	regexp.MustCompile("66 Epic"),
-	regexp.MustCompile("63 Blue"),
-	regexp.MustCompile("90 Green"),
-	regexp.MustCompile("63 Green"),
+	regexp.MustCompile(`PH\]`),
+	regexp.MustCompile(`TEST`),
+	regexp.MustCompile(`Test`),
+	regexp.MustCompile(`Bracer 3`),
+	regexp.MustCompile(`Bracer 2`),
+	regexp.MustCompile(`Bracer 1`),
+	regexp.MustCompile(`Boots 3`),
+	regexp.MustCompile(`Boots 2`),
+	regexp.MustCompile(`Boots 1`),
+	regexp.MustCompile(`zOLD`),
+	regexp.MustCompile(`30 Epic`),
+	regexp.MustCompile(`Indalamar`),
+	regexp.MustCompile(`QR XXXX`),
+	regexp.MustCompile(`Deprecated: Keanna`),
+	regexp.MustCompile(`90 Epic`),
+	regexp.MustCompile(`66 Epic`),
+	regexp.MustCompile(`63 Blue`),
+	regexp.MustCompile(`90 Green`),
+	regexp.MustCompile(`63 Green`),
 }
 
 // allowList allows overriding to allow an item
@@ -379,6 +379,12 @@ var allowList = map[int]bool{
 	15057: true, // Stormshroud Pants
 	15058: true, // Stormshroud Shoulders
 	21278: true, // Stormshroud Gloves
+
+	// Grand Marshal / High Warlord Weapons
+	18843: true,
+	18844: true,
+	18847: true,
+	18848: true,
 
 	41752: true, // Brunnhildar Axe
 

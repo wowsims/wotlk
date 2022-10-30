@@ -445,13 +445,8 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 			// Since this is our last BF, wait until we have SND / procs up.
 			sndTimeRemaining := rogue.SliceAndDiceAura.RemainingDuration(sim)
-			if sndTimeRemaining >= time.Second {
-				return true
-			}
-
 			// TODO: Wait for dst/mongoose procs
-
-			return false
+			return sndTimeRemaining >= time.Second
 		},
 	})
 }
