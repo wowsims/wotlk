@@ -316,7 +316,7 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
-	// 33510: true, // Unseen moon idol
+	33510: true, // Unseen moon idol
 	34473: true, // Commendation of Kael'thas
 	29994: true, // Thalassian Wildercloak
 	30627: true, // Tsunami Talisman
