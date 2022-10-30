@@ -297,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
  value: {
-  dps: 7238.99389
-  tps: 7084.28042
+  dps: 7279.22564
+  tps: 7127.03315
  }
 }
 dps_results: {
