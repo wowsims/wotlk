@@ -20,6 +20,9 @@ type WarriorInputs struct {
 
 const (
 	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
+	ArmsTree            = 0
+	FuryTree            = 1
+	ProtTree            = 2
 )
 
 type Warrior struct {
@@ -28,9 +31,6 @@ type Warrior struct {
 	Talents *proto.WarriorTalents
 
 	WarriorInputs
-
-	// Main spec talent tree
-	MainSpec string
 
 	// Current state
 	Stance                 Stance
@@ -133,8 +133,6 @@ func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
-	warrior.MainSpec = []string{"Arms", "Fury", "Prot"}[warrior.PrimaryTalentTree]
-
 	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
 	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
 
