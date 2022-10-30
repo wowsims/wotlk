@@ -14,7 +14,7 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
 		moonkin.Rotation.UseBattleRes = false
-		moonkin.Rotation.UseMf = false
+		moonkin.Rotation.UseMf = true
 		moonkin.Rotation.UseIs = true
 		moonkin.Rotation.UseStarfire = true
 		moonkin.Rotation.UseWrath = true
@@ -88,7 +88,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if maximizeIsUptime && insectSwarmUptime <= 0 {
 					return moonkin.InsectSwarm
 				}
-				if moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds() && rotation.UseStarfire {
+				if (moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds()) && rotation.UseStarfire {
 					if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 						moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
@@ -137,8 +137,11 @@ func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *cor
 			return
 		}
 		mcd.Spell.Cast(sim, target)
+
 		if willUseOffensivePotion {
 			moonkin.potionUsed = true
 		}
+
+		moonkin.UpdateMajorCooldowns()
 	}
 }
