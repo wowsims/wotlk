@@ -332,7 +332,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 
 	character.Unit.finalize()
 
-	character.majorCooldownManager.finalize(character)
+	character.majorCooldownManager.finalize()
 
 	if playerStats != nil {
 		playerStats.FinalStats = character.GetStats().ToFloatArray()

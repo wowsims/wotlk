@@ -1,7 +1,7 @@
 package core
 
 import (
-	"sort"
+	"golang.org/x/exp/slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -187,11 +187,7 @@ func (mcdm *majorCooldownManager) initialize(character *Character) {
 	mcdm.character = character
 }
 
-func (mcdm *majorCooldownManager) finalize(character *Character) {
-	if mcdm.initialMajorCooldowns == nil {
-		mcdm.initialMajorCooldowns = []MajorCooldown{}
-	}
-
+func (mcdm *majorCooldownManager) finalize() {
 	// Match user-specified cooldown configs to existing cooldowns.
 	for i := range mcdm.initialMajorCooldowns {
 		mcd := &mcdm.initialMajorCooldowns[i]
@@ -443,11 +439,9 @@ func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
 }
 
 func (mcdm *majorCooldownManager) sort() {
-	sort.SliceStable(mcdm.majorCooldowns, func(i, j int) bool {
+	slices.SortStableFunc(mcdm.majorCooldowns, func(m1, m2 *MajorCooldown) bool {
 		// Since we're just comparing and don't actually care about the remaining CD, ok to use 0 instead of sim.CurrentTime.
-		cdA := mcdm.majorCooldowns[i].ReadyAt()
-		cdB := mcdm.majorCooldowns[j].ReadyAt()
-		return cdA < cdB || (cdA == cdB && mcdm.majorCooldowns[i].Priority > mcdm.majorCooldowns[j].Priority)
+		return m1.ReadyAt() < m2.ReadyAt() || (m1.ReadyAt() == m2.ReadyAt() && m1.Priority > m2.Priority)
 	})
 }
 
