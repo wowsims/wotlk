@@ -93,6 +93,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		moonkin.Rotation.UseSmartCooldowns = true
 		moonkin.Rotation.MaximizeMfUptime = false
 		moonkin.Rotation.MaximizeIsUptime = true
+		moonkin.Rotation.MaintainFaerieFire = true
 	}
 
 	if !moonkin.Rotation.UseMf {

@@ -163,6 +163,7 @@ message BalanceDruid {
 		bool use_smart_cooldowns = 11;
 		bool maximize_mf_uptime = 12;
 		bool maximize_is_uptime = 13;
+		bool maintain_faerie_fire = 14;
 	}
 
   Rotation rotation = 1;
