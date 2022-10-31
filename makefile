@@ -157,10 +157,10 @@ rundevserver: devserver
 	./wowsimwotlk --usefs=true --launch=false
 
 release: wowsimwotlk
-	GOOS=windows GOARCH=amd64 GOAMD64=v3 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=darwin GOARCH=amd64 GOAMD64=v3 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v3 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v3 go build -o wowsimcli-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
+	GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
 # Now compress into a zip because the files are getting large.
 	zip wowsimwotlk-windows.exe.zip wowsimwotlk-windows.exe
 	zip wowsimwotlk-amd64-darwin.zip wowsimwotlk-amd64-darwin
