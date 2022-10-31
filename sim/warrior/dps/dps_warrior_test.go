@@ -18,7 +18,7 @@ func TestFury(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		TalentsString: "",
+		TalentsString: "32002301233-305053000520310053120500351",
 		GearSet:       core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
 		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
 
@@ -44,7 +44,7 @@ func TestArms(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		TalentsString: "",
+		TalentsString: "3022032023335100102012213231251-305-2033",
 		GearSet:       core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
 		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
@@ -73,7 +73,7 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment:     FuryP1Gear,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsFury,
-				TalentsString: "",
+				TalentsString: "32002301233-305053000520310053120500351",
 				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
