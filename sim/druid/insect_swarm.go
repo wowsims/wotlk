@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -52,7 +53,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	druid.InsectSwarmDot = core.NewDot(core.Dot{
 		Spell: druid.InsectSwarm,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "Insect Swarm",
+			Label:    "Insect Swarm-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				druid.Wrath.DamageMultiplier *= 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)

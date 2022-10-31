@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -74,7 +75,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			ThreatMultiplier: 1,
 		}),
 		Aura: druid.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Moonfire Dot",
+			Label:    "Moonfire Dot-" + strconv.Itoa(int(druid.Index)),
 			ActionID: actionID,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				druid.Starfire.BonusCritRating += core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
