@@ -57,6 +57,20 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 		ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeOffHand
 	ele.ApplyFlametongueImbue(true, hasOffhandWeapon)
 
+	if ele.Talents.FeralSpirit {
+
+		// Enable Auto Attacks but don't enable auto swinging
+		ele.EnableAutoAttacks(ele, core.AutoAttackOptions{
+			MainHand: ele.WeaponFromMainHand(ele.DefaultMeleeCritMultiplier()),
+			OffHand:  ele.WeaponFromOffHand(ele.DefaultMeleeCritMultiplier()),
+		})
+		ele.SpiritWolves = &shaman.SpiritWolves{
+			SpiritWolf1: ele.NewSpiritWolf(1),
+			SpiritWolf2: ele.NewSpiritWolf(2),
+		}
+
+	}
+
 	return ele
 }
 
