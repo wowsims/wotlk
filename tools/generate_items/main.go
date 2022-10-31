@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"golang.org/x/exp/slices"
 	"log"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -147,29 +147,29 @@ func main() {
 		panic("invalid item database source")
 	}
 
-	sort.SliceStable(gemsData, func(i, j int) bool {
-		if gemsData[i].Response == nil {
+	slices.SortStableFunc(gemsData, func(g1, g2 GemData) bool {
+		if g1.Response == nil {
 			return false
-		} else if gemsData[j].Response == nil {
+		} else if g2.Response == nil {
 			return true
 		}
-		if gemsData[i].Response.GetName() == gemsData[j].Response.GetName() {
-			return gemsData[i].Declaration.ID < gemsData[j].Declaration.ID
+		if g1.Response.GetName() == g2.Response.GetName() {
+			return g1.Declaration.ID < g2.Declaration.ID
 		}
-		return gemsData[i].Response.GetName() < gemsData[j].Response.GetName()
+		return g1.Response.GetName() < g2.Response.GetName()
 	})
 	writeGemFile(*outDir, gemsData)
 
-	sort.SliceStable(itemsData, func(i, j int) bool {
-		if itemsData[i].Response == nil {
+	slices.SortStableFunc(itemsData, func(i1, i2 ItemData) bool {
+		if i1.Response == nil {
 			return false
-		} else if itemsData[j].Response == nil {
+		} else if i2.Response == nil {
 			return true
 		}
-		if itemsData[i].Response.GetName() == itemsData[j].Response.GetName() {
-			return itemsData[i].Declaration.ID < itemsData[j].Declaration.ID
+		if i1.Response.GetName() == i2.Response.GetName() {
+			return i1.Declaration.ID < i2.Declaration.ID
 		}
-		return itemsData[i].Response.GetName() < itemsData[j].Response.GetName()
+		return i1.Response.GetName() < i2.Response.GetName()
 	})
 	writeItemFile(*outDir, itemsData)
 

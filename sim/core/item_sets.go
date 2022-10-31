@@ -2,9 +2,8 @@ package core
 
 import (
 	"fmt"
-	"sort"
-
 	"github.com/wowsims/wotlk/sim/core/items"
+	"golang.org/x/exp/slices"
 )
 
 type ItemSet struct {
@@ -22,14 +21,12 @@ type ItemSet struct {
 }
 
 func (set ItemSet) ItemIDs() []int32 {
-	ids := []int32{}
+	ids := make([]int32, 0, len(set.Items))
 	for id := range set.Items {
 		ids = append(ids, id)
 	}
 	// Sort so the order of IDs is always consistent, for tests.
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
+	slices.Sort(ids)
 	return ids
 }
 
@@ -38,7 +35,7 @@ func (set ItemSet) ItemIsInSet(itemID int32) bool {
 	return ok
 }
 
-var sets = []*ItemSet{}
+var sets []*ItemSet
 
 func GetAllItemSets() []*ItemSet {
 	// Defensive copy to prevent modifications.

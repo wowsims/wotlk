@@ -217,6 +217,13 @@ $combo-points-color: #ffa07a;
 	font-weight: bold;
 	overflow-x: hidden;
 }
+.rotation-timeline-resource-fill {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: yellow;
+}
 .rotation-timeline-cast {
 	position: absolute;
 	background-color: #e5cc80;
