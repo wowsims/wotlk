@@ -1,6 +1,8 @@
 package enhancement
 
 import (
+	"fmt"
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -15,8 +17,8 @@ const (
 	WeaveLightningBolt
 	Stormstrike
 	FlameShock
-	MagmaTotem
 	EarthShock
+	MagmaTotem
 	FrostShock
 	LightningShield
 	FireNova
@@ -204,7 +206,19 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	magmaTotem := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && enh.MagmaTotemDot.RemainingDuration(sim) <= time.Second*10
+			dotDuration := enh.MagmaTotemDot.RemainingDuration(sim).Seconds()
+
+			success := false
+			if dotDuration < 6 {
+				remaningTime := math.Mod(dotDuration, 2)
+
+				if remaningTime > 1.5 || remaningTime == 0 {
+					success = true
+				}
+				fmt.Printf("%v : %v, %v, \n", remaningTime, dotDuration, success)
+			}
+
+			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && success
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.MagmaTotem.Cast(sim, target)
@@ -271,20 +285,6 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		rotation.spellPriority = spellPriority
 		return
 	}
-
-	//Normal Priority Rotation
-	spellPriority := make([]Spell, NumberSpells)
-	spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
-	spellPriority[LightningBolt] = instantLightningBolt
-	spellPriority[Stormstrike] = stormstrike
-	spellPriority[FlameShock] = flameShock
-	spellPriority[EarthShock] = earthShock
-	spellPriority[LightningShield] = lightningShield
-	spellPriority[FireNova] = fireNova
-	spellPriority[LavaLash] = lavaLash
-	spellPriority[WeaveLightningBolt] = weaveLightningBolt
-	spellPriority[FrostShock] = frostShock
-	spellPriority[WeaveLavaBurst] = weaveLavaBurst
 
 	rotation.spellPriority = spellPriority
 }

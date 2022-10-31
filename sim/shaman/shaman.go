@@ -251,6 +251,9 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 				} else if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
 					shaman.applyToWDebuff(sim)
 				}
+				if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_MagmaTotem) && !shaman.Totems.UseFireElemental {
+					shaman.MagmaTotem.Cast(sim, shaman.CurrentTarget)
+				}
 			}
 		case WaterTotem:
 			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
@@ -260,6 +263,7 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 	}
 
 	shaman.FlameShock.CD.Reset()
+	println("Reset")
 }
 
 func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
