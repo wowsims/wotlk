@@ -157,8 +157,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4548.13033
-  tps: 4381.36757
+  dps: 4574.3861
+  tps: 4408.30704
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4903.7908
-  tps: 4744.1105
+  dps: 4861.01867
+  tps: 4700.83813
  }
 }
 dps_results: {
@@ -346,8 +346,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 4631.33655
-  tps: 4466.16761
+  dps: 4638.22601
+  tps: 4473.27184
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 5128.22055
-  tps: 4970.44616
+  dps: 5043.88787
+  tps: 4884.4668
  }
 }
 dps_results: {
@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4775.88245
-  tps: 4613.16834
+  dps: 4742.9001
+  tps: 4579.47012
  }
 }
 dps_results: {
@@ -486,8 +486,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 5128.22055
-  tps: 4970.44616
+  dps: 5043.88787
+  tps: 4884.4668
  }
 }
 dps_results: {
@@ -535,8 +535,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 5187.52971
-  tps: 5020.82134
+  dps: 5165.03364
+  tps: 4998.71014
  }
 }
 dps_results: {
@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
-  dps: 3666.41159
-  tps: 3506.7123
+  dps: 3567.13139
+  tps: 3405.82621
  }
 }
 dps_results: {
@@ -626,15 +626,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5297.96783
-  tps: 5133.18965
+  dps: 5268.46629
+  tps: 5103.83709
  }
 }
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 7382.73956
-  tps: 7225.21609
+  dps: 7375.73226
+  tps: 7218.32416
  }
 }
 dps_results: {
@@ -661,22 +661,22 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3976.67159
-  tps: 4428.28935
+  dps: 4414.28077
+  tps: 4900.11288
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2493.01529
-  tps: 2397.25999
+  dps: 2628.79993
+  tps: 2532.05936
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4333.41353
-  tps: 4075.08581
+  dps: 4450.6128
+  tps: 4189.29105
  }
 }
 dps_results: {
