@@ -104,7 +104,7 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
-	enh.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	enh.DelayDPSCooldownsForArmorDebuffs(time.Second * 3)
 
 	// This needs to be called after DPS cooldowns are delayed, which also happens
 	// after finalization.
