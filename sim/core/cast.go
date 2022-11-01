@@ -23,10 +23,6 @@ type Hardcast struct {
 	Target     *Unit
 }
 
-func (hc *Hardcast) OnExpire(sim *Simulation) {
-	hc.OnComplete(sim, hc.Target)
-}
-
 // Input for constructing the CastSpell function for a spell.
 type CastConfig struct {
 	// Default cast values with all static effects applied.
@@ -65,6 +61,10 @@ type Cast struct {
 	AfterCastDelay time.Duration
 }
 
+func (c *Cast) empty() bool {
+	return c.Cost == 0 && c.GCD == 0 && c.CastTime == 0 && c.ChannelTime == 0 && c.AfterCastDelay == 0
+}
+
 type CastFunc func(*Simulation, *Unit)
 type CastSuccessFunc func(*Simulation, *Unit) bool
 
@@ -89,8 +89,7 @@ func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
 }
 
 func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
-	empty := Cast{}
-	if config.DefaultCast == empty {
+	if config.DefaultCast.empty() {
 		return onCastComplete
 	}
 
@@ -196,14 +195,27 @@ func (spell *Spell) wrapCastFuncHaste(config CastConfig, onCastComplete CastFunc
 }
 
 func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) CastFunc {
-	if config.DefaultCast.GCD == 0 {
+	if config.DefaultCast.empty() { // spells that are not actually cast (e.g. auto attacks, procs)
 		return onCastComplete
+	}
+
+	if config.DefaultCast.GCD == 0 { // mostly cooldowns (e.g. nature's swiftness, presence of mind)
+		return func(sim *Simulation, target *Unit) {
+			if expires := spell.Unit.Hardcast.Expires; expires != 0 {
+				panic(fmt.Sprintf("Trying to cast %s but casting/channeling for %s, curTime = %s", spell.ActionID, expires-sim.CurrentTime, sim.CurrentTime))
+			}
+			onCastComplete(sim, target)
+		}
 	}
 
 	return func(sim *Simulation, target *Unit) {
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 		if spell.CurCast.GCD != 0 && !spell.Unit.GCD.IsReady(sim) {
 			panic(fmt.Sprintf("Trying to cast %s but GCD on cooldown for %s, curTime = %s", spell.ActionID, spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime))
+		}
+
+		if expires := spell.Unit.Hardcast.Expires; expires != 0 {
+			panic(fmt.Sprintf("Trying to cast %s but casting/channeling for %s, curTime = %s", spell.ActionID, expires-sim.CurrentTime, sim.CurrentTime))
 		}
 
 		gcd := spell.CurCast.GCD
@@ -294,6 +306,21 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		}
 	}
 
+	if config.DefaultCast.ChannelTime > 0 {
+		return func(sim *Simulation, target *Unit) {
+			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime}
+			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
+				// Hunter fake cast has no ID.
+				if !spell.ActionID.IsEmptyAction() {
+					spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s)",
+						spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime)
+					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
+				}
+			}
+			onCastComplete(sim, target)
+		}
+	}
+
 	if config.DefaultCast.CastTime == 0 {
 		if spell.Flags.Matches(SpellFlagNoLogs) {
 			return onCastComplete
@@ -334,9 +361,11 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			if spell.CurCast.CastTime == 0 {
 				onCastComplete(sim, target)
 			} else {
-				spell.Unit.Hardcast.Expires = sim.CurrentTime + spell.CurCast.CastTime
-				spell.Unit.Hardcast.OnComplete = onCastComplete
-				spell.Unit.Hardcast.Target = target
+				spell.Unit.Hardcast = Hardcast{
+					Expires:    sim.CurrentTime + spell.CurCast.CastTime,
+					OnComplete: onCastComplete,
+					Target:     target,
+				}
 
 				// If hardcast and GCD happen at the same time then we don't need a separate action.
 				if spell.Unit.Hardcast.Expires != spell.Unit.NextGCDAt() {

@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 1.1384
+  weights: 1.13829
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.3176
+  weights: 0.318
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.44633
+  weights: 0.4466
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.35052
-  weights: -0.31623
+  weights: 0.3534
+  weights: -0.31404
   weights: 0
   weights: 0
   weights: 0
@@ -103,8 +103,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 2043.5845
-  tps: 5883.44412
+  dps: 2043.80875
+  tps: 5884.04861
  }
 }
 dps_results: {
@@ -117,8 +117,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 1935.95202
-  tps: 5609.55471
+  dps: 1935.9473
+  tps: 5609.54494
  }
 }
 dps_results: {
@@ -376,8 +376,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtArmor"
  value: {
-  dps: 1620.57926
-  tps: 4754.33632
+  dps: 1620.57037
+  tps: 4754.30564
  }
 }
 dps_results: {
@@ -607,9 +607,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2937.15753
-  tps: 7701.1856
-  dtps: 112.0534
+  dps: 2933.50852
+  tps: 7693.09566
+  dtps: 112.49756
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3060.83971
-  tps: 8012.59411
+  dps: 3060.66776
+  tps: 8012.16414
   dtps: 107.8176
  }
 }
