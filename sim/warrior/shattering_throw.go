@@ -29,6 +29,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				Timer:    warrior.NewTimer(),
 				Duration: time.Minute * 5,
 			},
+			IgnoreHaste: true,
 		},
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
@@ -41,6 +42,8 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 			// To desync same speed weapon
 			if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
 				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed()+warrior.AutoAttacks.OffhandSwingSpeed()/2)
+			} else {
+				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed())
 			}
 		},
 	})
