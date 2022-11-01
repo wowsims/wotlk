@@ -327,10 +327,12 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			return 0
 		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
-			for _, mcd := range r.disabledMCDs {
-				mcd.Enable()
+			if r.allMCDsDisabled {
+				for _, mcd := range r.GetMajorCooldowns() {
+					mcd.Enable()
+				}
+				r.allMCDsDisabled = false
 			}
-			r.disabledMCDs = nil
 			return nil
 		},
 	})

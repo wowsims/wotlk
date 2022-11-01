@@ -182,6 +182,7 @@ type majorCooldownManager struct {
 	// the same cooldows as initialMajorCooldowns, but the order will change over
 	// the course of the sim.
 	majorCooldowns []*MajorCooldown
+	minReady       time.Duration
 
 	tryUsing bool
 	fullSort bool
@@ -340,6 +341,10 @@ func (mcdm *majorCooldownManager) GetMajorCooldownIDs() []*proto.ActionID {
 }
 
 func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
+	if sim.CurrentTime < mcdm.minReady {
+		return
+	}
+
 	mcdm.tryUsing = true
 restart:
 	for _, mcd := range mcdm.majorCooldowns {
@@ -357,6 +362,8 @@ restart:
 		}
 	}
 	mcdm.tryUsing = false
+
+	mcdm.minReady = mcdm.majorCooldowns[0].ReadyAt()
 }
 
 // This function should be called if the CD for a major cooldown changes outside
@@ -365,7 +372,12 @@ func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
 	if mcdm.tryUsing {
 		panic("Do not call UpdateMajorCooldowns while iterating cooldowns in TryUseCooldowns")
 	}
+	if len(mcdm.majorCooldowns) == 0 {
+		mcdm.minReady = NeverExpires
+		return
+	}
 	mcdm.sort()
+	mcdm.minReady = mcdm.majorCooldowns[0].ReadyAt()
 }
 
 func (mcdm *majorCooldownManager) sort() {

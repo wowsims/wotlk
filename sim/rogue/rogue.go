@@ -45,7 +45,8 @@ type Rogue struct {
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
-	disabledMCDs          []*core.MajorCooldown
+
+	allMCDsDisabled bool
 
 	maxEnergy float64
 
@@ -187,13 +188,10 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
-	rogue.disabledMCDs = nil
 	for _, mcd := range rogue.GetMajorCooldowns() {
-		if mcd.IsEnabled() {
-			mcd.Disable()
-			rogue.disabledMCDs = append(rogue.disabledMCDs, mcd)
-		}
+		mcd.Disable()
 	}
+	rogue.allMCDsDisabled = true
 	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
 	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
