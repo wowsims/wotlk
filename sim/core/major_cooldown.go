@@ -99,6 +99,18 @@ func (mcd *MajorCooldown) IsEnabled() bool {
 	return !mcd.disabled
 }
 
+func (mcd *MajorCooldown) Enable() {
+	if mcd != nil && mcd.disabled {
+		mcd.disabled = false
+	}
+}
+
+func (mcd *MajorCooldown) Disable() {
+	if mcd != nil && !mcd.disabled {
+		mcd.disabled = true
+	}
+}
+
 func (mcd *MajorCooldown) GetTimings() []time.Duration {
 	return mcd.timings
 }
@@ -302,7 +314,6 @@ func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) Maj
 			return mcd
 		}
 	}
-
 	return MajorCooldown{}
 }
 
@@ -312,7 +323,6 @@ func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCool
 			return mcd
 		}
 	}
-
 	return nil
 }
 
@@ -327,44 +337,6 @@ func (mcdm *majorCooldownManager) GetMajorCooldownIDs() []*proto.ActionID {
 		ids[i] = mcd.Spell.ActionID.ToProto()
 	}
 	return ids
-}
-
-func (mcdm *majorCooldownManager) HasMajorCooldown(actionID ActionID) bool {
-	return mcdm.GetMajorCooldown(actionID) != nil
-}
-
-func (mcdm *majorCooldownManager) DisableMajorCooldown(actionID ActionID) {
-	mcd := mcdm.GetMajorCooldown(actionID)
-	if mcd != nil {
-		mcd.disabled = true
-	}
-}
-
-func (mcdm *majorCooldownManager) EnableMajorCooldown(actionID ActionID) {
-	mcd := mcdm.GetMajorCooldown(actionID)
-	if mcd != nil {
-		mcd.disabled = false
-	}
-}
-
-// Disabled all MCDs that are currently enabled, and returns a list of the MCDs
-// which were disabled by this call.
-// If cooldownType is not CooldownTypeUnknown, then will be restricted to cooldowns of that type.
-func (mcdm *majorCooldownManager) DisableAllEnabledCooldowns(cooldownType CooldownType) []*MajorCooldown {
-	disabledMCDs := []*MajorCooldown{}
-	for _, mcd := range mcdm.majorCooldowns {
-		if mcd.IsEnabled() && (cooldownType == CooldownTypeUnknown || mcd.Type.Matches(cooldownType)) {
-			mcdm.DisableMajorCooldown(mcd.Spell.ActionID)
-			disabledMCDs = append(disabledMCDs, mcd)
-		}
-	}
-	return disabledMCDs
-}
-
-func (mcdm *majorCooldownManager) EnableAllCooldowns(mcdsToEnable []*MajorCooldown) {
-	for _, mcd := range mcdsToEnable {
-		mcdm.EnableMajorCooldown(mcd.Spell.ActionID)
-	}
 }
 
 func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {

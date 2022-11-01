@@ -215,10 +215,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Enable CDs
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 		func(s *core.Simulation, r *Rogue) PriorityAction {
-			if r.disabledMCDs != nil {
-				r.EnableAllCooldowns(r.disabledMCDs)
-				r.disabledMCDs = nil
+			for _, mcd := range r.disabledMCDs {
+				mcd.Enable()
 			}
+			r.disabledMCDs = nil
 			return Skip
 		},
 		func(s *core.Simulation, r *Rogue) bool {
