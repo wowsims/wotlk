@@ -172,6 +172,7 @@ class EpWeightsMenu extends Popup {
 		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
 		tippy(optimizeGemsButton, {
 			'content': `
+				<p><span class="warnings fa fa-exclamation-triangle"></span>WARNING: This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
 				<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
 				<p>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
 			`,
