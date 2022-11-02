@@ -280,24 +280,15 @@ func (druid *Druid) applyOmenOfClarity() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// Ignore melee bleeds
-			if spell.ProcMask.Matches(core.ProcMaskMelee) {
-				return
-			}
-			if spell == druid.Moonfire || spell == druid.InsectSwarm {
-				return
-			}
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
-			spellCoeff := 2.0 / 3.0
 			if spell == druid.Hurricane {
 				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
-				spellCoeff = hurricaneCoeff * curCastTickSpeed
-			}
-			chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
-
-			if sim.RandomFloat("Clearcasting") <= chanceToProc {
-				druid.ClearcastingAura.Activate(sim)
+				spellCoeff := hurricaneCoeff * curCastTickSpeed
+				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ClearcastingAura.Activate(sim)
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
