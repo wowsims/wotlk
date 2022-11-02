@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.79015
+  weights: 0.79153
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.27067
+  weights: 0.27235
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.18206
+  weights: 0.18229
   weights: 0
   weights: 0
   weights: 0
   weights: 0.43729
-  weights: -0.00763
+  weights: -0.00814
   weights: 0
   weights: 0
   weights: 0
@@ -103,8 +103,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 2033.46242
-  tps: 5848.15781
+  dps: 2033.45771
+  tps: 5848.14803
  }
 }
 dps_results: {
@@ -117,8 +117,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 1901.42745
-  tps: 5503.68191
+  dps: 1901.41855
+  tps: 5503.6512
  }
 }
 dps_results: {
@@ -138,8 +138,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 1612.53497
-  tps: 4733.60222
+  dps: 1612.53025
+  tps: 4733.59243
  }
 }
 dps_results: {
@@ -341,8 +341,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 1956.06017
-  tps: 5667.13231
+  dps: 1956.05545
+  tps: 5667.12254
  }
 }
 dps_results: {
@@ -397,8 +397,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 1956.06017
-  tps: 5667.13231
+  dps: 1956.05545
+  tps: 5667.12254
  }
 }
 dps_results: {
@@ -502,8 +502,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 1956.06017
-  tps: 5667.13231
+  dps: 1956.05545
+  tps: 5667.12254
  }
 }
 dps_results: {
@@ -593,23 +593,23 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 2331.64491
-  tps: 6605.14994
+  dps: 2331.63547
+  tps: 6605.13036
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 2555.46858
-  tps: 7134.95626
+  dps: 2555.45448
+  tps: 7134.91477
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2940.74827
-  tps: 7708.64065
-  dtps: 112.17464
+  dps: 2940.53786
+  tps: 7708.11762
+  dtps: 112.17399
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3074.42673
-  tps: 8052.76484
+  dps: 3074.25471
+  tps: 8052.33472
   dtps: 103.18239
  }
 }

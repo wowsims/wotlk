@@ -306,19 +306,19 @@ func (druid *Druid) registerBearFormSpell() {
 }
 
 func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
-
 	// Disable cooldowns not usable in form and/or delay others
 	if druid.StartingForm.Matches(Cat | Bear) {
-
-		druid.EnableAllCooldowns(druid.disabledMCDs)
+		for _, mcd := range druid.disabledMCDs {
+			mcd.Enable()
+		}
 		druid.disabledMCDs = nil
 
 		if druid.InForm(Humanoid) {
 			// Disable cooldown that incurs a gcd, so we dont get stuck out of form when we dont need to (Greater Drums)
-			for _, cd := range druid.GetMajorCooldowns() {
-				if cd.Spell.DefaultCast.GCD > 0 {
-					druid.DisableMajorCooldown(cd.Spell.ActionID)
-					druid.disabledMCDs = append(druid.disabledMCDs, cd)
+			for _, mcd := range druid.GetMajorCooldowns() {
+				if mcd.Spell.DefaultCast.GCD > 0 {
+					mcd.Disable()
+					druid.disabledMCDs = append(druid.disabledMCDs, mcd)
 				}
 			}
 		}

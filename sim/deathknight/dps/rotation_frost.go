@@ -47,22 +47,15 @@ func (fr *FrostRotation) Reset(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) addOnUseTrinketCooldown(actionID core.ActionID) {
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return false
-		}
-
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
+		majorCd.Disable()
 		dk.fr.onUseTrinkets = append(dk.fr.onUseTrinkets, majorCd)
 	}
 }
 
 func (dk *DpsDeathknight) getMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return false
-		}
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
+		majorCd.Disable()
 		return majorCd
 	}
 	return nil

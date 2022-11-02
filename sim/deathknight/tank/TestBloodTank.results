@@ -346,8 +346,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 1457.05982
-  tps: 4680.12273
+  dps: 1456.54162
+  tps: 4678.97641
  }
 }
 dps_results: {
@@ -619,9 +619,9 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1825.13607
-  tps: 6351.39944
-  dtps: 254.21094
+  dps: 1825.03
+  tps: 6350.46152
+  dtps: 254.44402
  }
 }
 dps_results: {
@@ -711,8 +711,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1844.27853
-  tps: 6366.6109
-  dtps: 255.1025
+  dps: 1843.06368
+  tps: 6362.3008
+  dtps: 255.07367
  }
 }

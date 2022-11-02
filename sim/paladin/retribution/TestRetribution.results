@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOC-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7480.10793
-  tps: 8783.54843
+  dps: 7508.31212
+  tps: 8780.62845
  }
 }
 dps_results: {
@@ -731,8 +731,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOR-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6296.33083
-  tps: 7583.29383
+  dps: 6372.90363
+  tps: 7645.21996
  }
 }
 dps_results: {
@@ -773,8 +773,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV 2 Target Swapping-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7003.09416
-  tps: 8293.71883
+  dps: 7074.10166
+  tps: 8346.41799
  }
 }
 dps_results: {
@@ -815,8 +815,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-BloodElf-P1-Retribution Paladin SOV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6799.2486
-  tps: 8102.6891
+  dps: 6850.23327
+  tps: 8122.5496
  }
 }
 dps_results: {
