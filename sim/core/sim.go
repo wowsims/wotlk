@@ -146,7 +146,7 @@ func (sim *Simulation) RandomFloat(label string) float64 {
 	labelRand, isPresent := sim.testRands[label]
 	if !isPresent {
 		// Add rseed to the label to we still have run-run variance for stat weights.
-		labelRand = NewSplitMix(uint64(hash(label + strconv.FormatInt(sim.rseed, 16))))
+		labelRand = NewSplitMix(uint64(makeTestRandSeed(sim.rseed, label)))
 		sim.testRands[label] = labelRand
 	}
 	v := labelRand.NextFloat64()
@@ -154,6 +154,21 @@ func (sim *Simulation) RandomFloat(label string) float64 {
 	// 	sim.Log("FLOAT64 '%s': %0.5f", label, v)
 	// }
 	return v
+}
+
+func (sim *Simulation) reseedRands(i int64) {
+	rseed := sim.Options.RandomSeed + i
+	sim.rand.Seed(rseed)
+
+	if sim.isTest {
+		for label, rand := range sim.testRands {
+			rand.Seed(makeTestRandSeed(rseed, label))
+		}
+	}
+}
+
+func makeTestRandSeed(rseed int64, label string) int64 {
+	return int64(hash(label + strconv.FormatInt(rseed, 16)))
 }
 
 // Shorthand for commonly-used RNG behavior.
@@ -271,7 +286,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		}
 
 		// Before each iteration, reset state to seed+iterations
-		sim.rand.Seed(sim.Options.RandomSeed + int64(i))
+		sim.reseedRands(int64(i))
 
 		sim.runOnce()
 		iterDuration := sim.Duration
