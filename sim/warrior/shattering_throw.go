@@ -39,12 +39,14 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 			core.ShatteringThrowAura(target).Activate(sim)
 			warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.AutoAttacks.MainhandSwingSpeed())
+
 			// To desync same speed weapon
 			if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
 				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed()+warrior.AutoAttacks.OffhandSwingSpeed()/2)
 			} else {
 				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed())
 			}
+			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime + time.Millisecond*10
 		},
 	})
 
