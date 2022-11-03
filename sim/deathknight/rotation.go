@@ -78,6 +78,9 @@ func (dk *Deathknight) RotationActionCallback_ERW(sim *core.Simulation, target *
 }
 
 func (dk *Deathknight) RotationActionCallback_Obli(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+		dk.Deathchill.Cast(sim, target)
+	}
 	casted := dk.Obliterate.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	s.ConditionalAdvance(casted && advance)
