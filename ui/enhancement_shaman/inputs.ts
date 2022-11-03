@@ -205,6 +205,13 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'firenovaManaThreshold',
 				label: 'Minimum mana to cast Fire Nova',
 				labelTooltip: 'Fire Nova will not be cast when mana is below this value. Set this medium-low, it has a bad mana-to-damage ratio',
+				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom){
+						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.FireNova) != undefined
+					}
+
+					return true
+				},
 			}),
 			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'shamanisticRageManaThreshold',

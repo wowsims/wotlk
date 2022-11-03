@@ -117,8 +117,9 @@ type Unit struct {
 	GCD       *Timer
 	doNothing bool // flags that this character chose to do nothing.
 
-	// Used for applying the effects of hardcast / channeled spells at a later time.
-	// By definition there can be only 1 hardcast spell being cast at any moment.
+	// Used for applying the effect of a hardcast spell when casting finishes.
+	//  For channeled spells, only Expires is set.
+	// No more than one cast may be active at any given time.
 	Hardcast Hardcast
 
 	// GCD-related PendingActions.
@@ -423,9 +424,11 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 	unit.auraTracker.advance(sim)
 
-	if unit.Hardcast.Expires != 0 && unit.Hardcast.Expires <= sim.CurrentTime {
-		unit.Hardcast.Expires = 0
-		unit.Hardcast.OnExpire(sim)
+	if hc := &unit.Hardcast; hc.Expires != 0 && hc.Expires <= sim.CurrentTime {
+		hc.Expires = 0
+		if hc.OnComplete != nil {
+			hc.OnComplete(sim, hc.Target)
+		}
 	}
 }
 

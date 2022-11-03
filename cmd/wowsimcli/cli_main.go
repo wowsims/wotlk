@@ -16,12 +16,25 @@ func init() {
 	sim.RegisterAll()
 }
 
+var (
+	Version string
+)
+
 func main() {
 	infile := flag.String("input", "input.json", "location of input file")
 	outfile := flag.String("output", "output.json", "location of output file")
 	verbose := flag.Bool("verbose", false, "print information during runtime")
+	printVersion := flag.Bool("version", false, "print version number and exit")
 
 	flag.Parse()
+
+	if Version == "" {
+		Version = "development"
+	}
+	if *printVersion {
+		fmt.Printf("Version: %s\n", Version)
+		return
+	}
 
 	data, err := os.ReadFile(*infile)
 	if err != nil {

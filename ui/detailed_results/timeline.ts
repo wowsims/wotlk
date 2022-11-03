@@ -642,7 +642,14 @@ export class Timeline extends ResultComponent {
 			if (percentageResources.includes(resourceType)) {
 				resourceElem.textContent = (resourceLogGroup.valueAfter / startValue * 100).toFixed(0) + '%';
 			} else {
-				resourceElem.textContent = Math.floor(resourceLogGroup.valueAfter).toFixed(0);
+				if (resourceType == ResourceType.ResourceTypeEnergy) {
+					const bgElem = document.createElement('div');
+					bgElem.classList.add('rotation-timeline-resource-fill')
+					bgElem.style.height = (resourceLogGroup.valueAfter / startValue * 100).toFixed(0) + '%';
+					resourceElem.appendChild(bgElem)
+				} else {
+					resourceElem.textContent = Math.floor(resourceLogGroup.valueAfter).toFixed(0);
+				}
 			}
 			rowElem.appendChild(resourceElem);
 

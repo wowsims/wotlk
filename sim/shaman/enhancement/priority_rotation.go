@@ -197,8 +197,8 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	magmaTotem := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			//Need to rework totems to make them easier to deal with.
-			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && enh.NextTotemDrops[2] < sim.CurrentTime && !enh.FireElementalTotem.IsReady(sim)
+			//TODO : rework totems to make them easier to work with.
+			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && enh.NextTotemDrops[2] <= sim.CurrentTime
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.MagmaTotem.Cast(sim, target)

@@ -183,7 +183,7 @@ func (hunter *Hunter) applyInvigoration() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 
@@ -233,7 +233,7 @@ func (hunter *Hunter) applyCobraStrikes() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 
@@ -299,7 +299,7 @@ func (hunter *Hunter) applyPiercingShots() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 			if spell != hunter.AimedShot && spell != hunter.SteadyShot && spell != hunter.ChimeraShot {
@@ -400,7 +400,7 @@ func (hunter *Hunter) applyFrenzy() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 			if sim.Proc(procChance, "Frenzy") {
@@ -503,7 +503,16 @@ func (hunter *Hunter) applyGoForTheThroat() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !result.Outcome.Matches(core.OutcomeCrit) {
+			if !spell.ProcMask.Matches(core.ProcMaskRanged) || !result.DidCrit() {
+				return
+			}
+			if !hunter.pet.IsEnabled() {
+				return
+			}
+			hunter.pet.AddFocus(sim, amount, core.ActionID{SpellID: 34954})
+		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.DidCrit() {
 				return
 			}
 			if !hunter.pet.IsEnabled() {
@@ -624,12 +633,20 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 
 			if sim.Proc(procChance, "ThrillOfTheHunt") {
 				hunter.AddMana(sim, spell.CurCast.Cost*0.4, manaMetrics, false)
+			}
+		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && spell == hunter.ExplosiveShot {
+				// Explosive shot ticks can proc TotH but with 1/3 the bonus.
+				if sim.Proc(procChance, "ThrillOfTheHunt") {
+					hunter.AddMana(sim, spell.CurCast.Cost*0.4/3, manaMetrics, false)
+				}
 			}
 		},
 	})
@@ -670,7 +687,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 
@@ -679,11 +696,7 @@ func (hunter *Hunter) applyExposeWeakness() {
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell != hunter.ExplosiveTrapDot.Spell {
-				return
-			}
-
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				return
 			}
 
@@ -812,6 +825,15 @@ func (hunter *Hunter) registerReadinessCD() {
 			if hunter.BlackArrow != nil {
 				hunter.BlackArrow.CD.Reset()
 			}
+
+			// TODO: This is needed because there are edge cases where core doesn't re-use Rapid Fire.
+			// Fix core so this isn't necessary.
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt: sim.CurrentTime + 1,
+				OnAction: func(_ *core.Simulation) {
+					hunter.UpdateMajorCooldowns()
+				},
+			})
 		},
 	})
 
