@@ -13,12 +13,14 @@ const (
 	StormstrikeApplyDebuff
 	WeaveLavaBurst
 	WeaveLightningBolt
+	MagmaTotem
 	Stormstrike
 	FlameShock
 	EarthShock
 	FrostShock
-	LightningShield
 	FireNova
+	LightningShield
+	DropAllTotems
 	LavaLash
 	NumberSpells // Used to get the max number of spells in the prio list, keep at bottoom
 )
@@ -117,10 +119,6 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	flameShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && enh.FlameShockDot.RemainingDuration(sim) <= time.Duration(rotation.options.FlameShockClipTicks)*enh.FlameShockDot.TickLength {
-				return true
-			}
-
 			return rotation.options.WeaveFlameShock && enh.FlameShockDot.RemainingDuration(sim) <= time.Duration(rotation.options.FlameShockClipTicks)*enh.FlameShockDot.TickLength
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -133,10 +131,6 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	earthShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
-				return true
-			}
-
 			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Earth
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -149,10 +143,6 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	frostShock := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom {
-				return true
-			}
-
 			return rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_Frost
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
@@ -177,7 +167,11 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	fireNova := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.Totems.Fire != proto.FireTotem_NoFireTotem && enh.CurrentMana() > rotation.options.FirenovaManaThreshold
+			if enh.Totems.Fire == proto.FireTotem_NoFireTotem {
+				return false
+			}
+
+			return enh.NextTotemDrops[2] > sim.CurrentTime && enh.CurrentMana() > rotation.options.FirenovaManaThreshold
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			return enh.FireNova.IsReady(sim) && enh.FireNova.Cast(sim, target)
@@ -201,6 +195,51 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
+	magmaTotem := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			//TODO : rework totems to make them easier to work with.
+			return enh.Totems.Fire == proto.FireTotem_MagmaTotem && enh.NextTotemDrops[2] <= sim.CurrentTime
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.MagmaTotem.Cast(sim, target)
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
+
+	dropAllTotems := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return true
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			// TODO : totems need to be dropped all at once.
+			return enh.TryDropTotems(sim)
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
+
+	//Normal Priority Rotation
+	var spellPriority []Spell
+	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Priority {
+		spellPriority = make([]Spell, NumberSpells)
+		spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
+		spellPriority[LightningBolt] = instantLightningBolt
+		spellPriority[Stormstrike] = stormstrike
+		spellPriority[FlameShock] = flameShock
+		spellPriority[EarthShock] = earthShock
+		spellPriority[LightningShield] = lightningShield
+		spellPriority[FireNova] = fireNova
+		spellPriority[LavaLash] = lavaLash
+		spellPriority[WeaveLightningBolt] = weaveLightningBolt
+		spellPriority[FrostShock] = frostShock
+		spellPriority[WeaveLavaBurst] = weaveLavaBurst
+		spellPriority[MagmaTotem] = magmaTotem
+		spellPriority[DropAllTotems] = dropAllTotems
+	}
+
 	//Custom Priority Rotation
 	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Custom && rotation.options.CustomRotation != nil {
 		spellPriority := make([]Spell, 0, len(rotation.options.CustomRotation.Spells))
@@ -208,6 +247,8 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		// Turn weaving off, will enable them if they have been added.
 		rotation.options.LightningboltWeave = false
 		rotation.options.LavaburstWeave = false
+		rotation.options.WeaveFlameShock = false
+		rotation.options.PrimaryShock = proto.EnhancementShaman_Rotation_None
 		for _, customSpellProto := range rotation.options.CustomRotation.Spells {
 			switch customSpellProto.Spell {
 			case int32(proto.EnhancementShaman_Rotation_StormstrikeDebuffMissing):
@@ -220,40 +261,33 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			case int32(proto.EnhancementShaman_Rotation_Stormstrike):
 				spellPriority = append(spellPriority, stormstrike)
 			case int32(proto.EnhancementShaman_Rotation_FlameShock):
+				rotation.options.WeaveFlameShock = true
 				spellPriority = append(spellPriority, flameShock)
 			case int32(proto.EnhancementShaman_Rotation_FireNova):
 				spellPriority = append(spellPriority, fireNova)
 			case int32(proto.EnhancementShaman_Rotation_LavaLash):
 				spellPriority = append(spellPriority, lavaLash)
 			case int32(proto.EnhancementShaman_Rotation_EarthShock):
-				spellPriority = append(spellPriority, earthShock)
+				if rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_None {
+					spellPriority = append(spellPriority, earthShock)
+				}
 			case int32(proto.EnhancementShaman_Rotation_LightningShield):
 				spellPriority = append(spellPriority, lightningShield)
 			case int32(proto.EnhancementShaman_Rotation_FrostShock):
-				spellPriority = append(spellPriority, frostShock)
+				if rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_None {
+					spellPriority = append(spellPriority, frostShock)
+				}
 			case int32(proto.EnhancementShaman_Rotation_LavaBurst):
 				rotation.options.LavaburstWeave = true
 				spellPriority = append(spellPriority, weaveLavaBurst)
+			case int32(proto.EnhancementShaman_Rotation_MagmaTotem):
+				spellPriority = append(spellPriority, magmaTotem)
 			}
 		}
 
 		rotation.spellPriority = spellPriority
 		return
 	}
-
-	//Normal Priority Rotation
-	spellPriority := make([]Spell, NumberSpells)
-	spellPriority[StormstrikeApplyDebuff] = stormstrikeApplyDebuff
-	spellPriority[LightningBolt] = instantLightningBolt
-	spellPriority[Stormstrike] = stormstrike
-	spellPriority[FlameShock] = flameShock
-	spellPriority[EarthShock] = earthShock
-	spellPriority[LightningShield] = lightningShield
-	spellPriority[FireNova] = fireNova
-	spellPriority[LavaLash] = lavaLash
-	spellPriority[WeaveLightningBolt] = weaveLightningBolt
-	spellPriority[FrostShock] = frostShock
-	spellPriority[WeaveLavaBurst] = weaveLavaBurst
 
 	rotation.spellPriority = spellPriority
 }
