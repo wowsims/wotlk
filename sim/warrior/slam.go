@@ -44,7 +44,7 @@ func (warrior *Warrior) registerSlamSpell() {
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}
-			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime + time.Millisecond*10
+			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime
 		},
 	})
 }

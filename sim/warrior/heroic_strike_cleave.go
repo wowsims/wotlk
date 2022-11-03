@@ -160,7 +160,7 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 }
 
 func (warrior *Warrior) ShouldQueueHSOrCleave(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.HSRageThreshold
+	return warrior.CurrentRage() >= warrior.HSRageThreshold && sim.CurrentTime > warrior.disableHsCleaveUntil
 }
 
 func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64) {

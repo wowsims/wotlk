@@ -46,7 +46,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 			} else {
 				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed())
 			}
-			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime + time.Millisecond*10
+			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime
 		},
 	})
 
