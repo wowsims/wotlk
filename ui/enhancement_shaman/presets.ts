@@ -73,6 +73,7 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 			CustomSpell.create({ spell: CustomRotationSpell.Stormstrike }),
 			CustomSpell.create({ spell: CustomRotationSpell.FlameShock }),
 			CustomSpell.create({ spell: CustomRotationSpell.EarthShock }),
+      CustomSpell.create({ spell: CustomRotationSpell.MagmaTotem}),
       CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
       CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
       CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
