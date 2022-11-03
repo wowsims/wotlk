@@ -91,8 +91,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityLow,
 		ShouldActivate: func(sim *core.Simulation, c *core.Character) bool {
-			bladeFlurry := rogue.GetMajorCooldown(BladeFlurryActionID)
-			if bladeFlurry != nil && bladeFlurry.IsReady(sim) {
+			if bf := rogue.GetMajorCooldown(BladeFlurryActionID); bf != nil && bf.IsReady(sim) {
 				return false
 			}
 			if rogue.CurrentEnergy() > 60 || (rogue.CurrentEnergy() > 30 && rogue.AdrenalineRushAura.IsActive()) {

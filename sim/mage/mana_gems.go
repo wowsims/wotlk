@@ -68,7 +68,7 @@ func (mage *Mage) registerManaGemsCD() {
 			remainingManaGems--
 			if remainingManaGems == 0 {
 				// Disable this cooldown since we're out of emeralds.
-				mage.DisableMajorCooldown(actionID)
+				mage.GetMajorCooldown(actionID).Disable()
 			}
 		},
 	})

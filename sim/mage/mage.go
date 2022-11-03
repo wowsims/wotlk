@@ -197,8 +197,9 @@ func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
 	pa.OnAction = func(sim *core.Simulation) {
 		if sim.IsExecutePhase35() {
 			for _, mcd := range mage.disabledMCDs {
-				mage.EnableMajorCooldown(mcd.Spell.ActionID)
+				mcd.Enable()
 			}
+			// TODO looks fishy, since disabledMCDs isn't emptied; also, this could use an executePhaseCallback instead
 		} else {
 			for _, mcd := range mage.GetMajorCooldowns() {
 				isBloodLust := mcd.Spell.ActionID == core.ActionID{SpellID: 2825, Tag: -1} //ignore blood lust as it shouldn't be saved
@@ -206,7 +207,7 @@ func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
 				isPotionOfSpeed := mcd.Spell.ActionID == core.ActionID{ItemID: 40211}
 				if mcd.Spell.CD.Duration > (sim.Duration-sim.CurrentTime) && mcd.Type.Matches(core.CooldownTypeDPS) &&
 					!isBloodLust && !isFlameCap || isPotionOfSpeed {
-					mage.DisableMajorCooldown(mcd.Spell.ActionID)
+					mcd.Disable()
 					mage.disabledMCDs = append(mage.disabledMCDs, mcd)
 				}
 			}

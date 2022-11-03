@@ -280,22 +280,15 @@ func (druid *Druid) applyOmenOfClarity() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// Ignore melee bleeds
-			if spell.ProcMask.Matches(core.ProcMaskMelee) {
-				return
-			}
-			if spell == druid.Moonfire || spell == druid.InsectSwarm {
-				return
-			}
-			// TODO looks fishy, chanceToProc is unused
-			chanceToProc := 0.0875 // https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
+			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if spell == druid.Hurricane {
-				chanceToProc *= 0.223
-			} else {
-				chanceToProc *= 0.666
-			}
-			if sim.RandomFloat("Clearcasting") <= 0.0175 {
-				druid.ClearcastingAura.Activate(sim)
+				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
+				hurricaneCoeff := 1.0 - (7.0 / 9.0)
+				spellCoeff := hurricaneCoeff * curCastTickSpeed
+				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ClearcastingAura.Activate(sim)
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -305,7 +298,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
-				chanceToProc := 0.0875
+				chanceToProc := (spell.CurCast.CastTime.Seconds() / 60) * 3.5
 				if spell == druid.Typhoon { // Add Wild Growth
 					chanceToProc *= 0.25
 				} else if spell == druid.Moonfire { // Add GotW

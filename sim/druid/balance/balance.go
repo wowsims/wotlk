@@ -124,11 +124,8 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 // Takes out a Cooldown from the generic MajorCooldownManager and adds it to a custom Slice of Cooldowns
 func (moonkin *BalanceDruid) getBalanceMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
-	if moonkin.Character.HasMajorCooldown(actionID) {
-		majorCd := moonkin.Character.GetMajorCooldown(actionID)
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return false
-		}
+	if majorCd := moonkin.Character.GetMajorCooldown(actionID); majorCd != nil {
+		majorCd.Disable()
 		return majorCd
 	}
 	return nil

@@ -30,7 +30,7 @@ func (druid *Druid) registerHurricaneSpell() {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
 			}
 		},
 	})
@@ -56,7 +56,7 @@ func (druid *Druid) registerHurricaneSpell() {
 			},
 		},
 
-		DamageMultiplier: 1 + druid.talentBonuses.galeWinds,
+		DamageMultiplier: 1 + druid.talentBonuses.galeWinds + druid.talentBonuses.genesis,
 		ThreatMultiplier: 1,
 		CritMultiplier:   1,
 

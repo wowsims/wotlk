@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Note that this is only used when the hardcast and GCD actions
+// Note that this is only used when the hardcast and GCD actions happen at different times.
 func (unit *Unit) newHardcastAction(sim *Simulation) {
 	if unit.hardcastAction != nil && !unit.hardcastAction.consumed {
 		unit.hardcastAction.Cancel(sim)
