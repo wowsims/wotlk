@@ -232,7 +232,7 @@ func (gs *GCDScheduler) ScheduleMCD(character *core.Character, mcdID core.Action
 			if success {
 				character.UpdateMajorCooldowns()
 			} else {
-				character.EnableMajorCooldown(gs.managedMCDIDs[mcdIdx])
+				gs.managedMCDs[mcdIdx].Enable()
 				gs.managedMCDs[mcdIdx].Spell.DefaultCast.GCD = 0
 			}
 			return success
@@ -266,7 +266,7 @@ func (gs *GCDScheduler) Reset(sim *core.Simulation, character *core.Character) {
 
 	for i, mcdID := range gs.managedMCDIDs {
 		gs.managedMCDs[i] = character.GetMajorCooldown(mcdID)
-		character.DisableMajorCooldown(mcdID)
+		gs.managedMCDs[i].Disable()
 	}
 }
 

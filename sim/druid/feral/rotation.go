@@ -1,7 +1,7 @@
 package feral
 
 import (
-	"sort"
+	"golang.org/x/exp/slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -251,8 +251,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		pendingActions = append(pendingActions, pendingAction{cat.SavageRoarAura.ExpiresAt(), roarCost})
 	}
 
-	sort.SliceStable(pendingActions, func(i, j int) bool {
-		return pendingActions[i].refreshTime < pendingActions[j].refreshTime
+	slices.SortStableFunc(pendingActions, func(p1, p2 pendingAction) bool {
+		return p1.refreshTime < p2.refreshTime
 	})
 
 	latencySecs := cat.latency.Seconds()

@@ -212,12 +212,15 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		})
 	}
 
+	// TODO I'd assume this should only be used once, to re-enable MCDs when sensible?
 	// Enable CDs
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 		func(s *core.Simulation, r *Rogue) PriorityAction {
-			if r.disabledMCDs != nil {
-				r.EnableAllCooldowns(r.disabledMCDs)
-				r.disabledMCDs = nil
+			if r.allMCDsDisabled {
+				for _, mcd := range r.GetMajorCooldowns() {
+					mcd.Enable()
+				}
+				r.allMCDsDisabled = false
 			}
 			return Skip
 		},

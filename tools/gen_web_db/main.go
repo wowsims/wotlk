@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
+	"golang.org/x/exp/slices"
 	"log"
 	"os"
 	"regexp"
-	"sort"
 	"strconv"
 )
 
@@ -49,8 +49,8 @@ func main() {
 		})
 	}
 
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].ID < items[j].ID
+	slices.SortFunc(items, func(i1, i2 ItemData) bool {
+		return i1.ID < i2.ID
 	})
 
 	file, _ := json.Marshal(items)

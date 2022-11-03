@@ -80,6 +80,30 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
+	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
+		moonkin.Rotation.UseBattleRes = false
+		moonkin.Rotation.UseMf = false
+		moonkin.Rotation.UseIs = true
+		moonkin.Rotation.UseStarfire = true
+		moonkin.Rotation.UseWrath = true
+		moonkin.Rotation.UseTyphoon = false
+		moonkin.Rotation.UseHurricane = false
+		moonkin.Rotation.MfInsideEclipseThreshold = 15
+		moonkin.Rotation.IsInsideEclipseThreshold = 15
+		moonkin.Rotation.UseSmartCooldowns = true
+		moonkin.Rotation.MaximizeMfUptime = false
+		moonkin.Rotation.MaximizeIsUptime = true
+		moonkin.Rotation.MaintainFaerieFire = true
+	}
+
+	if !moonkin.Rotation.UseMf {
+		moonkin.Rotation.MfInsideEclipseThreshold = 15
+	}
+
+	if !moonkin.Rotation.UseIs {
+		moonkin.Rotation.IsInsideEclipseThreshold = 15
+	}
+
 	if moonkin.Rotation.UseSmartCooldowns {
 		moonkin.potionUsed = false
 		consumes := moonkin.Consumes
@@ -100,11 +124,8 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 // Takes out a Cooldown from the generic MajorCooldownManager and adds it to a custom Slice of Cooldowns
 func (moonkin *BalanceDruid) getBalanceMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
-	if moonkin.Character.HasMajorCooldown(actionID) {
-		majorCd := moonkin.Character.GetMajorCooldown(actionID)
-		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return false
-		}
+	if majorCd := moonkin.Character.GetMajorCooldown(actionID); majorCd != nil {
+		majorCd.Disable()
 		return majorCd
 	}
 	return nil

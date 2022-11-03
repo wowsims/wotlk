@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -12,21 +11,6 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
-	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
-		moonkin.Rotation.UseBattleRes = false
-		moonkin.Rotation.UseMf = true
-		moonkin.Rotation.UseIs = true
-		moonkin.Rotation.UseStarfire = true
-		moonkin.Rotation.UseWrath = true
-		moonkin.Rotation.UseTyphoon = false
-		moonkin.Rotation.UseHurricane = false
-		moonkin.Rotation.MfInsideEclipseThreshold = 0
-		moonkin.Rotation.IsInsideEclipseThreshold = 15.0
-		moonkin.Rotation.UseSmartCooldowns = true
-		moonkin.Rotation.MaximizeMfUptime = false
-		moonkin.Rotation.MaximizeIsUptime = true
-	}
-
 	spell := moonkin.rotation(sim)
 
 	if success := spell.Cast(sim, moonkin.CurrentTarget); !success {
@@ -37,6 +21,14 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
+
+	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim) {
+		if moonkin.Talents.ImprovedFaerieFire > 0 {
+			if aura := target.GetActiveAuraWithTag(core.MinorSpellHitDebuffAuraTag); aura == nil {
+				return moonkin.FaerieFire
+			}
+		}
+	}
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
@@ -141,7 +133,6 @@ func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *cor
 		if willUseOffensivePotion {
 			moonkin.potionUsed = true
 		}
-
 		moonkin.UpdateMajorCooldowns()
 	}
 }

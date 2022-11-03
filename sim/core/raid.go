@@ -1,11 +1,10 @@
 package core
 
 import (
-	googleProto "google.golang.org/protobuf/proto"
-	"sort"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"golang.org/x/exp/slices"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 type Party struct {
@@ -254,8 +253,8 @@ func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) *proto.RaidBuffs 
 
 // Precompute the playersAndPets array for each party.
 func (raid *Raid) updatePlayersAndPets() {
-	raidPlayers := []*Unit{}
-	raidPets := []*Unit{}
+	var raidPlayers []*Unit
+	var raidPets []*Unit
 
 	for _, party := range raid.Parties {
 		party.Pets = []PetAgent{}
@@ -277,8 +276,8 @@ func (raid *Raid) updatePlayersAndPets() {
 
 	raid.AllUnits = append(raidPlayers, raidPets...)
 
-	sort.Slice(raid.AllUnits, func(i, j int) bool {
-		return raid.AllUnits[i].Index < raid.AllUnits[j].Index
+	slices.SortFunc(raid.AllUnits, func(u1, u2 *Unit) bool {
+		return u1.Index < u2.Index
 	})
 }
 

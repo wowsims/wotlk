@@ -131,8 +131,7 @@ func (dk *DpsDeathknight) setupGargoyleCooldowns() {
 }
 
 func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
-	if dk.Character.HasMajorCooldown(actionID) {
-		majorCd := dk.Character.GetMajorCooldown(actionID)
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 		dk.ur.majorCds = append(dk.ur.majorCds, majorCd)
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
