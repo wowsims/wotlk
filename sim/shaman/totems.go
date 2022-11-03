@@ -36,23 +36,6 @@ func (shaman *Shaman) registerWrathOfAirTotemSpell() {
 	shaman.WrathOfAirTotem = shaman.RegisterSpell(config)
 }
 
-func (shaman *Shaman) registerGraceOfAirTotemSpell() {
-	config := shaman.newTotemSpellConfig(310.0, 25359)
-	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-		shaman.NextTotemDrops[AirTotem] = sim.CurrentTime + time.Second*300
-	}
-	shaman.GraceOfAirTotem = shaman.RegisterSpell(config)
-}
-
-func (shaman *Shaman) registerTranquilAirTotemSpell() {
-	baseCost := shaman.BaseMana * 0.06
-	config := shaman.newTotemSpellConfig(baseCost, 25908)
-	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-		shaman.NextTotemDrops[AirTotem] = sim.CurrentTime + time.Second*300
-	}
-	shaman.TranquilAirTotem = shaman.RegisterSpell(config)
-}
-
 func (shaman *Shaman) registerWindfuryTotemSpell() {
 	config := shaman.newTotemSpellConfig(baseMana*0.11, 8512)
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -83,6 +66,14 @@ func (shaman *Shaman) applyToWDebuff(sim *core.Simulation) {
 		auraDef := core.TotemOfWrathDebuff(&target.Unit)
 		auraDef.Activate(sim)
 	}
+}
+
+func (shaman *Shaman) registerFlametongueTotemSpell() {
+	config := shaman.newTotemSpellConfig(baseMana*0.11, 58656)
+	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+		shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*300
+	}
+	shaman.FlametongueTotem = shaman.RegisterSpell(config)
 }
 
 func (shaman *Shaman) registerStrengthOfEarthTotemSpell() {
@@ -132,8 +123,6 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 					spell = shaman.WrathOfAirTotem
 				case proto.AirTotem_WindfuryTotem:
 					spell = shaman.WindfuryTotem
-				case proto.AirTotem_TranquilAirTotem:
-					spell = shaman.TranquilAirTotem
 				}
 
 			case EarthTotem:
@@ -153,7 +142,7 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 				case proto.FireTotem_MagmaTotem:
 					spell = shaman.MagmaTotem
 				case proto.FireTotem_FlametongueTotem:
-					// spell = shaman.FlametongueTotem
+					spell = shaman.FlametongueTotem
 				}
 
 			case WaterTotem:
