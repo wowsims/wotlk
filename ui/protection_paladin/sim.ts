@@ -178,6 +178,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
 					OtherInputs.HpPercentForDefensives,
+					OtherInputs.InspirationUptime,
 					ProtectionPaladinInputs.AuraSelection,
 					ProtectionPaladinInputs.UseAvengingWrath,
 					ProtectionPaladinInputs.JudgementSelection,
