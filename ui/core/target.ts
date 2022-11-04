@@ -30,6 +30,7 @@ export class Target {
 	private dualWieldPenalty: boolean = false;
 	private suppressDodge: boolean = false;
 	private parryHaste: boolean = true;
+	private tightEnemyDamage: boolean = false;
 	private spellSchool: SpellSchool = SpellSchool.SpellSchoolPhysical;
 
 	readonly idChangeEmitter = new TypedEvent<void>();
@@ -189,6 +190,18 @@ export class Target {
 		this.propChangeEmitter.emit(eventID);
 	}
 
+	getTightEnemyDamage(): boolean {
+		return this.tightEnemyDamage;
+	}
+
+	setTightEnemyDamage(eventID: EventID, newTightEnemyDamage: boolean) {
+		if (newTightEnemyDamage == this.tightEnemyDamage)
+			return;
+
+		this.tightEnemyDamage = newTightEnemyDamage;
+		this.propChangeEmitter.emit(eventID);
+	}
+
 	getSpellSchool(): SpellSchool {
 		return this.spellSchool;
 	}
@@ -234,6 +247,7 @@ export class Target {
 			dualWieldPenalty: this.getDualWieldPenalty(),
 			suppressDodge: this.getSuppressDodge(),
 			parryHaste: this.getParryHaste(),
+			tightEnemyDamage: this.getTightEnemyDamage(),
 			spellSchool: this.getSpellSchool(),
 			stats: this.stats.asArray(),
 		});
@@ -252,6 +266,7 @@ export class Target {
 			this.setDualWieldPenalty(eventID, proto.dualWieldPenalty);
 			this.setSuppressDodge(eventID, proto.suppressDodge);
 			this.setParryHaste(eventID, proto.parryHaste);
+			this.setTightEnemyDamage(eventID, proto.tightEnemyDamage);
 			this.setSpellSchool(eventID, proto.spellSchool);
 			this.setStats(eventID, new Stats(proto.stats));
 		});

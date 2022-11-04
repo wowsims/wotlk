@@ -41,17 +41,6 @@ func (paladin *Paladin) ApplyTalents() {
 		paladin.AddStatDependency(stats.Strength, stats.SpellPower, percentage)
 	}
 
-	// if paladin.Talents.ShieldSpecialization > 0 {
-	// 	bonus := 1 + 0.1*float64(paladin.Talents.ShieldSpecialization)
-	// 	paladin.AddStatDependency(stats.StatDependency{
-	// 		SourceStat:   stats.BlockValue,
-	// 		ModifiedStat: stats.BlockValue,
-	// 		Modifier: func(bv float64, _ float64) float64 {
-	// 			return bv * bonus
-	// 		},
-	// 	})
-	// }
-
 	if paladin.Talents.SacredDuty > 0 {
 		paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
 	}
@@ -138,7 +127,7 @@ func (paladin *Paladin) applyRedoubt() {
 
 	actionID := core.ActionID{SpellID: 20132}
 
-	paladin.MultiplyStat(stats.BlockValue, 1.0+0.10*float64(paladin.Talents.Redoubt))
+	paladin.PseudoStats.BlockValueMultiplier += 0.10*float64(paladin.Talents.Redoubt)
 
 	bonusBlockRating := 10 * core.BlockRatingPerBlockChance * float64(paladin.Talents.Redoubt)
 
@@ -226,12 +215,13 @@ func (paladin *Paladin) applyReckoning() {
 	})
 }
 
+// TODO: Update Ardent Defender behavior to WotLK with no leapfrogging
 func (paladin *Paladin) applyArdentDefender() {
 	if paladin.Talents.ArdentDefender == 0 {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 31854}
+	actionID := core.ActionID{SpellID: 66233}
 	damageReduction := 1.0 - 0.06*float64(paladin.Talents.ArdentDefender)
 
 	procAura := paladin.RegisterAura(core.Aura{
@@ -273,11 +263,12 @@ func (paladin *Paladin) applyCrusade() {
 			if !applied {
 				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 					unit := paladin.Env.GetTargetUnit(i)
+					crusadeMod := 1.0 + (0.01 * float64(paladin.Talents.Crusade))
 					switch unit.MobType {
 					case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeDemon, proto.MobType_MobTypeUndead, proto.MobType_MobTypeElemental:
-						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.02 * float64(paladin.Talents.Crusade))
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= crusadeMod * crusadeMod
 					default:
-						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1 + (0.01 * float64(paladin.Talents.Crusade))
+						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= crusadeMod
 					}
 				}
 				applied = true

@@ -10,20 +10,17 @@ import (
 func (warrior *Warrior) RegisterShieldBlockCD() {
 	actionID := core.ActionID{SpellID: 2565}
 
-	statDep := warrior.NewDynamicMultiplyStat(stats.BlockValue, 2)
 	warrior.ShieldBlockAura = warrior.RegisterAura(core.Aura{
 		Label:    "Shield Block",
 		ActionID: actionID,
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.AddStatDynamic(sim, stats.Block, 100*core.BlockRatingPerBlockChance)
-			// TODO: The innate block value from the shield item should not be multiplied
-			// as shown here https://youtu.be/LYJdkimJgn8?t=476
-			warrior.EnableDynamicStatDep(sim, statDep)
+			warrior.PseudoStats.BlockValueMultiplier += 1
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.AddStatDynamic(sim, stats.Block, -100*core.BlockRatingPerBlockChance)
-			warrior.DisableDynamicStatDep(sim, statDep)
+			warrior.PseudoStats.BlockValueMultiplier -= 1
 		},
 	})
 

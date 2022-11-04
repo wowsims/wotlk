@@ -388,6 +388,16 @@ class TargetPicker extends Component {
 			},
 			enableWhen: (target: Target) => target.getLevel() == Mechanics.BOSS_LEVEL,
 		});
+		new BooleanPicker(section3, modTarget, {
+			label: 'Tightened Damage Range',
+			labelTooltip: 'Reduces the damage range of this enemy\'s auto-attacks. Observed behavior for Patchwerk.',
+			changedEvent: (target: Target) => target.changeEmitter,
+			getValue: (target: Target) => target.getTightEnemyDamage(),
+			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
+				target.setTightEnemyDamage(eventID, newValue);
+			},
+			enableWhen: (target: Target) => target.getLevel() == Mechanics.BOSS_LEVEL,
+		});
 	}
 }
 

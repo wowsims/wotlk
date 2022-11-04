@@ -324,6 +324,9 @@ type PseudoStats struct {
 
 	HealingDealtMultiplier float64
 
+	// Important when unit is attacker or target
+	BlockValueMultiplier float64
+
 	///////////////////////////////////////////////////
 	// Effects that apply when this unit is the target.
 	///////////////////////////////////////////////////
@@ -332,6 +335,7 @@ type PseudoStats struct {
 	CanParry bool
 
 	ParryHaste bool
+	TightEnemyDamage bool
 
 	// Avoidance % not affected by Diminishing Returns
 	BaseDodge float64
@@ -383,6 +387,7 @@ func NewPseudoStats() PseudoStats {
 		MeleeHasteRatingPerHastePercent: 32.79,
 
 		HealingDealtMultiplier: 1,
+		BlockValueMultiplier: 1,
 
 		// Target effects.
 		DamageTakenMultiplier:       1,

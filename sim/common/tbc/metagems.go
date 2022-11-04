@@ -97,8 +97,9 @@ func init() {
 		})
 	})
 
+	// Eternal Earthstorm
 	core.NewItemEffect(35501, func(agent core.Agent) {
-		agent.GetCharacter().MultiplyStat(stats.BlockValue, 1.1)
+		agent.GetCharacter().PseudoStats.BlockValueMultiplier += 0.05
 	})
 
 	core.NewItemEffect(35503, func(agent core.Agent) {

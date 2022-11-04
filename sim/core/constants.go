@@ -30,8 +30,9 @@ const DefenseRatingToChanceReduction = (1.0 / DefenseRatingPerDefense) * MissDod
 const ResilienceRatingPerCritReductionChance = 82.0
 const ResilienceRatingPerCritDamageReductionPercent = 39.4231 / 2.2
 
-// TODO: Find these numbers for WOTLK
-const EnemyAutoAttackAPCoefficient = 0.000649375
+// TODO: More log scraping to verify this value for WOTLK.
+// Assuming 574 AP debuffs go to exactly zero and achieve -14.2%
+const EnemyAutoAttackAPCoefficient = 0.0002883296
 
 // IDs for items used in core
 const (

@@ -136,7 +136,7 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 func (character *Character) applyHealingModel(healingModel *proto.HealingModel) {
 	cadence := DurationFromSeconds(healingModel.CadenceSeconds)
 	if cadence == 0 {
-		cadence = time.Millisecond * 2500
+		cadence = time.Millisecond * 2000
 	}
 	healPerTick := healingModel.Hps * (float64(cadence) / float64(time.Second))
 
@@ -176,7 +176,7 @@ func (character *Character) GetPresimOptions(playerConfig *proto.Player) *Presim
 		},
 		OnPresimResult: func(presimResult *proto.UnitMetrics, iterations int32, duration time.Duration) bool {
 			character.applyHealingModel(&proto.HealingModel{
-				Hps:            presimResult.Dtps.Avg * 1.25,
+				Hps:            presimResult.Dtps.Avg * 1.50,
 				CadenceSeconds: healingModel.CadenceSeconds,
 			})
 			return true
