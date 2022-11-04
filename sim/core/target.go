@@ -145,7 +145,8 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 		target.Level = defaultRaidBossLevel
 	}
 	if target.stats[stats.MeleeCrit] == 0 {
-		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 0.05, 0.052, 0.054, 0.056) * CritRatingPerCritChance
+		// Treat any % crit buff an enemy would gain as though it was scaled with level 80 ratings
+		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 5.0, 5.2, 5.4, 5.6) * CritRatingPerCritChance
 	}
 
 	if target.Level == defaultRaidBossLevel && options.SuppressDodge {

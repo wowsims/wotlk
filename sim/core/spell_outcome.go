@@ -570,9 +570,7 @@ func (result *SpellResult) applyEnemyAttackTableParry(spell *Spell, attackTable 
 }
 
 func (result *SpellResult) applyEnemyAttackTableCrit(spell *Spell, _ *AttackTable, roll float64, chance *float64) bool {
-	if spell.CritMultiplier == 0 {
-		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
-	}
+
 	critRating := spell.Unit.stats[stats.MeleeCrit] + spell.BonusCritRating
 	critChance := critRating / (CritRatingPerCritChance * 100)
 	critChance -= result.Target.stats[stats.Defense] * DefenseRatingToChanceReduction
@@ -583,8 +581,9 @@ func (result *SpellResult) applyEnemyAttackTableCrit(spell *Spell, _ *AttackTabl
 	if roll < *chance {
 		result.Outcome = OutcomeCrit
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
-		resilCritMultiplier := 1 - result.Target.stats[stats.Resilience]/ResilienceRatingPerCritDamageReductionPercent/100
-		result.Damage *= 2 * resilCritMultiplier
+		// Assume PvE enemies do not use damage reduction multiplier component in WotLK
+		//resilCritMultiplier := 1 - result.Target.stats[stats.Resilience]/ResilienceRatingPerCritDamageReductionPercent/100
+		result.Damage *= 2
 		return true
 	}
 	return false
