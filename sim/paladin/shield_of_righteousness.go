@@ -38,7 +38,7 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			var baseDamage float64
 			// TODO: Derive or find accurate source for DR curve
-			bv := paladin.GetStat(stats.BlockValue)
+			bv := paladin.BlockValue()
 			if bv <= 2400.0 {
 				baseDamage = 520.0 + bv
 			} else {

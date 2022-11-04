@@ -27,8 +27,9 @@ func (warrior *Warrior) ApplyTalents() {
 		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.StrengthOfArms))
 	}
 
+	// Shield Mastery, Shield Block, Glyph of Blocking, Eternal Earthsiege treated as additive sources
 	if warrior.Talents.ShieldMastery > 0 {
-		warrior.MultiplyStat(stats.BlockValue, 1.0+0.15*float64(warrior.Talents.ShieldMastery))
+		warrior.PseudoStats.BlockValueMultiplier += 0.15*float64(warrior.Talents.ShieldMastery)
 	}
 
 	if warrior.Talents.Vitality > 0 {
@@ -60,6 +61,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyCriticalBlock()
 }
 
+// Multiplicative with all other modifiers and only applies to the block damage event
 func (warrior *Warrior) applyCriticalBlock() {
 	if warrior.Talents.CriticalBlock == 0 {
 		return
@@ -74,7 +76,7 @@ func (warrior *Warrior) applyCriticalBlock() {
 		if result.Outcome.Matches(core.OutcomeBlock) && !result.Outcome.Matches(core.OutcomeMiss) && !result.Outcome.Matches(core.OutcomeParry) && !result.Outcome.Matches(core.OutcomeDodge) {
 			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
 			if sim.RandomFloat("Critical Block Roll") <= procChance {
-				blockValue := warrior.GetStat(stats.BlockValue)
+				blockValue := warrior.BlockValue()
 				result.Damage = core.MaxFloat(0, result.Damage-blockValue)
 				dummyCriticalBlockSpell.Cast(sim, warrior.CurrentTarget)
 			}
@@ -98,7 +100,7 @@ func (warrior *Warrior) applyDamageShield() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := coeff * warrior.GetStat(stats.BlockValue)
+			baseDamage := coeff * warrior.BlockValue()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 		},
 	})

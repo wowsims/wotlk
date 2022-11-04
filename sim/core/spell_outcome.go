@@ -407,7 +407,7 @@ func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *Atta
 	if roll < *chance {
 		result.Outcome |= OutcomeBlock
 		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
-		result.Damage = MaxFloat(0, result.Damage-result.Target.GetStat(stats.BlockValue))
+		result.Damage = MaxFloat(0, result.Damage-result.Target.BlockValue())
 		return true
 	}
 	return false
@@ -528,7 +528,7 @@ func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable 
 	if roll < *chance {
 		result.Outcome |= OutcomeBlock
 		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
-		result.Damage = MaxFloat(0, result.Damage-result.Target.GetStat(stats.BlockValue))
+		result.Damage = MaxFloat(0, result.Damage-result.Target.BlockValue())
 		return true
 	}
 	return false

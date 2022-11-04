@@ -312,6 +312,10 @@ func (unit *Unit) Armor() float64 {
 	return unit.PseudoStats.ArmorMultiplier * unit.stats[stats.Armor]
 }
 
+func (unit *Unit) BlockValue() float64 {
+	return unit.PseudoStats.BlockValueMultiplier * unit.stats[stats.BlockValue]
+}
+
 func (unit *Unit) ArmorPenetrationPercentage(armorPenRating float64) float64 {
 	return MaxFloat(MinFloat(armorPenRating/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
