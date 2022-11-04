@@ -44,7 +44,6 @@ func (warrior *Warrior) registerSlamSpell() {
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}
-			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime
 		},
 	})
 }
@@ -64,5 +63,6 @@ func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
 		warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.Slam.DefaultCast.CastTime)
 	}
 
+	warrior.disableHsCleaveUntil = sim.CurrentTime + warrior.Slam.DefaultCast.CastTime
 	return warrior.Slam.Cast(sim, target)
 }
