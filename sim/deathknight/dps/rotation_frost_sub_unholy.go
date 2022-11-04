@@ -43,6 +43,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
 		if dk.Obliterate.CanCast(sim) {
+			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+				dk.Deathchill.Cast(sim, target)
+			}
 			casted = dk.Obliterate.Cast(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 		}
@@ -50,6 +53,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 		s.ConditionalAdvance(casted && advance)
 	} else {
 		if dk.Obliterate.CanCast(sim) {
+			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+				dk.Deathchill.Cast(sim, target)
+			}
 			casted = dk.Obliterate.Cast(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 

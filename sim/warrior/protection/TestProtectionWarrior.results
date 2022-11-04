@@ -45,7 +45,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 1.12186
+  weights: 1.09111
   weights: 0
   weights: 0
   weights: 0
@@ -56,7 +56,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.36597
+  weights: 0.34809
   weights: 0
   weights: 0
   weights: 0
@@ -65,12 +65,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.015
+  weights: 0.01501
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.42774
-  weights: -0.17886
+  weights: 0.42683
+  weights: -0.14066
   weights: 0
   weights: 0
   weights: 0
@@ -124,22 +124,22 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 1718.05074
-  tps: 5014.47176
+  dps: 1719.07192
+  tps: 5016.03202
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 1700.62816
-  tps: 4953.82787
+  dps: 1696.51454
+  tps: 4945.2116
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 1587.40455
-  tps: 4665.86485
+  dps: 1584.02358
+  tps: 4655.4223
  }
 }
 dps_results: {
@@ -299,8 +299,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 2299.8514
-  tps: 6456.80386
+  dps: 2303.96885
+  tps: 6465.84349
  }
 }
 dps_results: {
@@ -376,15 +376,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtArmor"
  value: {
-  dps: 1587.55041
-  tps: 4645.07048
+  dps: 1589.46797
+  tps: 4652.00479
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 1758.94438
-  tps: 5074.74917
+  dps: 1757.20398
+  tps: 5067.19206
  }
 }
 dps_results: {
@@ -495,8 +495,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-StormshroudArmor"
  value: {
-  dps: 1563.96999
-  tps: 4598.25242
+  dps: 1561.3091
+  tps: 4590.5936
  }
 }
 dps_results: {
@@ -586,8 +586,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 1683.67646
-  tps: 4910.09654
+  dps: 1686.44187
+  tps: 4921.4934
  }
 }
 dps_results: {
@@ -607,9 +607,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2891.66156
-  tps: 7582.04495
-  dtps: 111.47521
+  dps: 2891.32807
+  tps: 7581.17258
+  dtps: 111.46802
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3020.02458
-  tps: 7916.81241
+  dps: 3017.75165
+  tps: 7912.8709
   dtps: 102.70828
  }
 }

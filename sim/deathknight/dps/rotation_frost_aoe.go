@@ -82,6 +82,9 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 		int32(proto.Deathknight_Rotation_CustomObliterate): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := dk.Obliterate.CurCast.Cost
+				if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+					dk.Deathchill.Cast(sim, target)
+				}
 				return dk.Obliterate.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {

@@ -142,7 +142,6 @@ enum EarthTotem {
 
 enum AirTotem {
 	NoAirTotem = 0;
-	TranquilAirTotem = 1;
 	WindfuryTotem = 2;
 	WrathOfAirTotem = 3;
 }
@@ -261,7 +260,7 @@ message EnhancementShaman {
             FireNova = 10;
             ChainLightning = 11;
 			FrostShock = 12;
-            //fire totems as well maybe?
+			MagmaTotem = 13;
         }
 
 		CustomRotation custom_rotation = 3;

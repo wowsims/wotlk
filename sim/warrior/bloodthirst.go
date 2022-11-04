@@ -43,10 +43,20 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt: sim.CurrentTime + warrior.Bloodthirst.CD.Duration,
+				OnAction: func(_ *core.Simulation) {
+					if warrior.ShouldInstantSlam(sim) {
+						warrior.CastSlam(sim, warrior.CurrentTarget)
+					} else if warrior.CanBloodthirst(sim) {
+						warrior.Bloodthirst.Cast(sim, warrior.CurrentTarget)
+					}
+				},
+			})
 		},
 	})
 }
 
 func (warrior *Warrior) CanBloodthirst(sim *core.Simulation) bool {
-	return warrior.Talents.Bloodthirst && warrior.CurrentRage() >= warrior.Bloodthirst.DefaultCast.Cost && warrior.Bloodthirst.IsReady(sim)
+	return warrior.Talents.Bloodthirst && warrior.CurrentRage() >= warrior.Bloodthirst.DefaultCast.Cost && warrior.Bloodthirst.IsReady(sim) && warrior.GCD.IsReady(sim)
 }

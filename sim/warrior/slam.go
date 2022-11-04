@@ -44,13 +44,14 @@ func (warrior *Warrior) registerSlamSpell() {
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}
+			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime
 		},
 	})
 }
 
 func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
 	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.isBloodsurgeActive() &&
-		sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime)
+		sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime) && warrior.GCD.IsReady(sim)
 }
 
 func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {

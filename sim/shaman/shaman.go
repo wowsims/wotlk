@@ -109,16 +109,15 @@ type Shaman struct {
 	FireElemental      *FireElemental
 	FireElementalTotem *core.Spell
 
-	GraceOfAirTotem      *core.Spell
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
 	SearingTotem         *core.Spell
 	StrengthOfEarthTotem *core.Spell
 	TotemOfWrath         *core.Spell
-	TranquilAirTotem     *core.Spell
 	TremorTotem          *core.Spell
 	WindfuryTotem        *core.Spell
 	WrathOfAirTotem      *core.Spell
+	FlametongueTotem     *core.Spell
 
 	FlameShockDot   *core.Dot
 	SearingTotemDot *core.Dot
@@ -151,8 +150,11 @@ func (shaman *Shaman) HasMinorGlyph(glyph proto.ShamanMinorGlyph) bool {
 }
 
 func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
+	switch shaman.Totems.Fire {
+	case proto.FireTotem_TotemOfWrath:
 		raidBuffs.TotemOfWrath = true
+	case proto.FireTotem_FlametongueTotem:
+		raidBuffs.FlametongueTotem = true
 	}
 
 	switch shaman.Totems.Water {
@@ -202,7 +204,6 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerFeralSpirit()
 	shaman.registerFireElementalTotem()
 	shaman.registerFireNovaSpell()
-	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerLavaBurstSpell()
 	shaman.registerLavaLashSpell()
 	shaman.registerLightningBoltSpell()
@@ -215,7 +216,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerStrengthOfEarthTotemSpell()
 	shaman.registerThunderstormSpell()
 	shaman.registerTotemOfWrathSpell()
-	shaman.registerTranquilAirTotemSpell()
+	shaman.registerFlametongueTotemSpell()
 	shaman.registerTremorTotemSpell()
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
