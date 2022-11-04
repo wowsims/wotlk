@@ -21,7 +21,7 @@ func addPatchwerk25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      16_950_147,
 				stats.Armor:       10643,
-				stats.AttackPower: 640,
+				stats.AttackPower: 574,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
@@ -31,6 +31,7 @@ func addPatchwerk25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TightEnemyDamage: true,
 		},
 		AI: NewPatchwerk25AI(),
 	})
@@ -56,7 +57,7 @@ func (ai *Patchwerk25AI) Initialize(target *core.Target) {
 	ai.Target = target
 
 	//ai.registerHatefulStrikeSpell(target)
-	ai.registerFrenzySpell(target)
+	//ai.registerFrenzySpell(target)
 }
 
 func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
@@ -119,9 +120,11 @@ func (ai *Patchwerk25AI) registerFrenzySpell(target *core.Target) {
 }
 
 func (ai *Patchwerk25AI) DoAction(sim *core.Simulation) {
-	if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {
-		ai.Frenzy.Cast(sim, ai.Target.CurrentTarget)
-	}
+	// TODO: Re-enable Frenzy when we have a feature to flag for tank cooldown timing
+	//       Otherwise users get confused why the default settings say they die a lot...
+	//if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {
+	//	ai.Frenzy.Cast(sim, ai.Target.CurrentTarget)
+	//}
 
 	// TODO: Only enable Hateful Strike in solo sim if you are assigned OT instead of MT
 	// TODO: Actual targeting logic for Hateful Strike in raidsim
