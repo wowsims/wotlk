@@ -39,7 +39,6 @@ type Warrior struct {
 	shoutExpiresAt         time.Duration
 	revengeProcAura        *core.Aura
 	glyphOfRevengeProcAura *core.Aura
-	disableHsCleaveUntil   time.Duration
 	lastTasteForBloodProc  time.Duration
 	Ymirjar4pcProcAura     *core.Aura
 

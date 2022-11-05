@@ -109,7 +109,7 @@ func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
 }
 
 func (unit *Unit) HardcastWaitUntil(sim *Simulation, readyTime time.Duration, onComplete CastFunc) {
-	if unit.Hardcast.Expires >= sim.CurrentTime && sim.CurrentTime != 0 {
+	if unit.Hardcast.Expires > sim.CurrentTime {
 		fmt.Printf("Sim current time: %0.2f\n", sim.CurrentTime.Seconds())
 		panic(fmt.Sprintf("Hardcast already in use, will finish at: %0.2f", unit.Hardcast.Expires.Seconds()))
 	}

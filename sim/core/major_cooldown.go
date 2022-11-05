@@ -137,7 +137,7 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 	}
 
 	// while casting or channeling, no other action is possible
-	if character.Hardcast.Expires != 0 {
+	if character.Hardcast.Expires > sim.CurrentTime {
 		return false
 	}
 
