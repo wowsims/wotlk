@@ -269,12 +269,14 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 				spellPriority = append(spellPriority, lavaLash)
 			case int32(proto.EnhancementShaman_Rotation_EarthShock):
 				if rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_None {
+					rotation.options.PrimaryShock = proto.EnhancementShaman_Rotation_Earth
 					spellPriority = append(spellPriority, earthShock)
 				}
 			case int32(proto.EnhancementShaman_Rotation_LightningShield):
 				spellPriority = append(spellPriority, lightningShield)
 			case int32(proto.EnhancementShaman_Rotation_FrostShock):
 				if rotation.options.PrimaryShock == proto.EnhancementShaman_Rotation_None {
+					rotation.options.PrimaryShock = proto.EnhancementShaman_Rotation_Frost
 					spellPriority = append(spellPriority, frostShock)
 				}
 			case int32(proto.EnhancementShaman_Rotation_LavaBurst):
