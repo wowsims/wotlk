@@ -845,8 +845,8 @@ func registerShatteringThrowCD(agent Agent, numShatteringThrows int32) {
 
 var InnervateAuraTag = "Innervate"
 
-const InnervateDuration = time.Second * 20
-const InnervateCD = time.Minute * 6
+const InnervateDuration = time.Second * 10
+const InnervateCD = time.Minute * 3
 
 func InnervateManaThreshold(character *Character) float64 {
 	if character.Class == proto.Class_ClassMage {
@@ -870,7 +870,7 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 	character := agent.GetCharacter()
 	character.Env.RegisterPostFinalizeEffect(func() {
 		innervateThreshold = InnervateManaThreshold(character)
-		expectedManaPerInnervate = character.SpiritManaRegenPerSecond() * 5 * 20
+		expectedManaPerInnervate = 3496 * 2.25 // WotLK druid's base mana
 		remainingInnervateUsages = int(1 + (MaxDuration(0, character.Env.BaseDuration))/InnervateCD)
 		character.ExpectedBonusMana += expectedManaPerInnervate * float64(remainingInnervateUsages)
 		innervateAura = InnervateAura(character, expectedManaPerInnervate, -1)
@@ -903,30 +903,22 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 
 func InnervateAura(character *Character, expectedBonusManaReduction float64, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 29166, Tag: actionTag}
+	manaMetrics := character.NewManaMetrics(actionID)
 	return character.GetOrRegisterAura(Aura{
 		Label:    "Innervate-" + actionID.String(),
 		Tag:      InnervateAuraTag,
 		ActionID: actionID,
 		Duration: InnervateDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.ForceFullSpiritRegen = true
-			character.PseudoStats.SpiritRegenMultiplier *= 5.0
-			character.UpdateManaRegenRates()
-
 			expectedBonusManaPerTick := expectedBonusManaReduction / 10
 			StartPeriodicAction(sim, PeriodicActionOptions{
 				Period:   InnervateDuration / 10,
 				NumTicks: 10,
 				OnAction: func(sim *Simulation) {
 					character.ExpectedBonusMana -= expectedBonusManaPerTick
-					character.Metrics.BonusManaGained += expectedBonusManaPerTick
+					character.AddMana(sim, expectedBonusManaPerTick, manaMetrics, true)
 				},
 			})
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.ForceFullSpiritRegen = false
-			character.PseudoStats.SpiritRegenMultiplier /= 5.0
-			character.UpdateManaRegenRates()
 		},
 	})
 }

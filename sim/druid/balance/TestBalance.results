@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5560.13431
-  tps: 5388.33163
+  dps: 5560.11518
+  tps: 5402.33734
  }
 }
 dps_results: {
@@ -157,15 +157,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4088.08152
-  tps: 3911.47559
+  dps: 4068.48153
+  tps: 3902.28156
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
   dps: 5961.07513
-  tps: 5796.22979
+  tps: 5796.58907
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4461.98876
-  tps: 4292.79938
+  dps: 4462.40956
+  tps: 4303.87446
  }
 }
 dps_results: {
@@ -346,8 +346,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 4133.24197
-  tps: 3957.02344
+  dps: 4129.45935
+  tps: 3963.85052
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 4655.20086
-  tps: 4487.49431
+  dps: 4674.43373
+  tps: 4517.75719
  }
 }
 dps_results: {
@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4243.25892
-  tps: 4068.46948
+  dps: 4254.67445
+  tps: 4091.02599
  }
 }
 dps_results: {
@@ -486,8 +486,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 4655.20086
-  tps: 4487.49431
+  dps: 4674.43373
+  tps: 4517.75719
  }
 }
 dps_results: {
@@ -535,8 +535,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 4841.30529
-  tps: 4666.77731
+  dps: 4840.51862
+  tps: 4677.332
  }
 }
 dps_results: {
@@ -563,15 +563,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
-  dps: 3209.42371
-  tps: 3039.7193
+  dps: 3207.55919
+  tps: 3045.62609
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartRegalia"
  value: {
-  dps: 4991.92748
-  tps: 4828.29322
+  dps: 4993.12268
+  tps: 4839.815
  }
 }
 dps_results: {
@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 4811.33596
-  tps: 4636.78901
+  dps: 4795.5422
+  tps: 4631.95779
  }
 }
 dps_results: {
@@ -661,15 +661,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3817.17295
-  tps: 4192.6985
+  dps: 3912.8391
+  tps: 4585.4834
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2403.64157
-  tps: 2303.72609
+  dps: 2443.17578
+  tps: 2357.3681
  }
 }
 dps_results: {
