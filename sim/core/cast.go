@@ -371,11 +371,6 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 				if spell.Unit.Hardcast.Expires != spell.Unit.NextGCDAt() {
 					spell.Unit.newHardcastAction(sim)
 				}
-
-				if spell.Unit.AutoAttacks.IsEnabled() {
-					// Delay autoattacks until the cast is complete.
-					spell.Unit.AutoAttacks.DelayMeleeUntil(sim, spell.Unit.Hardcast.Expires)
-				}
 			}
 		}
 	}

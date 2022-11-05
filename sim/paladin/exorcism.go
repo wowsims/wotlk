@@ -10,7 +10,7 @@ import (
 
 func (paladin *Paladin) registerExorcismSpell() {
 	// From the perspective of max rank.
-	baseCost := paladin.BaseMana * 0.08
+	baseCost := paladin.BaseMana * 0.08 * (1 - 0.02*float64(paladin.Talents.Benediction))
 
 	paladin.Exorcism = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48801},
@@ -33,8 +33,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 				if paladin.ArtOfWarInstantCast.IsActive() {
 					paladin.ArtOfWarInstantCast.Deactivate(sim)
 					cast.CastTime = 0
-					cast.Cost *= 1 - 0.02*float64(paladin.Talents.Benediction)
+					return
 				}
+				paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime)
 			},
 		},
 

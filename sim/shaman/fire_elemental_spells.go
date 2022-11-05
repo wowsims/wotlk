@@ -28,9 +28,6 @@ func (fireElemental *FireElemental) registerFireBlast() {
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second,
 			},
-			OnCastComplete: func(sim *core.Simulation, _ *core.Spell) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed())
-			},
 		},
 
 		DamageMultiplier: 1,
@@ -66,9 +63,6 @@ func (fireElemental *FireElemental) registerFireNova() {
 			CD: core.Cooldown{
 				Timer:    fireElemental.NewTimer(),
 				Duration: time.Second, // TODO estimated from log digging,
-			},
-			ModifyCast: func(sim *core.Simulation, _ *core.Spell, _ *core.Cast) {
-				fireElemental.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+fireElemental.AutoAttacks.MainhandSwingSpeed()*2)
 			},
 		},
 

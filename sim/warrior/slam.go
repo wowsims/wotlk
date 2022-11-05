@@ -58,11 +58,10 @@ func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {
 }
 
 func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
-	warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.Slam.DefaultCast.CastTime)
-	if warrior.AutoAttacks.IsDualWielding {
-		warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.Slam.DefaultCast.CastTime)
+	if !warrior.Slam.Cast(sim, target) {
+		return false
 	}
-
-	warrior.disableHsCleaveUntil = sim.CurrentTime + warrior.Slam.DefaultCast.CastTime
-	return warrior.Slam.Cast(sim, target)
+	warrior.AutoAttacks.DelayMeleeBy(sim, warrior.Slam.CurCast.CastTime)
+	warrior.disableHsCleaveUntil = sim.CurrentTime + warrior.Slam.CurCast.CastTime
+	return true
 }
