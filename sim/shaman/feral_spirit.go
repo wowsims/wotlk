@@ -36,15 +36,6 @@ func (shaman *Shaman) registerFeralSpirit() {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Minute * 3,
 			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				attackSpeed := shaman.AutoAttacks.MainhandSwingSpeed()
-
-				if shaman.AutoAttacks.IsDualWielding {
-					attackSpeed = core.MinDuration(attackSpeed, shaman.AutoAttacks.OffhandSwingSpeed())
-				}
-
-				shaman.AutoAttacks.DelayMeleeUntil(sim, sim.CurrentTime+attackSpeed)
-			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -56,11 +47,18 @@ func (shaman *Shaman) registerFeralSpirit() {
 		},
 	})
 
-	//TODO: reset swing timer on cast, unless it ends up being fixed
-
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.FeralSpirit,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
 		Type:     core.CooldownTypeDPS,
+		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
+			return func(sim *core.Simulation, unit *core.Character) {
+				if shaman.FeralSpirit.Cast(sim, unit.CurrentTarget) {
+					// https://github.com/JamminL/wotlk-classic-bugs/issues/280
+					// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
+					shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+				}
+			}
+		},
 	})
 }

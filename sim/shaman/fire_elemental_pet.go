@@ -101,7 +101,7 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 
 	random := sim.RandomFloat("Fire Elemental Pet Spell")
 
-	//Meele the other 30%
+	//Melee the other 30%
 	if random >= .65 {
 		if !fireElemental.TryCast(sim, target, fireElemental.FireNova, maxFireNovaCasts) {
 			fireElemental.TryCast(sim, target, fireElemental.FireBlast, maxFireBlastCasts)
@@ -124,7 +124,16 @@ func (fireElemental *FireElemental) TryCast(sim *core.Simulation, target *core.U
 		return false
 	}
 
-	return spell.IsReady(sim) && spell.Cast(sim, target)
+	if !spell.IsReady(sim) {
+		return false
+	}
+
+	if !spell.Cast(sim, target) {
+		return false
+	}
+	// all spell casts reset the elemental's swing timer
+	fireElemental.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+spell.CurCast.CastTime)
+	return true
 }
 
 var fireElementalPetBaseStats = stats.Stats{
@@ -161,7 +170,7 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 				TODO working on figuring this out, getting close need more trials. will need to remove specific buffs,
 				ie does not gain the benefit from draenei buff.
 			*/
-			stats.Expertise: math.Floor((spellHitRatingFromOwner * 0.79)),
+			stats.Expertise: math.Floor(spellHitRatingFromOwner * 0.79),
 		}
 	}
 }

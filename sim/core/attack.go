@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/items"
@@ -552,78 +551,62 @@ func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
 
 	oldSwingSpeed := aa.curSwingSpeed
 	aa.curSwingSpeed = aa.unit.SwingSpeed()
-	speedup := aa.curSwingSpeed / oldSwingSpeed
 
-	mhSwingTime := aa.MainhandSwingAt - sim.CurrentTime
-	if mhSwingTime > 1 { // If its 1 we end up rounding down to 0 and causing a panic.
-		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(mhSwingTime)/speedup)
+	f := oldSwingSpeed / aa.curSwingSpeed
+
+	remainingSwingTime := aa.MainhandSwingAt - sim.CurrentTime
+	if remainingSwingTime > 0 {
+		aa.MainhandSwingAt = sim.CurrentTime + time.Duration(float64(remainingSwingTime)*f)
 	}
 
-	if aa.OH.SwingSpeed != 0 {
-		ohSwingTime := aa.OffhandSwingAt - sim.CurrentTime
-		if ohSwingTime > 1 {
-			newTime := time.Duration(float64(ohSwingTime) / speedup)
-			if newTime > 0 {
-				aa.OffhandSwingAt = sim.CurrentTime + newTime
-			}
+	if aa.IsDualWielding {
+		remainingSwingTime := aa.OffhandSwingAt - sim.CurrentTime
+		if remainingSwingTime > 0 {
+			aa.OffhandSwingAt = sim.CurrentTime + time.Duration(float64(remainingSwingTime)*f)
 		}
 	}
 
 	aa.resetAutoSwing(sim)
 }
 
-// Delays all swing timers until the specified time.
-func (aa *AutoAttacks) DelayMeleeUntil(sim *Simulation, readyAt time.Duration) {
-	autoChanged := false
+// StopMeleeUntil should be used whenever a non-melee spell is cast. It stops melee, then restarts it
+// at end of cast, but with a reset swing timer (as if swings had just landed).
+func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration) {
+	aa.CancelAutoSwing(sim)
 
-	if readyAt > aa.MainhandSwingAt {
-		aa.MainhandSwingAt = readyAt
-		if aa.AutoSwingMelee {
-			autoChanged = true
-		}
-	}
-	if readyAt > aa.OffhandSwingAt {
-		aa.OffhandSwingAt = readyAt
-		if aa.AutoSwingMelee {
-			autoChanged = true
-		}
-	}
-
-	if autoChanged {
-		aa.resetAutoSwing(sim)
-	}
+	// schedule restart action
+	sim.AddPendingAction(&PendingAction{
+		NextActionAt: readyAt,
+		Priority:     ActionPriorityAuto,
+		OnAction:     aa.restartMelee,
+	})
 }
 
-// Delays only mainhand swing timers until the specified time.
-func (aa *AutoAttacks) DelayMainhandMeleeUntil(sim *Simulation, readyAt time.Duration) {
-	autoChanged := false
-
-	if readyAt > aa.MainhandSwingAt {
-		aa.MainhandSwingAt = readyAt
-		if aa.AutoSwingMelee {
-			autoChanged = true
-		}
+func (aa *AutoAttacks) restartMelee(sim *Simulation) {
+	if !aa.autoSwingCancelled {
+		panic("restartMelee used while auto swing isn't cancelled")
 	}
 
-	if autoChanged {
-		aa.resetAutoSwing(sim)
+	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
+	if aa.IsDualWielding {
+		aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
 	}
+	aa.autoSwingCancelled = false
+	aa.resetAutoSwing(sim)
 }
 
-// Delays only offhand swing timers until the specified time.
-func (aa *AutoAttacks) DelayOffhandMeleeUntil(sim *Simulation, readyAt time.Duration) {
-	autoChanged := false
-
-	if readyAt > aa.OffhandSwingAt {
-		aa.OffhandSwingAt = readyAt
-		if aa.AutoSwingMelee {
-			autoChanged = true
-		}
+// Delays all swing timers for the specified amount. Only used by Slam.
+func (aa *AutoAttacks) DelayMeleeBy(sim *Simulation, delay time.Duration) {
+	if delay <= 0 {
+		return
 	}
 
-	if autoChanged {
-		aa.resetAutoSwing(sim)
+	aa.MainhandSwingAt += delay
+	if aa.IsDualWielding {
+		aa.OffhandSwingAt += delay
 	}
+
+	aa.resetAutoSwing(sim)
 }
 
 func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) {
@@ -640,27 +623,6 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 		nextAttack = MinDuration(nextAttack, aa.OffhandSwingAt)
 	}
 	return nextAttack
-}
-
-// Returns the time at which all melee swings will be ready.
-func (aa *AutoAttacks) MeleeSwingsReadyAt() time.Duration {
-	return MaxDuration(aa.MainhandSwingAt, aa.OffhandSwingAt)
-}
-
-// Returns true if all melee weapons are ready for a swing.
-func (aa *AutoAttacks) MeleeSwingsReady(sim *Simulation) bool {
-	return aa.MainhandSwingAt <= sim.CurrentTime &&
-		(aa.OH.SwingSpeed == 0 || aa.OffhandSwingAt <= sim.CurrentTime)
-}
-
-// Returns the time at which the next event will occur, considering both autos and the gcd.
-func (aa *AutoAttacks) NextEventAt(sim *Simulation) time.Duration {
-	if aa.NextAttackAt() == sim.CurrentTime {
-		panic(fmt.Sprintf("Returned 0 from next attack at %s, mh: %s, oh: %s", sim.CurrentTime, aa.MainhandSwingAt, aa.OffhandSwingAt))
-	}
-	return MinDuration(
-		sim.CurrentTime+aa.unit.GCD.TimeToReady(sim),
-		aa.NextAttackAt())
 }
 
 type PPMManager struct {

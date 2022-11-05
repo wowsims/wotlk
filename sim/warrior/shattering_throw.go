@@ -13,8 +13,8 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 	ShatteringThrowSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 64382},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagApplyArmorReduction,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -36,17 +36,10 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0.5 * spell.MeleeAttackPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-			core.ShatteringThrowAura(target).Activate(sim)
-			warrior.AutoAttacks.DelayMainhandMeleeUntil(sim, warrior.AutoAttacks.MainhandSwingAt+warrior.AutoAttacks.MainhandSwingSpeed())
-
-			// To desync same speed weapon
-			if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
-				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed()+warrior.AutoAttacks.OffhandSwingSpeed()/2)
-			} else {
-				warrior.AutoAttacks.DelayOffhandMeleeUntil(sim, warrior.AutoAttacks.OffhandSwingAt+warrior.AutoAttacks.OffhandSwingSpeed())
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+			if result.Landed() {
+				core.ShatteringThrowAura(target).Activate(sim)
 			}
-			warrior.disableHsCleaveUntil = sim.CurrentTime + spell.DefaultCast.CastTime
 		},
 	})
 
@@ -64,11 +57,14 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				if warrior.CurrentRage() < cost {
 					return
 				}
-				ShatteringThrowSpell.Cast(sim, character.CurrentTarget)
+				if ShatteringThrowSpell.Cast(sim, character.CurrentTarget) {
+					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime)
+					warrior.disableHsCleaveUntil = sim.CurrentTime + ShatteringThrowSpell.CurCast.CastTime
+				}
 			}
 		},
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return true
+			return warrior.CurrentRage() >= cost && (warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim))
 		},
 	})
 }
