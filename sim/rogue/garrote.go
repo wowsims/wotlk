@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -20,7 +21,7 @@ func (rogue *Rogue) registerGarrote() {
 		// 20% **total** damage increase with one fewer tick
 		totalDamageMod = 1.2 * 6.0 / 5.0
 	}
-	rogue.Garrote = rogue.RegisterSpell(core.SpellConfig{
+	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: GarroteSpellID},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
@@ -62,7 +63,7 @@ func (rogue *Rogue) registerGarrote() {
 	rogue.garroteDot = core.NewDot(core.Dot{
 		Spell: rogue.Garrote,
 		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Garrote",
+			Label:    "Garrote-" + strconv.Itoa(int(rogue.Index)),
 			Tag:      RogueBleedTag,
 			ActionID: rogue.Garrote.ActionID,
 		}),
