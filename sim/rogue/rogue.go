@@ -275,11 +275,11 @@ func (rogue *Rogue) CanMutilate() bool {
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  112,
-		stats.Agility:   206,
-		stats.Stamina:   88,
-		stats.Intellect: 43,
-		stats.Spirit:    57,
+		stats.Strength:  110,
+		stats.Agility:   191,
+		stats.Stamina:   105,
+		stats.Intellect: 46,
+		stats.Spirit:    65,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -287,11 +287,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  120,
-		stats.Agility:   200,
-		stats.Stamina:   92,
-		stats.Intellect: 38,
-		stats.Spirit:    57,
+		stats.Strength:  118,
+		stats.Agility:   185,
+		stats.Stamina:   106,
+		stats.Intellect: 42,
+		stats.Spirit:    66,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -299,11 +299,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  110,
-		stats.Agility:   206,
-		stats.Stamina:   88,
-		stats.Intellect: 45,
-		stats.Spirit:    58,
+		stats.Strength:  108,
+		stats.Agility:   191,
+		stats.Stamina:   105,
+		stats.Intellect: 48,
+		stats.Spirit:    67,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -323,11 +323,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  111,
-		stats.Agility:   208,
-		stats.Stamina:   88,
-		stats.Intellect: 39,
-		stats.Spirit:    58,
+		stats.Strength:  109,
+		stats.Agility:   193,
+		stats.Stamina:   105,
+		stats.Intellect: 43,
+		stats.Spirit:    67,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -335,11 +335,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  118,
-		stats.Agility:   201,
-		stats.Stamina:   91,
-		stats.Intellect: 36,
-		stats.Spirit:    61,
+		stats.Strength:  116,
+		stats.Agility:   186,
+		stats.Stamina:   106,
+		stats.Intellect: 40,
+		stats.Spirit:    69,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -347,11 +347,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  116,
-		stats.Agility:   206,
-		stats.Stamina:   90,
-		stats.Intellect: 35,
-		stats.Spirit:    59,
+		stats.Strength:  114,
+		stats.Agility:   191,
+		stats.Stamina:   105,
+		stats.Intellect: 39,
+		stats.Spirit:    68,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -359,11 +359,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  114,
-		stats.Agility:   202,
-		stats.Stamina:   90,
-		stats.Intellect: 37,
-		stats.Spirit:    63,
+		stats.Strength:  112,
+		stats.Agility:   187,
+		stats.Stamina:   105,
+		stats.Intellect: 41,
+		stats.Spirit:    72,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,

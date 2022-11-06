@@ -187,6 +187,8 @@ message Rogue {
 		bool open_with_garrote = 14;
 
 		bool rupture_for_bleed = 15;
+
+		int32 envenom_energy_threshold = 16;
 	}
 	Rotation rotation = 1;
 

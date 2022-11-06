@@ -76,9 +76,9 @@ export const RogueRotationConfig = {
 			],
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomPoolAmount',
-			label: 'Energy Pooled (Envenom)',
-			labelTooltip: 'Amount of energy to pool before casting Envenom (beyond the cost).',
+			fieldName: 'envenomEnergyThreshold',
+			label: 'Energy Threshold (Envenom)',
+			labelTooltip: 'Amount of total energy to pool before casting Envenom.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({

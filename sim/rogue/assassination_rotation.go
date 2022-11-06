@@ -238,7 +238,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 					return Cast
 				}
 			}
-			energyNeeded := core.MinFloat(r.maxEnergy, r.Envenom[1].DefaultCast.Cost+float64(rogue.Rotation.EnvenomPoolAmount))
+			energyNeeded := core.MinFloat(r.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThreshold))
+			energyNeeded = core.MaxFloat(r.Envenom[1].DefaultCast.Cost, energyNeeded)
 			minimumCP := int32(4)
 			if rogue.Rotation.AllowCpOvercap {
 				eps := r.getExpectedEnergyPerSecond()
