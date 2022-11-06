@@ -571,18 +571,20 @@ func (hunter *Hunter) applyLockAndLoad() {
 		MaxStacks: 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.ArcaneShot.CostMultiplier -= 1
-			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.CostMultiplier -= 1
+			if hunter.ExplosiveShotR4 != nil {
+				hunter.ExplosiveShotR4.CostMultiplier -= 1
+				hunter.ExplosiveShotR3.CostMultiplier -= 1
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.ArcaneShot.CostMultiplier += 1
-			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.CostMultiplier += 1
+			if hunter.ExplosiveShotR4 != nil {
+				hunter.ExplosiveShotR4.CostMultiplier += 1
+				hunter.ExplosiveShotR3.CostMultiplier += 1
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == hunter.ArcaneShot || spell == hunter.ExplosiveShot {
+			if spell == hunter.ArcaneShot || spell == hunter.ExplosiveShotR4 || spell == hunter.ExplosiveShotR3 {
 				aura.RemoveStack(sim)
 				hunter.ArcaneShot.CD.Reset() // Shares the CD with explosive shot.
 			}
@@ -642,7 +644,7 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.DidCrit() && spell == hunter.ExplosiveShot {
+			if result.DidCrit() && (spell == hunter.ExplosiveShotR4 || spell == hunter.ExplosiveShotR3) {
 				// Explosive shot ticks can proc TotH but with 1/3 the bonus.
 				if sim.Proc(procChance, "ThrillOfTheHunt") {
 					hunter.AddMana(sim, spell.CurCast.Cost*0.4/3, manaMetrics, false)
@@ -762,8 +764,9 @@ func (hunter *Hunter) applySniperTraining() {
 			if hunter.BlackArrow != nil {
 				hunter.BlackArrow.DamageMultiplierAdditive += dmgMod
 			}
-			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.DamageMultiplierAdditive += dmgMod
+			if hunter.ExplosiveShotR4 != nil {
+				hunter.ExplosiveShotR4.DamageMultiplierAdditive += dmgMod
+				hunter.ExplosiveShotR3.DamageMultiplierAdditive += dmgMod
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -774,8 +777,9 @@ func (hunter *Hunter) applySniperTraining() {
 			if hunter.BlackArrow != nil {
 				hunter.BlackArrow.DamageMultiplierAdditive -= dmgMod
 			}
-			if hunter.ExplosiveShot != nil {
-				hunter.ExplosiveShot.DamageMultiplierAdditive -= dmgMod
+			if hunter.ExplosiveShotR4 != nil {
+				hunter.ExplosiveShotR4.DamageMultiplierAdditive -= dmgMod
+				hunter.ExplosiveShotR3.DamageMultiplierAdditive -= dmgMod
 			}
 		},
 	})

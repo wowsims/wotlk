@@ -53,30 +53,32 @@ type Hunter struct {
 	AspectOfTheDragonhawk *core.Spell
 	AspectOfTheViper      *core.Spell
 
-	AimedShot     *core.Spell
-	ArcaneShot    *core.Spell
-	BlackArrow    *core.Spell
-	ChimeraShot   *core.Spell
-	ExplosiveShot *core.Spell
-	ExplosiveTrap *core.Spell
-	KillCommand   *core.Spell
-	KillShot      *core.Spell
-	MultiShot     *core.Spell
-	RapidFire     *core.Spell
-	RaptorStrike  *core.Spell
-	ScorpidSting  *core.Spell
-	SerpentSting  *core.Spell
-	SilencingShot *core.Spell
-	SteadyShot    *core.Spell
-	Volley        *core.Spell
+	AimedShot       *core.Spell
+	ArcaneShot      *core.Spell
+	BlackArrow      *core.Spell
+	ChimeraShot     *core.Spell
+	ExplosiveShotR4 *core.Spell
+	ExplosiveShotR3 *core.Spell
+	ExplosiveTrap   *core.Spell
+	KillCommand     *core.Spell
+	KillShot        *core.Spell
+	MultiShot       *core.Spell
+	RapidFire       *core.Spell
+	RaptorStrike    *core.Spell
+	ScorpidSting    *core.Spell
+	SerpentSting    *core.Spell
+	SilencingShot   *core.Spell
+	SteadyShot      *core.Spell
+	Volley          *core.Spell
 
 	// Fake spells to encapsulate weaving logic.
 	TrapWeaveSpell *core.Spell
 
-	BlackArrowDot    *core.Dot
-	ExplosiveTrapDot *core.Dot
-	ExplosiveShotDot *core.Dot
-	SerpentStingDot  *core.Dot
+	BlackArrowDot      *core.Dot
+	ExplosiveTrapDot   *core.Dot
+	ExplosiveShotR4Dot *core.Dot
+	ExplosiveShotR3Dot *core.Dot
+	SerpentStingDot    *core.Dot
 
 	AspectOfTheDragonhawkAura *core.Aura
 	AspectOfTheViperAura      *core.Aura
