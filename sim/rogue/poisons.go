@@ -112,7 +112,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			// TODO: MAP part snapshots
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
-				dot.Spell.CalcAndDealDamage(sim, target, baseDmg, dot.Spell.OutcomeTickMagicHit)
+				dot.Spell.CalcAndDealDamage(sim, target, baseDmg, dot.OutcomeTick)
 			},
 		})
 

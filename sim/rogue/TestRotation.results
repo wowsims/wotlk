@@ -127,7 +127,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 308.3
+   value: 308.4
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1465,7 +1465,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 234.1
+   value: 234
   }
   casts: {
    key: "spell_id:57968 tag:2"
