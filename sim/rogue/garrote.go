@@ -12,14 +12,14 @@ import (
 const GarroteSpellID = 48676
 
 func (rogue *Rogue) registerGarrote() {
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-	numTicks := 6
+	refundAmount := 0.8
 	baseCost := rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds))
-	totalDamageMod := 1.0
+
+	numTicks := 6
+	var glyphMultiplier float64
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGarrote) {
 		numTicks = 5
-		// 20% **total** damage increase with one fewer tick
-		totalDamageMod = 1.2 * 6.0 / 5.0
+		glyphMultiplier = 0.44 // cp. https://www.wowhead.com/wotlk/spell=56812/glyph-of-garrote
 	}
 	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: GarroteSpellID},
@@ -38,23 +38,19 @@ func (rogue *Rogue) registerGarrote() {
 		},
 
 		DamageMultiplier: 1 +
+			glyphMultiplier +
 			0.15*float64(rogue.Talents.BloodSpatter) +
+			0.10*float64(rogue.Talents.Opportunity) +
 			0.02*float64(rogue.Talents.FindWeakness),
-		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 			if result.Landed() {
-				rogue.garroteDot.Spell = spell
-				rogue.garroteDot.NumberOfTicks = numTicks
-				rogue.garroteDot.RecomputeAuraDuration()
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				rogue.garroteDot.Apply(sim)
-				rogue.ApplyFinisher(sim, spell)
 			} else {
-				if refundAmount > 0 {
-					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-				}
+				rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.EnergyRefundMetrics)
 			}
 			spell.DealOutcome(sim, result)
 		},
@@ -70,13 +66,12 @@ func (rogue *Rogue) registerGarrote() {
 		NumberOfTicks: numTicks,
 		TickLength:    time.Second * 3,
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 119 + dot.Spell.MeleeAttackPower()*0.07*totalDamageMod
+			dot.SnapshotBaseDamage = 119 + dot.Spell.MeleeAttackPower()*0.07
 			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 }
