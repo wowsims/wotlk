@@ -76,10 +76,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 		// Eclipse
 		if solarIsActive || lunarIsActive {
+			if maximizeIsUptime && insectSwarmUptime <= 0 {
+				return moonkin.InsectSwarm
+			}
+			if maximizeMfUptime && moonfireUptime <= 0 {
+				return moonkin.Moonfire
+			}
 			if lunarIsActive {
-				if maximizeIsUptime && insectSwarmUptime <= 0 {
-					return moonkin.InsectSwarm
-				}
 				if (moonfireUptime > 0 || float64(rotation.MfInsideEclipseThreshold) >= lunarUptime.Seconds()) && rotation.UseStarfire {
 					if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
@@ -90,9 +93,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					return moonkin.Moonfire
 				}
 			} else {
-				if maximizeMfUptime && moonfireUptime <= 0 {
-					return moonkin.Moonfire
-				}
 				if insectSwarmUptime > 0 || float64(rotation.IsInsideEclipseThreshold) >= solarUptime.Seconds() && rotation.UseWrath {
 					if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
