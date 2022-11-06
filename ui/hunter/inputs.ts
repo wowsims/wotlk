@@ -92,7 +92,7 @@ export const HunterRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'trapWeave',
 			label: 'Trap Weave',
-			labelTooltip: 'Uses explosive trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
+			labelTooltip: 'Uses Explosive Trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
@@ -100,6 +100,13 @@ export const HunterRotationConfig = {
 			label: 'Weave Time',
 			labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
 			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
+			fieldName: 'allowExplosiveShotDownrank',
+			label: 'Allow ES Downrank',
+			labelTooltip: 'Weaves Explosive Shot Rank 3 during LNL procs. This works because the rank 3 and rank 4 dots can stack.',
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
+			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
 			fieldName: 'customRotation',
@@ -114,7 +121,8 @@ export const HunterRotationConfig = {
 				{ actionId: ActionId.fromSpellId(61006), value: SpellOption.KillShot },
 				{ actionId: ActionId.fromSpellId(63672), value: SpellOption.BlackArrow },
 				{ actionId: ActionId.fromSpellId(53209), value: SpellOption.ChimeraShot },
-				{ actionId: ActionId.fromSpellId(60053), value: SpellOption.ExplosiveShot },
+				{ actionId: ActionId.fromSpellId(60053), value: SpellOption.ExplosiveShot, text: 'R4' },
+				{ actionId: ActionId.fromSpellId(60052), value: SpellOption.ExplosiveShotDownrank, text: 'R3' },
 				{ actionId: ActionId.fromSpellId(49067), value: SpellOption.ExplosiveTrap },
 				{ actionId: ActionId.fromSpellId(58434), value: SpellOption.Volley },
 			],

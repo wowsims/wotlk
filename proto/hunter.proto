@@ -211,6 +211,7 @@ message Hunter {
 			BlackArrow = 8;
 			ChimeraShot = 9;
 			ExplosiveShot = 10;
+			ExplosiveShotDownrank = 13;
 			ExplosiveTrap = 11;
 			Volley = 12;
 		}
@@ -220,6 +221,9 @@ message Hunter {
 		double viper_start_mana_percent = 6;
 		// Switch back to Aspect of the Hawk when mana goes above this percent.
 		double viper_stop_mana_percent = 7;
+
+		// Allow use of Explosive Shot Rank 3 during LNL procs.
+		bool allow_explosive_shot_downrank = 10;
 	}
 	Rotation rotation = 1;
 

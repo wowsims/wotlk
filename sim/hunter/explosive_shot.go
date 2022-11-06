@@ -1,7 +1,7 @@
 package hunter
 
 import (
-	"strconv"
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -14,10 +14,24 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 60053}
+	hunter.ExplosiveShotR4, hunter.ExplosiveShotR4Dot = hunter.makeExplosiveShotSpell(timer, false)
+	hunter.ExplosiveShotR3, hunter.ExplosiveShotR3Dot = hunter.makeExplosiveShotSpell(timer, true)
+}
+
+func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (*core.Spell, *core.Dot) {
 	baseCost := 0.07 * hunter.BaseMana
 
-	hunter.ExplosiveShot = hunter.RegisterSpell(core.SpellConfig{
+	actionID := core.ActionID{SpellID: 60053}
+	minFlatDamage := 386.0
+	maxFlatDamage := 464.0
+	if downrank {
+		actionID = core.ActionID{SpellID: 60052}
+		minFlatDamage = 325.0
+		maxFlatDamage = 391.0
+	}
+
+	var esDot *core.Dot
+	esSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskRangedSpecial,
@@ -50,24 +64,24 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 
 			if result.Landed() {
-				hunter.ExplosiveShot.SpellMetrics[target.UnitIndex].Hits--
-				hunter.ExplosiveShotDot.Apply(sim)
-				hunter.ExplosiveShotDot.TickOnce(sim)
+				spell.SpellMetrics[target.UnitIndex].Hits--
+				esDot.Apply(sim)
+				esDot.TickOnce(sim)
 			}
 		},
 	})
 
 	target := hunter.CurrentTarget
-	hunter.ExplosiveShotDot = core.NewDot(core.Dot{
-		Spell: hunter.ExplosiveShot,
+	esDot = core.NewDot(core.Dot{
+		Spell: esSpell,
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "ExplosiveShot-" + strconv.Itoa(int(hunter.Index)),
+			Label:    fmt.Sprintf("ExplosiveShot-%d-%d", actionID.SpellID, hunter.Index),
 			ActionID: actionID,
 		}),
 		NumberOfTicks: 2,
 		TickLength:    time.Second * 1,
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = sim.Roll(386, 464) + 0.14*dot.Spell.RangedAttackPower(target)
+			dot.SnapshotBaseDamage = sim.Roll(minFlatDamage, maxFlatDamage) + 0.14*dot.Spell.RangedAttackPower(target)
 			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
@@ -76,4 +90,6 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeRangedHitAndCritSnapshot)
 		},
 	})
+
+	return esSpell, esDot
 }
