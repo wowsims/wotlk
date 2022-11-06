@@ -350,6 +350,9 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 }
 
 func (raid Raid) GetPlayerFromRaidTarget(raidTarget *proto.RaidTarget) Agent {
+	if raidTarget == nil {
+		return nil
+	}
 	raidIndex := raidTarget.TargetIndex
 
 	partyIndex := int(raidIndex / 5)
