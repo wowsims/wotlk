@@ -310,9 +310,11 @@ func (priest *Priest) applySurgeOfLight() {
 		ActionID: core.ActionID{SpellID: 33154},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			priest.Smite.CastTimeMultiplier -= 1
-			priest.Smite.CostMultiplier -= 1
-			priest.Smite.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if priest.Smite != nil {
+				priest.Smite.CastTimeMultiplier -= 1
+				priest.Smite.CostMultiplier -= 1
+				priest.Smite.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 			if priest.FlashHeal != nil {
 				priest.FlashHeal.CastTimeMultiplier -= 1
 				priest.FlashHeal.CostMultiplier -= 1
@@ -320,9 +322,11 @@ func (priest *Priest) applySurgeOfLight() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			priest.Smite.CastTimeMultiplier += 1
-			priest.Smite.CostMultiplier += 1
-			priest.Smite.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if priest.Smite != nil {
+				priest.Smite.CastTimeMultiplier += 1
+				priest.Smite.CostMultiplier += 1
+				priest.Smite.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 			if priest.FlashHeal != nil {
 				priest.FlashHeal.CastTimeMultiplier += 1
 				priest.FlashHeal.CostMultiplier += 1
@@ -330,7 +334,7 @@ func (priest *Priest) applySurgeOfLight() {
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == priest.Smite || (priest.FlashHeal != nil && spell == priest.FlashHeal) {
+			if spell == priest.Smite || spell == priest.FlashHeal {
 				aura.Deactivate(sim)
 			}
 		},
