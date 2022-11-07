@@ -29,7 +29,7 @@ func (warrior *Warrior) ApplyTalents() {
 
 	// Shield Mastery, Shield Block, Glyph of Blocking, Eternal Earthsiege treated as additive sources
 	if warrior.Talents.ShieldMastery > 0 {
-		warrior.PseudoStats.BlockValueMultiplier += 0.15*float64(warrior.Talents.ShieldMastery)
+		warrior.PseudoStats.BlockValueMultiplier += 0.15 * float64(warrior.Talents.ShieldMastery)
 	}
 
 	if warrior.Talents.Vitality > 0 {
@@ -806,12 +806,15 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
+				Cost:        cost,
+				ChannelTime: time.Second * 6,
+				GCD:         core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
 				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBladestorm), time.Second*75, time.Second*90),
 			},
+			IgnoreHaste: true,
 		},
 
 		DamageMultiplier: 1,
@@ -821,10 +824,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			bladestormDot.Apply(sim)
 			bladestormDot.TickOnce(sim)
-
-			// Using regular cast/channel options would disable melee swings, so do it manually instead.
-			warrior.SetGCDTimer(sim, sim.CurrentTime+time.Second*6)
-			warrior.disableHsCleaveUntil = sim.CurrentTime + time.Second*6
 		},
 	})
 

@@ -59,7 +59,6 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				}
 				if ShatteringThrowSpell.Cast(sim, character.CurrentTarget) {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime)
-					warrior.disableHsCleaveUntil = sim.CurrentTime + ShatteringThrowSpell.CurCast.CastTime
 				}
 			}
 		},

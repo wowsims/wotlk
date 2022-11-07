@@ -62,6 +62,5 @@ func (warrior *Warrior) CastSlam(sim *core.Simulation, target *core.Unit) bool {
 		return false
 	}
 	warrior.AutoAttacks.DelayMeleeBy(sim, warrior.Slam.CurCast.CastTime)
-	warrior.disableHsCleaveUntil = sim.CurrentTime + warrior.Slam.CurCast.CastTime
 	return true
 }

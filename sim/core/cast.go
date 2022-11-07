@@ -200,7 +200,7 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 
 	if config.DefaultCast.GCD == 0 { // mostly cooldowns (e.g. nature's swiftness, presence of mind)
 		return func(sim *Simulation, target *Unit) {
-			if hc := spell.Unit.Hardcast; hc.Expires != 0 {
+			if hc := spell.Unit.Hardcast; hc.Expires > sim.CurrentTime {
 				panic(fmt.Sprintf("Trying to cast %s but casting/channeling %v for %s, curTime = %s", spell.ActionID, hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime))
 			}
 			onCastComplete(sim, target)
@@ -213,7 +213,7 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 			panic(fmt.Sprintf("Trying to cast %s but GCD on cooldown for %s, curTime = %s", spell.ActionID, spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime))
 		}
 
-		if hc := spell.Unit.Hardcast; hc.Expires != 0 {
+		if hc := spell.Unit.Hardcast; hc.Expires > sim.CurrentTime {
 			panic(fmt.Sprintf("Trying to cast %s but casting/channeling %v for %s, curTime = %s", spell.ActionID, hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime))
 		}
 
