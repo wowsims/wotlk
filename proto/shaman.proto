@@ -222,6 +222,7 @@ message ElementalShaman {
 		bool overwrite_flameshock = 6;
 		bool always_crit_lvb = 7;
 		bool use_thunderstorm = 8;
+		double lvb_fs_wait_ms = 12;
 	}
 
 	message Options {
