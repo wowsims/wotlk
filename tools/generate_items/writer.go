@@ -344,6 +344,7 @@ var allowList = map[int]bool{
 	29387: true, // Gnomeregan Auto-Blocker 600
 	29996: true, // Rod of the Sun King
 	30032: true, // Red Belt of Battle
+	30720: true, // Serpent-Coil Braid
 	31139: true, // Fist of Reckoning
 	31149: true, // Gloves of Pandemonium
 	31193: true, // Blade of Unquenched Thirst
