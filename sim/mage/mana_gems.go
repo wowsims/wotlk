@@ -17,21 +17,20 @@ func (mage *Mage) registerManaGemsCD() {
 		gemAura = mage.NewTemporaryStatsAura("Improved Mana Gems T7", core.ActionID{SpellID: 61062}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
 	}
 
-	minManaEmeraldGain := 2340.0
-	maxManaEmeraldGain := 2460.0
-	minManaSapphireGain := 3330.0
-	maxManaSapphireGain := 3500.0
-	manaEmeraldGainRange := maxManaEmeraldGain - minManaEmeraldGain
-	manaSapphireGainRange := maxManaSapphireGain - minManaSapphireGain
-
-	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfManaGem) {
-		minManaEmeraldGain *= 1.4
-		maxManaEmeraldGain *= 1.4
-		manaEmeraldGainRange *= 1.4
-		minManaSapphireGain *= 1.4
-		maxManaSapphireGain *= 1.4
-		manaSapphireGainRange *= 1.4
+	var serpentCoilAura *core.Aura
+	if mage.HasTrinketEquipped(30720) {
+		serpentCoilAura = mage.NewTemporaryStatsAura("Serpent-Coil Braid", core.ActionID{ItemID: 30720}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
 	}
+
+	manaMultiplier := core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfManaGem), 1.4, 1) *
+		(1 +
+			core.TernaryFloat64(serpentCoilAura != nil, 0.25, 0) +
+			core.TernaryFloat64(mage.MageTier.t7_2, 0.25, 0))
+
+	minManaEmeraldGain := 2340.0 * manaMultiplier
+	maxManaEmeraldGain := 2460.0 * manaMultiplier
+	minManaSapphireGain := 3330.0 * manaMultiplier
+	maxManaSapphireGain := 3500.0 * manaMultiplier
 
 	var remainingManaGems int
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
@@ -50,17 +49,20 @@ func (mage *Mage) registerManaGemsCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			// Mana Sapphire: Restores 3330 to 3500 mana. (2 Min Cooldown)
-			manaGain := minManaSapphireGain + (sim.RandomFloat("Mana Gem") * manaSapphireGainRange)
-			if remainingManaGems <= 3 {
+			var manaGain float64
+			if remainingManaGems > 3 {
+				// Mana Sapphire: Restores 3330 to 3500 mana. (2 Min Cooldown)
+				manaGain = sim.Roll(minManaSapphireGain, maxManaSapphireGain)
+			} else {
 				// Mana Emerald: Restores 2340 to 2460 mana. (2 Min Cooldown)
-				manaGain = minManaEmeraldGain + (sim.RandomFloat("Mana Gem") * manaEmeraldGainRange)
-
+				manaGain = sim.Roll(minManaEmeraldGain, maxManaEmeraldGain)
 			}
 
-			if mage.MageTier.t7_2 {
-				manaGain *= 1.25
+			if gemAura != nil {
 				gemAura.Activate(sim)
+			}
+			if serpentCoilAura != nil {
+				serpentCoilAura.Activate(sim)
 			}
 
 			mage.AddMana(sim, manaGain, manaMetrics, true)
