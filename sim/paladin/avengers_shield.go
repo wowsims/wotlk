@@ -41,9 +41,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			constBaseDamage := 1100.0 +
-				.07*spell.SpellPower() +
-				.07*spell.MeleeAttackPower()
+			constBaseDamage := .07*spell.SpellPower() + .07*spell.MeleeAttackPower()
 
 			curTarget := target
 			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
