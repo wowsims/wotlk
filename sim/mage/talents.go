@@ -33,8 +33,7 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	if mage.Talents.FocusMagic {
-		// TODO: Pretty sure this should be 2 separate effects? One from talent, another from generic raid buff from another mage.
-		totalCritPercent := 3 + float64(mage.Options.FocusMagicPercentUptime*3)/100.0
+		totalCritPercent := float64(mage.Options.FocusMagicPercentUptime*3) / 100.0
 		mage.AddStat(stats.SpellCrit, totalCritPercent*core.CritRatingPerCritChance)
 	}
 
