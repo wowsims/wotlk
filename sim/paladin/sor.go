@@ -60,7 +60,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
-			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getMajorGlyphSealOfRighteousnessBonus() + paladin.getTalentSealsOfThePureBonus()) *
 			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		ThreatMultiplier: 1,
 
