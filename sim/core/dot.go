@@ -74,6 +74,13 @@ func (dot *Dot) Apply(sim *Simulation) {
 	dot.Aura.Activate(sim)
 }
 
+// Like Apply(), but does not reset the tick timer.
+func (dot *Dot) ApplyOrRefresh(sim *Simulation) {
+	dot.TickCount = 0
+	dot.RecomputeAuraDuration()
+	dot.Aura.Activate(sim)
+}
+
 func (dot *Dot) Cancel(sim *Simulation) {
 	if dot.Aura.IsActive() {
 		dot.Aura.Deactivate(sim)

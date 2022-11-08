@@ -257,6 +257,7 @@ func (hunter *Hunter) applyPiercingShots() {
 	actionID := core.ActionID{SpellID: 53238}
 	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
 	var psDot *core.Dot
+
 	var currentTickDmg float64
 
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
@@ -269,7 +270,7 @@ func (hunter *Hunter) applyPiercingShots() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			psDot.Apply(sim)
+			psDot.ApplyOrRefresh(sim)
 		},
 	})
 
@@ -283,12 +284,11 @@ func (hunter *Hunter) applyPiercingShots() {
 		}),
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = currentTickDmg
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			// Specifically account for bleed modifiers, since it still affects the spell
+			// but we're ignoring all modifiers.
+			baseDmg := currentTickDmg * target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
 		},
 	})
 
@@ -307,9 +307,6 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			totalDmg := result.Damage * dmgMultiplier
-			// Specifically account for bleed modifiers, since it still affects the spell
-			// but we're ignoring all modifiers.
-			totalDmg *= result.Target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 
 			if psDot.IsActive() {
 				remainingTicks := 8 - psDot.TickCount
