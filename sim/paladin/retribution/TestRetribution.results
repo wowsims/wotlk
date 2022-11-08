@@ -52,8 +52,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-AegisPlate"
  value: {
-  dps: 4900.43789
-  tps: 4996.96544
+  dps: 4858.77674
+  tps: 4955.30429
  }
 }
 dps_results: {

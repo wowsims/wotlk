@@ -52,8 +52,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-AegisPlate"
  value: {
-  dps: 2914.21248
-  tps: 7016.24992
+  dps: 2896.8052
+  tps: 6971.4436
  }
 }
 dps_results: {
