@@ -179,6 +179,9 @@ message ShamanTotems {
 	// If set, any time a 2-minute totem is about to expire, will recall and
 	// replace all totems.
 	bool recall_totems = 8;
+
+	// If set will use fire totems as an MCD instead of manually controlling when to place them.
+	bool use_fire_mcd = 9;
 }
 
 enum ShamanShield {

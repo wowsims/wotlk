@@ -25,6 +25,7 @@ func RegisterElementalShaman() {
 
 func NewElementalShaman(character core.Character, options *proto.Player) *ElementalShaman {
 	eleShamOptions := options.GetElementalShaman()
+	eleShamOptions.Rotation.Totems.UseFireMcd = true // Control fire totems as MCD.
 
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: eleShamOptions.Options.Bloodlust,
