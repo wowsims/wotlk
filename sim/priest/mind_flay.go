@@ -24,6 +24,8 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		channelTime -= time.Duration(numTicks) * (time.Millisecond * 170)
 	}
 
+	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
+
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:     priest.MindFlayActionID(numTicks),
 		SpellSchool:  core.SpellSchoolShadow,
@@ -60,10 +62,9 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				if priest.ShadowWordPainDot.IsActive() {
-					if priest.Talents.PainAndSuffering == 3 {
-						priest.ShadowWordPainDot.Rollover(sim)
-					} else if sim.RandomFloat("Pain and Suffering") < (float64(priest.Talents.PainAndSuffering) * 0.33) {
+					if rolloverChance == 1 || sim.RandomFloat("Pain and Suffering") < rolloverChance {
 						priest.ShadowWordPainDot.Rollover(sim)
 					}
 				}
