@@ -40,7 +40,7 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 
 	switch eleShamOptions.Rotation.Type {
 	case proto.ElementalShaman_Rotation_Adaptive:
-		rotation = NewAdaptiveRotation(eleShamOptions.Talents)
+		rotation = NewAdaptiveRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
 	case proto.ElementalShaman_Rotation_Manual:
 		rotation = NewManualRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
 	}

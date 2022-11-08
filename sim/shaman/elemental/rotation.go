@@ -40,8 +40,9 @@ type Rotation interface {
 //
 // ################################################################
 type AdaptiveRotation struct {
-	fnmm float64
-	clmm float64
+	fnmm      float64
+	clmm      float64
+	lvbFSWait time.Duration
 }
 
 func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core.Simulation) {
@@ -61,15 +62,34 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 		return
 	}
 
-	if eleShaman.FlameShockDot.RemainingDuration(sim) <= 0 && eleShaman.FlameShock.IsReady(sim) {
+	fsTime := eleShaman.FlameShockDot.RemainingDuration(sim)
+	lvTime := eleShaman.LavaBurst.CD.TimeToReady(sim)
+	lvCastTime := eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime)
+	if fsTime <= 0 && eleShaman.FlameShock.IsReady(sim) {
 		if !eleShaman.FlameShock.Cast(sim, target) {
 			eleShaman.WaitForMana(sim, eleShaman.FlameShock.CurCast.Cost)
 		}
 		return
-	} else if eleShaman.FlameShockDot.RemainingDuration(sim) > eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime) && eleShaman.LavaBurst.IsReady(sim) {
-		if !eleShaman.LavaBurst.Cast(sim, target) {
-			eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
+	} else if fsTime > lvCastTime {
+		if lvTime <= 0 {
+			if !eleShaman.LavaBurst.Cast(sim, target) {
+				eleShaman.WaitForMana(sim, eleShaman.LavaBurst.CurCast.Cost)
+			}
+			return
+		} else if lvTime <= rotation.lvbFSWait && fsTime > lvCastTime+lvTime {
+			// If we have enough time to wait lvbFSWait and still have FS up, we should just wait to cast LvB.
+			eleShaman.WaitUntil(sim, sim.CurrentTime+lvTime)
+			return
 		}
+	}
+
+	fsCD := eleShaman.FlameShock.CD.TimeToReady(sim)
+	if fsCD > fsTime {
+		fsTime = fsCD
+	}
+	// If FS will be needed and is ready in < lvbFSWait time, delay.
+	if fsTime <= rotation.lvbFSWait {
+		eleShaman.WaitUntil(sim, sim.CurrentTime+fsTime)
 		return
 	}
 
@@ -132,8 +152,13 @@ func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Si
 // 	}
 // }
 
-func NewAdaptiveRotation(talents *proto.ShamanTalents) *AdaptiveRotation {
-	return &AdaptiveRotation{}
+func NewAdaptiveRotation(talents *proto.ShamanTalents, options *proto.ElementalShaman_Rotation) *AdaptiveRotation {
+	if options.LvbFsWaitMs == 0 {
+		options.LvbFsWaitMs = 175
+	}
+	return &AdaptiveRotation{
+		lvbFSWait: time.Duration(options.LvbFsWaitMs) * time.Millisecond,
+	}
 }
 
 // ################################################################
@@ -148,7 +173,7 @@ type ManualRotation struct {
 
 func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.Simulation) {
 	target := eleShaman.CurrentTarget
-
+	lvbFSWait := time.Duration(rotation.options.LvbFsWaitMs) * time.Millisecond
 	shouldTS := false
 	cmp := eleShaman.CurrentManaPercent()
 
@@ -168,7 +193,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	fsRemain := eleShaman.FlameShockDot.RemainingDuration(sim)
 	needFS := fsRemain <= 0
 	// Only overwrite if lvb is ready right now.
-	if !needFS && rotation.options.OverwriteFlameshock && eleShaman.LavaBurst.CD.TimeToReady(sim) <= 0 {
+	if !needFS && rotation.options.OverwriteFlameshock && eleShaman.LavaBurst.CD.TimeToReady(sim) <= core.GCDDefault {
 		lvbTime := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
 		if fsRemain < lvbTime {
 			needFS = true
@@ -190,15 +215,32 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	if lbTime <= time.Second && len(eleShaman.Env.Encounter.Targets) == 1 {
 		shouldCL = false // never CL if your LB is just as fast.
 	}
+	lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
 	if shouldCL && rotation.options.UseClOnlyGap {
 		shouldCL = false
-		lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
 		clCast := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime), core.GCDMin)
 		// If LvB CD < CL cast time, we should use CL to pass the time until then.
 		// Or if FS is about to expire and we didn't cast LvB.
 		if fsRemain <= clCast || (lvbCD <= clCast) {
 			shouldCL = true
 		}
+	}
+
+	fsCD := eleShaman.FlameShock.CD.TimeToReady(sim)
+	if fsCD > fsRemain {
+		fsRemain = fsCD
+	}
+
+	// If FS will be needed and is ready in < lvbFSWait time, delay.
+	if fsRemain <= lvbFSWait && fsRemain > 0 {
+		eleShaman.WaitUntil(sim, sim.CurrentTime+fsRemain)
+		return
+	}
+
+	// If LvB will be ready in < lvbFSWait time, delay
+	if lvbCD <= lvbFSWait && lvbCD > 0 {
+		eleShaman.WaitUntil(sim, sim.CurrentTime+lvbCD)
+		return
 	}
 
 	if needFS && eleShaman.FlameShock.IsReady(sim) {
