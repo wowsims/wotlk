@@ -257,6 +257,7 @@ func (hunter *Hunter) applyPiercingShots() {
 	actionID := core.ActionID{SpellID: 53238}
 	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
 	var psDot *core.Dot
+
 	var currentTickDmg float64
 
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
@@ -269,7 +270,7 @@ func (hunter *Hunter) applyPiercingShots() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			psDot.Apply(sim)
+			psDot.ApplyOrRefresh(sim)
 		},
 	})
 
