@@ -38,6 +38,10 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			shaman.MagmaTotemDot.Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			shaman.SearingTotemDot.Apply(sim)
+			if !shaman.Totems.UseFireMcd {
+				// +1 needed because of rounding issues with totem tick time.
+				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
+			}
 		},
 	})
 
@@ -62,7 +66,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		},
 	})
 
-	if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
+	if shaman.Totems.Fire != proto.FireTotem_SearingTotem || !shaman.Totems.UseFireMcd {
 		return
 	}
 	shaman.AddMajorCooldown(core.MajorCooldown{
@@ -110,6 +114,10 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			shaman.SearingTotemDot.Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			shaman.MagmaTotemDot.Apply(sim)
+			if !shaman.Totems.UseFireMcd {
+				// +1 needed because of rounding issues with totem tick time.
+				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*20 + 1
+			}
 		},
 	})
 
@@ -132,7 +140,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		},
 	})
 
-	if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
+	if shaman.Totems.Fire != proto.FireTotem_MagmaTotem || !shaman.Totems.UseFireMcd {
 		return // don't add magma totem to the CDs
 	}
 

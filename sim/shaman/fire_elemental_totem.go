@@ -47,6 +47,8 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			//  Otherwise we will be possibly disabling another ele shaman's ToW debuff/buff.
 			if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
 				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + fireTotemDuration
+			} else if shaman.Totems.Fire != proto.FireTotem_NoFireTotem && !shaman.Totems.UseFireMcd {
+				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + fireTotemDuration
 			}
 			shaman.MagmaTotemDot.Cancel(sim)
 			shaman.SearingTotemDot.Cancel(sim)
