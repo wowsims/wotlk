@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -34,9 +35,9 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			shaman.MagmaTotemDot.Cancel(sim)
+			shaman.FireElemental.Disable(sim)
 			shaman.SearingTotemDot.Apply(sim)
-			// +1 needed because of rounding issues with Searing totem tick time.
-			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
 		},
 	})
 
@@ -58,6 +59,24 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			baseDamage := sim.Roll(90, 120) + 0.167*dot.Spell.SpellPower()
 			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+		},
+	})
+
+	if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
+		return
+	}
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell:    shaman.SearingTotem,
+		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
+		Type:     core.CooldownTypeDPS,
+		CanActivate: func(s *core.Simulation, c *core.Character) bool {
+			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
+				return false
+			}
+			if shaman.SearingTotemDot.IsActive() || shaman.FireElemental.IsEnabled() {
+				return false
+			}
+			return true
 		},
 	})
 }
@@ -88,8 +107,9 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			shaman.SearingTotemDot.Cancel(sim)
+			shaman.FireElemental.Disable(sim)
 			shaman.MagmaTotemDot.Apply(sim)
-			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*20 + 1
 		},
 	})
 
@@ -109,6 +129,25 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			}
+		},
+	})
+
+	if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
+		return // don't add magma totem to the CDs
+	}
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell:    shaman.MagmaTotem,
+		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
+		Type:     core.CooldownTypeDPS,
+		CanActivate: func(s *core.Simulation, c *core.Character) bool {
+			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
+				return false
+			}
+			if shaman.MagmaTotemDot.IsActive() || shaman.FireElemental.IsEnabled() {
+				return false
+			}
+			return true
 		},
 	})
 }
