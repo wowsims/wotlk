@@ -284,12 +284,8 @@ func (hunter *Hunter) applyPiercingShots() {
 		}),
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = currentTickDmg
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			dot.Spell.CalcAndDealPeriodicDamage(sim, target, currentTickDmg, dot.OutcomeTick)
 		},
 	})
 
