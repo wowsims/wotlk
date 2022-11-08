@@ -572,6 +572,9 @@ func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
 // StopMeleeUntil should be used whenever a non-melee spell is cast. It stops melee, then restarts it
 // at end of cast, but with a reset swing timer (as if swings had just landed).
 func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration) {
+	if !aa.AutoSwingMelee { // if not auto swinging, don't auto restart.
+		return
+	}
 	aa.CancelAutoSwing(sim)
 
 	// schedule restart action
