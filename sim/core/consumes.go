@@ -11,6 +11,9 @@ import (
 func applyConsumeEffects(agent Agent) {
 	character := agent.GetCharacter()
 	consumes := character.Consumes
+	if consumes == nil {
+		return
+	}
 
 	if consumes.Flask != proto.Flask_FlaskUnknown {
 		switch consumes.Flask {
