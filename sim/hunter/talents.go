@@ -285,7 +285,10 @@ func (hunter *Hunter) applyPiercingShots() {
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.Spell.CalcAndDealPeriodicDamage(sim, target, currentTickDmg, dot.OutcomeTick)
+			// Specifically account for bleed modifiers, since it still affects the spell
+			// but we're ignoring all modifiers.
+			baseDmg := currentTickDmg * target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
 		},
 	})
 
@@ -304,9 +307,6 @@ func (hunter *Hunter) applyPiercingShots() {
 			}
 
 			totalDmg := result.Damage * dmgMultiplier
-			// Specifically account for bleed modifiers, since it still affects the spell
-			// but we're ignoring all modifiers.
-			totalDmg *= result.Target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 
 			if psDot.IsActive() {
 				remainingTicks := 8 - psDot.TickCount
