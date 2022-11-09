@@ -561,6 +561,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 3140.7643
+  tps: 7542.2866
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-StormshroudArmor"
  value: {
   dps: 2460.5485
@@ -663,6 +670,13 @@ dps_results: {
  value: {
   dps: 2611.43146
   tps: 6243.67748
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 3066.0714
+  tps: 7368.34216
  }
 }
 dps_results: {

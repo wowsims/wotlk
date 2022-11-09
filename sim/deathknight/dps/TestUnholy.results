@@ -571,6 +571,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 7738.22622
+  tps: 4660.28968
+  hps: 153.63705
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-StormshroudArmor"
  value: {
   dps: 6145.16904
@@ -680,6 +688,14 @@ dps_results: {
   dps: 6475.83779
   tps: 3888.92169
   hps: 134.58496
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 7458.62426
+  tps: 4523.64036
+  hps: 153.00609
  }
 }
 dps_results: {

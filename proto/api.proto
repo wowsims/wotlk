@@ -20,7 +20,6 @@ message Player {
 	string name = 16;
 
 	Race race = 1;
-	ShattrathFaction shatt_faction = 24;
 	Class class = 2;
 
 	EquipmentSpec equipment = 3;

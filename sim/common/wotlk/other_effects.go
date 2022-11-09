@@ -353,33 +353,34 @@ func init() {
 		})
 	})
 
-	core.NewItemEffect(56186, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		actionID := core.ActionID{ItemID: 56186}
-		manaMetrics := character.NewManaMetrics(actionID)
+	// TODO: This item ID is wrong, can't remember what this is for, though.
+	//core.NewItemEffect(56186, func(agent core.Agent) {
+	//	character := agent.GetCharacter()
+	//	actionID := core.ActionID{ItemID: 56186}
+	//	manaMetrics := character.NewManaMetrics(actionID)
 
-		spell := character.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-			Flags:    core.SpellFlagNoOnCastComplete,
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    character.NewTimer(),
-					Duration: time.Minute * 5,
-				},
-			},
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-					NumTicks: 12,
-					Period:   time.Second * 1,
-					OnAction: func(sim *core.Simulation) {
-						character.AddMana(sim, 195, manaMetrics, false)
-					},
-				})
-			},
-		})
-		character.AddMajorCooldown(core.MajorCooldown{
-			Type:  core.CooldownTypeMana,
-			Spell: spell,
-		})
-	})
+	//	spell := character.RegisterSpell(core.SpellConfig{
+	//		ActionID: actionID,
+	//		Flags:    core.SpellFlagNoOnCastComplete,
+	//		Cast: core.CastConfig{
+	//			CD: core.Cooldown{
+	//				Timer:    character.NewTimer(),
+	//				Duration: time.Minute * 5,
+	//			},
+	//		},
+	//		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+	//			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+	//				NumTicks: 12,
+	//				Period:   time.Second * 1,
+	//				OnAction: func(sim *core.Simulation) {
+	//					character.AddMana(sim, 195, manaMetrics, false)
+	//				},
+	//			})
+	//		},
+	//	})
+	//	character.AddMajorCooldown(core.MajorCooldown{
+	//		Type:  core.CooldownTypeMana,
+	//		Spell: spell,
+	//	})
+	//})
 }

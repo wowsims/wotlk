@@ -533,6 +533,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 7224.17662
+  tps: 5488.78078
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
   dps: 5784.39955
@@ -628,6 +635,13 @@ dps_results: {
  value: {
   dps: 5993.17486
   tps: 4546.42914
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 7071.49484
+  tps: 5373.25588
  }
 }
 dps_results: {

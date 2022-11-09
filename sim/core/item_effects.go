@@ -1,10 +1,11 @@
 package core
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -20,6 +21,7 @@ type ApplyWeaponEffect func(Agent, proto.ItemSlot)
 
 var itemEffects = map[int32]ApplyEffect{}
 var weaponEffects = map[int32]ApplyWeaponEffect{}
+var enchantEffects = map[int32]ApplyEffect{}
 
 // IDs of item effects which should be used for tests.
 var itemEffectsForTest = []int32{}
@@ -45,11 +47,22 @@ func HasWeaponEffect(id int32) bool {
 	return ok
 }
 
+func HasEnchantEffect(id int32) bool {
+	_, ok := enchantEffects[id]
+	return ok
+}
+
 // Registers an ApplyEffect function which will be called before the Sim
 // starts, for any Agent that is wearing the item.
 func NewItemEffect(id int32, itemEffect ApplyEffect) {
+	if _, hasItem := items.ByID[id]; !hasItem {
+		if _, hasGem := items.GemsByID[id]; !hasGem {
+			panic(fmt.Sprintf("No item with ID: %d", id))
+		}
+	}
+
 	if HasItemEffect(id) {
-		log.Fatalf("Cannot add multiple effects for one item: %d, %#v", id, itemEffect)
+		panic(fmt.Sprintf("Cannot add multiple effects for one item: %d, %#v", id, itemEffect))
 	}
 
 	itemEffects[id] = itemEffect
@@ -58,9 +71,28 @@ func NewItemEffect(id int32, itemEffect ApplyEffect) {
 	}
 }
 
+func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
+	found := false
+	for _, enchantsByID := range items.EnchantsByItemByID {
+		if _, ok := enchantsByID[id]; ok {
+			found = true
+			break
+		}
+	}
+	if !found {
+		panic(fmt.Sprintf("No enchant with ID: %d", id))
+	}
+
+	if HasEnchantEffect(id) {
+		panic(fmt.Sprintf("Cannot add multiple effects for one enchant: %d, %#v", id, enchantEffect))
+	}
+
+	enchantEffects[id] = enchantEffect
+}
+
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 	if HasWeaponEffect(id) {
-		log.Fatalf("Cannot add multiple effects for one item: %d, %#v", id, weaponEffect)
+		panic(fmt.Sprintf("Cannot add multiple effects for one item: %d, %#v", id, weaponEffect))
 	}
 	weaponEffects[id] = weaponEffect
 }

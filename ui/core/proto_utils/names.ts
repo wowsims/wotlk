@@ -2,7 +2,6 @@ import { Class } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Race } from '../proto/common.js';
-import { ShattrathFaction } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 
@@ -226,8 +225,3 @@ export function stringToResourceType(str: string): ResourceType {
 	}
 	return ResourceType.ResourceTypeNone;
 }
-
-export const shattFactionNames: Record<ShattrathFaction, string> = {
-	[ShattrathFaction.ShattrathFactionAldor]: 'Aldor',
-	[ShattrathFaction.ShattrathFactionScryer]: 'Scryer',
-};

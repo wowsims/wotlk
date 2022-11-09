@@ -11,7 +11,7 @@ import {
 	ItemSlot,
 	Item,
 	Profession,
-	Race, ShattrathFaction,
+	Race,
 	RaidTarget,
 	RangedWeaponType,
 	Spec,
@@ -82,7 +82,6 @@ export class Player<SpecType extends Spec> {
 	private race: Race;
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
-	private shattFaction: ShattrathFaction = 0;
 	private rotation: SpecRotation<SpecType>;
 	private talentsString: string = '';
 	private glyphs: Glyphs = Glyphs.create();
@@ -327,16 +326,6 @@ export class Player<SpecType extends Spec> {
 	}
 	isBlacksmithing(): boolean {
 		return this.hasProfession(Profession.Blacksmithing);
-	}
-
-	getShattFaction(): ShattrathFaction {
-		return this.shattFaction;
-	}
-	setShattFaction(eventID: EventID, newFaction: ShattrathFaction) {
-		if (newFaction != this.shattFaction) {
-			this.shattFaction = newFaction;
-			this.raceChangeEmitter.emit(eventID);
-		}
 	}
 
 	getFaction(): Faction {
@@ -695,7 +684,6 @@ export class Player<SpecType extends Spec> {
 			PlayerProto.create({
 				name: this.getName(),
 				race: this.getRace(),
-				shattFaction: this.getShattFaction(),
 				class: this.getClass(),
 				equipment: this.getGear().asSpec(),
 				consumes: this.getConsumes(),
@@ -719,7 +707,6 @@ export class Player<SpecType extends Spec> {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
-			this.setShattFaction(eventID, proto.shattFaction);
 			this.setGear(eventID, proto.equipment ? this.sim.lookupEquipmentSpec(proto.equipment) : new Gear({}));
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, new Stats(proto.bonusStats));
@@ -745,7 +732,6 @@ export class Player<SpecType extends Spec> {
 
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
-			this.setShattFaction(eventID, ShattrathFaction.ShattrathFactionAldor);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create());
 			this.setCooldowns(eventID, Cooldowns.create({
@@ -757,7 +743,6 @@ export class Player<SpecType extends Spec> {
 
 	static applySharedDefaultsToProto(proto: PlayerProto) {
 		const spec = playerToSpec(proto);
-		proto.shattFaction = ShattrathFaction.ShattrathFactionAldor;
 		proto.inFrontOfTarget = isTankSpec(spec);
 		proto.healingModel = HealingModel.create();
 		proto.cooldowns = Cooldowns.create({

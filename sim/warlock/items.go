@@ -201,50 +201,6 @@ var ItemSetGladiatorsFelshroud = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-	core.NewItemEffect(19337, func(agent core.Agent) {
-		warlock := agent.(WarlockAgent).GetWarlock()
-		if warlock.Pet == nil {
-			return
-		}
-
-		actionID := core.ActionID{ItemID: 19337}
-		bbAura := warlock.Pet.NewTemporaryStatsAura("The Black Book", actionID, stats.Stats{stats.SpellPower: 200, stats.AttackPower: 325, stats.Armor: 1600}, time.Second*30)
-
-		bbSpell := warlock.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    warlock.NewTimer(),
-					Duration: time.Minute * 5,
-				},
-			},
-
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				bbAura.Activate(sim)
-			},
-		})
-
-		warlock.AddMajorCooldown(core.MajorCooldown{
-			Spell: bbSpell,
-			Type:  core.CooldownTypeDPS,
-		})
-	})
-
-	core.NewItemEffect(30449, func(agent core.Agent) {
-		warlock := agent.(WarlockAgent).GetWarlock()
-		warlock.AddStat(stats.SpellPower, 48)
-		if warlock.Pet != nil {
-			warlock.Pet.AddStats(stats.Stats{
-				stats.ArcaneResistance: 130,
-				stats.FireResistance:   130,
-				stats.FrostResistance:  130,
-				stats.NatureResistance: 130,
-				stats.ShadowResistance: 130,
-			})
-		}
-	})
-
 	core.NewItemEffect(32493, func(agent core.Agent) {
 		warlock := agent.(WarlockAgent).GetWarlock()
 		procAura := warlock.NewTemporaryStatsAura("Asghtongue Talisman Proc", core.ActionID{SpellID: 40478}, stats.Stats{stats.SpellPower: 220}, time.Second*5)

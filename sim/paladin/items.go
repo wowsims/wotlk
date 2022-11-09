@@ -272,26 +272,6 @@ func (paladin *Paladin) getItemSetGladiatorsVindicationBonusGloves() float64 {
 func init() {
 	// Librams implemented in seals.go and judgement.go
 
-	// TODO: once we have judgement of command.. https://wotlk.wowhead.com/item=33503/libram-of-divine-judgement
-
-	core.NewItemEffect(27484, func(agent core.Agent) {
-		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Libram of Avengement Proc", core.ActionID{SpellID: 34260}, stats.Stats{stats.MeleeCrit: 53, stats.SpellCrit: 53}, time.Second*5)
-
-		paladin.RegisterAura(core.Aura{
-			Label:    "Libram of Avengement",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-					procAura.Activate(sim)
-				}
-			},
-		})
-	})
-
 	core.NewItemEffect(37574, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
 		procAura := paladin.NewTemporaryStatsAura("Libram of Furious Blows Proc", core.ActionID{SpellID: 48835}, stats.Stats{stats.MeleeCrit: 61, stats.SpellCrit: 61}, time.Second*5)
@@ -323,27 +303,6 @@ func init() {
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if paladin.CurrentSeal == paladin.SealOfCommandAura && spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 					if sim.RandomFloat("Libram of Reciprocation") > 0.15 {
-						return
-					}
-					procAura.Activate(sim)
-				}
-			},
-		})
-	})
-
-	core.NewItemEffect(33503, func(agent core.Agent) {
-		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Libram of Divine Judgement Proc", core.ActionID{SpellID: 43745}, stats.Stats{stats.AttackPower: 200}, time.Second*10)
-
-		paladin.RegisterAura(core.Aura{
-			Label:    "Libram of Divine Judgement",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if paladin.CurrentSeal == paladin.SealOfCommandAura && spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-					if sim.RandomFloat("Libram of Divine Judgement") > 0.40 {
 						return
 					}
 					procAura.Activate(sim)
@@ -564,35 +523,6 @@ func init() {
 				if spell.SpellID == paladin.HolyShield.SpellID {
 					procAura.Activate(sim)
 				}
-			},
-		})
-	})
-
-	core.NewItemEffect(30447, func(agent core.Agent) {
-		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Tome of Fiery Redemption Proc", core.ActionID{ItemID: 30447}, stats.Stats{stats.SpellPower: 290}, time.Second*15)
-
-		icd := core.Cooldown{
-			Timer:    paladin.NewTimer(),
-			Duration: time.Second * 45,
-		}
-
-		paladin.RegisterAura(core.Aura{
-			Label:    "Tome of Fiery Redemption",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !spell.Flags.Matches(SpellFlagSecondaryJudgement|SpellFlagPrimaryJudgement) && spell.SpellSchool != core.SpellSchoolPhysical {
-					return
-				}
-				if !icd.IsReady(sim) || sim.RandomFloat("TomeOfFieryRedemption") > 0.15 {
-					return
-				}
-				icd.Use(sim)
-
-				procAura.Activate(sim)
 			},
 		})
 	})

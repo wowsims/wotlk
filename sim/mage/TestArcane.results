@@ -421,6 +421,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 6478.20792
+  tps: 3890.53143
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-Sunstrider'sRegalia"
  value: {
   dps: 6382.252
@@ -495,6 +502,13 @@ dps_results: {
  value: {
   dps: 6616.864
   tps: 3971.49199
+ }
+}
+dps_results: {
+ key: "TestArcane-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 6515.77142
+  tps: 3914.28595
  }
 }
 dps_results: {
