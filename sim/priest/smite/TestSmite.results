@@ -463,6 +463,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 2854.46339
+  tps: 2428.21344
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 2974.00646
@@ -537,6 +544,13 @@ dps_results: {
  value: {
   dps: 2076.98628
   tps: 1782.41972
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 2907.92399
+  tps: 2473.83745
  }
 }
 dps_results: {

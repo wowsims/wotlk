@@ -13,7 +13,6 @@ const (
 	StormfuryTotem           = 31031
 	TotemOfAncestralGuidance = 32330
 	TotemOfStorms            = 23199
-	TotemOfThePulsingEarth   = 29389
 	TotemOfTheVoid           = 28248
 	TotemOfHex               = 40267
 	VentureCoLightningRod    = 38361

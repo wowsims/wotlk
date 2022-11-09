@@ -166,46 +166,6 @@ var ItemSetSlayers = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-	core.NewItemEffect(30450, func(agent core.Agent) {
-		rogue := agent.(RogueAgent).GetRogue()
-		procAura := rogue.NewTemporaryStatsAura("Warp Spring Coil Proc", core.ActionID{ItemID: 30450}, stats.Stats{stats.ArmorPenetration: 142}, time.Second*15)
-		const procChance = 0.25
-
-		icd := core.Cooldown{
-			Timer:    rogue.NewTimer(),
-			Duration: time.Second * 30,
-		}
-
-		rogue.RegisterAura(core.Aura{
-			Label:    "Warp Spring Coil",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
-
-				// https://wotlk.wowhead.com/spell=37173/armor-penetration, proc mask = 16.
-				if !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
-					return
-				}
-
-				if !icd.IsReady(sim) {
-					return
-				}
-
-				if sim.RandomFloat("WarpSpringCoil") > procChance {
-					return
-				}
-
-				icd.Use(sim)
-				procAura.Activate(sim)
-			},
-		})
-	})
-
 	core.NewItemEffect(32492, func(agent core.Agent) {
 		rogue := agent.(RogueAgent).GetRogue()
 		procAura := rogue.NewTemporaryStatsAura("Ashtongue Talisman Proc", core.ActionID{ItemID: 32492}, stats.Stats{stats.MeleeCrit: 145}, time.Second*10)

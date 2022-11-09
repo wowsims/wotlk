@@ -65,81 +65,6 @@ var ItemSetSkyshatterHarness = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-	core.NewItemEffect(19344, func(agent core.Agent) {
-		shaman := agent.(ShamanAgent).GetShaman()
-		const dur = time.Second * 20
-		actionID := core.ActionID{ItemID: 19344}
-
-		activeAura := shaman.GetOrRegisterAura(core.Aura{
-			Label:    "Natural Alignment Crystal",
-			ActionID: actionID,
-			Duration: dur,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDynamic(sim, stats.SpellPower, 250)
-				shaman.PseudoStats.CostMultiplier *= 1.2
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.AddStatDynamic(sim, stats.SpellPower, -250)
-				shaman.PseudoStats.CostMultiplier /= 1.2
-			},
-		})
-
-		spell := shaman.RegisterSpell(core.SpellConfig{
-			ActionID: actionID,
-			Flags:    core.SpellFlagNoOnCastComplete,
-			Cast: core.CastConfig{
-				CD: core.Cooldown{
-					Timer:    shaman.NewTimer(),
-					Duration: time.Minute * 5,
-				},
-				SharedCD: core.Cooldown{
-					Timer:    shaman.GetOffensiveTrinketCD(),
-					Duration: dur,
-				},
-			},
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				activeAura.Activate(sim)
-			},
-		})
-
-		shaman.AddMajorCooldown(core.MajorCooldown{
-			Spell: spell,
-			Type:  core.CooldownTypeDPS,
-		})
-	})
-
-	// ActivateFathomBrooch adds an aura that has a chance on cast of nature spell
-	//  to restore 335 mana. 40s ICD
-	core.NewItemEffect(30663, func(agent core.Agent) {
-		shaman := agent.(ShamanAgent).GetShaman()
-		icd := core.Cooldown{
-			Timer:    shaman.NewTimer(),
-			Duration: time.Second * 40,
-		}
-		manaMetrics := shaman.NewManaMetrics(core.ActionID{ItemID: 30663})
-
-		shaman.RegisterAura(core.Aura{
-			Label:    "Fathom Brooch of the Tidewalker",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !icd.IsReady(sim) {
-					return
-				}
-				if spell.SpellSchool != core.SpellSchoolNature {
-					return
-				}
-				if sim.RandomFloat("Fathom-Brooch of the Tidewalker") > 0.15 {
-					return
-				}
-				icd.Use(sim)
-				shaman.AddMana(sim, 335, manaMetrics, false)
-			},
-		})
-	})
-
 	core.NewItemEffect(32491, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
 		procAura := shaman.NewTemporaryStatsAura("Ashtongue Talisman of Vision Proc", core.ActionID{ItemID: 32491}, stats.Stats{stats.AttackPower: 275}, time.Second*10)
@@ -234,10 +159,6 @@ func init() {
 	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84, 10)
 	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101, 10)
 	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119, 10)
-
-	// Even though these item effects are handled elsewhere, add them so they are
-	// detected for automatic testing.
-	core.NewItemEffect(TotemOfThePulsingEarth, func(core.Agent) {})
 }
 
 func registerSpellPVPTotem(name string, id int32, sp float64, seconds float64) {

@@ -245,40 +245,6 @@ func (druid *Druid) HasT9FeralSetBonus(num int32) bool {
 
 func init() {
 
-	core.NewItemEffect(30664, func(agent core.Agent) {
-		druid := agent.(DruidAgent).GetDruid()
-
-		var procAura *core.Aura
-		if druid.InForm(Moonkin) {
-			procAura = druid.NewTemporaryStatsAura("Living Root Moonkin Proc", core.ActionID{SpellID: 37343}, stats.Stats{stats.SpellPower: 209}, time.Second*15)
-		} else if druid.InForm(Bear) {
-			procAura = druid.NewTemporaryStatsAura("Living Root Bear Proc", core.ActionID{SpellID: 37340}, stats.Stats{stats.Armor: 4070}, time.Second*15)
-		} else if druid.InForm(Cat) {
-			procAura = druid.NewTemporaryStatsAura("Living Root Cat Proc", core.ActionID{SpellID: 37341}, stats.Stats{stats.Strength: 64}, time.Second*15)
-		} else {
-			return
-		}
-
-		core.MakePermanent(druid.RegisterAura(core.Aura{
-			Label: "Living Root of the Wildheart",
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if druid.InForm(Moonkin) && sim.RandomFloat("Living Root of the Wildheart") < 0.03 {
-					procAura.Activate(sim)
-				}
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-					return
-				}
-				if sim.RandomFloat("Living Root of the Wildheart") > 0.03 {
-					return
-				}
-
-				procAura.Activate(sim)
-			},
-		}))
-	})
-
 	core.NewItemEffect(32486, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 
@@ -324,37 +290,6 @@ func init() {
 				if druid.IsMangle(spell) {
 					procAura.Activate(sim)
 				}
-			},
-		}))
-	})
-
-	core.NewItemEffect(33509, func(agent core.Agent) {
-		druid := agent.(DruidAgent).GetDruid()
-
-		actionID := core.ActionID{ItemID: 33509}
-		procAura := druid.NewTemporaryStatsAura("Idol of Terror Proc", actionID, stats.Stats{stats.Agility: 65}, time.Second*10)
-
-		procChance := 0.85
-		icd := core.Cooldown{
-			Timer:    druid.NewTimer(),
-			Duration: time.Second * 10,
-		}
-
-		core.MakePermanent(druid.RegisterAura(core.Aura{
-			Label: "Idol of Terror",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
-					return
-				}
-				if !icd.IsReady(sim) {
-					return
-				}
-				if sim.RandomFloat("Idol of Terror") > procChance {
-					return
-				}
-
-				icd.Use(sim)
-				procAura.Activate(sim)
 			},
 		}))
 	})
@@ -423,34 +358,34 @@ func init() {
 		}
 	})
 
-	core.NewItemEffect(37573, func(agent core.Agent) {
-		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 37573}
-		procAura := druid.NewTemporaryStatsAura("Idol of the Plainstalker Proc", actionID, stats.Stats{stats.Agility: 55}, time.Second*10)
-		procChance := 0.75
-		icd := core.Cooldown{
-			Timer:    druid.NewTimer(),
-			Duration: time.Second * 10,
-		}
-		core.MakePermanent(druid.RegisterAura(core.Aura{
-			Label: "Idol of the Plainstalker",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
-					return
-				}
+	//core.NewItemEffect(37573, func(agent core.Agent) {
+	//	druid := agent.(DruidAgent).GetDruid()
+	//	actionID := core.ActionID{ItemID: 37573}
+	//	procAura := druid.NewTemporaryStatsAura("Idol of the Plainstalker Proc", actionID, stats.Stats{stats.Agility: 55}, time.Second*10)
+	//	procChance := 0.75
+	//	icd := core.Cooldown{
+	//		Timer:    druid.NewTimer(),
+	//		Duration: time.Second * 10,
+	//	}
+	//	core.MakePermanent(druid.RegisterAura(core.Aura{
+	//		Label: "Idol of the Plainstalker",
+	//		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+	//			if !druid.IsMangle(spell) {
+	//				return
+	//			}
 
-				if !icd.IsReady(sim) {
-					return
-				}
-				if sim.RandomFloat("Idol of the Plainstalker") > procChance {
-					return
-				}
+	//			if !icd.IsReady(sim) {
+	//				return
+	//			}
+	//			if sim.RandomFloat("Idol of the Plainstalker") > procChance {
+	//				return
+	//			}
 
-				icd.Use(sim)
-				procAura.Activate(sim)
-			},
-		}))
-	})
+	//			icd.Use(sim)
+	//			procAura.Activate(sim)
+	//		},
+	//	}))
+	//})
 
 	core.NewItemEffect(45509, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
@@ -474,34 +409,34 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(38295, func(agent core.Agent) {
-		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 38295}
-		procAura := druid.NewTemporaryStatsAura("Idol of the Wastes Proc", actionID, stats.Stats{stats.Strength: 61}, time.Second*10)
-		procChance := 0.75
-		icd := core.Cooldown{
-			Timer:    druid.NewTimer(),
-			Duration: time.Second * 10,
-		}
-		core.MakePermanent(druid.RegisterAura(core.Aura{
-			Label: "Idol of the Wastes",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if druid.Shred != spell && druid.IsSwipeSpell(spell) {
-					return
-				}
+	//core.NewItemEffect(38295, func(agent core.Agent) {
+	//	druid := agent.(DruidAgent).GetDruid()
+	//	actionID := core.ActionID{ItemID: 38295}
+	//	procAura := druid.NewTemporaryStatsAura("Idol of the Wastes Proc", actionID, stats.Stats{stats.Strength: 61}, time.Second*10)
+	//	procChance := 0.75
+	//	icd := core.Cooldown{
+	//		Timer:    druid.NewTimer(),
+	//		Duration: time.Second * 10,
+	//	}
+	//	core.MakePermanent(druid.RegisterAura(core.Aura{
+	//		Label: "Idol of the Wastes",
+	//		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+	//			if druid.Shred != spell && druid.IsSwipeSpell(spell) {
+	//				return
+	//			}
 
-				if !icd.IsReady(sim) {
-					return
-				}
-				if sim.RandomFloat("Idol of the Wastes") > procChance {
-					return
-				}
+	//			if !icd.IsReady(sim) {
+	//				return
+	//			}
+	//			if sim.RandomFloat("Idol of the Wastes") > procChance {
+	//				return
+	//			}
 
-				icd.Use(sim)
-				procAura.Activate(sim)
-			},
-		}))
-	})
+	//			icd.Use(sim)
+	//			procAura.Activate(sim)
+	//		},
+	//	}))
+	//})
 
 	core.NewItemEffect(42574, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()

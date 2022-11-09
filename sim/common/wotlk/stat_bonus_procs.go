@@ -71,17 +71,17 @@ func init() {
 		ProcChance: 0.15,
 		ICD:        time.Second * 45,
 	})
-	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Serrah's Star",
-		ID:         37559,
-		Bonus:      stats.Stats{stats.MeleeCrit: 167, stats.SpellCrit: 167},
-		Duration:   time.Second * 10,
-		Callback:   OnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
-		Outcome:    core.OutcomeCrit,
-		ProcChance: 0.45,
-		ICD:        time.Second * 45,
-	})
+	//newProcStatBonusEffect(ProcStatBonusEffect{
+	//	Name:       "Serrah's Star",
+	//	ID:         37559,
+	//	Bonus:      stats.Stats{stats.MeleeCrit: 167, stats.SpellCrit: 167},
+	//	Duration:   time.Second * 10,
+	//	Callback:   OnSpellHitDealt,
+	//	ProcMask:   core.ProcMaskSpellDamage,
+	//	Outcome:    core.OutcomeCrit,
+	//	ProcChance: 0.45,
+	//	ICD:        time.Second * 45,
+	//})
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Spark of Life",
 		ID:         37657,
@@ -114,17 +114,17 @@ func init() {
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})
-	newProcStatBonusEffect(ProcStatBonusEffect{
-		Name:       "Valonforth's Remembrance",
-		ID:         38071,
-		Bonus:      stats.Stats{stats.Spirit: 222},
-		Duration:   time.Second * 10,
-		Callback:   OnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
-		Outcome:    core.OutcomeLanded,
-		ProcChance: 0.15,
-		ICD:        time.Second * 45,
-	})
+	//newProcStatBonusEffect(ProcStatBonusEffect{
+	//	Name:       "Valonforth's Remembrance",
+	//	ID:         38071,
+	//	Bonus:      stats.Stats{stats.Spirit: 222},
+	//	Duration:   time.Second * 10,
+	//	Callback:   OnSpellHitDealt,
+	//	ProcMask:   core.ProcMaskSpellDamage,
+	//	Outcome:    core.OutcomeLanded,
+	//	ProcChance: 0.15,
+	//	ICD:        time.Second * 45,
+	//})
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Embrace of the Spider",
 		ID:         39229,

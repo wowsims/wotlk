@@ -421,6 +421,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 4229.52531
+  tps: 3552.25601
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-Sunstrider'sRegalia"
  value: {
   dps: 4303.2239
@@ -495,6 +502,13 @@ dps_results: {
  value: {
   dps: 4305.67819
   tps: 3609.64203
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 4238.28713
+  tps: 3559.29252
  }
 }
 dps_results: {

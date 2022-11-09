@@ -421,6 +421,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 7207.18371
+  tps: 5117.10044
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
   dps: 5688.65851
@@ -523,6 +530,13 @@ dps_results: {
  value: {
   dps: 6729.71157
   tps: 4778.09521
+ }
+}
+dps_results: {
+ key: "TestAssassination-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 7008.1256
+  tps: 4975.76917
  }
 }
 dps_results: {

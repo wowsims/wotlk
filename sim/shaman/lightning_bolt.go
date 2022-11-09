@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -16,13 +15,8 @@ func (shaman *Shaman) registerLightningBoltSpell() {
 
 func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
 	baseCost := baseMana * 0.1
-	// TODO looks fishy, cost is unused
-	cost := baseCost
-	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfThePulsingEarth {
-		cost -= 27.0
-	}
 	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 2) {
-		cost -= baseCost * 0.05
+		baseCost -= baseCost * 0.05
 	}
 
 	spellConfig := shaman.newElectricSpellConfig(

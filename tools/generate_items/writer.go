@@ -316,42 +316,25 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
-	33510: true, // Unseen moon idol
-	34473: true, // Commendation of Kael'thas
-	29994: true, // Thalassian Wildercloak
-	30627: true, // Tsunami Talisman
-	38212: true, // Death Knight's Anguish
 	11815: true, // Hand of Justice
 	12590: true, // Felstriker
-	12632: true, // Storm Gauntlets
 	15808: true, // Fine Light Crossbow (for hunter testing).
-	17111: true, // Blazefury Medallion
-	17112: true, // Empyrean Demolisher
+	19019: true, // Thunderfury
 	19808: true, // Rockhide Strongfish
 	20837: true, // Sunstrider Axe
 	20966: true, // Jade Pendant of Blasting
-	22395: true, // Totem of Rage
-	23198: true, // Idol of Brutality
-	23835: true, // Gnomish Poultryizer
-	23836: true, // Goblin Rocket Launcher
 	24114: true, // Braided Eternium Chain
-	27947: true, // Totem of Impact
-	28032: true, // Delicate Green Poncho
-	28041: true, // Bladefist's Breadth
 	28785: true, // The Lightning Capacitor
 	28830: true, // Dragonspine Trophy
 	29383: true, // Bloodlust Brooch
 	29387: true, // Gnomeregan Auto-Blocker 600
+	29994: true, // Thalassian Wildercloak
 	29996: true, // Rod of the Sun King
 	30032: true, // Red Belt of Battle
+	30627: true, // Tsunami Talisman
 	30720: true, // Serpent-Coil Braid
-	31139: true, // Fist of Reckoning
-	31149: true, // Gloves of Pandemonium
-	31193: true, // Blade of Unquenched Thirst
 	32387: true, // Idol of the Raven Goddess
-	32508: true, // Necklace of the Deep
 	32658: true, // Badge of Tenacity
-	33122: true, // Cloak of Darkness
 	33135: true, // Falling Star
 	33140: true, // Blood of Amber
 	33143: true, // Stone of Blades
@@ -359,10 +342,13 @@ var allowList = map[int]bool{
 	33504: true, // Libram of Divine Purpose
 	33506: true, // Skycall Totem
 	33507: true, // Stonebreaker's Totem
+	33510: true, // Unseen moon idol
 	33829: true, // Hex Shrunken Head
 	33831: true, // Berserkers Call
 	34472: true, // Shard of Contempt
+	34473: true, // Commendation of Kael'thas
 	37574: true, // Libram of Furious Blows
+	38212: true, // Death Knight's Anguish
 	38287: true, // Empty Mug of Direbrew
 	38289: true, // Coren's Lucky Coin
 	39208: true, // Sigil of the Dark Rider

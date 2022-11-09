@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
-  dps: 5523.9116
-  tps: 3121.49206
+  dps: 5542.10116
+  tps: 3133.27887
  }
 }
 dps_results: {
@@ -512,6 +512,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 6728.53856
+  tps: 3813.28366
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
  value: {
   dps: 6761.89669
@@ -649,6 +656,13 @@ dps_results: {
  value: {
   dps: 5329.66327
   tps: 3002.49004
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 6637.01575
+  tps: 3754.75349
  }
 }
 dps_results: {

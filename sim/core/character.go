@@ -17,10 +17,9 @@ import (
 type Character struct {
 	Unit
 
-	Name         string // Different from Label, needed for returned results.
-	Race         proto.Race
-	ShattFaction proto.ShattrathFaction
-	Class        proto.Class
+	Name  string // Different from Label, needed for returned results.
+	Race  proto.Race
+	Class proto.Class
 
 	// Current gear.
 	Equip items.Equipment
@@ -70,11 +69,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			DistanceFromTarget: player.DistanceFromTarget,
 		},
 
-		Name:         player.Name,
-		Race:         player.Race,
-		ShattFaction: player.ShattFaction,
-		Class:        player.Class,
-		Equip:        items.ProtoToEquipment(player.Equipment),
+		Name:  player.Name,
+		Race:  player.Race,
+		Class: player.Class,
+		Equip: items.ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,
 			player.Profession2,
@@ -180,7 +178,7 @@ func (character *Character) applyItemEffects(agent Agent) {
 		}
 
 		// TODO: should we use eq.Enchant.EffectID because some enchants use a spellID instead of itemID?
-		if applyEnchantEffect, ok := itemEffects[eq.Enchant.ID]; ok {
+		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.ID]; ok {
 			applyEnchantEffect(agent)
 		}
 

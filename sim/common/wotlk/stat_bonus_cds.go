@@ -31,12 +31,12 @@ func init() {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.MeleeHaste: bonus, stats.SpellHaste: bonus}, duration, cooldown)
 	})
 	newHasteActive(36972, 256, time.Second*20, time.Minute*2) // Tome of Arcane Phenomena
-	newHasteActive(37558, 122, time.Second*20, time.Minute*2) // Tidal Boon
-	newHasteActive(37560, 124, time.Second*20, time.Minute*2) // Vial of Renewal
-	newHasteActive(37562, 140, time.Second*20, time.Minute*2) // Fury of the Crimson Drake
-	newHasteActive(38070, 148, time.Second*20, time.Minute*2) // Foresight's Anticipation
-	newHasteActive(38258, 140, time.Second*20, time.Minute*2) // Sailor's Knotted Charm
-	newHasteActive(38259, 140, time.Second*20, time.Minute*2) // First Mate's Pocketwatch
+	//newHasteActive(37558, 122, time.Second*20, time.Minute*2) // Tidal Boon
+	//newHasteActive(37560, 124, time.Second*20, time.Minute*2) // Vial of Renewal
+	//newHasteActive(37562, 140, time.Second*20, time.Minute*2) // Fury of the Crimson Drake
+	//newHasteActive(38070, 148, time.Second*20, time.Minute*2) // Foresight's Anticipation
+	//newHasteActive(38258, 140, time.Second*20, time.Minute*2) // Sailor's Knotted Charm
+	//newHasteActive(38259, 140, time.Second*20, time.Minute*2) // First Mate's Pocketwatch
 	newHasteActive(38764, 208, time.Second*20, time.Minute*2) // Rune of Finite Variation
 	newHasteActive(40531, 491, time.Second*20, time.Minute*2) // Mark of Norgannon
 	newHasteActive(43836, 212, time.Second*20, time.Minute*2) // Thorny Rose Brooch
@@ -48,13 +48,13 @@ func init() {
 	newAttackPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.AttackPower: bonus, stats.RangedAttackPower: bonus}, duration, cooldown)
 	})
-	newAttackPowerActive(35937, 328, time.Second*20, time.Minute*2)  // Braxley's Backyard Moonshine
-	newAttackPowerActive(36871, 280, time.Second*20, time.Minute*2)  // Fury of the Encroaching Storm
-	newAttackPowerActive(37166, 670, time.Second*20, time.Minute*2)  // Sphere of Red Dragon's Blood
-	newAttackPowerActive(37556, 248, time.Second*20, time.Minute*2)  // Talisman of the Tundra
-	newAttackPowerActive(37557, 304, time.Second*20, time.Minute*2)  // Warsong's Fervor
-	newAttackPowerActive(38080, 264, time.Second*20, time.Minute*2)  // Automated Weapon Coater
-	newAttackPowerActive(38081, 280, time.Second*20, time.Minute*2)  // Scarab of Isanoth
+	//newAttackPowerActive(35937, 328, time.Second*20, time.Minute*2)  // Braxley's Backyard Moonshine
+	//newAttackPowerActive(36871, 280, time.Second*20, time.Minute*2)  // Fury of the Encroaching Storm
+	newAttackPowerActive(37166, 670, time.Second*20, time.Minute*2) // Sphere of Red Dragon's Blood
+	//newAttackPowerActive(37556, 248, time.Second*20, time.Minute*2)  // Talisman of the Tundra
+	//newAttackPowerActive(37557, 304, time.Second*20, time.Minute*2)  // Warsong's Fervor
+	//newAttackPowerActive(38080, 264, time.Second*20, time.Minute*2)  // Automated Weapon Coater
+	//newAttackPowerActive(38081, 280, time.Second*20, time.Minute*2)  // Scarab of Isanoth
 	newAttackPowerActive(38761, 248, time.Second*20, time.Minute*2)  // Talon of Hatred
 	newAttackPowerActive(39257, 670, time.Second*20, time.Minute*2)  // Loatheb's Shadow
 	newAttackPowerActive(44014, 432, time.Second*15, time.Minute*2)  // Fezzik's Pocketwatch
@@ -65,15 +65,15 @@ func init() {
 	newSpellPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.SpellPower: bonus}, duration, cooldown)
 	})
-	newSpellPowerActive(35935, 178, time.Second*20, time.Minute*2) // Infused Coldstone Rune
-	newSpellPowerActive(36872, 173, time.Second*20, time.Minute*2) // Mender of the Oncoming Dawn
-	newSpellPowerActive(36874, 183, time.Second*20, time.Minute*2) // Horn of the Herald
-	newSpellPowerActive(37555, 149, time.Second*20, time.Minute*2) // Warsong's Wrath
+	//newSpellPowerActive(35935, 178, time.Second*20, time.Minute*2) // Infused Coldstone Rune
+	//newSpellPowerActive(36872, 173, time.Second*20, time.Minute*2) // Mender of the Oncoming Dawn
+	//newSpellPowerActive(36874, 183, time.Second*20, time.Minute*2) // Horn of the Herald
+	//newSpellPowerActive(37555, 149, time.Second*20, time.Minute*2) // Warsong's Wrath
 	newSpellPowerActive(37844, 346, time.Second*20, time.Minute*2) // Winged Talisman
 	newSpellPowerActive(37873, 346, time.Second*20, time.Minute*2) // Mark of the War Prisoner
-	newSpellPowerActive(38073, 120, time.Second*15, time.Minute*2) // Will of the Red Dragonflight
-	newSpellPowerActive(38213, 149, time.Second*20, time.Minute*2) // Harbringer's Wrath
-	newSpellPowerActive(38527, 183, time.Second*20, time.Minute*2) // Strike of the Seas
+	//newSpellPowerActive(38073, 120, time.Second*15, time.Minute*2) // Will of the Red Dragonflight
+	//newSpellPowerActive(38213, 149, time.Second*20, time.Minute*2) // Harbringer's Wrath
+	//newSpellPowerActive(38527, 183, time.Second*20, time.Minute*2) // Strike of the Seas
 	newSpellPowerActive(38760, 145, time.Second*20, time.Minute*2) // Mendicant's Charm
 	newSpellPowerActive(38762, 145, time.Second*20, time.Minute*2) // Insignia of Bloody Fire
 	newSpellPowerActive(38765, 202, time.Second*20, time.Minute*2) // Rune of Infinite Power

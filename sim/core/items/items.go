@@ -10,21 +10,22 @@ import (
 
 var ByName = map[string]Item{}
 var ByID = map[int32]Item{}
-var GemsByName = map[string]Gem{}
 var GemsByID = map[int32]Gem{}
-var EnchantsByName = map[string]Enchant{}
 var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
 func init() {
 	for _, v := range Enchants {
-		EnchantsByName[v.Name] = v
+		if _, ok := EnchantsByItemByID[v.ItemType][v.ID]; ok {
+			panic(fmt.Sprintf("Duplicate enchant ID %d", v.ID))
+		}
+
 		if EnchantsByItemByID[v.ItemType] == nil {
 			EnchantsByItemByID[v.ItemType] = map[int32]Enchant{}
 		}
 		EnchantsByItemByID[v.ItemType][v.ID] = v
 	}
+
 	for _, v := range Gems {
-		GemsByName[v.Name] = v
 		GemsByID[v.ID] = v
 	}
 

@@ -44,11 +44,6 @@ enum Faction {
 	Horde = 2;
 }
 
-enum ShattrathFaction {
-  ShattrathFactionAldor = 0;
-  ShattrathFactionScryer = 1;
-}
-
 enum Class {
 	ClassUnknown = 0;
 	ClassDruid = 1;

@@ -82,20 +82,6 @@ func init() {
 	core.AddEffectsToTest = false
 
 	newCapacitorDamageEffect(CapacitorDamageEffect{
-		Name:      "Thunder Capacitor",
-		ID:        38072,
-		MaxStacks: 4,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
-			Outcome:  core.OutcomeCrit,
-			ICD:      time.Millisecond * 2500,
-		},
-		School: core.SpellSchoolNature,
-		MinDmg: 1181,
-		MaxDmg: 1371,
-	})
-	newCapacitorDamageEffect(CapacitorDamageEffect{
 		Name:      "Reign of the Unliving",
 		ID:        47182,
 		MaxStacks: 3,

@@ -523,6 +523,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-SphereofRedDragon'sBlood-37166"
+ value: {
+  dps: 106.3215
+  tps: 48.28369
+  hps: 4476.9322
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 106.41608
@@ -608,6 +616,14 @@ dps_results: {
   dps: 84.63886
   tps: 35.25083
   hps: 3096.02448
+ }
+}
+dps_results: {
+ key: "TestHoly-AllItems-WingedTalisman-37844"
+ value: {
+  dps: 106.85924
+  tps: 48.28369
+  hps: 4542.00664
  }
 }
 dps_results: {

@@ -52,7 +52,6 @@ import { SavedGearSet } from './proto/ui.js';
 import { SavedSettings } from './proto/ui.js';
 import { SavedTalents } from './proto/ui.js';
 import { SettingsMenu } from './components/settings_menu.js';
-import { ShattrathFaction } from './proto/common.js';
 import { Sim } from './sim.js';
 import { SimOptions } from './proto/api.js';
 import { SimSettings as SimSettingsProto } from './proto/ui.js';
@@ -63,7 +62,6 @@ import { SpecRotation } from './proto_utils/utils.js';
 import { Stat } from './proto/common.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import { Stats } from './proto_utils/stats.js';
-import { shattFactionNames } from './proto_utils/names.js';
 import { Target } from './target.js';
 import { Target as TargetProto } from './proto/common.js';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
@@ -885,19 +883,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			changedEvent: sim => sim.professionChangeEmitter,
 			getValue: sim => sim.getProfession2(),
 			setValue: (eventID, sim, newValue) => sim.setProfession2(eventID, newValue),
-		});
-		const shattFactionPicker = new EnumPicker(this.rootElem.getElementsByClassName('race-section')[0] as HTMLElement, this.player, {
-			label: 'Shatt Faction',
-			values: [ShattrathFaction.ShattrathFactionAldor, ShattrathFaction.ShattrathFactionScryer].map(faction => {
-				return {
-					name: shattFactionNames[faction],
-					value: faction,
-				};
-			}),
-			changedEvent: sim => sim.gearChangeEmitter,
-			getValue: sim => sim.getShattFaction(),
-			setValue: (eventID, sim, newValue) => sim.setShattFaction(eventID, newValue),
-			showWhen: (player: Player<any>) => this.player.getEquippedItem(ItemSlot.ItemSlotNeck)?.item.id == 34678 || this.player.getEquippedItem(ItemSlot.ItemSlotNeck)?.item.id == 34679,
 		});
 
 		const encounterSectionElem = settingsTab.getElementsByClassName('encounter-section')[0] as HTMLElement;
