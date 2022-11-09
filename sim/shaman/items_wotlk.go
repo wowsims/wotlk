@@ -7,19 +7,17 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var itemSetT9Bonuses = map[int32]core.ApplyEffect{
-	2: func(agent core.Agent) {
-		// shocks.go
-	},
-	4: func(agent core.Agent) {
-		// lavaburst.go
-	},
-}
-
 var ItemSetThrallsRegalia = core.NewItemSet(core.ItemSet{
 	Name:            "Thrall's Regalia",
 	AlternativeName: "Nobundo's Regalia",
-	Bonuses:         itemSetT9Bonuses,
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// shocks.go
+		},
+		4: func(agent core.Agent) {
+			// lavaburst.go
+		},
+	},
 })
 
 var ItemSetEarthShatterGarb = core.NewItemSet(core.ItemSet{

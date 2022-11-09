@@ -66,7 +66,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			TickLength:    time.Second * 2,
 			NumberOfTicks: 2,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = lbdotDmg / 2 // spread dot over 2 ticks
+				dot.SnapshotBaseDamage = lbdotDmg
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -86,9 +86,17 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 		if result.Landed() {
-			if applyDot && result.DidCrit() { // need to merge in the 4pt8 effect
-				lbdotDmg = result.Damage * 0.08 // TODO: does this pool with a currently ticking dot?
-				lbDot.Apply(sim)                // will resnapshot
+			if applyDot && result.DidCrit() {
+				oldDmg := lbdotDmg
+				lbdotDmg = (result.Damage * 0.08) / 2
+				if lbDot.IsActive() {
+					remainingTicks := lbDot.NumberOfTicks - lbDot.TickCount
+					if remainingTicks > 0 {
+						lbdotDmg += (oldDmg * float64(remainingTicks)) / 2
+						lbDot.TakeSnapshot(sim, false)
+					}
+				}
+				lbDot.ApplyOrRefresh(sim)
 			}
 			if canLO && sim.RandomFloat("LB Lightning Overload") <= lightningOverloadChance {
 				shaman.LightningBoltLO.Cast(sim, target)

@@ -246,10 +246,12 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		case FireTotem:
 			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
 				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) {
-					shaman.NextTotemDrops[FireTotem] = 0 // attack totems we drop immediately
-				} else if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
+					if !shaman.Totems.UseFireMcd {
+						shaman.NextTotemDrops[FireTotem] = 0
+					}
+				} else {
+					shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
 					shaman.applyToWDebuff(sim)
 				}
 			}

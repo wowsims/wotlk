@@ -324,7 +324,6 @@ var allowList = map[int]bool{
 	20837: true, // Sunstrider Axe
 	20966: true, // Jade Pendant of Blasting
 	24114: true, // Braided Eternium Chain
-	28785: true, // The Lightning Capacitor
 	28830: true, // Dragonspine Trophy
 	29383: true, // Bloodlust Brooch
 	29387: true, // Gnomeregan Auto-Blocker 600
@@ -348,6 +347,7 @@ var allowList = map[int]bool{
 	34472: true, // Shard of Contempt
 	34473: true, // Commendation of Kael'thas
 	37574: true, // Libram of Furious Blows
+	38072: true, // Thunder Capacitor
 	38212: true, // Death Knight's Anguish
 	38287: true, // Empty Mug of Direbrew
 	38289: true, // Coren's Lucky Coin

@@ -47,7 +47,12 @@ export const ElementalShamanRotationConfig = {
 			fieldName: 'inThunderstormRange',
 			label: 'In Thunderstorm Range',
 			labelTooltip: 'Thunderstorm will hit all targets when cast. Ignores knockback.',
-			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
+			showWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecElementalShaman>({
+			fieldName: 'lvbFsWaitMs',
+			label: 'Max wait for LvB/FS (ms)',
+			labelTooltip: 'Amount of time the sim will wait if FS is about to fall off or LvB CD is about to come up. Setting to 0 will default to 175ms',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
 			fieldName: 'useChainLightning',
@@ -96,6 +101,7 @@ export const ElementalShamanRotationConfig = {
 			label: 'Allow Thunderstorm to be cast.',
 			labelTooltip: 'Disabling this will stop thunderstorm from being cast entirely.',
 			enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().type == RotationType.Manual,
+			showWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
 		}),
 	],
 };

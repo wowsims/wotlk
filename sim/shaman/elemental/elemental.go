@@ -34,13 +34,14 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 	totems := &proto.ShamanTotems{}
 	if eleShamOptions.Rotation.Totems != nil {
 		totems = eleShamOptions.Rotation.Totems
+		totems.UseFireMcd = true // Control fire totems as MCD.
 	}
 
 	var rotation Rotation
 
 	switch eleShamOptions.Rotation.Type {
 	case proto.ElementalShaman_Rotation_Adaptive:
-		rotation = NewAdaptiveRotation(eleShamOptions.Talents)
+		rotation = NewAdaptiveRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
 	case proto.ElementalShaman_Rotation_Manual:
 		rotation = NewManualRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
 	}

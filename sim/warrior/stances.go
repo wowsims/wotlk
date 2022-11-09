@@ -44,12 +44,6 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 				warrior.SpendRage(sim, warrior.CurrentRage()-maxRetainedRage, rageMetrics)
 			}
 
-			// Delayed, so same-GCD casts are affected by the current aura.
-			//  Alternatively, those casts could just (artificially) happen before the stance change.
-			core.StartDelayedAction(sim, core.DelayedActionOptions{
-				DoAt:     sim.CurrentTime + 10*time.Millisecond,
-				OnAction: aura.Activate,
-			})
 			warrior.Stance = stance
 		},
 	})
