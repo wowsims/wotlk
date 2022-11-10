@@ -51,6 +51,27 @@ func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 func (dk *Deathknight) registerDiseaseDots() {
 	dk.registerFrostFever()
 	dk.registerBloodPlague()
+	dk.registerDiseaseGhostCasts()
+}
+
+// This is used by the first applications of any of the DK disease
+// to simulate the extra proc chances that are present on classic when
+// applying a diseases for the first time on a mob
+func (dk *Deathknight) registerDiseaseGhostCasts() {
+	dk.DiseaseGhostSpell = dk.Character.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 52789},
+		SpellSchool: core.SpellSchoolMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 0,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Just deal 0 damage as the "Harmful Spell" is implemented on spell damage
+			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeAlwaysHit)
+		},
+	})
 }
 
 func (dk *Deathknight) registerFrostFever() {
