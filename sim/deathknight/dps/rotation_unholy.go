@@ -23,6 +23,7 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 	}
 
 	dk.RotationSequence.Clear().
+		NewAction(dk.RotationActionCallback_MindFreezeFiller).
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true))
@@ -57,6 +58,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return sim.CurrentTime
+	}
+
+	if dk.uhMindFreeze(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -170,6 +175,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 	}
 
 	if dk.uhEmpoweredRuneWeapon(sim, target) {
+		return sim.CurrentTime
+	}
+
+	if dk.uhMindFreeze(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -357,6 +366,17 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 	} else {
 		dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 	}
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_MindFreezeFiller(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	// Use Mind Freeze off GCD to proc extra effects in the opener
+	if dk.Talents.EndlessWinter == 2 && dk.SummonGargoyle.IsReady(sim) {
+		if dk.MindFreezeSpell.IsReady(sim) {
+			dk.MindFreezeSpell.Cast(sim, target)
+		}
+	}
+	s.Advance()
+	return sim.CurrentTime
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {

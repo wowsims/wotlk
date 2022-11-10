@@ -152,6 +152,11 @@ type Deathknight struct {
 
 	DeathPact *RuneSpell
 
+	// Used only to proc stuff as its free GCD
+	MindFreezeSpell *core.Spell
+	// Used by Crypt Fever & Ebon Plague ghost procs
+	DiseaseGhostSpell *core.Spell
+
 	// Diseases
 	FrostFeverSpell     *RuneSpell
 	BloodPlagueSpell    *RuneSpell
@@ -278,6 +283,7 @@ func (dk *Deathknight) Initialize() {
 	dk.registerVampiricBloodSpell()
 	dk.registerAntiMagicShellSpell()
 	dk.registerRuneStrikeSpell()
+	dk.registerMindFreeze()
 
 	dk.registerRaiseDeadCD()
 	dk.registerSummonGargoyleCD()
@@ -286,6 +292,34 @@ func (dk *Deathknight) Initialize() {
 	dk.registerDeathPactSpell()
 
 	dk.registerUnholyFrenzyCD()
+}
+
+func (dk *Deathknight) registerMindFreeze() {
+	// If talented to have no cost we use it in rotation
+	if dk.Talents.EndlessWinter == 2 {
+		// We dont care about the kick part and only want it to trigger on harmful spell procs
+		dk.MindFreezeSpell = dk.Character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 47528},
+			SpellSchool: core.SpellSchoolMagic,
+			ProcMask:    core.ProcMaskSpellDamage,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    dk.NewTimer(),
+					Duration: time.Second * 10,
+				},
+			},
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 0,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				// Just deal damage as the "Harmful Spell" is implemented as OnSpellHit with damage > 0
+				spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeAlwaysHit)
+			},
+		})
+	}
 }
 
 func (dk *Deathknight) ResetBonusCoeffs() {

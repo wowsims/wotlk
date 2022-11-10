@@ -169,6 +169,16 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 	return true
 }
 
+func (dk *DpsDeathknight) uhMindFreeze(sim *core.Simulation, target *core.Unit) bool {
+	if dk.Talents.EndlessWinter == 2 && dk.SummonGargoyle.IsReady(sim) {
+		if dk.MindFreezeSpell.IsReady(sim) {
+			dk.MindFreezeSpell.Cast(sim, target)
+			return true
+		}
+	}
+	return false
+}
+
 // Save up Runic Power for Summon Gargoyle - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
 	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
