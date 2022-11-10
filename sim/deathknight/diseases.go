@@ -68,7 +68,7 @@ func (dk *Deathknight) registerDiseaseGhostCasts() {
 		ThreatMultiplier: 0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Just deal damage as the "Harmful Spell" is implemented as OnSpellHit with damage > 0
+			// Just deal 0 damage as the "Harmful Spell" is implemented on spell damage
 			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeAlwaysHit)
 		},
 	})
