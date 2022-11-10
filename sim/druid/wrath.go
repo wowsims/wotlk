@@ -23,6 +23,7 @@ func (druid *Druid) registerWrathSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagNaturesGrace,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		MissileSpeed: 20,

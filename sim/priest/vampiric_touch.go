@@ -11,7 +11,7 @@ import (
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
 	baseCost := priest.BaseMana * 0.16
-	numTicks := 5 + core.TernaryInt(priest.HasSetBonus(ItemSetZabras, 2), 2, 0)
+	numTicks := 5 + core.TernaryInt32(priest.HasSetBonus(ItemSetZabras, 2), 2, 0)
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

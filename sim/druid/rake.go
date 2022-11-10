@@ -15,7 +15,7 @@ func (druid *Druid) registerRakeSpell() {
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
-	t9bonus := core.TernaryInt(druid.HasT9FeralSetBonus(2), 1, 0)
+	t9bonus := core.TernaryInt32(druid.HasT9FeralSetBonus(2), 1, 0)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

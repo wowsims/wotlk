@@ -12,11 +12,11 @@ import (
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
 //
 //	The first never deals damage, so the latter should probably be used as ActionID here.
-func (priest *Priest) MindFlayActionID(numTicks int) core.ActionID {
-	return core.ActionID{SpellID: 48156, Tag: int32(numTicks)}
+func (priest *Priest) MindFlayActionID(numTicks int32) core.ActionID {
+	return core.ActionID{SpellID: 48156, Tag: numTicks}
 }
 
-func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
+func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	baseCost := priest.BaseMana * 0.09
 
 	channelTime := time.Second * time.Duration(numTicks)
@@ -75,7 +75,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int) *core.Spell {
 	})
 }
 
-func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
+func (priest *Priest) newMindFlayDot(numTicks int32) *core.Dot {
 	target := priest.CurrentTarget
 
 	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
@@ -95,7 +95,7 @@ func (priest *Priest) newMindFlayDot(numTicks int) *core.Dot {
 	return core.NewDot(core.Dot{
 		Spell: priest.MindFlay[numTicks],
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "MindFlay-" + strconv.Itoa(numTicks) + "-" + strconv.Itoa(int(priest.Index)),
+			Label:    "MindFlay-" + strconv.Itoa(int(numTicks)) + "-" + strconv.Itoa(int(priest.Index)),
 			ActionID: priest.MindFlayActionID(numTicks),
 		}),
 

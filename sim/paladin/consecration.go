@@ -24,7 +24,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 			Label:    "Consecration",
 			ActionID: actionID,
 		}),
-		NumberOfTicks: 8 + core.TernaryInt(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
+		NumberOfTicks: 8 + core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
 		TickLength:    time.Second * 1,
 
 		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {

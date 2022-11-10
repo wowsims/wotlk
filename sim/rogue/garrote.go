@@ -15,7 +15,7 @@ func (rogue *Rogue) registerGarrote() {
 	refundAmount := 0.8
 	baseCost := rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds))
 
-	numTicks := 6
+	numTicks := int32(6)
 	var glyphMultiplier float64
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGarrote) {
 		numTicks = 5

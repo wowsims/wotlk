@@ -3,7 +3,6 @@ package mage
 import (
 	"time"
 
-	llq "github.com/emirpasic/gods/queues/linkedlistqueue"
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -88,14 +87,12 @@ type Mage struct {
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
 
-	ArcaneMissilesDot   *core.Dot
-	IgniteDots          []*core.Dot
-	LivingBombDots      []*core.Dot
-	LivingBombNotActive *llq.Queue
-	FireballDot         *core.Dot
-	FlamestrikeDot      *core.Dot
-	FrostfireDot        *core.Dot
-	PyroblastDot        *core.Dot
+	ArcaneMissilesDot *core.Dot
+	LivingBombDot     *core.Dot // living bomb is used for single-target only, currently
+	FireballDot       *core.Dot
+	FlamestrikeDot    *core.Dot
+	FrostfireDot      *core.Dot
+	PyroblastDot      *core.Dot
 
 	ArcaneBlastAura    *core.Aura
 	MissileBarrageAura *core.Aura
@@ -106,10 +103,11 @@ type Mage struct {
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
 
-	// Used to prevent utiliizing Brain Freeze immediately after proccing it.
+	// Used to prevent utilising Brain Freeze immediately after proccing it.
 	BrainFreezeActivatedAt time.Duration
 
-	IgniteTickDamage []float64
+	IgniteDots          []*core.Dot
+	IgniteDamageBuffers []float64
 
 	MageTier MageTierSets
 
@@ -142,10 +140,6 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
-
-	mage.LivingBombDots = make([]*core.Dot, mage.Env.GetNumTargets())
-	mage.LivingBombNotActive = llq.New()
-
 	mage.MageTier = MageTierSets{
 		mage.HasSetBonus(ItemSetFrostfireGarb, 2),
 		mage.HasSetBonus(ItemSetFrostfireGarb, 4),
@@ -166,7 +160,6 @@ func (mage *Mage) Initialize() {
 	mage.registerFireBlastSpell()
 	mage.registerFlamestrikeSpell()
 	mage.registerFrostboltSpell()
-	mage.registerIgniteSpell()
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
 	mage.registerWintersChillSpell()
@@ -176,14 +169,6 @@ func (mage *Mage) Initialize() {
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
-
-	mage.IgniteDots = []*core.Dot{}
-	mage.IgniteTickDamage = []float64{}
-	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
-		mage.IgniteTickDamage = append(mage.IgniteTickDamage, 0)
-		mage.IgniteDots = append(mage.IgniteDots, mage.newIgniteDot(mage.Env.GetTargetUnit(i)))
-		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
-	}
 
 	mage.num4CostAB = 0
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
@@ -236,10 +221,6 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 	mage.manaTracker.Reset()
 	mage.bonusAMCCCrit = 0
-	for i := int32(0); i < mage.Env.GetNumTargets(); i++ {
-		mage.LivingBombNotActive.Clear()
-		mage.LivingBombNotActive.Enqueue(mage.Env.GetTargetUnit(i))
-	}
 
 	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
 		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)

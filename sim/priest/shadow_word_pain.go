@@ -60,7 +60,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		}),
 
 		NumberOfTicks: 6 +
-			core.TernaryInt(priest.HasSetBonus(ItemSetAbsolution, 2), 1, 0),
+			core.TernaryInt32(priest.HasSetBonus(ItemSetAbsolution, 2), 1, 0),
 		TickLength: time.Second * 3,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {

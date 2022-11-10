@@ -37,6 +37,7 @@ func (druid *Druid) registerStarfireSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagNaturesGrace,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

@@ -18,7 +18,7 @@ func (druid *Druid) registerStarfallSpell() {
 
 	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
-	numberOfTicks := core.TernaryInt(druid.Env.GetNumTargets() > 1, 20, 10)
+	numberOfTicks := core.TernaryInt32(druid.Env.GetNumTargets() > 1, 20, 10)
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
 	// Nature's Majesty
@@ -28,6 +28,7 @@ func (druid *Druid) registerStarfallSpell() {
 		ActionID:     core.ActionID{SpellID: 53201},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagNaturesGrace,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

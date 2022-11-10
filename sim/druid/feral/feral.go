@@ -78,7 +78,7 @@ type FeralDruid struct {
 	readyToShift   bool
 	waitingForTick bool
 	latency        time.Duration
-	maxRipTicks    int
+	maxRipTicks    int32
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {

@@ -46,7 +46,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				rogue.ruptureDot.Spell = spell
-				rogue.ruptureDot.NumberOfTicks = int(numTicks)
+				rogue.ruptureDot.NumberOfTicks = numTicks
 				rogue.ruptureDot.RecomputeAuraDuration()
 				rogue.ruptureDot.Apply(sim)
 				rogue.ApplyFinisher(sim, spell)

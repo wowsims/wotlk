@@ -74,7 +74,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 				warlock.Incinerate.DamageMultiplierAdditive -= fireAndBrimstoneBonus
 			},
 		}),
-		NumberOfTicks: 5 + int(warlock.Talents.MoltenCore),
+		NumberOfTicks: 5 + warlock.Talents.MoltenCore,
 		TickLength:    time.Second * 3,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
