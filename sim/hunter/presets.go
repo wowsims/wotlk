@@ -182,69 +182,70 @@ var FullConsumes = &proto.Consumes{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40505,
-		"enchant": 44879,
+		"enchant": 3817,
 		"gems": [
 			41398,
-			40023
+			42143
 		]
 	},
 	{
 		"id": 44664,
 		"gems": [
-			40023
+			42143
 		]
 	},
 	{
 		"id": 40507,
-		"enchant": 44871,
+		"enchant": 3808,
 		"gems": [
 			39997
 		]
 	},
 	{
 		"id": 40403,
-		"enchant": 55002
+		"enchant": 3605
 	},
 	{
 		"id": 43998,
-		"enchant": 44623,
+		"enchant": 3832,
 		"gems": [
-			39997,
-			40023
+			42143,
+			39997
 		]
 	},
 	{
 		"id": 40282,
-		"enchant": 60616,
+		"enchant": 3845,
 		"gems": [
-			40086,
+			39997,
 			0
 		]
 	},
 	{
 		"id": 40541,
-		"enchant": 54999,
+		"enchant": 3604,
 		"gems": [
 			0
 		]
 	},
 	{
 		"id": 39762,
+		"enchant": 3601,
 		"gems": [
 			39997
 		]
 	},
 	{
 		"id": 40331,
-		"enchant": 38374,
+		"enchant": 3823,
 		"gems": [
 			39997,
-			40023
+			49110
 		]
 	},
 	{
 		"id": 40549,
-		"enchant": 55016
+		"enchant": 3606
 	},
 	{
 		"id": 40074
@@ -253,17 +254,18 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 		"id": 40474
 	},
 	{
-		"id": 40431
+		"id": 40684
 	},
 	{
 		"id": 44253
 	},
 	{
 		"id": 40388,
-		"enchant": 44630
+		"enchant": 3827
 	},
+	{},
 	{
 		"id": 40385,
-		"enchant": 41167
+		"enchant": 3608
 	}
 ]}`)

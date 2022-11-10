@@ -191,10 +191,10 @@ class ItemPicker extends Component {
 					this.enchantElem.textContent = description;
 				});
 				// Make enchant text hover have a tooltip.
-				if (newItem.enchant.isSpellId) {
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.id}`);
+				if (newItem.enchant.spellId) {
+					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
 				} else {
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.id}`);
+					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
 				}
 			}
 
@@ -300,8 +300,8 @@ class SelectorModal extends Popup {
 			eligibleEnchants.map(enchant => {
 				return {
 					item: enchant,
-					id: enchant.id,
-					actionId: enchant.isSpellId ? ActionId.fromSpellId(enchant.id) : ActionId.fromItemId(enchant.id),
+					id: enchant.effectId,
+					actionId: enchant.spellId ? ActionId.fromSpellId(enchant.spellId) : ActionId.fromItemId(enchant.itemId),
 					name: enchant.name,
 					quality: enchant.quality,
 					phase: enchant.phase || 1,

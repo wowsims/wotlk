@@ -167,7 +167,7 @@ export class EquippedItem {
 	asSpec(): ItemSpec {
 		return ItemSpec.create({
 			id: this._item.id,
-			enchant: this._enchant?.id,
+			enchant: this._enchant?.effectId,
 			gems: this._gems.map(gem => gem?.id || 0),
 		});
 	}

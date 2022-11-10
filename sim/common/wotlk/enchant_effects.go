@@ -11,10 +11,10 @@ import (
 func init() {
 	// Keep these in order by item ID.
 
-	core.NewEnchantEffect(37339, func(agent core.Agent) {
+	core.NewEnchantEffect(3251, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 37339
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 37339
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3251
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3251
 		if !mh && !oh {
 			return
 		}
@@ -57,10 +57,10 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(37344, func(agent core.Agent) {
+	core.NewEnchantEffect(3239, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 37344
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 37344
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3239
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3239
 		if !mh && !oh {
 			return
 		}
@@ -99,7 +99,7 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(41146, func(agent core.Agent) {
+	core.NewEnchantEffect(3607, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		// TODO: This should be ranged-only haste. For now just make it hunter-only.
 		if character.Class == proto.Class_ClassHunter {
@@ -107,11 +107,11 @@ func init() {
 		}
 	})
 
-	core.NewEnchantEffect(41167, func(agent core.Agent) {
+	core.NewEnchantEffect(3608, func(agent core.Agent) {
 		agent.GetCharacter().AddBonusRangedCritRating(40)
 	})
 
-	core.NewEnchantEffect(42500, func(agent core.Agent) {
+	core.NewEnchantEffect(3748, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 42500}
 
@@ -145,35 +145,27 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(44473, func(agent core.Agent) {
+	core.NewEnchantEffect(3247, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if character.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
 			character.PseudoStats.MobTypeAttackPower += 140
 		}
 	})
 
-	core.NewEnchantEffect(44485, func(agent core.Agent) {
+	core.NewEnchantEffect(3253, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
 
-	// Apply for Wisdom to Cloak (itemid) but NOT for Enchant Gloves Precision (spellid)
-	core.NewEnchantEffect(44488, func(agent core.Agent) {
+	core.NewEnchantEffect(3296, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		if character.Equip[proto.ItemSlot_ItemSlotBack].Enchant.ID == 44488 {
-			if character.Equip[proto.ItemSlot_ItemSlotHands].Enchant.ID == 44488 {
-				// If someone has both of these enchants for some reason, this will get called twice.
-				character.PseudoStats.ThreatMultiplier *= 0.98995
-			} else {
-				character.PseudoStats.ThreatMultiplier *= 0.98
-			}
-		}
+		character.PseudoStats.ThreatMultiplier *= 0.98
 	})
 
-	core.NewEnchantEffect(44492, func(agent core.Agent) {
+	core.NewEnchantEffect(3789, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 44492
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 44492
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3789
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3789
 		if !mh && !oh {
 			return
 		}
@@ -208,10 +200,10 @@ func init() {
 	})
 
 	// TODO: These are stand-in values without any real reference.
-	core.NewEnchantEffect(44494, func(agent core.Agent) {
+	core.NewEnchantEffect(3241, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 44494
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 44494
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3241
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3241
 		if !mh && !oh {
 			return
 		}
@@ -238,7 +230,7 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(44495, func(agent core.Agent) {
+	core.NewEnchantEffect(3790, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
 		procAura := character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 250, stats.SpellHaste: 250}, time.Second*10)
@@ -266,13 +258,13 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(44739, func(agent core.Agent, _ proto.ItemSlot) {
+	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.Ranged
 		w.BaseDamageMin += 15
 		w.BaseDamageMax += 15
 	})
 
-	core.NewEnchantEffect(54998, func(agent core.Agent) {
+	core.NewEnchantEffect(3603, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54757}
 
@@ -309,7 +301,7 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(54999, func(agent core.Agent) {
+	core.NewEnchantEffect(3604, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 54758}
 
@@ -372,10 +364,10 @@ func init() {
 		})
 	}
 
-	core.NewEnchantEffect(53343, func(agent core.Agent) {
+	core.NewEnchantEffect(3370, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53343
-		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53343
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
+		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
 		if !mh && !oh {
 			return
 		}
@@ -457,10 +449,10 @@ func init() {
 	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
-	core.NewEnchantEffect(53344, func(agent core.Agent) {
+	core.NewEnchantEffect(3368, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53344
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53344
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3368
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3368
 		if !mh && !oh {
 			return
 		}
@@ -502,10 +494,10 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(70164, func(agent core.Agent) {
+	core.NewEnchantEffect(3883, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 70164
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 70164
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3883
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3883
 		if !mh && !oh {
 			return
 		}
@@ -514,10 +506,10 @@ func init() {
 		character.MultiplyStat(stats.Stamina, 1.01)
 	})
 
-	core.NewEnchantEffect(62158, func(agent core.Agent) {
+	core.NewEnchantEffect(3847, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 62158
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 62158
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3847
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3847
 		if !mh {
 			return
 		}
@@ -530,7 +522,7 @@ func init() {
 		character.MultiplyStat(stats.Stamina, 1.02)
 	})
 
-	core.NewEnchantEffect(55642, func(agent core.Agent) {
+	core.NewEnchantEffect(3722, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
 		procAura := character.NewTemporaryStatsAura("Lightweave Embroidery Proc", core.ActionID{SpellID: 55637}, stats.Stats{stats.SpellPower: 295}, time.Second*15)
@@ -554,7 +546,7 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(55769, func(agent core.Agent) {
+	core.NewEnchantEffect(3728, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		if !character.HasManaBar() {
 			return
@@ -581,7 +573,7 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(55777, func(agent core.Agent) {
+	core.NewEnchantEffect(3730, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
 		procAura := character.NewTemporaryStatsAura("Swordguard Embroidery Proc", core.ActionID{SpellID: 55775}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400}, time.Second*15)

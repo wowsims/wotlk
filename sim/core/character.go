@@ -178,11 +178,11 @@ func (character *Character) applyItemEffects(agent Agent) {
 		}
 
 		// TODO: should we use eq.Enchant.EffectID because some enchants use a spellID instead of itemID?
-		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.ID]; ok {
+		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.EffectID]; ok {
 			applyEnchantEffect(agent)
 		}
 
-		if applyWeaponEffect, ok := weaponEffects[eq.Enchant.ID]; ok {
+		if applyWeaponEffect, ok := weaponEffects[eq.Enchant.EffectID]; ok {
 			applyWeaponEffect(agent, proto.ItemSlot(slot))
 		}
 	}

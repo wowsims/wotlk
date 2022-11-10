@@ -891,10 +891,7 @@ class WCLSimPlayer implements wclSimPlayer {
 		this.gear.forEach((gear) => {
 			const item = ItemSpec.create();
 			item.id = gear.id;
-			const dbEnchant = this.simUI.sim.getEnchantFlexible(gear.permanentEnchant);
-			item.enchant = dbEnchant
-				? dbEnchant.id
-				: 0;
+			item.enchant = gear.permanentEnchant;
 			if (gear.gems) {
 				item.gems = new Array<number>();
 				gear.gems.forEach((gemInfo) => item.gems.push(gemInfo.id));

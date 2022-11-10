@@ -110,7 +110,7 @@ export const DISC_PRERAID_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 37294,
-			"enchant": 44876,
+			"enchant": 3819,
 			"gems": [
 				41401,
 				39998
@@ -121,15 +121,15 @@ export const DISC_PRERAID_PRESET = {
 		},
 		{
 			"id": 37691,
-			"enchant": 44872
+			"enchant": 3809
 		},
 		{
 			"id": 37630,
-			"enchant": 63765
+			"enchant": 3859
 		},
 		{
 			"id": 39515,
-			"enchant": 44489,
+			"enchant": 3832,
 			"gems": [
 				42144,
 				42144
@@ -137,14 +137,14 @@ export const DISC_PRERAID_PRESET = {
 		},
 		{
 			"id": 37361,
-			"enchant": 44498,
+			"enchant": 2332,
 			"gems": [
 				0
 			]
 		},
 		{
 			"id": 39519,
-			"enchant": 44592,
+			"enchant": 3246,
 			"gems": [
 				42144,
 				0
@@ -152,7 +152,7 @@ export const DISC_PRERAID_PRESET = {
 		},
 		{
 			"id": 40697,
-			"enchant": 54793,
+			"enchant": 3601,
 			"gems": [
 				39998,
 				39998
@@ -160,11 +160,11 @@ export const DISC_PRERAID_PRESET = {
 		},
 		{
 			"id": 37622,
-			"enchant": 41602
+			"enchant": 3719
 		},
 		{
 			"id": 44202,
-			"enchant": 55016,
+			"enchant": 3606,
 			"gems": [
 				40027
 			]
@@ -187,7 +187,7 @@ export const DISC_PRERAID_PRESET = {
 		},
 		{
 			"id": 37360,
-			"enchant": 45059
+			"enchant": 3854
 		},
 		{},
 		{
@@ -203,7 +203,7 @@ export const DISC_P1_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40456,
-			"enchant": 44876,
+			"enchant": 3819,
 			"gems": [
 				41401,
 				39998
@@ -217,32 +217,32 @@ export const DISC_P1_PRESET = {
 		},
 		{
 			"id": 40450,
-			"enchant": 44872,
+			"enchant": 3809,
 			"gems": [
 				42144
 			]
 		},
 		{
 			"id": 40724,
-			"enchant": 63765
+			"enchant": 3859
 		},
 		{
 			"id": 40194,
-			"enchant": 44489,
+			"enchant": 3832,
 			"gems": [
 				42144
 			]
 		},
 		{
 			"id": 40741,
-			"enchant": 44498,
+			"enchant": 2332,
 			"gems": [
 				0
 			]
 		},
 		{
 			"id": 40445,
-			"enchant": 44592,
+			"enchant": 3246,
 			"gems": [
 				42144,
 				0
@@ -250,7 +250,7 @@ export const DISC_P1_PRESET = {
 		},
 		{
 			"id": 40271,
-			"enchant": 54793,
+			"enchant": 3601,
 			"gems": [
 				40027,
 				39998
@@ -258,7 +258,7 @@ export const DISC_P1_PRESET = {
 		},
 		{
 			"id": 40398,
-			"enchant": 41602,
+			"enchant": 3719,
 			"gems": [
 				39998,
 				39998
@@ -266,7 +266,7 @@ export const DISC_P1_PRESET = {
 		},
 		{
 			"id": 40236,
-			"enchant": 55016
+			"enchant": 3606
 		},
 		{
 			"id": 40108
@@ -282,7 +282,7 @@ export const DISC_P1_PRESET = {
 		},
 		{
 			"id": 40395,
-			"enchant": 44487
+			"enchant": 3834
 		},
 		{
 			"id": 40350
@@ -300,7 +300,7 @@ export const HOLY_PRERAID_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42553,
-			"enchant": 44876,
+			"enchant": 3819,
 			"gems": [
 				41401,
 				42148
@@ -311,15 +311,15 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 37655,
-			"enchant": 44872
+			"enchant": 3809
 		},
 		{
 			"id": 37291,
-			"enchant": 44472
+			"enchant": 3831
 		},
 		{
 			"id": 39515,
-			"enchant": 44489,
+			"enchant": 3832,
 			"gems": [
 				40012,
 				40012
@@ -327,14 +327,14 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 37361,
-			"enchant": 44555,
+			"enchant": 1119,
 			"gems": [
 				0
 			]
 		},
 		{
 			"id": 39519,
-			"enchant": 54999,
+			"enchant": 3604,
 			"gems": [
 				40012,
 				0
@@ -342,7 +342,7 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 40697,
-			"enchant": 54793,
+			"enchant": 3601,
 			"gems": [
 				42148,
 				42148
@@ -350,7 +350,7 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 37189,
-			"enchant": 41602,
+			"enchant": 3719,
 			"gems": [
 				40047,
 				49110
@@ -358,7 +358,7 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 44202,
-			"enchant": 55016,
+			"enchant": 3606,
 			"gems": [
 				40092
 			]
@@ -381,7 +381,7 @@ export const HOLY_PRERAID_PRESET = {
 		},
 		{
 			"id": 37360,
-			"enchant": 45059
+			"enchant": 3854
 		},
 		{},
 		{
@@ -397,7 +397,7 @@ export const HOLY_P1_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40447,
-			"enchant": 44876,
+			"enchant": 3819,
 			"gems": [
 				41401,
 				40051
@@ -411,18 +411,18 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40450,
-			"enchant": 44872,
+			"enchant": 3809,
 			"gems": [
 				40012
 			]
 		},
 		{
 			"id": 40723,
-			"enchant": 44472
+			"enchant": 3831
 		},
 		{
 			"id": 40381,
-			"enchant": 44489,
+			"enchant": 3832,
 			"gems": [
 				40012,
 				49110
@@ -430,14 +430,14 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40741,
-			"enchant": 44555,
+			"enchant": 1119,
 			"gems": [
 				0
 			]
 		},
 		{
 			"id": 40454,
-			"enchant": 54999,
+			"enchant": 3604,
 			"gems": [
 				40051,
 				0
@@ -445,7 +445,7 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40271,
-			"enchant": 54793,
+			"enchant": 3601,
 			"gems": [
 				40012,
 				40012
@@ -453,7 +453,7 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40398,
-			"enchant": 41602,
+			"enchant": 3719,
 			"gems": [
 				42148,
 				42148
@@ -461,7 +461,7 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40326,
-			"enchant": 55016,
+			"enchant": 3606,
 			"gems": [
 				42148
 			]
@@ -484,7 +484,7 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40395,
-			"enchant": 44487
+			"enchant": 3834
 		},
 		{
 			"id": 40350

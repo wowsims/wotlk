@@ -110,195 +110,194 @@ export const OtherDefaults = {
 };
 
 export const P1_PRESET = {
-    name: 'P1 Preset',
-    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-    gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 40467,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            42144
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40470,
-          "enchant": 44874,
-          "gems": [
-            42144
-          ]
-        },
-        {
-          "id": 44005,
-          "enchant": 63765,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40469,
-          "enchant": 44489,
-          "gems": [
-            42144,
-            39998
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40466,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "enchant": 54793,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40519,
-          "enchant": 55016
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40080
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40395,
-          "enchant": 44487
-        },
-        {
-          "id": 40192
-        },
-        {
-          "id": 40321
-        }
-      ]}`),
+	name: 'P1 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40467,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				42144
+			]
+		},
+		{
+			"id": 44661,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40470,
+			"enchant": 3810,
+			"gems": [
+				42144
+			]
+		},
+		{
+			"id": 44005,
+			"enchant": 3859,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40469,
+			"enchant": 3832,
+			"gems": [
+				42144,
+				39998
+			]
+		},
+		{
+			"id": 44008,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40466,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40561,
+			"enchant": 3601,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 40560,
+			"enchant": 3719
+		},
+		{
+			"id": 40519,
+			"enchant": 3606
+		},
+		{
+			"id": 40399
+		},
+		{
+			"id": 40080
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 40432
+		},
+		{
+			"id": 40395,
+			"enchant": 3834
+		},
+		{
+			"id": 40192
+		},
+		{
+			"id": 40321
+		}
+	]}`),
 };
 
 export const PRE_RAID_PRESET = {
-    name: 'Pre-raid Preset',
-    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-    gear: EquipmentSpec.fromJsonString(`{   "items": [
-        {
-          "id": 42554,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            40049
-          ]
-        },
-        {
-          "id": 40680
-        },
-        {
-          "id": 37673,
-          "enchant": 44874,
-          "gems": [
-            42144
-          ]
-        },
-        {
-          "id": 41610,
-          "enchant": 63765
-        },
-        {
-          "id": 39547,
-          "enchant": 44489,
-          "gems": [
-            42144,
-            40026
-          ]
-        },
-        {
-          "id": 37884,
-          "enchant": 44498,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 39544,
-          "enchant": 54999,
-          "gems": [
-            42144,
-            0
-          ]
-        },
-        {
-          "id": 40696,
-          "enchant": 54793,
-          "gems": [
-            40014,
-            39998
-          ]
-        },
-        {
-          "id": 37854,
-          "enchant": 41602
-        },
-        {
-          "id": 44202,
-          "enchant": 55016,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 40585
-        },
-        {
-          "id": 43253,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 37873
-        },
-        {
-          "id": 40682
-        },
-        {
-          "id": 45085,
-          "enchant": 44487
-        },
-        {
-          "id": 40698
-        },
-        {
-          "id": 40712
-        }
-      ]
-    }`),
+	name: 'Pre-raid Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+		{
+			"id": 42554,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40049
+			]
+		},
+		{
+			"id": 40680
+		},
+		{
+			"id": 37673,
+			"enchant": 3810,
+			"gems": [
+				42144
+			]
+		},
+		{
+			"id": 41610,
+			"enchant": 3859
+		},
+		{
+			"id": 39547,
+			"enchant": 3832,
+			"gems": [
+				42144,
+				40026
+			]
+		},
+		{
+			"id": 37884,
+			"enchant": 2332,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39544,
+			"enchant": 3604,
+			"gems": [
+				42144,
+				0
+			]
+		},
+		{
+			"id": 40696,
+			"enchant": 3601,
+			"gems": [
+				40014,
+				39998
+			]
+		},
+		{
+			"id": 37854,
+			"enchant": 3719
+		},
+		{
+			"id": 44202,
+			"enchant": 3606,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 40585
+		},
+		{
+			"id": 43253,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 37873
+		},
+		{
+			"id": 40682
+		},
+		{
+			"id": 45085,
+			"enchant": 3834
+		},
+		{
+			"id": 40698
+		},
+		{
+			"id": 40712
+		}
+	]}`),
 };
 

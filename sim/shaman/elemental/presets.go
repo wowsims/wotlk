@@ -69,102 +69,90 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{
-"items": [
+var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-	  "id": 40516,
-	  "enchant": 44877,
-	  "gems": [
-		41285,
-		40025
-	  ]
+		"id": 40516,
+		"enchant": 3820,
+		"gems": [
+			41285,
+			40027
+		]
 	},
 	{
-	  "id": 44661,
-	  "gems": [
-		40027
-	  ]
+		"id": 44661,
+		"gems": [
+			39998
+		]
 	},
 	{
-	  "id": 40518,
-	  "enchant": 44874,
-	  "gems": [
-		39998
-	  ]
+		"id": 40286,
+		"enchant": 3810
 	},
 	{
-	  "id": 44005,
-	  "enchant": 44472,
-	  "gems": [
-		40025
-	  ]
+		"id": 44005,
+		"enchant": 3722,
+		"gems": [
+			40027
+		]
 	},
 	{
-	  "id": 40514,
-	  "enchant": 44623,
-	  "gems": [
-		39998,
-		40025
-	  ]
+		"id": 40514,
+		"enchant": 3832,
+		"gems": [
+			42144,
+			42144
+		]
 	},
 	{
-	  "id": 40324,
-	  "enchant": 44498,
-	  "gems": [
-		40025,
-		0
-	  ]
+		"id": 40324,
+		"enchant": 2332,
+		"gems": [
+			42144,
+			0
+		]
 	},
 	{
-	  "id": 40302,
-	  "enchant": 54999,
-	  "gems": [
-		0
-	  ]
+		"id": 40302,
+		"enchant": 3246,
+		"gems": [
+			0
+		]
 	},
 	{
-	  "id": 40327,
-	  "gems": [
-		39998
-	  ]
+		"id": 40301,
+		"gems": [
+			40014
+		]
 	},
 	{
-	  "id": 40517,
-	  "enchant": 41602,
-	  "gems": [
-		40049,
-		40027
-	  ]
+		"id": 40560,
+		"enchant": 3721
 	},
 	{
-	  "id": 40237,
-	  "enchant": 60623,
-	  "gems": [
-		40025
-	  ]
+		"id": 40519,
+		"enchant": 3826
 	},
 	{
-	  "id": 40399
+		"id": 37694
 	},
 	{
-	  "id": 48957
+		"id": 40399
 	},
 	{
-	  "id": 40255
+		"id": 40432
 	},
 	{
-	  "id": 39229
+		"id": 40255
 	},
 	{
-	  "id": 40395,
-	  "enchant": 44487
+		"id": 40395,
+		"enchant": 3834
 	},
 	{
-	  "id": 40401,
-	  "enchant": 60653
+		"id": 40401,
+		"enchant": 1128
 	},
 	{
-	  "id": 40708
+		"id": 40267
 	}
-  ]
-}`)
+]}`)

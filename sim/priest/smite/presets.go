@@ -68,74 +68,86 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40562,
-		"enchant": 44877,
+		"enchant": 3820,
 		"gems": [
-			41307,
-			40049
+			41333,
+			42144
 		]
 	},
 	{
-		"id": 40374
-	},
-	{
-		"id": 40555,
-		"enchant": 44874
-	},
-	{
-		"id": 41610,
-		"enchant": 63765
-	},
-	{
-		"id": 40526,
-		"enchant": 33990,
+		"id": 44661,
 		"gems": [
-			40049
+			39998
 		]
 	},
 	{
-		"id": 40325,
-		"enchant": 44498,
+		"id": 40459,
+		"enchant": 3810,
 		"gems": [
+			42144
+		]
+	},
+	{
+		"id": 44005,
+		"enchant": 3859,
+		"gems": [
+			42144
+		]
+	},
+	{
+		"id": 40234,
+		"enchant": 1144,
+		"gems": [
+			39998,
+			39998
+		]
+	},
+	{
+		"id": 44008,
+		"enchant": 2332,
+		"gems": [
+			39998,
 			0
 		]
 	},
 	{
 		"id": 40454,
-		"enchant": 44592,
+		"enchant": 3604,
 		"gems": [
 			40049,
 			0
 		]
 	},
 	{
-		"id": 40301,
+		"id": 40561,
+		"enchant": 3601,
 		"gems": [
-			40049
+			39998
 		]
 	},
 	{
 		"id": 40560,
-		"enchant": 41602
+		"enchant": 3719
 	},
 	{
-		"id": 40246,
-		"enchant": 60623
+		"id": 40558,
+		"enchant": 3826
+	},
+	{
+		"id": 40719
 	},
 	{
 		"id": 40399
 	},
 	{
-		"id": 39389
+		"id": 40255
 	},
 	{
-		"id": 42129
-	},
-	{
-		"id": 40382
+		"id": 40432
 	},
 	{
 		"id": 40395,
-		"enchant": 44487
+		"enchant": 3834
 	},
 	{
 		"id": 40273

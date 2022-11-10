@@ -187,321 +187,311 @@ export const OtherDefaults = {
 
 export const SWP_BIS = {
 	name: 'Straight Outa SWP',
-	gear: EquipmentSpec.fromJsonString(`
-{"items": [
-        {
-          "id": 34340,
-          "enchant": 29191,
-          "gems": [
-            34220,
-            32215
-          ]
-        },
-        {
-          "id": 34204
-        },
-        {
-          "id": 31054,
-          "enchant": 28886,
-          "gems": [
-            32215,
-            35760
-          ]
-        },
-        {
-          "id": 34242,
-          "enchant": 33150,
-          "gems": [
-            32196
-          ]
-        },
-        {
-          "id": 34364,
-          "enchant": 24003,
-          "gems": [
-            32196,
-            35488,
-            32196
-          ]
-        },
-        {
-          "id": 34436,
-          "enchant": 22534,
-          "gems": [
-            35760,
-            0
-          ]
-        },
-        {
-          "id": 34344,
-          "enchant": 28272,
-          "gems": [
-            35760,
-            32196,
-            0
-          ]
-        },
-        {
-          "id": 34541,
-          "gems": [
-            35760,
-            0
-          ]
-        },
-        {
-          "id": 34181,
-          "enchant": 24274,
-          "gems": [
-            32196,
-            32196,
-            35760
-          ]
-        },
-        {
-          "id": 34564,
-          "enchant": 35297,
-          "gems": [
-            35760
-          ]
-        },
-        {
-          "id": 34362,
-          "enchant": 22536
-        },
-        {
-          "id": 34230,
-          "enchant": 22536
-        },
-        {
-          "id": 32483
-        },
-        {
-          "id": 34429
-        },
-        {
-          "id": 34336,
-          "enchant": 22561
-        },
-        {
-          "id": 34179
-        },
-        {
-          "id": 34347,
-          "gems": [
-            35760
-          ]
-        }
-      ]}
-    `),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 34340,
+			"enchant": 3002,
+			"gems": [
+				34220,
+				32215
+			]
+		},
+		{
+			"id": 34204
+		},
+		{
+			"id": 31054,
+			"enchant": 2982,
+			"gems": [
+				32215,
+				35760
+			]
+		},
+		{
+			"id": 34242,
+			"enchant": 2621,
+			"gems": [
+				32196
+			]
+		},
+		{
+			"id": 34364,
+			"enchant": 2661,
+			"gems": [
+				32196,
+				35488,
+				32196
+			]
+		},
+		{
+			"id": 34436,
+			"enchant": 2650,
+			"gems": [
+				35760,
+				0
+			]
+		},
+		{
+			"id": 34344,
+			"enchant": 2937,
+			"gems": [
+				35760,
+				32196,
+				0
+			]
+		},
+		{
+			"id": 34541,
+			"gems": [
+				35760,
+				0
+			]
+		},
+		{
+			"id": 34181,
+			"enchant": 2748,
+			"gems": [
+				32196,
+				32196,
+				35760
+			]
+		},
+		{
+			"id": 34564,
+			"enchant": 2940,
+			"gems": [
+				35760
+			]
+		},
+		{
+			"id": 34362,
+			"enchant": 2928
+		},
+		{
+			"id": 34230,
+			"enchant": 2928
+		},
+		{
+			"id": 32483
+		},
+		{
+			"id": 34429
+		},
+		{
+			"id": 34336,
+			"enchant": 2672
+		},
+		{
+			"id": 34179
+		},
+		{
+			"id": 34347,
+			"gems": [
+				35760
+			]
+		}
+  ]}`),
 };
 export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 44910,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            39998
-          ]
-        },
-        {
-          "id": 42647,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 34210,
-          "enchant": 44874,
-          "gems": [
-            39998,
-            40051
-          ]
-        },
-        {
-          "id": 41610,
-          "enchant": 55642
-        },
-        {
-          "id": 39497,
-          "enchant": 44489,
-          "gems": [
-            39998,
-            40051
-          ]
-        },
-        {
-          "id": 37361,
-          "enchant": 44498,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 42113,
-          "enchant": 54999,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 40696,
-          "gems": [
-            40051,
-            39998
-          ]
-        },
-        {
-          "id": 34181,
-          "enchant": 41602,
-          "gems": [
-            39998,
-            39998,
-            40051
-          ]
-        },
-        {
-          "id": 44202,
-          "enchant": 55016,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 43253,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 37694
-        },
-        {
-          "id": 40682
-        },
-        {
-          "id": 37873
-        },
-        {
-          "id": 45085,
-          "enchant": 44487
-        },
-        {
-          "id": 40698
-        },
-        {
-          "id": 34348,
-          "gems": [
-            39998
-          ]
-        }
-      ]
-    }
-  `),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 44910,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				39998
+			]
+		},
+		{
+			"id": 42647,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 34210,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 41610,
+			"enchant": 3722
+		},
+		{
+			"id": 39497,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 37361,
+			"enchant": 2332,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 42113,
+			"enchant": 3604,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40696,
+			"gems": [
+				40051,
+				39998
+			]
+		},
+		{
+			"id": 34181,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 44202,
+			"enchant": 3606,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 43253,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 37694
+		},
+		{
+			"id": 40682
+		},
+		{
+			"id": 37873
+		},
+		{
+			"id": 45085,
+			"enchant": 3834
+		},
+		{
+			"id": 40698
+		},
+		{
+			"id": 34348,
+			"gems": [
+				39998
+			]
+		}
+  ]}`),
 }
 export const P1_Preset_Demo_Destro = {
 	name: 'P1 Preset Demo / Destro',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 40421,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            40014
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40099
-          ]
-        },
-        {
-          "id": 40424,
-          "enchant": 44874,
-          "gems": [
-            40049
-          ]
-        },
-        {
-          "id": 44005,
-          "enchant": 55642,
-          "gems": [
-            40099
-          ]
-        },
-        {
-          "id": 40423,
-          "enchant": 44489,
-          "gems": [
-            40049,
-            40014
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40420,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "gems": [
-            40014
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40558,
-          "enchant": 55016
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40719
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40396,
-          "enchant": 44487
-        },
-        {
-          "id": 39766
-        },
-        {
-          "id": 39712
-        }
-      ]
-    }
-  `),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40421,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40014
+			]
+		},
+		{
+			"id": 44661,
+			"gems": [
+				40099
+			]
+		},
+		{
+			"id": 40424,
+			"enchant": 3810,
+			"gems": [
+				40049
+			]
+		},
+		{
+			"id": 44005,
+			"enchant": 3722,
+			"gems": [
+				40099
+			]
+		},
+		{
+			"id": 40423,
+			"enchant": 3832,
+			"gems": [
+				40049,
+				40014
+			]
+		},
+		{
+			"id": 44008,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40420,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40561,
+			"gems": [
+				40014
+			]
+		},
+		{
+			"id": 40560,
+			"enchant": 3719
+		},
+		{
+			"id": 40558,
+			"enchant": 3606
+		},
+		{
+			"id": 40399
+		},
+		{
+			"id": 40719
+		},
+		{
+			"id": 40432
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 40396,
+			"enchant": 3834
+		},
+		{
+			"id": 39766
+		},
+		{
+			"id": 39712
+		}
+  ]}`),
 }
 
 
@@ -510,100 +500,96 @@ export const P1_Preset_Affliction = {
 	name: 'P1 Affliction Preset',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 40421,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            40051
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40424,
-          "enchant": 44874,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 44005,
-          "enchant": 55642,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 40423,
-          "enchant": 44489,
-          "gems": [
-            39998,
-            40051
-          ]
-        },
-        {
-          "id": 44008,
-          "enchant": 44498,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40420,
-          "enchant": 54999,
-          "gems": [
-            39998,
-            0
-          ]
-        },
-        {
-          "id": 40561,
-          "gems": [
-            39998
-          ]
-        },
-        {
-          "id": 40560,
-          "enchant": 41602
-        },
-        {
-          "id": 40558,
-          "enchant": 55016
-        },
-        {
-          "id": 40399
-        },
-        {
-          "id": 40719
-        },
-        {
-          "id": 40432
-        },
-        {
-          "id": 40255
-        },
-        {
-          "id": 40396,
-          "enchant": 44487
-        },
-        {
-          "id": 39766
-        },
-        {
-          "id": 39712
-        }
-      ]
-    }
-  `),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 40421,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40051
+			]
+		},
+		{
+			"id": 44661,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40424,
+			"enchant": 3810,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 44005,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40423,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 44008,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40420,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40561,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 40560,
+			"enchant": 3719
+		},
+		{
+			"id": 40558,
+			"enchant": 3606
+		},
+		{
+			"id": 40399
+		},
+		{
+			"id": 40719
+		},
+		{
+			"id": 40432
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 40396,
+			"enchant": 3834
+		},
+		{
+			"id": 39766
+		},
+		{
+			"id": 39712
+		}
+  ]}`),
 }
 
 
@@ -611,111 +597,107 @@ export const P1_PreBiS_14 = {
 	name: 'Pre-Raid Preset',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {
-          "id": 44910,
-          "enchant": 44877,
-          "gems": [
-            41285,
-            39998
-          ]
-        },
-        {
-          "id": 42647,
-          "gems": [
-            40049
-          ]
-        },
-        {
-          "id": 34210,
-          "enchant": 44874,
-          "gems": [
-            39998,
-            40014
-          ]
-        },
-        {
-          "id": 41610,
-          "enchant": 55642
-        },
-        {
-          "id": 39497,
-          "enchant": 44489,
-          "gems": [
-            39998,
-            40014
-          ]
-        },
-        {
-          "id": 37361,
-          "enchant": 44498,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 42113,
-          "enchant": 54999,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 40696,
-          "gems": [
-            40014,
-            39998
-          ]
-        },
-        {
-          "id": 34181,
-          "enchant": 41602,
-          "gems": [
-            39998,
-            39998,
-            40014
-          ]
-        },
-        {
-          "id": 44202,
-          "enchant": 55016,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 43253,
-          "gems": [
-            40026
-          ]
-        },
-        {
-          "id": 37694
-        },
-        {
-          "id": 40682
-        },
-        {
-          "id": 37873
-        },
-        {
-          "id": 45085,
-          "enchant": 44487
-        },
-        {
-          "id": 40698
-        },
-        {
-          "id": 34348,
-          "gems": [
-            39998
-          ]
-        }
-      ]
-    }
-  `),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 44910,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				39998
+			]
+		},
+		{
+			"id": 42647,
+			"gems": [
+				40049
+			]
+		},
+		{
+			"id": 34210,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40014
+			]
+		},
+		{
+			"id": 41610,
+			"enchant": 3722
+		},
+		{
+			"id": 39497,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				40014
+			]
+		},
+		{
+			"id": 37361,
+			"enchant": 2332,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 42113,
+			"enchant": 3604,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40696,
+			"gems": [
+				40014,
+				39998
+			]
+		},
+		{
+			"id": 34181,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				39998,
+				40014
+			]
+		},
+		{
+			"id": 44202,
+			"enchant": 3606,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 43253,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 37694
+		},
+		{
+			"id": 40682
+		},
+		{
+			"id": 37873
+		},
+		{
+			"id": 45085,
+			"enchant": 3834
+		},
+		{
+			"id": 40698
+		},
+		{
+			"id": 34348,
+			"gems": [
+				39998
+			]
+		}
+  ]}`),
 }
 
 export const Naked = {

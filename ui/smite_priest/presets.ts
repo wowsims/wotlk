@@ -98,7 +98,7 @@ export const PRERAID_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42553,
-			"enchant": 44877,
+			"enchant": 3820,
 			"gems": [
 				41333,
 				40014
@@ -109,7 +109,7 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 34210,
-			"enchant": 44874,
+			"enchant": 3810,
 			"gems": [
 				42144,
 				40014
@@ -117,11 +117,11 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 41610,
-			"enchant": 63765
+			"enchant": 3859
 		},
 		{
 			"id": 43792,
-			"enchant": 33990,
+			"enchant": 1144,
 			"gems": [
 				42144,
 				40049
@@ -129,14 +129,14 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 37361,
-			"enchant": 44498,
+			"enchant": 2332,
 			"gems": [
 				0
 			]
 		},
 		{
 			"id": 39285,
-			"enchant": 44592,
+			"enchant": 3246,
 			"gems": [
 				40014,
 				0
@@ -151,11 +151,11 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 37854,
-			"enchant": 41602
+			"enchant": 3719
 		},
 		{
 			"id": 44202,
-			"enchant": 60623,
+			"enchant": 3826,
 			"gems": [
 				40026
 			]
@@ -177,7 +177,7 @@ export const PRERAID_PRESET = {
 		},
 		{
 			"id": 41384,
-			"enchant": 44487
+			"enchant": 3834
 		},
 		{
 			"id": 40698
@@ -194,7 +194,7 @@ export const P1_PRESET = {
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40562,
-			"enchant": 44877,
+			"enchant": 3820,
 			"gems": [
 				41333,
 				42144
@@ -208,21 +208,21 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40459,
-			"enchant": 44874,
+			"enchant": 3810,
 			"gems": [
 				42144
 			]
 		},
 		{
 			"id": 44005,
-			"enchant": 63765,
+			"enchant": 3859,
 			"gems": [
 				42144
 			]
 		},
 		{
 			"id": 40234,
-			"enchant": 33990,
+			"enchant": 1144,
 			"gems": [
 				39998,
 				39998
@@ -230,7 +230,7 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 44008,
-			"enchant": 44498,
+			"enchant": 2332,
 			"gems": [
 				39998,
 				0
@@ -238,7 +238,7 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40454,
-			"enchant": 54999,
+			"enchant": 3604,
 			"gems": [
 				40049,
 				0
@@ -246,18 +246,18 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40561,
-			"enchant": 54793,
+			"enchant": 3601,
 			"gems": [
 				39998
 			]
 		},
 		{
 			"id": 40560,
-			"enchant": 41602
+			"enchant": 3719
 		},
 		{
 			"id": 40558,
-			"enchant": 60623
+			"enchant": 3826
 		},
 		{
 			"id": 40719
@@ -273,7 +273,7 @@ export const P1_PRESET = {
 		},
 		{
 			"id": 40395,
-			"enchant": 44487
+			"enchant": 3834
 		},
 		{
 			"id": 40273
