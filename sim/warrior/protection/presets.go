@@ -73,7 +73,7 @@ var FullConsumes = &proto.Consumes{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40546,
-		"enchant": 44878,
+		"enchant": 3818,
 		"gems": [
 			41380,
 			40034
@@ -84,41 +84,41 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 39704,
-		"enchant": 44957,
+		"enchant": 3852,
 		"gems": [
-			40008
+			40034
 		]
 	},
 	{
-		"id": 40252,
-		"enchant": 55002
+		"id": 40722,
+		"enchant": 3605
 	},
 	{
-		"id": 40544,
-		"enchant": 44489,
+		"id": 44000,
+		"enchant": 3832,
 		"gems": [
-			40008,
-			40008
+			40034,
+			40015
 		]
 	},
 	{
 		"id": 39764,
-		"enchant": 44944,
+		"enchant": 3850,
 		"gems": [
 			0
 		]
 	},
 	{
 		"id": 40545,
-		"enchant": 63770,
+		"enchant": 3860,
 		"gems": [
-			49110,
+			40034,
 			0
 		]
 	},
 	{
 		"id": 39759,
-		"enchant": 54793,
+		"enchant": 3601,
 		"gems": [
 			40008,
 			36767
@@ -126,11 +126,14 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40589,
-		"enchant": 38373
+		"enchant": 3822
 	},
 	{
-		"id": 40297,
-		"enchant": 44491
+		"id": 39717,
+		"enchant": 3232,
+		"gems": [
+			40089
+		]
 	},
 	{
 		"id": 40370
@@ -150,11 +153,11 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40402,
-		"enchant": 22559
+		"enchant": 3788
 	},
 	{
 		"id": 40400,
-		"enchant": 44936
+		"enchant": 3849
 	},
 	{
 		"id": 41168,

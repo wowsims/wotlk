@@ -683,13 +683,15 @@ enum EnchantType {
 }
 
 message Enchant {
-	int32 id = 1;        // ID of the enchant "item".
-	int32 effect_id = 2; // ID of the effect (for the item tooltip UI)
-	string name = 3;     
+	// All enchants have an effect ID. Some also have an item ID, others have a spell ID,
+	// and yet others have both item and spell IDs. No single ID alone is not enough
+	// to uniquely identify an enchant. Uniqueness requires either effect ID + slot, or
+	// effect ID + item/spell ID.
+	int32 effect_id = 2; // ID of the effect.
+	int32 item_id = 1;   // ID of the enchant "item". Might be 0 if not available.
+	int32 spell_id = 10; // ID of the enchant "spell". Might be 0 if not available.
 
-	// If true, then id is the ID of the enchant spell instead of the formula item.
-	// This is used by enchants for which a formula doesn't exist (its taught by a trainer).
-	bool is_spell_id = 10;
+	string name = 3;     
 
 	ItemType type = 4;   // Which type of item this enchant can be applied to.
 	EnchantType enchant_type = 9;

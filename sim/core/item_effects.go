@@ -91,6 +91,16 @@ func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 }
 
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
+	found := false
+	for _, enchantsByID := range items.EnchantsByItemByID {
+		if _, ok := enchantsByID[id]; ok {
+			found = true
+			break
+		}
+	}
+	if !found {
+		panic(fmt.Sprintf("No enchant with ID: %d", id))
+	}
 	if HasWeaponEffect(id) {
 		panic(fmt.Sprintf("Cannot add multiple effects for one item: %d, %#v", id, weaponEffect))
 	}

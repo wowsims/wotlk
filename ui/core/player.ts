@@ -212,12 +212,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	// Returns all items that this player can wear in the given slot.
-	getItems(slot: ItemSlot | undefined): Array<Item> {
+	getItems(slot: ItemSlot): Array<Item> {
 		return this.sim.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
 	}
 
 	// Returns all enchants that this player can wear in the given slot.
-	getEnchants(slot: ItemSlot | undefined): Array<Enchant> {
+	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.sim.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
 	}
 
@@ -589,12 +589,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	computeEnchantEP(enchant: Enchant): number {
-		if (this.enchantEPCache.has(enchant.id)) {
-			return this.enchantEPCache.get(enchant.id)!;
+		if (this.enchantEPCache.has(enchant.effectId)) {
+			return this.enchantEPCache.get(enchant.effectId)!;
 		}
 
 		let ep = this.computeStatsEP(new Stats(enchant.stats));
-		this.enchantEPCache.set(enchant.id, ep);
+		this.enchantEPCache.set(enchant.effectId, ep);
 		return ep
 	}
 

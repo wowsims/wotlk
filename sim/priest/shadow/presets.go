@@ -83,7 +83,7 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40562,
-		"enchant": 44877,
+		"enchant": 3820,
 		"gems": [
 			41285,
 			39998
@@ -97,21 +97,21 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40459,
-		"enchant": 44874,
+		"enchant": 3810,
 		"gems": [
 			39998
 		]
 	},
 	{
 		"id": 44005,
-		"enchant": 55642,
+		"enchant": 3722,
 		"gems": [
 			40026
 		]
 	},
 	{
 		"id": 44002,
-		"enchant": 33990,
+		"enchant": 1144,
 		"gems": [
 			39998,
 			39998
@@ -119,7 +119,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 44008,
-		"enchant": 44498,
+		"enchant": 2332,
 		"gems": [
 			39998,
 			0
@@ -127,7 +127,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40454,
-		"enchant": 54999,
+		"enchant": 3604,
 		"gems": [
 			40049,
 			0
@@ -141,11 +141,11 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40560,
-		"enchant": 41602
+		"enchant": 3719
 	},
 	{
 		"id": 40558,
-		"enchant": 55016
+		"enchant": 3606
 	},
 	{
 		"id": 40719
@@ -161,7 +161,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40395,
-		"enchant": 44487
+		"enchant": 3834
 	},
 	{
 		"id": 40273

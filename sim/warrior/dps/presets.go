@@ -141,11 +141,11 @@ var FullConsumes = &proto.Consumes{
 
 var FuryP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
-		"id": 40528,
-		"enchant": 44879,
+		"id": 44006,
+		"enchant": 3817,
 		"gems": [
-			41398,
-			39996
+			41285,
+			42702
 		]
 	},
 	{
@@ -156,63 +156,63 @@ var FuryP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40530,
-		"enchant": 44871,
+		"enchant": 3808,
 		"gems": [
-			40058
+			40037
 		]
 	},
 	{
 		"id": 40403,
-		"enchant": 55002
+		"enchant": 3605
 	},
 	{
-		"id": 40525,
-		"enchant": 44489,
+		"id": 40539,
+		"enchant": 3832,
 		"gems": [
-			42142,
-			49110
+			42142
 		]
 	},
 	{
-		"id": 40733,
-		"enchant": 44484,
+		"id": 39765,
+		"enchant": 3845,
 		"gems": [
+			39996,
 			0
 		]
 	},
 	{
 		"id": 40541,
-		"enchant": 54999,
+		"enchant": 3604,
 		"gems": [
 			0
 		]
 	},
 	{
-		"id": 40317,
+		"id": 40205,
 		"gems": [
 			42142
 		]
 	},
 	{
 		"id": 40529,
-		"enchant": 38374,
+		"enchant": 3823,
 		"gems": [
 			39996,
-			39996
+			40022
 		]
 	},
 	{
 		"id": 40591,
-		"enchant": 55016
+		"enchant": 3606
 	},
 	{
 		"id": 43993,
 		"gems": [
-			39996
+			42142
 		]
 	},
 	{
-		"id": 40075
+		"id": 40717
 	},
 	{
 		"id": 42987
@@ -222,11 +222,11 @@ var FuryP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40384,
-		"enchant": 44492
+		"enchant": 3789
 	},
 	{
 		"id": 40384,
-		"enchant": 44492
+		"enchant": 3789
 	},
 	{
 		"id": 40385

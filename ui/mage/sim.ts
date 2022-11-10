@@ -147,15 +147,15 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.P1_PRERAID_ARCANE_PRESET,
+					Presets.P1_PRERAID_FIRE_PRESET,
 					Presets.P1_ARCANE_PRESET,
 					Presets.P1_FIRE_PRESET,
 					Presets.P1_FROST_PRESET,
-					Presets.P1_PRERAID_ARCANE_PRESET,
-					Presets.P1_PRERAID_FIRE_PRESET,
+					Presets.P2_Arcane_Preset,
+					Presets.P2_Fire_Preset,
 					Presets.ICC_FFB_Preset,
 					Presets.ICC_Fireball_Preset,
-					Presets.P2_Arcane_Preset,
-					Presets.P2_Fire_Preset
 				],
 			},
 		});

@@ -94,193 +94,189 @@ export const DefaultDebuffs = Debuffs.create({
 	judgementOfWisdom: true,
 });
 
-export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(` {
-    "items": [
-      {
-        "id": 40562,
-        "enchant": 44877,
-        "gems": [
-          41285,
-          39998
-        ]
-      },
-      {
-        "id": 44661,
-        "gems": [
-          40026
-        ]
-      },
-      {
-        "id": 40459,
-        "enchant": 44874,
-        "gems": [
-          39998
-        ]
-      },
-      {
-        "id": 44005,
-        "enchant": 55642,
-        "gems": [
-          40026
-        ]
-      },
-      {
-        "id": 44002,
-        "enchant": 33990,
-        "gems": [
-          39998,
-          39998
-        ]
-      },
-      {
-        "id": 44008,
-        "enchant": 44498,
-        "gems": [
-          39998,
-          0
-        ]
-      },
-      {
-        "id": 40454,
-        "enchant": 54999,
-        "gems": [
-          40049,
-          0
-        ]
-      },
-      {
-        "id": 40561,
-        "gems": [
-          39998
-        ]
-      },
-      {
-        "id": 40560,
-        "enchant": 41602
-      },
-      {
-        "id": 40558,
-        "enchant": 55016
-      },
-      {
-        "id": 40719
-      },
-      {
-        "id": 40399
-      },
-      {
-        "id": 40255
-      },
-      {
-        "id": 40432
-      },
-      {
-        "id": 40395,
-        "enchant": 44487
-      },
-      {
-        "id": 40273
-      },
-      {
-        "id": 39712
-      }
-    ]
-  }`),
-};
 export const PreBis_PRESET = {
 	name: 'PreBis Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{
-    "items": [
-      {
-        "id": 42553,
-        "enchant": 44877,
-        "gems": [
-          41285,
-          40049
-        ]
-      },
-      {
-        "id": 40680
-      },
-      {
-        "id": 34210,
-        "enchant": 44874,
-        "gems": [
-          39998,
-          40026
-        ]
-      },
-      {
-        "id": 41610,
-        "enchant": 55642
-      },
-      {
-        "id": 43792,
-        "enchant": 33990,
-        "gems": [
-          39998,
-          40051
-        ]
-      },
-      {
-        "id": 37361,
-        "enchant": 44498,
-        "gems": [
-          0
-        ]
-      },
-      {
-        "id": 39530,
-        "enchant": 54999,
-        "gems": [
-          40049,
-          0
-        ]
-      },
-      {
-        "id": 40696,
-        "gems": [
-          40049,
-          39998
-        ]
-      },
-      {
-        "id": 37854,
-        "enchant": 41602
-      },
-      {
-        "id": 44202,
-        "enchant": 60623,
-        "gems": [
-          40026
-        ]
-      },
-      {
-        "id": 40585
-      },
-      {
-        "id": 37694
-      },
-      {
-        "id": 37835
-      },
-      {
-        "id": 37873
-      },
-      {
-        "id": 41384,
-        "enchant": 44487
-      },
-      {
-        "id": 40698
-      },
-      {
-        "id": 37177
-      }
-    ]
-  }`),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 42553,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40049
+			]
+		},
+		{
+			"id": 40680
+		},
+		{
+			"id": 34210,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40026
+			]
+		},
+		{
+			"id": 41610,
+			"enchant": 3722
+		},
+		{
+			"id": 43792,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 37361,
+			"enchant": 2332,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39530,
+			"enchant": 3604,
+			"gems": [
+				40049,
+				0
+			]
+		},
+		{
+			"id": 40696,
+			"gems": [
+				40049,
+				39998
+			]
+		},
+		{
+			"id": 37854,
+			"enchant": 3719
+		},
+		{
+			"id": 44202,
+			"enchant": 3826,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40585
+		},
+		{
+			"id": 37694
+		},
+		{
+			"id": 37835
+		},
+		{
+			"id": 37873
+		},
+		{
+			"id": 41384,
+			"enchant": 3834
+		},
+		{
+			"id": 40698
+		},
+		{
+			"id": 37177
+		}
+  ]}`),
+};
+export const P1_PRESET = {
+	name: 'P1 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(` {"items": [
+		{
+			"id": 40562,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				39998
+			]
+		},
+		{
+			"id": 44661,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 40459,
+			"enchant": 3810,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 44005,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 44002,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 44008,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 40454,
+			"enchant": 3604,
+			"gems": [
+				40049,
+				0
+			]
+		},
+		{
+			"id": 40561,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 40560,
+			"enchant": 3719
+		},
+		{
+			"id": 40558,
+			"enchant": 3606
+		},
+		{
+			"id": 40719
+		},
+		{
+			"id": 40399
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 40432
+		},
+		{
+			"id": 40395,
+			"enchant": 3834
+		},
+		{
+			"id": 40273
+		},
+		{
+			"id": 39712
+		}
+  ]}`),
 };

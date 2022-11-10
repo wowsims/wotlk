@@ -306,11 +306,11 @@ func (dk *Deathknight) sigilOfTheUnfalteringKnight() *core.Aura {
 
 func init() {
 	// Rune of Cinderglacier
-	core.NewEnchantEffect(53341, func(agent core.Agent) {
+	core.NewEnchantEffect(3369, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 53341
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 53341
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3369
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3369
 		if !mh && !oh {
 			return
 		}

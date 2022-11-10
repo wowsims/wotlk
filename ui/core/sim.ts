@@ -83,7 +83,7 @@ export class Sim {
 
 	// Database
 	private items: Record<number, Item> = {};
-	private enchants: Enchant[] = [];
+	private enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private gems: Record<number, Gem> = {};
 	private presetEncounters: Record<string, PresetEncounter> = {};
 	private presetTargets: Record<string, PresetTarget> = {};
@@ -122,8 +122,15 @@ export class Sim {
 
 		this._initPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
 			result.items.forEach(item => this.items[item.id] = item);
-			// result.enchants.forEach(enchant => this.enchants[enchant.id] = enchant);
-			this.enchants = result.enchants;
+			result.enchants.forEach(enchant => {
+				const slots = getEligibleEnchantSlots(enchant);
+				slots.forEach(slot => {
+					if (!this.enchantsBySlot[slot]) {
+						this.enchantsBySlot[slot] = [];
+					}
+					this.enchantsBySlot[slot]!.push(enchant);
+				});
+			});
 			result.gems.forEach(gem => this.gems[gem.id] = gem);
 			result.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 			result.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
@@ -320,25 +327,14 @@ export class Sim {
 		}
 	}
 
-	getItems(slot: ItemSlot | undefined): Array<Item> {
+	getItems(slot: ItemSlot): Array<Item> {
 		let items = Object.values(this.items);
-		if (slot != undefined) {
-			items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		}
+		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
 		return items;
 	}
 
-	getEnchants(slot: ItemSlot | undefined): Array<Enchant> {
-		let enchants = Object.values(this.enchants);
-		if (slot != undefined) {
-			enchants = enchants.filter(enchant => getEligibleEnchantSlots(enchant).includes(slot));
-		}
-		return enchants;
-	}
-
-	// ID can be the formula ID OR the effect ID.
-	getEnchantFlexible(id: number): Enchant | null {
-		return Object.values(this.enchants).find(enchant => enchant.id == id || enchant.effectId == id) || null;
+	getEnchants(slot: ItemSlot): Array<Enchant> {
+		return this.enchantsBySlot[slot] || [];
 	}
 
 	getGems(socketColor?: GemColor): Array<Gem> {
@@ -499,7 +495,18 @@ export class Sim {
 		if (!item)
 			return null;
 
-		const enchant = itemSpec.enchant > 0 ? this.enchants.find(e => (e.id == itemSpec.enchant && e.type == item.type)) : null;
+		let enchant: Enchant | null = null;
+		if (itemSpec.enchant) {
+			const slots = getEligibleItemSlots(item);
+			for (let i = 0; i < slots.length; i++) {
+				enchant = (this.enchantsBySlot[slots[i]] || [])
+						.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
+				if (enchant) {
+					break;
+				}
+			}
+		}
+
 		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
 
 		return new EquippedItem(item, enchant, gems);
