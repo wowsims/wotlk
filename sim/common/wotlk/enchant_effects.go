@@ -367,7 +367,7 @@ func init() {
 	core.NewEnchantEffect(3370, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
-		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
+		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
 		if !mh && !oh {
 			return
 		}
@@ -412,13 +412,11 @@ func init() {
 
 				vulnAura.Activate(sim)
 				isMH := spell.ProcMask.Matches(core.ProcMaskMeleeMH)
+				isOH := spell.ProcMask.Matches(core.ProcMaskMeleeOH)
 				if isMH {
 					mhRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
-				}
-
-				isOH := spell.ProcMask.Matches(core.ProcMaskMeleeOH)
-				if isOH {
+				} else if isOH {
 					ohRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
 				}
