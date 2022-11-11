@@ -48,17 +48,17 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 	applyDot := !isLightningOverload && shaman.HasSetBonus(ItemSetWorldbreakerGarb, 4)
 	var lbDot *core.Dot
 	lbdotDmg := 0.0 // dynamically changing dmg
+	lbDotSpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 64930},
+		SpellSchool:      core.SpellSchoolNature,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagIgnoreModifiers,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+	})
 	if applyDot {
-		spell := shaman.RegisterSpell(core.SpellConfig{
-			ActionID:         core.ActionID{SpellID: 64930},
-			SpellSchool:      core.SpellSchoolNature,
-			ProcMask:         core.ProcMaskEmpty,
-			Flags:            core.SpellFlagIgnoreModifiers,
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-		})
 		lbDot = core.NewDot(core.Dot{
-			Spell: spell,
+			Spell: lbDotSpell,
 			Aura: shaman.CurrentTarget.RegisterAura(core.Aura{
 				Label:    "Electrified-" + strconv.Itoa(int(shaman.Index)),
 				ActionID: core.ActionID{SpellID: 64930},
@@ -95,6 +95,9 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 						lbdotDmg += (oldDmg * float64(remainingTicks)) / 2
 						lbDot.TakeSnapshot(sim, false)
 					}
+				} else {
+					// Dummy cast to add to metrics/timeline
+					lbDotSpell.Cast(sim, target)
 				}
 				lbDot.ApplyOrRefresh(sim)
 			}

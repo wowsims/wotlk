@@ -719,8 +719,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 4313.92187
-  tps: 3326.54256
+  dps: 4314.13033
+  tps: 3326.71642
  }
 }
 dps_results: {
