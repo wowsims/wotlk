@@ -120,7 +120,7 @@ func (dk *Deathknight) registerFrostFever() {
 		}
 		dk.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
 			Aura:          target.RegisterAura(aura),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				firstTsApply := !flagTs[target.Index]
@@ -187,7 +187,7 @@ func (dk *Deathknight) registerBloodPlague() {
 					}
 				},
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
@@ -248,7 +248,7 @@ func (dk *Deathknight) registerDrwFrostFever() {
 				Label:    "DrwFrostFever-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
 				ActionID: actionID,
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
@@ -299,7 +299,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				Label:    "DrwBloodPlague-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
 				ActionID: actionID,
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {

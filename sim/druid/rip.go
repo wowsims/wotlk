@@ -13,11 +13,11 @@ import (
 func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 49800}
 	baseCost := 30.0 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10.0, 0.0)
-	refundPercent := (0.4 * float64(druid.Talents.PrimalPrecision))
+	refundPercent := 0.4 * float64(druid.Talents.PrimalPrecision)
 
 	ripBaseNumTicks := 6 +
-		core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
-		core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
+		core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
+		core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
 	comboPointCoeff := 93.0
 	if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
@@ -92,11 +92,11 @@ func (druid *Druid) registerRipSpell() {
 	})
 }
 
-func (druid *Druid) MaxRipTicks() int {
-	base := 6
-	t7bonus := core.TernaryInt(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
-	ripGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
-	shredGlyphBonus := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
+func (druid *Druid) MaxRipTicks() int32 {
+	base := int32(6)
+	t7bonus := core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
+	ripGlyphBonus := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
+	shredGlyphBonus := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
 	return base + ripGlyphBonus + shredGlyphBonus + t7bonus
 }
 

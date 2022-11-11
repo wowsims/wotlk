@@ -8,6 +8,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+const (
+	SpellFlagNaturesGrace = core.SpellFlagAgentReserved1
+)
+
 type Druid struct {
 	core.Character
 	SelfBuffs
@@ -98,7 +102,7 @@ type talentBonuses struct {
 	moonglow        float64
 	naturesMajesty  float64
 	vengeance       float64
-	naturesSplendor int
+	naturesSplendor int32
 	starlightWrath  time.Duration
 }
 
@@ -132,7 +136,7 @@ func (druid *Druid) RegisterTalentsBonuses() {
 		moonglow:        1 - 0.03*float64(druid.Talents.Moonglow),                // cost reduction
 		naturesMajesty:  2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
 		vengeance:       0.2 * float64(druid.Talents.Vengeance),
-		naturesSplendor: core.TernaryInt(druid.Talents.NaturesSplendor, 1, 0),
+		naturesSplendor: core.TernaryInt32(druid.Talents.NaturesSplendor, 1, 0),
 		starlightWrath:  time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath),
 	}
 }

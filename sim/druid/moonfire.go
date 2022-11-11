@@ -28,6 +28,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		ActionID:     core.ActionID{SpellID: 48463},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagNaturesGrace,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -84,7 +85,7 @@ func (druid *Druid) registerMoonfireSpell() {
 				druid.Starfire.BonusCritRating -= core.CritRatingPerCritChance * float64(druid.Talents.ImprovedInsectSwarm)
 			},
 		}),
-		NumberOfTicks: 4 + core.TernaryInt(druid.setBonuses.balance_t6_2, 1, 0) + druid.talentBonuses.naturesSplendor,
+		NumberOfTicks: 4 + core.TernaryInt32(druid.setBonuses.balance_t6_2, 1, 0) + druid.talentBonuses.naturesSplendor,
 		TickLength:    time.Second * 3,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
@@ -95,8 +96,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			if dotCanCrit {
-				// TODO: This allows misses... probably a bug.
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 			} else {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			}
@@ -104,10 +104,10 @@ func (druid *Druid) registerMoonfireSpell() {
 	})
 }
 
-func (druid *Druid) maxMoonfireTicks() int {
-	base := 4
-	thunderhearthRegalia := core.TernaryInt(druid.setBonuses.balance_t6_2, 1, 0)
+func (druid *Druid) maxMoonfireTicks() int32 {
+	base := int32(4)
+	thunderhearthRegalia := core.TernaryInt32(druid.setBonuses.balance_t6_2, 1, 0)
 	natureSplendor := druid.talentBonuses.naturesSplendor
-	starfireGlyph := core.TernaryInt(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire), 3, 0)
+	starfireGlyph := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire), 3, 0)
 	return base + thunderhearthRegalia + natureSplendor + starfireGlyph
 }

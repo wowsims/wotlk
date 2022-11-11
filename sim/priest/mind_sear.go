@@ -12,11 +12,11 @@ import (
 // TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
 //
 //	Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
-func (priest *Priest) MindSearActionID(numTicks int) core.ActionID {
-	return core.ActionID{SpellID: 53023, Tag: int32(numTicks)}
+func (priest *Priest) MindSearActionID(numTicks int32) core.ActionID {
+	return core.ActionID{SpellID: 53023, Tag: numTicks}
 }
 
-func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
+func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 	baseCost := priest.BaseMana * 0.28
 	channelTime := time.Second * time.Duration(numTicks)
 
@@ -52,18 +52,18 @@ func (priest *Priest) newMindSearSpell(numTicks int) *core.Spell {
 	})
 }
 
-func (priest *Priest) newMindSearDot(numTicks int) *core.Dot {
+func (priest *Priest) newMindSearDot(numTicks int32) *core.Dot {
 	target := priest.CurrentTarget
 
 	miseryCoeff := 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
-	normMod := (1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01) // initialize modifier
+	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
 
 	return core.NewDot(core.Dot{
 		Spell: priest.MindSear[numTicks],
 		Aura: target.RegisterAura(core.Aura{
-			Label:    "MindSear-" + strconv.Itoa(numTicks) + "-" + strconv.Itoa(int(priest.Index)),
+			Label:    "MindSear-" + strconv.Itoa(int(numTicks)) + "-" + strconv.Itoa(int(priest.Index)),
 			ActionID: priest.MindSearActionID(numTicks),
 		}),
 

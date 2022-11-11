@@ -11,6 +11,7 @@ import (
 func (mage *Mage) ApplyTalents() {
 	mage.applyArcaneConcentration()
 	mage.applyIgnite()
+	mage.applyEmpoweredFire()
 	mage.applyMasterOfElements()
 	mage.applyWintersChill()
 	mage.applyMoltenFury()
@@ -420,7 +421,7 @@ func (mage *Mage) registerCombustionCD() {
 			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
-			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) || spell.SameAction(core.ActionID{SpellID: 44457}) { //LB dot action should be ignored
+			if spell == mage.Ignite || spell == mage.LivingBomb { //LB dot action should be ignored
 				return
 			}
 			if !result.Landed() {

@@ -105,7 +105,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 			},
 		}),
 		// TODO: is this bonus ticks or bonus time that results in extra ticks?
-		NumberOfTicks:       6 + core.TernaryInt(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
+		NumberOfTicks:       6 + core.TernaryInt32(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
 

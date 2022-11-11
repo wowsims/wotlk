@@ -13,7 +13,7 @@ type Dot struct {
 	// Embed Aura so we can use IsActive/Refresh/etc directly.
 	*Aura
 
-	NumberOfTicks int           // number of ticks over the whole duration
+	NumberOfTicks int32         // number of ticks over the whole duration
 	TickLength    time.Duration // time between each tick
 
 	// If true, tick length will be shortened based on casting speed.
@@ -30,7 +30,7 @@ type Dot struct {
 	tickPeriod time.Duration
 
 	// Number of ticks since last call to Apply().
-	TickCount int
+	TickCount int32
 
 	lastTickTime time.Duration
 }

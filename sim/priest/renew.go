@@ -93,8 +93,8 @@ func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
 	})
 }
 
-func (priest *Priest) renewTicks() int {
-	return 5 - core.TernaryInt(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfRenew), 1, 0)
+func (priest *Priest) renewTicks() int32 {
+	return 5 - core.TernaryInt32(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfRenew), 1, 0)
 }
 
 func (priest *Priest) renewHealingMultiplier() float64 {

@@ -17,7 +17,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 	refundAmount := cost * 0.8
 
 	dotDuration := time.Second * 15
-	dotTicks := 5
+	dotTicks := int32(5)
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending) {
 		dotDuration += time.Second * 6
 		dotTicks += 2

@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int) *core.Spell {
+func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int32) *core.Spell {
 	if dot.IsActive() && dot.TickCount+1 < maxTicks {
 		return warlock.DrainSoulChannelling
 	} else {
