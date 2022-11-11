@@ -284,3 +284,51 @@ $combo-points-color: #ffa07a;
 .rotation-timeline-cast.outcome-crit .rotation-timeline-cast-icon {
 	border-color: blue;
 }
+.timeline-runes {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 12px 12px 12px 12px 12px 12px 12px 12px;
+    grid-column-gap: 2px;
+    padding: 2px;
+    box-sizing: border-box;
+
+    .rune {
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+
+        &.blood {
+            border: 1px solid red;
+
+            &.full {
+                background: red;
+            }
+        }
+
+        &.frost {
+            border: 1px solid cyan;
+
+            &.full {
+                background: cyan;
+            }
+        }
+
+        &.unholy {
+            border: 1px solid green;
+
+            &.full {
+                background: green;
+            }
+        }
+
+        &.death {
+            border: 1px solid purple;
+
+            &.full {
+                background: purple;
+            }
+        }
+    }
+}
