@@ -24,6 +24,13 @@ declare var $: any;
 declare var tippy: any;
 declare var ApexCharts: any;
 
+type RuneResourceEvent = {
+    [ResourceType.ResourceTypeBloodRune]: number;
+    [ResourceType.ResourceTypeFrostRune]: number;
+    [ResourceType.ResourceTypeUnholyRune]: number;
+    [ResourceType.ResourceTypeDeathRune]: number;
+    timestamp: number;
+};
 type TooltipHandler = (dataPointIndex: number) => string;
 
 const dpsColor = '#ed5653';
@@ -461,6 +468,43 @@ export class Timeline extends ResultComponent {
 		this.hiddenIdsChangeEmitter = new TypedEvent<void>();
 	}
 
+    private accumulateRuneResourceEvents(resources: Record<ResourceType, Array<ResourceChangedLogGroup>>): Array<RuneResourceEvent> {
+
+        const all_rune_events = [
+            ...resources[ResourceType.ResourceTypeBloodRune],
+            ...resources[ResourceType.ResourceTypeFrostRune],
+            ...resources[ResourceType.ResourceTypeUnholyRune],
+            ...resources[ResourceType.ResourceTypeDeathRune],
+        ].sort((a, b) => a.timestamp - b.timestamp);
+        const grouped_events = all_rune_events.reduce((accumulator, event) => {
+            const timestamp = event.timestamp;
+            if (!accumulator[timestamp]) {
+                accumulator[timestamp] = [];
+            }
+            accumulator[timestamp].push(event);
+            return accumulator;
+        }, {} as Record<number, Array<ResourceChangedLogGroup>>)
+        const current_rune_state: RuneResourceEvent = {
+            timestamp: 0,
+            [ResourceType.ResourceTypeBloodRune]: 2,
+            [ResourceType.ResourceTypeFrostRune]: 2,
+            [ResourceType.ResourceTypeUnholyRune]: 2,
+            [ResourceType.ResourceTypeDeathRune]: 0,
+        };
+        const timestamps = Object.keys(grouped_events).map(Number.parseFloat);
+        const sorted_timestamps = timestamps.sort((t1, t2) => t1 - t2);
+        const rune_states = []
+        for (const ts of sorted_timestamps) {
+            const events = grouped_events[ts];
+            for (const event of events) {
+                (current_rune_state as any)[event.resourceType] = event.valueAfter;
+                current_rune_state.timestamp = event.timestamp;
+            }
+            rune_states.push({...current_rune_state});
+        }
+        return rune_states;
+    }
+
 	private updateRotationChart(player: UnitMetrics, duration: number) {
 		const targets = this.resultData!.result.getTargets(this.resultData!.filter);
 		if (targets.length == 0) {
@@ -476,7 +520,17 @@ export class Timeline extends ResultComponent {
 			console.log("Failed to draw rotation: ", e);
 		}
 
-		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
+		orderedResourceTypes.forEach((resourceType) => {
+            if (
+                resourceType === ResourceType.ResourceTypeBloodRune
+                || resourceType === ResourceType.ResourceTypeFrostRune
+                || resourceType === ResourceType.ResourceTypeUnholyRune
+                || resourceType === ResourceType.ResourceTypeDeathRune) {
+                return;
+            }
+            this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration);
+        });
+        this.addRuneResourceRows(this.accumulateRuneResourceEvents(player.groupedResourceLogs), duration);
 
 		const buffsById = Object.values(bucket(player.auraUptimeLogs, log => log.actionId!.toString()));
 		buffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
@@ -615,6 +669,52 @@ export class Timeline extends ResultComponent {
 		separatorElem.style.width = this.timeToPx(duration);
 		this.rotationTimeline.appendChild(separatorElem);
 	}
+
+    private addRuneResourceRows(resourceLogs: Array<RuneResourceEvent>, duration: number): void {
+		const labelElem = document.createElement('div');
+		labelElem.classList.add('rotation-label', 'rotation-row');
+		labelElem.innerHTML = `
+			<a class="rotation-label-icon" style="background-image:url('')"></a>
+			<span class="rotation-label-text">Runes</span>
+		`;
+		this.rotationLabels.appendChild(labelElem);
+
+		const rowElem = document.createElement('div');
+		rowElem.classList.add('rotation-timeline-row', 'rotation-row');
+		rowElem.style.width = this.timeToPx(duration);
+
+        const runeClasses = {
+            [ResourceType.ResourceTypeBloodRune]: "blood",
+            [ResourceType.ResourceTypeFrostRune]: "frost",
+            [ResourceType.ResourceTypeUnholyRune]: "unholy",
+            [ResourceType.ResourceTypeDeathRune]: "death",
+        }
+
+		resourceLogs.forEach((resourceLogGroup, i) => {
+			const resourceElem = document.createElement('div');
+			resourceElem.classList.add('rotation-timeline-resource', 'series-color');
+			resourceElem.style.left = this.timeToPx(resourceLogs[i].timestamp);
+			resourceElem.style.width = this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp);
+
+            const runeContainer = document.createElement('div');
+            runeContainer.classList.add('timeline-runes');
+            for (const runeType of Object.keys(runeClasses)) {
+                const runeClass = (runeClasses as any)[runeType];
+                const runeCount = (resourceLogGroup as any)[runeType];
+                const rune1Elem = document.createElement('div');
+                rune1Elem.classList.add('rune', runeClass, runeCount > 1 ? 'full' : 'empty');
+                const rune2Elem = document.createElement('div');
+                rune2Elem.classList.add('rune', runeClass, runeCount > 0 ? 'full' : 'empty');
+                runeContainer.appendChild(rune1Elem);
+                runeContainer.appendChild(rune2Elem);
+            }
+            resourceElem.appendChild(runeContainer);
+
+			rowElem.appendChild(resourceElem);
+        });
+
+		this.rotationTimeline.appendChild(rowElem);
+    }
 
 	private addResourceRow(resourceType: ResourceType, resourceLogs: Array<ResourceChangedLogGroup>, duration: number) {
 		if (resourceLogs.length == 0) {
