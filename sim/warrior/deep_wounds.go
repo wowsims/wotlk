@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var DeepWoundsActionID = core.ActionID{SpellID: 12867}
@@ -18,11 +17,16 @@ func (warrior *Warrior) applyDeepWounds() {
 	warrior.DeepWounds = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    DeepWoundsActionID,
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			warrior.DeepWoundsDots[target.Index].ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+		},
 	})
 
 	warrior.RegisterAura(core.Aura{
@@ -36,7 +40,6 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 			if result.Outcome.Matches(core.OutcomeCrit) {
-				warrior.DeepWounds.Cast(sim, nil)
 				warrior.procDeepWounds(sim, result.Target, spell.IsMH())
 				warrior.procBloodFrenzy(sim, result, time.Second*6)
 			}
@@ -55,30 +58,34 @@ func (warrior *Warrior) newDeepWoundsDot(target *core.Unit) *core.Dot {
 		TickLength:    time.Second * 1,
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			baseDamage := warrior.DeepWoundsTickDamage[target.Index]
-			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.OutcomeTick)
-			// TODO: This probably can go before the calc now (after we assign baseDamage) but it breaks 1 test.
-			warrior.DeepWoundsDamageBuffer[target.Index] -= warrior.DeepWoundsTickDamage[target.Index]
+			dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
+		SnapshotAttackerMultiplier: 1,
 	})
 }
 
-// TODO (maybe) https://github.com/magey/wotlk-warrior/issues/26 - Deep Wounds is not benefitting from Blood Frenzy
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isMh bool) {
 	dot := warrior.DeepWoundsDots[target.Index]
 
-	dotDamageMultiplier := 0.16 * float64(warrior.Talents.DeepWounds) * warrior.PseudoStats.DamageDealtMultiplier * warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
-	if isMh {
-		dotDamage := (warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * dotDamageMultiplier
-		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage
-	} else {
-		dwsMultiplier := 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
-		dotDamage := ((warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) * 0.5) + dot.Spell.BonusWeaponDamage()) * dwsMultiplier * dotDamageMultiplier
-		warrior.DeepWoundsDamageBuffer[target.Index] += dotDamage
+	var outstandingDamage float64
+	if dot.IsActive() {
+		outstandingDamage = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
 	}
 
-	warrior.DeepWoundsTickDamage[target.Index] = warrior.DeepWoundsDamageBuffer[target.Index] / 6
-	warrior.DeepWounds.SpellMetrics[target.UnitIndex].Hits++
+	attackTable := warrior.AttackTables[target.UnitIndex]
+	var awd float64
+	if isMh {
+		adm := warrior.AutoAttacks.MHAuto.AttackerDamageMultiplier(attackTable)
+		tdm := warrior.AutoAttacks.MHAuto.TargetDamageMultiplier(attackTable, false)
+		awd = (warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * adm * tdm
+	} else {
+		adm := warrior.AutoAttacks.OHAuto.AttackerDamageMultiplier(attackTable)
+		tdm := warrior.AutoAttacks.OHAuto.TargetDamageMultiplier(attackTable, false)
+		awd = ((warrior.AutoAttacks.OH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) * 0.5) + dot.Spell.BonusWeaponDamage()) * adm * tdm
+	}
+	newDamage := awd * 0.16 * float64(warrior.Talents.DeepWounds)
 
-	dot.Apply(sim)
+	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
+	warrior.DeepWounds.Cast(sim, target)
 }

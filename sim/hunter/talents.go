@@ -255,11 +255,8 @@ func (hunter *Hunter) applyPiercingShots() {
 	}
 
 	actionID := core.ActionID{SpellID: 53238}
-	dmgMultiplier := 0.1 * float64(hunter.Talents.PiercingShots)
+
 	var psDot *core.Dot
-
-	var currentTickDmg float64
-
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -269,8 +266,9 @@ func (hunter *Hunter) applyPiercingShots() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			psDot.ApplyOrRefresh(sim)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			psDot.ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 		},
 	})
 
@@ -285,10 +283,9 @@ func (hunter *Hunter) applyPiercingShots() {
 		NumberOfTicks: 8,
 		TickLength:    time.Second * 1,
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			// Specifically account for bleed modifiers, since it still affects the spell
-			// but we're ignoring all modifiers.
-			baseDmg := currentTickDmg * target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
-			dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+			// Specifically account for bleed modifiers, since it still affects the spell, but we're ignoring all modifiers.
+			dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 
@@ -306,15 +303,14 @@ func (hunter *Hunter) applyPiercingShots() {
 				return
 			}
 
-			totalDmg := result.Damage * dmgMultiplier
-
+			var outstandingDamage float64
 			if psDot.IsActive() {
-				remainingTicks := 8 - psDot.TickCount
-				totalDmg += currentTickDmg * float64(remainingTicks)
+				outstandingDamage = psDot.SnapshotBaseDamage * float64(psDot.NumberOfTicks-psDot.TickCount)
 			}
 
-			currentTickDmg = totalDmg / 8
+			newDamage := result.Damage * 0.1 * float64(hunter.Talents.PiercingShots)
 
+			psDot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(psDot.NumberOfTicks)
 			psSpell.Cast(sim, result.Target)
 		},
 	})
