@@ -77,10 +77,8 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	RendDots               *core.Dot
-	DeepWoundsDots         []*core.Dot
-	DeepWoundsTickDamage   []float64
-	DeepWoundsDamageBuffer []float64
+	RendDots       *core.Dot
+	DeepWoundsDots []*core.Dot
 
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
@@ -128,7 +126,7 @@ func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
-func (warrior *Warrior) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (warrior *Warrior) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
@@ -165,15 +163,13 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	warrior.DeepWoundsDamageBuffer = make([]float64, warrior.Env.GetNumTargets())
-	warrior.DeepWoundsTickDamage = make([]float64, warrior.Env.GetNumTargets())
 	warrior.DeepWoundsDots = make([]*core.Dot, warrior.Env.GetNumTargets())
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(i))
+	for i := range warrior.DeepWoundsDots {
+		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(int32(i)))
 	}
 }
 
-func (warrior *Warrior) Reset(sim *core.Simulation) {
+func (warrior *Warrior) Reset(_ *core.Simulation) {
 	warrior.overpowerValidUntil = 0
 	warrior.rendValidUntil = 0
 

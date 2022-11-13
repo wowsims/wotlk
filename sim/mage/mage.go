@@ -106,8 +106,7 @@ type Mage struct {
 	// Used to prevent utilising Brain Freeze immediately after proccing it.
 	BrainFreezeActivatedAt time.Duration
 
-	IgniteDots          []*core.Dot
-	IgniteDamageBuffers []float64
+	IgniteDots []*core.Dot
 
 	MageTier MageTierSets
 

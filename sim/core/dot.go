@@ -74,6 +74,32 @@ func (dot *Dot) Apply(sim *Simulation) {
 	dot.Aura.Activate(sim)
 }
 
+// ApplyOrReset is used for rolling dots that reset the tick timer on reapplication.
+// This is more efficient than Apply(), and works around tickAction.CleanUp() wrongly generating
+// an extra ticks if (re-)application and tick happen at the same time.
+func (dot *Dot) ApplyOrReset(sim *Simulation) {
+	if !dot.IsActive() {
+		dot.Apply(sim)
+		return
+	}
+
+	dot.TakeSnapshot(sim, true)
+
+	dot.RecomputeAuraDuration() // recalculate haste
+	dot.Aura.Refresh(sim)       // update aura's duration
+
+	dot.TickCount = 0
+
+	dot.tickAction.NextActionAt = -1 // prevent tickAction.CleanUp() from adding an extra tick
+	dot.tickAction.Cancel(sim)       // remove old PA ticker
+
+	// recreate with new period, resetting the next tick.
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	sim.AddPendingAction(dot.tickAction)
+}
+
 // Like Apply(), but does not reset the tick timer.
 func (dot *Dot) ApplyOrRefresh(sim *Simulation) {
 	dot.TickCount = 0
