@@ -50,6 +50,16 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 				spell.BonusWeaponDamage()
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+
+			jowAura := target.GetAura(core.JudgementOfWisdomAuraLabel)
+			if jowAura.IsActive() {
+				jowAura.Refresh(sim)
+			}
+
+			jolAura := target.GetAura(core.JudgementOfLightAuraLabel)
+			if jolAura.IsActive() {
+				jolAura.Refresh(sim)
+			}
 		},
 	})
 }

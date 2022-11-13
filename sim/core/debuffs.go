@@ -236,6 +236,11 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			unit := spell.Unit
+			if !unit.HasManaBar() {
+				return
+			}
+
 			if spell.ProcMask.Matches(ProcMaskEmpty) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
@@ -245,18 +250,22 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return
 			}
 
-			unit := spell.Unit
-			if unit.HasManaBar() && sim.RandomFloat("jow") > 0.5 {
-				if unit.JowManaMetrics == nil {
-					unit.JowManaMetrics = unit.NewManaMetrics(actionID)
+			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+				if !unit.AutoAttacks.PPMProc(sim, 15, spell.ProcMask, "jow") {
+					return
 				}
-				// JoW returns 2% of base mana 50% of the time.
-				unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
+			} else {
+				// TODO: Figure out if spell proc rate is also different from TBC.
+				if sim.RandomFloat("jow") <= 0.5 {
+					return
+				}
 			}
 
-			if spell.ActionID.SpellID == 35395 { // Crusader strike
-				aura.Refresh(sim)
+			if unit.JowManaMetrics == nil {
+				unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 			}
+			// JoW returns 2% of base mana 50% of the time.
+			unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
 		},
 	})
 }
@@ -273,10 +282,6 @@ func JudgementOfLightAura(target *Unit) *Aura {
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if !spell.ProcMask.Matches(ProcMaskMelee) || !result.Landed() {
 				return
-			}
-
-			if spell.ActionID.SpellID == 35395 {
-				aura.Refresh(sim)
 			}
 		},
 	})
