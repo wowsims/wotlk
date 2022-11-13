@@ -805,6 +805,7 @@ func (hunter *Hunter) registerReadinessCD() {
 			hunter.RapidFire.CD.Reset()
 			hunter.MultiShot.CD.Reset()
 			hunter.ArcaneShot.CD.Reset()
+			hunter.KillShot.CD.Reset()
 			hunter.RaptorStrike.CD.Reset()
 			hunter.ExplosiveTrap.CD.Reset()
 			if hunter.KillCommand != nil {
