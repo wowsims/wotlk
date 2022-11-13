@@ -673,6 +673,27 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 	return ppmm
 }
 
+// Returns whether a PPM-based effect procced.
+//
+// Using NewPPMManager() is preferred; this function should only be used when
+// the attacker is not known at initialization time.
+func (aa *AutoAttacks) PPMProc(sim *Simulation, ppm float64, procMask ProcMask, label string) bool {
+	if !aa.IsEnabled() {
+		return false
+	}
+
+	procChance := 0.0
+	if procMask.Matches(ProcMaskMeleeMH) {
+		procChance = ppm * aa.MH.SwingSpeed / 60.0
+	} else if procMask.Matches(ProcMaskMeleeOH) {
+		procChance = ppm * aa.OH.SwingSpeed / 60.0
+	} else if procMask.Matches(ProcMaskRanged) {
+		procChance = ppm * aa.Ranged.SwingSpeed / 60.0
+	}
+
+	return procChance > 0 && sim.RandomFloat(label) < procChance
+}
+
 func (unit *Unit) applyParryHaste() {
 	if !unit.PseudoStats.ParryHaste || !unit.AutoAttacks.IsEnabled() {
 		return
