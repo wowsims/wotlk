@@ -83,7 +83,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			return enh.Stormstrike != nil
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			//TODO add in SS delay so we don't loose flametongues, if Last attack = current time
+			//TODO add in SS delay so we don't lose flametongues, if Last attack = current time
 			return enh.Stormstrike.IsReady(sim) && enh.Stormstrike.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {
@@ -187,7 +187,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			return enh.LavaLash != nil
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			//TODO add in LL delay so we don't loose flametongues, if Last attack = current time
+			//TODO add in LL delay so we don't lose flametongues, if Last attack = current time
 			return enh.LavaLash.IsReady(sim) && enh.LavaLash.Cast(sim, target)
 		},
 		readyAt: func() time.Duration {

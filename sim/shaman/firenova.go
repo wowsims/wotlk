@@ -40,7 +40,7 @@ func (shaman *Shaman) registerFireNovaSpell() {
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05 + float64(shaman.Talents.ImprovedFireNova)*0.1,
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+		ThreatMultiplier: shaman.spellThreatMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// FIXME: double check spell coefficients

@@ -80,8 +80,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Bizuri'sTotemofShatteredIce-50458"
  value: {
-  dps: 7041.12225
-  tps: 3996.25368
+  dps: 7033.6729
+  tps: 3990.12278
  }
 }
 dps_results: {
@@ -500,8 +500,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterRegalia"
  value: {
-  dps: 4732.98503
-  tps: 2673.55617
+  dps: 4731.48744
+  tps: 2672.50786
  }
 }
 dps_results: {
@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 6557.43485
-  tps: 3721.20324
+  dps: 6549.44225
+  tps: 3715.60842
  }
 }
 dps_results: {
@@ -668,15 +668,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 6251.50683
-  tps: 3556.72491
+  dps: 6276.70545
+  tps: 3574.36394
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5700.66301
-  tps: 3237.48706
+  dps: 5691.46766
+  tps: 3231.67369
  }
 }
 dps_results: {
