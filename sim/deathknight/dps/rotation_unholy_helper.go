@@ -217,15 +217,23 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Go back to Blood Presence after Bloodlust
-	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
+	if dk.Rotation.Presence == proto.Deathknight_Rotation_Blood && dk.Rotation.BlPresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
 		return dk.BloodPresence.Cast(sim, target)
 	}
 
+	// Go back to Unholy Presence after Bloodlust
+	if dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy && dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.BloodPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		return dk.UnholyPresence.Cast(sim, target)
+	}
+
 	// Go back to Blood Presence after gargoyle cast
-	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
+	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) && dk.HasActiveAuraWithTag("Bloodlust") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
