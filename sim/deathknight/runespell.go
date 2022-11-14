@@ -24,7 +24,7 @@ type RuneSpell struct {
 	ConvertType        RuneType
 	dk                 *Deathknight
 
-	CanCast RuneSpellCanCast
+	canCast RuneSpellCanCast
 	onCast  RuneSpellOnCast
 }
 
@@ -86,15 +86,21 @@ func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool 
 	return result
 }
 
-func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
-	if rs.CanCast == nil {
-		return rs.castInternal(sim, target)
-	} else {
-		if rs.CanCast(sim) {
-			return rs.castInternal(sim, target)
-		}
+func (rs *RuneSpell) CanCast(sim *core.Simulation) bool {
+	if rs == nil {
 		return false
+	} else if rs.canCast == nil {
+		return true
+	} else {
+		return rs.canCast(sim)
 	}
+}
+
+func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
+	if rs.CanCast(sim) {
+		return rs.castInternal(sim, target)
+	}
+	return false
 }
 
 // RegisterSpell will connect the underlying spell to the given RuneSpell.
@@ -105,7 +111,7 @@ func (dk *Deathknight) RegisterSpell(rs *RuneSpell, spellConfig core.SpellConfig
 		rs = &RuneSpell{}
 	}
 	rs.dk = dk
-	rs.CanCast = canCast
+	rs.canCast = canCast
 	rs.onCast = onCast
 	rs.Spell = dk.Character.RegisterSpell(spellConfig)
 	return rs

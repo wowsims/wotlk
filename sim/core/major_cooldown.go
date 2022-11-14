@@ -193,11 +193,17 @@ func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
 		return majorCooldownManager{}
 	}
 
+	cooldownConfigs := cooldownConfigs{
+		HpPercentForDefensives: cooldowns.HpPercentForDefensives,
+	}
+	for _, cooldownConfig := range cooldowns.Cooldowns {
+		if cooldownConfig.Id != nil {
+			cooldownConfigs.Cooldowns = append(cooldownConfigs.Cooldowns, cooldownConfig)
+		}
+	}
+
 	return majorCooldownManager{
-		cooldownConfigs: cooldownConfigs{
-			Cooldowns:              cooldowns.Cooldowns,
-			HpPercentForDefensives: cooldowns.HpPercentForDefensives,
-		},
+		cooldownConfigs: cooldownConfigs,
 	}
 }
 

@@ -132,7 +132,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	}
 	actionID := core.ActionID{SpellID: 17116}
 
-	spell := druid.RegisterSpell(core.SpellConfig{
+	nsSpell := druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -157,13 +157,13 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 
 			// Remove the buff and put skill on CD
 			aura.Deactivate(sim)
-			spell.CD.Use(sim)
+			nsSpell.CD.Use(sim)
 			druid.UpdateMajorCooldowns()
 		},
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: nsSpell,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length starfire or wrath.
