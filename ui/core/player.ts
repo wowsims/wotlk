@@ -58,6 +58,7 @@ import {
 	withSpecProto,
 } from './proto_utils/utils.js';
 
+import { getLanguageCode } from './constants/lang.js';
 import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { Party, MAX_PARTY_SIZE } from './party.js';
@@ -654,7 +655,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	setWowheadData(equippedItem: EquippedItem, elem: HTMLElement) {
-		let parts = ['domain=wotlk'];
+		const parts = [];
+
+		const lang = getLanguageCode();
+		const langPrefix = lang ? lang + '.' : '';
+		parts.push(`domain=${langPrefix}wotlk`);
+
 		if (equippedItem.gems.length > 0) {
 			parts.push('gems=' + equippedItem.gems.map(gem => gem ? gem.id : 0).join(':'));
 		}
