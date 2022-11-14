@@ -104,6 +104,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
 			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
 			dk.Rotation.BlPresence = proto.Deathknight_Rotation_Blood
+			dk.Rotation.Presence = proto.Deathknight_Rotation_Blood
 
 			mh := dk.GetMHWeapon()
 			oh := dk.GetOHWeapon()
