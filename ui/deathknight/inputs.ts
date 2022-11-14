@@ -178,6 +178,18 @@ export const StartingPresenceInput = InputHelpers.makeRotationEnumInput<Spec.Spe
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
+export const FightPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'presence',
+	label: 'Fight Presence',
+	labelTooltip: 'Presence to be in during the encounter.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodRuneFiller>({
 	fieldName: 'bloodRuneFiller',
 	label: 'Blood Rune Filler',
@@ -310,6 +322,7 @@ export const DeathKnightRotationConfig = {
 		FirstDiseaseInput,
 		StartingPresenceInput,
 		BloodlustPresence,
+		FightPresence,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
 		OblitDelayDurationInput,
