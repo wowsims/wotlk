@@ -22,5 +22,6 @@ export function getLanguageCode(): string {
 		}
 	}
 
-	return cachedLanguageCode;
+	// Return empty for 'en' because its the default, and wowhead links don't actually work with /en/.
+	return cachedLanguageCode == 'en' ? '' : cachedLanguageCode;
 }
