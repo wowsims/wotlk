@@ -16,10 +16,17 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '../core/proto/mage.js';
+import {
+	Mage,
+	Mage_Rotation as MageRotation,
+	Mage_Rotation_Type as RotationType,
+	MageTalents as MageTalents,
+	Mage_Options as MageOptions,
+} from '../core/proto/mage.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as MageInputs from './inputs.js';
@@ -57,6 +64,16 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecMage>) => {
+				let stats = new Stats();
+				if (player.getRotation().type == RotationType.Arcane) {
+					stats = stats.addStat(Stat.StatSpellHit, player.getTalents().arcaneFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				}
+
+				return {
+					talents: stats,
+				};
+			},
 
 			defaults: {
 				// Default equipped gear.
