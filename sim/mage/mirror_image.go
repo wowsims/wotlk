@@ -10,9 +10,9 @@ import (
 // The numbers in this file are VERY rough approximations based on logs.
 
 func (mage *Mage) registerMirrorImageCD() {
-
 	baseCost := mage.BaseMana * 0.1
 	summonDuration := time.Second * 30
+
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 55342},
 
@@ -22,10 +22,7 @@ func (mage *Mage) registerMirrorImageCD() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
-				// GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				spell.DefaultCast.GCD = core.GCDDefault
+				GCD:  core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
@@ -34,7 +31,7 @@ func (mage *Mage) registerMirrorImageCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			mage.mirrorImage.EnableWithTimeout(sim, mage.waterElemental, summonDuration)
+			mage.mirrorImage.EnableWithTimeout(sim, mage.mirrorImage, summonDuration)
 			if mage.MageTier.t10_4 {
 				bloodmageDamageAura.Activate(sim)
 			}

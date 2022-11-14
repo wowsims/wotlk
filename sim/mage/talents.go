@@ -281,6 +281,10 @@ func (mage *Mage) registerPresenceOfMindCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if !character.GCD.IsReady(sim) {
+				return false
+			}
+
 			var manaCost float64
 			if mage.Talents.Pyroblast {
 				manaCost = mage.Pyroblast.DefaultCast.Cost
