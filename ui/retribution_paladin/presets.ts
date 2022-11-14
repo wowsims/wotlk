@@ -211,92 +211,94 @@ export const P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 40576,
+		  {
+			"id": 44006,
 			"enchant": 3817,
 			"gems": [
-				41398,
-				40037
+			  41398,
+			  49110
 			]
-		},
-		{
+		  },
+		  {
 			"id": 44664,
 			"gems": [
-				42142
+			  42142
 			]
-		},
-		{
+		  },
+		  {
 			"id": 40578,
 			"enchant": 3808,
 			"gems": [
-				49110
+			  39996
 			]
-		},
-		{
+		  },
+		  {
 			"id": 40403,
 			"enchant": 3605
-		},
-		{
+		  },
+		  {
 			"id": 40574,
 			"enchant": 3832,
 			"gems": [
-				42142,
-				39996
+			  42142,
+			  39996
 			]
-		},
-		{
-			"id": 40186,
+		  },
+		  {
+			"id": 40330,
 			"enchant": 3845,
 			"gems": [
-				0
+			  39996,
+			  0
 			]
-		},
-		{
+		  },
+		  {
 			"id": 40541,
 			"enchant": 3604,
 			"gems": [
-				0
+			  0
 			]
-		},
-		{
-			"id": 40205,
+		  },
+		  {
+			"id": 40278,
 			"gems": [
-				39996
+			  39996,
+			  39996
 			]
-		},
-		{
-			"id": 40577,
+		  },
+		  {
+			"id": 44011,
 			"enchant": 3823,
 			"gems": [
-				42142,
-				40038
+			  42142,
+			  39996
 			]
-		},
-		{
-			"id": 39701,
+		  },
+		  {
+			"id": 40591,
 			"enchant": 3606
-		},
-		{
+		  },
+		  {
 			"id": 40075
-		},
-		{
+		  },
+		  {
 			"id": 40474
-		},
-		{
+		  },
+		  {
 			"id": 42987
-		},
-		{
+		  },
+		  {
 			"id": 40431
-		},
-		{
+		  },
+		  {
 			"id": 40384,
 			"enchant": 3789
-		},
-		{},
-		{
+		  },
+		  {},
+		  {
 			"id": 42852
-		}
-	]}`),
+		  }
+		]}`),
 };
 
 export const P2_PRESET = {
