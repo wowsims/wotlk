@@ -9,7 +9,6 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
-
 	// We are going to treat this like a snapshot if you have the glyph.
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
 		shaman.AddStat(stats.SpellPower, 280*0.3)
@@ -73,6 +72,10 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.registerShamanisticRageCD()
 
 	// TODO: FeralSpirit Spirit summons
+}
+
+func (shaman *Shaman) spellThreatMultiplier() float64 {
+	return []float64{1, 0.9, 0.8, 0.7}[shaman.Talents.ElementalPrecision]
 }
 
 func (shaman *Shaman) applyElementalFocus() {
