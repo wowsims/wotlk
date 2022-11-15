@@ -88,6 +88,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 			IgnoreHaste: true,
 		},
 
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
+			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
+
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

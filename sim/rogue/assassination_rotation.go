@@ -162,7 +162,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		})
 	}
 
-	// Rupture
+	// Rupture for Bleed
 	if rogue.Rotation.RuptureForBleed {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
@@ -230,6 +230,29 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		0,
 	})
 
+	// Rupture
+	if rogue.Rotation.AssassinationFinisherPriority == proto.Rogue_Rotation_RuptureEnvenom {
+		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+			func(s *core.Simulation, r *Rogue) PriorityAction {
+				if r.ruptureDot.IsActive() || s.GetRemainingDuration() < time.Second*18 {
+					return Skip
+				}
+				if rogue.ComboPoints() > 3 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {
+					return Cast
+				}
+				if rogue.ComboPoints() < 4 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+					return Build
+				}
+				return Wait
+
+			},
+			func(s *core.Simulation, r *Rogue) bool {
+				return r.Rupture[r.ComboPoints()].Cast(s, r.CurrentTarget)
+			},
+			rogue.Rupture[1].DefaultCast.Cost,
+		})
+	}
+
 	// Envenom
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 		func(s *core.Simulation, r *Rogue) PriorityAction {
@@ -239,6 +262,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				}
 			}
 			energyNeeded := core.MinFloat(r.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThreshold))
+			// Don't pool when fight is about to end
+			if s.GetRemainingDuration() <= time.Second*4 {
+				energyNeeded = r.Envenom[1].DefaultCast.Cost
+			}
 			energyNeeded = core.MaxFloat(r.Envenom[1].DefaultCast.Cost, energyNeeded)
 			minimumCP := int32(4)
 			if rogue.Rotation.AllowCpOvercap {
