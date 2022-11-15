@@ -20,10 +20,12 @@ export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 			'show-1h-weapons-selector',
 		],
 		label: '1H',
-		changedEvent: (sim: Sim) => sim.show1hWeaponsChangeEmitter,
-		getValue: (sim: Sim) => sim.getShow1hWeapons(),
+		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+		getValue: (sim: Sim) => sim.getFilters().oneHandedWeapons,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
-			sim.setShow1hWeapons(eventID, newValue);
+			const filters = sim.getFilters();
+			filters.oneHandedWeapons = newValue;
+			sim.setFilters(eventID, filters);
 		},
 	});
 }
@@ -34,10 +36,12 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 			'show-2h-weapons-selector',
 		],
 		label: '2H',
-		changedEvent: (sim: Sim) => sim.show2hWeaponsChangeEmitter,
-		getValue: (sim: Sim) => sim.getShow2hWeapons(),
+		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+		getValue: (sim: Sim) => sim.getFilters().twoHandedWeapons,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
-			sim.setShow2hWeapons(eventID, newValue);
+			const filters = sim.getFilters();
+			filters.twoHandedWeapons = newValue;
+			sim.setFilters(eventID, filters);
 		},
 	});
 }
@@ -48,10 +52,12 @@ export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): Boo
 			'show-matching-gems-selector',
 		],
 		label: 'Match Socket',
-		changedEvent: (sim: Sim) => sim.showMatchingGemsChangeEmitter,
-		getValue: (sim: Sim) => sim.getShowMatchingGems(),
+		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+		getValue: (sim: Sim) => sim.getFilters().matchingGemsOnly,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
-			sim.setShowMatchingGems(eventID, newValue);
+			const filters = sim.getFilters();
+			filters.matchingGemsOnly = newValue;
+			sim.setFilters(eventID, filters);
 		},
 	});
 }
