@@ -110,7 +110,7 @@ export class SettingsMenu extends Popup {
 		const defaultLang = langs.indexOf('en');
 		const languagePicker = new EnumPicker(language, this.simUI.sim, {
 			label: 'Language',
-			//'labelTooltip': '',
+			labelTooltip: 'Controls the language for Wowhead tooltips.',
 			values: langs.map((lang, i) => {
 				return {
 					name: wowheadSupportedLanguages[lang],
