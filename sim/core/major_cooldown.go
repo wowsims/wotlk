@@ -363,6 +363,13 @@ restart:
 				continue // activation failed, most likely because CanActivate() is incomplete or not implemented
 			}
 			mcdm.sort()
+
+			if mcd.Spell.DefaultCast.GCD > 0 {
+				// If the GCD was used, don't use any more MCDs until the next cycle so
+				// their durations aren't partially wasted.
+				break
+			}
+
 			// many MCDs are off the GCD, so it makes sense to continue
 			goto restart
 		}
