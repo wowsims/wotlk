@@ -577,13 +577,14 @@ class SelectorModal extends Popup {
 			validItemElems = validItemElems.filter(elem => {
 				const listItemIdx = parseInt(elem.dataset.idx!);
 				const listItemData = itemData[listItemIdx];
+				const filters = this.player.sim.getFilters();
 
 				if (label == 'Items') {
 					const listItem = listItemData.item as unknown as Item;
-					if (!this.player.sim.getShow1hWeapons() && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType != HandType.HandTypeTwoHand) {
+					if (!filters.oneHandedWeapons && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType != HandType.HandTypeTwoHand) {
 						return false;
 					}
-					if (!this.player.sim.getShow2hWeapons() && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType == HandType.HandTypeTwoHand) {
+					if (!filters.twoHandedWeapons && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType == HandType.HandTypeTwoHand) {
 						return false;
 					}
 				} else if (label == 'Enchants') {
@@ -593,7 +594,7 @@ class SelectorModal extends Popup {
 					}
 				} else if (label.startsWith('Gem')) {
 					const listItem = listItemData.item as unknown as Gem;
-					if (this.player.sim.getShowMatchingGems() && !gemMatchesSocket(listItem, socketColor)) {
+					if (filters.matchingGemsOnly && !gemMatchesSocket(listItem, socketColor)) {
 						return false;
 					}
 				}
@@ -650,16 +651,8 @@ class SelectorModal extends Popup {
 			}
 		});
 
-		this.player.sim.phaseChangeEmitter.on(() => {
-			applyFilters();
-		});
-		TypedEvent.onAny([
-			this.player.sim.show1hWeaponsChangeEmitter,
-			this.player.sim.show2hWeaponsChangeEmitter,
-			this.player.sim.showMatchingGemsChangeEmitter,
-		]).on(() => {
-			applyFilters();
-		});
+		this.player.sim.phaseChangeEmitter.on(applyFilters);
+		this.player.sim.filtersChangeEmitter.on(applyFilters);
 		this.player.gearChangeEmitter.on(() => {
 			applyFilters();
 			updateSelected();

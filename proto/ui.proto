@@ -7,6 +7,23 @@ import "api.proto";
 import "common.proto";
 import "paladin.proto";
 
+message DatabaseFilters {
+	// TODO:
+	// Source
+	// Raid
+	// Req. Profession
+
+	repeated ArmorType armor_types = 1;
+	repeated WeaponType weapon_types = 2;
+
+	double min_weapon_speed = 4;
+	double max_weapon_speed = 5;
+
+	bool one_handed_weapons = 6;
+	bool two_handed_weapons = 7;
+	bool matching_gems_only = 8;
+}
+
 message SimSettings {
 	int32 iterations = 1;
 	int32 phase = 2;
@@ -17,6 +34,7 @@ message SimSettings {
 	bool show_experimental = 5;
 	string language = 9;
 	Faction faction = 6;
+	DatabaseFilters filters = 10;
 }
 
 // Contains all information that is imported/exported from an individual sim.
