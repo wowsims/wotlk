@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"golang.org/x/exp/slices"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -94,8 +95,8 @@ func main() {
 	var itemsData []ItemData
 	if *db == "wowhead" {
 		gemDeclarations := getGemDeclarations()
-		gemsData = make([]GemData, len(gemDeclarations)) // TODO looks fishy, might be sparsely populated
-		for idx, gemDeclaration := range gemDeclarations {
+		gemsData = make([]GemData, 0, len(gemDeclarations))
+		for _, gemDeclaration := range gemDeclarations {
 			gemData := GemData{
 				Declaration: gemDeclaration,
 				Response:    getWowheadItemResponse(gemDeclaration.ID, tooltipsDB),
@@ -104,15 +105,14 @@ func main() {
 				continue
 			}
 			//log.Printf("\n\n%+v\n", gemData.Response)
-			gemsData[idx] = gemData
-
+			gemsData = append(gemsData, gemData)
 			tempItems = append(tempItems, tempItemIcon{ID: gemDeclaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
 		}
 
 		itemDeclarations := getItemDeclarations()
 		// qualityModifiers := getItemQualityModifiers()
-		itemsData = make([]ItemData, len(itemDeclarations)) // TODO looks fishy, might be sparsely populated
-		for idx, itemDeclaration := range itemDeclarations {
+		itemsData = make([]ItemData, 0, len(itemDeclarations))
+		for _, itemDeclaration := range itemDeclarations {
 			itemData := ItemData{
 				Declaration: itemDeclaration,
 				Response:    getWowheadItemResponse(itemDeclaration.ID, tooltipsDB),
@@ -122,7 +122,7 @@ func main() {
 				continue
 			}
 			//fmt.Printf("\n\n%+v\n", itemData.Response)
-			itemsData[idx] = itemData
+			itemsData = append(itemsData, itemData)
 			tempItems = append(tempItems, tempItemIcon{ID: itemDeclaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
 		}
 	} else if *db == "wotlkdb" {
@@ -241,12 +241,8 @@ func getItemDeclarations() []ItemDeclaration {
 		declaration := ItemDeclaration{
 			ID: itemID,
 		}
-
-		for _, override := range ItemDeclarationOverrides {
-			if override.ID == itemID {
-				declaration = override
-				break
-			}
+		if override, ok := ItemDeclarationOverrides[itemID]; ok {
+			declaration = override
 		}
 
 		itemDeclarations = append(itemDeclarations, declaration)
