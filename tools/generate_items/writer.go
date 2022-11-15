@@ -47,7 +47,8 @@ var Gems = []Gem{
 		if gemData.Declaration.Filter {
 			continue
 		}
-		allow := allowList[gemData.Declaration.ID]
+		// allow := allowList[gemData.Declaration.ID]
+		allow := false
 		if !allow {
 			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
 				continue
@@ -316,6 +317,7 @@ var denyListNameRegexes = []*regexp.Regexp{
 
 // allowList allows overriding to allow an item
 var allowList = map[int]bool{
+	37032: true, // Edge of the Tuskarr
 	11815: true, // Hand of Justice
 	12590: true, // Felstriker
 	15808: true, // Fine Light Crossbow (for hunter testing).
