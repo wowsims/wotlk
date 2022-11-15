@@ -15,6 +15,7 @@ message SimSettings {
 	bool show_threat_metrics = 4;
 	bool show_healing_metrics = 7;
 	bool show_experimental = 5;
+	string language = 9;
 	Faction faction = 6;
 }
 

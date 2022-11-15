@@ -41,6 +41,7 @@ import { getEligibleItemSlots } from './proto_utils/utils.js';
 import { getEligibleEnchantSlots } from './proto_utils/utils.js';
 import { playerToSpec } from './proto_utils/utils.js';
 
+import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
 import { Raid } from './raid.js';
@@ -77,6 +78,7 @@ export class Sim {
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
+	private language: string = '';
 
 	readonly raid: Raid;
 	readonly encounter: Encounter;
@@ -100,6 +102,7 @@ export class Sim {
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly languageChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
 	// Emits when any of the settings change (but not the raid / encounter).
@@ -150,6 +153,7 @@ export class Sim {
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
+			this.languageChangeEmitter,
 		]);
 
 		this.changeEmitter = TypedEvent.onAny([
@@ -480,6 +484,18 @@ export class Sim {
 		}
 	}
 
+	getLanguage(): string {
+		return this.language;
+	}
+	setLanguage(eventID: EventID, newLanguage: string) {
+		newLanguage = newLanguage || getBrowserLanguageCode();
+		if (newLanguage != this.language) {
+			this.language = newLanguage;
+			setLanguageCode(this.language);
+			this.languageChangeEmitter.emit(eventID);
+		}
+	}
+
 	getIterations(): number {
 		return this.iterations;
 	}
@@ -543,6 +559,7 @@ export class Sim {
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
+			language: this.getLanguage(),
 			faction: this.getFaction(),
 		});
 	}
@@ -556,6 +573,7 @@ export class Sim {
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
+			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
 		});
 	}
@@ -568,6 +586,7 @@ export class Sim {
 			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
 			showHealingMetrics: isHealingSim,
+			language: this.getLanguage(), // Don't change language.
 		}));
 	}
 }
