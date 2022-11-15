@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"time"
+	"unicode"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -57,6 +58,19 @@ type RunicPowerBar struct {
 
 	isACopy bool
 	clone   *RunicPowerBar
+}
+
+func (rp *RunicPowerBar) String() string {
+	state := []byte{'B', 'B', 'F', 'F', 'U', 'U'}
+	for i := range state {
+		if rp.runeStates&isDeaths[i] == isDeaths[i] {
+			state[i] = 'D'
+		}
+		if rp.runeStates&isSpents[i] == isSpents[i] {
+			state[i] = byte(unicode.ToLower(rune(state[i])))
+		}
+	}
+	return string(state)
 }
 
 func (rp *RunicPowerBar) Print() {
@@ -732,6 +746,7 @@ func (rp *RunicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetri
 			}
 
 			rp.unit.Log(sim, "Gained %0.3f %s rune from %s (%d --> %d).", float64(gainAmount), name, metrics.ActionID, currRunes-gainAmount, currRunes)
+			rp.unit.Log(sim, "Rune State:%s", rp.String())
 		}
 	}
 }
@@ -763,6 +778,7 @@ func (rp *RunicPowerBar) SpendRuneMetrics(sim *Simulation, metrics *ResourceMetr
 			}
 
 			rp.unit.Log(sim, "Spent 1.000 %s rune from %s (%d --> %d).", name, metrics.ActionID, currRunes+spendAmount, currRunes)
+			rp.unit.Log(sim, "Rune State:%s", rp.String())
 		}
 	}
 }
