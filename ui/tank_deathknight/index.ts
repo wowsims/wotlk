@@ -7,6 +7,8 @@ import { TankDeathknightSimUI } from './sim.js';
 
 const sim = new Sim();
 const player = new Player<Spec.SpecTankDeathknight>(Spec.SpecTankDeathknight, sim);
+player.enableHealing();
+
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
 const simUI = new TankDeathknightSimUI(document.body, player);
