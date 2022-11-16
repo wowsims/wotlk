@@ -1020,12 +1020,12 @@ func ReplenishmentAura(unit *Unit, actionID ActionID) *Aura {
 		panic("Wrong Replenishment Action ID")
 	}
 
-	if unit.HasManaBar() {
+	if unit.HasManaBar() && unit.replenishmentDep == nil {
 		unit.replenishmentDep = unit.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
 	}
 
 	unit.ReplenishmentAura = unit.GetOrRegisterAura(Aura{
-		Label:    "Replenishment-" + actionID.String(),
+		Label:    "Replenishment-" + ActionID{SpellID: 57669}.String(),
 		Tag:      ReplenishmentAuraTag,
 		ActionID: ActionID{SpellID: 57669},
 		Priority: 1,
@@ -1052,63 +1052,60 @@ func InitReplenishmentAuras(character *Character, actionID ActionID) {
 	}
 }
 
-func ReplenishmentAuraTargetting(character *Character) []*Character {
+func ReplenishmentAuraTargetting(character *Character) []*Unit {
 
-	var currentCharacter *Character
-	var charactersWithManaIssues [25]*Character
-	var charactersMana [25]float64
+	// var currentCharacter *Character
+	var unitsWithManaIssues [25]*Unit
+	var unitsMana [25]float64
 
 	len := 0
-	for _, party := range character.Party.Raid.Parties {
-		for _, player := range party.Players {
-			currentCharacter = player.GetCharacter()
-			if currentCharacter.HasManaBar() {
-				charactersWithManaIssues[len] = currentCharacter
-				charactersMana[len] = currentCharacter.CurrentManaPercent()
-				len++
-			}
+	for _, unit := range character.Env.Raid.AllUnits {
+		if unit.HasManaBar() {
+			unitsWithManaIssues[len] = unit
+			unitsMana[len] = unit.CurrentManaPercent()
+			len++
 		}
 	}
 	if len == 0 {
 		return nil
 	}
 
-	var chosenCharacters []*Character
+	var chosenUnits []*Unit
 	if len <= 10 {
-		chosenCharacters = make([]*Character, len)
+		chosenUnits = make([]*Unit, len)
 		for i := 0; i < len; i++ {
-			chosenCharacters[i] = charactersWithManaIssues[i]
+			chosenUnits[i] = unitsWithManaIssues[i]
 		}
 	} else {
-		chosenCharacters = make([]*Character, 10)
+		chosenUnits = make([]*Unit, 10)
 		for i := 0; i < 10; i++ {
-			chosenCharacters[i] = charactersWithManaIssues[i]
+			chosenUnits[i] = unitsWithManaIssues[i]
 		}
 		var chosenIndexes [10]int
 		for j := 0; j < 10; j++ {
 			chosenIndexes[j] = -1
 			lastMana := 1.0
 			for i := 0; i < len; i++ {
-				// Check first for characters that don't already have the buff
-				if !contains(chosenIndexes, i) && charactersMana[i] < lastMana && !charactersWithManaIssues[i].HasActiveAuraWithTag(ReplenishmentAuraTag) {
+				// Check first for Units that don't already have the buff
+				if !contains(chosenIndexes, i) && unitsMana[i] < lastMana && !unitsWithManaIssues[i].HasActiveAuraWithTag(ReplenishmentAuraTag) {
 					chosenIndexes[j] = i
-					chosenCharacters[j] = charactersWithManaIssues[i]
-					lastMana = charactersMana[i]
+					chosenUnits[j] = unitsWithManaIssues[i]
+					lastMana = unitsMana[i]
 				}
 			}
 			if chosenIndexes[j] == -1 { // If you couldn't find anyone that didn't have the replenishment buff, refresh replenishment
 				lastMana := 1.0
 				for i := 0; i < len; i++ {
-					if !contains(chosenIndexes, i) && charactersMana[i] < lastMana {
+					if !contains(chosenIndexes, i) && unitsMana[i] < lastMana {
 						chosenIndexes[j] = i
-						chosenCharacters[j] = charactersWithManaIssues[i]
-						lastMana = charactersMana[chosenIndexes[j]]
+						chosenUnits[j] = unitsWithManaIssues[i]
+						lastMana = unitsMana[chosenIndexes[j]]
 					}
 				}
 			}
 		}
 	}
-	return chosenCharacters
+	return chosenUnits
 }
 
 func contains(s [10]int, e int) bool {
