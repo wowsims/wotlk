@@ -138,7 +138,6 @@ func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {
-
 }
 
 func NewWarlock(character core.Character, options *proto.Player) *Warlock {
