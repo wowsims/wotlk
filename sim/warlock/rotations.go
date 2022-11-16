@@ -284,20 +284,6 @@ Might sound complicated, worry not, things will get better.
 */
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
-	if warlock.DrainSoulDot.IsActive() {
-		shouldClip := false
-		if shouldClip {
-			warlock.DrainSoulDot.Cancel(sim)
-		} else {
-			// This means we are continuing to soul drain.
-			tickLength := warlock.DrainSoulDot.TickPeriod()
-			previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
-			humanReactionTime := time.Millisecond * 150
-			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
-			return
-		}
-	}
-
 	var spell *core.Spell                      //the variable we'll be returning to the sim as our final decision
 	var filler *core.Spell                     //the filler spell we'll store, we will cast this whenever we have all our priorities in check
 	var target = warlock.CurrentTarget         //our current target
@@ -305,6 +291,63 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	curse := warlock.Rotation.Curse            // our curse of choice
 	dotLag := 10 * time.Millisecond            // the lag time for dots, a small value that allows us to gap two dots properly
 
+	hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
+	allCDs := []time.Duration{
+		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
+		core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-hauntcasttime),
+		core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
+	}
+
+	if warlock.DrainSoulDot.IsActive() {
+		if !warlock.GCD.IsReady(sim) {
+			return
+		}
+		// This means we are continuing to soul drain.
+		shouldClip := false
+
+		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
+			warlock.PseudoStats.DamageDealtMultiplier
+		newTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
+		newDrainSoulRolloverPower := newDmg / newTickSpeed
+
+		if allCDs[0].Seconds() == 0 && sim.GetRemainingDuration().Seconds()-12 > 3 {
+			shouldClip = true
+		} else if allCDs[2].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 18 {
+			shouldClip = true
+		} else if allCDs[1].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 8 {
+			shouldClip = true
+		} else if newDrainSoulRolloverPower > warlock.DrainSoulRolloverPower {
+			shouldClip = true
+		} else if warlock.CorruptionDot.RemainingDuration(sim) < 2*warlock.DrainSoulDot.TickPeriod() {
+			shouldClip = true
+		}
+
+		tickLength := warlock.DrainSoulDot.TickPeriod()
+		previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+		humanReactionTime := time.Millisecond * 150
+
+		nextTickAt := previousTickAt + tickLength
+
+		deltaTime := nextTickAt - previousTickAt
+		CloseToTick := deltaTime / tickLength
+
+		if sim.Log != nil {
+			warlock.Log(sim, "deltaTime[%d]", nextTickAt.Seconds())
+			warlock.Log(sim, "CloseToTick[%d]", CloseToTick)
+		}
+
+		//if shouldClip && sim.CurrentTime > previousTickAt && sim.CurrentTime < nextTickAt {
+		//warlock.WaitUntil(sim, nextTickAt)
+		//return
+		//}
+
+		if shouldClip && warlock.DrainSoulDot.TickCount != 0 {
+			warlock.DrainSoulDot.Cancel(sim)
+		} else {
+			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
+			return
+		}
+	}
 	// ------------------------------------------
 	// Data
 	// ------------------------------------------
@@ -476,6 +519,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = RSI.Spell
 			currentSpellPrio = RSI.Priority
 		} // find and cast the highest prio
+
 	}
 	nextSpell += sim.CurrentTime
 	if sim.Log != nil {
@@ -535,7 +579,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.LifeTapOrDarkPact(sim)
 			return
 		}
-
 		// After all the previous checks, if everything checks out, you are free to cast filler.
 		spell = filler
 	}
@@ -555,6 +598,35 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Spell casting
 	// ------------------------------------------
+
+	if spell == warlock.DrainSoul {
+		baseDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
+			warlock.PseudoStats.DamageDealtMultiplier
+		baseTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
+		warlock.DrainSoulRolloverPower = baseDmg / baseTickSpeed
+	}
+
+	if filler == warlock.DrainSoul {
+		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2 {
+			spell = filler
+		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
+			spell = filler
+		}
+	}
+
+	if warlock.DrainSoulDot.IsActive() {
+		// This means we are continuing to soul drain.
+		tickLength := warlock.DrainSoulDot.TickPeriod()
+		previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+		humanReactionTime := time.Millisecond * 150
+		if sim.Log != nil {
+			//warlock.Log(sim, "tickLength[%d]", tickLength.Seconds())
+			//warlock.Log(sim, "previousTickAt[%d]", previousTickAt.Seconds())
+		}
+		warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
+		return
+	}
+
 	if success := spell.Cast(sim, target); success {
 		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 			// We are recording the current rollover power of corruption
