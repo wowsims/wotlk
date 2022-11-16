@@ -77,7 +77,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 					numActive++
 				}
 			}
-			dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier)
+			dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(4, numActive))*soulSiphonMultiplier)
 
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},

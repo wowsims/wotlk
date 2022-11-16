@@ -65,6 +65,7 @@ type Warlock struct {
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
+	DrainSoulRolloverPower  float64
 	DPSPAverage             float64
 	PreviousTime            time.Duration
 	SpellsRotation          []SpellRotation
