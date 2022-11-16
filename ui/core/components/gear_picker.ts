@@ -3,7 +3,6 @@ import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { enchantAppliesToItem } from '../proto_utils/utils.js';
 import { Class, Enchant, Gem, GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
@@ -22,6 +21,7 @@ import { formatDeltaTextElem } from '../utils.js';
 import { getEnumValues } from '../utils.js';
 
 import { Component } from './component.js';
+import { FiltersMenu } from './filters_menu.js';
 import { Popup } from './popup.js';
 import { makePhaseSelector } from './other_inputs.js';
 import { makeShow1hWeaponsSelector } from './other_inputs.js';
@@ -454,11 +454,12 @@ class SelectorModal extends Popup {
       <div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
       <div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
       <div class="selector-modal-phase-selector"></div>
+      <button class="selector-modal-filters-button sim-button">Filters</button>
     </div>
-	<div style="width: 100%;height: 30px;font-size: 18px;">
-		<span style="float:left">Item</span>
-		<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
-	</div>
+		<div style="width: 100%;height: 30px;font-size: 18px;">
+			<span style="float:left">Item</span>
+			<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
+		</div>
     <ul class="selector-modal-list"></ul>
     `;
 
@@ -466,7 +467,7 @@ class SelectorModal extends Popup {
 		tippy(helpIcon, {'content': 'These values are computed using stat weights which can be edited using the "Stat Weights" button.'});
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, this.player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, this.player.sim);
-		if (label != 'Items' || slot != ItemSlot.ItemSlotMainHand && this.player.getClass() != Class.ClassWarrior) {
+		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && this.player.getClass() == Class.ClassWarrior)))) {
 			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
@@ -477,6 +478,13 @@ class SelectorModal extends Popup {
 		}
 
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
+
+		const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
+		if (FiltersMenu.anyFiltersForSlot(slot)) {
+			filtersButton.addEventListener('click', () => new FiltersMenu(this.rootElem, this.player, slot));
+		} else {
+			filtersButton.style.display = 'none';
+		}
 
 		if (label == 'Items') {
 			tabElem.classList.add('active', 'in');
@@ -574,30 +582,27 @@ class SelectorModal extends Popup {
 			let validItemElems = listItemElems;
 			const currentEquippedItem = this.player.getEquippedItem(slot);
 
-			validItemElems = validItemElems.filter(elem => {
-				const listItemIdx = parseInt(elem.dataset.idx!);
-				const listItemData = itemData[listItemIdx];
-				const filters = this.player.sim.getFilters();
+			if (label == 'Items') {
+				validItemElems = this.player.filterItemData(
+						validItemElems,
+						elem => itemData[parseInt(elem.dataset.idx!)].item as unknown as Item,
+						slot);
+			} else if (label == 'Enchants') {
+				validItemElems = this.player.filterEnchantData(
+						validItemElems,
+						elem => itemData[parseInt(elem.dataset.idx!)].item as unknown as Enchant,
+						slot,
+						currentEquippedItem);
+			} else if (label.startsWith('Gem')) {
+				validItemElems = this.player.filterGemData(
+						validItemElems,
+						elem => itemData[parseInt(elem.dataset.idx!)].item as unknown as Gem,
+						slot,
+						socketColor);
+			}
 
-				if (label == 'Items') {
-					const listItem = listItemData.item as unknown as Item;
-					if (!filters.oneHandedWeapons && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType != HandType.HandTypeTwoHand) {
-						return false;
-					}
-					if (!filters.twoHandedWeapons && listItem.weaponType != WeaponType.WeaponTypeUnknown && listItem.handType == HandType.HandTypeTwoHand) {
-						return false;
-					}
-				} else if (label == 'Enchants') {
-					const listItem = listItemData.item as unknown as Enchant;
-					if (currentEquippedItem && !enchantAppliesToItem(listItem, currentEquippedItem.item)) {
-						return false;
-					}
-				} else if (label.startsWith('Gem')) {
-					const listItem = listItemData.item as unknown as Gem;
-					if (filters.matchingGemsOnly && !gemMatchesSocket(listItem, socketColor)) {
-						return false;
-					}
-				}
+			validItemElems = validItemElems.filter(elem => {
+				const listItemData = itemData[parseInt(elem.dataset.idx!)];
 
 				if (listItemData.phase > this.player.sim.getPhase()) {
 					return false;

@@ -1,3 +1,4 @@
+import { ArmorType } from './proto/common.js';
 import { Class, Faction } from './proto/common.js';
 import { Consumes } from './proto/common.js';
 import { Enchant } from './proto/common.js';
@@ -15,6 +16,7 @@ import { Race } from './proto/common.js';
 import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
 import { Stat } from './proto/common.js';
+import { WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
 import { PresetEncounter, PresetTarget } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
@@ -50,6 +52,7 @@ import { Player } from './player.js';
 import { Raid } from './raid.js';
 import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
+import { getEnumValues } from './utils.js';
 import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
@@ -530,7 +533,18 @@ export class Sim {
 		return new Gear(gearMap);
 	}
 
+	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
+	private static readonly ALL_WEAPON_TYPES = (getEnumValues(WeaponType) as Array<WeaponType>).filter(v => v != 0);
+
 	toProto(): SimSettingsProto {
+		const filters = this.getFilters();
+		if (filters.armorTypes.length == Sim.ALL_ARMOR_TYPES.length) {
+			filters.armorTypes = [];
+		}
+		if (filters.weaponTypes.length == Sim.ALL_WEAPON_TYPES.length) {
+			filters.weaponTypes = [];
+		}
+
 		return SimSettingsProto.create({
 			iterations: this.getIterations(),
 			phase: this.getPhase(),
@@ -541,7 +555,7 @@ export class Sim {
 			showExperimental: this.getShowExperimental(),
 			language: this.getLanguage(),
 			faction: this.getFaction(),
-			filters: this.getFilters(),
+			filters: filters,
 		});
 	}
 
@@ -556,7 +570,15 @@ export class Sim {
 			this.setShowExperimental(eventID, proto.showExperimental);
 			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
-			this.setFilters(eventID, proto.filters || Sim.defaultFilters());
+
+			const filters = proto.filters || Sim.defaultFilters();
+			if (filters.armorTypes.length == 0) {
+				filters.armorTypes = Sim.ALL_ARMOR_TYPES.slice();
+			}
+			if (filters.weaponTypes.length == 0) {
+				filters.weaponTypes = Sim.ALL_WEAPON_TYPES.slice();
+			}
+			this.setFilters(eventID, filters);
 		});
 	}
 
