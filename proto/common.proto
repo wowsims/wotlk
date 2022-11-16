@@ -789,13 +789,10 @@ message Cooldowns {
 message HealingModel {
 	// Healing per second to apply.
 	double hps = 1;
-
 	// How often healing is applied.
 	double cadence_seconds = 2;
-
-	
-	
 	double inspiration_uptime = 3;
+	bool disable_healing = 4; // disables healing model
 }
 
 message CustomRotation {

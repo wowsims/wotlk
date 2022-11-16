@@ -7,6 +7,12 @@ import { ProtectionPaladinSimUI } from './sim.js';
 
 const sim = new Sim();
 const player = new Player<Spec.SpecProtectionPaladin>(Spec.SpecProtectionPaladin, sim);
+var hm = player.getHealingModel();
+if (hm.cadenceSeconds == 0) {
+    hm.cadenceSeconds = 2;
+    player.setHealingModel(0, hm)
+}
+
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
 const simUI = new ProtectionPaladinSimUI(document.body, player);

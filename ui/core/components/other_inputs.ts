@@ -193,10 +193,13 @@ export const HealingCadence = {
 		<p>Example: if Incoming HPS is set to 1000 and this is set to 1s, then every 1s a heal will be received for 1000. If this is instead set to 2s, then every 2s a heal will be recieved for 2000.</p>
 		<p>If set to 0, defaults to 2.0 seconds.</p>
 	`,
-	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
+	changedEvent: (player: Player<any>) => player.healingModelChangeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().cadenceSeconds,
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		const healingModel = player.getHealingModel();
+		if (newValue == 0) {
+			newValue = 2;
+		}
 		healingModel.cadenceSeconds = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
