@@ -499,7 +499,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
-					if sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
+					if warlock.Talents.ImprovedSoulLeech == 2 || sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
 						replTargets = core.ReplenishmentAuraTargetting(warlock.GetCharacter())
 						for _, char := range replTargets {
 							if char != nil {

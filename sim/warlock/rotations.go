@@ -283,6 +283,21 @@ Function takes the Warlock character that's used to model the client behavior, a
 Might sound complicated, worry not, things will get better.
 */
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
+
+	if warlock.DrainSoulDot.IsActive() {
+		shouldClip := false
+		if shouldClip {
+			warlock.DrainSoulDot.Cancel(sim)
+		} else {
+			// This means we are continuing to soul drain.
+			tickLength := warlock.DrainSoulDot.TickPeriod()
+			previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+			humanReactionTime := time.Millisecond * 150
+			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
+			return
+		}
+	}
+
 	var spell *core.Spell                      //the variable we'll be returning to the sim as our final decision
 	var filler *core.Spell                     //the filler spell we'll store, we will cast this whenever we have all our priorities in check
 	var target = warlock.CurrentTarget         //our current target
@@ -440,7 +455,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	*/
 	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 		// Drain Soul phase, Soul Siphon is an affliction talent, so if below %25, and you have siphon talented, sim assumes you are Affliction.
-		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5) //This function checks if you are channeling DS or not. Returns continuing channeling or casting DS actions accordingly.
+		filler = warlock.DrainSoul
 	} else if warlock.DecimationAura.IsActive() { //Molten Core, buffs Incinerate and Soul Fire, however, since below %35 you will spam SF, you don't need to check Molten Core.
 		// Demo & Hybrid execute phase
 		filler = warlock.SoulFire
