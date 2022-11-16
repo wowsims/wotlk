@@ -1054,15 +1054,15 @@ func InitReplenishmentAuras(character *Character, actionID ActionID) {
 
 func ReplenishmentAuraTargetting(character *Character) []*Unit {
 
-	// var currentCharacter *Character
 	var unitsWithManaIssues [25]*Unit
 	var unitsMana [25]float64
 
 	len := 0
 	for _, unit := range character.Env.Raid.AllUnits {
 		if unit.HasManaBar() {
-			unitsWithManaIssues[len] = unit
 			unitsMana[len] = unit.CurrentManaPercent()
+			unitPointer := unit
+			unitsWithManaIssues[len] = unitPointer
 			len++
 		}
 	}
