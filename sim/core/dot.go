@@ -35,6 +35,11 @@ type Dot struct {
 	lastTickTime time.Duration
 }
 
+// TickPeriod is how fast the snapshotted dot ticks.
+func (dot *Dot) TickPeriod() time.Duration {
+	return dot.tickPeriod
+}
+
 // Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.
 // - Example: critical strike rating, internal % damage modifiers: buffs or debuffs on player
 // Nevermelting Ice, Shadow Mastery (ISB), Trick of the Trades, Deaths Embrace, Thadius Polarity, Hera Spores, Crit on weapons from swapping

@@ -33,7 +33,6 @@ type Warlock struct {
 	ConflagrateDot        *core.Dot
 	DrainSoul             *core.Spell
 	DrainSoulDot          *core.Dot
-	DrainSoulChannelling  *core.Spell
 	Shadowburn            *core.Spell
 
 	CurseOfElements     *core.Spell
