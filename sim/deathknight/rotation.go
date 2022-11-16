@@ -266,8 +266,12 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 			optWait = dk.RotationSequence.DoAction(sim, target, dk)
 		}
 
-		if optWait > sim.CurrentTime {
-			dk.WaitUntil(sim, optWait)
+		if optWait != -1 {
+			if optWait < sim.CurrentTime {
+				dk.Wait(sim)
+			} else {
+				dk.WaitUntil(sim, optWait)
+			}
 		} else if dk.GCD.IsReady(sim) {
 			dk.Wait(sim)
 		}
