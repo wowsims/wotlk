@@ -3,16 +3,17 @@
 .settings-menu {
 }
 
-.settings-menu-title {
+.menu-title {
 	text-align: center;
 	margin: 20px;
 	font-size: 24px;
 }
 
-.settings-menu-content {
+.menu-content {
 	margin: 20px;
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-evenly;
 	overflow-y: auto;
 	max-height: 80vh;
 }
@@ -26,7 +27,7 @@
 	flex: 2;
 }
 
-.settings-menu-section {
+.menu-section {
 	margin: 15px 0;
 }
 

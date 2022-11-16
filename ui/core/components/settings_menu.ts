@@ -31,13 +31,13 @@ export class SettingsMenu extends Popup {
 		this.simUI = simUI;
 
 		this.rootElem.innerHTML = `
-			<div class="settings-menu-title">
+			<div class="menu-title">
 				<span>OPTIONS</span>
 			</div>
-			<div class="settings-menu-content">
+			<div class="menu-content">
 				<div class="settings-menu-content-left">
 					<button class="restore-defaults-button sim-button">RESTORE DEFAULTS</button>
-					<div class="settings-menu-section">
+					<div class="menu-section">
 						<div class="fixed-rng-seed">
 						</div>
 						<div class="last-used-rng-seed-container">
@@ -50,7 +50,7 @@ export class SettingsMenu extends Popup {
 					</div>
 				</div>
 				<div class="settings-menu-content-right">
-					<div class="settings-menu-section settings-menu-ep-weights within-raid-sim-hide">
+					<div class="menu-section settings-menu-ep-weights within-raid-sim-hide">
 						<div class="language-picker">
 						</div>
 					</div>
