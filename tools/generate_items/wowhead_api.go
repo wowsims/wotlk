@@ -667,7 +667,7 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 		tooltipBytes = []byte(tooltipStr)
 	} else {
 		fmt.Printf("Item DB missing ID: %d\n", itemID)
-		url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", itemID)
+		url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", itemID)
 
 		httpClient := http.Client{
 			Timeout: 5 * time.Second,

@@ -52,7 +52,7 @@ func main() {
 			go func(min, max int) {
 				client := http.Client{}
 				for i := min; i < max; i++ {
-					url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", i)
+					url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", i)
 					resp, err := client.Get(url)
 					if err != nil {
 						fmt.Printf("Error fetching %d: %s\n", i, err)
