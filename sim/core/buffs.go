@@ -1062,7 +1062,7 @@ func ReplenishmentAuraTargetting(character *Character) []*Character {
 	for _, party := range character.Party.Raid.Parties {
 		for _, player := range party.Players {
 			currentCharacter = player.GetCharacter()
-			if currentCharacter.HasManaBar() && !currentCharacter.HasActiveAuraWithTag(ReplenishmentAuraTag) {
+			if currentCharacter.HasManaBar() {
 				charactersWithManaIssues[len] = currentCharacter
 				charactersMana[len] = currentCharacter.CurrentManaPercent()
 				len++
@@ -1087,18 +1087,22 @@ func ReplenishmentAuraTargetting(character *Character) []*Character {
 		var chosenIndexes [10]int
 		for j := 0; j < 10; j++ {
 			chosenIndexes[j] = -1
+			lastMana := 1.0
 			for i := 0; i < len; i++ {
 				// Check first for characters that don't already have the buff
-				if !contains(chosenIndexes, i) && charactersMana[i] < charactersMana[chosenIndexes[j]] && !currentCharacter.HasActiveAuraWithTag(ReplenishmentAuraTag) {
+				if !contains(chosenIndexes, i) && charactersMana[i] < lastMana && !charactersWithManaIssues[i].HasActiveAuraWithTag(ReplenishmentAuraTag) {
 					chosenIndexes[j] = i
 					chosenCharacters[j] = charactersWithManaIssues[i]
+					lastMana = charactersMana[i]
 				}
 			}
 			if chosenIndexes[j] == -1 { // If you couldn't find anyone that didn't have the replenishment buff, refresh replenishment
+				lastMana := 1.0
 				for i := 0; i < len; i++ {
-					if !contains(chosenIndexes, i) && charactersMana[i] < charactersMana[chosenIndexes[j]] {
+					if !contains(chosenIndexes, i) && charactersMana[i] < lastMana {
 						chosenIndexes[j] = i
 						chosenCharacters[j] = charactersWithManaIssues[i]
+						lastMana = charactersMana[chosenIndexes[j]]
 					}
 				}
 			}
