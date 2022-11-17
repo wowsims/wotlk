@@ -51,6 +51,10 @@ func (warlock *Warlock) corruptionTracker() float64 {
 }
 
 func (warlock *Warlock) defineRotation() {
+
+	warlock.initProcTrackers()
+	warlock.setupDSCooldowns()
+
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	secondaryDot := warlock.Rotation.SecondaryDot
@@ -292,6 +296,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	dotLag := 10 * time.Millisecond            // the lag time for dots, a small value that allows us to gap two dots properly
 
 	hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
+
+	tickLength := warlock.DrainSoulDot.TickPeriod()
+	previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+	humanReactionTime := time.Millisecond * 150
+	nextTick := previousTickAt + tickLength + humanReactionTime
+
 	allCDs := []time.Duration{
 		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
 		core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-hauntcasttime),
@@ -304,13 +314,43 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 		// This means we are continuing to soul drain.
 		shouldClip := false
+		NumberOfPotentialClips1 := core.MinDuration(allCDs[0]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()), allCDs[1]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		NumberOfPotentialClips := core.MinDuration(NumberOfPotentialClips1, allCDs[2]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+
+		if sim.Log != nil {
+			warlock.Log(sim, "Number of Ticks until next clip [%d]", NumberOfPotentialClips)
+		}
+
+		// Look at all current +SP / +Haste and Dmg modifier procs from now until next haunt application and determine if the dot should be resnap shot for all falling off buff
+		warlock.DSProcCheck(sim, warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		Tracker := []float64{
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+		}
+		for i, cd := range warlock.procTrackers {
+			curAura := cd.aura
+			curExpire := cd.expiresAt.Seconds()
+
+			if cd.didActivate && cd.isActive && curExpire < float64(nextTick.Seconds()) {
+				Tracker[i] = curExpire
+
+				if sim.Log != nil {
+					warlock.Log(sim, "Aura Name: [%s]", curAura.Label)
+					warlock.Log(sim, "Expires At: [%d]", Tracker[i])
+				}
+			}
+		}
 
 		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
 			warlock.PseudoStats.DamageDealtMultiplier
 		newTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
 		newDrainSoulRolloverPower := newDmg / newTickSpeed
 
-		if allCDs[0].Seconds() == 0 && sim.GetRemainingDuration().Seconds()-12 > 3 {
+		if allCDs[0]-warlock.ApplyCastSpeed(time.Duration(warlock.DrainSoulDot.TickPeriod())) < 0 && sim.GetRemainingDuration().Seconds()-6 > 0 {
 			shouldClip = true
 		} else if allCDs[2].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 18 {
 			shouldClip = true
@@ -322,28 +362,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			shouldClip = true
 		}
 
-		tickLength := warlock.DrainSoulDot.TickPeriod()
-		previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
-		humanReactionTime := time.Millisecond * 150
-
-		nextTickAt := previousTickAt + tickLength
-
-		deltaTime := nextTickAt - previousTickAt
-		CloseToTick := deltaTime / tickLength
-
-		if sim.Log != nil {
-			warlock.Log(sim, "deltaTime[%d]", nextTickAt.Seconds())
-			warlock.Log(sim, "CloseToTick[%d]", CloseToTick)
-		}
-
-		//if shouldClip && sim.CurrentTime > previousTickAt && sim.CurrentTime < nextTickAt {
-		//warlock.WaitUntil(sim, nextTickAt)
-		//return
-		//}
-
 		if shouldClip && warlock.DrainSoulDot.TickCount != 0 {
+			warlock.resetProcTrackers()
 			warlock.DrainSoulDot.Cancel(sim)
 		} else {
+			warlock.resetProcTrackers()
 			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
 			return
 		}
@@ -607,7 +630,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	}
 
 	if filler == warlock.DrainSoul {
-		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/2 {
+		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/4 {
 			spell = filler
 		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
 			spell = filler

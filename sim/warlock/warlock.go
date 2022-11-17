@@ -14,6 +14,9 @@ type Warlock struct {
 	Options  *proto.Warlock_Options
 	Rotation *proto.Warlock_Rotation
 
+	procTrackers []*ProcTracker
+	majorCds     []*core.MajorCooldown
+
 	Pet *WarlockPet
 
 	ShadowBolt            *core.Spell
