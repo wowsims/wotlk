@@ -161,7 +161,7 @@ var Enchants = []Enchant{
 	{EffectID: 3247, ItemID: 44473, Name: "Scourgebane", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{EffectID: 3827, ItemID: 44483, Name: "Massacre", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.AttackPower: 110, stats.RangedAttackPower: 110}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{EffectID: 3828, SpellID: 44630, Name: "Greater Savagery", Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.AttackPower: 85, stats.RangedAttackPower: 85}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
-	{EffectID: 3854, ItemID: 45059, Name: "Greater Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 81}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{EffectID: 3854, ItemID: 45059, Name: "Staff - Greater Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 81}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeStaff},
 	{EffectID: 3367, SpellID: 53342, Name: "Rune of Spellshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{EffectID: 3365, SpellID: 53323, Name: "Rune of Swordshattering", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
 	{EffectID: 3847, SpellID: 62158, Name: "Rune of the Stoneskin Gargoyle", Phase: 1, Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon, ClassAllowlist: []proto.Class{proto.Class_ClassDeathknight}},
@@ -272,7 +272,7 @@ var Enchants = []Enchant{
 	{EffectID: 2670, ItemID: 22556, Name: "2H Weapon - Major Agility", Quality: proto.ItemQuality_ItemQualityUncommon, Bonus: stats.Stats{stats.Agility: 35}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
 	{EffectID: 3225, ItemID: 33307, Name: "Executioner", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
 	{EffectID: 3273, ItemID: 35498, Name: "Deathfrost", Phase: 5, Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{}, ItemType: proto.ItemType_ItemTypeWeapon},
-	{EffectID: 3855, ItemID: 45060, Name: "Staff - Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 69}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeTwoHand},
+	{EffectID: 3855, ItemID: 45060, Name: "Staff - Spellpower", Quality: proto.ItemQuality_ItemQualityRare, Bonus: stats.Stats{stats.SpellPower: 69}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeStaff},
 
 	// Shield
 	{EffectID: 2654, ItemID: 22539, Name: "Intellect", Quality: proto.ItemQuality_ItemQualityCommon, Bonus: stats.Stats{stats.Intellect: 12}, ItemType: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},

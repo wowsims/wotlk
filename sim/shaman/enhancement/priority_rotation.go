@@ -19,6 +19,7 @@ const (
 	EarthShock
 	FrostShock
 	FireNova
+	DelayedWeave
 	LightningShield
 	DropAllTotems
 	LavaLash
@@ -93,10 +94,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	weaveLightningBolt := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
+			return rotation.options.LightningboltWeave && enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
+			reactionTime := time.Millisecond * time.Duration(rotation.options.AutoWeaveDelay)
 			return rotation.options.LightningboltWeave && enh.CastLightningBoltWeave(sim, reactionTime)
 		},
 		readyAt: func() time.Duration {
@@ -106,10 +107,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	weaveLavaBurst := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
+			return rotation.options.LavaburstWeave && enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			reactionTime := time.Millisecond * time.Duration(rotation.options.WeaveReactionTime)
+			reactionTime := time.Millisecond * time.Duration(rotation.options.AutoWeaveDelay)
 			return rotation.options.LavaburstWeave && enh.LavaBurst.IsReady(sim) && enh.CastLavaBurstWeave(sim, reactionTime)
 		},
 		readyAt: func() time.Duration {
@@ -221,6 +222,30 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
+	delayedWeave := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rotation.options.LightningboltWeave && rotation.options.DelayGcdWeave > 0 && enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
+			if timeUntilSwing <= time.Millisecond*time.Duration(rotation.options.DelayGcdWeave) && timeUntilSwing != 0 {
+				delay := enh.AutoAttacks.NextAttackAt() + time.Millisecond*100
+				enh.HardcastWaitUntil(sim, delay, func(_ *core.Simulation, _ *core.Unit) {
+					enh.GCD.Reset()
+					enh.CastLightningBoltWeave(sim, 0)
+				})
+
+				enh.WaitUntil(sim, delay)
+				return true
+			}
+
+			return false
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
+
 	//Normal Priority Rotation
 	var spellPriority []Spell
 	if rotation.options.RotationType == proto.EnhancementShaman_Rotation_Priority {
@@ -238,6 +263,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		spellPriority[WeaveLavaBurst] = weaveLavaBurst
 		spellPriority[MagmaTotem] = magmaTotem
 		spellPriority[DropAllTotems] = dropAllTotems
+		spellPriority[DelayedWeave] = delayedWeave
 	}
 
 	//Custom Priority Rotation
@@ -258,6 +284,9 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			case int32(proto.EnhancementShaman_Rotation_LightningBoltWeave):
 				rotation.options.LightningboltWeave = true
 				spellPriority = append(spellPriority, weaveLightningBolt)
+			case int32(proto.EnhancementShaman_Rotation_LightningBoltDelayedWeave):
+				rotation.options.LightningboltWeave = true
+				spellPriority = append(spellPriority, delayedWeave)
 			case int32(proto.EnhancementShaman_Rotation_Stormstrike):
 				spellPriority = append(spellPriority, stormstrike)
 			case int32(proto.EnhancementShaman_Rotation_FlameShock):
@@ -315,6 +344,9 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	// We could choose to not wait for auto attacks if we don't have any MW stacks,
 	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
 	upcomingCD := enh.AutoAttacks.NextAttackAt()
+	if upcomingCD < sim.CurrentTime {
+		upcomingCD = sim.CurrentTime
+	}
 	var cast Cast
 	for _, spell := range rotation.spellPriority {
 		if !spell.condition(sim, target) {

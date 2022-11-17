@@ -1662,6 +1662,9 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 	if ((enchant.enchantType == EnchantType.EnchantTypeShield) != (item.weaponType == WeaponType.WeaponTypeShield))
 		return false;
 
+	if (enchant.enchantType == EnchantType.EnchantTypeStaff && item.weaponType != WeaponType.WeaponTypeStaff)
+		return false;
+
 	if (item.weaponType == WeaponType.WeaponTypeOffHand)
 		return false;
 

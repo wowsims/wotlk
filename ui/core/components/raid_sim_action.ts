@@ -340,7 +340,7 @@ export class RaidSimResultsManager {
 				</div>
 			`;
 			const hpsMetrics = simResult.raidMetrics.hps;
-			content = `
+			content += `
 				<div class="results-sim-hps healing-metrics">
 					<span class="topline-result-avg">${hpsMetrics.avg.toFixed(2)}</span>
 					<span class="topline-result-stdev">${hpsMetrics.stdev.toFixed(2)}</span>

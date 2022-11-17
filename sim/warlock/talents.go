@@ -485,9 +485,6 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
 	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
 
-	var replTargets []*core.Character
-	core.InitReplenishmentAuras(warlock.GetCharacter(), actionID)
-
 	warlock.RegisterAura(core.Aura{
 		Label:    "Improved Soul Leech Hidden Aura",
 		Duration: core.NeverExpires,
@@ -500,8 +497,7 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric, true)
 					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric, true)
 					if warlock.Talents.ImprovedSoulLeech == 2 || sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
-						replTargets = core.ReplenishmentAuraTargetting(warlock.GetCharacter())
-						for _, char := range replTargets {
+						for _, char := range core.ReplenishmentAuraTargetting(warlock.GetCharacter()) {
 							if char != nil {
 								char.ReplenishmentAura.Activate(sim)
 							}

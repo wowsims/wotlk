@@ -93,6 +93,7 @@ export class Player<SpecType extends Spec> {
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
+	private healingEnabled: boolean = false;
 
 	private itemEPCache: Map<number, number> = new Map<number, number>();
 	private gemEPCache: Map<number, number> = new Map<number, number>();
@@ -552,6 +553,15 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
 
+	enableHealing() {
+		this.healingEnabled = true;
+		var hm = this.getHealingModel();
+		if (hm.cadenceSeconds == 0) {
+			hm.cadenceSeconds = 2;
+			this.setHealingModel(0, hm)
+		}
+	}
+
 	getHealingModel(): HealingModel {
 		// Make a defensive copy
 		return HealingModel.clone(this.healingModel);
@@ -563,6 +573,10 @@ export class Player<SpecType extends Spec> {
 
 		// Make a defensive copy
 		this.healingModel = HealingModel.clone(newHealingModel);
+		// If we have enabled healing model and try to set 0s cadence, default to 2s.
+		if (this.healingModel.cadenceSeconds == 0 && this.healingEnabled) {
+			this.healingModel.cadenceSeconds = 2;
+		}
 		this.healingModelChangeEmitter.emit(eventID);
 	}
 

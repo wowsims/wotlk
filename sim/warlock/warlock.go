@@ -14,6 +14,9 @@ type Warlock struct {
 	Options  *proto.Warlock_Options
 	Rotation *proto.Warlock_Rotation
 
+	procTrackers []*ProcTracker
+	majorCds     []*core.MajorCooldown
+
 	Pet *WarlockPet
 
 	ShadowBolt            *core.Spell
@@ -65,6 +68,7 @@ type Warlock struct {
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
+	DrainSoulRolloverPower  float64
 	DPSPAverage             float64
 	PreviousTime            time.Duration
 	SpellsRotation          []SpellRotation
@@ -117,6 +121,10 @@ func (warlock *Warlock) Initialize() {
 	}
 	if warlock.Talents.Shadowburn {
 		warlock.registerShadowBurnSpell()
+	}
+
+	if warlock.Talents.ImprovedSoulLeech > 0 {
+		core.InitReplenishmentAuras(warlock.GetCharacter(), core.ActionID{SpellID: 54118})
 	}
 
 	warlock.defineRotation()
