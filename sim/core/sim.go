@@ -32,6 +32,9 @@ type Simulation struct {
 
 	Log func(string, ...interface{})
 
+	executePhase20Begins  time.Duration
+	executePhase25Begins  time.Duration
+	executePhase35Begins  time.Duration
 	executePhase20        bool
 	executePhase25        bool
 	executePhase35        bool
@@ -212,6 +215,9 @@ func (sim *Simulation) reset() {
 		variation := sim.DurationVariation * 2
 		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
 	}
+	sim.executePhase20Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_20))
+	sim.executePhase25Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_25))
+	sim.executePhase35Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_35))
 
 	sim.CurrentTime = 0.0
 
@@ -375,7 +381,7 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 	sim.CurrentTime += elapsedTime
 
 	if !sim.executePhase35 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase35Begins) ||
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase35Begins) ||
 			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.35) {
 			sim.executePhase35 = true
 			for _, callback := range sim.executePhaseCallbacks {
@@ -383,7 +389,7 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 			}
 		}
 	} else if !sim.executePhase25 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase25Begins) ||
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase25Begins) ||
 			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.25) {
 			sim.executePhase25 = true
 			for _, callback := range sim.executePhaseCallbacks {
@@ -391,7 +397,7 @@ func (sim *Simulation) advance(elapsedTime time.Duration) {
 			}
 		}
 	} else if !sim.executePhase20 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.Encounter.executePhase20Begins) ||
+		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase20Begins) ||
 			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
 			sim.executePhase20 = true
 			for _, callback := range sim.executePhaseCallbacks {
