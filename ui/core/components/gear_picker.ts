@@ -652,7 +652,7 @@ class SelectorModal extends Popup {
 			const newEquippedItem = this.player.getEquippedItem(slot);
 			const newItem = equippedToItemFn(newEquippedItem);
 
-			const newItemId = (newItem as any)?.id || null;
+			const newItemId = newItem ? (label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item|Gem).id) : 0;
 			const newEP = newItem ? computeEP(newItem) : 0;
 
 			listItemElems.forEach(elem => {
