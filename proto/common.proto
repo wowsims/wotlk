@@ -680,6 +680,7 @@ enum EnchantType {
 	EnchantTypeTwoHand = 1;
 	EnchantTypeShield = 2;
 	EnchantTypeKit = 3;
+	EnchantTypeStaff = 4;
 }
 
 message Enchant {
