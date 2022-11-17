@@ -577,8 +577,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Average-Default"
  value: {
-  dps: 7123.80425
-  tps: 6130.65182
+  dps: 7122.17304
+  tps: 6129.13091
  }
 }
 dps_results: {

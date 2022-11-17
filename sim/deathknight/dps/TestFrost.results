@@ -626,8 +626,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 7936.56817
-  tps: 4691.78875
+  dps: 7936.85554
+  tps: 4691.96117
  }
 }
 dps_results: {
