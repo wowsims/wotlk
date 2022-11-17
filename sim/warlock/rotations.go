@@ -152,7 +152,7 @@ func (warlock *Warlock) defineRotation() {
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		spellCastTime := warlock.ApplyCastSpeed(core.GCDDefault)
 		if sim.IsExecutePhase25() {
-			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
+			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength) + time.Millisecond*500
 		}
 		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
@@ -350,7 +350,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		newTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
 		newDrainSoulRolloverPower := newDmg / newTickSpeed
 
-		if allCDs[0]-warlock.ApplyCastSpeed(time.Duration(warlock.DrainSoulDot.TickPeriod())) < 0 && sim.GetRemainingDuration().Seconds()-6 > 0 {
+		if allCDs[0]-warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength) < time.Millisecond*750 && sim.GetRemainingDuration().Seconds()-6 > 0 {
 			shouldClip = true
 		} else if allCDs[2].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 18 {
 			shouldClip = true
@@ -584,7 +584,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if warlock.Talents.SoulSiphon > 0 {
 			// We suppose that if you would want to use Drain Soul as an execute filler if and only if you have the Soul Siphon talent.
 			executeDuration = 0.25
-			DesiredManaAtExecute = 0.02
+			DesiredManaAtExecute = 0.12
 		}
 		TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
 		// TotalManaAtExecute := executeDuration*sim.Duration.Seconds()/ManaSpendRate
@@ -629,11 +629,29 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		warlock.DrainSoulRolloverPower = baseDmg / baseTickSpeed
 	}
 
+	delta := allCDs[0] - hauntcasttime
+	if sim.Log != nil {
+		warlock.Log(sim, "delta[%d]", delta.Seconds())
+		//warlock.Log(sim, "previousTickAt[%d]", previousTickAt.Seconds())
+	}
+
 	if filler == warlock.DrainSoul {
 		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/4 {
 			spell = filler
 		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
 			spell = filler
+		}
+
+		if spell == warlock.UnstableAffliction {
+			if allCDs[0]-hauntcasttime < time.Millisecond*15 {
+
+				//spell = warlock.Haunt
+				//currentWait := allCDs[0]
+				//if currentWait > 0 {
+				//	warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
+				//	return
+				//}
+			}
 		}
 	}
 
