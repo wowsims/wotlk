@@ -67,6 +67,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			IsInsideEclipseThreshold: 15.0,
 			UseSmartCooldowns:        true,
 			MaximizeIsUptime:         true,
+			PlayerLatency:            200,
 		},
 	},
 }
