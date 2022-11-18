@@ -635,7 +635,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 			AuraTag:          PowerInfusionAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     PowerInfusionDuration,
-			AuraCD:           PowerInfusionCD,
+			AuraCD:           time.Duration(float64(PowerInfusionCD) * 0.8), // All disc priests take Ascension talent.
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
