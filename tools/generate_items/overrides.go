@@ -1,42 +1,13 @@
 package main
 
 import (
+	"regexp"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type ItemDeclaration struct {
-	ID int
-
-	// Override fields, in case wowhead is wrong.
-	Stats          Stats // Only non-zero values will override
-	ClassAllowlist []proto.Class
-	Phase          int
-	HandType       proto.HandType // Overrides hand type.
-	Filter         bool           // If true, this item will be omitted from the sim.
-}
-type ItemData struct {
-	Declaration ItemDeclaration
-	Response    ItemResponse
-
-	QualityModifier float64
-}
-
-type GemDeclaration struct {
-	ID int
-
-	// Override fields, in case wowhead is wrong.
-	Stats Stats // Only non-zero values will override
-	Phase int
-
-	Filter bool // If true, this item will be omitted from the sim.
-}
-type GemData struct {
-	Declaration GemDeclaration
-	Response    ItemResponse
-}
-
 // Allows manual overriding for Gem fields in case WowHead is wrong.
-var GemDeclarationOverrides = []GemDeclaration{
+var GemOverrideOverrides = []GemOverride{
 	{ID: 33131, Stats: Stats{proto.Stat_StatAttackPower: 32, proto.Stat_StatRangedAttackPower: 32}},
 
 	// pvp non-unique gems not in game currently.
@@ -50,7 +21,7 @@ var GemDeclarationOverrides = []GemDeclaration{
 }
 
 // Allows manual overriding for Item fields in case WowHead is wrong.
-var ItemDeclarationOverrides = []ItemDeclaration{
+var ItemOverrideOverrides = []ItemOverride{
 	{ /** Destruction Holo-gogs */ ID: 32494, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
 	{ /** Gadgetstorm Goggles */ ID: 32476, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
 	{ /** Magnified Moon Specs */ ID: 32480, ClassAllowlist: []proto.Class{proto.Class_ClassDruid}},
@@ -361,6 +332,90 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 37092},
 	{ID: 37098},
 
+	// Keep these items
+	{ID: 37032, Keep: true}, // Edge of the Tuskarr
+	{ID: 11815, Keep: true}, // Hand of Justice
+	{ID: 12590, Keep: true}, // Felstriker
+	{ID: 15808, Keep: true}, // Fine Light Crossbow (for hunter testing).
+	{ID: 19019, Keep: true}, // Thunderfury
+	{ID: 19808, Keep: true}, // Rockhide Strongfish
+	{ID: 20837, Keep: true}, // Sunstrider Axe
+	{ID: 20966, Keep: true}, // Jade Pendant of Blasting
+	{ID: 24114, Keep: true}, // Braided Eternium Chain
+	{ID: 28830, Keep: true}, // Dragonspine Trophy
+	{ID: 29383, Keep: true}, // Bloodlust Brooch
+	{ID: 29387, Keep: true}, // Gnomeregan Auto-Blocker 600
+	{ID: 29994, Keep: true}, // Thalassian Wildercloak
+	{ID: 29996, Keep: true}, // Rod of the Sun King
+	{ID: 30032, Keep: true}, // Red Belt of Battle
+	{ID: 30627, Keep: true}, // Tsunami Talisman
+	{ID: 30720, Keep: true}, // Serpent-Coil Braid
+	{ID: 32387, Keep: true}, // Idol of the Raven Goddess
+	{ID: 32658, Keep: true}, // Badge of Tenacity
+	{ID: 33135, Keep: true}, // Falling Star
+	{ID: 33140, Keep: true}, // Blood of Amber
+	{ID: 33143, Keep: true}, // Stone of Blades
+	{ID: 33144, Keep: true}, // Facet of Eternity
+	{ID: 33504, Keep: true}, // Libram of Divine Purpose
+	{ID: 33506, Keep: true}, // Skycall Totem
+	{ID: 33507, Keep: true}, // Stonebreaker's Totem
+	{ID: 33510, Keep: true}, // Unseen moon idol
+	{ID: 33829, Keep: true}, // Hex Shrunken Head
+	{ID: 33831, Keep: true}, // Berserkers Call
+	{ID: 34472, Keep: true}, // Shard of Contempt
+	{ID: 34473, Keep: true}, // Commendation of Kael'thas
+	{ID: 37574, Keep: true}, // Libram of Furious Blows
+	{ID: 38072, Keep: true}, // Thunder Capacitor
+	{ID: 38212, Keep: true}, // Death Knight's Anguish
+	{ID: 38287, Keep: true}, // Empty Mug of Direbrew
+	{ID: 38289, Keep: true}, // Coren's Lucky Coin
+	{ID: 39208, Keep: true}, // Sigil of the Dark Rider
+
+	{ID: 6360, Keep: true}, // Steelscale Crushfish
+	{ID: 8345, Keep: true}, // Wolfshead Helm
+	{ID: 9449, Keep: true}, // Manual Crowd Pummeler
+
+	{ID: 27510, Keep: true}, // Tidefury Gauntlets
+	{ID: 27802, Keep: true}, // Tidefury Shoulderguards
+	{ID: 27909, Keep: true}, // Tidefury Kilt
+	{ID: 28231, Keep: true}, // Tidefury Chestpiece
+	{ID: 28349, Keep: true}, // Tidefury Helm
+
+	{ID: 15056, Keep: true}, // Stormshroud Armor
+	{ID: 15057, Keep: true}, // Stormshroud Pants
+	{ID: 15058, Keep: true}, // Stormshroud Shoulders
+	{ID: 21278, Keep: true}, // Stormshroud Gloves
+
+	// Grand Marshal / High Warlord Weapons
+	{ID: 18843, Keep: true},
+	{ID: 18844, Keep: true},
+	{ID: 18847, Keep: true},
+	{ID: 18848, Keep: true},
+
+	{ID: 41752, Keep: true}, // Brunnhildar Axe
+
+	// Undead Slaying Sets
+	// Plate
+	{ID: 43068, Keep: true},
+	{ID: 43069, Keep: true},
+	{ID: 43070, Keep: true},
+	{ID: 43071, Keep: true},
+	// Cloth
+	{ID: 43072, Keep: true},
+	{ID: 43073, Keep: true},
+	{ID: 43074, Keep: true},
+	{ID: 43075, Keep: true},
+	// Mail
+	{ID: 43076, Keep: true},
+	{ID: 43077, Keep: true},
+	{ID: 43078, Keep: true},
+	{ID: 43079, Keep: true},
+	//Leather
+	{ID: 43080, Keep: true},
+	{ID: 43081, Keep: true},
+	{ID: 43082, Keep: true},
+	{ID: 43083, Keep: true},
+
 	// Filter out these items
 	{ID: 17782, Filter: true}, // talisman of the binding shard
 	{ID: 17783, Filter: true}, // talisman of the binding fragment
@@ -378,4 +433,27 @@ var ItemDeclarationOverrides = []ItemDeclaration{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
+}
+
+// If any of these match the item name, don't include it.
+var denyListNameRegexes = []*regexp.Regexp{
+	regexp.MustCompile(`PH\]`),
+	regexp.MustCompile(`TEST`),
+	regexp.MustCompile(`Test`),
+	regexp.MustCompile(`Bracer 3`),
+	regexp.MustCompile(`Bracer 2`),
+	regexp.MustCompile(`Bracer 1`),
+	regexp.MustCompile(`Boots 3`),
+	regexp.MustCompile(`Boots 2`),
+	regexp.MustCompile(`Boots 1`),
+	regexp.MustCompile(`zOLD`),
+	regexp.MustCompile(`30 Epic`),
+	regexp.MustCompile(`Indalamar`),
+	regexp.MustCompile(`QR XXXX`),
+	regexp.MustCompile(`Deprecated: Keanna`),
+	regexp.MustCompile(`90 Epic`),
+	regexp.MustCompile(`66 Epic`),
+	regexp.MustCompile(`63 Blue`),
+	regexp.MustCompile(`90 Green`),
+	regexp.MustCompile(`63 Green`),
 }
