@@ -343,6 +343,10 @@ func (sim *Simulation) runOnce() {
 			sim.advance(pa.NextActionAt - sim.CurrentTime)
 		}
 		pa.consumed = true
+
+		if pa.cancelled {
+			continue // pa was cancelled during the advance.
+		}
 		pa.OnAction(sim)
 	}
 

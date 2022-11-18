@@ -180,7 +180,7 @@ func NewDot(config Dot) *Dot {
 	oldOnGain := dot.Aura.OnGain
 	oldOnExpire := dot.Aura.OnExpire
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
-		dot.lastTickTime = sim.CurrentTime // prevent tick by saying it was applied now.
+		dot.lastTickTime = -1 // prevent tick by saying it was applied now.
 		dot.TakeSnapshot(sim, false)
 
 		periodicOptions := dot.basePeriodicOptions()
