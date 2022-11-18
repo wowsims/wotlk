@@ -45,11 +45,11 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 		},
 
 		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
-		DamageMultiplier: 1 *
-			(1 + 0.01*float64(shaman.Talents.Concussion)) *
-			core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 4), 1.25, 1),
+		DamageMultiplier: 1 +
+			0.01*float64(shaman.Talents.Concussion) +
+			core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 4), 0.25, 0),
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+		ThreatMultiplier: shaman.spellThreatMultiplier(),
 	}
 }
 
@@ -88,9 +88,9 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 			SpellSchool: core.SpellSchoolFire,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			DamageMultiplier: config.DamageMultiplier *
-				(1.0 + float64(shaman.Talents.StormEarthAndFire)*0.2) *
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2), 1.2, 1),
+			DamageMultiplier: config.DamageMultiplier +
+				float64(shaman.Talents.StormEarthAndFire)*0.2 +
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2), 0.2, 0),
 			CritMultiplier:   config.CritMultiplier,
 			ThreatMultiplier: config.ThreatMultiplier,
 		}),
@@ -104,7 +104,6 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 				shaman.LavaBurst.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			},
 		}),
-		// TODO: is this bonus ticks or bonus time that results in extra ticks?
 		NumberOfTicks:       6 + core.TernaryInt32(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
@@ -119,15 +118,15 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		},
 	})
 
-	// Apply this talent after creating DoT spell so it doesn't get copied into periodic DamageMultiplier.
-	config.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
+	// Apply this talent after creating DoT spell, so it doesn't get copied into periodic DamageMultiplier.
+	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 	shaman.FlameShock = shaman.RegisterSpell(config)
 }
 
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	config := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
-	config.DamageMultiplier *= 1 + 0.1*float64(shaman.Talents.BoomingEchoes)
+	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 	config.ThreatMultiplier *= 2
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(812, 858) + 0.386*spell.SpellPower()

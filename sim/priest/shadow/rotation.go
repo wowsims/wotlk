@@ -715,7 +715,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		wait2 = core.MinDuration(dpidx, wait1)
 		wait3 = core.MinDuration(vtidx, swpidx)
 		wait = core.MinDuration(wait3, wait2)
-		spriest.WaitUntil(sim, sim.CurrentTime+wait)
+		if wait <= 0 {
+			spriest.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
+		} else {
+			spriest.WaitUntil(sim, sim.CurrentTime+wait)
+		}
 		return
 	}
 	if success := spell.Cast(sim, spriest.CurrentTarget); !success {

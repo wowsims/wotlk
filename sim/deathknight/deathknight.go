@@ -165,9 +165,8 @@ type Deathknight struct {
 	FrostFeverExtended  []int
 	BloodPlagueExtended []int
 
-	UnholyBlightSpell      *core.Spell
-	UnholyBlightDot        []*core.Dot
-	UnholyBlightTickDamage []float64
+	UnholyBlightSpell *core.Spell
+	UnholyBlightDots  []*core.Dot
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
@@ -225,7 +224,7 @@ func (dk *Deathknight) GetCharacter() *core.Character {
 	return &dk.Character
 }
 
-func (dk *Deathknight) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (dk *Deathknight) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (dk *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {

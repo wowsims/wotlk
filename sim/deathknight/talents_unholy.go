@@ -1,15 +1,11 @@
 package deathknight
 
 import (
-	//"github.com/wowsims/wotlk/sim/core/proto"
-
-	"strconv"
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
-	//"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"strconv"
+	"time"
 )
 
 func (dk *Deathknight) ApplyUnholyTalents() {
@@ -264,20 +260,17 @@ func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit,
 		return
 	}
 
-	unholyBlightDot := dk.UnholyBlightDot[target.Index]
+	dot := dk.UnholyBlightDots[target.Index]
 
-	newUnholyBlightDamage := deathCoilDamage * 0.10
-	if unholyBlightDot.IsActive() {
-		newUnholyBlightDamage += dk.UnholyBlightTickDamage[target.Index] * float64(10-unholyBlightDot.TickCount)
+	var outstandingDamage float64
+	if dot.IsActive() {
+		outstandingDamage = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
 	}
-	dk.UnholyBlightTickDamage[target.Index] = newUnholyBlightDamage / 10
 
-	// resets the length
-	if unholyBlightDot.IsActive() {
-		unholyBlightDot.Apply(sim)
-	} else {
-		dk.UnholyBlightSpell.Cast(sim, target)
-	}
+	newDamage := deathCoilDamage * 0.10
+	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
+
+	dk.UnholyBlightSpell.Cast(sim, target)
 }
 
 func (dk *Deathknight) applyUnholyBlight() {
@@ -292,24 +285,23 @@ func (dk *Deathknight) applyUnholyBlight() {
 	dk.UnholyBlightSpell = dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dk.UnholyBlightDot[dk.CurrentTarget.Index].Apply(sim)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.UnholyBlightDots[target.Index].ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 		},
 	})
 
-	dk.UnholyBlightDot = make([]*core.Dot, dk.Env.GetNumTargets())
-	dk.UnholyBlightTickDamage = make([]float64, dk.Env.GetNumTargets())
-	for _, encounterTarget := range dk.Env.Encounter.Targets {
-		target := &encounterTarget.Unit
+	dk.UnholyBlightDots = make([]*core.Dot, dk.Env.GetNumTargets())
+	for i := range dk.UnholyBlightDots {
+		target := dk.Env.GetTargetUnit(int32(i))
 
-		dk.UnholyBlightTickDamage[target.Index] = 0
-		dk.UnholyBlightDot[target.Index] = core.NewDot(core.Dot{
+		dk.UnholyBlightDots[target.Index] = core.NewDot(core.Dot{
 			Spell: dk.UnholyBlightSpell,
 			Aura: target.RegisterAura(core.Aura{
 				Label:    "UnholyBlight-" + strconv.Itoa(int(dk.Index)),
@@ -318,10 +310,8 @@ func (dk *Deathknight) applyUnholyBlight() {
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
 
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = dk.UnholyBlightTickDamage[target.Index] * glyphDmgBonus
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-			},
+			SnapshotAttackerMultiplier: glyphDmgBonus,
+
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},

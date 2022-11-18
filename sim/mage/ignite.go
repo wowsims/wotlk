@@ -23,7 +23,7 @@ func (mage *Mage) applyIgnite() {
 				return
 			}
 			if spell.SpellSchool.Matches(core.SpellSchoolFire) && result.Outcome.Matches(core.OutcomeCrit) {
-				mage.procIgnite(sim, result.Target, result.Damage)
+				mage.procIgnite(sim, result)
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -31,22 +31,27 @@ func (mage *Mage) applyIgnite() {
 				return
 			}
 			if spell == mage.LivingBombDot.Spell && result.Outcome.Matches(core.OutcomeCrit) {
-				mage.procIgnite(sim, result.Target, result.Damage)
+				mage.procIgnite(sim, result)
 			}
 		},
 	})
 
 	mage.Ignite = mage.RegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 12654},
-		SpellSchool:      core.SpellSchoolFire,
-		ProcMask:         core.ProcMaskEmpty,
-		Flags:            SpellFlagMage | core.SpellFlagIgnoreModifiers,
+		ActionID:    core.ActionID{SpellID: 12654},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       SpellFlagMage | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mage.IgniteDots[target.Index].ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+		},
 	})
 
 	mage.IgniteDots = make([]*core.Dot, mage.Env.GetNumTargets())
-	mage.IgniteDamageBuffers = make([]float64, mage.Env.GetNumTargets())
 	for i := range mage.IgniteDots {
 		mage.IgniteDots[i] = core.NewDot(core.Dot{
 			Spell: mage.Ignite,
@@ -58,24 +63,25 @@ func (mage *Mage) applyIgnite() {
 			NumberOfTicks: 2,
 			TickLength:    time.Second * 2,
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				mage.IgniteDamageBuffers[target.Index] -= dot.SnapshotBaseDamage
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 			SnapshotAttackerMultiplier: 1,
 		})
 	}
 }
 
-func (mage *Mage) procIgnite(sim *core.Simulation, target *core.Unit, spellDamage float64) {
-	dot := mage.IgniteDots[target.Index]
+func (mage *Mage) procIgnite(sim *core.Simulation, result *core.SpellResult) {
+	dot := mage.IgniteDots[result.Target.Index]
 
-	if !dot.IsActive() {
-		mage.IgniteDamageBuffers[target.Index] = 0
+	var outstandingDamage float64
+	if dot.IsActive() {
+		outstandingDamage = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
 	}
 
-	mage.IgniteDamageBuffers[target.Index] += spellDamage * float64(mage.Talents.Ignite) * 0.08
-	dot.SnapshotBaseDamage = mage.IgniteDamageBuffers[target.Index] / 2
-	dot.Apply(sim)
+	newDamage := result.Damage * float64(mage.Talents.Ignite) * 0.08
+
+	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
+	mage.Ignite.Cast(sim, result.Target)
 }
 
 func (mage *Mage) applyEmpoweredFire() {

@@ -22,7 +22,10 @@ import { GearListRequest, GearListResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
-import { SimSettings as SimSettingsProto } from './proto/ui.js';
+import {
+	DatabaseFilters,
+	SimSettings as SimSettingsProto,
+} from './proto/ui.js';
 
 import { EquippedItem } from './proto_utils/equipped_item.js';
 import { Gear } from './proto_utils/gear.js';
@@ -41,6 +44,7 @@ import { getEligibleItemSlots } from './proto_utils/utils.js';
 import { getEligibleEnchantSlots } from './proto_utils/utils.js';
 import { playerToSpec } from './proto_utils/utils.js';
 
+import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
 import { Raid } from './raid.js';
@@ -70,13 +74,12 @@ export class Sim {
 	private phase: number = OtherConstants.CURRENT_PHASE;
 	private faction: Faction = Faction.Alliance;
 	private fixedRngSeed: number = 0;
-	private show1hWeapons: boolean = true;
-	private show2hWeapons: boolean = true;
-	private showMatchingGems: boolean = true;
+	private filters: DatabaseFilters = Sim.defaultFilters();
 	private showDamageMetrics: boolean = true;
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
+	private language: string = '';
 
 	readonly raid: Raid;
 	readonly encounter: Encounter;
@@ -93,13 +96,12 @@ export class Sim {
 	readonly factionChangeEmitter = new TypedEvent<void>();
 	readonly fixedRngSeedChangeEmitter = new TypedEvent<void>();
 	readonly lastUsedRngSeedChangeEmitter = new TypedEvent<void>();
-	readonly show1hWeaponsChangeEmitter = new TypedEvent<void>();
-	readonly show2hWeaponsChangeEmitter = new TypedEvent<void>();
-	readonly showMatchingGemsChangeEmitter = new TypedEvent<void>();
+	readonly filtersChangeEmitter = new TypedEvent<void>();
 	readonly showDamageMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly languageChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
 	// Emits when any of the settings change (but not the raid / encounter).
@@ -143,13 +145,12 @@ export class Sim {
 			this.iterationsChangeEmitter,
 			this.phaseChangeEmitter,
 			this.fixedRngSeedChangeEmitter,
-			this.show1hWeaponsChangeEmitter,
-			this.show2hWeaponsChangeEmitter,
-			this.showMatchingGemsChangeEmitter,
+			this.filtersChangeEmitter,
 			this.showDamageMetricsChangeEmitter,
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
+			this.languageChangeEmitter,
 		]);
 
 		this.changeEmitter = TypedEvent.onAny([
@@ -409,35 +410,18 @@ export class Sim {
 		return this.lastUsedRngSeed;
 	}
 
-
-	getShow1hWeapons(): boolean {
-		return this.show1hWeapons;
+	getFilters(): DatabaseFilters {
+		// Make a defensive copy
+		return DatabaseFilters.clone(this.filters);
 	}
-	setShow1hWeapons(eventID: EventID, newShow1hWeapons: boolean) {
-		if (newShow1hWeapons != this.show1hWeapons) {
-			this.show1hWeapons = newShow1hWeapons;
-			this.show1hWeaponsChangeEmitter.emit(eventID);
+	setFilters(eventID: EventID, newFilters: DatabaseFilters) {
+		if (DatabaseFilters.equals(newFilters, this.filters)) {
+			return;
 		}
-	}
 
-	getShow2hWeapons(): boolean {
-		return this.show2hWeapons;
-	}
-	setShow2hWeapons(eventID: EventID, newShow2hWeapons: boolean) {
-		if (newShow2hWeapons != this.show2hWeapons) {
-			this.show2hWeapons = newShow2hWeapons;
-			this.show2hWeaponsChangeEmitter.emit(eventID);
-		}
-	}
-
-	getShowMatchingGems(): boolean {
-		return this.showMatchingGems;
-	}
-	setShowMatchingGems(eventID: EventID, newShowMatchingGems: boolean) {
-		if (newShowMatchingGems != this.showMatchingGems) {
-			this.showMatchingGems = newShowMatchingGems;
-			this.showMatchingGemsChangeEmitter.emit(eventID);
-		}
+		// Make a defensive copy
+		this.filters = DatabaseFilters.clone(newFilters);
+		this.filtersChangeEmitter.emit(eventID);
 	}
 
 	getShowDamageMetrics(): boolean {
@@ -477,6 +461,18 @@ export class Sim {
 		if (newShowExperimental != this.showExperimental) {
 			this.showExperimental = newShowExperimental;
 			this.showExperimentalChangeEmitter.emit(eventID);
+		}
+	}
+
+	getLanguage(): string {
+		return this.language;
+	}
+	setLanguage(eventID: EventID, newLanguage: string) {
+		newLanguage = newLanguage || getBrowserLanguageCode();
+		if (newLanguage != this.language) {
+			this.language = newLanguage;
+			setLanguageCode(this.language);
+			this.languageChangeEmitter.emit(eventID);
 		}
 	}
 
@@ -543,7 +539,9 @@ export class Sim {
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
+			language: this.getLanguage(),
 			faction: this.getFaction(),
+			filters: this.getFilters(),
 		});
 	}
 
@@ -556,7 +554,9 @@ export class Sim {
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
+			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
+			this.setFilters(eventID, proto.filters || Sim.defaultFilters());
 		});
 	}
 
@@ -568,7 +568,16 @@ export class Sim {
 			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
 			showHealingMetrics: isHealingSim,
+			language: this.getLanguage(), // Don't change language.
+			filters: Sim.defaultFilters(),
 		}));
+	}
+
+	static defaultFilters(): DatabaseFilters {
+		return DatabaseFilters.create({
+			oneHandedWeapons: true,
+			twoHandedWeapons: true,
+		});
 	}
 }
 

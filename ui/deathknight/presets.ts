@@ -113,6 +113,8 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	holdErwArmy: false,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
 	startingPresence: Deathknight_Rotation_Presence.Unholy,
+	blPresence: Deathknight_Rotation_Presence.Blood,
+	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 });

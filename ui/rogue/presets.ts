@@ -54,7 +54,7 @@ export const DefaultRotation = RogueRotation.create({
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-  envenomEnergyThreshold: 60,
+	envenomEnergyThreshold: 60,
 });
 
 export const DefaultOptions = RogueOptions.create({

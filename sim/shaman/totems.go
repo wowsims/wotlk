@@ -92,7 +92,7 @@ func (shaman *Shaman) registerTremorTotemSpell() {
 	shaman.TremorTotem = shaman.RegisterSpell(config)
 }
 
-func (shaman *Shaman) NextTotemAt(sim *core.Simulation) time.Duration {
+func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
 	nextTotemAt := core.MinDuration(
 		shaman.NextTotemDrops[0],
 		core.MinDuration(
