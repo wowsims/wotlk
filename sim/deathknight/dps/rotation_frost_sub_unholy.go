@@ -7,6 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+// frosst's opener
 func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
@@ -16,24 +17,26 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
+		NewAction(dk.RotationActionCallback_Pesti).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_FS).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
+		NewAction(dk.RotationActionCallback_Pesti).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
 }
 
+//original opener
 //func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 //	dk.setupUnbreakableArmorCooldowns()
 //
@@ -117,7 +120,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *c
 			NewAction(dk.RotationActionCallback_UA_Frost).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
+			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence2)
 	} else {
 		s.Advance()
 	}
@@ -129,20 +132,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check2(sim *c
 		s.Clear().
 			NewAction(dk.RotationActionCallback_UA_Frost).
 			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
-	} else {
-		s.Advance()
-	}
-	return sim.CurrentTime
-}
-
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.UnbreakableArmor.CanCast(sim) && dk.BloodTap.CanCast(sim) {
-		s.Clear().
-			NewAction(dk.RotationActionCallback_BS).
-			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_UA_Frost).
-			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence2)
 	} else {
 		s.Advance()
@@ -150,14 +139,33 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *c
 	return sim.CurrentTime
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if (dk.UnbreakableArmor.TimeToReady(sim) < 2500*time.Millisecond+sim.CurrentTime) && (dk.BloodTap.TimeToReady(sim) < 2500*time.Millisecond+sim.CurrentTime) {
+		s.Clear().
+			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_UA_Frost).
+			NewAction(dk.RotationActionCallback_BS).
+			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
+	} else {
+		s.Advance()
+	}
+	return sim.CurrentTime
+}
+
+//func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+//	if sim.timeto
+//	s.Clear().
+//		New
+//}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
-		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_FS).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check1).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence2)
 	return sim.CurrentTime
 }
@@ -168,9 +176,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check1).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check2).
+		//NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight).
+		NewAction(dk.RotationActionCallback_Pesti).
+		//NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
+		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
 	return sim.CurrentTime
 }
@@ -221,8 +230,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Dump(sim *cor
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
-
-		spell := dk.RegularPrioPickSpell(sim, target, obAt)
+		delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
+		spell := dk.RegularPrioPickSpell(sim, target, obAt+delayAmount)
 		if spell != nil {
 			casted = spell.Cast(sim, target)
 		} else {
