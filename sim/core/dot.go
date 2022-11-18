@@ -73,9 +73,6 @@ func (dot *Dot) Rollover(sim *Simulation) {
 }
 
 func (dot *Dot) Apply(sim *Simulation) {
-	if dot.tickAction != nil {
-		dot.tickAction.NextActionAt = -1 // prevent tickAction.CleanUp() from adding an extra tick
-	}
 	dot.Cancel(sim)
 	dot.TickCount = 0
 	dot.RecomputeAuraDuration()
@@ -183,7 +180,7 @@ func NewDot(config Dot) *Dot {
 	oldOnGain := dot.Aura.OnGain
 	oldOnExpire := dot.Aura.OnExpire
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
-		dot.lastTickTime = -1 // reset last tick time.
+		dot.lastTickTime = sim.CurrentTime // prevent tick by saying it was applied now.
 		dot.TakeSnapshot(sim, false)
 
 		periodicOptions := dot.basePeriodicOptions()
