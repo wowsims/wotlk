@@ -1147,18 +1147,26 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 
 	var explosives []*Spell
 
+	var sapper *Spell
 	if consumes.ThermalSapper {
-		explosives = append(explosives, character.newThermalSapperSpell(sharedTimer))
-	}
-	if consumes.ExplosiveDecoy {
-		explosives = append(explosives, character.newExplosiveDecoySpell(sharedTimer))
+		sapper = character.newThermalSapperSpell(sharedTimer)
+		explosives = append(explosives, sapper)
 	}
 
+	var decoy *Spell
+	if consumes.ExplosiveDecoy {
+		decoy = character.newExplosiveDecoySpell(sharedTimer)
+		explosives = append(explosives, decoy)
+	}
+
+	var filler *Spell
 	switch consumes.FillerExplosive {
 	case proto.Explosive_ExplosiveSaroniteBomb:
-		explosives = append(explosives, character.newSaroniteBombSpell(sharedTimer))
+		filler = character.newSaroniteBombSpell(sharedTimer)
+		explosives = append(explosives, filler)
 	case proto.Explosive_ExplosiveCobaltFragBomb:
-		explosives = append(explosives, character.newCobaltFragBombSpell(sharedTimer))
+		filler = character.newCobaltFragBombSpell(sharedTimer)
+		explosives = append(explosives, filler)
 	}
 
 	spell := character.RegisterSpell(SpellConfig{
@@ -1173,11 +1181,14 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 		},
 
 		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
-			for _, explosive := range explosives {
-				if explosive.IsReady(sim) {
-					explosive.Cast(sim, target)
-					break
-				}
+			if sapper != nil && sapper.IsReady(sim) {
+				sapper.Cast(sim, target)
+			} else if decoy != nil && decoy.IsReady(sim) && (sim.GetRemainingDuration() < time.Minute*2 || filler == nil) {
+				// Decoy puts other explosives on 2m CD, so only use if there won't be enough
+				// time to use another explosive OR there is no filler explosive.
+				decoy.Cast(sim, target)
+			} else if filler != nil && filler.IsReady(sim) {
+				filler.Cast(sim, target)
 			}
 
 			nextExplosiveAt := sim.CurrentTime + time.Minute*5
@@ -1196,6 +1207,8 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 
 // Creates a spell object for the common explosive case.
 func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, minSelfDamage float64, maxSelfDamage float64) SpellConfig {
+	dealSelfDamage := actionID.SameAction(ThermalSapperActionID)
+
 	return SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: school,
@@ -1205,7 +1218,7 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 			CD: cooldown,
 			SharedCD: Cooldown{
 				Timer:    sharedTimer,
-				Duration: time.Minute,
+				Duration: TernaryDuration(actionID.SameAction(ExplosiveDecoyActionID), time.Minute*2, time.Minute),
 			},
 		},
 
@@ -1216,11 +1229,15 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			// TODO: AOE Cap
 			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, sim.Roll(minDamage, maxDamage), spell.OutcomeMagicHitAndCrit)
+				baseDamage := sim.Roll(minDamage, maxDamage) * sim.Encounter.AOECapMultiplier()
+				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
-			// TODO: Deal self-damage
+
+			if dealSelfDamage {
+				baseDamage := sim.Roll(minDamage, maxDamage)
+				spell.CalcAndDealDamage(sim, &character.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+			}
 		},
 	}
 }
