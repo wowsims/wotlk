@@ -73,6 +73,9 @@ func (dot *Dot) Rollover(sim *Simulation) {
 }
 
 func (dot *Dot) Apply(sim *Simulation) {
+	if dot.tickAction != nil {
+		dot.tickAction.NextActionAt = -1 // prevent tickAction.CleanUp() from adding an extra tick
+	}
 	dot.Cancel(sim)
 	dot.TickCount = 0
 	dot.RecomputeAuraDuration()
