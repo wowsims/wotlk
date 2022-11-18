@@ -675,8 +675,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 5822.32851
-  tps: 5923.22995
+  dps: 5844.7608
+  tps: 5945.18218
  }
 }
 dps_results: {

@@ -9,13 +9,14 @@ import (
 )
 
 type Encounter struct {
-	Duration             time.Duration
-	DurationVariation    time.Duration
-	executePhase20Begins time.Duration
-	executePhase25Begins time.Duration
-	executePhase35Begins time.Duration
-	Targets              []*Target
-	TargetUnits          []*Unit
+	Duration          time.Duration
+	DurationVariation time.Duration
+	Targets           []*Target
+	TargetUnits       []*Unit
+
+	ExecuteProportion_20 float64
+	ExecuteProportion_25 float64
+	ExecuteProportion_35 float64
 
 	EndFightAtHealth float64
 	// DamgeTaken is used to track health fights instead of duration fights.
@@ -44,9 +45,9 @@ func NewEncounter(options *proto.Encounter) Encounter {
 	encounter := Encounter{
 		Duration:             DurationFromSeconds(options.Duration),
 		DurationVariation:    DurationFromSeconds(options.DurationVariation),
-		executePhase20Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_20)),
-		executePhase25Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_25)),
-		executePhase35Begins: DurationFromSeconds(options.Duration * (1 - options.ExecuteProportion_35)),
+		ExecuteProportion_20: MaxFloat(options.ExecuteProportion_20, 0),
+		ExecuteProportion_25: MaxFloat(options.ExecuteProportion_25, 0),
+		ExecuteProportion_35: MaxFloat(options.ExecuteProportion_35, 0),
 		Targets:              []*Target{},
 	}
 	// If UseHealth is set, we use the sum of targets health.
