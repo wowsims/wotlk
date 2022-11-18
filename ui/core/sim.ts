@@ -123,13 +123,7 @@ export class Sim {
 	private modifyRaidProto: ((raidProto: RaidProto) => void) = () => { };
 
 	constructor() {
-		if (/iPad|iPhone|iPod/.test(navigator.userAgent || navigator.vendor)) {
-			// Start with a single worker on iOS.
-			// This is a temporary fix to prevent jetsam from reaping MobileSafari/com.apple.WebKit.WebContent processes on low memory iOS devices.
-			this.workerPool = new WorkerPool(1);
-		} else {
-			this.workerPool = new WorkerPool(3);
-		}
+		this.workerPool = new WorkerPool(1);
 
 		this._initPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
 			result.items.forEach(item => this.items[item.id] = item);
