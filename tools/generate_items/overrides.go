@@ -7,7 +7,7 @@ import (
 )
 
 // Allows manual overriding for Gem fields in case WowHead is wrong.
-var GemDeclarationOverrides = []GemDeclaration{
+var GemOverrideOverrides = []GemOverride{
 	{ID: 33131, Stats: Stats{proto.Stat_StatAttackPower: 32, proto.Stat_StatRangedAttackPower: 32}},
 
 	// pvp non-unique gems not in game currently.
@@ -21,7 +21,7 @@ var GemDeclarationOverrides = []GemDeclaration{
 }
 
 // Allows manual overriding for Item fields in case WowHead is wrong.
-var ItemDeclarationOverrides = []ItemDeclaration{
+var ItemOverrideOverrides = []ItemOverride{
 	{ /** Destruction Holo-gogs */ ID: 32494, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
 	{ /** Gadgetstorm Goggles */ ID: 32476, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
 	{ /** Magnified Moon Specs */ ID: 32480, ClassAllowlist: []proto.Class{proto.Class_ClassDruid}},

@@ -12,84 +12,84 @@ import (
 	"strings"
 )
 
-func getGemDeclarations() []GemDeclaration {
+func getGemOverrides() []GemOverride {
 	gemsData := readCsvFile("./assets/item_data/all_gem_ids.csv")
 
 	// Ignore first line
 	gemsData = gemsData[1:]
 
-	gemDeclarations := make([]GemDeclaration, 0, len(gemsData))
+	gemOverrides := make([]GemOverride, 0, len(gemsData))
 	for _, gemsDataRow := range gemsData {
 		gemID, err := strconv.Atoi(gemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid gem ID: " + gemsDataRow[0])
 		}
-		declaration := GemDeclaration{
+		declaration := GemOverride{
 			ID: gemID,
 		}
 
-		for _, override := range GemDeclarationOverrides {
+		for _, override := range GemOverrideOverrides {
 			if override.ID == gemID {
 				declaration = override
 				break
 			}
 		}
 
-		gemDeclarations = append(gemDeclarations, declaration)
+		gemOverrides = append(gemOverrides, declaration)
 	}
 
 	// Add any declarations that were missing from the csv file.
-	for _, overrideGemDeclaration := range GemDeclarationOverrides {
+	for _, overrideGemOverride := range GemOverrideOverrides {
 		found := false
-		for _, gemDecl := range gemDeclarations {
-			if gemDecl.ID == overrideGemDeclaration.ID {
+		for _, gemDecl := range gemOverrides {
+			if gemDecl.ID == overrideGemOverride.ID {
 				found = true
 				break
 			}
 		}
 		if !found {
-			gemDeclarations = append(gemDeclarations, overrideGemDeclaration)
+			gemOverrides = append(gemOverrides, overrideGemOverride)
 		}
 	}
 
-	return gemDeclarations
+	return gemOverrides
 }
 
-func getItemDeclarations() []ItemDeclaration {
+func getItemOverrides() []ItemOverride {
 	itemsData := readCsvFile("./assets/item_data/all_item_ids.csv")
 
 	// Ignore first line
 	itemsData = itemsData[1:]
 
 	// Create an empty declaration (just the ID) for all the items.
-	itemDeclarations := make([]ItemDeclaration, 0, len(itemsData))
+	itemOverrides := make([]ItemOverride, 0, len(itemsData))
 	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid item ID: " + itemsDataRow[0])
 		}
 
-		itemDeclarations = append(itemDeclarations, ItemDeclaration{
+		itemOverrides = append(itemOverrides, ItemOverride{
 			ID: itemID,
 		})
 	}
 
 	// Apply declarations overrides.
-	for _, overrideItemDeclaration := range ItemDeclarationOverrides {
+	for _, overrideItemOverride := range ItemOverrideOverrides {
 		found := false
-		for i, itemDecl := range itemDeclarations {
-			if itemDecl.ID == overrideItemDeclaration.ID {
+		for i, itemDecl := range itemOverrides {
+			if itemDecl.ID == overrideItemOverride.ID {
 				found = true
-				itemDeclarations[i] = overrideItemDeclaration
+				itemOverrides[i] = overrideItemOverride
 				break
 			}
 		}
 		if !found {
-			itemDeclarations = append(itemDeclarations, overrideItemDeclaration)
+			itemOverrides = append(itemOverrides, overrideItemOverride)
 		}
 	}
 
-	return itemDeclarations
+	return itemOverrides
 }
 
 // Returns the prefetched list of all wowhead tooltips.

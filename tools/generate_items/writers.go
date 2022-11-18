@@ -69,7 +69,7 @@ var Gems = []Gem{
 `)
 
 	for _, gemData := range gemsData {
-		file.WriteString(fmt.Sprintf("\t%s,\n", gemToGoString(gemData.Declaration, gemData.Response)))
+		file.WriteString(fmt.Sprintf("\t%s,\n", gemToGoString(gemData.Override, gemData.Response)))
 	}
 
 	file.WriteString("}\n")
@@ -86,10 +86,10 @@ func writeDatabaseFile(db *WowDatabase) {
 
 	var tempItems []tempItemIcon
 	for _, gemData := range db.gems {
-		tempItems = append(tempItems, tempItemIcon{ID: gemData.Declaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
+		tempItems = append(tempItems, tempItemIcon{ID: gemData.Override.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
 	}
 	for _, itemData := range db.items {
-		tempItems = append(tempItems, tempItemIcon{ID: itemData.Declaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
+		tempItems = append(tempItems, tempItemIcon{ID: itemData.Override.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
 	}
 
 	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
@@ -109,20 +109,20 @@ func writeDatabaseFile(db *WowDatabase) {
 	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
-func gemToGoString(gemDeclaration GemDeclaration, gemResponse ItemResponse) string {
+func gemToGoString(gemOverride GemOverride, gemResponse ItemResponse) string {
 	gemStr := "{"
 
 	gemStr += fmt.Sprintf("Name:\"%s\", ", gemResponse.GetName())
-	gemStr += fmt.Sprintf("ID:%d, ", gemDeclaration.ID)
+	gemStr += fmt.Sprintf("ID:%d, ", gemOverride.ID)
 
-	phase := gemDeclaration.Phase
+	phase := gemOverride.Phase
 	if phase == 0 {
 		phase = gemResponse.GetPhase()
 	}
 	gemStr += fmt.Sprintf("Phase:%d, ", phase)
 	gemStr += fmt.Sprintf("Quality:proto.ItemQuality_%s, ", proto.ItemQuality(gemResponse.GetQuality()).String())
 	gemStr += fmt.Sprintf("Color:proto.GemColor_%s, ", gemResponse.GetSocketColor().String())
-	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemDeclaration.Stats))
+	gemStr += fmt.Sprintf("Stats: %s, ", statsToGoString(gemResponse.GetGemStats(), gemOverride.Stats))
 
 	if gemResponse.GetUnique() {
 		gemStr += "Unique:true, "
@@ -141,11 +141,11 @@ func itemToGoString(itemData ItemData) string {
 	itemStr := "{"
 
 	itemStr += fmt.Sprintf("Name:\"%s\", ", strings.ReplaceAll(itemData.Response.GetName(), "\"", "\\\""))
-	itemStr += fmt.Sprintf("ID:%d, ", itemData.Declaration.ID)
+	itemStr += fmt.Sprintf("ID:%d, ", itemData.Override.ID)
 
 	classAllowlist := itemData.Response.GetClassAllowlist()
-	if len(itemData.Declaration.ClassAllowlist) > 0 {
-		classAllowlist = itemData.Declaration.ClassAllowlist
+	if len(itemData.Override.ClassAllowlist) > 0 {
+		classAllowlist = itemData.Override.ClassAllowlist
 	}
 	if len(classAllowlist) > 0 {
 		itemStr += "ClassAllowlist: []proto.Class{"
@@ -167,8 +167,8 @@ func itemToGoString(itemData ItemData) string {
 		itemStr += fmt.Sprintf("WeaponType:proto.WeaponType_%s, ", weaponType.String())
 
 		handType := itemData.Response.GetHandType()
-		if itemData.Declaration.HandType != proto.HandType_HandTypeUnknown {
-			handType = itemData.Declaration.HandType
+		if itemData.Override.HandType != proto.HandType_HandTypeUnknown {
+			handType = itemData.Override.HandType
 		}
 		if handType == proto.HandType_HandTypeUnknown {
 			panic("Unknown hand type for item: " + fmt.Sprintf("%#v", itemData.Response))
@@ -191,7 +191,7 @@ func itemToGoString(itemData ItemData) string {
 		itemStr += fmt.Sprintf("SwingSpeed: %0.2f, ", speed)
 	}
 
-	phase := itemData.Declaration.Phase
+	phase := itemData.Override.Phase
 	if phase == 0 {
 		phase = itemData.Response.GetPhase()
 	}
@@ -208,7 +208,7 @@ func itemToGoString(itemData ItemData) string {
 		itemStr += fmt.Sprintf("QualityModifier:%0.03f, ", itemData.QualityModifier)
 	}
 
-	itemStr += fmt.Sprintf("Stats: %s", statsToGoString(itemData.Response.GetStats(), itemData.Declaration.Stats))
+	itemStr += fmt.Sprintf("Stats: %s", statsToGoString(itemData.Response.GetStats(), itemData.Override.Stats))
 
 	gemSockets := itemData.Response.GetGemSockets()
 	if len(gemSockets) > 0 {

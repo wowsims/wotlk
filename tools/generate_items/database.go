@@ -7,7 +7,8 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-type ItemDeclaration struct {
+// For overriding item data.
+type ItemOverride struct {
 	ID int
 
 	// Override fields, in case wowhead is wrong.
@@ -20,13 +21,14 @@ type ItemDeclaration struct {
 }
 
 type ItemData struct {
-	Declaration ItemDeclaration
-	Response    ItemResponse
+	Response ItemResponse
+	Override ItemOverride
 
 	QualityModifier float64
 }
 
-type GemDeclaration struct {
+// For overriding gem data.
+type GemOverride struct {
 	ID int
 
 	// Override fields, in case wowhead is wrong.
@@ -37,8 +39,8 @@ type GemDeclaration struct {
 }
 
 type GemData struct {
-	Declaration GemDeclaration
-	Response    ItemResponse
+	Response ItemResponse
+	Override GemOverride
 }
 
 type WowDatabase struct {
@@ -46,13 +48,13 @@ type WowDatabase struct {
 	gems  []GemData
 }
 
-func NewWowDatabase(itemDeclarations []ItemDeclaration, gemDeclarations []GemDeclaration, tooltipsDB map[int]WowheadItemResponse) *WowDatabase {
+func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, tooltipsDB map[int]WowheadItemResponse) *WowDatabase {
 	db := &WowDatabase{}
 
-	for _, itemDeclaration := range itemDeclarations {
+	for _, itemOverride := range itemOverrides {
 		itemData := ItemData{
-			Declaration: itemDeclaration,
-			Response:    tooltipsDB[itemDeclaration.ID],
+			Override: itemOverride,
+			Response: tooltipsDB[itemOverride.ID],
 		}
 		if itemData.Response.GetName() == "" {
 			continue
@@ -60,10 +62,10 @@ func NewWowDatabase(itemDeclarations []ItemDeclaration, gemDeclarations []GemDec
 		db.items = append(db.items, itemData)
 	}
 
-	for _, gemDeclaration := range gemDeclarations {
+	for _, gemOverride := range gemOverrides {
 		gemData := GemData{
-			Declaration: gemDeclaration,
-			Response:    tooltipsDB[gemDeclaration.ID],
+			Override: gemOverride,
+			Response: tooltipsDB[gemOverride.ID],
 		}
 		if gemData.Response.GetName() == "" {
 			continue
@@ -73,14 +75,14 @@ func NewWowDatabase(itemDeclarations []ItemDeclaration, gemDeclarations []GemDec
 
 	slices.SortStableFunc(db.items, func(i1, i2 ItemData) bool {
 		if i1.Response.GetName() == i2.Response.GetName() {
-			return i1.Declaration.ID < i2.Declaration.ID
+			return i1.Override.ID < i2.Override.ID
 		}
 		return i1.Response.GetName() < i2.Response.GetName()
 	})
 
 	slices.SortStableFunc(db.gems, func(g1, g2 GemData) bool {
 		if g1.Response.GetName() == g2.Response.GetName() {
-			return g1.Declaration.ID < g2.Declaration.ID
+			return g1.Override.ID < g2.Override.ID
 		}
 		return g1.Response.GetName() < g2.Response.GetName()
 	})
@@ -92,7 +94,7 @@ func NewWowDatabase(itemDeclarations []ItemDeclaration, gemDeclarations []GemDec
 func (db *WowDatabase) getSimmableItems() []ItemData {
 	var included []ItemData
 	for _, itemData := range db.items {
-		if itemData.Declaration.Filter {
+		if itemData.Override.Filter {
 			continue
 		}
 
@@ -111,7 +113,7 @@ func (db *WowDatabase) getSimmableItems() []ItemData {
 			continue
 		}
 
-		if itemData.Declaration.Keep {
+		if itemData.Override.Keep {
 			included = append(included, itemData)
 			continue
 		}
@@ -150,10 +152,10 @@ func (db *WowDatabase) getSimmableGems() []GemData {
 	var included []GemData
 
 	for _, gemData := range db.gems {
-		if gemData.Declaration.Filter {
+		if gemData.Override.Filter {
 			continue
 		}
-		// allow := allowList[gemData.Declaration.ID]
+		// allow := allowList[gemData.Override.ID]
 		allow := false
 		if !allow {
 			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {

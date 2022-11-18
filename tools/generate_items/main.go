@@ -12,7 +12,7 @@ func main() {
 		panic("outDir flag is required!")
 	}
 
-	db := NewWowDatabase(getItemDeclarations(), getGemDeclarations(), getWowheadTooltipsDB())
+	db := NewWowDatabase(getItemOverrides(), getGemOverrides(), getWowheadTooltipsDB())
 
 	writeItemFile(*outDir, db.getSimmableItems())
 	writeGemFile(*outDir, db.getSimmableGems())
