@@ -174,12 +174,20 @@ func main() {
 	writeItemFile(*outDir, itemsData)
 
 	// Write out the all_items_db.json so as we adjust the items we adjust it too.
+	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
 	itemDB := &strings.Builder{}
-	v, err := json.Marshal(tempItems)
-	if err != nil {
-		log.Fatalf("failed to marshal: %s", err)
+	itemDB.WriteString("[\n")
+	for i, item := range tempItems {
+		itemJson, err := json.Marshal(item)
+		if err != nil {
+			log.Fatalf("failed to marshal: %s", err)
+		}
+		itemDB.WriteString(string(itemJson))
+		if i != len(tempItems)-1 {
+			itemDB.WriteString(",\n")
+		}
 	}
-	itemDB.Write(v)
+	itemDB.WriteString("]")
 	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
 
@@ -232,28 +240,26 @@ func getItemDeclarations() []ItemDeclaration {
 	// Ignore first line
 	itemsData = itemsData[1:]
 
+	// Create an empty declaration (just the ID) for all the items.
 	itemDeclarations := make([]ItemDeclaration, 0, len(itemsData))
 	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])
 		if err != nil {
 			log.Fatal("Invalid item ID: " + itemsDataRow[0])
 		}
-		declaration := ItemDeclaration{
-			ID: itemID,
-		}
-		if override, ok := ItemDeclarationOverrides[itemID]; ok {
-			declaration = override
-		}
 
-		itemDeclarations = append(itemDeclarations, declaration)
+		itemDeclarations = append(itemDeclarations, ItemDeclaration{
+			ID: itemID,
+		})
 	}
 
-	// Add any declarations that were missing from the csv file.
+	// Apply declarations overrides.
 	for _, overrideItemDeclaration := range ItemDeclarationOverrides {
 		found := false
-		for _, itemDecl := range itemDeclarations {
+		for i, itemDecl := range itemDeclarations {
 			if itemDecl.ID == overrideItemDeclaration.ID {
 				found = true
+				itemDeclarations[i] = overrideItemDeclaration
 				break
 			}
 		}
