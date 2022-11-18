@@ -116,6 +116,11 @@ export const BalanceDruidRotationConfig = {
 			labelTooltip: 'Rotation will try to keep Insect Swarm up without clipping',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
-
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'playerLatency',
+			label: 'Player latency',
+			labelTooltip: 'Time before the player reacts to an eclipse proc',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
 	],
 };
