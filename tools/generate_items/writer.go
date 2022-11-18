@@ -90,9 +90,6 @@ var Items = []Item{
 `)
 
 	for _, itemData := range itemsData {
-		if itemData.Response == nil {
-			continue
-		}
 		if itemData.Declaration.Filter {
 			continue
 		}

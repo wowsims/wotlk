@@ -27,14 +27,6 @@ func main() {
 
 	tooltipsDB := getWowheadTooltipsDB()
 
-	type tempItemIcon struct {
-		ID   int
-		Name string
-		Icon string
-	}
-
-	var tempItems []tempItemIcon
-
 	// Generate all item/gem ids from the tooltips db
 
 	// gems := &strings.Builder{}
@@ -95,7 +87,6 @@ func main() {
 	var itemsData []ItemData
 	if *db == "wowhead" {
 		gemDeclarations := getGemDeclarations()
-		gemsData = make([]GemData, 0, len(gemDeclarations))
 		for _, gemDeclaration := range gemDeclarations {
 			gemData := GemData{
 				Declaration: gemDeclaration,
@@ -106,12 +97,10 @@ func main() {
 			}
 			//log.Printf("\n\n%+v\n", gemData.Response)
 			gemsData = append(gemsData, gemData)
-			tempItems = append(tempItems, tempItemIcon{ID: gemDeclaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
 		}
 
 		itemDeclarations := getItemDeclarations()
 		// qualityModifiers := getItemQualityModifiers()
-		itemsData = make([]ItemData, 0, len(itemDeclarations))
 		for _, itemDeclaration := range itemDeclarations {
 			itemData := ItemData{
 				Declaration: itemDeclaration,
@@ -123,7 +112,6 @@ func main() {
 			}
 			//fmt.Printf("\n\n%+v\n", itemData.Response)
 			itemsData = append(itemsData, itemData)
-			tempItems = append(tempItems, tempItemIcon{ID: itemDeclaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
 		}
 	} else if *db == "wotlkdb" {
 		itemsData = make([]ItemData, 0, len(tooltipsDB))
@@ -148,11 +136,6 @@ func main() {
 	}
 
 	slices.SortStableFunc(gemsData, func(g1, g2 GemData) bool {
-		if g1.Response == nil {
-			return false
-		} else if g2.Response == nil {
-			return true
-		}
 		if g1.Response.GetName() == g2.Response.GetName() {
 			return g1.Declaration.ID < g2.Declaration.ID
 		}
@@ -161,11 +144,6 @@ func main() {
 	writeGemFile(*outDir, gemsData)
 
 	slices.SortStableFunc(itemsData, func(i1, i2 ItemData) bool {
-		if i1.Response == nil {
-			return false
-		} else if i2.Response == nil {
-			return true
-		}
 		if i1.Response.GetName() == i2.Response.GetName() {
 			return i1.Declaration.ID < i2.Declaration.ID
 		}
@@ -173,22 +151,7 @@ func main() {
 	})
 	writeItemFile(*outDir, itemsData)
 
-	// Write out the all_items_db.json so as we adjust the items we adjust it too.
-	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
-	itemDB := &strings.Builder{}
-	itemDB.WriteString("[\n")
-	for i, item := range tempItems {
-		itemJson, err := json.Marshal(item)
-		if err != nil {
-			log.Fatalf("failed to marshal: %s", err)
-		}
-		itemDB.WriteString(string(itemJson))
-		if i != len(tempItems)-1 {
-			itemDB.WriteString(",\n")
-		}
-	}
-	itemDB.WriteString("]")
-	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
+	writeDatabaseFile(gemsData, itemsData)
 }
 
 func getGemDeclarations() []GemDeclaration {
@@ -357,4 +320,36 @@ func readCsvFile(filePath string) [][]string {
 	}
 
 	return records
+}
+
+func writeDatabaseFile(gemsData []GemData, itemsData []ItemData) {
+	type tempItemIcon struct {
+		ID   int
+		Name string
+		Icon string
+	}
+
+	var tempItems []tempItemIcon
+	for _, gemData := range gemsData {
+		tempItems = append(tempItems, tempItemIcon{ID: gemData.Declaration.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
+	}
+	for _, itemData := range itemsData {
+		tempItems = append(tempItems, tempItemIcon{ID: itemData.Declaration.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
+	}
+
+	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
+	itemDB := &strings.Builder{}
+	itemDB.WriteString("[\n")
+	for i, item := range tempItems {
+		itemJson, err := json.Marshal(item)
+		if err != nil {
+			log.Fatalf("failed to marshal: %s", err)
+		}
+		itemDB.WriteString(string(itemJson))
+		if i != len(tempItems)-1 {
+			itemDB.WriteString(",\n")
+		}
+	}
+	itemDB.WriteString("]")
+	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
 }
