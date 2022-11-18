@@ -203,11 +203,6 @@ func itemToGoString(itemData ItemData) string {
 	}
 
 	itemStr += fmt.Sprintf("Ilvl:%d, ", itemData.Response.GetItemLevel())
-
-	if itemData.QualityModifier != 0 {
-		itemStr += fmt.Sprintf("QualityModifier:%0.03f, ", itemData.QualityModifier)
-	}
-
 	itemStr += fmt.Sprintf("Stats: %s", statsToGoString(itemData.Response.GetStats(), itemData.Override.Stats))
 
 	gemSockets := itemData.Response.GetGemSockets()

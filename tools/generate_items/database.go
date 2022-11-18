@@ -11,7 +11,6 @@ import (
 type ItemOverride struct {
 	ID int
 
-	// Override fields, in case wowhead is wrong.
 	Stats          Stats // Only non-zero values will override
 	ClassAllowlist []proto.Class
 	Phase          int
@@ -23,15 +22,12 @@ type ItemOverride struct {
 type ItemData struct {
 	Response ItemResponse
 	Override ItemOverride
-
-	QualityModifier float64
 }
 
 // For overriding gem data.
 type GemOverride struct {
 	ID int
 
-	// Override fields, in case wowhead is wrong.
 	Stats Stats // Only non-zero values will override
 	Phase int
 
