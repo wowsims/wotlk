@@ -54,6 +54,16 @@ type WowheadItemResponse struct {
 	Tooltip string `json:"tooltip"`
 }
 
+func WowheadItemResponseFromBytes(tooltipBytes []byte) WowheadItemResponse {
+	response := WowheadItemResponse{}
+	err := json.Unmarshal(tooltipBytes, &response)
+	if err != nil {
+		fmt.Printf("Failed to decode tooltipBytes: %s\n", string(tooltipBytes))
+		log.Fatal(err)
+	}
+	return response
+}
+
 func (item WowheadItemResponse) GetName() string {
 	return item.Name
 }
@@ -659,12 +669,10 @@ func (item WowheadItemResponse) GetItemSetName() string {
 	return withoutPvp
 }
 
-func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemResponse {
+func getWowheadItemResponse(itemID int, tooltipsDB map[int]WowheadItemResponse) WowheadItemResponse {
 	// If the db already has it, just return the db value.
-	var tooltipBytes []byte
-
-	if tooltipStr, ok := tooltipsDB[itemID]; ok {
-		tooltipBytes = []byte(tooltipStr)
+	if dbResponse, ok := tooltipsDB[itemID]; ok {
+		return dbResponse
 	} else {
 		fmt.Printf("Item DB missing ID: %d\n", itemID)
 		url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", itemID)
@@ -689,27 +697,18 @@ func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemRe
 		if err != nil {
 			log.Fatal(err)
 		}
-		tooltipBytes = resultBody
 		f, err := os.OpenFile("./assets/item_data/all_item_tooltips.csv", os.O_APPEND|os.O_WRONLY, 0666)
 		if err != nil {
 			log.Fatalf("failed to open file to write: %s", err)
 		}
-		if strings.Contains(string(tooltipBytes), "\"error\":") {
+		if strings.Contains(string(resultBody), "\"error\":") {
 			// fmt.Printf("Error in tooltip for %d: %s\n", i, bstr)
-			log.Fatalf("failed to fetch item: %d (%s)", itemID, string(tooltipBytes))
+			log.Fatalf("failed to fetch item: %d (%s)", itemID, string(resultBody))
 		}
-		f.WriteString(fmt.Sprintf("%d, %s, %s\n", itemID, url, tooltipBytes))
-	}
+		f.WriteString(fmt.Sprintf("%d, %s, %s\n", itemID, url, resultBody))
 
-	//fmt.Printf(string(tooltipStr))
-	itemResponse := WowheadItemResponse{}
-	err := json.Unmarshal(tooltipBytes, &itemResponse)
-	if err != nil {
-		fmt.Printf("Failed to decode tooltipBytes for item: %d\n", itemID)
-		log.Fatal(err)
+		return WowheadItemResponseFromBytes(resultBody)
 	}
-
-	return itemResponse
 }
 
 func (item WowheadItemResponse) IsHeroic() bool {
