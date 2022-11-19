@@ -1,9 +1,32 @@
+import { ArmorType } from '../proto/common.js';
 import { Class } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Race } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
+import { WeaponType } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
+
+export const armorTypeNames: Record<ArmorType, string> = {
+	[ArmorType.ArmorTypeUnknown]: 'Unknown',
+	[ArmorType.ArmorTypeCloth]: 'Cloth',
+	[ArmorType.ArmorTypeLeather]: 'Leather',
+	[ArmorType.ArmorTypeMail]: 'Mail',
+	[ArmorType.ArmorTypePlate]: 'Plate',
+};
+
+export const weaponTypeNames: Record<WeaponType, string> = {
+	[WeaponType.WeaponTypeUnknown]: 'Unknown',
+	[WeaponType.WeaponTypeAxe]: 'Axe',
+	[WeaponType.WeaponTypeDagger]: 'Dagger',
+	[WeaponType.WeaponTypeFist]: 'Fist',
+	[WeaponType.WeaponTypeMace]: 'Mace',
+	[WeaponType.WeaponTypeOffHand]: 'Misc',
+	[WeaponType.WeaponTypePolearm]: 'Polearm',
+	[WeaponType.WeaponTypeShield]: 'Shield',
+	[WeaponType.WeaponTypeStaff]: 'Staff',
+	[WeaponType.WeaponTypeSword]: 'Sword',
+};
 
 export const raceNames: Record<Race, string> = {
 	[Race.RaceUnknown]: 'None',

@@ -1353,7 +1353,7 @@ export function playerToSpec(player: Player): Spec {
 	throw new Error('Unable to parse spec from player proto: ' + JSON.stringify(Player.toJson(player), null, 2));
 }
 
-const classToMaxArmorType: Record<Class, ArmorType> = {
+export const classToMaxArmorType: Record<Class, ArmorType> = {
 	[Class.ClassUnknown]: ArmorType.ArmorTypeUnknown,
 	[Class.ClassDruid]: ArmorType.ArmorTypeLeather,
 	[Class.ClassHunter]: ArmorType.ArmorTypeMail,
@@ -1403,7 +1403,7 @@ interface EligibleWeaponType {
 	canUseTwoHand?: boolean,
 }
 
-const classToEligibleWeaponTypes: Record<Class, Array<EligibleWeaponType>> = {
+export const classToEligibleWeaponTypes: Record<Class, Array<EligibleWeaponType>> = {
 	[Class.ClassUnknown]: [],
 	[Class.ClassDruid]: [
 		{ weaponType: WeaponType.WeaponTypeDagger },
@@ -1660,6 +1660,9 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 		return false;
 
 	if ((enchant.enchantType == EnchantType.EnchantTypeShield) != (item.weaponType == WeaponType.WeaponTypeShield))
+		return false;
+
+	if (enchant.enchantType == EnchantType.EnchantTypeStaff && item.weaponType != WeaponType.WeaponTypeStaff)
 		return false;
 
 	if (item.weaponType == WeaponType.WeaponTypeOffHand)

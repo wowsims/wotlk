@@ -51,7 +51,8 @@ export const DefaultRotation = BalanceDruidRotation.create({
     isInsideEclipseThreshold: 15,
     mfInsideEclipseThreshold: 0,
     useSmartCooldowns : true,
-	maximizeIsUptime : true
+	maximizeIsUptime : true,
+	playerLatency : 200,
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({

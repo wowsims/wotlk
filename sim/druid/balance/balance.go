@@ -94,6 +94,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		moonkin.Rotation.MaximizeMfUptime = false
 		moonkin.Rotation.MaximizeIsUptime = true
 		moonkin.Rotation.MaintainFaerieFire = true
+		moonkin.Rotation.PlayerLatency = 200
 	}
 
 	if !moonkin.Rotation.UseMf {

@@ -166,7 +166,7 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 
 func (character *Character) GetPresimOptions(playerConfig *proto.Player) *PresimOptions {
 	healingModel := playerConfig.HealingModel
-	if healingModel == nil || healingModel.Hps != 0 {
+	if healingModel == nil || healingModel.Hps != 0 || healingModel.CadenceSeconds == 0 {
 		// If Hps is not 0, then we don't need to run the presim.
 		return nil
 	}

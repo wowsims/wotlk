@@ -7,6 +7,8 @@ import { FeralTankDruidSimUI } from './sim.js';
 
 const sim = new Sim();
 const player = new Player<Spec.SpecFeralTankDruid>(Spec.SpecFeralTankDruid, sim);
+player.enableHealing();
+
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
 const simUI = new FeralTankDruidSimUI(document.body, player);

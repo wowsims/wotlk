@@ -101,6 +101,7 @@ export const EnhancementShamanRotationConfig = {
 				values: [
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt},
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltWeave, text: "Weave" },
+					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltDelayedWeave, text: "Delay" },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff"  },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.Stormstrike },
 					{ actionId: ActionId.fromSpellId(49233), value: CustomRotationSpell.FlameShock },
@@ -174,11 +175,11 @@ export const EnhancementShamanRotationConfig = {
 
 					return true
 				}
-			}),
+			}),		
 			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
-				fieldName: 'weaveReactionTime',
-				label: 'Weaving Reaction Time',
-				labelTooltip: 'The Reaction time to gaining maelstrom stacks after a auto attack in milliseconds',
+				fieldName: 'autoWeaveDelay',
+				label: 'Weaving Delay After Auto Attack',
+				labelTooltip: 'The amount of time to wait after an auto attack before weaveing, in milliseconds',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
 					if (player.getRotation().rotationType == RotationType.Custom){
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltWeave) != undefined
@@ -192,6 +193,43 @@ export const EnhancementShamanRotationConfig = {
 					}
 
 					return true
+				},
+			}),InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+				fieldName: 'delayGcdWeave',
+				label: 'Delay LL to Weave',
+				labelTooltip: 'The amount of time to hold Lava Lash to weave in milliseconds. Setting to 0 will disable delaying',
+				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom){
+						return false
+					}
+
+					return player.getRotation().lightningboltWeave
+				},
+				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom){
+						return false
+					}
+
+					return true
+				},
+			}),
+			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+				fieldName: 'delayGcdWeave',
+				label: 'Delay Weave Time',
+				labelTooltip: 'The amount of time to hold a GCD to weave in milliseconds. Setting to 0 will disable delaying',
+				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom){
+						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltDelayedWeave) != undefined
+					}
+
+					return false
+				},
+				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom){
+						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltDelayedWeave) != undefined
+					}
+
+					return false
 				},
 			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({ 

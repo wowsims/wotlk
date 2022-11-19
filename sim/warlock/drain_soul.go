@@ -8,21 +8,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (warlock *Warlock) channelCheck(sim *core.Simulation, dot *core.Dot, maxTicks int32) *core.Spell {
-	if dot.IsActive() && dot.TickCount+1 < maxTicks {
-		return warlock.DrainSoulChannelling
-	} else {
-		return warlock.DrainSoul
-	}
-}
-
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	spellSchool := core.SpellSchoolShadow
 	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
 	baseCost := warlock.BaseMana * 0.14
-	channelTime := 3 * time.Second
-	epsilon := 1 * time.Millisecond
 
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -34,9 +24,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
+				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
+				GCD:  core.GCDDefault,
+				// ChannelTime: channelTime,
 			},
 		},
 
@@ -49,7 +39,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.DrainSoulDot.Apply(sim)
-				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
+				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt())
 			}
 			spell.DealOutcome(sim, result)
 		},
@@ -62,7 +52,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			ActionID: actionID,
 		}),
 
-		NumberOfTicks:       1,
+		NumberOfTicks:       5,
 		TickLength:          3 * time.Second,
 		AffectedByCastSpeed: true,
 
@@ -87,31 +77,12 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 					numActive++
 				}
 			}
-			dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier)
+			dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(4, numActive))*soulSiphonMultiplier)
 
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-		},
-	})
-
-	warlock.DrainSoulChannelling = warlock.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		ProcMask: core.ProcMaskEmpty,
-		Flags:    core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
-				CastTime:    0,
-			},
-		},
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			warlock.DrainSoulDot.Apply(sim) // TODO: do we want to just refresh and continue ticking with same snapshot or update snapshot?
-			warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt() + epsilon)
 		},
 	})
 }

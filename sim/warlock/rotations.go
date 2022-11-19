@@ -51,6 +51,10 @@ func (warlock *Warlock) corruptionTracker() float64 {
 }
 
 func (warlock *Warlock) defineRotation() {
+
+	warlock.initProcTrackers()
+	warlock.setupDSCooldowns()
+
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	secondaryDot := warlock.Rotation.SecondaryDot
@@ -148,7 +152,7 @@ func (warlock *Warlock) defineRotation() {
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		spellCastTime := warlock.ApplyCastSpeed(core.GCDDefault)
 		if sim.IsExecutePhase25() {
-			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)
+			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength) + time.Millisecond*1000
 		}
 		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
@@ -283,6 +287,7 @@ Function takes the Warlock character that's used to model the client behavior, a
 Might sound complicated, worry not, things will get better.
 */
 func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
+
 	var spell *core.Spell                      //the variable we'll be returning to the sim as our final decision
 	var filler *core.Spell                     //the filler spell we'll store, we will cast this whenever we have all our priorities in check
 	var target = warlock.CurrentTarget         //our current target
@@ -290,6 +295,87 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	curse := warlock.Rotation.Curse            // our curse of choice
 	dotLag := 10 * time.Millisecond            // the lag time for dots, a small value that allows us to gap two dots properly
 
+	if sim.IsExecutePhase25() {
+		warlock.SpellsRotation[2].Priority = 3 //UA
+		warlock.SpellsRotation[3].Priority = 2 //Haunt
+	}
+
+	hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
+
+	tickLength := warlock.DrainSoulDot.TickPeriod()
+	previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+	humanReactionTime := time.Millisecond * 150
+	nextTick := previousTickAt + tickLength + humanReactionTime
+
+	allCDs := []time.Duration{
+		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
+		core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-hauntcasttime),
+		core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
+	}
+
+	if warlock.DrainSoulDot.IsActive() {
+		if !warlock.GCD.IsReady(sim) {
+			return
+		}
+		// This means we are continuing to soul drain.
+		shouldClip := false
+		NumberOfPotentialClips1 := core.MinDuration(allCDs[0]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()), allCDs[1]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		NumberOfPotentialClips := core.MinDuration(NumberOfPotentialClips1, allCDs[2]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+
+		if sim.Log != nil {
+			warlock.Log(sim, "Number of Ticks until next clip [%d]", NumberOfPotentialClips)
+		}
+
+		// Look at all current +SP / +Haste and Dmg modifier procs from now until next haunt application and determine if the dot should be resnap shot for all falling off buff
+		warlock.DSProcCheck(sim, warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		Tracker := []float64{
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+		}
+		for i, cd := range warlock.procTrackers {
+			curAura := cd.aura
+			curExpire := cd.expiresAt.Seconds()
+
+			if cd.didActivate && cd.isActive && curExpire < float64(nextTick.Seconds()) {
+				Tracker[i] = curExpire
+
+				if sim.Log != nil {
+					warlock.Log(sim, "Aura Name: [%s]", curAura.Label)
+					warlock.Log(sim, "Expires At: [%d]", Tracker[i])
+				}
+			}
+		}
+
+		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
+			warlock.PseudoStats.DamageDealtMultiplier
+		newTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
+		newDrainSoulRolloverPower := newDmg / newTickSpeed
+
+		if allCDs[0]-warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)-humanReactionTime < time.Millisecond*1000 && sim.GetRemainingDuration().Seconds()-8 > 0 {
+			shouldClip = true
+		} else if allCDs[2].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 18 {
+			shouldClip = true
+		} else if allCDs[1].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 8 {
+			shouldClip = true
+		} else if newDrainSoulRolloverPower > warlock.DrainSoulRolloverPower {
+			shouldClip = true
+		} else if warlock.CorruptionDot.RemainingDuration(sim) < 2*warlock.DrainSoulDot.TickPeriod() {
+			shouldClip = true
+		}
+
+		if shouldClip && warlock.DrainSoulDot.TickCount != 0 {
+			warlock.resetProcTrackers()
+			warlock.DrainSoulDot.Cancel(sim)
+		} else {
+			warlock.resetProcTrackers()
+			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
+			return
+		}
+	}
 	// ------------------------------------------
 	// Data
 	// ------------------------------------------
@@ -440,7 +526,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	*/
 	if sim.IsExecutePhase25() && warlock.Talents.SoulSiphon > 0 {
 		// Drain Soul phase, Soul Siphon is an affliction talent, so if below %25, and you have siphon talented, sim assumes you are Affliction.
-		filler = warlock.channelCheck(sim, warlock.DrainSoulDot, 5) //This function checks if you are channeling DS or not. Returns continuing channeling or casting DS actions accordingly.
+		filler = warlock.DrainSoul
 	} else if warlock.DecimationAura.IsActive() { //Molten Core, buffs Incinerate and Soul Fire, however, since below %35 you will spam SF, you don't need to check Molten Core.
 		// Demo & Hybrid execute phase
 		filler = warlock.SoulFire
@@ -461,6 +547,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = RSI.Spell
 			currentSpellPrio = RSI.Priority
 		} // find and cast the highest prio
+
 	}
 	nextSpell += sim.CurrentTime
 	if sim.Log != nil {
@@ -502,7 +589,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		} else if warlock.Talents.SoulSiphon > 0 {
 			// We suppose that if you would want to use Drain Soul as an execute filler if and only if you have the Soul Siphon talent.
 			executeDuration = 0.25
-			DesiredManaAtExecute = 0.02
+			DesiredManaAtExecute = 0.15
 		}
 		TotalManaAtExecute := warlock.MaxMana() * DesiredManaAtExecute
 		// TotalManaAtExecute := executeDuration*sim.Duration.Seconds()/ManaSpendRate
@@ -520,7 +607,6 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.LifeTapOrDarkPact(sim)
 			return
 		}
-
 		// After all the previous checks, if everything checks out, you are free to cast filler.
 		spell = filler
 	}
@@ -540,6 +626,53 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Spell casting
 	// ------------------------------------------
+
+	if spell == warlock.DrainSoul {
+		baseDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
+			warlock.PseudoStats.DamageDealtMultiplier
+		baseTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
+		warlock.DrainSoulRolloverPower = baseDmg / baseTickSpeed
+	}
+
+	//delta := allCDs[0] - hauntcasttime
+	//if sim.Log != nil {
+	//	warlock.Log(sim, "delta[%d]", delta.Seconds())
+	//warlock.Log(sim, "previousTickAt[%d]", previousTickAt.Seconds())
+	//}
+
+	if filler == warlock.DrainSoul {
+		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/3 {
+			spell = filler
+		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
+			spell = filler
+		}
+
+		//if spell == warlock.UnstableAffliction {
+		//	if allCDs[0]-hauntcasttime < time.Millisecond*15 {
+
+		//spell = warlock.Haunt
+		//currentWait := allCDs[0]
+		//if currentWait > 0 {
+		//	warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
+		//	return
+		//}
+		//	}
+		//}
+	}
+
+	if warlock.DrainSoulDot.IsActive() {
+		// This means we are continuing to soul drain.
+		tickLength := warlock.DrainSoulDot.TickPeriod()
+		previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+		humanReactionTime := time.Millisecond * 150
+		if sim.Log != nil {
+			//warlock.Log(sim, "tickLength[%d]", tickLength.Seconds())
+			//warlock.Log(sim, "previousTickAt[%d]", previousTickAt.Seconds())
+		}
+		warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
+		return
+	}
+
 	if success := spell.Cast(sim, target); success {
 		if spell == warlock.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 			// We are recording the current rollover power of corruption

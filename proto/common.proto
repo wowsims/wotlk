@@ -680,6 +680,7 @@ enum EnchantType {
 	EnchantTypeTwoHand = 1;
 	EnchantTypeShield = 2;
 	EnchantTypeKit = 3;
+	EnchantTypeStaff = 4;
 }
 
 message Enchant {
@@ -789,12 +790,8 @@ message Cooldowns {
 message HealingModel {
 	// Healing per second to apply.
 	double hps = 1;
-
 	// How often healing is applied.
 	double cadence_seconds = 2;
-
-	
-	
 	double inspiration_uptime = 3;
 }
 
