@@ -56,12 +56,12 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			},
 		},
 
-		BonusCritRating:  5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
+		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
 		DamageMultiplier: 1 +
-							.05*float64(warrior.Talents.GagOrder) +
-							core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), .10, 0) +
-							core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtPlate, 2), .10, 0) +
-							core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), .20, 0),  // TODO: All additive multipliers?
+			.05*float64(warrior.Talents.GagOrder) +
+			core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtArmor, 4), .10, 0) +
+			core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtPlate, 2), .10, 0) +
+			core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), .20, 0), // TODO: All additive multipliers?
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1.3,
 		FlatThreatBonus:  770,
@@ -72,7 +72,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			// TODO: Verify that this bypass behavior and DR curve are correct
 
 			sbvMod := warrior.PseudoStats.BlockValueMultiplier
-			sbvMod /= (sbvMod - core.TernaryFloat64(warrior.ShieldBlockAura.IsActive(),1,0) - core.TernaryFloat64(glyphOfBlockingAura.IsActive(),0.1,0) )
+			sbvMod /= (sbvMod - core.TernaryFloat64(warrior.ShieldBlockAura.IsActive(), 1, 0) - core.TernaryFloat64(glyphOfBlockingAura.IsActive(), 0.1, 0))
 
 			sbv := warrior.BlockValue() / sbvMod
 
