@@ -52,7 +52,8 @@ export const DefaultRotation = FeralDruidRotation.create({
 	powerbear: false,
 	maxRoarOffset: 14.0,
 	maintainFaerieFire: true,
-	hotUptime: 0.0
+	hotUptime: 0.0,
+	snekWeave: false,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({

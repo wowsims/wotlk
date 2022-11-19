@@ -103,6 +103,12 @@ export const FeralDruidRotationConfig = {
 			label: 'Bite Time',
 			labelTooltip: 'Min seconds on Rip/Roar to bite',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'snekWeave',
+			label: 'Snek Weave',
+			labelTooltip: 'Reset swing timer using albino snek, when going from bear to cat',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType != BearweaveType.None,
 		})
 	],
 };

@@ -210,6 +210,7 @@ message FeralDruid {
 	float max_roar_offset = 11;
 	BiteModeType bite_mode_type = 12;
 	float hot_uptime = 13;
+	bool snek_weave = 14;
   }
   Rotation rotation = 1;
 

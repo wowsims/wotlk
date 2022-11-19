@@ -51,11 +51,7 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 	druid.CatFormAura.Deactivate(sim)
 	druid.TryUseCooldowns(sim)
 
-	if druid.GCD.IsReady(sim) {
-		return druid.CatForm.Cast(sim, nil)
-	}
-
-	return true
+	return druid.CatForm.Cast(sim, nil)
 }
 
 // Handles things that function for *both* cat/bear

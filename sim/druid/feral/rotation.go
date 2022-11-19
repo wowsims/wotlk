@@ -1,8 +1,9 @@
 package feral
 
 import (
-	"golang.org/x/exp/slices"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -188,7 +189,14 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
-		cat.shiftBearCat(sim, false)
+		didShift := cat.shiftBearCat(sim, false)
+		if !didShift {
+			panic("didnt shift?")
+		}
+		// Reset swing timer from snek (or idol/weapon swap) when going into cat
+		if cat.InForm(druid.Cat) && cat.Rotation.SnekWeave {
+			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+		}
 		return
 	}
 
@@ -310,7 +318,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		// Rage to Mangle or Maul, or (c) we don't have enough time or
 		// Energy leeway to spend an additional GCD in Dire Bear Form.
 		shiftNow := (curEnergy+15.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (cat.RipDot.RemainingDuration(sim) < (3.0 * time.Second)))
-		shiftNext := (curEnergy+30.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (cat.RipDot.RemainingDuration(sim) < time.Duration(float64(4.5)*float64(time.Second))))
+		shiftNext := (curEnergy+30.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (cat.RipDot.RemainingDuration(sim) < time.Duration(4500*time.Millisecond)))
 
 		var powerbearNow bool
 		if rotation.Powerbear {
@@ -336,7 +344,21 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
 		} else if shiftNow {
-			cat.readyToShift = true
+
+			// If we are resetting our swing timer using Albino Snake or a
+			// duplicate weapon swap, then do an additional check here to
+			// see whether we can delay the shift until the next bear swing
+			// goes out in order to maximize the gains from the reset.
+			projectedDelay := cat.AutoAttacks.MainhandSwingAt + 2*cat.latency - sim.CurrentTime
+			ripConflict := ripRefreshPending && (cat.RipDot.ExpiresAt() < sim.CurrentTime+projectedDelay+(1500*time.Millisecond))
+			nextCatSwing := sim.CurrentTime + cat.latency + time.Duration(float64(cat.AutoAttacks.MainhandSwingSpeed())/float64(2500*time.Millisecond))
+			canDelayShift := !ripConflict && cat.Rotation.SnekWeave && (curEnergy+10*projectedDelay.Seconds() <= furorCap) && (cat.AutoAttacks.MainhandSwingAt < nextCatSwing)
+
+			if canDelayShift {
+				timeToNextAction = cat.AutoAttacks.MainhandSwingAt - sim.CurrentTime
+			} else {
+				cat.readyToShift = true
+			}
 		} else if powerbearNow {
 			cat.shiftBearCat(sim, true)
 		} else if lacerateNow && cat.CanLacerate(sim) {
@@ -410,11 +432,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	}
 
-	if cat.readyToShift {
-		cat.shiftBearCat(sim, false)
-		return
-	}
-
 	// Model in latency when waiting on Energy for our next action
 	nextAction := sim.CurrentTime + timeToNextAction
 	if len(pendingActions) > 0 {
@@ -423,7 +440,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	nextAction += cat.latency
 
-	// TODO: This probably shouldnt happen
 	if nextAction <= sim.CurrentTime {
 		cat.DoNothing()
 	} else {
@@ -450,6 +466,7 @@ type FeralDruidRotation struct {
 	MaxRoarOffset      time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
+	SnekWeave          bool
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
@@ -467,5 +484,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MaxRoarOffset:      time.Duration(float64(rotation.MaxRoarOffset) * float64(time.Second)),
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
+		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
 	}
 }
