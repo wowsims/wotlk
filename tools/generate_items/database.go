@@ -39,18 +39,24 @@ type GemData struct {
 	Override GemOverride
 }
 
-type WowDatabase struct {
-	items []ItemData
-	gems  []GemData
+type SpellData struct {
+	ID       int
+	Response ItemResponse
 }
 
-func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, tooltipsDB map[int]WowheadItemResponse) *WowDatabase {
+type WowDatabase struct {
+	items  []ItemData
+	gems   []GemData
+	spells []SpellData
+}
+
+func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, itemTooltipsDB map[int]WowheadItemResponse, spellTooltipsDB map[int]WowheadItemResponse) *WowDatabase {
 	db := &WowDatabase{}
 
 	for _, itemOverride := range itemOverrides {
 		itemData := ItemData{
 			Override: itemOverride,
-			Response: tooltipsDB[itemOverride.ID],
+			Response: itemTooltipsDB[itemOverride.ID],
 		}
 		if itemData.Response.GetName() == "" {
 			continue
@@ -61,12 +67,19 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, to
 	for _, gemOverride := range gemOverrides {
 		gemData := GemData{
 			Override: gemOverride,
-			Response: tooltipsDB[gemOverride.ID],
+			Response: itemTooltipsDB[gemOverride.ID],
 		}
 		if gemData.Response.GetName() == "" {
 			continue
 		}
 		db.gems = append(db.gems, gemData)
+	}
+
+	for spellID, spellResponse := range spellTooltipsDB {
+		db.spells = append(db.spells, SpellData{
+			ID:       spellID,
+			Response: spellResponse,
+		})
 	}
 
 	slices.SortStableFunc(db.items, func(i1, i2 ItemData) bool {
@@ -81,6 +94,13 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, to
 			return g1.Override.ID < g2.Override.ID
 		}
 		return g1.Response.GetName() < g2.Response.GetName()
+	})
+
+	slices.SortStableFunc(db.spells, func(s1, s2 SpellData) bool {
+		if s1.Response.GetName() == s2.Response.GetName() {
+			return s1.ID < s2.ID
+		}
+		return s1.Response.GetName() < s2.Response.GetName()
 	})
 
 	return db
@@ -165,4 +185,18 @@ func (db *WowDatabase) getSimmableGems() []GemData {
 	}
 
 	return included
+}
+
+func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
+	uiDB := &proto.UIDatabase{}
+	for _, itemData := range db.items {
+		uiDB.ItemIcons = append(uiDB.ItemIcons, &proto.IconData{Id: int32(itemData.Override.ID), Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
+	}
+	for _, gemData := range db.gems {
+		uiDB.ItemIcons = append(uiDB.ItemIcons, &proto.IconData{Id: int32(gemData.Override.ID), Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
+	}
+	for _, spellData := range db.spells {
+		uiDB.SpellIcons = append(uiDB.SpellIcons, &proto.IconData{Id: int32(spellData.ID), Name: spellData.Response.GetName(), Icon: spellData.Response.GetIcon()})
+	}
+	return uiDB
 }
