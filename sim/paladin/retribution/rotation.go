@@ -163,15 +163,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			if !success {
 				ret.WaitForMana(sim, ret.DivineStorm.CurCast.Cost)
 			}
-		case ret.Env.GetNumTargets() == 1 && isExecutePhase && ret.HammerOfWrath.IsReady(sim):
-			success := ret.HammerOfWrath.Cast(sim, target)
-			if !success {
-				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
-			}
 		case ret.Env.GetNumTargets() > 1 && ret.Consecration.IsReady(sim):
 			success := ret.Consecration.Cast(sim, target)
 			if !success {
 				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
+			}
+		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+			success := ret.HammerOfWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
 			}
 		case ret.DemonAndUndeadTargetCount >= ret.HolyWrathThreshold && ret.HolyWrath.IsReady(sim):
 			success := ret.HolyWrath.Cast(sim, target)
