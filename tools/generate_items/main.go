@@ -15,10 +15,9 @@ func main() {
 	db := NewWowDatabase(
 		getItemOverrides(),
 		getGemOverrides(),
+		EnchantOverrides,
 		getWowheadTooltipsDB("./assets/item_data/all_item_tooltips.csv"),
 		getWowheadTooltipsDB("./assets/spell_data/all_spell_tooltips.csv"))
 
-	writeItemFile(*outDir, db.getSimmableItems())
-	writeGemFile(*outDir, db.getSimmableGems())
 	writeDatabaseFile(db)
 }

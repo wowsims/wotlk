@@ -8,12 +8,18 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+var Items []Item
+var Enchants []Enchant
+var Gems []Gem
+
 var ByName = map[string]Item{}
 var ByID = map[int32]Item{}
 var GemsByID = map[int32]Gem{}
 var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
 func init() {
+	loadDatabase()
+
 	for _, v := range Enchants {
 		if _, ok := EnchantsByItemByID[v.ItemType][v.EffectID]; ok {
 			panic(fmt.Sprintf("Duplicate enchant ID %d", v.EffectID))
@@ -88,6 +94,32 @@ type Item struct {
 	Enchant Enchant
 }
 
+func ItemFromProto(pData *proto.UIItem) Item {
+	return Item{
+		ID:                 pData.Id,
+		Name:               pData.Name,
+		ClassAllowlist:     pData.ClassAllowlist,
+		Type:               pData.Type,
+		ArmorType:          pData.ArmorType,
+		WeaponType:         pData.WeaponType,
+		HandType:           pData.HandType,
+		RangedWeaponType:   pData.RangedWeaponType,
+		WeaponDamageMin:    pData.WeaponDamageMin,
+		WeaponDamageMax:    pData.WeaponDamageMax,
+		SwingSpeed:         pData.WeaponSpeed,
+		Stats:              stats.FromFloatArray(pData.Stats),
+		Phase:              byte(pData.Phase),
+		Quality:            pData.Quality,
+		Unique:             pData.Unique,
+		Ilvl:               pData.Ilvl,
+		GemSockets:         pData.GemSockets,
+		SocketBonus:        stats.FromFloatArray(pData.SocketBonus),
+		RequiredProfession: pData.RequiredProfession,
+		Heroic:             pData.Heroic,
+		SetName:            pData.SetName,
+	}
+}
+
 func (item Item) ToProto() *proto.Item {
 	return &proto.Item{
 		Id:                 item.ID,
@@ -143,6 +175,23 @@ type Enchant struct {
 	ClassAllowlist []proto.Class
 }
 
+func EnchantFromProto(pData *proto.UIEnchant) Enchant {
+	return Enchant{
+		EffectID:       pData.EffectId,
+		ItemID:         pData.ItemId,
+		SpellID:        pData.SpellId,
+		Name:           pData.Name,
+		ItemType:       pData.Type,
+		EnchantType:    pData.EnchantType,
+		Bonus:          stats.FromFloatArray(pData.Stats),
+		Quality:        pData.Quality,
+		Phase:          pData.Phase,
+		ClassAllowlist: pData.ClassAllowlist,
+
+		RequiredProfession: pData.RequiredProfession,
+	}
+}
+
 func (enchant Enchant) ToProto() *proto.Enchant {
 	return &proto.Enchant{
 		EffectId:       enchant.EffectID,
@@ -170,6 +219,20 @@ type Gem struct {
 	Unique  bool
 
 	RequiredProfession proto.Profession
+}
+
+func GemFromProto(pData *proto.UIGem) Gem {
+	return Gem{
+		ID:      pData.Id,
+		Name:    pData.Name,
+		Stats:   stats.FromFloatArray(pData.Stats),
+		Color:   pData.Color,
+		Phase:   byte(pData.Phase),
+		Quality: pData.Quality,
+		Unique:  pData.Unique,
+
+		RequiredProfession: pData.RequiredProfession,
+	}
 }
 
 func (gem Gem) ToProto() *proto.Gem {
