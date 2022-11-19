@@ -3,19 +3,23 @@ import {
 	UIDatabase,
 } from '../proto/ui.js';
 
-//const dbUrl = '/wotlk/assets/database/db.json';
-const dbUrl = '/wotlk/assets/database/db.bin';
+const dbUrlJson = '/wotlk/assets/database/db.json';
+const dbUrlBin = '/wotlk/assets/database/db.bin';
+const READ_JSON = false;
 
 export class Database {
 	private static loadPromise: Promise<Database>|null = null;
 	static get(): Promise<Database> {
 		if (Database.loadPromise == null) {
-			Database.loadPromise = fetch(dbUrl)
-				// For reading JSON db.
-				//.then(response => response.json())
-				//.then(json => new Database(UIDatabase.fromJson(json)));
-				.then(response => response.arrayBuffer())
-				.then(buffer => new Database(UIDatabase.fromBinary(new Uint8Array(buffer))));
+			if (READ_JSON) {
+				Database.loadPromise = fetch(dbUrlJson)
+					.then(response => response.json())
+					.then(json => new Database(UIDatabase.fromJson(json)));
+			} else {
+				Database.loadPromise = fetch(dbUrlBin)
+					.then(response => response.arrayBuffer())
+					.then(buffer => new Database(UIDatabase.fromBinary(new Uint8Array(buffer))));
+			}
 		}
 		return Database.loadPromise;
 	}
