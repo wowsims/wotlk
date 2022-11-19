@@ -88,15 +88,16 @@ export const FeralDruidRotationConfig = {
 			label: 'Bite during rotation',
 			labelTooltip: 'Use bite during rotation rather than just at end',
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
-			fieldName: 'biteModeType',
-			label: 'Bite Mode',
-			labelTooltip: 'Underlying "Bite logic" to use',
-			values: [
-				{ name: 'Emperical', value: BiteModeType.Emperical },
-			],
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true
-		}),
+		// Can be uncommented if/when analytical bite mode is added
+		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
+		//	fieldName: 'biteModeType',
+		//	label: 'Bite Mode',
+		//	labelTooltip: 'Underlying "Bite logic" to use',
+		//	values: [
+		//		{ name: 'Emperical', value: BiteModeType.Emperical },
+		//	],
+		//	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true
+		//}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'biteTime',
 			label: 'Bite Time',
