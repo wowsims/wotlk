@@ -103,14 +103,7 @@ func getWowheadTooltipsDB(filepath string) map[int]WowheadItemResponse {
 
 	db := make(map[int]WowheadItemResponse)
 	scanner := bufio.NewScanner(file)
-	i := 0
 	for scanner.Scan() {
-		i++
-		if i == 1 {
-			// Ignore first line
-			continue
-		}
-
 		line := scanner.Text()
 
 		itemIDStr := line[:strings.Index(line, ",")]

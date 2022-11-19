@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -28,10 +30,28 @@ func main() {
 	threads := *numThreads
 
 	fmt.Printf("Starting tooltip fetching.\n\tids file: %s\n\tStart ID: %d, End ID: %d\n\tWorkers: %d\n\tOutput File: %s\n\n", *idFile, startMinID, maxID, threads, *output)
-	f, err := os.Create(*output)
-	if err != nil {
-		log.Fatalf("failed to open file to write: %s", err)
+	database := map[int]string{}
+	keys := []int{} // db keys for sorting by ID later
+	if existingFile, err := os.Open(*output); err == nil {
+		scanner := bufio.NewScanner(existingFile)
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			itemIDStr := line[:strings.Index(line, ",")]
+			itemID, err := strconv.Atoi(itemIDStr)
+			if err != nil {
+				log.Fatal("Invalid item ID: " + itemIDStr)
+			}
+
+			tooltip := line[strings.Index(line, "{"):]
+			database[itemID] = tooltip
+			keys = append(keys, itemID)
+		}
+		existingFile.Close()
+
+		fmt.Printf("Found %d existing items in tooltip database.\n", len(database))
 	}
+
 	type result struct {
 		id    int
 		value string
@@ -75,6 +95,9 @@ func main() {
 		fmt.Printf("Fetching ids from file list...\n")
 		ids := getItemDeclarations(*idFile)
 		fmt.Printf("Found %d items...\n", len(ids))
+		if threads > len(ids) {
+			threads = len(ids)
+		}
 		numPer := len(ids) / threads
 		total = len(ids)
 
@@ -88,7 +111,7 @@ func main() {
 				fmt.Printf("Starting worker for id block %d to %d\n", min, max-1)
 				client := http.Client{}
 				for i := min; i < max; i++ {
-					url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", ids[i])
+					url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", ids[i])
 					resp, err := client.Get(url)
 					if err != nil {
 						fmt.Printf("Error fetching %d: %s\n", ids[i], err)
@@ -113,8 +136,13 @@ func main() {
 		close(results)
 	}()
 
+	tempFile, err := os.Create("temp_tooltips.csv")
+	if err != nil {
+		panic("failed to create temp file to write tooltips to: " + err.Error())
+	}
 	totalComplete := 0
 	var lastUpdate time.Time
+
 	for res := range results {
 		totalComplete++
 
@@ -128,10 +156,26 @@ func main() {
 			continue
 		}
 
-		url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", res.id)
-		f.WriteString(fmt.Sprintf("%d, %s, %s\n", res.id, url, res.value))
+		database[res.id] = res.value // replaces existing tooltips
+		keys = append(keys, res.id)
+		url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", res.id)
+		tempFile.WriteString(fmt.Sprintf("%d, %s, %s\n", res.id, url, res.value))
 	}
-	fmt.Printf("Tooltips %d/%d complete\n", totalComplete, total)
+
+	fmt.Printf("Tooltips %d/%d complete\nNow writing tooltip file...", totalComplete, total)
+
+	finalOutput, err := os.Create(*output)
+	if err != nil {
+		log.Fatalf("failed to open output file to write: %s", err)
+	}
+
+	sort.Ints(keys)
+	for _, k := range keys {
+		url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", k)
+		finalOutput.WriteString(fmt.Sprintf("%d, %s, %s\n", k, url, database[k]))
+	}
+
+	fmt.Printf("Complete.\n")
 }
 
 func getItemDeclarations(name string) []int {
