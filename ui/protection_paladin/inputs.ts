@@ -41,6 +41,11 @@ export const ProtectionPaladinRotationConfig = {
 			labelTooltip: 'Open with Hammer of the Righteous instead of Shield of Righteousness. Recommended for AoE.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
+			fieldName: 'squeezeHolyWrath',
+			label: 'Squeeze Holy Wrath',
+			labelTooltip: 'Squeeze a Holy Wrath cast during sufficiently hasted GCDs (Bloodlust)',
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
 			fieldName: 'useCustomPrio',
 			label: 'Use custom priority',
 			labelTooltip: 'Deviates from the standard 96969 rotation, using the priority configured below. Will still attempt to keep a filler GCD between Hammer and Shield.',
