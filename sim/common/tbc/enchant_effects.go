@@ -13,7 +13,7 @@ func init() {
 	// Keep these in order by item ID.
 
 	// TODO: Crusader, Mongoose, and Executioner could also be modelled as AddWeaponEffect instead
-	core.AddWeaponEffect(16250, func(agent core.Agent, slot proto.ItemSlot) {
+	core.AddWeaponEffect(1897, func(agent core.Agent, slot proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.MH
 		if slot == proto.ItemSlot_ItemSlotOffHand {
 			w = &agent.GetCharacter().AutoAttacks.OH
@@ -22,14 +22,14 @@ func init() {
 		w.BaseDamageMax += 5
 	})
 
-	core.NewEnchantEffect(18283, func(agent core.Agent) {
+	core.NewEnchantEffect(2523, func(agent core.Agent) {
 		agent.GetCharacter().AddBonusRangedHitRating(30)
 	})
-	core.NewEnchantEffect(23766, func(agent core.Agent) {
+	core.NewEnchantEffect(2724, func(agent core.Agent) {
 		agent.GetCharacter().AddBonusRangedCritRating(28)
 	})
 
-	core.NewEnchantEffect(22560, func(agent core.Agent) {
+	core.NewEnchantEffect(2671, func(agent core.Agent) {
 		// Sunfire
 		agent.GetCharacter().OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellSchool.Matches(core.SpellSchoolArcane | core.SpellSchoolFire) {
@@ -37,7 +37,7 @@ func init() {
 			}
 		})
 	})
-	core.NewEnchantEffect(22561, func(agent core.Agent) {
+	core.NewEnchantEffect(2672, func(agent core.Agent) {
 		// Soulfrost
 		agent.GetCharacter().OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellSchool.Matches(core.SpellSchoolFrost | core.SpellSchoolShadow) {
@@ -46,7 +46,7 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(22552, func(agent core.Agent, slot proto.ItemSlot) {
+	core.AddWeaponEffect(963, func(agent core.Agent, slot proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.MH
 		if slot == proto.ItemSlot_ItemSlotOffHand {
 			w = &agent.GetCharacter().AutoAttacks.OH
@@ -58,10 +58,10 @@ func init() {
 	// ApplyCrusaderEffect will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
-	core.NewEnchantEffect(16252, func(agent core.Agent) {
+	core.NewEnchantEffect(1900, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 16252
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 16252
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 1900
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 1900
 		if !mh && !oh {
 			return
 		}
@@ -95,17 +95,17 @@ func init() {
 		})
 	})
 
-	core.NewEnchantEffect(22535, func(agent core.Agent) {
+	core.NewEnchantEffect(2929, func(agent core.Agent) {
 		agent.GetCharacter().PseudoStats.BonusDamage += 2
 	})
 
 	// ApplyMongooseEffect will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
-	core.NewEnchantEffect(22559, func(agent core.Agent) {
+	core.NewEnchantEffect(2673, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 22559
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 22559
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 2673
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 2673
 		if !mh && !oh {
 			return
 		}
@@ -137,25 +137,25 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(23765, func(agent core.Agent, _ proto.ItemSlot) {
+	core.AddWeaponEffect(2723, func(agent core.Agent, _ proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.Ranged
 		w.BaseDamageMin += 12
 		w.BaseDamageMax += 12
 	})
 
-	core.NewEnchantEffect(33150, func(agent core.Agent) {
+	core.NewEnchantEffect(2621, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 0.98
 	})
-	core.NewEnchantEffect(33153, func(agent core.Agent) {
+	core.NewEnchantEffect(2613, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
 
-	core.NewEnchantEffect(33307, func(agent core.Agent) {
+	core.NewEnchantEffect(3225, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 33307
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 33307
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3225
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3225
 		if !mh && !oh {
 			return
 		}
@@ -223,10 +223,10 @@ func init() {
 			},
 		})
 	}
-	core.NewEnchantEffect(35498, func(agent core.Agent) {
+	core.NewEnchantEffect(3273, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.ID == 35498
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.ID == 35498
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3273
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3273
 		if !mh && !oh {
 			return
 		}

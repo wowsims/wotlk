@@ -35,7 +35,6 @@ func (shaman *Shaman) registerFireElementalTotem() {
 				Cost: manaCost,
 				GCD:  core.GCDDefault,
 			},
-			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
 				Duration: time.Minute * time.Duration(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireElementalTotem), 5, 10)),

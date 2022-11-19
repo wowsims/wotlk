@@ -123,7 +123,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
 	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.1 * warlock.BaseMana
-	numberOfTicks := 12
+	numberOfTicks := int32(12)
 	totalBaseDmg := 1740.0
 	agonyEffect := totalBaseDmg * 0.056
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {

@@ -163,31 +163,31 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Dual Wield Unholy DK',
 		iconUrl: talentTreeIcons[Class.ClassDeathknight][2],
 	},
-	{
-		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultBloodRotation,
-		talents: DeathknightPresets.BloodTalents.data,
-		specOptions: DeathknightPresets.DefaultBloodOptions,
-		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood Dps DK',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceTroll,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
-			},
-		},
-		otherDefaults: DeathknightPresets.OtherDefaults,
-		tooltip: 'Blood Dps DK',
-		iconUrl: talentTreeIcons[Class.ClassDeathknight][0],
-	},
+	//{
+	//	spec: Spec.SpecDeathknight,
+	//	rotation: DeathknightPresets.DefaultBloodRotation,
+	//	talents: DeathknightPresets.BloodTalents.data,
+	//	specOptions: DeathknightPresets.DefaultBloodOptions,
+	//	consumes: DeathknightPresets.DefaultConsumes,
+	//	defaultName: 'Blood Dps DK',
+	//	defaultFactionRaces: {
+	//		[Faction.Unknown]: Race.RaceUnknown,
+	//		[Faction.Alliance]: Race.RaceHuman,
+	//		[Faction.Horde]: Race.RaceTroll,
+	//	},
+	//	defaultGear: {
+	//		[Faction.Unknown]: {},
+	//		[Faction.Alliance]: {
+	//			1: DeathknightPresets.P1_UNHOLY_2H_BIS_PRESET.gear,
+	//		},
+	//		[Faction.Horde]: {
+	//			1: DeathknightPresets.P1_UNHOLY_2H_BIS_PRESET.gear,
+	//		},
+	//	},
+	//	otherDefaults: DeathknightPresets.OtherDefaults,
+	//	tooltip: 'Blood Dps DK',
+	//	iconUrl: talentTreeIcons[Class.ClassDeathknight][0],
+	//},
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,

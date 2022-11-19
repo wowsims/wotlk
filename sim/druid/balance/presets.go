@@ -67,6 +67,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			IsInsideEclipseThreshold: 15.0,
 			UseSmartCooldowns:        true,
 			MaximizeIsUptime:         true,
+			PlayerLatency:            200,
 		},
 	},
 }
@@ -86,10 +87,10 @@ var PlayerOptionsAOE = &proto.Player_BalanceDruid{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40467,
-		"enchant": 44877,
+		"enchant": 3820,
 		"gems": [
 			41285,
-			39998
+			42144
 		]
 	},
 	{
@@ -100,26 +101,29 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40470,
-		"enchant": 44874,
+		"enchant": 3810,
 		"gems": [
-			39998
+			42144
 		]
 	},
 	{
-		"id": 40405,
-		"enchant": 44472
-	},
-	{
-		"id": 40469,
-		"enchant": 44489,
+		"id": 44005,
+		"enchant": 3859,
 		"gems": [
-			39998,
 			40026
 		]
 	},
 	{
+		"id": 40469,
+		"enchant": 3832,
+		"gems": [
+			42144,
+			39998
+		]
+	},
+	{
 		"id": 44008,
-		"enchant": 44498,
+		"enchant": 2332,
 		"gems": [
 			39998,
 			0
@@ -127,7 +131,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40466,
-		"enchant": 54999,
+		"enchant": 3604,
 		"gems": [
 			39998,
 			0
@@ -135,18 +139,18 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40561,
-		"enchant": 54793,
+		"enchant": 3601,
 		"gems": [
 			39998
 		]
 	},
 	{
 		"id": 40560,
-		"enchant": 41602
+		"enchant": 3719
 	},
 	{
-		"id": 40558,
-		"enchant": 55016
+		"id": 40519,
+		"enchant": 3606
 	},
 	{
 		"id": 40399
@@ -162,7 +166,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40395,
-		"enchant": 44487
+		"enchant": 3834
 	},
 	{
 		"id": 40192

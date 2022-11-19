@@ -266,7 +266,7 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 }
 
 func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
-	critBonus := (0.2 * float64(shaman.Talents.ElementalFury)) + secondary
+	critBonus := 0.2*float64(shaman.Talents.ElementalFury) + secondary
 	return shaman.SpellCritMultiplier(1, critBonus)
 }
 

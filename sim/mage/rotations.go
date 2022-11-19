@@ -77,7 +77,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 		return mage.Scorch
 	}
 
-	if !mage.LivingBombNotActive.Empty() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
+	if !mage.LivingBombDot.IsActive() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
 		return mage.LivingBomb
 	}
 

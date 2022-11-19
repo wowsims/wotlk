@@ -15,14 +15,14 @@ var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
 func init() {
 	for _, v := range Enchants {
-		if _, ok := EnchantsByItemByID[v.ItemType][v.ID]; ok {
-			panic(fmt.Sprintf("Duplicate enchant ID %d", v.ID))
+		if _, ok := EnchantsByItemByID[v.ItemType][v.EffectID]; ok {
+			panic(fmt.Sprintf("Duplicate enchant ID %d", v.EffectID))
 		}
 
 		if EnchantsByItemByID[v.ItemType] == nil {
 			EnchantsByItemByID[v.ItemType] = map[int32]Enchant{}
 		}
-		EnchantsByItemByID[v.ItemType][v.ID] = v
+		EnchantsByItemByID[v.ItemType][v.EffectID] = v
 	}
 
 	for _, v := range Gems {
@@ -117,7 +117,7 @@ func (item Item) ToProto() *proto.Item {
 func (item Item) ToItemSpecProto() *proto.ItemSpec {
 	itemSpec := &proto.ItemSpec{
 		Id:      item.ID,
-		Enchant: item.Enchant.ID,
+		Enchant: item.Enchant.EffectID,
 		Gems:    []int32{},
 	}
 	for _, gem := range item.Gems {
@@ -127,10 +127,10 @@ func (item Item) ToItemSpecProto() *proto.ItemSpec {
 }
 
 type Enchant struct {
-	ID          int32 // ID of the enchant item.
 	EffectID    int32 // Used by UI to apply effect to tooltip
+	ItemID      int32 // ID of the enchant item.
+	SpellID     int32 // ID of the enchant spell.
 	Name        string
-	IsSpellID   bool
 	Quality     proto.ItemQuality
 	Bonus       stats.Stats
 	ItemType    proto.ItemType    // Which slot the enchant goes on.
@@ -145,10 +145,10 @@ type Enchant struct {
 
 func (enchant Enchant) ToProto() *proto.Enchant {
 	return &proto.Enchant{
-		Id:             enchant.ID,
 		EffectId:       enchant.EffectID,
+		ItemId:         enchant.ItemID,
+		SpellId:        enchant.SpellID,
 		Name:           enchant.Name,
-		IsSpellId:      enchant.IsSpellID,
 		Type:           enchant.ItemType,
 		EnchantType:    enchant.EnchantType,
 		Stats:          enchant.Bonus[:],

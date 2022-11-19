@@ -55,11 +55,6 @@ type Paladin struct {
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
 
-	RighteousVengeanceSpell  *core.Spell
-	RighteousVengeanceDots   []*core.Dot
-	RighteousVengeancePools  []float64
-	RighteousVengeanceDamage []float64
-
 	ArtOfWarInstantCast *core.Aura
 
 	SpiritualAttunementMetrics *core.ResourceMetrics
@@ -107,7 +102,7 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
-func (paladin *Paladin) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (paladin *Paladin) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (paladin *Paladin) Initialize() {
@@ -138,28 +133,10 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerSpiritualAttunement()
 	paladin.registerDivinePleaSpell()
-	paladin.registerRighteousVengeanceSpell()
 
-	targets := paladin.Env.GetNumTargets()
-
-	if paladin.Talents.RighteousVengeance > 0 {
-		paladin.RighteousVengeanceDots = []*core.Dot{}
-		for i := int32(0); i < targets; i++ {
-			paladin.RighteousVengeanceDots = append(paladin.RighteousVengeanceDots, paladin.makeRighteousVengeanceDot(paladin.Env.GetTargetUnit(i)))
-		}
-		paladin.RighteousVengeancePools = []float64{}
-		for i := int32(0); i < targets; i++ {
-			paladin.RighteousVengeancePools = append(paladin.RighteousVengeancePools, 0.0)
-		}
-		paladin.RighteousVengeanceDamage = []float64{}
-		for i := int32(0); i < targets; i++ {
-			paladin.RighteousVengeanceDamage = append(paladin.RighteousVengeanceDamage, 0.0)
-		}
-	}
-
-	paladin.SealOfVengeanceDots = []*core.Dot{}
-	for i := int32(0); i < targets; i++ {
-		paladin.SealOfVengeanceDots = append(paladin.SealOfVengeanceDots, paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(i)))
+	paladin.SealOfVengeanceDots = make([]*core.Dot, paladin.Env.GetNumTargets())
+	for i := range paladin.SealOfVengeanceDots {
+		paladin.SealOfVengeanceDots[i] = paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(int32(i)))
 	}
 
 	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
@@ -170,12 +147,9 @@ func (paladin *Paladin) Initialize() {
 	}
 }
 
-func (paladin *Paladin) Reset(sim *core.Simulation) {
+func (paladin *Paladin) Reset(_ *core.Simulation) {
 	paladin.CurrentSeal = nil
 	paladin.CurrentJudgement = nil
-}
-
-func (paladin *Paladin) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 }
 
 // maybe need to add stat dependencies

@@ -54,7 +54,7 @@ export const DefaultRotation = RogueRotation.create({
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-  envenomEnergyThreshold: 60,
+	envenomEnergyThreshold: 60,
 });
 
 export const DefaultOptions = RogueOptions.create({
@@ -74,90 +74,90 @@ export const PRERAID_PRESET_ASSASSINATION = {
 	name: 'Pre-Raid Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-    {
-      "id": 42550,
-      "enchant": 44879,
-      "gems": [
-        41398,
-        40058
-      ]
-    },
-    {
-      "id": 40678
-    },
-    {
-      "id": 43481,
-      "enchant": 44871
-    },
-    {
-      "id": 38614,
-      "enchant": 55002
-    },
-    {
-      "id": 39558,
-      "enchant": 44489,
-      "gems": [
-        40003,
-        42702
-      ]
-    },
-    {
-      "id": 34448,
-      "enchant": 44484,
-      "gems": [
-        40003,
-        0
-      ]
-    },
-    {
-      "id": 39560,
-      "enchant": 54999,
-      "gems": [
-        40058,
-        0
-      ]
-    },
-    {
-      "id": 40694,
-      "gems": [
-        40003,
-        40003
-      ]
-    },
-    {
-      "id": 37644,
-      "enchant": 38374
-    },
-    {
-      "id": 34575,
-      "enchant": 55016,
-      "gems": [
-        40003
-      ]
-    },
-    {
-      "id": 40586
-    },
-    {
-      "id": 37642
-    },
-    {
-      "id": 40684
-    },
-    {
-      "id": 44253
-    },
-    {
-      "id": 37856,
-      "enchant": 44492
-    },
-    {
-      "id": 37667,
-      "enchant": 44492
-    },
-    {
-      "id": 43612
-    }
+		{
+			"id": 42550,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				40058
+			]
+		},
+		{
+			"id": 40678
+		},
+		{
+			"id": 43481,
+			"enchant": 3808
+		},
+		{
+			"id": 38614,
+			"enchant": 3605
+		},
+		{
+			"id": 39558,
+			"enchant": 3832,
+			"gems": [
+				40003,
+				42702
+			]
+		},
+		{
+			"id": 34448,
+			"enchant": 3845,
+			"gems": [
+				40003,
+				0
+			]
+		},
+		{
+			"id": 39560,
+			"enchant": 3604,
+			"gems": [
+				40058,
+				0
+			]
+		},
+		{
+			"id": 40694,
+			"gems": [
+				40003,
+				40003
+			]
+		},
+		{
+			"id": 37644,
+			"enchant": 3823
+		},
+		{
+			"id": 34575,
+			"enchant": 3606,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 40586
+		},
+		{
+			"id": 37642
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 37856,
+			"enchant": 3789
+		},
+		{
+			"id": 37667,
+			"enchant": 3789
+		},
+		{
+			"id": 43612
+		}
   ]}`),
 };
 
@@ -165,99 +165,99 @@ export const PRERAID_PRESET_COMBAT = {
   name: 'Pre-Raid Combat',
   tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
   gear: EquipmentSpec.fromJsonString(`{"items": [
-    {
-      "id": 42550,
-      "enchant": 44879,
-      "gems": [
-        41398,
-        40014
-      ]
-    },
-    {
-      "id": 40678
-    },
-    {
-      "id": 37139,
-      "enchant": 44871,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 34241,
-      "enchant": 55002,
-      "gems": [
-        40014
-      ]
-    },
-    {
-      "id": 39558,
-      "enchant": 44489,
-      "gems": [
-        39999,
-        40014
-      ]
-    },
-    {
-      "id": 34448,
-      "enchant": 44484,
-      "gems": [
-        39999,
-        0
-      ]
-    },
-    {
-      "id": 39560,
-      "enchant": 54999,
-      "gems": [
-        40014,
-        0
-      ]
-    },
-    {
-      "id": 40694,
-      "gems": [
-        42702,
-        39999
-      ]
-    },
-    {
-      "id": 37644,
-      "enchant": 38374
-    },
-    {
-      "id": 34575,
-      "enchant": 55016,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 40586
-    },
-    {
-      "id": 37642
-    },
-    {
-      "id": 40684
-    },
-    {
-      "id": 44253
-    },
-    {
-      "id": 37693,
-      "enchant": 44492
-    },
-    {
-      "id": 37856,
-      "enchant": 44492
-    },
-    {
-      "id": 44504,
-      "gems": [
-        40053
-      ]
-    }
+		{
+			"id": 42550,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				40014
+			]
+		},
+		{
+			"id": 40678
+		},
+		{
+			"id": 37139,
+			"enchant": 3808,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 34241,
+			"enchant": 3605,
+			"gems": [
+				40014
+			]
+		},
+		{
+			"id": 39558,
+			"enchant": 3832,
+			"gems": [
+				39999,
+				40014
+			]
+		},
+		{
+			"id": 34448,
+			"enchant": 3845,
+			"gems": [
+				39999,
+				0
+			]
+		},
+		{
+			"id": 39560,
+			"enchant": 3604,
+			"gems": [
+				40014,
+				0
+			]
+		},
+		{
+			"id": 40694,
+			"gems": [
+				42702,
+				39999
+			]
+		},
+		{
+			"id": 37644,
+			"enchant": 3823
+		},
+		{
+			"id": 34575,
+			"enchant": 3606,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 40586
+		},
+		{
+			"id": 37642
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 37693,
+			"enchant": 3789
+		},
+		{
+			"id": 37856,
+			"enchant": 3789
+		},
+		{
+			"id": 44504,
+			"gems": [
+				40053
+			]
+		}
   ]}`),
 }
 
@@ -265,95 +265,95 @@ export const P1_PRESET_ASSASSINATION = {
 	name: 'P1 Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
-    {
-      "id": 40499,
-      "enchant": 44879,
-      "gems": [
-        41398,
-        42702
-      ]
-    },
-    {
-      "id": 44664,
-      "gems": [
-        40003
-      ]
-    },
-    {
-      "id": 40502,
-      "enchant": 44871,
-      "gems": [
-        40003
-      ]
-    },
-    {
-      "id": 40403,
-      "enchant": 55002
-    },
-    {
-      "id": 40539,
-      "enchant": 44489,
-      "gems": [
-        40003
-      ]
-    },
-    {
-      "id": 39765,
-      "enchant": 44484,
-      "gems": [
-        40003,
-        0
-      ]
-    },
-    {
-      "id": 40496,
-      "enchant": 54999,
-      "gems": [
-        40053,
-        0
-      ]
-    },
-    {
-      "id": 40260,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 40500,
-      "enchant": 38374,
-      "gems": [
-        40003,
-        40003
-      ]
-    },
-    {
-      "id": 39701,
-      "enchant": 55016
-    },
-    {
-      "id": 40074
-    },
-    {
-      "id": 40474
-    },
-    {
-      "id": 40684
-    },
-    {
-      "id": 44253
-    },
-    {
-      "id": 39714,
-      "enchant": 44492
-    },
-    {
-      "id": 40386,
-      "enchant": 44492
-    },
-    {
-      "id": 40385
-    }
+		{
+			"id": 40499,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				42702
+			]
+		},
+		{
+			"id": 44664,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 40502,
+			"enchant": 3808,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 40403,
+			"enchant": 3605
+		},
+		{
+			"id": 40539,
+			"enchant": 3832,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 39765,
+			"enchant": 3845,
+			"gems": [
+				40003,
+				0
+			]
+		},
+		{
+			"id": 40496,
+			"enchant": 3604,
+			"gems": [
+				40053,
+				0
+			]
+		},
+		{
+			"id": 40260,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 40500,
+			"enchant": 3823,
+			"gems": [
+				40003,
+				40003
+			]
+		},
+		{
+			"id": 39701,
+			"enchant": 3606
+		},
+		{
+			"id": 40074
+		},
+		{
+			"id": 40474
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 39714,
+			"enchant": 3789
+		},
+		{
+			"id": 40386,
+			"enchant": 3789
+		},
+		{
+			"id": 40385
+		}
   ]}`),
 }
 
@@ -361,93 +361,93 @@ export const P1_PRESET_COMBAT = {
 	name: 'P1 Combat',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-    {
-      "id": 40499,
-      "enchant": 44879,
-      "gems": [
-        41398,
-        42702
-      ]
-    },
-    {
-      "id": 44664,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 40502,
-      "enchant": 44871,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 40403,
-      "enchant": 55002
-    },
-    {
-      "id": 40539,
-      "enchant": 44489,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 39765,
-      "enchant": 44484,
-      "gems": [
-        39999,
-        0
-      ]
-    },
-    {
-      "id": 40541,
-      "enchant": 54999,
-      "gems": [
-        0
-      ]
-    },
-    {
-      "id": 40205,
-      "gems": [
-        39999
-      ]
-    },
-    {
-      "id": 44011,
-      "enchant": 38374,
-      "gems": [
-        39999,
-        39999
-      ]
-    },
-    {
-      "id": 39701,
-      "enchant": 55016
-    },
-    {
-      "id": 40074
-    },
-    {
-      "id": 40474
-    },
-    {
-      "id": 40684
-    },
-    {
-      "id": 44253
-    },
-    {
-      "id": 40383,
-      "enchant": 44492
-    },
-    {
-      "id": 39714,
-      "enchant": 44492
-    },
-    {
-      "id": 40385
-    }
+		{
+			"id": 40499,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				42702
+			]
+		},
+		{
+			"id": 44664,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 40502,
+			"enchant": 3808,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 40403,
+			"enchant": 3605
+		},
+		{
+			"id": 40539,
+			"enchant": 3832,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 39765,
+			"enchant": 3845,
+			"gems": [
+				39999,
+				0
+			]
+		},
+		{
+			"id": 40541,
+			"enchant": 3604,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40205,
+			"gems": [
+				39999
+			]
+		},
+		{
+			"id": 44011,
+			"enchant": 3823,
+			"gems": [
+				39999,
+				39999
+			]
+		},
+		{
+			"id": 39701,
+			"enchant": 3606
+		},
+		{
+			"id": 40074
+		},
+		{
+			"id": 40474
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 44253
+		},
+		{
+			"id": 40383,
+			"enchant": 3789
+		},
+		{
+			"id": 39714,
+			"enchant": 3789
+		},
+		{
+			"id": 40385
+		}
   ]}`),
 }

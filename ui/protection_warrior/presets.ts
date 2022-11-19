@@ -96,201 +96,201 @@ export const DefaultConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
-export const P1_BALANCED_PRESET = {
-	name: 'P1 Balanced Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
-    {
-      "id": 40546,
-      "enchant": 44878,
-      "gems": [
-        41380,
-        40034
-      ]
-    },
-    {
-      "id": 40387
-    },
-    {
-      "id": 39704,
-      "enchant": 44957,
-      "gems": [
-        40034
-      ]
-    },
-    {
-      "id": 40722,
-      "enchant": 55002
-    },
-    {
-      "id": 44000,
-      "enchant": 44489,
-      "gems": [
-        40034,
-        40015
-      ]
-    },
-    {
-      "id": 39764,
-      "enchant": 44944,
-      "gems": [
-        0
-      ]
-    },
-    {
-      "id": 40545,
-      "enchant": 63770,
-      "gems": [
-        40034,
-        0
-      ]
-    },
-    {
-      "id": 39759,
-      "enchant": 54793,
-      "gems": [
-        40008,
-        36767
-      ]
-    },
-    {
-      "id": 40589,
-      "enchant": 38373
-    },
-    {
-      "id": 39717,
-      "enchant": 44491,
-      "gems": [
-        40089
-      ]
-    },
-    {
-      "id": 40370
-    },
-    {
-      "id": 40718
-    },
-    {
-      "id": 40257
-    },
-    {
-      "id": 44063,
-      "gems": [
-        36767,
-        40089
-      ]
-    },
-    {
-      "id": 40402,
-      "enchant": 44496
-    },
-    {
-      "id": 40400,
-      "enchant": 44936
-    },
-    {
-      "id": 41168,
-      "gems": [
-        36767
-      ]
-    }
-  ]}`),
-};
-
 export const P1_PRERAID_BALANCED_PRESET = {
 	name: 'P1 Pre-Raid Balanced Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-    {
-      "id": 42549,
-      "enchant": 44878,
-      "gems": [
-        41380,
-        40015
-      ]
-    },
-    {
-      "id": 40679
-    },
-    {
-      "id": 37814,
-      "enchant": 44957
-    },
-    {
-      "id": 37728,
-      "enchant": 55002
-    },
-    {
-      "id": 39611,
-      "enchant": 47766,
-      "gems": [
-        40008,
-        40008
-      ]
-    },
-    {
-      "id": 37620,
-      "enchant": 44944,
-      "gems": [
-        0
-      ]
-    },
-    {
-      "id": 39622,
-      "enchant": 63770,
-      "gems": [
-        40034,
-        0
-      ]
-    },
-    {
-      "id": 37379,
-      "enchant": 54793,
-      "gems": [
-        40034,
-        36767
-      ]
-    },
-    {
-      "id": 43500,
-      "enchant": 38373,
-      "gems": [
-        40034
-      ]
-    },
-    {
-      "id": 44201,
-      "enchant": 44491
-    },
-    {
-      "id": 37784
-    },
-    {
-      "id": 37186
-    },
-    {
-      "id": 37220
-    },
-    {
-      "id": 44063,
-      "gems": [
-        36767,
-        40089
-      ]
-    },
-    {
-      "id": 37401,
-      "enchant": 44496
-    },
-    {
-      "id": 43085,
-      "enchant": 44936
-    },
-    {
-      "id": 41168,
-      "gems": [
-        36767
-      ]
-    }
+		{
+			"id": 42549,
+			"enchant": 3818,
+			"gems": [
+				41380,
+				40015
+			]
+		},
+		{
+			"id": 40679
+		},
+		{
+			"id": 37814,
+			"enchant": 3852
+		},
+		{
+			"id": 37728,
+			"enchant": 3605
+		},
+		{
+			"id": 39611,
+			"enchant": 1953,
+			"gems": [
+				40008,
+				40008
+			]
+		},
+		{
+			"id": 37620,
+			"enchant": 3850,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39622,
+			"enchant": 3860,
+			"gems": [
+				40034,
+				0
+			]
+		},
+		{
+			"id": 37379,
+			"enchant": 3601,
+			"gems": [
+				40034,
+				36767
+			]
+		},
+		{
+			"id": 43500,
+			"enchant": 3822,
+			"gems": [
+				40034
+			]
+		},
+		{
+			"id": 44201,
+			"enchant": 3232
+		},
+		{
+			"id": 37784
+		},
+		{
+			"id": 37186
+		},
+		{
+			"id": 37220
+		},
+		{
+			"id": 44063,
+			"gems": [
+				36767,
+				40089
+			]
+		},
+		{
+			"id": 37401,
+			"enchant": 3788
+		},
+		{
+			"id": 43085,
+			"enchant": 3849
+		},
+		{
+			"id": 41168,
+			"gems": [
+				36767
+			]
+		}
+  ]}`),
+};
+
+export const P1_BALANCED_PRESET = {
+	name: 'P1 Balanced Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
+		{
+			"id": 40546,
+			"enchant": 3818,
+			"gems": [
+				41380,
+				40034
+			]
+		},
+		{
+			"id": 40387
+		},
+		{
+			"id": 39704,
+			"enchant": 3852,
+			"gems": [
+				40034
+			]
+		},
+		{
+			"id": 40722,
+			"enchant": 3605
+		},
+		{
+			"id": 44000,
+			"enchant": 3832,
+			"gems": [
+				40034,
+				40015
+			]
+		},
+		{
+			"id": 39764,
+			"enchant": 3850,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 40545,
+			"enchant": 3860,
+			"gems": [
+				40034,
+				0
+			]
+		},
+		{
+			"id": 39759,
+			"enchant": 3601,
+			"gems": [
+				40008,
+				36767
+			]
+		},
+		{
+			"id": 40589,
+			"enchant": 3822
+		},
+		{
+			"id": 39717,
+			"enchant": 3232,
+			"gems": [
+				40089
+			]
+		},
+		{
+			"id": 40370
+		},
+		{
+			"id": 40718
+		},
+		{
+			"id": 40257
+		},
+		{
+			"id": 44063,
+			"gems": [
+				36767,
+				40089
+			]
+		},
+		{
+			"id": 40402,
+			"enchant": 3788
+		},
+		{
+			"id": 40400,
+			"enchant": 3849
+		},
+		{
+			"id": 41168,
+			"gems": [
+				36767
+			]
+		}
   ]}`),
 };

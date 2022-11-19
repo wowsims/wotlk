@@ -75,7 +75,8 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'hotUptime',
 			label: 'Revitalize Hot Uptime',
 			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
-			percent: true
+			percent: true,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Analytical,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'maxRoarOffset',

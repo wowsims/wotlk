@@ -1,3 +1,4 @@
+import { getLanguageCode } from '../constants/lang.js';
 import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 import { Item } from '../proto/common.js';
@@ -136,17 +137,21 @@ export class ActionId {
 	}
 
 	static makeItemUrl(id: number): string {
+		const lang = getLanguageCode();
+		const langPrefix = lang ? lang + '/' : '';
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?item=' + id;
 		} else {
-			return 'https://wowhead.com/wotlk/item=' + id;
+			return `https://wowhead.com/wotlk/${langPrefix}item=${id}`;
 		}
 	}
 	static makeSpellUrl(id: number): string {
+		const lang = getLanguageCode();
+		const langPrefix = lang ? lang + '/' : '';
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?spell=' + id;
 		} else {
-			return 'https://wowhead.com/wotlk/spell=' + id;
+			return `https://wowhead.com/wotlk/${langPrefix}spell=${id}`;
 		}
 	}
 

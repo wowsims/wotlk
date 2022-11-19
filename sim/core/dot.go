@@ -13,7 +13,7 @@ type Dot struct {
 	// Embed Aura so we can use IsActive/Refresh/etc directly.
 	*Aura
 
-	NumberOfTicks int           // number of ticks over the whole duration
+	NumberOfTicks int32         // number of ticks over the whole duration
 	TickLength    time.Duration // time between each tick
 
 	// If true, tick length will be shortened based on casting speed.
@@ -30,9 +30,14 @@ type Dot struct {
 	tickPeriod time.Duration
 
 	// Number of ticks since last call to Apply().
-	TickCount int
+	TickCount int32
 
 	lastTickTime time.Duration
+}
+
+// TickPeriod is how fast the snapshotted dot ticks.
+func (dot *Dot) TickPeriod() time.Duration {
+	return dot.tickPeriod
 }
 
 // Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.
@@ -72,6 +77,32 @@ func (dot *Dot) Apply(sim *Simulation) {
 	dot.TickCount = 0
 	dot.RecomputeAuraDuration()
 	dot.Aura.Activate(sim)
+}
+
+// ApplyOrReset is used for rolling dots that reset the tick timer on reapplication.
+// This is more efficient than Apply(), and works around tickAction.CleanUp() wrongly generating
+// an extra ticks if (re-)application and tick happen at the same time.
+func (dot *Dot) ApplyOrReset(sim *Simulation) {
+	if !dot.IsActive() {
+		dot.Apply(sim)
+		return
+	}
+
+	dot.TakeSnapshot(sim, true)
+
+	dot.RecomputeAuraDuration() // recalculate haste
+	dot.Aura.Refresh(sim)       // update aura's duration
+
+	dot.TickCount = 0
+
+	dot.tickAction.NextActionAt = -1 // prevent tickAction.CleanUp() from adding an extra tick
+	dot.tickAction.Cancel(sim)       // remove old PA ticker
+
+	// recreate with new period, resetting the next tick.
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	sim.AddPendingAction(dot.tickAction)
 }
 
 // Like Apply(), but does not reset the tick timer.
@@ -149,6 +180,7 @@ func NewDot(config Dot) *Dot {
 	oldOnGain := dot.Aura.OnGain
 	oldOnExpire := dot.Aura.OnExpire
 	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
+		dot.lastTickTime = -1 // reset last tick time.
 		dot.TakeSnapshot(sim, false)
 
 		periodicOptions := dot.basePeriodicOptions()

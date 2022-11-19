@@ -265,6 +265,7 @@ message EnhancementShaman {
             ChainLightning = 11;
 			FrostShock = 12;
 			MagmaTotem = 13;
+			LightningBoltDelayedWeave = 14;
         }
 
 		CustomRotation custom_rotation = 3;
@@ -273,7 +274,7 @@ message EnhancementShaman {
         bool lavaburst_weave = 4;
         bool lightningbolt_weave = 5;
         int32 maelstromweapon_min_stack = 6;
-		double weave_reaction_time = 7;
+		double auto_weave_delay = 7;
 
         //other general rotation config options
         double firenova_mana_threshold = 8;
@@ -288,6 +289,7 @@ message EnhancementShaman {
 		bool weave_flame_shock = 10;
 		PrimaryShock primary_shock = 11;
         int32 flame_shock_clip_ticks = 12;
+		double delay_gcd_weave = 13;
 
     }
 

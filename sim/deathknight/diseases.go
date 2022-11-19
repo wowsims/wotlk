@@ -51,6 +51,27 @@ func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 func (dk *Deathknight) registerDiseaseDots() {
 	dk.registerFrostFever()
 	dk.registerBloodPlague()
+	dk.registerDiseaseGhostCasts()
+}
+
+// This is used by the first applications of any of the DK disease
+// to simulate the extra proc chances that are present on classic when
+// applying a diseases for the first time on a mob
+func (dk *Deathknight) registerDiseaseGhostCasts() {
+	dk.DiseaseGhostSpell = dk.Character.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 52789},
+		SpellSchool: core.SpellSchoolMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 0,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Just deal 0 damage as the "Harmful Spell" is implemented on spell damage
+			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeAlwaysHit)
+		},
+	})
 }
 
 func (dk *Deathknight) registerFrostFever() {
@@ -99,7 +120,7 @@ func (dk *Deathknight) registerFrostFever() {
 		}
 		dk.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
 			Aura:          target.RegisterAura(aura),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				firstTsApply := !flagTs[target.Index]
@@ -166,7 +187,7 @@ func (dk *Deathknight) registerBloodPlague() {
 					}
 				},
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
@@ -227,7 +248,7 @@ func (dk *Deathknight) registerDrwFrostFever() {
 				Label:    "DrwFrostFever-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
 				ActionID: actionID,
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
@@ -278,7 +299,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				Label:    "DrwBloodPlague-" + strconv.Itoa(int(dk.RuneWeapon.Index)),
 				ActionID: actionID,
 			}),
-			NumberOfTicks: 5 + int(dk.Talents.Epidemic),
+			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {

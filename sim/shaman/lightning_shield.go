@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -16,22 +15,15 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 	actionID := core.ActionID{SpellID: 49281}
 	procChance := 0.02*float64(shaman.Talents.StaticShock) + core.TernaryFloat64(shaman.HasSetBonus(ItemSetThrallsBattlegear, 2), 0.03, 0)
 
-	dmgMultBonus := 0.0
-	switch shaman.Equip[items.ItemSlotHands].ID { //s1 and s2 enh pvp gloves, probably unnessecary but its fun
-	case 26000:
-		fallthrough
-	case 32005:
-		dmgMultBonus = 0.08
-	}
-
 	procSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49279},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskEmpty,
 
-		DamageMultiplier: 1*(1+0.05*float64(shaman.Talents.ImprovedShields)+
-			core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0)) +
-			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0) + dmgMultBonus,
+		DamageMultiplier: 1 +
+			0.05*float64(shaman.Talents.ImprovedShields) +
+			core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthshatterBattlegear, 2), 0.1, 0) +
+			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningShield), 0.2, 0),
 		ThreatMultiplier: 1, //fix when spirit weapons is fixed
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

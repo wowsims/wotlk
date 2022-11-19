@@ -16,10 +16,17 @@ import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import { Mage, Mage_Rotation as MageRotation, MageTalents as MageTalents, Mage_Options as MageOptions } from '../core/proto/mage.js';
+import {
+	Mage,
+	Mage_Rotation as MageRotation,
+	Mage_Rotation_Type as RotationType,
+	MageTalents as MageTalents,
+	Mage_Options as MageOptions,
+} from '../core/proto/mage.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as MageInputs from './inputs.js';
@@ -57,6 +64,16 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecMage>) => {
+				let stats = new Stats();
+				if (player.getRotation().type == RotationType.Arcane) {
+					stats = stats.addStat(Stat.StatSpellHit, player.getTalents().arcaneFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+				}
+
+				return {
+					talents: stats,
+				};
+			},
 
 			defaults: {
 				// Default equipped gear.
@@ -147,15 +164,15 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.P1_PRERAID_ARCANE_PRESET,
+					Presets.P1_PRERAID_FIRE_PRESET,
 					Presets.P1_ARCANE_PRESET,
 					Presets.P1_FIRE_PRESET,
 					Presets.P1_FROST_PRESET,
-					Presets.P1_PRERAID_ARCANE_PRESET,
-					Presets.P1_PRERAID_FIRE_PRESET,
+					Presets.P2_Arcane_Preset,
+					Presets.P2_Fire_Preset,
 					Presets.ICC_FFB_Preset,
 					Presets.ICC_Fireball_Preset,
-					Presets.P2_Arcane_Preset,
-					Presets.P2_Fire_Preset
 				],
 			},
 		});

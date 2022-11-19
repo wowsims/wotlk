@@ -28,7 +28,9 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
 			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
+
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
 			0.02*float64(rogue.Talents.FindWeakness) +

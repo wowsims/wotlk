@@ -53,11 +53,11 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 		BonusHitRating: float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		BonusCritRating: 0 +
-			(float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance) +
+			float64(shaman.Talents.TidalMastery)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(shaman.Talents.CallOfThunder, 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: 1 * (1 + 0.01*float64(shaman.Talents.Concussion)),
+		DamageMultiplier: 1 + 0.01*float64(shaman.Talents.Concussion),
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+		ThreatMultiplier: shaman.spellThreatMultiplier(),
 	}
 
 	if isLightningOverload {

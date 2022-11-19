@@ -26,9 +26,13 @@ func (shaman *Shaman) registerLavaLashSpell() {
 	manaCost := 0.04 * shaman.BaseMana
 
 	flatDamageBonus := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
-	offhandFlametongueImbued := false
+
+	imbueMultiplier := 1.0
 	if shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon || shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank {
-		offhandFlametongueImbued = true
+		imbueMultiplier = 1.25
+		if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash) {
+			imbueMultiplier = 1.35
+		}
 	}
 
 	var indomitabilityAura *core.Aura
@@ -63,11 +67,10 @@ func (shaman *Shaman) registerLavaLashSpell() {
 			},
 		},
 
-		DamageMultiplier: 1 + core.TernaryFloat64(offhandFlametongueImbued,
-			core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLavaLash), 0.35, 0.25), 0)*
+		DamageMultiplier: imbueMultiplier *
 			core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerBattlegear, 2), 1.2, 1),
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
-		ThreatMultiplier: 1 - (0.1/3)*float64(shaman.Talents.ElementalPrecision),
+		ThreatMultiplier: shaman.spellThreatMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := flatDamageBonus +

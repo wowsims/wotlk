@@ -11,7 +11,9 @@ import { Player } from '../player.js';
 import { classNames, nameToClass, nameToRace, statNames } from '../proto_utils/names.js';
 import { talentSpellIdsToTalentString } from '../talents/factory.js';
 import { EventID, TypedEvent } from '../typed_event.js';
+import { wowheadSupportedLanguages } from '../constants/lang.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
+import { EnumPicker } from '../components/enum_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { getEnumValues } from '../utils.js';
 
@@ -29,13 +31,13 @@ export class SettingsMenu extends Popup {
 		this.simUI = simUI;
 
 		this.rootElem.innerHTML = `
-			<div class="settings-menu-title">
+			<div class="menu-title">
 				<span>OPTIONS</span>
 			</div>
-			<div class="settings-menu-content">
+			<div class="menu-content">
 				<div class="settings-menu-content-left">
 					<button class="restore-defaults-button sim-button">RESTORE DEFAULTS</button>
-					<div class="settings-menu-section">
+					<div class="menu-section">
 						<div class="fixed-rng-seed">
 						</div>
 						<div class="last-used-rng-seed-container">
@@ -48,7 +50,9 @@ export class SettingsMenu extends Popup {
 					</div>
 				</div>
 				<div class="settings-menu-content-right">
-					<div class="settings-menu-section settings-menu-ep-weights within-raid-sim-hide">
+					<div class="menu-section settings-menu-ep-weights within-raid-sim-hide">
+						<div class="language-picker">
+						</div>
 					</div>
 				</div>
 			</div>
@@ -90,15 +94,39 @@ export class SettingsMenu extends Popup {
 			},
 		});
 
-		// Comment this out when there are no experiments to show.
 		const showExperimental = this.rootElem.getElementsByClassName('show-experimental-picker')[0] as HTMLElement;
 		new BooleanPicker(showExperimental, this.simUI.sim, {
 			label: 'Show Experimental',
+			labelTooltip: 'Shows experimental options, if there are any active experiments.',
 			changedEvent: (sim: Sim) => sim.showExperimentalChangeEmitter,
 			getValue: (sim: Sim) => sim.getShowExperimental(),
 			setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
 				sim.setShowExperimental(eventID, newValue);
 			},
 		});
+
+		const language = this.rootElem.getElementsByClassName('language-picker')[0] as HTMLElement;
+		const langs = Object.keys(wowheadSupportedLanguages);
+		const defaultLang = langs.indexOf('en');
+		const languagePicker = new EnumPicker(language, this.simUI.sim, {
+			label: 'Language',
+			labelTooltip: 'Controls the language for Wowhead tooltips.',
+			values: langs.map((lang, i) => {
+				return {
+					name: wowheadSupportedLanguages[lang],
+					value: i,
+				};
+			}),
+			changedEvent: (sim: Sim) => sim.languageChangeEmitter,
+			getValue: (sim: Sim) => {
+				const idx = langs.indexOf(sim.getLanguage());
+				return idx == -1 ? defaultLang : idx;
+			},
+			setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+				sim.setLanguage(eventID, langs[newValue] || 'en');
+			},
+		});
+		// Refresh page after language change, to apply the changes.
+		languagePicker.changeEmitter.on(() => setTimeout(() => location.reload(), 100));
 	}
 }

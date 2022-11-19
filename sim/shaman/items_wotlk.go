@@ -161,11 +161,10 @@ func init() {
 			Duration:  time.Second * 30,
 			MaxStacks: 5,
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-				shaman.AddStatDynamic(sim, stats.SpellHaste, -44*float64(oldStacks))
-				shaman.AddStatDynamic(sim, stats.SpellHaste, 44*float64(newStacks))
-
-				shaman.AddStatDynamic(sim, stats.MeleeHaste, -44*float64(oldStacks))
-				shaman.AddStatDynamic(sim, stats.MeleeHaste, 44*float64(newStacks))
+				shaman.AddStatsDynamic(sim, stats.Stats{
+					stats.SpellHaste: 44 * float64(newStacks-oldStacks),
+					stats.MeleeHaste: 44 * float64(newStacks-oldStacks),
+				})
 			},
 		})
 		shaman.RegisterAura(core.Aura{

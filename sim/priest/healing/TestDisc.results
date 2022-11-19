@@ -45,17 +45,17 @@ character_stats_results: {
 dps_results: {
  key: "TestDisc-AllItems-AbsolutionRegalia"
  value: {
-  dps: 84.23859
-  tps: 39.90263
-  hps: 3507.16891
+  dps: 81.70746
+  tps: 39.27719
+  hps: 3498.70264
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-AshtongueTalismanofAcumen-32490"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -69,9 +69,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -125,57 +125,57 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5516.31772
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5478.46155
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DarkmoonCard:Greatness-42987"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DarkmoonCard:Greatness-44253"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DarkmoonCard:Greatness-44254"
  value: {
-  dps: 100.27223
-  tps: 54.31602
-  hps: 5538.29056
+  dps: 96.09266
+  tps: 53.27471
+  hps: 5523.90777
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5475.23133
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5437.28577
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-Defender'sCode-40257"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -229,25 +229,25 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5526.43662
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5488.60007
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 103.53535
-  tps: 54.21681
-  hps: 5650.44044
+  dps: 99.69045
+  tps: 53.22471
+  hps: 5612.01099
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-ForgeEmber-37660"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5503.67651
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5465.48626
  }
 }
 dps_results: {
@@ -269,17 +269,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-FuturesightRune-38763"
  value: {
-  dps: 102.1343
-  tps: 54.36602
-  hps: 5555.13567
+  dps: 97.87716
+  tps: 53.22471
+  hps: 5532.01275
  }
 }
 dps_results: {
@@ -309,9 +309,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 105.77726
-  tps: 54.21681
-  hps: 5650.43145
+  dps: 101.84913
+  tps: 53.22471
+  hps: 5612.70357
  }
 }
 dps_results: {
@@ -333,17 +333,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-IncisorFragment-37723"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 103.11686
-  tps: 54.21681
-  hps: 5575.50821
+  dps: 99.2875
+  tps: 53.22471
+  hps: 5537.08045
  }
 }
 dps_results: {
@@ -357,33 +357,33 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 100.27223
-  tps: 54.36602
-  hps: 5571.31607
+  dps: 96.09266
+  tps: 53.32471
+  hps: 5565.50532
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5506.90063
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5468.89112
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5456.76517
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5422.78739
  }
 }
 dps_results: {
@@ -421,9 +421,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -437,17 +437,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 104.28265
-  tps: 54.21681
-  hps: 5618.59797
+  dps: 100.41001
+  tps: 53.22471
+  hps: 5579.85812
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 104.82071
-  tps: 54.21681
-  hps: 5638.48555
+  dps: 100.9281
+  tps: 53.22471
+  hps: 5599.60166
  }
 }
 dps_results: {
@@ -469,9 +469,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -493,25 +493,25 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -525,9 +525,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 101.03841
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 97.75552
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -565,17 +565,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 102.93574
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 99.29946
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 102.93574
-  tps: 54.21681
-  hps: 5452.86814
+  dps: 99.29946
+  tps: 53.22471
+  hps: 5415.32863
  }
 }
 dps_results: {
@@ -621,9 +621,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-WingedTalisman-37844"
  value: {
-  dps: 99.79883
-  tps: 54.21681
-  hps: 5536.05315
+  dps: 96.09266
+  tps: 53.22471
+  hps: 5497.51312
  }
 }
 dps_results: {
@@ -645,64 +645,64 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Average-Default"
  value: {
-  dps: 101.20243
-  tps: 54.84389
-  hps: 5619.07316
+  dps: 96.96815
+  tps: 53.69062
+  hps: 5591.12892
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-LongMultiTarget"
  value: {
-  dps: 100.82874
-  tps: 1064.39941
-  hps: 5341.93731
+  dps: 99.2875
+  tps: 1052.49424
+  hps: 5336.53605
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-LongSingleTarget"
  value: {
-  dps: 100.82874
-  tps: 53.21997
-  hps: 5341.93731
+  dps: 99.2875
+  tps: 52.62471
+  hps: 5336.53605
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 504.14372
-  tps: 183.54237
+  dps: 496.43751
+  tps: 183.04044
   hps: 8315.29472
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongMultiTarget"
  value: {
-  dps: 51.60864
-  tps: 531.96455
-  hps: 2813.23577
+  dps: 46.29484
+  tps: 496.53663
+  hps: 2753.80857
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongSingleTarget"
  value: {
-  dps: 51.60864
-  tps: 26.59823
-  hps: 2813.23577
+  dps: 46.29484
+  tps: 24.82683
+  hps: 2753.80857
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 258.04319
-  tps: 98.67304
+  dps: 231.47421
+  tps: 90.31606
   hps: 5595.89583
  }
 }
 dps_results: {
  key: "TestDisc-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 84.86757
-  tps: 54.21681
-  hps: 5575.50821
+  dps: 81.96211
+  tps: 53.22471
+  hps: 5537.08045
  }
 }

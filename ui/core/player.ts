@@ -6,6 +6,7 @@ import {
 	Gem,
 	GemColor,
 	Glyphs,
+	HandType,
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
@@ -43,6 +44,7 @@ import {
 	canEquipItem,
 	classColors,
 	emptyRaidTarget,
+	enchantAppliesToItem,
 	getEligibleEnchantSlots,
 	getEligibleItemSlots,
 	getTalentTree,
@@ -58,6 +60,7 @@ import {
 	withSpecProto,
 } from './proto_utils/utils.js';
 
+import { getLanguageCode } from './constants/lang.js';
 import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { Party, MAX_PARTY_SIZE } from './party.js';
@@ -90,6 +93,7 @@ export class Player<SpecType extends Spec> {
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
+	private healingEnabled: boolean = false;
 
 	private itemEPCache: Map<number, number> = new Map<number, number>();
 	private gemEPCache: Map<number, number> = new Map<number, number>();
@@ -212,12 +216,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	// Returns all items that this player can wear in the given slot.
-	getItems(slot: ItemSlot | undefined): Array<Item> {
+	getItems(slot: ItemSlot): Array<Item> {
 		return this.sim.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
 	}
 
 	// Returns all enchants that this player can wear in the given slot.
-	getEnchants(slot: ItemSlot | undefined): Array<Enchant> {
+	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.sim.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
 	}
 
@@ -549,6 +553,15 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
 
+	enableHealing() {
+		this.healingEnabled = true;
+		var hm = this.getHealingModel();
+		if (hm.cadenceSeconds == 0) {
+			hm.cadenceSeconds = 2;
+			this.setHealingModel(0, hm)
+		}
+	}
+
 	getHealingModel(): HealingModel {
 		// Make a defensive copy
 		return HealingModel.clone(this.healingModel);
@@ -560,6 +573,10 @@ export class Player<SpecType extends Spec> {
 
 		// Make a defensive copy
 		this.healingModel = HealingModel.clone(newHealingModel);
+		// If we have enabled healing model and try to set 0s cadence, default to 2s.
+		if (this.healingModel.cadenceSeconds == 0 && this.healingEnabled) {
+			this.healingModel.cadenceSeconds = 2;
+		}
 		this.healingModelChangeEmitter.emit(eventID);
 	}
 
@@ -589,12 +606,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	computeEnchantEP(enchant: Enchant): number {
-		if (this.enchantEPCache.has(enchant.id)) {
-			return this.enchantEPCache.get(enchant.id)!;
+		if (this.enchantEPCache.has(enchant.effectId)) {
+			return this.enchantEPCache.get(enchant.effectId)!;
 		}
 
 		let ep = this.computeStatsEP(new Stats(enchant.stats));
-		this.enchantEPCache.set(enchant.id, ep);
+		this.enchantEPCache.set(enchant.effectId, ep);
 		return ep
 	}
 
@@ -654,7 +671,12 @@ export class Player<SpecType extends Spec> {
 	}
 
 	setWowheadData(equippedItem: EquippedItem, elem: HTMLElement) {
-		let parts = ['domain=wotlk'];
+		const parts = [];
+
+		const lang = getLanguageCode();
+		const langPrefix = lang ? lang + '.' : '';
+		parts.push(`domain=${langPrefix}wotlk`);
+
 		if (equippedItem.gems.length > 0) {
 			parts.push('gems=' + equippedItem.gems.map(gem => gem ? gem.id : 0).join(':'));
 		}
@@ -668,6 +690,97 @@ export class Player<SpecType extends Spec> {
 		}
 
 		elem.setAttribute('data-wowhead', parts.join('&'));
+	}
+
+	static ARMOR_SLOTS: Array<ItemSlot> = [
+		ItemSlot.ItemSlotHead,
+		ItemSlot.ItemSlotShoulder,
+		ItemSlot.ItemSlotChest,
+		ItemSlot.ItemSlotWrist,
+		ItemSlot.ItemSlotHands,
+		ItemSlot.ItemSlotLegs,
+		ItemSlot.ItemSlotWaist,
+		ItemSlot.ItemSlotFeet,
+	];
+
+	static WEAPON_SLOTS: Array<ItemSlot> = [
+		ItemSlot.ItemSlotMainHand,
+		ItemSlot.ItemSlotOffHand,
+	];
+
+	filterItemData<T>(itemData: Array<T>, getItemFunc: (val: T) => Item, slot: ItemSlot): Array<T> {
+		const filters = this.sim.getFilters();
+
+		if (Player.ARMOR_SLOTS.includes(slot)) {
+			return itemData.filter(itemElem => {
+				const item = getItemFunc(itemElem);
+
+				if (!filters.armorTypes.includes(item.armorType)) {
+					return false;
+				}
+
+				return true;
+			});
+		} else if (Player.WEAPON_SLOTS.includes(slot)) {
+			return itemData.filter(itemElem => {
+				const item = getItemFunc(itemElem);
+
+				if (!filters.weaponTypes.includes(item.weaponType)) {
+					return false;
+				}
+				if (!filters.oneHandedWeapons && item.handType != HandType.HandTypeTwoHand) {
+					return false;
+				}
+				if (!filters.twoHandedWeapons && item.handType == HandType.HandTypeTwoHand) {
+					return false;
+				}
+
+				const minSpeed = slot == ItemSlot.ItemSlotMainHand ? filters.minMhWeaponSpeed : filters.minOhWeaponSpeed;
+				const maxSpeed = slot == ItemSlot.ItemSlotMainHand ? filters.maxMhWeaponSpeed : filters.maxOhWeaponSpeed;
+				if (minSpeed > 0 && item.weaponSpeed < minSpeed) {
+					return false;
+				}
+				if (maxSpeed > 0 && item.weaponSpeed > maxSpeed) {
+					return false;
+				}
+
+				return true;
+			});
+		} else {
+			return itemData;
+		}
+	}
+
+	filterEnchantData<T>(enchantData: Array<T>, getEnchantFunc: (val: T) => Enchant, slot: ItemSlot, currentEquippedItem: EquippedItem|null): Array<T> {
+		if (!currentEquippedItem) {
+			return enchantData;
+		}
+
+		const filters = this.sim.getFilters();
+
+		return enchantData.filter(enchantElem => {
+			const enchant = getEnchantFunc(enchantElem);
+
+			if (!enchantAppliesToItem(enchant, currentEquippedItem.item)) {
+				return false;
+			}
+
+			return true;
+		});
+	}
+
+	filterGemData<T>(gemData: Array<T>, getGemFunc: (val: T) => Gem, slot: ItemSlot, socketColor: GemColor): Array<T> {
+		const filters = this.sim.getFilters();
+
+		return gemData.filter(gemElem => {
+			const gem = getGemFunc(gemElem);
+
+			if (filters.matchingGemsOnly && !gemMatchesSocket(gem, socketColor)) {
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 	makeRaidTarget(): RaidTarget {

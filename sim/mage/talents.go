@@ -11,6 +11,7 @@ import (
 func (mage *Mage) ApplyTalents() {
 	mage.applyArcaneConcentration()
 	mage.applyIgnite()
+	mage.applyEmpoweredFire()
 	mage.applyMasterOfElements()
 	mage.applyWintersChill()
 	mage.applyMoltenFury()
@@ -280,6 +281,10 @@ func (mage *Mage) registerPresenceOfMindCD() {
 		Spell: spell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if !character.GCD.IsReady(sim) {
+				return false
+			}
+
 			var manaCost float64
 			if mage.Talents.Pyroblast {
 				manaCost = mage.Pyroblast.DefaultCast.Cost
@@ -420,7 +425,7 @@ func (mage *Mage) registerCombustionCD() {
 			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
-			if spell.SameAction(IgniteActionID) || spell.SameAction(core.ActionID{SpellID: 55359}) || spell.SameAction(core.ActionID{SpellID: 44457}) { //LB dot action should be ignored
+			if spell == mage.Ignite || spell == mage.LivingBomb { //LB dot action should be ignored
 				return
 			}
 			if !result.Landed() {

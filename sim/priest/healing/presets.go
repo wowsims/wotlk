@@ -113,7 +113,7 @@ var PlayerOptionsHoly = &proto.Player_HealingPriest{
 var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40456,
-		"enchant": 44876,
+		"enchant": 3819,
 		"gems": [
 			41401,
 			39998
@@ -127,32 +127,32 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40450,
-		"enchant": 44872,
+		"enchant": 3809,
 		"gems": [
 			42144
 		]
 	},
 	{
 		"id": 40724,
-		"enchant": 63765
+		"enchant": 3859
 	},
 	{
 		"id": 40194,
-		"enchant": 44489,
+		"enchant": 3832,
 		"gems": [
 			42144
 		]
 	},
 	{
 		"id": 40741,
-		"enchant": 44498,
+		"enchant": 2332,
 		"gems": [
 			0
 		]
 	},
 	{
 		"id": 40445,
-		"enchant": 44592,
+		"enchant": 3246,
 		"gems": [
 			42144,
 			0
@@ -160,7 +160,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40271,
-		"enchant": 54793,
+		"enchant": 3601,
 		"gems": [
 			40027,
 			39998
@@ -168,7 +168,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40398,
-		"enchant": 41602,
+		"enchant": 3719,
 		"gems": [
 			39998,
 			39998
@@ -176,7 +176,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40236,
-		"enchant": 55016
+		"enchant": 3606
 	},
 	{
 		"id": 40108
@@ -192,7 +192,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	},
 	{
 		"id": 40395,
-		"enchant": 44487
+		"enchant": 3834
 	},
 	{
 		"id": 40350

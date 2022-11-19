@@ -129,7 +129,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				stats = stats.addStat(Stat.StatMeleeCrit, player.getTalents().lethalShots * 1 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
 
 				const rangedWeapon = player.getEquippedItem(ItemSlot.ItemSlotRanged);
-				if (rangedWeapon?.enchant?.id == 41167) {
+				if (rangedWeapon?.enchant?.effectId == 3608) {
 					stats = stats.addStat(Stat.StatMeleeCrit, 40);
 				}
 				if (player.getRace() == Race.RaceDwarf && rangedWeapon?.item.rangedWeaponType == RangedWeaponType.RangedWeaponTypeGun) {

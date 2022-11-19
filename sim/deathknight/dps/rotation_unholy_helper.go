@@ -169,6 +169,16 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 	return true
 }
 
+func (dk *DpsDeathknight) uhMindFreeze(sim *core.Simulation, target *core.Unit) bool {
+	if dk.Talents.EndlessWinter == 2 && dk.SummonGargoyle.IsReady(sim) {
+		if dk.MindFreezeSpell.IsReady(sim) {
+			dk.MindFreezeSpell.Cast(sim, target)
+			return true
+		}
+	}
+	return false
+}
+
 // Save up Runic Power for Summon Gargoyle - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
 	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
@@ -207,15 +217,23 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Go back to Blood Presence after Bloodlust
-	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
+	if dk.Rotation.Presence == proto.Deathknight_Rotation_Blood && dk.Rotation.BlPresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
 		return dk.BloodPresence.Cast(sim, target)
 	}
 
+	// Go back to Unholy Presence after Bloodlust
+	if dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy && dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.BloodPresence) && !dk.HasActiveAuraWithTag("Bloodlust") {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		return dk.UnholyPresence.Cast(sim, target)
+	}
+
 	// Go back to Blood Presence after gargoyle cast
-	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) {
+	if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.SummonGargoyle.IsReady(sim) && dk.HasActiveAuraWithTag("Bloodlust") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}

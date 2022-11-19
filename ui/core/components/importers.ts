@@ -114,17 +114,6 @@ export abstract class Importer extends Popup {
 			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
 		}
 
-		equipmentSpec.items.forEach(item => {
-			if (item.enchant) {
-				const dbEnchant = simUI.sim.getEnchantFlexible(item.enchant);
-				if (dbEnchant) {
-					item.enchant = dbEnchant.id;
-				} else {
-					item.enchant = 0;
-				}
-			}
-		});
-
 		const gear = simUI.sim.lookupEquipmentSpec(equipmentSpec);
 
 		const expectedEnchantIds = equipmentSpec.items.map(item => item.enchant);
@@ -306,6 +295,11 @@ class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 
 		const gearJson = importJson['gear'];
 		gearJson.items = (gearJson.items as Array<any>).filter(item => item != null);
+		(gearJson.items as Array<any>).forEach(item => {
+			if (item.gems) {
+				item.gems = (item.gems as Array<any>).map(gem => gem || 0);
+			}
+		});
 		const equipmentSpec = EquipmentSpec.fromJson(gearJson);
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, glyphs, professions);

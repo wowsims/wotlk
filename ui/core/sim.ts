@@ -1,3 +1,4 @@
+import { ArmorType } from './proto/common.js';
 import { Class, Faction } from './proto/common.js';
 import { Consumes } from './proto/common.js';
 import { Enchant } from './proto/common.js';
@@ -15,6 +16,7 @@ import { Race } from './proto/common.js';
 import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
 import { Stat } from './proto/common.js';
+import { WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
 import { PresetEncounter, PresetTarget } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
@@ -22,7 +24,10 @@ import { GearListRequest, GearListResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
-import { SimSettings as SimSettingsProto } from './proto/ui.js';
+import {
+	DatabaseFilters,
+	SimSettings as SimSettingsProto,
+} from './proto/ui.js';
 
 import { EquippedItem } from './proto_utils/equipped_item.js';
 import { Gear } from './proto_utils/gear.js';
@@ -41,11 +46,13 @@ import { getEligibleItemSlots } from './proto_utils/utils.js';
 import { getEligibleEnchantSlots } from './proto_utils/utils.js';
 import { playerToSpec } from './proto_utils/utils.js';
 
+import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
 import { Raid } from './raid.js';
 import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
+import { getEnumValues } from './utils.js';
 import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
@@ -70,20 +77,19 @@ export class Sim {
 	private phase: number = OtherConstants.CURRENT_PHASE;
 	private faction: Faction = Faction.Alliance;
 	private fixedRngSeed: number = 0;
-	private show1hWeapons: boolean = true;
-	private show2hWeapons: boolean = true;
-	private showMatchingGems: boolean = true;
+	private filters: DatabaseFilters = Sim.defaultFilters();
 	private showDamageMetrics: boolean = true;
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
+	private language: string = '';
 
 	readonly raid: Raid;
 	readonly encounter: Encounter;
 
 	// Database
 	private items: Record<number, Item> = {};
-	private enchants: Enchant[] = [];
+	private enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private gems: Record<number, Gem> = {};
 	private presetEncounters: Record<string, PresetEncounter> = {};
 	private presetTargets: Record<string, PresetTarget> = {};
@@ -93,13 +99,12 @@ export class Sim {
 	readonly factionChangeEmitter = new TypedEvent<void>();
 	readonly fixedRngSeedChangeEmitter = new TypedEvent<void>();
 	readonly lastUsedRngSeedChangeEmitter = new TypedEvent<void>();
-	readonly show1hWeaponsChangeEmitter = new TypedEvent<void>();
-	readonly show2hWeaponsChangeEmitter = new TypedEvent<void>();
-	readonly showMatchingGemsChangeEmitter = new TypedEvent<void>();
+	readonly filtersChangeEmitter = new TypedEvent<void>();
 	readonly showDamageMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly languageChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
 	// Emits when any of the settings change (but not the raid / encounter).
@@ -118,12 +123,19 @@ export class Sim {
 	private modifyRaidProto: ((raidProto: RaidProto) => void) = () => { };
 
 	constructor() {
-		this.workerPool = new WorkerPool(3);
+		this.workerPool = new WorkerPool(1);
 
 		this._initPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
 			result.items.forEach(item => this.items[item.id] = item);
-			// result.enchants.forEach(enchant => this.enchants[enchant.id] = enchant);
-			this.enchants = result.enchants;
+			result.enchants.forEach(enchant => {
+				const slots = getEligibleEnchantSlots(enchant);
+				slots.forEach(slot => {
+					if (!this.enchantsBySlot[slot]) {
+						this.enchantsBySlot[slot] = [];
+					}
+					this.enchantsBySlot[slot]!.push(enchant);
+				});
+			});
 			result.gems.forEach(gem => this.gems[gem.id] = gem);
 			result.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 			result.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
@@ -136,13 +148,12 @@ export class Sim {
 			this.iterationsChangeEmitter,
 			this.phaseChangeEmitter,
 			this.fixedRngSeedChangeEmitter,
-			this.show1hWeaponsChangeEmitter,
-			this.show2hWeaponsChangeEmitter,
-			this.showMatchingGemsChangeEmitter,
+			this.filtersChangeEmitter,
 			this.showDamageMetricsChangeEmitter,
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
+			this.languageChangeEmitter,
 		]);
 
 		this.changeEmitter = TypedEvent.onAny([
@@ -320,25 +331,14 @@ export class Sim {
 		}
 	}
 
-	getItems(slot: ItemSlot | undefined): Array<Item> {
+	getItems(slot: ItemSlot): Array<Item> {
 		let items = Object.values(this.items);
-		if (slot != undefined) {
-			items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		}
+		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
 		return items;
 	}
 
-	getEnchants(slot: ItemSlot | undefined): Array<Enchant> {
-		let enchants = Object.values(this.enchants);
-		if (slot != undefined) {
-			enchants = enchants.filter(enchant => getEligibleEnchantSlots(enchant).includes(slot));
-		}
-		return enchants;
-	}
-
-	// ID can be the formula ID OR the effect ID.
-	getEnchantFlexible(id: number): Enchant | null {
-		return Object.values(this.enchants).find(enchant => enchant.id == id || enchant.effectId == id) || null;
+	getEnchants(slot: ItemSlot): Array<Enchant> {
+		return this.enchantsBySlot[slot] || [];
 	}
 
 	getGems(socketColor?: GemColor): Array<Gem> {
@@ -413,35 +413,18 @@ export class Sim {
 		return this.lastUsedRngSeed;
 	}
 
-
-	getShow1hWeapons(): boolean {
-		return this.show1hWeapons;
+	getFilters(): DatabaseFilters {
+		// Make a defensive copy
+		return DatabaseFilters.clone(this.filters);
 	}
-	setShow1hWeapons(eventID: EventID, newShow1hWeapons: boolean) {
-		if (newShow1hWeapons != this.show1hWeapons) {
-			this.show1hWeapons = newShow1hWeapons;
-			this.show1hWeaponsChangeEmitter.emit(eventID);
+	setFilters(eventID: EventID, newFilters: DatabaseFilters) {
+		if (DatabaseFilters.equals(newFilters, this.filters)) {
+			return;
 		}
-	}
 
-	getShow2hWeapons(): boolean {
-		return this.show2hWeapons;
-	}
-	setShow2hWeapons(eventID: EventID, newShow2hWeapons: boolean) {
-		if (newShow2hWeapons != this.show2hWeapons) {
-			this.show2hWeapons = newShow2hWeapons;
-			this.show2hWeaponsChangeEmitter.emit(eventID);
-		}
-	}
-
-	getShowMatchingGems(): boolean {
-		return this.showMatchingGems;
-	}
-	setShowMatchingGems(eventID: EventID, newShowMatchingGems: boolean) {
-		if (newShowMatchingGems != this.showMatchingGems) {
-			this.showMatchingGems = newShowMatchingGems;
-			this.showMatchingGemsChangeEmitter.emit(eventID);
-		}
+		// Make a defensive copy
+		this.filters = DatabaseFilters.clone(newFilters);
+		this.filtersChangeEmitter.emit(eventID);
 	}
 
 	getShowDamageMetrics(): boolean {
@@ -484,6 +467,18 @@ export class Sim {
 		}
 	}
 
+	getLanguage(): string {
+		return this.language;
+	}
+	setLanguage(eventID: EventID, newLanguage: string) {
+		newLanguage = newLanguage || getBrowserLanguageCode();
+		if (newLanguage != this.language) {
+			this.language = newLanguage;
+			setLanguageCode(this.language);
+			this.languageChangeEmitter.emit(eventID);
+		}
+	}
+
 	getIterations(): number {
 		return this.iterations;
 	}
@@ -499,7 +494,18 @@ export class Sim {
 		if (!item)
 			return null;
 
-		const enchant = itemSpec.enchant > 0 ? this.enchants.find(e => (e.id == itemSpec.enchant && e.type == item.type)) : null;
+		let enchant: Enchant | null = null;
+		if (itemSpec.enchant) {
+			const slots = getEligibleItemSlots(item);
+			for (let i = 0; i < slots.length; i++) {
+				enchant = (this.enchantsBySlot[slots[i]] || [])
+						.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
+				if (enchant) {
+					break;
+				}
+			}
+		}
+
 		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
 
 		return new EquippedItem(item, enchant, gems);
@@ -527,7 +533,18 @@ export class Sim {
 		return new Gear(gearMap);
 	}
 
+	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
+	private static readonly ALL_WEAPON_TYPES = (getEnumValues(WeaponType) as Array<WeaponType>).filter(v => v != 0);
+
 	toProto(): SimSettingsProto {
+		const filters = this.getFilters();
+		if (filters.armorTypes.length == Sim.ALL_ARMOR_TYPES.length) {
+			filters.armorTypes = [];
+		}
+		if (filters.weaponTypes.length == Sim.ALL_WEAPON_TYPES.length) {
+			filters.weaponTypes = [];
+		}
+
 		return SimSettingsProto.create({
 			iterations: this.getIterations(),
 			phase: this.getPhase(),
@@ -536,7 +553,9 @@ export class Sim {
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
+			language: this.getLanguage(),
 			faction: this.getFaction(),
+			filters: filters,
 		});
 	}
 
@@ -549,7 +568,17 @@ export class Sim {
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
+			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
+
+			const filters = proto.filters || Sim.defaultFilters();
+			if (filters.armorTypes.length == 0) {
+				filters.armorTypes = Sim.ALL_ARMOR_TYPES.slice();
+			}
+			if (filters.weaponTypes.length == 0) {
+				filters.weaponTypes = Sim.ALL_WEAPON_TYPES.slice();
+			}
+			this.setFilters(eventID, filters);
 		});
 	}
 
@@ -561,7 +590,16 @@ export class Sim {
 			showDamageMetrics: !isHealingSim,
 			showThreatMetrics: isTankSim,
 			showHealingMetrics: isHealingSim,
+			language: this.getLanguage(), // Don't change language.
+			filters: Sim.defaultFilters(),
 		}));
+	}
+
+	static defaultFilters(): DatabaseFilters {
+		return DatabaseFilters.create({
+			oneHandedWeapons: true,
+			twoHandedWeapons: true,
+		});
 	}
 }
 

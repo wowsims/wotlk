@@ -75,6 +75,16 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
+			fieldName: 'assassinationFinisherPriority',
+			label: 'Finisher Priority',
+			labelTooltip: 'The finisher that will be cast with highest priority.',
+			values: [
+				{ name: 'Rupture', value: AssassinationPriority.RuptureEnvenom },
+				{ name: 'Envenom', value: AssassinationPriority.EnvenomRupture },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomEnergyThreshold',
 			label: 'Energy Threshold (Envenom)',

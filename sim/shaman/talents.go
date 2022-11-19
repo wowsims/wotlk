@@ -9,7 +9,6 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
-
 	// We are going to treat this like a snapshot if you have the glyph.
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
 		shaman.AddStat(stats.SpellPower, 280*0.3)
@@ -73,6 +72,10 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.registerShamanisticRageCD()
 
 	// TODO: FeralSpirit Spirit summons
+}
+
+func (shaman *Shaman) spellThreatMultiplier() float64 {
+	return []float64{1, 0.9, 0.8, 0.7}[shaman.Talents.ElementalPrecision]
 }
 
 func (shaman *Shaman) applyElementalFocus() {
@@ -191,10 +194,10 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 		ActionID: core.ActionID{SpellID: 64701},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.PseudoStats.CastSpeedMultiplier *= 1.15
+			shaman.MultiplyCastSpeed(1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			shaman.PseudoStats.CastSpeedMultiplier /= 1.15
+			shaman.MultiplyCastSpeed(1 / 1.15)
 		},
 	})
 

@@ -58,25 +58,27 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	}),
 	maelstromweaponMinStack: 3,
 	lightningboltWeave: true,
-	weaveReactionTime: 0,
+	autoWeaveDelay: 500,
+	delayGcdWeave: 750,
 	lavaburstWeave: false,
 	firenovaManaThreshold: 3000,
 	shamanisticRageManaThreshold: 25,
 	primaryShock: PrimaryShock.Earth,
 	weaveFlameShock: true,
-  rotationType: RotationType.Priority,
-  customRotation: CustomRotation.create({
-		spells: [
+  	rotationType: RotationType.Priority,
+  	customRotation: CustomRotation.create({
+			spells: [
 			CustomSpell.create({ spell: CustomRotationSpell.LightningBolt }),
 			CustomSpell.create({ spell: CustomRotationSpell.StormstrikeDebuffMissing }),
 			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltWeave }),
 			CustomSpell.create({ spell: CustomRotationSpell.Stormstrike }),
 			CustomSpell.create({ spell: CustomRotationSpell.FlameShock }),
 			CustomSpell.create({ spell: CustomRotationSpell.EarthShock }),
-      CustomSpell.create({ spell: CustomRotationSpell.MagmaTotem}),
-      CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
-      CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
-      CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
+			CustomSpell.create({ spell: CustomRotationSpell.MagmaTotem}),
+			CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
+			CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
+			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltDelayedWeave }),
+			CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
 		],
 	}),
 });
@@ -124,191 +126,188 @@ export const PreRaid_PRESET = {
 	name: 'Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 43311,
-          "enchant": 44879,
-          "gems": [
-            41398,
-            42156
-          ]
-        },
-        {
-          "id": 40678
-        },
-        {
-          "id": 37373,
-          "enchant": 44871
-        },
-        {
-          "id": 37840,
-          "enchant": 55002
-        },
-        {
-          "id": 39597,
-          "enchant": 44489,
-          "gems": [
-            40053,
-            40088
-          ]
-        },
-        {
-          "id": 43131,
-          "enchant": 44484,
-          "gems": [
-            0
-          ]
-        },
-        {
-          "id": 39601,
-          "enchant": 54999,
-          "gems": [
-            40053,
-            0
-          ]
-        },
-        {
-          "id": 37407,
-          "gems": [
-            42156
-          ]
-        },
-        {
-          "id": 37669,
-          "enchant": 38374
-        },
-        {
-          "id": 37167,
-          "enchant": 55016,
-          "gems": [
-            40053,
-            42156
-          ]
-        },
-        {
-          "id": 37685
-        },
-        {
-          "id": 37642
-        },
-        {
-          "id": 37390
-        },
-        {
-          "id": 40684
-        },
-        {
-          "id": 41384,
-          "enchant": 44492
-        },
-        {
-          "id": 40704,
-          "enchant": 44492
-        },
-        {
-          "id": 37575
-        },
-        {
-          "id": 33507
-        }
-    ]}`)
+		{
+			"id": 43311,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				42156
+			]
+		},
+		{
+			"id": 40678
+		},
+		{
+			"id": 37373,
+			"enchant": 3808
+		},
+		{
+			"id": 37840,
+			"enchant": 3605
+		},
+		{
+			"id": 39597,
+			"enchant": 3832,
+			"gems": [
+				40053,
+				40088
+			]
+		},
+		{
+			"id": 43131,
+			"enchant": 3845,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 39601,
+			"enchant": 3604,
+			"gems": [
+				40053,
+				0
+			]
+		},
+		{
+			"id": 37407,
+			"gems": [
+				42156
+			]
+		},
+		{
+			"id": 37669,
+			"enchant": 3823
+		},
+		{
+			"id": 37167,
+			"enchant": 3606,
+			"gems": [
+				40053,
+				42156
+			]
+		},
+		{
+			"id": 37685
+		},
+		{
+			"id": 37642
+		},
+		{
+			"id": 37390
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 41384,
+			"enchant": 3789
+		},
+		{
+			"id": 40704,
+			"enchant": 3789
+		},
+		{
+			"id": 33507
+		}
+	]}`),
 }
 
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 40543,
-          "enchant": 44879,
-          "gems": [
-            41398,
-            40014
-          ]
-        },
-        {
-          "id": 44661,
-          "gems": [
-            40014
-          ]
-        },
-        {
-          "id": 40524,
-          "enchant": 44871,
-          "gems": [
-            40014
-          ]
-        },
-        {
-          "id": 40403,
-          "enchant": 55002
-        },
-        {
-          "id": 40523,
-          "enchant": 44489,
-          "gems": [
-            40003,
-            40014
-          ]
-        },
-        {
-          "id": 40282,
-          "enchant": 44484,
-          "gems": [
-            42702,
-            0
-          ]
-        },
-        {
-          "id": 40520,
-          "enchant": 54999,
-          "gems": [
-            42154,
-            0
-          ]
-        },
-        {
-          "id": 40275,
-          "gems": [
-            42156
-          ]
-        },
-        {
-          "id": 40522,
-          "enchant": 38374,
-          "gems": [
-            39999,
-            42156
-          ]
-        },
-        {
-          "id": 40367,
-          "enchant": 55016,
-          "gems": [
-            40058
-          ]
-        },
-        {
-          "id": 40474
-        },
-        {
-          "id": 40074
-        },
-        {
-          "id": 40684
-        },
-        {
-          "id": 37390
-        },
-        {
-          "id": 39763,
-          "enchant": 44492
-        },
-        {
-          "id": 39468,
-          "enchant": 44492
-        },
-        {
-          "id": 40322
-        }
-      ]}`),
+		{
+			"id": 40543,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				40014
+			]
+		},
+		{
+			"id": 44661,
+			"gems": [
+				40014
+			]
+		},
+		{
+			"id": 40524,
+			"enchant": 3808,
+			"gems": [
+				40014
+			]
+		},
+		{
+			"id": 40403,
+			"enchant": 3605
+		},
+		{
+			"id": 40523,
+			"enchant": 3832,
+			"gems": [
+				40003,
+				40014
+			]
+		},
+		{
+			"id": 40282,
+			"enchant": 3845,
+			"gems": [
+				42702,
+				0
+			]
+		},
+		{
+			"id": 40520,
+			"enchant": 3604,
+			"gems": [
+				42154,
+				0
+			]
+		},
+		{
+			"id": 40275,
+			"gems": [
+				42156
+			]
+		},
+		{
+			"id": 40522,
+			"enchant": 3823,
+			"gems": [
+				39999,
+				42156
+			]
+		},
+		{
+			"id": 40367,
+			"enchant": 3606,
+			"gems": [
+				40058
+			]
+		},
+		{
+			"id": 40474
+		},
+		{
+			"id": 40074
+		},
+		{
+			"id": 40684
+		},
+		{
+			"id": 37390
+		},
+		{
+			"id": 39763,
+			"enchant": 3789
+		},
+		{
+			"id": 39468,
+			"enchant": 3789
+		},
+		{
+			"id": 40322
+		}
+	]}`),
 };

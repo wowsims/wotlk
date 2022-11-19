@@ -91,9 +91,10 @@ func (druid *Druid) ApplyTalents() {
 }
 
 func (druid *Druid) setupNaturesGrace() {
-	if druid.Talents.NaturesGrace < 1 {
+	if druid.Talents.NaturesGrace == 0 {
 		return
 	}
+
 	druid.NaturesGraceProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Natures Grace Proc",
 		ActionID: core.ActionID{SpellID: 16886},
@@ -106,6 +107,8 @@ func (druid *Druid) setupNaturesGrace() {
 		},
 	})
 
+	procChance := []float64{0, .33, .66, 1}[druid.Talents.NaturesGrace]
+
 	druid.RegisterAura(core.Aura{
 		Label:    "Natures Grace",
 		Duration: core.NeverExpires,
@@ -116,7 +119,7 @@ func (druid *Druid) setupNaturesGrace() {
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if (spell == druid.Starfire || spell == druid.Wrath) && float64(druid.Talents.NaturesGrace)*(1.0/3.0) >= sim.RandomFloat("Natures Grace") {
+			if spell.Flags.Matches(SpellFlagNaturesGrace) && sim.Proc(procChance, "Natures Grace") {
 				druid.NaturesGraceProcAura.Activate(sim)
 			}
 		},
@@ -129,7 +132,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	}
 	actionID := core.ActionID{SpellID: 17116}
 
-	spell := druid.RegisterSpell(core.SpellConfig{
+	nsSpell := druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -154,13 +157,13 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 
 			// Remove the buff and put skill on CD
 			aura.Deactivate(sim)
-			spell.CD.Use(sim)
+			nsSpell.CD.Use(sim)
 			druid.UpdateMajorCooldowns()
 		},
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: nsSpell,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length starfire or wrath.
