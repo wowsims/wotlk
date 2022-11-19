@@ -215,38 +215,80 @@ func (paladin *Paladin) applyReckoning() {
 	})
 }
 
-// TODO: Update Ardent Defender behavior to WotLK with no leapfrogging
 func (paladin *Paladin) applyArdentDefender() {
 	if paladin.Talents.ArdentDefender == 0 {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 66233}
-	damageReduction := 1.0 - 0.06*float64(paladin.Talents.ArdentDefender)
+	var ardentDamageReduction float64
+	switch(paladin.Talents.ArdentDefender) {
+		case 3: ardentDamageReduction = 0.07
+		case 2: ardentDamageReduction = 0.13
+		case 1: ardentDamageReduction = 0.20
+	}
 
+	// TBD? Buff to mark time spent fully below 35% and attribute absorbs
+	// rangeAura := paladin.RegisterAura(core.Aura{
+		// Label:    "Ardent Defender (Active)",
+		// ActionID: core.ActionID{SpellID: 31852},
+		// Duration: core.NeverExpires,
+	// })
+
+	// paladin.RegisterAura(core.Aura{
+		// Label:    "Ardent Defender Talent",
+		// Duration: core.NeverExpires,
+		// OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			// aura.Activate(sim)
+		// },
+		// OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// if aura.Unit.CurrentHealthPercent() < 0.35 {
+				// procAura.Activate(sim)
+			// }
+		// },
+	// })
+
+	// Debuff to show that AD has procced
 	procAura := paladin.RegisterAura(core.Aura{
 		Label:    "Ardent Defender",
-		ActionID: actionID,
-		Duration: core.NeverExpires,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageReduction
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageReduction
+		ActionID: core.ActionID{SpellID: 66233},
+		Duration: time.Second * 120.0,
+	})
+	
+	// Spell to heal you when AD has procced; fire this before fatal damage so that a Death is not detected
+	procHeal := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:		core.ActionID{SpellID: 66233},
+		SpellSchool:	core.SpellSchoolHoly,
+		ProcMask:		core.ProcMaskSpellHealing,
+		CritMultiplier:	1, // Assuming this can't really crit?
+		ThreatMultiplier: 0.25,
+		DamageMultiplier: 1,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// 540 defense (+140) yields the full heal amount
+			ardentHealAmount := core.MaxFloat(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10*float64(paladin.Talents.ArdentDefender)
+			spell.CalcAndDealHealing(sim, &paladin.Unit, ardentHealAmount*paladin.MaxHealth(), spell.OutcomeHealingCrit)
 		},
 	})
 
-	paladin.RegisterAura(core.Aura{
-		Label:    "Ardent Defender Talent",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if aura.Unit.CurrentHealthPercent() < 0.35 {
+	// >= 0.35, no effect
+	// < 0.35, pro-rated DR
+	// =< 0, proc death save
+	paladin.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+		incomingDamage := result.Damage
+		if (paladin.CurrentHealth()-incomingDamage)/paladin.MaxHealth() <= 0.35 {
+			//rangeAura.Activate(sim)
+			result.Damage -= (paladin.MaxHealth()*0.35 - (paladin.CurrentHealth()-incomingDamage))*ardentDamageReduction
+			if sim.Log != nil {
+				paladin.Log(sim, "Ardent Defender reduced damage by %d", int32(incomingDamage-result.Damage))
+			}
+			
+			// Now check death save, based on the reduced damage
+			if (result.Damage >= paladin.CurrentHealth()) && !procAura.IsActive() {
+				result.Damage = paladin.CurrentHealth()
+				procHeal.Cast(sim, &paladin.Unit)
 				procAura.Activate(sim)
 			}
-		},
+		}
+		// TODO: Metrics, attribute reduced damage as absorption
 	})
 }
 
