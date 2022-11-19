@@ -46,6 +46,12 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
+			jow := target.GetAura(core.JudgementOfWisdomAuraLabel)
+			if jow.IsActive() {
+				jow.Refresh(sim)
+			} else {
+				core.JudgementOfWisdomAura(target).Activate(sim)
+			}
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
 	})
@@ -81,6 +87,12 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
+			jol := target.GetAura(core.JudgementOfLightAuraLabel)
+			if jol.IsActive() {
+				jol.Refresh(sim)
+			} else {
+				core.JudgementOfLightAura(target).Activate(sim)
+			}
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
 	})
