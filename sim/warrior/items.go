@@ -58,6 +58,66 @@ var ItemSetGladiatorsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+var ItemSetDreadnaughtPlate = core.NewItemSet(core.ItemSet{
+	Name: "Dreadnaught Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the damage of your Shield Slam ability by 10%.
+			// Handled in shield_slam.go.
+		},
+		4: func(agent core.Agent) {
+			// Increases the duration of Shield Wall by 3 seconds.
+			// NYI
+		},
+	},
+})
+
+var ItemSetSiegebreakerPlate = core.NewItemSet(core.ItemSet{
+	Name: "Siegebreaker Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the critical strike chance of Devastate by 10%.
+			// Handled in devastate.go
+		},
+		4: func(agent core.Agent) {
+			// Shield Block grants 10% magic DR
+			// NYI
+		},
+	},
+})
+
+var ItemSetWrynnsPlate = core.NewItemSet(core.ItemSet{
+	Name:            "Wrynn's Plate",
+	AlternativeName: "Hellscream's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Decreases the cooldown on Taunt by 2sec
+			// NYI
+
+			// Increases damage done by Devastate by 5%
+			// Handled in devastate.go
+		},
+		4: func(agent core.Agent) {
+			// Decreases the cooldown of Shield Block by 10 sec
+			// NYI
+		},
+	},
+})
+
+var ItemSetYmirjarLordsPlate = core.NewItemSet(core.ItemSet{
+	Name: "Ymirjar Lord's Plate",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Shield Slam and Shockwave deal 20% increased damage
+			// Handled in shield_slam.go and shockwave.go
+		},
+		4: func(agent core.Agent) {
+			// Bloodrage no longer costs health to use, and now causes you to absorb damage equal to 20% max HP
+			// NYI
+		},
+	},
+})
+
 var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Dreadnaught Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
