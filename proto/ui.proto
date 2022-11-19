@@ -7,6 +7,57 @@ import "api.proto";
 import "common.proto";
 import "paladin.proto";
 
+// Contains all information about an Item needed by the UI.
+// Generally this will include everything needed by the sim, plus some
+// additional data for displaying / filtering.
+message UIItem {
+	int32 id = 1;
+	string name = 2;
+	string icon = 3;
+
+	ItemType type = 4;
+	ArmorType armor_type = 5;
+	WeaponType weapon_type = 6;
+	HandType hand_type = 7;
+	RangedWeaponType ranged_weapon_type = 8;
+
+	repeated double stats = 9;
+	repeated GemColor gem_sockets = 10;
+	repeated double socketBonus = 11;
+
+	// Weapon stats, needed for computing proper EP for melee weapons
+	double weapon_damage_min = 12;
+	double weapon_damage_max = 13;
+	double weapon_speed = 14;
+
+	int32 ilvl = 15;
+	int32 phase = 16;
+	ItemQuality quality = 17;
+	bool unique = 18;
+	bool heroic = 19;
+
+	// Classes that are allowed to use the item. Empty indicates no special class restrictions.
+	repeated Class class_allowlist = 20;
+	Profession required_profession = 21;
+}
+
+message IconData {
+	int32 id = 1;
+	string name = 2;
+	string icon = 3;
+}
+
+// Holds all WoW data for the UI.
+message UIDatabase {
+	repeated UIItem items = 1;
+	// repeated UIEnchant enchants = 2;
+	// repeated UIGem gems = 3;
+
+	// Entities for which we just need a name/icon.
+	repeated IconData item_icons = 4;
+	repeated IconData spell_icons = 5;
+}
+
 message DatabaseFilters {
 	// TODO:
 	// Source

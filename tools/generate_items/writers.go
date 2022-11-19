@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +8,8 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	protojson "google.golang.org/protobuf/encoding/protojson"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func writeItemFile(outDir string, itemsData []ItemData) {
@@ -78,35 +79,48 @@ var Gems = []Gem{
 }
 
 func writeDatabaseFile(db *WowDatabase) {
-	type tempItemIcon struct {
-		ID   int
-		Name string
-		Icon string
-	}
+	uiDB := db.toUIDatabase()
 
-	var tempItems []tempItemIcon
-	for _, gemData := range db.gems {
-		tempItems = append(tempItems, tempItemIcon{ID: gemData.Override.ID, Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
+	// Write database as a binary file.
+	outbytes, err := googleProto.Marshal(uiDB)
+	if err != nil {
+		log.Fatalf("[ERROR] Failed to marshal db: %s", err.Error())
 	}
-	for _, itemData := range db.items {
-		tempItems = append(tempItems, tempItemIcon{ID: itemData.Override.ID, Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
-	}
+	os.WriteFile("./assets/database/db.bin", outbytes, 0666)
 
+	// Also write in JSON format so we can manually inspect the contents.
 	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
-	itemDB := &strings.Builder{}
-	itemDB.WriteString("[\n")
-	for i, item := range tempItems {
-		itemJson, err := json.Marshal(item)
+	builder := &strings.Builder{}
+	builder.WriteString("{\n")
+
+	builder.WriteString("\"itemIcons\":[\n")
+	for i, icon := range uiDB.ItemIcons {
+		json, err := protojson.MarshalOptions{}.Marshal(icon)
 		if err != nil {
-			log.Fatalf("failed to marshal: %s", err)
+			log.Printf("[ERROR] Failed to marshal icon: %s", err.Error())
 		}
-		itemDB.WriteString(string(itemJson))
-		if i != len(tempItems)-1 {
-			itemDB.WriteString(",\n")
+		builder.WriteString(string(json))
+		if i != len(uiDB.ItemIcons)-1 {
+			builder.WriteString(",\n")
 		}
 	}
-	itemDB.WriteString("]")
-	os.WriteFile("./assets/item_data/all_items_db.json", []byte(itemDB.String()), 0666)
+	builder.WriteString("],\n")
+
+	builder.WriteString("\"spellIcons\":[\n")
+	for i, icon := range uiDB.SpellIcons {
+		json, err := protojson.MarshalOptions{}.Marshal(icon)
+		if err != nil {
+			log.Printf("[ERROR] Failed to marshal icon: %s", err.Error())
+		}
+		builder.WriteString(string(json))
+		if i != len(uiDB.SpellIcons)-1 {
+			builder.WriteString(",\n")
+		}
+	}
+	builder.WriteString("]\n")
+
+	builder.WriteString("}")
+	os.WriteFile("./assets/database/db.json", []byte(builder.String()), 0666)
 }
 
 func gemToGoString(gemOverride GemOverride, gemResponse ItemResponse) string {
