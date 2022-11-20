@@ -99,7 +99,7 @@
 	margin: 5px 20px;
 }
 
-.selector-modal-tab-gem-icon:hover, tr.active>.selector-modal-tab-gem-icon {
+.selector-modal-tab-gem-icon:hover, li.active>.selector-modal-tab-gem-icon {
 	box-shadow:
 			0 0 10px white,
 			0 0 10px white,
@@ -136,7 +136,6 @@
 }
 
 .selector-modal-list {
-	display: block;
 	max-height: 70vh;
 	overflow-y: scroll;
 	overflow-x: hidden;
