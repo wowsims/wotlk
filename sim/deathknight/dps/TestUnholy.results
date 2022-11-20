@@ -611,6 +611,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-TheTwinBladesofAzzinoth"
+ value: {
+  dps: 7499.65016
+  tps: 4649.89395
+  hps: 148.19997
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-ThunderingSkyflareDiamond"
  value: {
   dps: 8052.99864
