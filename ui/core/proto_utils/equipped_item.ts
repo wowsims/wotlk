@@ -1,21 +1,19 @@
-import { Enchant } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { ActionId } from './action_id.js';
 import { enchantAppliesToItem } from './utils.js';
 import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { Stats } from './stats.js';
-
-export function getWowheadItemId(item: Item): number {
-	return item.wowheadId || item.id;
-}
 
 export function getWeaponDPS(item: Item): number {
 	return ((item.weaponDamageMin + item.weaponDamageMax) / 2) / (item.weaponSpeed || 1);

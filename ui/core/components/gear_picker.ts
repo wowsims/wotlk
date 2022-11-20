@@ -1,12 +1,10 @@
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, Enchant, Gem, GemColor } from '../proto/common.js';
+import { Class, GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
@@ -19,6 +17,11 @@ import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
 import { getEnumValues } from '../utils.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';

@@ -695,7 +695,7 @@ class NewPlayerPicker extends Component {
 						this.raidPicker.raid.sim.waitForInit().then(() => {
 							newPlayer.setGear(
 								eventID,
-								this.raidPicker.raid.sim.lookupEquipmentSpec(
+								this.raidPicker.raid.sim.db.lookupEquipmentSpec(
 									matchingPreset.defaultGear[this.raidPicker.getCurrentFaction()][this.raidPicker.getCurrentPhase()]));
 						});
 
