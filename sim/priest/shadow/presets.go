@@ -1,7 +1,7 @@
 package shadow
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -80,7 +80,7 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	},
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40562,
 		"enchant": 3820,

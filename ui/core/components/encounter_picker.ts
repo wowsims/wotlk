@@ -33,7 +33,7 @@ export class EncounterPicker extends Component {
 
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
-			const presetTargets = modEncounter.sim.getAllPresetTargets();
+			const presetTargets = modEncounter.sim.db.getAllPresetTargets();
 			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
 				extraCssClasses: ['damage-metrics', 'npc-picker'],
 				label: 'NPC',
@@ -146,7 +146,7 @@ class AdvancedEncounterPicker extends Popup {
 
 		this.addCloseButton();
 
-		const presetEncounters = this.encounter.sim.getAllPresetEncounters();
+		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
 
 		const encounterTypeContainer = this.rootElem.getElementsByClassName('encounter-type')[0] as HTMLElement;
 		new EnumPicker<Encounter>(encounterTypeContainer, this.encounter, {
@@ -214,7 +214,7 @@ class TargetPicker extends Component {
 		const section2 = this.rootElem.getElementsByClassName('target-picker-section2')[0] as HTMLElement;
 		const section3 = this.rootElem.getElementsByClassName('target-picker-section3')[0] as HTMLElement;
 
-		const presetTargets = modTarget.sim.getAllPresetTargets();
+		const presetTargets = modTarget.sim.db.getAllPresetTargets();
 		new EnumPicker<Target>(section1, modTarget, {
 			extraCssClasses: ['npc-picker'],
 			label: 'NPC',

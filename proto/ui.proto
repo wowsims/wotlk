@@ -7,6 +7,100 @@ import "api.proto";
 import "common.proto";
 import "paladin.proto";
 
+// Holds all WoW data for the UI.
+message UIDatabase {
+	repeated UIItem items = 1;
+	repeated UIEnchant enchants = 2;
+	repeated UIGem gems = 3;
+	repeated PresetEncounter encounters = 6;
+
+	// Entities for which we just need a name/icon.
+	repeated IconData item_icons = 4;
+	repeated IconData spell_icons = 5;
+}
+
+// Contains all information about an Item needed by the UI.
+// Generally this will include everything needed by the sim, plus some
+// additional data for displaying / filtering.
+message UIItem {
+	int32 id = 1;
+	string name = 2;
+	string icon = 3;
+
+	ItemType type = 4;
+	ArmorType armor_type = 5;
+	WeaponType weapon_type = 6;
+	HandType hand_type = 7;
+	RangedWeaponType ranged_weapon_type = 8;
+
+	repeated double stats = 9;
+	repeated GemColor gem_sockets = 10;
+	repeated double socketBonus = 11;
+
+	// Weapon stats, needed for computing proper EP for melee weapons
+	double weapon_damage_min = 12;
+	double weapon_damage_max = 13;
+	double weapon_speed = 14;
+
+	int32 ilvl = 15;
+	int32 phase = 16;
+	ItemQuality quality = 17;
+	bool unique = 18;
+	bool heroic = 19;
+
+	// Classes that are allowed to use the item. Empty indicates no special class restrictions.
+	repeated Class class_allowlist = 20;
+	Profession required_profession = 21;
+
+	// Name of the item set to which this item belongs, if any.
+	string set_name = 22;
+}
+
+message UIEnchant {
+	// All enchants have an effect ID. Some also have an item ID, others have a spell ID,
+	// and yet others have both item and spell IDs. No single ID alone is enough to
+	// uniquely identify an enchant. Uniqueness requires either effect ID + slot, or
+	// effect ID + item/spell ID.
+	int32 effect_id = 1; // ID of the effect.
+	int32 item_id = 2;   // ID of the enchant "item". Might be 0 if not available.
+	int32 spell_id = 3;  // ID of the enchant "spell". Might be 0 if not available.
+
+	string name = 4;     
+	string icon = 5;
+
+	ItemType type = 6; // Which type of item this enchant can be applied to.
+	EnchantType enchant_type = 7;
+
+	repeated double stats = 8;
+
+	ItemQuality quality = 9;
+	int32 phase = 10;
+
+	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
+	repeated Class class_allowlist = 11;
+	Profession required_profession = 12;
+}
+
+message UIGem {
+	int32 id = 1;
+	string name = 2;
+	string icon = 3;
+	GemColor color = 4;
+
+	repeated double stats = 5;
+
+	int32 phase = 6;
+	ItemQuality quality = 7;
+	bool unique = 8;
+	Profession required_profession = 9;
+}
+
+message IconData {
+	int32 id = 1;
+	string name = 2;
+	string icon = 3;
+}
+
 message DatabaseFilters {
 	// TODO:
 	// Source

@@ -61,7 +61,7 @@ func getItemOverrides() []ItemOverride {
 	// Ignore first line
 	itemsData = itemsData[1:]
 
-	// Create an empty declaration (just the ID) for all the items.
+	// Create an empty declaration (just the ID) for all the core.
 	itemOverrides := make([]ItemOverride, 0, len(itemsData))
 	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])
@@ -94,23 +94,16 @@ func getItemOverrides() []ItemOverride {
 
 // Returns the prefetched list of all wowhead tooltips.
 // Maps item IDs to tooltip strings.
-func getWowheadTooltipsDB() map[int]WowheadItemResponse {
-	file, err := os.Open("./assets/item_data/all_item_tooltips.csv")
+func getWowheadTooltipsDB(filepath string) map[int]WowheadItemResponse {
+	file, err := os.Open(filepath)
 	if err != nil {
-		log.Fatalf("Failed to open all_item_tooltips.csv: %s", err)
+		log.Fatalf("Failed to open %s: %s", filepath, err)
 	}
 	defer file.Close()
 
 	db := make(map[int]WowheadItemResponse)
 	scanner := bufio.NewScanner(file)
-	i := 0
 	for scanner.Scan() {
-		i++
-		if i == 1 {
-			// Ignore first line
-			continue
-		}
-
 		line := scanner.Text()
 
 		itemIDStr := line[:strings.Index(line, ",")]

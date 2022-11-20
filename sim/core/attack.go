@@ -3,7 +3,6 @@ package core
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -41,7 +40,7 @@ func newWeaponFromUnarmed(critMultiplier float64) Weapon {
 	}
 }
 
-func newWeaponFromItem(item items.Item, critMultiplier float64) Weapon {
+func newWeaponFromItem(item Item, critMultiplier float64) Weapon {
 	normalizedWeaponSpeed := 2.4
 	if item.WeaponType == proto.WeaponType_WeaponTypeDagger {
 		normalizedWeaponSpeed = 1.7

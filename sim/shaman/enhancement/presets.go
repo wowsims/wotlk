@@ -1,7 +1,7 @@
 package enhancement
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -102,7 +102,7 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
 
-var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40543,
 		"enchant": 3817,

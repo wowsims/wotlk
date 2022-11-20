@@ -6,20 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// Allows manual overriding for Gem fields in case WowHead is wrong.
-var GemOverrideOverrides = []GemOverride{
-	{ID: 33131, Stats: Stats{proto.Stat_StatAttackPower: 32, proto.Stat_StatRangedAttackPower: 32}},
-
-	// pvp non-unique gems not in game currently.
-	{ID: 35489, Filter: true},
-	{ID: 38545, Filter: true},
-	{ID: 38546, Filter: true},
-	{ID: 38547, Filter: true},
-	{ID: 38548, Filter: true},
-	{ID: 38549, Filter: true},
-	{ID: 38550, Filter: true},
-}
-
 // Allows manual overriding for Item fields in case WowHead is wrong.
 var ItemOverrideOverrides = []ItemOverride{
 	{ /** Destruction Holo-gogs */ ID: 32494, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
@@ -456,4 +442,18 @@ var denyListNameRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`63 Blue`),
 	regexp.MustCompile(`90 Green`),
 	regexp.MustCompile(`63 Green`),
+}
+
+// Allows manual overriding for Gem fields in case WowHead is wrong.
+var GemOverrideOverrides = []GemOverride{
+	{ID: 33131, Stats: Stats{proto.Stat_StatAttackPower: 32, proto.Stat_StatRangedAttackPower: 32}},
+
+	// pvp non-unique gems not in game currently.
+	{ID: 35489, Filter: true},
+	{ID: 38545, Filter: true},
+	{ID: 38546, Filter: true},
+	{ID: 38547, Filter: true},
+	{ID: 38548, Filter: true},
+	{ID: 38549, Filter: true},
+	{ID: 38550, Filter: true},
 }

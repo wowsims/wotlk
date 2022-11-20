@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -20,9 +19,9 @@ func (druid *Druid) registerRipSpell() {
 		core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
 	comboPointCoeff := 93.0
-	if druid.Equip[items.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
+	if druid.Equip[core.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
 		comboPointCoeff += 7
-	} else if druid.Equip[items.ItemSlotRanged].ID == 39757 { // Idol of Worship
+	} else if druid.Equip[core.ItemSlotRanged].ID == 39757 { // Idol of Worship
 		comboPointCoeff += 21
 	}
 

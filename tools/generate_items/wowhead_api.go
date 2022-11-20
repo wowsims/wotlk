@@ -3,14 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -222,16 +218,16 @@ type classPattern struct {
 
 // Detects class-locked items, e.g. tier sets and pvp gear.
 var classPatternsWowhead = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/warrior" class="c1">Warrior</a>`)},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/paladin" class="c2">Paladin</a>`)},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/hunter" class="c3">Hunter</a>`)},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/rogue" class="c4">Rogue</a>`)},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/priest" class="c5">Priest</a>`)},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/death-knight" class="c6">Death Knight</a>`)},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/shaman" class="c7">Shaman</a>`)},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/mage" class="c8">Mage</a>`)},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/warlock" class="c9">Warlock</a>`)},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/druid" class="c11">Druid</a>`)},
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/class=1/warrior" class="c1">Warrior</a>`)},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/class=2/paladin" class="c2">Paladin</a>`)},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/class=3/hunter" class="c3">Hunter</a>`)},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/class=4/rogue" class="c4">Rogue</a>`)},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/class=5/priest" class="c5">Priest</a>`)},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/class=7/death-knight" class="c6">Death Knight</a>`)},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/class=7/shaman" class="c7">Shaman</a>`)},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/class=8/mage" class="c8">Mage</a>`)},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/class=9/warlock" class="c9">Warlock</a>`)},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/class=11/druid" class="c11">Druid</a>`)},
 }
 
 func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
@@ -667,48 +663,6 @@ func (item WowheadItemResponse) GetItemSetName() string {
 	// Now strip out the season prefix from any pvp set names
 	withoutPvp := strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(original, "Savage Glad", "Glad", 1), "Hateful Glad", "Glad", 1), "Deadly Glad", "Glad", 1), "Furious Glad", "Glad", 1), "Relentless Glad", "Glad", 1), "Wrathful Glad", "Glad", 1)
 	return withoutPvp
-}
-
-func getWowheadItemResponse(itemID int, tooltipsDB map[int]WowheadItemResponse) WowheadItemResponse {
-	// If the db already has it, just return the db value.
-	if dbResponse, ok := tooltipsDB[itemID]; ok {
-		return dbResponse
-	}
-
-	fmt.Printf("Item DB missing ID: %d\n", itemID)
-	url := fmt.Sprintf("https://nether.wowhead.com/wotlk/tooltip/item/%d", itemID)
-
-	httpClient := http.Client{
-		Timeout: 5 * time.Second,
-	}
-
-	request, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	result, err := httpClient.Do(request)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer result.Body.Close()
-
-	resultBody, err := io.ReadAll(result.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	f, err := os.OpenFile("./assets/item_data/all_item_tooltips.csv", os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatalf("failed to open file to write: %s", err)
-	}
-	if strings.Contains(string(resultBody), "\"error\":") {
-		// fmt.Printf("Error in tooltip for %d: %s\n", i, bstr)
-		log.Fatalf("failed to fetch item: %d (%s)", itemID, string(resultBody))
-	}
-	f.WriteString(fmt.Sprintf("%d, %s, %s\n", itemID, url, resultBody))
-
-	return WowheadItemResponseFromBytes(resultBody)
 }
 
 func (item WowheadItemResponse) IsHeroic() bool {

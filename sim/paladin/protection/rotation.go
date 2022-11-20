@@ -38,10 +38,7 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 		if !prot.Rotation.UseCustomPrio {
 
 			// Standard rotation. Enforce 6sec CDs to have 1 GCD between, filling with 9sec abilities.
-			if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
-				// Always cast HoW if ready
-				prot.HammerOfWrath.Cast(sim, target)
-			} else if prot.Rotation.HammerFirst && prot.HammerOfTheRighteous.IsReady(sim) {
+			if prot.Rotation.HammerFirst && prot.HammerOfTheRighteous.IsReady(sim) {
 				// Always cast HotR if ready
 				prot.HammerOfTheRighteous.Cast(sim, target)
 			} else if prot.Rotation.HammerFirst &&
@@ -57,18 +54,24 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 				(prot.ShieldOfRighteousness.TimeToReady(sim) < gapSlack) {
 				// Cast HotR if ready but only if you've spent a global since ShoR
 				prot.HammerOfTheRighteous.Cast(sim, target)
+			} else if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
+				// TODO: Prio may depend on gear; consider Glyph behavior
+				prot.HammerOfWrath.Cast(sim, target)
 			} else if prot.HolyShield.IsReady(sim) {
 				// Top priority 9 is Holy Shield
 				prot.HolyShield.Cast(sim, target)
 			} else if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
-				// AS prio if glyphed. This will push out Cons/Judge which may not be good, but assumed desired based on the glyph choice
+				// AS prio if glyphed. This will push out Cons/Judge which may not be ideal, but assumed desired based on the glyph choice
 				prot.AvengersShield.Cast(sim, target)
 			} else if prot.Consecration.IsReady(sim) {
 				prot.Consecration.Cast(sim, target)
+			} else if prot.Rotation.SqueezeHolyWrath && prot.HolyWrath.IsReady(sim) && (prot.Consecration.TimeToReady(sim) > time.Millisecond*6850) && (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) {
+				// Squeeze HW in open partial global after Consecration during bloodlust against Undead/Demon
+				prot.HolyWrath.Cast(sim, target)
 			} else if prot.JudgementOfWisdom.IsReady(sim) {
 				prot.JudgementOfWisdom.Cast(sim, target)
 			}
-			// Do not ever cast Exorcism, Holy Wrath, or unglyphed AS
+			// Do not ever cast Exorcism or unglyphed AS
 			// TODO: Possible to dynamically affect Judgement<>AS priority based on Libram bonus at SBV softcap?
 
 		} else {

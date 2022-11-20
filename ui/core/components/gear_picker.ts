@@ -1,12 +1,10 @@
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, Enchant, Gem, GemColor } from '../proto/common.js';
+import { Class, GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
@@ -19,6 +17,11 @@ import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
 import { getEnumValues } from '../utils.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';
@@ -460,7 +463,7 @@ class SelectorModal extends Popup {
 			<span style="float:left">Item</span>
 			<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
 		</div>
-    <table class="selector-modal-list"></table>
+    <ul class="selector-modal-list"></ul>
     `;
 
 		const helpIcon = tabContent.getElementsByClassName("ep-help").item(0);
@@ -498,26 +501,26 @@ class SelectorModal extends Popup {
 			const item = itemData.item;
 			const itemEP = computeEP(item);
 
-			const listItemElem = document.createElement('tr');
+			const listItemElem = document.createElement('li');
 			listItemElem.classList.add('selector-modal-list-item');
 			listElem.appendChild(listItemElem);
 
 			listItemElem.dataset.idx = String(itemIdx);
 
 			listItemElem.innerHTML = `
-				<td class="selector-modal-list-label-cell">
+				<div class="selector-modal-list-label-cell">
 					<a class="selector-modal-list-item-icon"></a>
 					<a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
-				</td>
-				<td>
+				</div>
+				<div>
 					<span class="selector-modal-list-item-favorite fa-star"></span>
-				</td>
-				<td class="selector-modal-list-item-ep">
+				</div>
+				<div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
-				</td>
-				<td class="selector-modal-list-item-ep">
+				</div>
+				<div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-delta"></span>
-				</td>
+				</div>
       `;
 
 			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {

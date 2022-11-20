@@ -4,7 +4,7 @@ import (
 	//"math/rand"
 	//"testing"
 
-	//"github.com/wowsims/wotlk/sim/core/items"
+	//"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -13,9 +13,9 @@ import (
 //	a := &FakeAgent{}
 //	c := &Character{
 //		Metrics: NewCharacterMetrics(),
-//		Equip: items.Equipment{
-//			proto.ItemSlot_ItemSlotMainHand: items.ByID[32262],
-//			proto.ItemSlot_ItemSlotOffHand:  items.ByID[32262],
+//		Equip: core.Equipment{
+//			proto.ItemSlot_ItemSlotMainHand: core.ByID[32262],
+//			proto.ItemSlot_ItemSlotOffHand:  core.ByID[32262],
 //		},
 //	}
 //	sim := &Simulation{
@@ -56,9 +56,9 @@ import (
 //	a := &FakeAgent{}
 //	c := &Character{
 //		Metrics: NewCharacterMetrics(),
-//		Equip: items.Equipment{
-//			proto.ItemSlot_ItemSlotRanged:   items.ByID[28772], // sunfury bow phoenix
-//			proto.ItemSlot_ItemSlotMainHand: items.ByID[28435], // mooncleaver
+//		Equip: core.Equipment{
+//			proto.ItemSlot_ItemSlotRanged:   core.ByID[28772], // sunfury bow phoenix
+//			proto.ItemSlot_ItemSlotMainHand: core.ByID[28435], // mooncleaver
 //		},
 //	}
 //	sim := &Simulation{

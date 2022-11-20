@@ -24,8 +24,6 @@ func main() {
 
 	js.Global().Set("computeStats", js.FuncOf(computeStats))
 	js.Global().Set("computeStatsJson", js.FuncOf(computeStatsJson))
-	js.Global().Set("gearList", js.FuncOf(gearList))
-	js.Global().Set("gearListJson", js.FuncOf(gearListJson))
 	js.Global().Set("raidSim", js.FuncOf(raidSim))
 	js.Global().Set("raidSimJson", js.FuncOf(raidSimJson))
 	js.Global().Set("raidSimAsync", js.FuncOf(raidSimAsync))
@@ -117,43 +115,6 @@ func computeStatsJson(this js.Value, args []js.Value) (response interface{}) {
 		return nil
 	}
 	response = js.ValueOf(string(output))
-	return response
-}
-
-func gearList(this js.Value, args []js.Value) interface{} {
-	glr := &proto.GearListRequest{}
-	if err := googleProto.Unmarshal(getArgsBinary(args[0]), glr); err != nil {
-		log.Printf("Failed to parse request: %s", err)
-		return nil
-	}
-	result := core.GetGearList(glr)
-
-	outbytes, err := googleProto.Marshal(result)
-	if err != nil {
-		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
-		return nil
-	}
-
-	outArray := js.Global().Get("Uint8Array").New(len(outbytes))
-	js.CopyBytesToJS(outArray, outbytes)
-
-	return outArray
-}
-
-func gearListJson(this js.Value, args []js.Value) interface{} {
-	glr := &proto.GearListRequest{}
-	if err := protojson.Unmarshal(getArgsJson(args[0]), glr); err != nil {
-		log.Printf("Failed to parse request: %s", err)
-		return nil
-	}
-	result := core.GetGearList(glr)
-
-	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(result)
-	if err != nil {
-		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
-		return nil
-	}
-	response := js.ValueOf(string(output))
 	return response
 }
 

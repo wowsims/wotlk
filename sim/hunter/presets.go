@@ -1,7 +1,7 @@
 package hunter
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -179,7 +179,7 @@ var FullConsumes = &proto.Consumes{
 	PetFood:         proto.PetFood_PetFoodKiblersBits,
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40505,
 		"enchant": 3817,
