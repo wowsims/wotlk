@@ -23,3 +23,6 @@ wowsimwotlk
 # old result file
 TestDestruction.results
 sim/priest/healing/TestHealing.results
+
+#macos
+.DS_Store

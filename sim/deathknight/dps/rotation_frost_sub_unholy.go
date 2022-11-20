@@ -97,6 +97,20 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 
 	return core.TernaryDuration(casted, -1, waitTime)
 }
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := false
+	advance := true
+	waitTime := time.Duration(-1)
+	if dk.Obliterate.CanCast(sim) {
+		if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+			dk.Deathchill.Cast(sim, target)
+		}
+		casted = dk.Obliterate.Cast(sim, target)
+		advance = dk.LastOutcome.Matches(core.OutcomeLanded)
+	}
+	s.ConditionalAdvance(casted && advance)
+	return core.TernaryDuration(casted, -1, waitTime)
+}
 
 // TODO: Improve this
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -152,10 +166,64 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *c
 	return sim.CurrentTime
 }
 
+//end of fight logic in the works
 //func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-//	if sim.timeto
-//	s.Clear().
-//		New
+//	if sim.Log != nil && sim.GetRemainingDuration() < 1500*time.Millisecond*4 {
+//		sim.Log("endoffight function entered!")
+//	} else {
+//		s.Advance()
+//	}
+//	frAt := dk.NormalFrostRuneReadyAt(sim)
+//	uhAt := dk.NormalUnholyRuneReadyAt(sim)
+//	obAt := core.MaxDuration(frAt, uhAt)
+//	extraFS := 0.0
+//	if sim.GetRemainingDuration() < 1500*time.Millisecond*3 && obAt > sim.Duration {
+//		extraFS = 1
+//	} else {
+//		extraFS = 0
+//	}
+//
+//	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+//	if sim.GetRemainingDuration() < 1500*time.Millisecond*1 {
+//		if dk.CurrentRunicPower() >= fsCost*(1+extraFS) {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+//		}
+//	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*2 {
+//		if dk.CurrentRunicPower() >= fsCost*(1+extraFS) {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+//		} else if dk.CurrentBloodRunes() > 0 {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_BS).
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli)
+//		}
+//
+//		sim.GetRemainingDuration()
+//	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*3 {
+//		if dk.CurrentRunicPower() >= fsCost*(2+extraFS) {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+//		} else if dk.CurrentRunicPower() >= fsCost*(1+extraFS) && dk.NormalSpentBloodRuneReadyAt(sim) <= sim.CurrentTime+1500*time.Millisecond {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_BS).
+//				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+//		}
+//	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*4 {
+//		if dk.CurrentRunicPower() >= fsCost*(1+extraFS) && dk.CurrentBloodRunes() > 0 {
+//			s.Clear().
+//				NewAction(dk.RotationActionCallback_Pesti).
+//				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
+//				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+//		}
+//	}
+//
+//	return sim.CurrentTime
 //}
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -176,6 +244,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
+		//end of fight logic entering
 		//NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight).
 		NewAction(dk.RotationActionCallback_Pesti).
 		//NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
