@@ -49,20 +49,19 @@ message Player {
 		TankDeathknight tank_deathknight = 32;
 	}
 
-	// Only used by the UI. Sim uses talents within the spec protos.
 	string talentsString = 17;
-
 	Glyphs glyphs = 28;
-
 	Profession profession1 = 29;
 	Profession profession2 = 30;
-
 	Cooldowns cooldowns = 19;
 
 	bool in_front_of_target = 23;
 	double distance_from_target = 33;
 
 	HealingModel healing_model = 27;
+
+	// Items/enchants/gems/etc to include in the database.
+	SimDatabase database = 35;
 }
 
 message Party {
