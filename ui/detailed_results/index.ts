@@ -1,5 +1,6 @@
 import { DetailedResultsUpdate, SimRun, SimRunData } from '../core/proto/ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
+import { Database } from '../core/proto_utils/database.js';
 import { SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
 
 import { SimResultData } from './result_component.js';
@@ -18,6 +19,8 @@ import { Timeline } from './timeline.js';
 import { ToplineResults } from './topline_results.js';
 
 declare var Chart: any;
+
+Database.get();
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('mainTextColor')) {
