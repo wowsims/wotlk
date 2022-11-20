@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"os"
 	"reflect"
@@ -49,11 +51,16 @@ func writeProtoArrayToBuilder(arrInterface interface{}, builder *strings.Builder
 	builder.WriteString("\":[\n")
 
 	for i, elem := range arr {
-		json, err := protojson.MarshalOptions{}.Marshal(elem.(googleProto.Message))
+		jsonBytes, err := protojson.MarshalOptions{}.Marshal(elem.(googleProto.Message))
 		if err != nil {
 			log.Printf("[ERROR] Failed to marshal: %s", err.Error())
 		}
-		builder.WriteString(string(json))
+
+		// Format using Compact() so we get a stable output (no random diffs for version control).
+		var formatted bytes.Buffer
+		json.Compact(&formatted, jsonBytes)
+		builder.WriteString(string(formatted.Bytes()))
+
 		if i != len(arr)-1 {
 			builder.WriteString(",")
 		}
