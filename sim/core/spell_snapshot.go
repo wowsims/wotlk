@@ -44,6 +44,8 @@ func (manager *SnapshotManager) AddProc(id int32, label string, isActive bool) b
 }
 
 func (manager *SnapshotManager) CanSnapShot(sim *Simulation, castTime time.Duration) bool {
+	success := true
+
 	for _, procTracker := range manager.procTrackers {
 		if !procTracker.didActivate && procTracker.aura.IsActive() {
 			procTracker.didActivate = true
@@ -58,19 +60,12 @@ func (manager *SnapshotManager) CanSnapShot(sim *Simulation, castTime time.Durat
 			return true
 		}
 
-		// if !procTracker.didActivate && !procTracker.isActive {
-		// 	// logMessage(sim, "Waiting on procs..")
-		// 	success = false
-		// }
-	}
-
-	for _, procTracker := range manager.procTrackers {
 		if !procTracker.didActivate && !procTracker.isActive {
-			return false
+			success = false
 		}
 	}
 
-	return true
+	return success
 }
 
 func (manager *SnapshotManager) ActivateMajorCooldowns(sim *Simulation) {
@@ -86,10 +81,6 @@ func (manager *SnapshotManager) ResetProcTrackers() {
 		procTracker.didActivate = false
 		procTracker.expiresAt = -1
 	}
-}
-
-func (manager *SnapshotManager) ClearMajorCoolDowns() {
-	manager.majorCooldowns = make([]*MajorCooldown, 0)
 }
 
 func (manager *SnapshotManager) AddMajorCooldown(majorCd *MajorCooldown) {
