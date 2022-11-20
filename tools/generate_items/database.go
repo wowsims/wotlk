@@ -174,28 +174,31 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, en
 		return s1.Response.GetName() < s2.Response.GetName()
 	})
 
+	db.applyGlobalFilters()
+
 	return db
+}
+
+// Filters out entities which shouldn't be included anywhere.
+func (db *WowDatabase) applyGlobalFilters() {
+	db.items = core.Filter(db.items, func(itemData ItemData) bool {
+		if itemData.Override.Filter {
+			return false
+		}
+
+		for _, pattern := range denyListNameRegexes {
+			if pattern.MatchString(itemData.Response.GetName()) {
+				return false
+			}
+		}
+		return true
+	})
 }
 
 // Returns only items which are worth including in the sim.
 func (db *WowDatabase) getSimmableItems() []ItemData {
 	var included []ItemData
 	for _, itemData := range db.items {
-		if itemData.Override.Filter {
-			continue
-		}
-
-		deny := false
-		for _, pattern := range denyListNameRegexes {
-			if pattern.MatchString(itemData.Response.GetName()) {
-				deny = true
-				break
-			}
-		}
-		if deny {
-			continue
-		}
-
 		if !itemData.Response.IsEquippable() {
 			continue
 		}

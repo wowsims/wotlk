@@ -182,3 +182,13 @@ func UnitLevelFloat64(unitLevel int32, maxLevelPlus0Val float64, maxLevelPlus1Va
 func WithinToleranceFloat64(expectedValue float64, actualValue float64, tolerance float64) bool {
 	return actualValue >= (expectedValue-tolerance) && actualValue <= (expectedValue+tolerance)
 }
+
+func Filter[T any](slice []T, f func(T) bool) []T {
+	var n []T
+	for _, e := range slice {
+		if f(e) {
+			n = append(n, e)
+		}
+	}
+	return n
+}
