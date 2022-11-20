@@ -109,7 +109,7 @@ func (item Item) ToItemSpecProto() *proto.ItemSpec {
 type Enchant struct {
 	EffectID int32 // Used by UI to apply effect to tooltip
 	Name     string
-	Bonus    stats.Stats
+	Stats    stats.Stats
 	ItemType proto.ItemType // Which slot the enchant goes on.
 }
 
@@ -118,7 +118,7 @@ func EnchantFromProto(pData *proto.UIEnchant) Enchant {
 		EffectID: pData.EffectId,
 		Name:     pData.Name,
 		ItemType: pData.Type,
-		Bonus:    stats.FromFloatArray(pData.Stats),
+		Stats:    stats.FromFloatArray(pData.Stats),
 	}
 }
 
@@ -287,7 +287,7 @@ func (equipment Equipment) Stats() stats.Stats {
 	equipStats := stats.Stats{}
 	for _, item := range equipment {
 		equipStats = equipStats.Add(item.Stats)
-		equipStats = equipStats.Add(item.Enchant.Bonus)
+		equipStats = equipStats.Add(item.Enchant.Stats)
 
 		for _, gem := range item.Gems {
 			equipStats = equipStats.Add(gem.Stats)
