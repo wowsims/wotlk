@@ -226,10 +226,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
 	}
 
-	if spell.ResourceType != 0 && spell.DefaultCast.Cost == 0 {
-		panic("ResourceType set for spell " + spell.ActionID.String() + " but no cost")
-	}
-
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
 		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
