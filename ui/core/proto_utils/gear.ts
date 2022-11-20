@@ -1,8 +1,5 @@
-import { Enchant } from '../proto/common.js';
 import { EquipmentSpec } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
@@ -10,6 +7,11 @@ import { WeaponType } from '../proto/common.js';
 import { equalsOrBothNull } from '../utils.js';
 import { getEnumValues } from '../utils.js';
 import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { isMetaGemActive } from './gems.js';
 import { gemMatchesSocket } from './gems.js';

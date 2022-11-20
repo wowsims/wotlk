@@ -275,9 +275,6 @@ message RaidSimResult {
 message GearListRequest {
 }
 message GearListResult {
-	repeated Item items = 1;
-	repeated Enchant enchants = 2;
-	repeated Gem gems = 3;
 	repeated PresetEncounter encounters = 4;
 }
 message PresetTarget {

@@ -2,15 +2,12 @@ import {
 	Class,
 	Cooldowns,
 	Consumes,
-	Enchant,
-	Gem,
 	GemColor,
 	Glyphs,
 	HandType,
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
-	Item,
 	Profession,
 	Race,
 	RaidTarget,
@@ -20,6 +17,11 @@ import {
 	Stat,
 	WeaponType,
 } from './proto/common.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from './proto/ui.js';
 
 import { PlayerStats } from './proto/api.js';
 import { Player as PlayerProto } from './proto/api.js';
@@ -217,17 +219,17 @@ export class Player<SpecType extends Spec> {
 
 	// Returns all items that this player can wear in the given slot.
 	getItems(slot: ItemSlot): Array<Item> {
-		return this.sim.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
+		return this.sim.db.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
 	}
 
 	// Returns all enchants that this player can wear in the given slot.
 	getEnchants(slot: ItemSlot): Array<Enchant> {
-		return this.sim.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
+		return this.sim.db.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
 	}
 
 	// Returns all gems that this player can wear of the given color.
 	getGems(socketColor?: GemColor): Array<Gem> {
-		return this.sim.getGems(socketColor);
+		return this.sim.db.getGems(socketColor);
 	}
 
 	getEpWeights(): Stats {
@@ -640,14 +642,14 @@ export class Player<SpecType extends Spec> {
 		}
 
 		const slot = getEligibleItemSlots(item)[0];
-		const enchants = this.sim.getEnchants(slot);
+		const enchants = this.sim.db.getEnchants(slot);
 		if (enchants.length > 0) {
 			ep += Math.max(...enchants.map(enchant => this.computeEnchantEP(enchant)));
 		}
 
 		// Compare whether its better to match sockets + get socket bonus, or just use best gems.
 		const bestGemEPNotMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
+			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
 			if (gems.length > 0) {
 				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
 			} else {
@@ -656,7 +658,7 @@ export class Player<SpecType extends Spec> {
 		}));
 
 		const bestGemEPMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
+			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
 			if (gems.length > 0) {
 				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
 			} else {

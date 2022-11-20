@@ -120,32 +120,6 @@ func ItemFromProto(pData *proto.UIItem) Item {
 	}
 }
 
-func (item Item) ToProto() *proto.Item {
-	return &proto.Item{
-		Id:                 item.ID,
-		WowheadId:          item.WowheadID,
-		Name:               item.Name,
-		ClassAllowlist:     item.ClassAllowlist,
-		Type:               item.Type,
-		ArmorType:          item.ArmorType,
-		WeaponType:         item.WeaponType,
-		HandType:           item.HandType,
-		RangedWeaponType:   item.RangedWeaponType,
-		WeaponDamageMin:    item.WeaponDamageMin,
-		WeaponDamageMax:    item.WeaponDamageMax,
-		WeaponSpeed:        item.SwingSpeed,
-		Stats:              item.Stats[:],
-		Phase:              int32(item.Phase),
-		Quality:            item.Quality,
-		Unique:             item.Unique,
-		Ilvl:               item.Ilvl,
-		GemSockets:         item.GemSockets,
-		SocketBonus:        item.SocketBonus[:],
-		RequiredProfession: item.RequiredProfession,
-		Heroic:             item.Heroic,
-	}
-}
-
 func (item Item) ToItemSpecProto() *proto.ItemSpec {
 	itemSpec := &proto.ItemSpec{
 		Id:      item.ID,
@@ -192,23 +166,6 @@ func EnchantFromProto(pData *proto.UIEnchant) Enchant {
 	}
 }
 
-func (enchant Enchant) ToProto() *proto.Enchant {
-	return &proto.Enchant{
-		EffectId:       enchant.EffectID,
-		ItemId:         enchant.ItemID,
-		SpellId:        enchant.SpellID,
-		Name:           enchant.Name,
-		Type:           enchant.ItemType,
-		EnchantType:    enchant.EnchantType,
-		Stats:          enchant.Bonus[:],
-		Quality:        enchant.Quality,
-		Phase:          enchant.Phase,
-		ClassAllowlist: enchant.ClassAllowlist,
-
-		RequiredProfession: enchant.RequiredProfession,
-	}
-}
-
 type Gem struct {
 	ID      int32
 	Name    string
@@ -232,20 +189,6 @@ func GemFromProto(pData *proto.UIGem) Gem {
 		Unique:  pData.Unique,
 
 		RequiredProfession: pData.RequiredProfession,
-	}
-}
-
-func (gem Gem) ToProto() *proto.Gem {
-	return &proto.Gem{
-		Id:      gem.ID,
-		Name:    gem.Name,
-		Stats:   gem.Stats[:],
-		Color:   gem.Color,
-		Phase:   int32(gem.Phase),
-		Quality: gem.Quality,
-		Unique:  gem.Unique,
-
-		RequiredProfession: gem.RequiredProfession,
 	}
 }
 

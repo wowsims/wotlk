@@ -2,7 +2,6 @@
 package core
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -11,24 +10,9 @@ import (
  * Returns all items, enchants, and gems recognized by the sim.
  */
 func GetGearList(request *proto.GearListRequest) *proto.GearListResult {
-	result := &proto.GearListResult{
+	return &proto.GearListResult{
 		Encounters: presetEncounters,
 	}
-
-	for i := range items.Items {
-		item := items.Items[i]
-		result.Items = append(result.Items, item.ToProto())
-	}
-	for i := range items.Gems {
-		gem := items.Gems[i]
-		result.Gems = append(result.Gems, gem.ToProto())
-	}
-	for i := range items.Enchants {
-		enchant := items.Enchants[i]
-		result.Enchants = append(result.Enchants, enchant.ToProto())
-	}
-
-	return result
 }
 
 /**

@@ -1,11 +1,12 @@
 import { getLanguageCode } from '../constants/lang.js';
 import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
-import { Item } from '../proto/common.js';
 import { OtherAction } from '../proto/common.js';
 import { IconData } from '../proto/ui.js';
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
 import { NO_TARGET } from '../proto_utils/utils.js';
+import {
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { Database } from './database.js';
 
@@ -412,7 +413,7 @@ export class ActionId {
 	}
 
 	static fromItem(item: Item): ActionId {
-		return ActionId.fromItemId(getWowheadItemId(item));
+		return ActionId.fromItemId(item.id);
 	}
 
 	static fromProto(protoId: ActionIdProto): ActionId {
