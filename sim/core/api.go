@@ -7,15 +7,6 @@ import (
 )
 
 /**
- * Returns all items, enchants, and gems recognized by the sim.
- */
-func GetGearList(request *proto.GearListRequest) *proto.GearListResult {
-	return &proto.GearListResult{
-		Encounters: presetEncounters,
-	}
-}
-
-/**
  * Returns character stats taking into account gear / buffs / consumes / etc
  */
 func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {

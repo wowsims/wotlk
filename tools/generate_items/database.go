@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	_ "github.com/wowsims/wotlk/sim/encounters" // Needed for preset encounters.
 	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -112,11 +114,14 @@ type WowDatabase struct {
 	enchants []*proto.UIEnchant
 	gems     []GemData
 	spells   []SpellData
+
+	encounters []*proto.PresetEncounter
 }
 
 func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, enchantOverrides []*proto.UIEnchant, itemTooltipsDB map[int]WowheadItemResponse, spellTooltipsDB map[int]WowheadItemResponse) *WowDatabase {
 	db := &WowDatabase{
-		enchants: enchantOverrides,
+		enchants:   enchantOverrides,
+		encounters: core.PresetEncounters,
 	}
 
 	for _, itemOverride := range itemOverrides {
@@ -255,7 +260,8 @@ func (db *WowDatabase) getSimmableGems() []GemData {
 
 func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
 	uiDB := &proto.UIDatabase{
-		Enchants: db.enchants,
+		Enchants:   db.enchants,
+		Encounters: db.encounters,
 	}
 
 	for _, itemData := range db.getSimmableItems() {

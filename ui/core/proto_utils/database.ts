@@ -3,6 +3,8 @@ import {
 	GemColor,
 	ItemSlot,
 	ItemSpec,
+	PresetEncounter,
+	PresetTarget,
 } from '../proto/common.js';
 import {
 	IconData,
@@ -22,6 +24,7 @@ import { Gear } from './gear.js';
 
 const dbUrlJson = '/wotlk/assets/database/db.json';
 const dbUrlBin = '/wotlk/assets/database/db.bin';
+// When changing this value, don't forget to change the html <link> for preloading!
 const READ_JSON = false;
 
 export class Database {
@@ -44,6 +47,8 @@ export class Database {
 	private readonly items: Record<number, Item> = {};
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly gems: Record<number, Gem> = {};
+	private readonly presetEncounters: Record<string, PresetEncounter> = {};
+	private readonly presetTargets: Record<string, PresetTarget> = {};
 	private readonly itemIcons: Record<number, IconData>;
 	private readonly spellIcons: Record<number, IconData>;
 
@@ -59,6 +64,9 @@ export class Database {
 			});
 		});
 		db.gems.forEach(gem => this.gems[gem.id] = gem);
+
+		db.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
+		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
 
 		this.itemIcons = {};
 		this.spellIcons = {};
@@ -130,6 +138,19 @@ export class Database {
 		});
 
 		return new Gear(gearMap);
+	}
+
+	getPresetEncounter(path: string): PresetEncounter | null {
+		return this.presetEncounters[path] || null;
+	}
+	getPresetTarget(path: string): PresetTarget | null {
+		return this.presetTargets[path] || null;
+	}
+	getAllPresetEncounters(): Array<PresetEncounter> {
+		return Object.values(this.presetEncounters);
+	}
+	getAllPresetTargets(): Array<PresetTarget> {
+		return Object.values(this.presetTargets);
 	}
 
 	static async getItemIconData(itemId: number): Promise<IconData> {

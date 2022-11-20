@@ -28,8 +28,6 @@ addEventListener('message', async (e) => {
 	[
 		['computeStats', computeStats],
 		['computeStatsJson', computeStatsJson],
-		['gearList', gearList],
-		['gearListJson', gearListJson],
 		['raidSim', raidSim],
 		['raidSimJson', raidSimJson],
 		['raidSimAsync', (data) => {

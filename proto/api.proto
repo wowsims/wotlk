@@ -271,21 +271,6 @@ message RaidSimResult {
 	string error_result = 5;
 }
 
-// RPC GearList
-message GearListRequest {
-}
-message GearListResult {
-	repeated PresetEncounter encounters = 4;
-}
-message PresetTarget {
-	string path = 1;
-	Target target = 2;
-}
-message PresetEncounter {
-	string path = 1;
-	repeated PresetTarget targets = 2;
-}
-
 // RPC ComputeStats
 message ComputeStatsRequest {
 	Raid raid = 1;

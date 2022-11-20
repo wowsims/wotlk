@@ -15,9 +15,7 @@ import { Spec } from './proto/common.js';
 import { Stat } from './proto/common.js';
 import { WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
-import { PresetEncounter, PresetTarget } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
-import { GearListRequest, GearListResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
@@ -87,10 +85,7 @@ export class Sim {
 	readonly raid: Raid;
 	readonly encounter: Encounter;
 
-	// Database
 	private db_: Database|null = null;
-	private presetEncounters: Record<string, PresetEncounter> = {};
-	private presetTargets: Record<string, PresetTarget> = {};
 
 	readonly iterationsChangeEmitter = new TypedEvent<void>();
 	readonly phaseChangeEmitter = new TypedEvent<void>();
@@ -122,15 +117,9 @@ export class Sim {
 
 	constructor() {
 		this.workerPool = new WorkerPool(1);
-
-		const dbPromise = Database.get().then(db => {
+		this._initPromise = Database.get().then(db => {
 			this.db_ = db;
-		}) as Promise<void>;
-		const gearListPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
-			result.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
-			result.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
-		}) as Promise<void>;
-		this._initPromise = Promise.all([dbPromise, gearListPromise]);
+		});
 
 		this.raid = new Raid(this);
 		this.encounter = new Encounter(this);
@@ -324,19 +313,6 @@ export class Sim {
 			var result = await this.workerPool.statWeightsAsync(request, onProgress);
 			return result;
 		}
-	}
-
-	getPresetEncounter(path: string): PresetEncounter | null {
-		return this.presetEncounters[path] || null;
-	}
-	getPresetTarget(path: string): PresetTarget | null {
-		return this.presetTargets[path] || null;
-	}
-	getAllPresetEncounters(): Array<PresetEncounter> {
-		return Object.values(this.presetEncounters);
-	}
-	getAllPresetTargets(): Array<PresetTarget> {
-		return Object.values(this.presetTargets);
 	}
 
 	getPhase(): number {
