@@ -419,6 +419,7 @@ var ItemOverrideOverrides = []ItemOverride{
 	{ID: 34578, Filter: true}, // Battlemaster's Determination
 	{ID: 34579, Filter: true}, // Battlemaster's Audacity
 	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
+	{ID: 43727, Filter: true}, // Bonescythe Breastplate
 }
 
 // If any of these match the item name, don't include it.
