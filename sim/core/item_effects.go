@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -55,8 +54,8 @@ func HasEnchantEffect(id int32) bool {
 // Registers an ApplyEffect function which will be called before the Sim
 // starts, for any Agent that is wearing the item.
 func NewItemEffect(id int32, itemEffect ApplyEffect) {
-	if _, hasItem := items.ItemsByID[id]; !hasItem {
-		if _, hasGem := items.GemsByID[id]; !hasGem {
+	if _, hasItem := ItemsByID[id]; !hasItem {
+		if _, hasGem := GemsByID[id]; !hasGem {
 			panic(fmt.Sprintf("No item with ID: %d", id))
 		}
 	}
@@ -73,7 +72,7 @@ func NewItemEffect(id int32, itemEffect ApplyEffect) {
 
 func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 	found := false
-	for _, enchantsByID := range items.EnchantsByItemByID {
+	for _, enchantsByID := range EnchantsByItemByID {
 		if _, ok := enchantsByID[id]; ok {
 			found = true
 			break
@@ -92,7 +91,7 @@ func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 	found := false
-	for _, enchantsByID := range items.EnchantsByItemByID {
+	for _, enchantsByID := range EnchantsByItemByID {
 		if _, ok := enchantsByID[id]; ok {
 			found = true
 			break

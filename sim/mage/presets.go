@@ -1,7 +1,7 @@
 package mage
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -183,7 +183,7 @@ var FullFrostConsumes = FullFireConsumes
 
 var FullArcaneConsumes = FullFireConsumes
 
-var P1ArcaneGear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1ArcaneGear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40416,
 		"enchant": 3820,

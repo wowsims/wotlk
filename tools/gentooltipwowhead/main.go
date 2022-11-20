@@ -70,7 +70,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Will fetch %d items...\n", len(idsToFetch))
+	fmt.Printf("Will fetch %d core...\n", len(idsToFetch))
 
 	threads := *numThreads
 	if threads > len(idsToFetch) {

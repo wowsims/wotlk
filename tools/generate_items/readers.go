@@ -61,7 +61,7 @@ func getItemOverrides() []ItemOverride {
 	// Ignore first line
 	itemsData = itemsData[1:]
 
-	// Create an empty declaration (just the ID) for all the items.
+	// Create an empty declaration (just the ID) for all the core.
 	itemOverrides := make([]ItemOverride, 0, len(itemsData))
 	for _, itemsDataRow := range itemsData {
 		itemID, err := strconv.Atoi(itemsDataRow[0])

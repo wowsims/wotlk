@@ -3,8 +3,6 @@ package warrior
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/items"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -221,7 +219,7 @@ func primary(warrior *Warrior, hand hand) float64 {
 	return 1
 }
 
-func isPoleaxe(weapon *items.Item) bool {
+func isPoleaxe(weapon *core.Item) bool {
 	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
 }
 

@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -22,7 +21,7 @@ type Character struct {
 	Class proto.Class
 
 	// Current gear.
-	Equip items.Equipment
+	Equip Equipment
 
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
@@ -72,7 +71,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Name:  player.Name,
 		Race:  player.Race,
 		Class: player.Class,
-		Equip: items.ProtoToEquipment(player.Equipment),
+		Equip: ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,
 			player.Profession2,
@@ -164,7 +163,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	return playerStats
 }
 
-// Apply effects from all equipped items.
+// Apply effects from all equipped core.
 func (character *Character) applyItemEffects(agent Agent) {
 	for slot, eq := range character.Equip {
 		if applyItemEffect, ok := itemEffects[eq.ID]; ok {
@@ -283,20 +282,20 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 		partyBuffs.HeroicPresence = true
 	}
 
-	if character.Equip[items.ItemSlotMainHand].ID == ItemIDAtieshMage {
+	if character.Equip[ItemSlotMainHand].ID == ItemIDAtieshMage {
 		partyBuffs.AtieshMage += 1
 	}
-	if character.Equip[items.ItemSlotMainHand].ID == ItemIDAtieshWarlock {
+	if character.Equip[ItemSlotMainHand].ID == ItemIDAtieshWarlock {
 		partyBuffs.AtieshWarlock += 1
 	}
 
-	if character.Equip[items.ItemSlotNeck].ID == ItemIDBraidedEterniumChain {
+	if character.Equip[ItemSlotNeck].ID == ItemIDBraidedEterniumChain {
 		partyBuffs.BraidedEterniumChain = true
 	}
-	if character.Equip[items.ItemSlotNeck].ID == ItemIDChainOfTheTwilightOwl {
+	if character.Equip[ItemSlotNeck].ID == ItemIDChainOfTheTwilightOwl {
 		partyBuffs.ChainOfTheTwilightOwl = true
 	}
-	if character.Equip[items.ItemSlotNeck].ID == ItemIDEyeOfTheNight {
+	if character.Equip[ItemSlotNeck].ID == ItemIDEyeOfTheNight {
 		partyBuffs.EyeOfTheNight = true
 	}
 }
@@ -388,17 +387,17 @@ func (character *Character) HasGlyph(glyphID int32) bool {
 }
 
 func (character *Character) HasTrinketEquipped(itemID int32) bool {
-	return character.Equip[items.ItemSlotTrinket1].ID == itemID ||
-		character.Equip[items.ItemSlotTrinket2].ID == itemID
+	return character.Equip[ItemSlotTrinket1].ID == itemID ||
+		character.Equip[ItemSlotTrinket2].ID == itemID
 }
 
 func (character *Character) HasRingEquipped(itemID int32) bool {
-	return character.Equip[items.ItemSlotFinger1].ID == itemID ||
-		character.Equip[items.ItemSlotFinger2].ID == itemID
+	return character.Equip[ItemSlotFinger1].ID == itemID ||
+		character.Equip[ItemSlotFinger2].ID == itemID
 }
 
 func (character *Character) HasMetaGemEquipped(gemID int32) bool {
-	for _, gem := range character.Equip[items.ItemSlotHead].Gems {
+	for _, gem := range character.Equip[ItemSlotHead].Gems {
 		if gem.ID == gemID {
 			return true
 		}
@@ -407,7 +406,7 @@ func (character *Character) HasMetaGemEquipped(gemID int32) bool {
 }
 
 // Returns the MH weapon if one is equipped, and null otherwise.
-func (character *Character) GetMHWeapon() *items.Item {
+func (character *Character) GetMHWeapon() *Item {
 	weapon := &character.Equip[proto.ItemSlot_ItemSlotMainHand]
 	if weapon.ID == 0 {
 		return nil
@@ -421,7 +420,7 @@ func (character *Character) HasMHWeapon() bool {
 
 // Returns the OH weapon if one is equipped, and null otherwise. Note that
 // shields / Held-in-off-hand items are NOT counted as weapons in this function.
-func (character *Character) GetOHWeapon() *items.Item {
+func (character *Character) GetOHWeapon() *Item {
 	weapon := &character.Equip[proto.ItemSlot_ItemSlotOffHand]
 	if weapon.ID == 0 ||
 		weapon.WeaponType == proto.WeaponType_WeaponTypeShield ||
@@ -436,7 +435,7 @@ func (character *Character) HasOHWeapon() bool {
 }
 
 // Returns the ranged weapon if one is equipped, and null otherwise.
-func (character *Character) GetRangedWeapon() *items.Item {
+func (character *Character) GetRangedWeapon() *Item {
 	weapon := &character.Equip[proto.ItemSlot_ItemSlotRanged]
 	if weapon.ID == 0 ||
 		weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeIdol ||

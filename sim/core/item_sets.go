@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"golang.org/x/exp/slices"
 )
 
@@ -59,7 +58,7 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 	set.Items = make(map[int32]struct{})
 	foundName := false
 	foundAlternativeName := false
-	for _, item := range items.ItemsByID {
+	for _, item := range ItemsByID {
 		if item.SetName == set.Name || (len(set.AlternativeName) > 0 && item.SetName == set.AlternativeName) {
 			//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
 			set.Items[item.ID] = struct{}{}

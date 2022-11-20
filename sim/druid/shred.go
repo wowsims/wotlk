@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -13,8 +12,8 @@ func (druid *Druid) registerShredSpell() {
 	baseCost := 60.0 - 9*float64(druid.Talents.ShreddingAttacks)
 
 	flatDamageBonus := 666 +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 29390, 88, 0) +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == 40713, 203, 0)
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 29390, 88, 0) +
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40713, 203, 0)
 
 	hasGlyphofShred := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred)
 	maxRipTicks := druid.MaxRipTicks()

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -43,7 +42,7 @@ func (shaman *Shaman) StormstrikeDebuffAura(target *core.Unit) *core.Aura {
 
 func (shaman *Shaman) newStormstrikeHitSpell(isMH bool) *core.Spell {
 	var flatDamageBonus float64 = 0
-	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheDancingFlame {
+	if shaman.Equip[core.ItemSlotRanged].ID == TotemOfTheDancingFlame {
 		flatDamageBonus += 155
 	}
 
@@ -86,7 +85,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	ohHit := shaman.newStormstrikeHitSpell(false)
 
 	baseCost := baseMana * 0.08
-	if shaman.Equip[items.ItemSlotRanged].ID == StormfuryTotem {
+	if shaman.Equip[core.ItemSlotRanged].ID == StormfuryTotem {
 		baseCost -= 22
 	}
 
@@ -97,7 +96,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		skyshatterAura = shaman.NewTemporaryStatsAura("Skyshatter 4pc AP Bonus", core.ActionID{SpellID: 38432}, stats.Stats{stats.AttackPower: 70}, time.Second*12)
 	}
 	var totemOfDuelingAura *core.Aura
-	if shaman.Equip[items.ItemSlotRanged].ID == TotemOfDueling {
+	if shaman.Equip[core.ItemSlotRanged].ID == TotemOfDueling {
 		totemOfDuelingAura = shaman.NewTemporaryStatsAura("Essense of the Storm", core.ActionID{SpellID: 60766},
 			stats.Stats{stats.MeleeHaste: 60, stats.SpellHaste: 60}, time.Second*6)
 	}
