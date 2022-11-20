@@ -456,6 +456,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-TheTwinBladesofAzzinoth"
+ value: {
+  dps: 4553.54793
+  tps: 4090.52712
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-ThunderingSkyflareDiamond"
  value: {
   dps: 5481.34365

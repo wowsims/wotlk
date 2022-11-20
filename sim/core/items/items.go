@@ -12,7 +12,6 @@ var Items []Item
 var Enchants []Enchant
 var Gems []Gem
 
-var ByName = map[string]Item{}
 var ByID = map[int32]Item{}
 var GemsByID = map[int32]Gem{}
 var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
@@ -44,18 +43,15 @@ func init() {
 
 	for _, v := range Items {
 		if _, ok := ByID[v.ID]; ok {
-			fmt.Printf("Found dup item: %s\n", v.Name)
+			fmt.Printf("Found dup item: %d\n", v.ID)
 			panic("no dupes allowed")
 		}
-		ByName[v.Name] = v
 		ByID[v.ID] = v
 	}
 }
 
 type Item struct {
 	ID        int32
-	WowheadID int32
-	Heroic    bool
 	Type      proto.ItemType
 	ArmorType proto.ArmorType
 	// Weapon Stats
@@ -66,25 +62,10 @@ type Item struct {
 	WeaponDamageMax  float64
 	SwingSpeed       float64
 
-	// Used by the UI to filter which items are shown.
-	ClassAllowlist []proto.Class
-
-	Name       string
-	SourceZone string
-	SourceDrop string
-	Stats      stats.Stats // Stats applied to wearer
-	Phase      byte
-	Quality    proto.ItemQuality
-	Unique     bool
-	Ilvl       int32
-	SetName    string // Empty string if not part of a set.
-
-	RequiredProfession proto.Profession
-
-	// Hidden variable used for a few obscure mechanics (Seal of Righteousness).
-	// Intuitively, this is a measure of the difference between the expected stats
-	// and the actual stats of an item, e.g. decreased weapon DPS on caster weapons.
-	QualityModifier float64
+	Name    string
+	Stats   stats.Stats // Stats applied to wearer
+	Quality proto.ItemQuality
+	SetName string // Empty string if not part of a set.
 
 	GemSockets  []proto.GemColor
 	SocketBonus stats.Stats
@@ -96,27 +77,20 @@ type Item struct {
 
 func ItemFromProto(pData *proto.UIItem) Item {
 	return Item{
-		ID:                 pData.Id,
-		Name:               pData.Name,
-		ClassAllowlist:     pData.ClassAllowlist,
-		Type:               pData.Type,
-		ArmorType:          pData.ArmorType,
-		WeaponType:         pData.WeaponType,
-		HandType:           pData.HandType,
-		RangedWeaponType:   pData.RangedWeaponType,
-		WeaponDamageMin:    pData.WeaponDamageMin,
-		WeaponDamageMax:    pData.WeaponDamageMax,
-		SwingSpeed:         pData.WeaponSpeed,
-		Stats:              stats.FromFloatArray(pData.Stats),
-		Phase:              byte(pData.Phase),
-		Quality:            pData.Quality,
-		Unique:             pData.Unique,
-		Ilvl:               pData.Ilvl,
-		GemSockets:         pData.GemSockets,
-		SocketBonus:        stats.FromFloatArray(pData.SocketBonus),
-		RequiredProfession: pData.RequiredProfession,
-		Heroic:             pData.Heroic,
-		SetName:            pData.SetName,
+		ID:               pData.Id,
+		Name:             pData.Name,
+		Type:             pData.Type,
+		ArmorType:        pData.ArmorType,
+		WeaponType:       pData.WeaponType,
+		HandType:         pData.HandType,
+		RangedWeaponType: pData.RangedWeaponType,
+		WeaponDamageMin:  pData.WeaponDamageMin,
+		WeaponDamageMax:  pData.WeaponDamageMax,
+		SwingSpeed:       pData.WeaponSpeed,
+		Stats:            stats.FromFloatArray(pData.Stats),
+		GemSockets:       pData.GemSockets,
+		SocketBonus:      stats.FromFloatArray(pData.SocketBonus),
+		SetName:          pData.SetName,
 	}
 }
 
@@ -133,62 +107,34 @@ func (item Item) ToItemSpecProto() *proto.ItemSpec {
 }
 
 type Enchant struct {
-	EffectID    int32 // Used by UI to apply effect to tooltip
-	ItemID      int32 // ID of the enchant item.
-	SpellID     int32 // ID of the enchant spell.
-	Name        string
-	Quality     proto.ItemQuality
-	Bonus       stats.Stats
-	ItemType    proto.ItemType    // Which slot the enchant goes on.
-	EnchantType proto.EnchantType // Additional category when ItemType isn't enough.
-	Phase       int32
-
-	RequiredProfession proto.Profession
-
-	// Used by the UI to filter which enchants are shown.
-	ClassAllowlist []proto.Class
+	EffectID int32 // Used by UI to apply effect to tooltip
+	Name     string
+	Bonus    stats.Stats
+	ItemType proto.ItemType // Which slot the enchant goes on.
 }
 
 func EnchantFromProto(pData *proto.UIEnchant) Enchant {
 	return Enchant{
-		EffectID:       pData.EffectId,
-		ItemID:         pData.ItemId,
-		SpellID:        pData.SpellId,
-		Name:           pData.Name,
-		ItemType:       pData.Type,
-		EnchantType:    pData.EnchantType,
-		Bonus:          stats.FromFloatArray(pData.Stats),
-		Quality:        pData.Quality,
-		Phase:          pData.Phase,
-		ClassAllowlist: pData.ClassAllowlist,
-
-		RequiredProfession: pData.RequiredProfession,
+		EffectID: pData.EffectId,
+		Name:     pData.Name,
+		ItemType: pData.Type,
+		Bonus:    stats.FromFloatArray(pData.Stats),
 	}
 }
 
 type Gem struct {
-	ID      int32
-	Name    string
-	Stats   stats.Stats // flat stats gem adds
-	Color   proto.GemColor
-	Phase   byte
-	Quality proto.ItemQuality
-	Unique  bool
-
-	RequiredProfession proto.Profession
+	ID    int32
+	Name  string
+	Stats stats.Stats
+	Color proto.GemColor
 }
 
 func GemFromProto(pData *proto.UIGem) Gem {
 	return Gem{
-		ID:      pData.Id,
-		Name:    pData.Name,
-		Stats:   stats.FromFloatArray(pData.Stats),
-		Color:   pData.Color,
-		Phase:   byte(pData.Phase),
-		Quality: pData.Quality,
-		Unique:  pData.Unique,
-
-		RequiredProfession: pData.RequiredProfession,
+		ID:    pData.Id,
+		Name:  pData.Name,
+		Stats: stats.FromFloatArray(pData.Stats),
+		Color: pData.Color,
 	}
 }
 
@@ -202,13 +148,13 @@ type Equipment [proto.ItemSlot_ItemSlotRanged + 1]Item
 
 func (equipment *Equipment) EquipItem(item Item) {
 	if item.Type == proto.ItemType_ItemTypeFinger {
-		if equipment[ItemSlotFinger1].Name == "" {
+		if equipment[ItemSlotFinger1].ID == 0 {
 			equipment[ItemSlotFinger1] = item
 		} else {
 			equipment[ItemSlotFinger2] = item
 		}
 	} else if item.Type == proto.ItemType_ItemTypeTrinket {
-		if equipment[ItemSlotTrinket1].Name == "" {
+		if equipment[ItemSlotTrinket1].ID == 0 {
 			equipment[ItemSlotTrinket1] = item
 		} else {
 			equipment[ItemSlotTrinket2] = item
