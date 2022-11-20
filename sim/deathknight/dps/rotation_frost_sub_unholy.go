@@ -171,7 +171,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
 		//end of fight logic entering
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight).
+		//NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight).
 		NewAction(dk.RotationActionCallback_Pesti).
 		//NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
 		NewAction(dk.RotationActionCallback_BS).
