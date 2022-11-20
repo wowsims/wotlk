@@ -34,6 +34,8 @@ func writeDatabaseFile(db *WowDatabase) {
 	writeProtoArrayToBuilder(uiDB.ItemIcons, builder, "itemIcons")
 	builder.WriteString(",\n")
 	writeProtoArrayToBuilder(uiDB.SpellIcons, builder, "spellIcons")
+	builder.WriteString(",\n")
+	writeProtoArrayToBuilder(uiDB.Encounters, builder, "encounters")
 	builder.WriteString("\n")
 
 	builder.WriteString("}")

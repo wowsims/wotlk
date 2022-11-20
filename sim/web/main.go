@@ -255,7 +255,6 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 	http.HandleFunc("/computeStats", handleAPI)
 	http.HandleFunc("/individualSim", handleAPI)
 	http.HandleFunc("/raidSim", handleAPI)
-	http.HandleFunc("/gearList", handleAPI)
 	http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
 		if req.URL.Path == "/" {
 			http.Redirect(resp, req, "/wotlk/", http.StatusPermanentRedirect)
@@ -364,9 +363,6 @@ var handlers = map[string]apiHandler{
 	}},
 	"/computeStats": {msg: func() googleProto.Message { return &proto.ComputeStatsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
 		return core.ComputeStats(msg.(*proto.ComputeStatsRequest))
-	}},
-	"/gearList": {msg: func() googleProto.Message { return &proto.GearListRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
-		return core.GetGearList(msg.(*proto.GearListRequest))
 	}},
 }
 

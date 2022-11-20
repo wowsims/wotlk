@@ -107,7 +107,7 @@ func (pt PresetTarget) ToProto() *proto.PresetTarget {
 }
 
 var presetTargets []*PresetTarget
-var presetEncounters []*proto.PresetEncounter
+var PresetEncounters []*proto.PresetEncounter
 
 func AddPresetTarget(newPreset *PresetTarget) {
 	for _, preset := range presetTargets {
@@ -156,13 +156,13 @@ func AddPresetEncounter(name string, targetPaths []string) {
 		}
 	}
 
-	for _, preset := range presetEncounters {
+	for _, preset := range PresetEncounters {
 		if preset.Path == path {
 			log.Fatalf("Preset Encounter with path %s already added!", path)
 		}
 	}
 
-	presetEncounters = append(presetEncounters, &proto.PresetEncounter{
+	PresetEncounters = append(PresetEncounters, &proto.PresetEncounter{
 		Path:    path,
 		Targets: targetProtos,
 	})

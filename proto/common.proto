@@ -628,6 +628,15 @@ message Encounter {
 	repeated Target targets = 6;
 }
 
+message PresetTarget {
+	string path = 1;
+	Target target = 2;
+}
+message PresetEncounter {
+	string path = 1;
+	repeated PresetTarget targets = 2;
+}
+
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;

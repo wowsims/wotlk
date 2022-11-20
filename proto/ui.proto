@@ -12,6 +12,7 @@ message UIDatabase {
 	repeated UIItem items = 1;
 	repeated UIEnchant enchants = 2;
 	repeated UIGem gems = 3;
+	repeated PresetEncounter encounters = 6;
 
 	// Entities for which we just need a name/icon.
 	repeated IconData item_icons = 4;
