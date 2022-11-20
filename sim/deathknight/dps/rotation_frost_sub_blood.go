@@ -7,31 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *deathknight.RuneSpell {
-	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-
-	abGcd := 1500 * time.Millisecond
-	spGcd := dk.SpellGCD()
-
-	km := dk.KM()
-	rime := dk.Rime()
-	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km {
-		return dk.FrostStrike
-	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
-		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km && rime {
-		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && rime {
-		return dk.HowlingBlast
-	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HornOfWinter.CanCast(sim) {
-		return dk.HornOfWinter
-	} else {
-		return nil
-	}
-}
-
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
