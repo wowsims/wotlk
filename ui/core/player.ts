@@ -1,8 +1,7 @@
 import {
 	Class,
-	Consumes,
 	Cooldowns,
-	Faction,
+	Consumes,
 	GemColor,
 	Glyphs,
 	HandType,
@@ -13,8 +12,8 @@ import {
 	Race,
 	RaidTarget,
 	RangedWeaponType,
-	SimDatabase,
 	Spec,
+	Faction,
 	Stat,
 	WeaponType,
 } from './proto/common.js';
@@ -796,14 +795,13 @@ export class Player<SpecType extends Spec> {
 	}
 
 	toProto(forExport?: boolean): PlayerProto {
-		const gear = this.getGear();
 		return withSpecProto(
 			this.spec,
 			PlayerProto.create({
 				name: this.getName(),
 				race: this.getRace(),
 				class: this.getClass(),
-				equipment: gear.asSpec(),
+				equipment: this.getGear().asSpec(),
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().asArray(),
 				buffs: this.getBuffs(),
@@ -815,7 +813,6 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
-				database: forExport ? SimDatabase.create() : gear.toDatabase(),
 			}),
 			this.getRotation(),
 			forExport ? this.specTypeFunctions.talentsCreate() : this.getTalents(),

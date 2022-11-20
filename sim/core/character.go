@@ -54,10 +54,6 @@ type Character struct {
 }
 
 func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {
-	if player.Database != nil {
-		addToDatabase(player.Database)
-	}
-
 	character := Character{
 		Unit: Unit{
 			Type:        PlayerUnit,
