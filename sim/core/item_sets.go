@@ -70,11 +70,14 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 			}
 		}
 	}
-	if !foundName {
-		panic("No items found for set " + set.Name)
-	}
-	if len(set.AlternativeName) > 0 && !foundAlternativeName {
-		panic("No items found for set alternative " + set.AlternativeName)
+
+	if WITH_DB {
+		if !foundName {
+			panic("No items found for set " + set.Name)
+		}
+		if len(set.AlternativeName) > 0 && !foundAlternativeName {
+			panic("No items found for set alternative " + set.AlternativeName)
+		}
 	}
 
 	sets = append(sets, set)
@@ -82,6 +85,14 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 		itemSetLookup[itemID] = set
 	}
 	return set
+}
+
+func AddItemToSets(item Item) {
+	for _, set := range sets {
+		if set.Name == item.SetName || set.AlternativeName == item.SetName {
+			set.Items[item.ID] = struct{}{}
+		}
+	}
 }
 
 func (character *Character) HasSetBonus(itemSet *ItemSet, numItems int32) bool {
