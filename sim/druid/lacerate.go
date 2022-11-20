@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -17,7 +16,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 	tickDamage := 320.0 / 5
 	initialDamage := 88.0
-	if druid.Equip[items.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
+	if druid.Equip[core.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
 		tickDamage += 8
 		initialDamage += 8
 	}

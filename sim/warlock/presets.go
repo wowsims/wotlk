@@ -1,7 +1,7 @@
 package warlock
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -178,7 +178,7 @@ var FullConsumes = &proto.Consumes{
 	Food:          proto.Food_FoodFishFeast,
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40421,
 		"enchant": 3820,

@@ -1,4 +1,4 @@
-package items
+package core
 
 import (
 	"github.com/wowsims/wotlk/assets/database"

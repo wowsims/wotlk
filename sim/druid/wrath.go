@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -16,8 +15,8 @@ func (druid *Druid) registerWrathSpell() {
 	baseCost := 0.11 * druid.BaseMana
 	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 	spellCoeff := 0.571 + (0.02 * float64(druid.Talents.WrathOfCenarius))
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
+	bonusFlatDamage := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

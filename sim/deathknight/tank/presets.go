@@ -1,7 +1,7 @@
 package tank
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -101,7 +101,7 @@ var Glyphs = &proto.Glyphs{
 	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfVampiricBlood),
 }
 
-var BloodP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var BloodP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40565,
 		"enchant": 3878,

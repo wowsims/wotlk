@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -79,10 +78,10 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 func (shaman *Shaman) electricSpellBonusDamage(spellCoeff float64) float64 {
 	bonusDamage := 0 +
-		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
-		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +
-		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0) +
-		core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == TotemOfHex, 165, 0)
+		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == TotemOfStorms, 33, 0) +
+		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == TotemOfTheVoid, 55, 0) +
+		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == TotemOfAncestralGuidance, 85, 0) +
+		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == TotemOfHex, 165, 0)
 
 	return bonusDamage * spellCoeff // These items do not benefit from the bonus coeff from shamanism.
 }

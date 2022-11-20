@@ -1,7 +1,7 @@
 package retribution
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -74,7 +74,7 @@ var FullConsumes = &proto.Consumes{
 	ThermalSapper:   true,
 }
 
-var Phase1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40576,
 		"enchant": 3817,
