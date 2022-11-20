@@ -12,49 +12,6 @@ import (
 	"strings"
 )
 
-func getGemOverrides() []GemOverride {
-	gemsData := readCsvFile("./assets/item_data/all_gem_ids.csv")
-
-	// Ignore first line
-	gemsData = gemsData[1:]
-
-	gemOverrides := make([]GemOverride, 0, len(gemsData))
-	for _, gemsDataRow := range gemsData {
-		gemID, err := strconv.Atoi(gemsDataRow[0])
-		if err != nil {
-			log.Fatal("Invalid gem ID: " + gemsDataRow[0])
-		}
-		declaration := GemOverride{
-			ID: gemID,
-		}
-
-		for _, override := range GemOverrideOverrides {
-			if override.ID == gemID {
-				declaration = override
-				break
-			}
-		}
-
-		gemOverrides = append(gemOverrides, declaration)
-	}
-
-	// Add any declarations that were missing from the csv file.
-	for _, overrideGemOverride := range GemOverrideOverrides {
-		found := false
-		for _, gemDecl := range gemOverrides {
-			if gemDecl.ID == overrideGemOverride.ID {
-				found = true
-				break
-			}
-		}
-		if !found {
-			gemOverrides = append(gemOverrides, overrideGemOverride)
-		}
-	}
-
-	return gemOverrides
-}
-
 func getItemOverrides() []ItemOverride {
 	itemsData := readCsvFile("./assets/item_data/all_item_ids.csv")
 

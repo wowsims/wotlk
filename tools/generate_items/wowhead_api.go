@@ -582,6 +582,24 @@ func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
 	// fmt.Printf("Could not find socket color for gem %s\n", item.Name)
 	return proto.GemColor_GemColorUnknown
 }
+func (item WowheadItemResponse) IsGem() bool {
+	return item.GetSocketColor() != proto.GemColor_GemColorUnknown &&
+		!strings.Contains(item.GetName(), "Design:")
+}
+func (item WowheadItemResponse) ToGemProto() *proto.UIGem {
+	return &proto.UIGem{
+		Name:  item.GetName(),
+		Icon:  item.GetIcon(),
+		Color: item.GetSocketColor(),
+
+		Stats: toSlice(item.GetGemStats()),
+
+		Phase:              int32(item.GetPhase()),
+		Quality:            proto.ItemQuality(item.GetQuality()),
+		Unique:             item.GetUnique(),
+		RequiredProfession: item.GetRequiredProfession(),
+	}
+}
 
 var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Strength`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
 var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Agility`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}

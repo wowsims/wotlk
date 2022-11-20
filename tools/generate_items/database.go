@@ -18,8 +18,6 @@ type ItemOverride struct {
 	ClassAllowlist []proto.Class
 	Phase          int
 	HandType       proto.HandType // Overrides hand type.
-	Filter         bool           // If true, this item will be omitted from the sim.
-	Keep           bool           // If true, keep this item even if it would otherwise be filtered.
 }
 
 type ItemData struct {
@@ -68,48 +66,19 @@ func (itemData *ItemData) toProto() *proto.UIItem {
 	return itemProto
 }
 
-// For overriding gem data.
-type GemOverride struct {
-	ID int
-
-	Stats Stats // Only non-zero values will override
-	Phase int
-
-	Filter bool // If true, this item will be omitted from the sim.
-}
-
-type GemData struct {
-	Response ItemResponse
-	Override GemOverride
-}
-
-func (gemData *GemData) toProto() *proto.UIGem {
-	gemProto := &proto.UIGem{
-		Name:  gemData.Response.GetName(),
-		Icon:  gemData.Response.GetIcon(),
-		Color: gemData.Response.GetSocketColor(),
-
-		Stats: toSlice(mergeStats(gemData.Response.GetGemStats(), gemData.Override.Stats)),
-
-		Phase:              int32(gemData.Response.GetPhase()),
-		Quality:            proto.ItemQuality(gemData.Response.GetQuality()),
-		Unique:             gemData.Response.GetUnique(),
-		RequiredProfession: gemData.Response.GetRequiredProfession(),
+func mergeGemProtos(dst, src *proto.UIGem) {
+	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+	if src.Stats != nil {
+		dst.Stats = src.Stats
+		src.Stats = nil
 	}
-
-	overrideProto := &proto.UIGem{
-		Id:    int32(gemData.Override.ID),
-		Phase: int32(gemData.Override.Phase),
-	}
-
-	googleProto.Merge(gemProto, overrideProto)
-	return gemProto
+	googleProto.Merge(dst, src)
 }
 
 type WowDatabase struct {
 	items    []ItemData
 	enchants []*proto.UIEnchant
-	gems     []GemData
+	gems     map[int32]*proto.UIGem
 
 	itemIcons  []*proto.IconData
 	spellIcons []*proto.IconData
@@ -117,9 +86,10 @@ type WowDatabase struct {
 	encounters []*proto.PresetEncounter
 }
 
-func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, enchantOverrides []*proto.UIEnchant, itemTooltipsDB map[int]WowheadItemResponse, spellTooltipsDB map[int]WowheadItemResponse) *WowDatabase {
+func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []*proto.UIGem, enchantOverrides []*proto.UIEnchant, itemTooltipsDB map[int]WowheadItemResponse, spellTooltipsDB map[int]WowheadItemResponse) *WowDatabase {
 	db := &WowDatabase{
 		enchants:   enchantOverrides,
+		gems:       make(map[int32]*proto.UIGem),
 		encounters: core.PresetEncounters,
 	}
 
@@ -134,15 +104,17 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, en
 		db.items = append(db.items, itemData)
 	}
 
+	for id, response := range itemTooltipsDB {
+		if response.IsGem() {
+			gemProto := response.ToGemProto()
+			gemProto.Id = int32(id)
+			db.gems[gemProto.Id] = gemProto
+		}
+	}
 	for _, gemOverride := range gemOverrides {
-		gemData := GemData{
-			Override: gemOverride,
-			Response: itemTooltipsDB[gemOverride.ID],
+		if _, ok := db.gems[gemOverride.Id]; ok {
+			mergeGemProtos(db.gems[gemOverride.Id], gemOverride)
 		}
-		if gemData.Response.GetName() == "" {
-			continue
-		}
-		db.gems = append(db.gems, gemData)
 	}
 
 	for _, enchant := range db.enchants {
@@ -166,18 +138,15 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, en
 		}
 	}
 
-	db.itemIcons = core.Filter(db.itemIcons, func(icon *proto.IconData) bool {
+	db.itemIcons = core.FilterSlice(db.itemIcons, func(icon *proto.IconData) bool {
 		return icon.Name != "" && icon.Icon != ""
 	})
-	db.spellIcons = core.Filter(db.spellIcons, func(icon *proto.IconData) bool {
+	db.spellIcons = core.FilterSlice(db.spellIcons, func(icon *proto.IconData) bool {
 		return icon.Name != "" && icon.Icon != ""
 	})
 
 	slices.SortStableFunc(db.items, func(i1, i2 ItemData) bool {
 		return i1.Override.ID < i2.Override.ID
-	})
-	slices.SortStableFunc(db.gems, func(g1, g2 GemData) bool {
-		return g1.Override.ID < g2.Override.ID
 	})
 	slices.SortStableFunc(db.itemIcons, func(s1, s2 *proto.IconData) bool {
 		return s1.Id < s2.Id
@@ -193,13 +162,26 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, en
 
 // Filters out entities which shouldn't be included anywhere.
 func (db *WowDatabase) applyGlobalFilters() {
-	db.items = core.Filter(db.items, func(itemData ItemData) bool {
-		if itemData.Override.Filter {
+	db.items = core.FilterSlice(db.items, func(itemData ItemData) bool {
+		if _, ok := itemDenyList[itemData.Override.ID]; ok {
 			return false
 		}
 
 		for _, pattern := range denyListNameRegexes {
 			if pattern.MatchString(itemData.Response.GetName()) {
+				return false
+			}
+		}
+		return true
+	})
+
+	db.gems = core.FilterMap(db.gems, func(_ int32, gem *proto.UIGem) bool {
+		if _, ok := gemDenyList[int(gem.Id)]; ok {
+			return false
+		}
+
+		for _, pattern := range denyListNameRegexes {
+			if pattern.MatchString(gem.Name) {
 				return false
 			}
 		}
@@ -215,7 +197,7 @@ func (db *WowDatabase) getSimmableItems() []ItemData {
 			continue
 		}
 
-		if itemData.Override.Keep {
+		if _, ok := itemAllowList[itemData.Override.ID]; ok {
 			included = append(included, itemData)
 			continue
 		}
@@ -250,27 +232,13 @@ func (db *WowDatabase) getSimmableItems() []ItemData {
 }
 
 // Returns only gems which are worth including in the sim.
-func (db *WowDatabase) getSimmableGems() []GemData {
-	var included []GemData
-
-	for _, gemData := range db.gems {
-		if gemData.Override.Filter {
-			continue
+func (db *WowDatabase) getSimmableGems() map[int32]*proto.UIGem {
+	return core.FilterMap(db.gems, func(id int32, gem *proto.UIGem) bool {
+		if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
+			return false
 		}
-		// allow := allowList[gemData.Override.ID]
-		allow := false
-		if !allow {
-			if gemData.Response.GetQuality() < int(proto.ItemQuality_ItemQualityUncommon) {
-				continue
-			}
-			// if gemData.Response.GetPhase() == 0 {
-			// 	continue
-			// }
-		}
-		included = append(included, gemData)
-	}
-
-	return included
+		return true
+	})
 }
 
 func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
@@ -284,9 +252,12 @@ func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
 	for _, itemData := range db.getSimmableItems() {
 		uiDB.Items = append(uiDB.Items, itemData.toProto())
 	}
-	for _, gemData := range db.getSimmableGems() {
-		uiDB.Gems = append(uiDB.Gems, gemData.toProto())
+	for _, gem := range db.getSimmableGems() {
+		uiDB.Gems = append(uiDB.Gems, gem)
 	}
+	slices.SortStableFunc(uiDB.Gems, func(g1, g2 *proto.UIGem) bool {
+		return g1.Id < g2.Id
+	})
 	return uiDB
 }
 

@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Allows manual overriding for Item fields in case WowHead is wrong.
@@ -15,31 +16,6 @@ var ItemOverrideOverrides = []ItemOverride{
 	{ /** Hyper-Magnified Moon Specs */ ID: 35182, ClassAllowlist: []proto.Class{proto.Class_ClassDruid}},
 	{ /** Lightning Etched Specs */ ID: 34355, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
 	{ /** Annihilator Holo-Gogs */ ID: 34847, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
-	{ /** Twinblade of the Pheonix */ ID: 29993, Stats: Stats{proto.Stat_StatRangedAttackPower: 108}},
-	{ /** Pillar of Ferocity */ ID: 30883, Stats: Stats{proto.Stat_StatArmor: 550}},
-	{ /** Incisor Fragment */ ID: 37723, Stats: Stats{proto.Stat_StatArmorPenetration: 0}},
-
-	// TBC blacksmithing crafted weapons
-	{ID: 28431, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28432, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28433, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28437, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28438, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28439, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28657, HandType: proto.HandType_HandTypeOneHand},
-	{ID: 28767, HandType: proto.HandType_HandTypeOneHand},
-
-	{ID: 29994}, // Wildercloak
-	{ID: 29387}, // Gnomeregan Auto-Blocker 600
-	{ID: 38289}, // Coren's Lucky Coin
-	{ID: 34473}, // Commendation of Kaelthas
-
-	// WotLK Halloween Event items
-	{ID: 49121, Phase: 1}, // Ring of Ghoulish Glee
-	{ID: 49123, Phase: 1}, // The Horseman's Seal
-	{ID: 49124, Phase: 1}, // Wicked Witch's Band
-	{ID: 49128, Phase: 1}, // The Horseman's Baleful Blade
-	{ID: 49126, Phase: 1}, // The Horseman's Horrific Helm
 
 	// Valorous T8 Sets
 	{ID: 45375, Phase: 2},
@@ -146,109 +122,110 @@ var ItemOverrideOverrides = []ItemOverride{
 	{ID: 49807, Phase: 4},
 	{ID: 49810, Phase: 4},
 	{ID: 49809, Phase: 4},
+}
 
-	// Keep these items
-	{ID: 37032, Keep: true}, // Edge of the Tuskarr
-	{ID: 11815, Keep: true}, // Hand of Justice
-	{ID: 12590, Keep: true}, // Felstriker
-	{ID: 15808, Keep: true}, // Fine Light Crossbow (for hunter testing).
-	{ID: 19019, Keep: true}, // Thunderfury
-	{ID: 19808, Keep: true}, // Rockhide Strongfish
-	{ID: 20837, Keep: true}, // Sunstrider Axe
-	{ID: 20966, Keep: true}, // Jade Pendant of Blasting
-	{ID: 24114, Keep: true}, // Braided Eternium Chain
-	{ID: 28830, Keep: true}, // Dragonspine Trophy
-	{ID: 29383, Keep: true}, // Bloodlust Brooch
-	{ID: 29387, Keep: true}, // Gnomeregan Auto-Blocker 600
-	{ID: 29994, Keep: true}, // Thalassian Wildercloak
-	{ID: 29996, Keep: true}, // Rod of the Sun King
-	{ID: 30032, Keep: true}, // Red Belt of Battle
-	{ID: 30627, Keep: true}, // Tsunami Talisman
-	{ID: 30720, Keep: true}, // Serpent-Coil Braid
-	{ID: 32387, Keep: true}, // Idol of the Raven Goddess
-	{ID: 32658, Keep: true}, // Badge of Tenacity
-	{ID: 33135, Keep: true}, // Falling Star
-	{ID: 33140, Keep: true}, // Blood of Amber
-	{ID: 33143, Keep: true}, // Stone of Blades
-	{ID: 33144, Keep: true}, // Facet of Eternity
-	{ID: 33504, Keep: true}, // Libram of Divine Purpose
-	{ID: 33506, Keep: true}, // Skycall Totem
-	{ID: 33507, Keep: true}, // Stonebreaker's Totem
-	{ID: 33510, Keep: true}, // Unseen moon idol
-	{ID: 33829, Keep: true}, // Hex Shrunken Head
-	{ID: 33831, Keep: true}, // Berserkers Call
-	{ID: 34472, Keep: true}, // Shard of Contempt
-	{ID: 34473, Keep: true}, // Commendation of Kael'thas
-	{ID: 37574, Keep: true}, // Libram of Furious Blows
-	{ID: 38072, Keep: true}, // Thunder Capacitor
-	{ID: 38212, Keep: true}, // Death Knight's Anguish
-	{ID: 38287, Keep: true}, // Empty Mug of Direbrew
-	{ID: 38289, Keep: true}, // Coren's Lucky Coin
-	{ID: 39208, Keep: true}, // Sigil of the Dark Rider
+// Keep these sorted by item ID.
+var itemAllowList = map[int]struct{}{
+	11815: struct{}{}, // Hand of Justice
+	12590: struct{}{}, // Felstriker
+	15808: struct{}{}, // Fine Light Crossbow (for hunter testing).
+	18843: struct{}{},
+	18844: struct{}{},
+	18847: struct{}{},
+	18848: struct{}{},
+	19019: struct{}{}, // Thunderfury
+	19808: struct{}{}, // Rockhide Strongfish
+	20837: struct{}{}, // Sunstrider Axe
+	20966: struct{}{}, // Jade Pendant of Blasting
+	24114: struct{}{}, // Braided Eternium Chain
+	28830: struct{}{}, // Dragonspine Trophy
+	29383: struct{}{}, // Bloodlust Brooch
+	29387: struct{}{}, // Gnomeregan Auto-Blocker 600
+	29994: struct{}{}, // Thalassian Wildercloak
+	29996: struct{}{}, // Rod of the Sun King
+	30032: struct{}{}, // Red Belt of Battle
+	30627: struct{}{}, // Tsunami Talisman
+	30720: struct{}{}, // Serpent-Coil Braid
+	32387: struct{}{}, // Idol of the Raven Goddess
+	32658: struct{}{}, // Badge of Tenacity
+	33135: struct{}{}, // Falling Star
+	33140: struct{}{}, // Blood of Amber
+	33143: struct{}{}, // Stone of Blades
+	33144: struct{}{}, // Facet of Eternity
+	33504: struct{}{}, // Libram of Divine Purpose
+	33506: struct{}{}, // Skycall Totem
+	33507: struct{}{}, // Stonebreaker's Totem
+	33510: struct{}{}, // Unseen moon idol
+	33829: struct{}{}, // Hex Shrunken Head
+	33831: struct{}{}, // Berserkers Call
+	34472: struct{}{}, // Shard of Contempt
+	34473: struct{}{}, // Commendation of Kael'thas
+	37032: struct{}{}, // Edge of the Tuskarr
+	37574: struct{}{}, // Libram of Furious Blows
+	38072: struct{}{}, // Thunder Capacitor
+	38212: struct{}{}, // Death Knight's Anguish
+	38287: struct{}{}, // Empty Mug of Direbrew
+	38289: struct{}{}, // Coren's Lucky Coin
+	39208: struct{}{}, // Sigil of the Dark Rider
+	41752: struct{}{}, // Brunnhildar Axe
+	6360:  struct{}{}, // Steelscale Crushfish
+	8345:  struct{}{}, // Wolfshead Helm
+	9449:  struct{}{}, // Manual Crowd Pummeler
 
-	{ID: 6360, Keep: true}, // Steelscale Crushfish
-	{ID: 8345, Keep: true}, // Wolfshead Helm
-	{ID: 9449, Keep: true}, // Manual Crowd Pummeler
+	// Sets
+	27510: struct{}{}, // Tidefury Gauntlets
+	27802: struct{}{}, // Tidefury Shoulderguards
+	27909: struct{}{}, // Tidefury Kilt
+	28231: struct{}{}, // Tidefury Chestpiece
+	28349: struct{}{}, // Tidefury Helm
 
-	{ID: 27510, Keep: true}, // Tidefury Gauntlets
-	{ID: 27802, Keep: true}, // Tidefury Shoulderguards
-	{ID: 27909, Keep: true}, // Tidefury Kilt
-	{ID: 28231, Keep: true}, // Tidefury Chestpiece
-	{ID: 28349, Keep: true}, // Tidefury Helm
-
-	{ID: 15056, Keep: true}, // Stormshroud Armor
-	{ID: 15057, Keep: true}, // Stormshroud Pants
-	{ID: 15058, Keep: true}, // Stormshroud Shoulders
-	{ID: 21278, Keep: true}, // Stormshroud Gloves
-
-	// Grand Marshal / High Warlord Weapons
-	{ID: 18843, Keep: true},
-	{ID: 18844, Keep: true},
-	{ID: 18847, Keep: true},
-	{ID: 18848, Keep: true},
-
-	{ID: 41752, Keep: true}, // Brunnhildar Axe
+	15056: struct{}{}, // Stormshroud Armor
+	15057: struct{}{}, // Stormshroud Pants
+	15058: struct{}{}, // Stormshroud Shoulders
+	21278: struct{}{}, // Stormshroud Gloves
 
 	// Undead Slaying Sets
 	// Plate
-	{ID: 43068, Keep: true},
-	{ID: 43069, Keep: true},
-	{ID: 43070, Keep: true},
-	{ID: 43071, Keep: true},
+	43068: struct{}{},
+	43069: struct{}{},
+	43070: struct{}{},
+	43071: struct{}{},
 	// Cloth
-	{ID: 43072, Keep: true},
-	{ID: 43073, Keep: true},
-	{ID: 43074, Keep: true},
-	{ID: 43075, Keep: true},
+	43072: struct{}{},
+	43073: struct{}{},
+	43074: struct{}{},
+	43075: struct{}{},
 	// Mail
-	{ID: 43076, Keep: true},
-	{ID: 43077, Keep: true},
-	{ID: 43078, Keep: true},
-	{ID: 43079, Keep: true},
+	43076: struct{}{},
+	43077: struct{}{},
+	43078: struct{}{},
+	43079: struct{}{},
 	//Leather
-	{ID: 43080, Keep: true},
-	{ID: 43081, Keep: true},
-	{ID: 43082, Keep: true},
-	{ID: 43083, Keep: true},
+	43080: struct{}{},
+	43081: struct{}{},
+	43082: struct{}{},
+	43083: struct{}{},
+}
 
-	// Filter out these items
-	{ID: 17782, Filter: true}, // talisman of the binding shard
-	{ID: 17783, Filter: true}, // talisman of the binding fragment
-	{ID: 17802, Filter: true}, // Deprecated version of Thunderfury
-	{ID: 18582, Filter: true},
-	{ID: 18583, Filter: true},
-	{ID: 18584, Filter: true},
-	{ID: 24265, Filter: true},
-	{ID: 32384, Filter: true},
-	{ID: 32421, Filter: true},
-	{ID: 32422, Filter: true},
-	{ID: 33482, Filter: true},
-	{ID: 34576, Filter: true}, // Battlemaster's Cruelty
-	{ID: 34577, Filter: true}, // Battlemaster's Depreavity
-	{ID: 34578, Filter: true}, // Battlemaster's Determination
-	{ID: 34579, Filter: true}, // Battlemaster's Audacity
-	{ID: 34580, Filter: true}, // Battlemaster's Perseverence
-	{ID: 43727, Filter: true}, // Bonescythe Breastplate
+// Keep these sorted by item ID.
+var itemDenyList = map[int]struct{}{
+	17782: struct{}{}, // talisman of the binding shard
+	17783: struct{}{}, // talisman of the binding fragment
+	17802: struct{}{}, // Deprecated version of Thunderfury
+	18582: struct{}{},
+	18583: struct{}{},
+	18584: struct{}{},
+	24265: struct{}{},
+	32384: struct{}{},
+	32421: struct{}{},
+	32422: struct{}{},
+	33482: struct{}{},
+	34576: struct{}{}, // Battlemaster's Cruelty
+	34577: struct{}{}, // Battlemaster's Depreavity
+	34578: struct{}{}, // Battlemaster's Determination
+	34579: struct{}{}, // Battlemaster's Audacity
+	34580: struct{}{}, // Battlemaster's Perseverence
+	43727: struct{}{}, // Bonescythe Breastplate
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.
@@ -395,15 +372,17 @@ var denyListNameRegexes = []*regexp.Regexp{
 }
 
 // Allows manual overriding for Gem fields in case WowHead is wrong.
-var GemOverrideOverrides = []GemOverride{
-	{ID: 33131, Stats: Stats{proto.Stat_StatAttackPower: 32, proto.Stat_StatRangedAttackPower: 32}},
-
+var GemOverrides = []*proto.UIGem{
+	{Id: 33131, Stats: stats.Stats{stats.AttackPower: 32, stats.RangedAttackPower: 32}.ToFloatArray()},
+}
+var gemDenyList = map[int]struct{}{
 	// pvp non-unique gems not in game currently.
-	{ID: 35489, Filter: true},
-	{ID: 38545, Filter: true},
-	{ID: 38546, Filter: true},
-	{ID: 38547, Filter: true},
-	{ID: 38548, Filter: true},
-	{ID: 38549, Filter: true},
-	{ID: 38550, Filter: true},
+	32735: struct{}{},
+	35489: struct{}{},
+	38545: struct{}{},
+	38546: struct{}{},
+	38547: struct{}{},
+	38548: struct{}{},
+	38549: struct{}{},
+	38550: struct{}{},
 }
