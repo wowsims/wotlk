@@ -55,7 +55,7 @@ func HasEnchantEffect(id int32) bool {
 // Registers an ApplyEffect function which will be called before the Sim
 // starts, for any Agent that is wearing the item.
 func NewItemEffect(id int32, itemEffect ApplyEffect) {
-	if _, hasItem := items.ByID[id]; !hasItem {
+	if _, hasItem := items.ItemsByID[id]; !hasItem {
 		if _, hasGem := items.GemsByID[id]; !hasGem {
 			panic(fmt.Sprintf("No item with ID: %d", id))
 		}

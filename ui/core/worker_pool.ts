@@ -1,8 +1,5 @@
 import { REPO_NAME } from './constants/other.js'
-import { Enchant } from './proto/common.js';
-import { Gem } from './proto/common.js';
 import { GemColor } from './proto/common.js';
-import { Item } from './proto/common.js';
 import { ItemQuality } from './proto/common.js';
 import { ItemSlot } from './proto/common.js';
 import { ItemSpec } from './proto/common.js';

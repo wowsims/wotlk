@@ -8,45 +8,31 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var Items []Item
-var Enchants []Enchant
-var Gems []Gem
-
-var ByID = map[int32]Item{}
+var ItemsByID = map[int32]Item{}
 var GemsByID = map[int32]Gem{}
 var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
 
-func init() {
-	loadDatabase()
-
-	for _, v := range Enchants {
-		if _, ok := EnchantsByItemByID[v.ItemType][v.EffectID]; ok {
-			panic(fmt.Sprintf("Duplicate enchant ID %d", v.EffectID))
+func addToDatabase(newDB *proto.SimDatabase) {
+	for _, v := range newDB.Items {
+		if _, ok := ItemsByID[v.Id]; !ok {
+			ItemsByID[v.Id] = ItemFromProto(v)
 		}
-
-		if EnchantsByItemByID[v.ItemType] == nil {
-			EnchantsByItemByID[v.ItemType] = map[int32]Enchant{}
-		}
-		EnchantsByItemByID[v.ItemType][v.EffectID] = v
 	}
 
-	for _, v := range Gems {
-		GemsByID[v.ID] = v
+	for _, v := range newDB.Enchants {
+		if EnchantsByItemByID[v.Type] == nil {
+			EnchantsByItemByID[v.Type] = map[int32]Enchant{}
+		}
+		if _, ok := EnchantsByItemByID[v.Type][v.EffectId]; ok {
+			continue
+		}
+		EnchantsByItemByID[v.Type][v.EffectId] = EnchantFromProto(v)
 	}
 
-	// Add hard-coded items. Wowhead doesn't seem to have tooltips for random enchant items.
-	// Use negative IDs to avoid collisions with real item IDs.
-	Items = append(Items, []Item{
-		// Example hard-coded item using a negative ID.
-		// {Name: "Glider's Boots of Nature's Wrath", WowheadID: 30681, ID: -1, Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Armor: 250, stats.NatureSpellPower: 78}},
-	}...)
-
-	for _, v := range Items {
-		if _, ok := ByID[v.ID]; ok {
-			fmt.Printf("Found dup item: %d\n", v.ID)
-			panic("no dupes allowed")
+	for _, v := range newDB.Gems {
+		if _, ok := GemsByID[v.Id]; !ok {
+			GemsByID[v.Id] = GemFromProto(v)
 		}
-		ByID[v.ID] = v
 	}
 }
 
@@ -75,7 +61,7 @@ type Item struct {
 	Enchant Enchant
 }
 
-func ItemFromProto(pData *proto.UIItem) Item {
+func ItemFromProto(pData *proto.SimItem) Item {
 	return Item{
 		ID:               pData.Id,
 		Name:             pData.Name,
@@ -113,7 +99,7 @@ type Enchant struct {
 	ItemType proto.ItemType // Which slot the enchant goes on.
 }
 
-func EnchantFromProto(pData *proto.UIEnchant) Enchant {
+func EnchantFromProto(pData *proto.SimEnchant) Enchant {
 	return Enchant{
 		EffectID: pData.EffectId,
 		Name:     pData.Name,
@@ -129,7 +115,7 @@ type Gem struct {
 	Color proto.GemColor
 }
 
-func GemFromProto(pData *proto.UIGem) Gem {
+func GemFromProto(pData *proto.SimGem) Gem {
 	return Gem{
 		ID:    pData.Id,
 		Name:  pData.Name,
@@ -208,7 +194,7 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 
 func NewItem(itemSpec ItemSpec) Item {
 	item := Item{}
-	if foundItem, ok := ByID[itemSpec.ID]; ok {
+	if foundItem, ok := ItemsByID[itemSpec.ID]; ok {
 		item = foundItem
 	} else {
 		panic(fmt.Sprintf("No item with id: %d", itemSpec.ID))
