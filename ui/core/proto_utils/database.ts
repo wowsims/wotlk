@@ -70,6 +70,16 @@ export class Database {
 
 		this.itemIcons = {};
 		this.spellIcons = {};
+		db.items.forEach(item => this.itemIcons[item.id] = IconData.create({
+			id: item.id,
+			name: item.name,
+			icon: item.icon,
+		}));
+		db.gems.forEach(gem => this.itemIcons[gem.id] = IconData.create({
+			id: gem.id,
+			name: gem.name,
+			icon: gem.icon,
+		}));
 		db.itemIcons.forEach(data => this.itemIcons[data.id] = data);
 		db.spellIcons.forEach(data => this.spellIcons[data.id] = data);
 	}
@@ -155,30 +165,39 @@ export class Database {
 
 	static async getItemIconData(itemId: number): Promise<IconData> {
 		const db = await Database.get();
-		return db.itemIcons[itemId] || IconData.create();
+		if (!db.itemIcons[itemId]) {
+			db.itemIcons[itemId] = await Database.getWowheadItemTooltipData(itemId);
+		}
+		return db.itemIcons[itemId];
 	}
 
 	static async getSpellIconData(spellId: number): Promise<IconData> {
 		const db = await Database.get();
-		return db.spellIcons[spellId] || IconData.create();
+		if (!db.spellIcons[spellId]) {
+			db.spellIcons[spellId] = await Database.getWowheadSpellTooltipData(spellId);
+		}
+		return db.spellIcons[spellId];
 	}
 
-	//private static async getWowheadTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
-	//	if (!cache.has(id)) {
-	//		const url = `https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`;
-	//		try {
-	//			const response = await fetch(url);
-	//			cache.set(id, response.json());
-	//		} catch (e) {
-	//			console.error('Error while fetching url: ' + url + '\n\n' + e);
-	//			cache.set(id, Promise.resolve({
-	//				name: '',
-	//				icon: '',
-	//				tooltip: '',
-	//			}));
-	//		}
-	//	}
-
-	//	return cache.get(id) as Promise<any>;
-	//}
+	private static async getWowheadItemTooltipData(id: number): Promise<IconData> {
+		return Database.getWowheadTooltipData(id, 'item');
+	}
+	private static async getWowheadSpellTooltipData(id: number): Promise<IconData> {
+		return Database.getWowheadTooltipData(id, 'spell');
+	}
+	private static async getWowheadTooltipData(id: number, tooltipPostfix: string): Promise<IconData> {
+		const url = `https://nether.wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`;
+		try {
+			const response = await fetch(url);
+			const json = await response.json();
+			return IconData.create({
+				id: id,
+				name: json['name'],
+				icon: json['icon'],
+			});
+		} catch (e) {
+			console.error('Error while fetching url: ' + url + '\n\n' + e);
+			return IconData.create();
+		}
+	}
 }

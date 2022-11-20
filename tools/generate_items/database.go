@@ -32,6 +32,7 @@ func (itemData *ItemData) toProto() *proto.UIItem {
 
 	itemProto := &proto.UIItem{
 		Name: itemData.Response.GetName(),
+		Icon: itemData.Response.GetIcon(),
 
 		Type:             itemData.Response.GetItemType(),
 		ArmorType:        itemData.Response.GetArmorType(),
@@ -85,6 +86,7 @@ type GemData struct {
 func (gemData *GemData) toProto() *proto.UIGem {
 	gemProto := &proto.UIGem{
 		Name:  gemData.Response.GetName(),
+		Icon:  gemData.Response.GetIcon(),
 		Color: gemData.Response.GetSocketColor(),
 
 		Stats: toSlice(mergeStats(gemData.Response.GetGemStats(), gemData.Override.Stats)),
@@ -104,16 +106,13 @@ func (gemData *GemData) toProto() *proto.UIGem {
 	return gemProto
 }
 
-type SpellData struct {
-	ID       int
-	Response ItemResponse
-}
-
 type WowDatabase struct {
 	items    []ItemData
 	enchants []*proto.UIEnchant
 	gems     []GemData
-	spells   []SpellData
+
+	itemIcons  []*proto.IconData
+	spellIcons []*proto.IconData
 
 	encounters []*proto.PresetEncounter
 }
@@ -146,32 +145,45 @@ func NewWowDatabase(itemOverrides []ItemOverride, gemOverrides []GemOverride, en
 		db.gems = append(db.gems, gemData)
 	}
 
-	for spellID, spellResponse := range spellTooltipsDB {
-		db.spells = append(db.spells, SpellData{
-			ID:       spellID,
-			Response: spellResponse,
-		})
+	for _, enchant := range db.enchants {
+		if enchant.ItemId != 0 {
+			if tooltip, ok := itemTooltipsDB[int(enchant.ItemId)]; ok {
+				db.itemIcons = append(db.itemIcons, &proto.IconData{Id: enchant.ItemId, Name: tooltip.GetName(), Icon: tooltip.GetIcon()})
+			}
+		}
+		if enchant.SpellId != 0 {
+			if tooltip, ok := spellTooltipsDB[int(enchant.SpellId)]; ok {
+				db.spellIcons = append(db.spellIcons, &proto.IconData{Id: enchant.SpellId, Name: tooltip.GetName(), Icon: tooltip.GetIcon()})
+			}
+		}
 	}
 
+	for _, itemID := range extraItemIcons {
+		if itemID != 0 {
+			if tooltip, ok := itemTooltipsDB[itemID]; ok {
+				db.itemIcons = append(db.itemIcons, &proto.IconData{Id: int32(itemID), Name: tooltip.GetName(), Icon: tooltip.GetIcon()})
+			}
+		}
+	}
+
+	db.itemIcons = core.Filter(db.itemIcons, func(icon *proto.IconData) bool {
+		return icon.Name != "" && icon.Icon != ""
+	})
+	db.spellIcons = core.Filter(db.spellIcons, func(icon *proto.IconData) bool {
+		return icon.Name != "" && icon.Icon != ""
+	})
+
 	slices.SortStableFunc(db.items, func(i1, i2 ItemData) bool {
-		if i1.Response.GetName() == i2.Response.GetName() {
-			return i1.Override.ID < i2.Override.ID
-		}
-		return i1.Response.GetName() < i2.Response.GetName()
+		return i1.Override.ID < i2.Override.ID
 	})
-
 	slices.SortStableFunc(db.gems, func(g1, g2 GemData) bool {
-		if g1.Response.GetName() == g2.Response.GetName() {
-			return g1.Override.ID < g2.Override.ID
-		}
-		return g1.Response.GetName() < g2.Response.GetName()
+		return g1.Override.ID < g2.Override.ID
 	})
-
-	slices.SortStableFunc(db.spells, func(s1, s2 SpellData) bool {
-		if s1.Response.GetName() == s2.Response.GetName() {
-			return s1.ID < s2.ID
-		}
-		return s1.Response.GetName() < s2.Response.GetName()
+	slices.SortStableFunc(db.itemIcons, func(s1, s2 *proto.IconData) bool {
+		return s1.Id < s2.Id
+	})
+	slices.SortStableFunc(db.spellIcons, func(s1, s2 *proto.IconData) bool {
+		return s1.Id < s2.Id
 	})
 
 	db.applyGlobalFilters()
@@ -265,6 +277,8 @@ func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
 	uiDB := &proto.UIDatabase{
 		Enchants:   db.enchants,
 		Encounters: db.encounters,
+		ItemIcons:  db.itemIcons,
+		SpellIcons: db.spellIcons,
 	}
 
 	for _, itemData := range db.getSimmableItems() {
@@ -272,16 +286,6 @@ func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
 	}
 	for _, gemData := range db.getSimmableGems() {
 		uiDB.Gems = append(uiDB.Gems, gemData.toProto())
-	}
-
-	for _, itemData := range db.items {
-		uiDB.ItemIcons = append(uiDB.ItemIcons, &proto.IconData{Id: int32(itemData.Override.ID), Name: itemData.Response.GetName(), Icon: itemData.Response.GetIcon()})
-	}
-	for _, gemData := range db.gems {
-		uiDB.ItemIcons = append(uiDB.ItemIcons, &proto.IconData{Id: int32(gemData.Override.ID), Name: gemData.Response.GetName(), Icon: gemData.Response.GetIcon()})
-	}
-	for _, spellData := range db.spells {
-		uiDB.SpellIcons = append(uiDB.SpellIcons, &proto.IconData{Id: int32(spellData.ID), Name: spellData.Response.GetName(), Icon: spellData.Response.GetIcon()})
 	}
 	return uiDB
 }
