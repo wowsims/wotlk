@@ -424,6 +424,7 @@ var ItemOverrideOverrides = []ItemOverride{
 
 // If any of these match the item name, don't include it.
 var denyListNameRegexes = []*regexp.Regexp{
+	regexp.MustCompile(`DEPRECATED`),
 	regexp.MustCompile(`PH\]`),
 	regexp.MustCompile(`TEST`),
 	regexp.MustCompile(`Test`),
