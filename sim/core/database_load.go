@@ -1,3 +1,7 @@
+// Only include this file in the build when we specify the 'with_db' tag.
+// Without the tag, the database will start out completely empty.
+//go:build with_db
+
 package core
 
 import (
@@ -7,6 +11,7 @@ import (
 
 func init() {
 	db := database.Load()
+	WITH_DB = true
 
 	simDB := &proto.SimDatabase{
 		Items:    make([]*proto.SimItem, len(db.Items)),

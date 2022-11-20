@@ -273,9 +273,12 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 	filteredSets := []*ItemSet{}
 
 	for _, set := range GetAllItemSets() {
-		firstItem := ItemsByID[set.ItemIDs()[0]]
-		if filter.Matches(firstItem, true) {
-			filteredSets = append(filteredSets, set)
+		itemIDs := set.ItemIDs()
+		if len(itemIDs) > 0 {
+			firstItem := ItemsByID[itemIDs[0]]
+			if filter.Matches(firstItem, true) {
+				filteredSets = append(filteredSets, set)
+			}
 		}
 	}
 

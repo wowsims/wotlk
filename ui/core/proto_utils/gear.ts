@@ -3,9 +3,13 @@ import { GemColor } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
+import { SimDatabase } from '../proto/common.js';
+import { SimItem } from '../proto/common.js';
+import { SimEnchant } from '../proto/common.js';
+import { SimGem } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
 import { equalsOrBothNull } from '../utils.js';
-import { getEnumValues } from '../utils.js';
+import { distinct, getEnumValues } from '../utils.js';
 import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
 import {
 	UIEnchant as Enchant,
@@ -234,5 +238,26 @@ export class Gear {
 		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
 			.map(ei => ei.getFailedProfessionRequirements(professions))
 			.flat();
+	}
+
+	toDatabase(): SimDatabase {
+		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
+		return SimDatabase.create({
+			items: distinct(equippedItems.map(ei => Gear.itemToDB(ei.item))),
+			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => Gear.enchantToDB(ei.enchant!))),
+			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => Gear.gemToDB(gem))).flat()),
+		});
+	}
+
+	private static itemToDB(item: Item): SimItem {
+		return SimItem.fromJson(Item.toJson(item), { ignoreUnknownFields: true });
+	}
+
+	private static enchantToDB(enchant: Enchant): SimEnchant {
+		return SimEnchant.fromJson(Enchant.toJson(enchant), { ignoreUnknownFields: true });
+	}
+
+	private static gemToDB(gem: Gem): SimGem {
+		return SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true });
 	}
 }
