@@ -54,11 +54,9 @@ func HasEnchantEffect(id int32) bool {
 // Registers an ApplyEffect function which will be called before the Sim
 // starts, for any Agent that is wearing the item.
 func NewItemEffect(id int32, itemEffect ApplyEffect) {
-	if WITH_DB {
-		if _, hasItem := ItemsByID[id]; !hasItem {
-			if _, hasGem := GemsByID[id]; !hasGem {
-				panic(fmt.Sprintf("No item with ID: %d", id))
-			}
+	if _, hasItem := ItemsByID[id]; !hasItem {
+		if _, hasGem := GemsByID[id]; !hasGem {
+			panic(fmt.Sprintf("No item with ID: %d", id))
 		}
 	}
 
@@ -73,17 +71,15 @@ func NewItemEffect(id int32, itemEffect ApplyEffect) {
 }
 
 func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
-	if WITH_DB {
-		found := false
-		for _, enchantsByID := range EnchantsByItemByID {
-			if _, ok := enchantsByID[id]; ok {
-				found = true
-				break
-			}
+	found := false
+	for _, enchantsByID := range EnchantsByItemByID {
+		if _, ok := enchantsByID[id]; ok {
+			found = true
+			break
 		}
-		if !found {
-			panic(fmt.Sprintf("No enchant with ID: %d", id))
-		}
+	}
+	if !found {
+		panic(fmt.Sprintf("No enchant with ID: %d", id))
 	}
 
 	if HasEnchantEffect(id) {
@@ -94,17 +90,15 @@ func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 }
 
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
-	if WITH_DB {
-		found := false
-		for _, enchantsByID := range EnchantsByItemByID {
-			if _, ok := enchantsByID[id]; ok {
-				found = true
-				break
-			}
+	found := false
+	for _, enchantsByID := range EnchantsByItemByID {
+		if _, ok := enchantsByID[id]; ok {
+			found = true
+			break
 		}
-		if !found {
-			panic(fmt.Sprintf("No enchant with ID: %d", id))
-		}
+	}
+	if !found {
+		panic(fmt.Sprintf("No enchant with ID: %d", id))
 	}
 	if HasWeaponEffect(id) {
 		panic(fmt.Sprintf("Cannot add multiple effects for one item: %d, %#v", id, weaponEffect))
