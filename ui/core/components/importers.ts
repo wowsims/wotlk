@@ -114,7 +114,7 @@ export abstract class Importer extends Popup {
 			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
 		}
 
-		const gear = simUI.sim.lookupEquipmentSpec(equipmentSpec);
+		const gear = simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
 		const expectedEnchantIds = equipmentSpec.items.map(item => item.enchant);
 		const foundEnchantIds = gear.asSpec().items.map(item => item.enchant);
@@ -233,7 +233,7 @@ class Individual80UImporter<SpecType extends Spec> extends Importer {
 			equipmentSpec.items.push(itemSpec);
 		});
 
-		const gear = this.simUI.sim.lookupEquipmentSpec(equipmentSpec);
+		const gear = this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
 	}

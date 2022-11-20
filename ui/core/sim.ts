@@ -178,7 +178,7 @@ export class Sim {
 					return;
 				}
 
-				let gear = this.lookupEquipmentSpec(player.equipment);
+				let gear = this.db.lookupEquipmentSpec(player.equipment);
 				let gearChanged = false;
 
 				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
@@ -460,14 +460,6 @@ export class Sim {
 			this.iterations = newIterations;
 			this.iterationsChangeEmitter.emit(eventID);
 		}
-	}
-
-	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
-		return this.db!.lookupItemSpec(itemSpec);
-	}
-
-	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {
-		return this.db!.lookupEquipmentSpec(equipSpec);
 	}
 
 	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
