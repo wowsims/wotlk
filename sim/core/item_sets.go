@@ -88,9 +88,14 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 }
 
 func AddItemToSets(item Item) {
+	if item.SetName == "" {
+		return
+	}
+
 	for _, set := range sets {
 		if set.Name == item.SetName || set.AlternativeName == item.SetName {
 			set.Items[item.ID] = struct{}{}
+			itemSetLookup[item.ID] = set
 		}
 	}
 }
