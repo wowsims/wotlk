@@ -59,7 +59,7 @@ func NewItemSet(setStruct ItemSet) *ItemSet {
 	set.Items = make(map[int32]struct{})
 	foundName := false
 	foundAlternativeName := false
-	for _, item := range items.Items {
+	for _, item := range items.ItemsByID {
 		if item.SetName == set.Name || (len(set.AlternativeName) > 0 && item.SetName == set.AlternativeName) {
 			//fmt.Printf("Adding item %s-%d to set %s\n", item.Name, item.ID, item.SetName)
 			set.Items[item.ID] = struct{}{}

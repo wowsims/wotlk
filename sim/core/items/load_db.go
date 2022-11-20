@@ -2,23 +2,54 @@ package items
 
 import (
 	"github.com/wowsims/wotlk/assets/database"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func loadDatabase() {
+func init() {
 	db := database.Load()
 
-	Items = make([]Item, len(db.Items))
+	simDB := &proto.SimDatabase{
+		Items:    make([]*proto.SimItem, len(db.Items)),
+		Enchants: make([]*proto.SimEnchant, len(db.Enchants)),
+		Gems:     make([]*proto.SimGem, len(db.Gems)),
+	}
+
 	for i, item := range db.Items {
-		Items[i] = ItemFromProto(item)
+		simDB.Items[i] = &proto.SimItem{
+			Id:               item.Id,
+			Name:             item.Name,
+			Type:             item.Type,
+			ArmorType:        item.ArmorType,
+			WeaponType:       item.WeaponType,
+			HandType:         item.HandType,
+			RangedWeaponType: item.RangedWeaponType,
+			Stats:            item.Stats,
+			GemSockets:       item.GemSockets,
+			SocketBonus:      item.SocketBonus,
+			WeaponDamageMin:  item.WeaponDamageMin,
+			WeaponDamageMax:  item.WeaponDamageMax,
+			WeaponSpeed:      item.WeaponSpeed,
+			SetName:          item.SetName,
+		}
 	}
 
-	Enchants = make([]Enchant, len(db.Enchants))
 	for i, enchant := range db.Enchants {
-		Enchants[i] = EnchantFromProto(enchant)
+		simDB.Enchants[i] = &proto.SimEnchant{
+			EffectId: enchant.EffectId,
+			Name:     enchant.Name,
+			Type:     enchant.Type,
+			Stats:    enchant.Stats,
+		}
 	}
 
-	Gems = make([]Gem, len(db.Gems))
 	for i, gem := range db.Gems {
-		Gems[i] = GemFromProto(gem)
+		simDB.Gems[i] = &proto.SimGem{
+			Id:    gem.Id,
+			Name:  gem.Name,
+			Color: gem.Color,
+			Stats: gem.Stats,
+		}
 	}
+
+	addToDatabase(simDB)
 }

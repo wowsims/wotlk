@@ -261,7 +261,7 @@ func (filter *ItemFilter) Matches(item items.Item, equipChecksOnly bool) bool {
 func (filter *ItemFilter) FindAllItems() []items.Item {
 	filteredItems := []items.Item{}
 
-	for _, item := range items.ByID {
+	for _, item := range items.ItemsByID {
 		if filter.Matches(item, false) {
 			filteredItems = append(filteredItems, item)
 		}
@@ -274,7 +274,7 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 	filteredSets := []*ItemSet{}
 
 	for _, set := range GetAllItemSets() {
-		firstItem := items.ByID[set.ItemIDs()[0]]
+		firstItem := items.ItemsByID[set.ItemIDs()[0]]
 		if filter.Matches(firstItem, true) {
 			filteredSets = append(filteredSets, set)
 		}
@@ -372,7 +372,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	} else if testIdx < len(generator.items)+len(generator.sets) {
 		testSet := generator.sets[testIdx-len(generator.items)]
 		for _, itemID := range testSet.ItemIDs() {
-			setItem := items.ByID[itemID]
+			setItem := items.ItemsByID[itemID]
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
