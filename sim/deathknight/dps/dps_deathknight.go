@@ -233,6 +233,8 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 }
 
 func (dk *DpsDeathknight) setupGargoyleCooldowns() {
+	dk.ur.gargoyleSnapshot.ClearMajorCooldowns()
+
 	// hyperspeed accelerators
 	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
 

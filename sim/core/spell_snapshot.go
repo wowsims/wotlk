@@ -83,6 +83,10 @@ func (manager *SnapshotManager) ResetProcTrackers() {
 	}
 }
 
+func (manager *SnapshotManager) ClearMajorCooldowns() {
+	manager.majorCooldowns = make([]*MajorCooldown, 0)
+}
+
 func (manager *SnapshotManager) AddMajorCooldown(majorCd *MajorCooldown) {
 	manager.majorCooldowns = append(manager.majorCooldowns, majorCd)
 }
