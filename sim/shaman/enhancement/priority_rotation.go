@@ -1,7 +1,6 @@
 package enhancement
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -349,9 +348,6 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	// We could choose to not wait for auto attacks if we don't have any MW stacks,
 	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
 	upcomingCD := enh.AutoAttacks.NextAttackAt()
-	if upcomingCD < enh.AutoAttacks.NextAttackAt() {
-		fmt.Printf("upComing: %v \n", sim.CurrentTime)
-	}
 	var cast Cast
 	for _, spell := range rotation.spellPriority {
 		if !spell.condition(sim, target) {
