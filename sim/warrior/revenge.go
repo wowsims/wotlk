@@ -10,6 +10,7 @@ import (
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	actionID := core.ActionID{SpellID: 30357}
+
 	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
 		Label:    "Revenge",
 		Duration: 5 * time.Second,
@@ -41,8 +42,17 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	cost := 5.0 - float64(warrior.Talents.FocusedRage)
 	refundAmount := cost * 0.8
 
+	cooldownDur := time.Second * 5
+	gcdDur := core.GCDDefault
+
+	if warrior.Talents.UnrelentingAssault == 1 {
+		cooldownDur -= time.Second * 2
+	} else if warrior.Talents.UnrelentingAssault == 2 {
+		cooldownDur -= time.Second * 4
+		gcdDur -= time.Millisecond * 500
+	}
+
 	extraHit := warrior.Talents.ImprovedRevenge > 0 && warrior.Env.GetNumTargets() > 1
-	rollMultiplier := 1 + 0.3*float64(warrior.Talents.ImprovedRevenge)
 
 	warrior.Revenge = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -56,23 +66,22 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD:  gcdDur,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second*5 - 2*time.Second*time.Duration(warrior.Talents.UnrelentingAssault),
+				Duration: cooldownDur,
 			},
 		},
 
-		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
+		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault) + 0.3*float64(warrior.Talents.ImprovedRevenge),
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  121,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dmgFromAP := 0.31 * spell.MeleeAttackPower()
-			baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+			baseDamage := sim.Roll(1636, 1998) + 0.31*spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
@@ -81,7 +90,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			if extraHit {
 				if sim.RandomFloat("Revenge Target Roll") <= 0.5*float64(warrior.Talents.ImprovedRevenge) {
 					otherTarget := sim.Environment.NextTargetUnit(target)
-					baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+					baseDamage := sim.Roll(1636, 1998) + 0.31*spell.MeleeAttackPower()
 					spell.CalcAndDealDamage(sim, otherTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 				}
 			}

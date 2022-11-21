@@ -1,21 +1,17 @@
 import { getLanguageCode } from '../constants/lang.js';
 import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
-import { Item } from '../proto/common.js';
 import { OtherAction } from '../proto/common.js';
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
+import { IconData } from '../proto/ui.js';
 import { NO_TARGET } from '../proto_utils/utils.js';
+import {
+	UIItem as Item,
+} from '../proto/ui.js';
+
+import { Database } from './database.js';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
 export const USE_WOTLK_DB = false;
-
-
-type ItemData = {
-	ID: number,
-	Name: string,
-	Icon: string,
-};
-type ItemDB = Record<number, ItemData>;
 
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
 export class ActionId {
@@ -417,7 +413,7 @@ export class ActionId {
 	}
 
 	static fromItem(item: Item): ActionId {
-		return ActionId.fromItemId(getWowheadItemId(item));
+		return ActionId.fromItemId(item.id);
 	}
 
 	static fromProto(protoId: ActionIdProto): ActionId {
@@ -457,99 +453,11 @@ export class ActionId {
 		}
 	}
 
-	private static dbCache = new Map<string, Promise<ItemDB>>();
-	private static async getDb(url: string): Promise<ItemDB> {
-		if (!ActionId.dbCache.has(url)) {
-			ActionId.dbCache.set(url, fetch(url)
-				.then(response => response.json())
-				.then(responseJson => {
-					const db: ItemDB = {};
-					(responseJson as Array<ItemData>).forEach(item => {
-						db[item.ID] = item;
-					});
-					return db;
-				}));
-		}
-		return ActionId.dbCache.get(url)!;
-	}
-	private static async getDbTooltipDataHelper(id: number, dbUrl: string): Promise<any> {
-		const db = await ActionId.getDb(dbUrl);
-		return db[id] ? {
-			name: db[id].Name,
-			icon: db[id].Icon,
-		} : {
-			name: '',
-			icon: '',
-		};
-	}
-	private static async getWowheadTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
-		if (!cache.has(id)) {
-			const url = `https://wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}`;
-			try {
-				const response = await fetch(url);
-				cache.set(id, response.json());
-			} catch (e) {
-				console.error('Error while fetching url: ' + url + '\n\n' + e);
-				cache.set(id, Promise.resolve({
-					name: '',
-					icon: '',
-					tooltip: '',
-				}));
-			}
-		}
-
-		return cache.get(id) as Promise<any>;
-	}
-	private static async getWotlkdbTooltipDataHelper(id: number, tooltipPostfix: string, cache: Map<number, Promise<any>>): Promise<any> {
-		if (!cache.has(id)) {
-			const url = `https://wotlkdb.com/?${tooltipPostfix}=${id}&power`;
-			try {
-				const response = await fetch(url);
-				const data = await response.text();
-				const nameMatch = data.match(/name_enus: '(.*?)'/g);
-				const iconMatch = data.match(/icon: '(.*?)'/g);
-				const tooltipMatch = data.match(/tooltip_enus: '(.*?)'/g);
-				cache.set(id, Promise.resolve({
-					name: nameMatch ? nameMatch[1] : '',
-					icon: iconMatch ? iconMatch[1] : '',
-					tooltip: tooltipMatch ? tooltipMatch[1] : '',
-				}));
-			} catch (e) {
-				console.error('Error while fetching url: ' + url + '\n\n' + e);
-				cache.set(id, Promise.resolve({
-					name: '',
-					icon: '',
-					tooltip: '',
-				}));
-			}
-		}
-
-		return cache.get(id) as Promise<any>;
-	}
-
-	static async getItemTooltipData(id: number): Promise<any> {
-		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/item_data/all_items_db.json');
-		//if (USE_WOTLK_DB) {
-		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'item', itemToTooltipDataCache);
-		//} else {
-		//	return await ActionId.getWowheadTooltipDataHelper(id, 'item', itemToTooltipDataCache);
-		//}
-	}
-
-	static async getSpellTooltipData(id: number): Promise<any> {
-		return await ActionId.getDbTooltipDataHelper(id, '/wotlk/assets/spell_data/all_spells_db.json');
-		//if (USE_WOTLK_DB) {
-		//	return await ActionId.getWotlkdbTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
-		//} else {
-		//	return await ActionId.getWowheadTooltipDataHelper(id, 'spell', spellToTooltipDataCache);
-		//}
-	}
-
-	static async getTooltipData(actionId: ActionId): Promise<any> {
+	static async getTooltipData(actionId: ActionId): Promise<IconData> {
 		if (actionId.itemId) {
-			return await ActionId.getItemTooltipData(actionId.itemId);
+			return await Database.getItemIconData(actionId.itemId);
 		} else {
-			return await ActionId.getSpellTooltipData(actionId.spellId);
+			return await Database.getSpellIconData(actionId.spellId);
 		}
 	}
 }

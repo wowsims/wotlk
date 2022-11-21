@@ -250,14 +250,6 @@ func (druid *Druid) applyOmenOfClarity() {
 	if !druid.Talents.OmenOfClarity {
 		return
 	}
-
-	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
-
-	druid.ClearcastingAura = druid.GetOrRegisterAura(core.Aura{
-		Label:    "Clearcasting",
-		ActionID: core.ActionID{SpellID: 16870},
-		Duration: time.Second * 15,
-	})
 	// T10-2P
 	var lasherweave2P *core.Aura
 	if druid.HasSetBonus(ItemSetLasherweaveRegalia, 2) {
@@ -276,6 +268,18 @@ func (druid *Druid) applyOmenOfClarity() {
 		})
 	}
 
+	druid.ClearcastingAura = druid.GetOrRegisterAura(core.Aura{
+		Label:    "Clearcasting",
+		ActionID: core.ActionID{SpellID: 16870},
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if druid.setBonuses.balance_t10_2 {
+				lasherweave2P.Activate(sim)
+			}
+		},
+	})
+
+	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -312,9 +316,6 @@ func (druid *Druid) applyOmenOfClarity() {
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
 					druid.ClearcastingAura.Activate(sim)
 				}
-			}
-			if druid.setBonuses.balance_t10_2 {
-				lasherweave2P.Activate(sim)
 			}
 		},
 	})

@@ -204,20 +204,27 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 	var flags core.SpellFlag
 	var applyEffects core.ApplySpellResults
 	var procMask core.ProcMask
+	onSpellHitDealt := config.OnSpellHitDealt
 	if config.School == core.SpellSchoolPhysical {
 		flags = core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage
 		procMask = core.ProcMaskSpellDamage
 		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(config.MinDmg, config.MaxDmg) + config.APRatio*spell.MeleeAttackPower()
 			baseDamage *= hp.killCommandMult()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			if onSpellHitDealt != nil {
+				onSpellHitDealt(sim, spell, result)
+			}
 		}
 	} else {
 		procMask = core.ProcMaskMeleeMHSpecial
 		applyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(config.MinDmg, config.MaxDmg) + config.APRatio*spell.MeleeAttackPower()
 			baseDamage *= 1 + 0.2*float64(hp.KillCommandAura.GetStacks())
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			if onSpellHitDealt != nil {
+				onSpellHitDealt(sim, spell, result)
+			}
 		}
 	}
 

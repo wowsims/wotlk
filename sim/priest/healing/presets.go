@@ -1,7 +1,7 @@
 package healing
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -110,7 +110,7 @@ var PlayerOptionsHoly = &proto.Player_HealingPriest{
 	},
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40456,
 		"enchant": 3819,

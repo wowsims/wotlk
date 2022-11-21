@@ -142,6 +142,12 @@
   padding: 0;
 }
 
+.selector-modal-list-label-cell {
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+
 .selector-modal-list-item {
   display: flex;
   align-items: center;
@@ -178,11 +184,19 @@
 	letter-spacing: normal;
 }
 
-.selector-modal-list-item-padding {
-	flex-grow: 1;
+.selector-modal-list-item-favorite {
+	margin: 0 10px;
+	font-size: 22px;
+	color: yellow;
+}
+.selector-modal-list-item-favorite:hover {
+	text-shadow:
+		0 0 10px white,
+		0 0 10px white;
 }
 
 .selector-modal-list-item-ep {
+	display: flex;
 	font-size: 16px;
 	font-weight: 800;
 }
@@ -191,4 +205,6 @@
 	display: inline-block;
 	margin: 5px;
 	color: white;
+	min-width: 50px;
+	text-align: right;
 }

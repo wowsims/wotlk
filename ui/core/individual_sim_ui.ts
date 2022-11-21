@@ -412,7 +412,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			},
 			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
 				TypedEvent.freezeAllAndDo(() => {
-					player.setGear(eventID, this.sim.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
+					player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
 					player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats || []));
 				});
 			},
@@ -431,7 +431,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					isPreset: true,
 					data: SavedGearSet.create({
 						// Convert to gear and back so order is always the same.
-						gear: this.sim.lookupEquipmentSpec(presetGear.gear).asSpec(),
+						gear: this.sim.db.lookupEquipmentSpec(presetGear.gear).asSpec(),
 						bonusStats: new Stats().asArray(),
 					}),
 					enableWhen: presetGear.enableWhen,
@@ -678,6 +678,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			// E.g. healing/mana potions.
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
+			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);
@@ -695,6 +696,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
+			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);
@@ -1133,7 +1135,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
-			this.player.setGear(eventID, this.sim.lookupEquipmentSpec(this.individualConfig.defaults.gear));
+			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);

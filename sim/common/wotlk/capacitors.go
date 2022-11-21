@@ -105,6 +105,7 @@ func init() {
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 		},
+		School: core.SpellSchoolFire,
 		MinDmg: 1741,
 		MaxDmg: 2023,
 	})

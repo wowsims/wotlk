@@ -1,7 +1,7 @@
 package smite
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -65,7 +65,7 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 	},
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40562,
 		"enchant": 3820,

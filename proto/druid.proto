@@ -158,12 +158,13 @@ message BalanceDruid {
 		bool use_starfire = 6;
 		bool use_typhoon = 7;
 		bool use_hurricane = 8;
-		float mf_inside_eclipse_threshold = 9;
-		float is_inside_eclipse_threshold = 10;
+		int32 mf_inside_eclipse_threshold = 9;
+		int32 is_inside_eclipse_threshold = 10;
 		bool use_smart_cooldowns = 11;
 		bool maximize_mf_uptime = 12;
 		bool maximize_is_uptime = 13;
 		bool maintain_faerie_fire = 14;
+		int32 player_latency = 15;
 	}
 
   Rotation rotation = 1;

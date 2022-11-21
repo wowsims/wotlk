@@ -1,4 +1,3 @@
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { Stats } from '../proto_utils/stats.js';
 import { Glyphs } from '../proto/common.js';

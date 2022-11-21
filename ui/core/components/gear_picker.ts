@@ -1,17 +1,15 @@
-import { getWowheadItemId } from '../proto_utils/equipped_item.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, Enchant, Gem, GemColor } from '../proto/common.js';
+import { Class, GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { getEnchantDescription } from '../proto_utils/enchants.js';
+import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
@@ -19,6 +17,11 @@ import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
 import { getEnumValues } from '../utils.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';
@@ -492,6 +495,7 @@ class SelectorModal extends Popup {
 		}
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
+		const initialFilters = this.player.sim.getFilters();
 
 		const listItemElems = itemData.map((itemData, itemIdx) => {
 			const item = itemData.item;
@@ -504,11 +508,17 @@ class SelectorModal extends Popup {
 			listItemElem.dataset.idx = String(itemIdx);
 
 			listItemElem.innerHTML = `
-        <a class="selector-modal-list-item-icon"></a>
-        <a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
-        <div class="selector-modal-list-item-padding"></div>
-        <div class="selector-modal-list-item-ep">
+				<div class="selector-modal-list-label-cell">
+					<a class="selector-modal-list-item-icon"></a>
+					<a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
+				</div>
+				<div>
+					<span class="selector-modal-list-item-favorite fa-star"></span>
+				</div>
+				<div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
+				</div>
+				<div class="selector-modal-list-item-ep">
 					<span class="selector-modal-list-item-ep-delta"></span>
 				</div>
       `;
@@ -518,14 +528,14 @@ class SelectorModal extends Popup {
 				epElem.style.display = 'none';
 			}
 
-			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLImageElement;
+			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLAnchorElement;
+			const nameElem = listItemElem.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLAnchorElement;
 			itemData.actionId.fill().then(filledId => {
-				filledId.setWowheadHref(listItemElem.children[0] as HTMLAnchorElement);
-				filledId.setWowheadHref(listItemElem.children[1] as HTMLAnchorElement);
+				filledId.setWowheadHref(iconElem);
+				filledId.setWowheadHref(nameElem);
 				iconElem.style.backgroundImage = `url('${filledId.iconUrl}')`;
 			});
 
-			const nameElem = listItemElem.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLImageElement;
 			setItemQualityCssClass(nameElem, itemData.quality);
 
 			const onclick = (event: Event) => {
@@ -541,6 +551,97 @@ class SelectorModal extends Popup {
 			nameElem.addEventListener('click', onclick);
 			iconElem.addEventListener('click', onclick);
 
+			const favoriteElem = listItemElem.getElementsByClassName('selector-modal-list-item-favorite')[0] as HTMLElement;
+			tippy(favoriteElem, {'content': 'Add to Favorites'});
+			const setFavorite = (isFavorite: boolean) => {
+				const filters = this.player.sim.getFilters();
+				if (label == 'Items') {
+					const favId = itemData.id;
+					if (isFavorite) {
+						filters.favoriteItems.push(favId);
+					} else {
+						const favIdx = filters.favoriteItems.indexOf(favId);
+						if (favIdx != -1) {
+							filters.favoriteItems.splice(favIdx, 1);
+						}
+					}
+				} else if (label == 'Enchants') {
+					const favId = getUniqueEnchantString(item as unknown as Enchant);
+					if (isFavorite) {
+						filters.favoriteEnchants.push(favId);
+					} else {
+						const favIdx = filters.favoriteEnchants.indexOf(favId);
+						if (favIdx != -1) {
+							filters.favoriteEnchants.splice(favIdx, 1);
+						}
+					}
+				} else if (label.startsWith('Gem')) {
+					const favId = itemData.id;
+					if (isFavorite) {
+						filters.favoriteGems.push(favId);
+					} else {
+						const favIdx = filters.favoriteGems.indexOf(favId);
+						if (favIdx != -1) {
+							filters.favoriteGems.splice(favIdx, 1);
+						}
+					}
+				}
+				this.player.sim.setFilters(TypedEvent.nextEventID(), filters);
+
+				// Reorder and update this element.
+				const curItemElems = Array.from(listElem.children) as Array<HTMLElement>;
+				if (isFavorite) {
+					// Use same sorting order (based on idx) among the favorited elems.
+					const nextElem = curItemElems.find(elem => elem.dataset.fav == 'false' || parseInt(elem.dataset.idx!) > itemIdx);
+					if (nextElem) {
+						listElem.insertBefore(listItemElem, nextElem);
+					} else {
+						listElem.appendChild(listItemElem);
+					}
+
+					favoriteElem.classList.add('fa-solid');
+					favoriteElem.classList.remove('fa-regular');
+					listItemElem.dataset.fav = 'true';
+				} else {
+					// Put back in original spot. itemIdx will usually be a very good starting point for the search.
+					// Need to search in both directions to handle all cases of favorited elems / itemIdx location.
+					let curIdx = itemIdx;
+					while (curIdx > 0 && curItemElems[curIdx].dataset.fav == 'false' && parseInt(curItemElems[curIdx].dataset.idx!) > itemIdx) {
+						curIdx--;
+					}
+					while (curIdx < curItemElems.length && (curItemElems[curIdx].dataset.fav == 'true' || parseInt(curItemElems[curIdx].dataset.idx!) < itemIdx)) {
+						curIdx++;
+					}
+					if (curIdx == curItemElems.length) {
+						listElem.appendChild(listItemElem);
+					} else {
+						listElem.insertBefore(listItemElem, curItemElems[curIdx]);
+					}
+
+					favoriteElem.classList.remove('fa-solid');
+					favoriteElem.classList.add('fa-regular');
+					listItemElem.dataset.fav = 'false';
+				}
+			};
+			favoriteElem.addEventListener('click', () => setFavorite(listItemElem.dataset.fav == 'false'));
+
+			let isFavorite = false;
+			if (label == 'Items') {
+				isFavorite = initialFilters.favoriteItems.includes(itemData.id);
+			} else if (label == 'Enchants') {
+				isFavorite = initialFilters.favoriteEnchants.includes(getUniqueEnchantString(item as unknown as Enchant));
+			} else if (label.startsWith('Gem')) {
+				isFavorite = initialFilters.favoriteGems.includes(itemData.id);
+			}
+			if (isFavorite) {
+				favoriteElem.classList.add('fa-solid');
+				listItemElem.dataset.fav = 'true';
+				listElem.prepend(listItemElem);
+			} else {
+				favoriteElem.classList.add('fa-regular');
+				listItemElem.dataset.fav = 'false';
+			}
+
 			return listItemElem;
 		});
 
@@ -554,7 +655,7 @@ class SelectorModal extends Popup {
 			const newEquippedItem = this.player.getEquippedItem(slot);
 			const newItem = equippedToItemFn(newEquippedItem);
 
-			const newItemId = (newItem as any)?.id || null;
+			const newItemId = newItem ? (label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item|Gem).id) : 0;
 			const newEP = newItem ? computeEP(newItem) : 0;
 
 			listItemElems.forEach(elem => {

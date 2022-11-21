@@ -34,6 +34,8 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
 
+	// Player "brain" latency
+	playerLatency := time.Duration(rotation.PlayerLatency)
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
 	fishingForLunar := lunarICD <= solarICD
@@ -56,22 +58,29 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	} else if rotation.UseHurricane {
 		return moonkin.Hurricane
 	}
+
 	if moonkin.Talents.Eclipse > 0 {
 
-		// Eclipse stuff
-		lunarIsActive := lunarICD > time.Millisecond*15000
-		solarIsActive := solarICD > time.Millisecond*15000
-		lunarUptime := core.TernaryDuration(lunarIsActive, lunarICD-time.Millisecond*15000, 0)
-		solarUptime := core.TernaryDuration(solarIsActive, solarICD-time.Millisecond*15000, 0)
+		lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
+		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
+		lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
+		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 
 		// "Dispelling" eclipse effects before casting if needed
 		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 && rotation.UseMf {
-			moonkin.GetAura("Lunar Eclipse proc").Deactivate(sim)
 			lunarIsActive = false
 		}
 		if float64(solarUptime-moonkin.Wrath.CurCast.CastTime) <= 0 && rotation.UseIs {
-			moonkin.GetAura("Solar Eclipse proc").Deactivate(sim)
 			solarIsActive = false
+		}
+
+		if lunarIsActive {
+			lunarIsActive = lunarUptime < (moonkin.LunarEclipseProcAura.Duration - playerLatency)
+			fishingForSolar = false
+		}
+		if solarIsActive {
+			solarIsActive = solarUptime < (moonkin.SolarEclipseProcAura.Duration - playerLatency)
+			fishingForLunar = false
 		}
 
 		// Eclipse
@@ -92,7 +101,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				} else if rotation.UseMf {
 					return moonkin.Moonfire
 				}
-			} else {
+			} else if solarIsActive {
 				if insectSwarmUptime > 0 || float64(rotation.IsInsideEclipseThreshold) >= solarUptime.Seconds() && rotation.UseWrath {
 					if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)

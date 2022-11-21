@@ -3,10 +3,8 @@ package druid
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
-
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -28,8 +26,8 @@ func (druid *Druid) registerStarfireSpell() {
 	spellCoeff := 1.0
 	bonusCoeff := 0.04 * float64(druid.Talents.WrathOfCenarius)
 
-	idolSpellPower := core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == IvoryMoongoddess, 55, 0) +
-		core.TernaryFloat64(druid.Equip[items.ItemSlotRanged].ID == ShootingStar, 165, 0)
+	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IvoryMoongoddess, 55, 0) +
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == ShootingStar, 165, 0)
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 

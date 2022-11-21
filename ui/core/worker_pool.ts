@@ -1,8 +1,5 @@
 import { REPO_NAME } from './constants/other.js'
-import { Enchant } from './proto/common.js';
-import { Gem } from './proto/common.js';
 import { GemColor } from './proto/common.js';
-import { Item } from './proto/common.js';
 import { ItemQuality } from './proto/common.js';
 import { ItemSlot } from './proto/common.js';
 import { ItemSpec } from './proto/common.js';
@@ -10,7 +7,6 @@ import { ItemType } from './proto/common.js';
 import { Stat } from './proto/common.js';
 
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
-import { GearListRequest, GearListResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult, ProgressMetrics } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 
@@ -36,11 +32,6 @@ export class WorkerPool {
 
 	async makeApiCall(requestName: string, request: Uint8Array): Promise<Uint8Array> {
 		return await this.getLeastBusyWorker().doApiCall(requestName, request, "");
-	}
-
-	async getGearList(request: GearListRequest): Promise<GearListResult> {
-		const result = await this.makeApiCall('gearList', GearListRequest.toBinary(request));
-		return GearListResult.fromBinary(result);
 	}
 
 	async computeStats(request: ComputeStatsRequest): Promise<ComputeStatsResult> {

@@ -1,7 +1,7 @@
 package dps
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -122,7 +122,7 @@ var FullConsumes = &proto.Consumes{
 	Food:          proto.Food_FoodDragonfinFilet,
 }
 
-var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var UnholyDwP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 44006,
 		"enchant": 3817,
@@ -212,7 +212,7 @@ var UnholyDwP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
 	}
 ]}`)
 
-var FrostP1Gear = items.EquipmentSpecFromJsonString(`{ "items": [
+var FrostP1Gear = core.EquipmentSpecFromJsonString(`{ "items": [
 	{
 		"id": 44006,
 		"enchant": 3817,

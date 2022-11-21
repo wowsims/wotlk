@@ -3,14 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -52,6 +48,16 @@ type WowheadItemResponse struct {
 	Quality int    `json:"quality"`
 	Icon    string `json:"icon"`
 	Tooltip string `json:"tooltip"`
+}
+
+func WowheadItemResponseFromBytes(tooltipBytes []byte) WowheadItemResponse {
+	response := WowheadItemResponse{}
+	err := json.Unmarshal(tooltipBytes, &response)
+	if err != nil {
+		fmt.Printf("Failed to decode tooltipBytes: %s\n", string(tooltipBytes))
+		log.Fatal(err)
+	}
+	return response
 }
 
 func (item WowheadItemResponse) GetName() string {
@@ -212,16 +218,16 @@ type classPattern struct {
 
 // Detects class-locked items, e.g. tier sets and pvp gear.
 var classPatternsWowhead = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/warrior" class="c1">Warrior</a>`)},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/paladin" class="c2">Paladin</a>`)},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/hunter" class="c3">Hunter</a>`)},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/rogue" class="c4">Rogue</a>`)},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/priest" class="c5">Priest</a>`)},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/death-knight" class="c6">Death Knight</a>`)},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/shaman" class="c7">Shaman</a>`)},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/mage" class="c8">Mage</a>`)},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/warlock" class="c9">Warlock</a>`)},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/druid" class="c11">Druid</a>`)},
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/class=1/warrior" class="c1">Warrior</a>`)},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/class=2/paladin" class="c2">Paladin</a>`)},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/class=3/hunter" class="c3">Hunter</a>`)},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/class=4/rogue" class="c4">Rogue</a>`)},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/class=5/priest" class="c5">Priest</a>`)},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/class=6/death-knight" class="c6">Death Knight</a>`)},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/class=7/shaman" class="c7">Shaman</a>`)},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/class=8/mage" class="c8">Mage</a>`)},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/class=9/warlock" class="c9">Warlock</a>`)},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/class=11/druid" class="c11">Druid</a>`)},
 }
 
 func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
@@ -236,68 +242,33 @@ func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
 	return allowlist
 }
 
-// At least one of these regexes must be present for the item to be equippable.
-var requiredEquippableRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`<td>Head</td>`),
-	regexp.MustCompile(`<td>Neck</td>`),
-	regexp.MustCompile(`<td>Shoulder</td>`),
-	regexp.MustCompile(`<td>Back</td>`),
-	regexp.MustCompile(`<td>Chest</td>`),
-	regexp.MustCompile(`<td>Wrist</td>`),
-	regexp.MustCompile(`<td>Hands</td>`),
-	regexp.MustCompile(`<td>Waist</td>`),
-	regexp.MustCompile(`<td>Legs</td>`),
-	regexp.MustCompile(`<td>Feet</td>`),
-	regexp.MustCompile(`<td>Finger</td>`),
-	regexp.MustCompile(`<td>Trinket</td>`),
-	regexp.MustCompile(`<td>Ranged</td>`),
-	regexp.MustCompile(`<td>Thrown</td>`),
-	regexp.MustCompile(`<td>Relic</td>`),
-	regexp.MustCompile(`<td>Main Hand</td>`),
-	regexp.MustCompile(`<td>Two-Hand</td>`),
-	regexp.MustCompile(`<td>One-Hand</td>`),
-	regexp.MustCompile(`<td>Off Hand</td>`),
-	regexp.MustCompile(`<td>Held In Off-hand</td>`),
-	regexp.MustCompile(`<td>Held In Off-Hand</td>`),
-}
-
-// If any of these regexes are present, the item is not equippable.
-var nonEquippableRegexes = []*regexp.Regexp{
+var patternRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`Design:`),
 	regexp.MustCompile(`Recipe:`),
 	regexp.MustCompile(`Pattern:`),
 	regexp.MustCompile(`Plans:`),
 	regexp.MustCompile(`Schematic:`),
-	regexp.MustCompile(`Random enchantment`),
-}
-
-func (item WowheadItemResponse) IsEquippable() bool {
-	found := false
-	for _, pattern := range requiredEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			found = true
-		}
-	}
-	if !found {
-		return false
-	}
-
-	for _, pattern := range nonEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			return false
-		}
-	}
-
-	return true
 }
 
 func (item WowheadItemResponse) IsPattern() bool {
-	for _, pattern := range nonEquippableRegexes {
+	for _, pattern := range patternRegexes {
 		if pattern.MatchString(item.Tooltip) {
 			return true
 		}
 	}
 	return false
+}
+
+var randomEnchantRegex = regexp.MustCompile(`Random enchantment`)
+
+func (item WowheadItemResponse) IsRandomEnchant() bool {
+	return randomEnchantRegex.MatchString(item.Tooltip)
+}
+
+func (item WowheadItemResponse) IsEquippable() bool {
+	return item.GetItemType() != proto.ItemType_ItemTypeUnknown &&
+		!item.IsPattern() &&
+		!item.IsRandomEnchant()
 }
 
 var itemLevelRegex = regexp.MustCompile(`Item Level <!--ilvl-->([0-9]+)<`)
@@ -365,7 +336,7 @@ func (item WowheadItemResponse) GetItemType() proto.ItemType {
 			return itemType
 		}
 	}
-	panic("Could not find item type from tooltip: " + item.Tooltip)
+	return proto.ItemType_ItemTypeUnknown
 }
 
 var armorTypePatterns = map[proto.ArmorType]*regexp.Regexp{
@@ -576,6 +547,55 @@ func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
 	// fmt.Printf("Could not find socket color for gem %s\n", item.Name)
 	return proto.GemColor_GemColorUnknown
 }
+func (item WowheadItemResponse) IsGem() bool {
+	return item.GetSocketColor() != proto.GemColor_GemColorUnknown &&
+		!strings.Contains(item.GetName(), "Design:")
+}
+func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
+	weaponDamageMin, weaponDamageMax := item.GetWeaponDamage()
+	return &proto.UIItem{
+		Name: item.GetName(),
+		Icon: item.GetIcon(),
+
+		Type:             item.GetItemType(),
+		ArmorType:        item.GetArmorType(),
+		WeaponType:       item.GetWeaponType(),
+		HandType:         item.GetHandType(),
+		RangedWeaponType: item.GetRangedWeaponType(),
+
+		Stats:       toSlice(item.GetStats()),
+		GemSockets:  item.GetGemSockets(),
+		SocketBonus: toSlice(item.GetSocketBonus()),
+
+		WeaponDamageMin: weaponDamageMin,
+		WeaponDamageMax: weaponDamageMax,
+		WeaponSpeed:     item.GetWeaponSpeed(),
+
+		Ilvl:    int32(item.GetItemLevel()),
+		Phase:   int32(item.GetPhase()),
+		Quality: proto.ItemQuality(item.GetQuality()),
+		Unique:  item.GetUnique(),
+		Heroic:  item.IsHeroic(),
+
+		ClassAllowlist:     item.GetClassAllowlist(),
+		RequiredProfession: item.GetRequiredProfession(),
+		SetName:            item.GetItemSetName(),
+	}
+}
+func (item WowheadItemResponse) ToGemProto() *proto.UIGem {
+	return &proto.UIGem{
+		Name:  item.GetName(),
+		Icon:  item.GetIcon(),
+		Color: item.GetSocketColor(),
+
+		Stats: toSlice(item.GetGemStats()),
+
+		Phase:              int32(item.GetPhase()),
+		Quality:            proto.ItemQuality(item.GetQuality()),
+		Unique:             item.GetUnique(),
+		RequiredProfession: item.GetRequiredProfession(),
+	}
+}
 
 var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Strength`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
 var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Agility`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
@@ -657,59 +677,6 @@ func (item WowheadItemResponse) GetItemSetName() string {
 	// Now strip out the season prefix from any pvp set names
 	withoutPvp := strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(original, "Savage Glad", "Glad", 1), "Hateful Glad", "Glad", 1), "Deadly Glad", "Glad", 1), "Furious Glad", "Glad", 1), "Relentless Glad", "Glad", 1), "Wrathful Glad", "Glad", 1)
 	return withoutPvp
-}
-
-func getWowheadItemResponse(itemID int, tooltipsDB map[int]string) WowheadItemResponse {
-	// If the db already has it, just return the db value.
-	var tooltipBytes []byte
-
-	if tooltipStr, ok := tooltipsDB[itemID]; ok {
-		tooltipBytes = []byte(tooltipStr)
-	} else {
-		fmt.Printf("Item DB missing ID: %d\n", itemID)
-		url := fmt.Sprintf("https://wowhead.com/wotlk/tooltip/item/%d?json", itemID)
-
-		httpClient := http.Client{
-			Timeout: 5 * time.Second,
-		}
-
-		request, err := http.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		result, err := httpClient.Do(request)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		defer result.Body.Close()
-
-		resultBody, err := io.ReadAll(result.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-		tooltipBytes = resultBody
-		f, err := os.OpenFile("./assets/item_data/all_item_tooltips.csv", os.O_APPEND|os.O_WRONLY, 0666)
-		if err != nil {
-			log.Fatalf("failed to open file to write: %s", err)
-		}
-		if strings.Contains(string(tooltipBytes), "\"error\":") {
-			// fmt.Printf("Error in tooltip for %d: %s\n", i, bstr)
-			log.Fatalf("failed to fetch item: %d (%s)", itemID, string(tooltipBytes))
-		}
-		f.WriteString(fmt.Sprintf("%d, %s, %s\n", itemID, url, tooltipBytes))
-	}
-
-	//fmt.Printf(string(tooltipStr))
-	itemResponse := WowheadItemResponse{}
-	err := json.Unmarshal(tooltipBytes, &itemResponse)
-	if err != nil {
-		fmt.Printf("Failed to decode tooltipBytes for item: %d\n", itemID)
-		log.Fatal(err)
-	}
-
-	return itemResponse
 }
 
 func (item WowheadItemResponse) IsHeroic() bool {

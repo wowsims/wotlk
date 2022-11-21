@@ -48,6 +48,8 @@ export const GenericAoeTalents = {
 
 export const DefaultRotation = ProtectionPaladinRotation.create({
 	hammerFirst: false,
+	squeezeHolyWrath: true,
+	waitSlack: 300,
 	useCustomPrio: false,
 	customRotation: CustomRotation.create({
 		spells: [
@@ -184,7 +186,7 @@ export const P1_PRESET = {
 			"id": 40581,
 			"enchant": 3818,
 			"gems": [
-				41396,
+				41380,
 				36767
 			]
 		},
@@ -195,7 +197,7 @@ export const P1_PRESET = {
 			"id": 40584,
 			"enchant": 3852,
 			"gems": [
-				49110
+				40008
 			]
 		},
 		{

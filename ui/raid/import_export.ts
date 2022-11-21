@@ -317,7 +317,7 @@ class RaidWCLImporter extends Importer {
 
 		encounter.targets = new Array<TargetProto>();
 
-		let closestEncounterPreset = this.simUI.sim.getAllPresetEncounters().find((enc) => enc.path.includes(fight.name));
+		let closestEncounterPreset = this.simUI.sim.db.getAllPresetEncounters().find((enc) => enc.path.includes(fight.name));
 
 		// Use the preset encounter if it exists.
 		if (closestEncounterPreset && closestEncounterPreset.targets.length) {

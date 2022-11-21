@@ -7,6 +7,8 @@ import { ProtectionWarriorSimUI } from './sim.js';
 
 const sim = new Sim();
 const player = new Player<Spec.SpecProtectionWarrior>(Spec.SpecProtectionWarrior, sim);
+player.enableHealing();
+
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
 const simUI = new ProtectionWarriorSimUI(document.body, player);

@@ -144,7 +144,7 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 
 	character.RegisterResetEffect(func(sim *Simulation) {
 		// Hack since we don't have OnHealingReceived aura handlers yet.
-		ardentDefenderAura := character.GetAura("Ardent Defender")
+		//ardentDefenderAura := character.GetAura("Ardent Defender")
 		willOfTheNecropolisAura := character.GetAura("Will of The Necropolis")
 
 		StartPeriodicAction(sim, PeriodicActionOptions{
@@ -152,9 +152,10 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 			OnAction: func(sim *Simulation) {
 				character.GainHealth(sim, healPerTick, healthMetrics)
 
-				if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
-					ardentDefenderAura.Deactivate(sim)
-				}
+				// Might use this again in the future to track "absorb" metrics but currently disabled
+				//if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
+				//	ardentDefenderAura.Deactivate(sim)
+				//}
 
 				if willOfTheNecropolisAura != nil && character.CurrentHealthPercent() > 0.35 {
 					willOfTheNecropolisAura.Deactivate(sim)
@@ -166,8 +167,9 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 
 func (character *Character) GetPresimOptions(playerConfig *proto.Player) *PresimOptions {
 	healingModel := playerConfig.HealingModel
-	if healingModel == nil || healingModel.Hps != 0 {
+	if healingModel == nil || healingModel.Hps != 0 || healingModel.CadenceSeconds == 0 {
 		// If Hps is not 0, then we don't need to run the presim.
+		// Tank sims should always have nonzero Cadence set, even if disabled
 		return nil
 	}
 	return &PresimOptions{

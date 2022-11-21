@@ -1,4 +1,6 @@
-import { Enchant } from '../proto/common.js';
+import {
+	UIEnchant as Enchant,
+} from '../proto/ui.js';
 
 let descriptionsPromise: Promise<Record<number, string>> | null = null;
 function fetchEnchantDescriptions(): Promise<Record<number, string>> {
@@ -19,4 +21,9 @@ function fetchEnchantDescriptions(): Promise<Record<number, string>> {
 export async function getEnchantDescription(enchant: Enchant): Promise<string> {
 	const descriptionsMap = await fetchEnchantDescriptions();
 	return descriptionsMap[enchant.effectId] || enchant.name;
+}
+
+// Returns a string uniquely identifying the enchant.
+export function getUniqueEnchantString(enchant: Enchant): string {
+	return enchant.effectId + '-' + enchant.type;
 }
