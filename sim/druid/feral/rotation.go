@@ -298,9 +298,17 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	floatingEnergy := 0.0
 	previousTime := sim.CurrentTime
+	tfPending := false
 
 	for _, s := range pendingActions {
 		delta_t := float64((s.refreshTime - previousTime) / core.EnergyTickDuration)
+		if !tfPending {
+			tfPending = cat.tfExpectedBefore(sim, s.refreshTime)
+			if tfPending {
+				s.cost -= 60
+			}
+		}
+
 		if delta_t < s.cost {
 			floatingEnergy += s.cost - delta_t
 			previousTime = s.refreshTime
