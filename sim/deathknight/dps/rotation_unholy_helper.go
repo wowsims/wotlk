@@ -16,8 +16,7 @@ type UnholyRotation struct {
 
 	syncTimeFF time.Duration
 
-	procTrackers []*ProcTracker
-	majorCds     []*core.MajorCooldown
+	gargoyleSnapshot *core.SnapshotManager
 
 	activatingGargoyle bool
 }
@@ -26,7 +25,7 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.syncTimeFF = 0
 	ur.activatingGargoyle = false
 
-	ur.resetProcTrackers()
+	ur.gargoyleSnapshot.ResetProcTrackers()
 }
 
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
@@ -203,15 +202,11 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		}
 
 		dk.ur.activatingGargoyle = true
-		for _, majorCd := range dk.ur.majorCds {
-			if majorCd.IsReady(sim) {
-				majorCd.TryActivate(sim, &dk.Character)
-			}
-		}
+		dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
 		dk.ur.activatingGargoyle = false
 
 		if dk.SummonGargoyle.Cast(sim, target) {
-			dk.ur.resetProcTrackers()
+			dk.ur.gargoyleSnapshot.ResetProcTrackers()
 			return true
 		}
 	}
@@ -254,7 +249,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim) && dk.CurrentUnholyRunes() == 0) {
 		return false
 	}
-	if dk.GargoyleProcCheck(sim, castTime) {
+	if !dk.ur.gargoyleSnapshot.CanSnapShot(sim, castTime) {
 		return false
 	}
 
@@ -265,28 +260,4 @@ func logMessage(sim *core.Simulation, message string) {
 	if sim.Log != nil {
 		sim.Log(message)
 	}
-}
-
-func (dk *DpsDeathknight) GargoyleProcCheck(sim *core.Simulation, castTime time.Duration) bool {
-	for _, procTracker := range dk.ur.procTrackers {
-		if !procTracker.didActivate && procTracker.aura.IsActive() {
-			procTracker.didActivate = true
-			procTracker.expiresAt = procTracker.aura.ExpiresAt()
-		}
-
-		// A proc is about to drop
-		if procTracker.didActivate && procTracker.expiresAt <= sim.CurrentTime+castTime {
-			logMessage(sim, "Proc dropping "+procTracker.aura.Label)
-			return false
-		}
-	}
-
-	for _, procTracker := range dk.ur.procTrackers {
-		if !procTracker.didActivate && !procTracker.isActive {
-			// logMessage(sim, "Waiting on procs..")
-			return true
-		}
-	}
-
-	return false
 }
