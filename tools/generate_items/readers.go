@@ -14,14 +14,14 @@ import (
 
 // Returns the prefetched list of all wowhead tooltips.
 // Maps item IDs to tooltip strings.
-func getWowheadTooltipsDB(filepath string) map[int]WowheadItemResponse {
+func getWowheadTooltipsDB(filepath string) map[int32]WowheadItemResponse {
 	file, err := os.Open(filepath)
 	if err != nil {
 		log.Fatalf("Failed to open %s: %s", filepath, err)
 	}
 	defer file.Close()
 
-	db := make(map[int]WowheadItemResponse)
+	db := make(map[int32]WowheadItemResponse)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -33,7 +33,7 @@ func getWowheadTooltipsDB(filepath string) map[int]WowheadItemResponse {
 		}
 
 		tooltip := line[strings.Index(line, "{"):]
-		db[itemID] = WowheadItemResponseFromBytes([]byte(tooltip))
+		db[int32(itemID)] = WowheadItemResponseFromBytes([]byte(tooltip))
 	}
 
 	fmt.Printf("\n--\nTOOLTIPS LOADED: %d\n--\n", len(db))
