@@ -219,12 +219,14 @@ var itemDenyList = map[int32]struct{}{
 	32421: struct{}{},
 	32422: struct{}{},
 	33482: struct{}{},
+	33350: struct{}{},
 	34576: struct{}{}, // Battlemaster's Cruelty
 	34577: struct{}{}, // Battlemaster's Depreavity
 	34578: struct{}{}, // Battlemaster's Determination
 	34579: struct{}{}, // Battlemaster's Audacity
 	34580: struct{}{}, // Battlemaster's Perseverence
 	43727: struct{}{}, // Bonescythe Breastplate
+	53500: struct{}{}, // Tectonic Plate
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.
@@ -347,27 +349,29 @@ var extraItemIcons = []int32{
 
 // If any of these match the item name, don't include it.
 var denyListNameRegexes = []*regexp.Regexp{
+	regexp.MustCompile(`30 Epic`),
+	regexp.MustCompile(`63 Blue`),
+	regexp.MustCompile(`63 Green`),
+	regexp.MustCompile(`66 Epic`),
+	regexp.MustCompile(`90 Epic`),
+	regexp.MustCompile(`90 Green`),
+	regexp.MustCompile(`Boots 1`),
+	regexp.MustCompile(`Boots 2`),
+	regexp.MustCompile(`Boots 3`),
+	regexp.MustCompile(`Bracer 1`),
+	regexp.MustCompile(`Bracer 2`),
+	regexp.MustCompile(`Bracer 3`),
 	regexp.MustCompile(`DB\d`),
 	regexp.MustCompile(`DEPRECATED`),
+	regexp.MustCompile(`Deprecated: Keanna`),
+	regexp.MustCompile(`Indalamar`),
+	regexp.MustCompile(`Monster -`),
+	regexp.MustCompile(`NEW`),
 	regexp.MustCompile(`PH`),
+	regexp.MustCompile(`QR XXXX`),
 	regexp.MustCompile(`TEST`),
 	regexp.MustCompile(`Test`),
-	regexp.MustCompile(`Bracer 3`),
-	regexp.MustCompile(`Bracer 2`),
-	regexp.MustCompile(`Bracer 1`),
-	regexp.MustCompile(`Boots 3`),
-	regexp.MustCompile(`Boots 2`),
-	regexp.MustCompile(`Boots 1`),
 	regexp.MustCompile(`zOLD`),
-	regexp.MustCompile(`30 Epic`),
-	regexp.MustCompile(`Indalamar`),
-	regexp.MustCompile(`QR XXXX`),
-	regexp.MustCompile(`Deprecated: Keanna`),
-	regexp.MustCompile(`90 Epic`),
-	regexp.MustCompile(`66 Epic`),
-	regexp.MustCompile(`63 Blue`),
-	regexp.MustCompile(`90 Green`),
-	regexp.MustCompile(`63 Green`),
 }
 
 // Allows manual overriding for Gem fields in case WowHead is wrong.

@@ -48,17 +48,17 @@ func NewWowDatabase(itemOverrides []*proto.UIItem, gemOverrides []*proto.UIGem, 
 		encounters: core.PresetEncounters,
 	}
 
-	for _, itemOverride := range itemOverrides {
-		response := itemTooltipsDB[int(itemOverride.Id)]
-
-		if !response.IsEquippable() {
-			continue
+	for id, response := range itemTooltipsDB {
+		if response.IsEquippable() {
+			itemProto := response.ToItemProto()
+			itemProto.Id = int32(id)
+			db.items[itemProto.Id] = itemProto
 		}
-
-		itemProto := response.ToItemProto()
-		itemProto.Id = itemOverride.Id
-		mergeItemProtos(itemProto, itemOverride)
-		db.items[itemProto.Id] = itemProto
+	}
+	for _, itemOverride := range itemOverrides {
+		if _, ok := db.items[itemOverride.Id]; ok {
+			mergeItemProtos(db.items[itemOverride.Id], itemOverride)
+		}
 	}
 
 	for id, response := range itemTooltipsDB {
