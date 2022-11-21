@@ -230,6 +230,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 			if timeUntilSwing <= time.Millisecond*time.Duration(rotation.options.DelayGcdWeave) && timeUntilSwing != 0 {
 				delay := enh.AutoAttacks.NextAttackAt() + time.Millisecond*100
+				if delay < sim.CurrentTime {
+					return false
+				}
+
 				enh.HardcastWaitUntil(sim, delay, func(_ *core.Simulation, _ *core.Unit) {
 					enh.GCD.Reset()
 					enh.CastLightningBoltWeave(sim, 0)
@@ -344,9 +348,6 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	// We could choose to not wait for auto attacks if we don't have any MW stacks,
 	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
 	upcomingCD := enh.AutoAttacks.NextAttackAt()
-	if upcomingCD < sim.CurrentTime {
-		upcomingCD = sim.CurrentTime
-	}
 	var cast Cast
 	for _, spell := range rotation.spellPriority {
 		if !spell.condition(sim, target) {
@@ -358,7 +359,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 
 		readyAt := spell.readyAt()
-		if readyAt > sim.CurrentTime && upcomingCD > readyAt {
+		if readyAt > sim.CurrentTime && (upcomingCD > readyAt || upcomingCD < sim.CurrentTime) {
 			upcomingCD = readyAt
 			cast = spell.cast
 		}
