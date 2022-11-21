@@ -47,7 +47,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 }
 
 // more end of fight functions
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_1GCD(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	frAt := dk.NormalFrostRuneReadyAt(sim)
 	uhAt := dk.NormalUnholyRuneReadyAt(sim)
 	obAt := core.MaxDuration(frAt, uhAt)
@@ -57,7 +57,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_1GCD(
 
 	if obAt < sim.CurrentTime {
 		s.Clear().NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
-	} else if dk.CurrentRunicPower() <= fsCost {
+	} else if dk.CurrentRunicPower() >= fsCost {
 		s.Clear().NewAction(dk.RotationActionCallback_FS)
 	} else if dk.Rime() {
 		s.Clear().NewAction(dk.RotationActionCallback_HB)
@@ -67,78 +67,97 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_1GCD(
 		s.Clear().NewAction(dk.RotationActionCallback_IT)
 	} else if dk.CurrentUnholyRunes() >= 1 {
 		s.Clear().NewAction(dk.RotationActionCallback_PS)
+	} else {
+		s.Advance()
+	}
+	return sim.CurrentTime
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_3GCD(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	frAt := dk.NormalFrostRuneReadyAt(sim)
+	uhAt := dk.NormalUnholyRuneReadyAt(sim)
+	obAt := core.MaxDuration(frAt, uhAt)
+	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+
+	if obAt < sim.CurrentTime {
+		s.Clear().NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+	} else if dk.CurrentRunicPower() >= fsCost {
+		s.Clear().NewAction(dk.RotationActionCallback_FS)
+	} else if dk.Rime() {
+		s.Clear().NewAction(dk.RotationActionCallback_HB)
+	} else if ffExpiresAt < sim.GetMaxDuration() && bpExpiresAt < sim.GetMaxDuration() {
+		s.Clear().NewAction(dk.RotationActionCallback_Pesti)
+	} else if dk.CurrentBloodRunes() >= 1 {
+		s.Clear().NewAction(dk.RotationActionCallback_BS)
+	} else if dk.CurrentFrostRunes() >= 1 {
+		s.Clear().NewAction(dk.RotationActionCallback_IT)
+	} else if dk.CurrentUnholyRunes() >= 1 {
+		s.Clear().NewAction(dk.RotationActionCallback_PS)
+	} else {
+		s.Advance()
+	}
+	return sim.CurrentTime
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight_4and5_GCD(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	frAt := dk.NormalFrostRuneReadyAt(sim)
+	uhAt := dk.NormalUnholyRuneReadyAt(sim)
+	obAt := core.MaxDuration(frAt, uhAt)
+	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
+
+	if obAt < sim.CurrentTime {
+		s.Clear().NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
+	} else if dk.CurrentRunicPower() >= fsCost {
+		s.Clear().NewAction(dk.RotationActionCallback_FS)
+	} else if dk.Rime() {
+		s.Clear().NewAction(dk.RotationActionCallback_HB)
+	} else if ffExpiresAt < sim.GetMaxDuration() && bpExpiresAt < sim.GetMaxDuration() {
+		s.Clear().NewAction(dk.RotationActionCallback_Pesti)
+	} else if dk.CurrentBloodRunes() >= 1 {
+		s.Clear().NewAction(dk.RotationActionCallback_BS)
+	} else {
+		s.Advance()
 	}
 	return sim.CurrentTime
 }
 
 // end of fight logic in the works
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_EndOfFight(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if sim.Log != nil && sim.GetRemainingDuration() < 1500*time.Millisecond*4 {
+	if sim.Log != nil && sim.GetRemainingDuration() <= 1500*time.Millisecond*5 {
 		sim.Log("endoffight function entered!")
+
+		if sim.GetRemainingDuration() <= 1500*time.Millisecond*1 {
+			s.Clear().NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD)
+		} else if sim.GetRemainingDuration() <= 1500*time.Millisecond*2 {
+			s.Clear().
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD)
+		} else if sim.GetRemainingDuration() <= 1500*time.Millisecond*3 {
+			s.Clear().
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_3GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD)
+		} else if sim.GetRemainingDuration() <= 1500*time.Millisecond*4 {
+			s.Clear().
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_4and5_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_3GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD)
+		} else if sim.GetRemainingDuration() <= 1500*time.Millisecond*5 {
+			s.Clear().
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_4and5_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_4and5_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_3GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD).
+				NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1and2_GCD)
+		}
 	} else {
 		s.Advance()
 	}
-	frAt := dk.NormalFrostRuneReadyAt(sim)
-	uhAt := dk.NormalUnholyRuneReadyAt(sim)
-	obAt := core.MaxDuration(frAt, uhAt)
-	extraFS := 0.0
-	if sim.GetRemainingDuration() < 1500*time.Millisecond*3 && obAt > sim.Duration {
-		extraFS = 1
-	} else {
-		extraFS = 0
-	}
-
-	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-
-	if sim.GetRemainingDuration() < 1500*time.Millisecond*1 {
-		s.Clear().NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight_1GCD)
-	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*2 {
-		if dk.CurrentRunicPower() >= fsCost*(1+extraFS) {
-			s.Clear().
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
-				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
-		} else if dk.CurrentBloodRunes() > 0 {
-			s.Clear().
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
-				NewAction(dk.RotationActionCallback_BS).
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli)
-		}
-
-		sim.GetRemainingDuration()
-	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*3 {
-		if dk.CurrentRunicPower() >= fsCost*(2+extraFS) {
-			s.Clear().
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
-				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
-		} else if dk.CurrentRunicPower() >= fsCost*(1+extraFS) && dk.NormalSpentBloodRuneReadyAt(sim) <= sim.CurrentTime+1500*time.Millisecond {
-			s.Clear().
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
-				NewAction(dk.RotationActionCallback_BS).
-				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
-		}
-	} else if sim.GetRemainingDuration() < 1500*time.Millisecond*4 {
-		if dk.CurrentRunicPower() >= fsCost*(1+extraFS) && dk.CurrentBloodRunes() > 0 {
-			s.Clear().
-				NewAction(dk.RotationActionCallback_Pesti).
-				NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
-				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli)
-		}
-
-	}
-	/*{
-		if (sim.GetRemainingDuration().Minutes() < 1500*time.Millisecond * 1) {
-			Prio oblit > FS > HB(rime) > BS > IT > PS
-		} else if (sim.GetRemainingDuration().Minutes() < 1500*time.Millisecond * 2) {
-			Prio oblit > FS > HB(rime) > BS > IT > PS
-		} else if (sim.GetRemainingDuration().Minutes() < 1500*time.Millisecond * 3) {
-			Prio oblit > FS > HB(rime) > Pesti > BS > IT > PS
-		} else if (sim.GetRemainingDuration().Minutes() < 1500*time.Millisecond * 4) {
-			Prio oblit > FS > HB(rime) > Pesti > BS
-		} else if (sim.GetRemainingDuration().Minutes() < 1500*time.Millisecond * 5) {
-			Prio oblit > FS > HB(rime) > Pesti > BS
-		}
-	}*/
-
 	return sim.CurrentTime
 }
 
