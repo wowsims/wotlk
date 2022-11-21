@@ -1,6 +1,7 @@
 package enhancement
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -231,7 +232,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			if timeUntilSwing <= time.Millisecond*time.Duration(rotation.options.DelayGcdWeave) && timeUntilSwing != 0 {
 				delay := enh.AutoAttacks.NextAttackAt() + time.Millisecond*100
 				if delay < sim.CurrentTime {
-					delay = sim.CurrentTime + time.Millisecond*100
+					return false
 				}
 
 				enh.HardcastWaitUntil(sim, delay, func(_ *core.Simulation, _ *core.Unit) {
@@ -348,8 +349,8 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	// We could choose to not wait for auto attacks if we don't have any MW stacks,
 	// this would reduce the amount of DoAction calls by a little bit; might not be a issue though.
 	upcomingCD := enh.AutoAttacks.NextAttackAt()
-	if upcomingCD < sim.CurrentTime {
-		upcomingCD = sim.CurrentTime
+	if upcomingCD < enh.AutoAttacks.NextAttackAt() {
+		fmt.Printf("upComing: %v \n", sim.CurrentTime)
 	}
 	var cast Cast
 	for _, spell := range rotation.spellPriority {
@@ -362,7 +363,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 		}
 
 		readyAt := spell.readyAt()
-		if readyAt > sim.CurrentTime && upcomingCD > readyAt {
+		if readyAt > sim.CurrentTime && (upcomingCD > readyAt || upcomingCD < sim.CurrentTime) {
 			upcomingCD = readyAt
 			cast = spell.cast
 		}
