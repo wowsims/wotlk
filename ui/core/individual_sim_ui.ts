@@ -678,6 +678,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			// E.g. healing/mana potions.
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
+			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);
@@ -695,6 +696,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
+			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
 			{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
 		]);
