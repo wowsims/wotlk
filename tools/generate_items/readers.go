@@ -15,17 +15,9 @@ import (
 // Returns the prefetched list of all wowhead tooltips.
 // Maps item IDs to tooltip strings.
 func getWowheadTooltipsDB(filepath string) map[int32]WowheadItemResponse {
-	file, err := os.Open(filepath)
-	if err != nil {
-		log.Fatalf("Failed to open %s: %s", filepath, err)
-	}
-	defer file.Close()
-
+	lines := readFileLines(filepath)
 	db := make(map[int32]WowheadItemResponse)
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
+	for _, line := range lines {
 		itemIDStr := line[:strings.Index(line, ",")]
 		itemID, err := strconv.Atoi(itemIDStr)
 		if err != nil {
@@ -38,6 +30,22 @@ func getWowheadTooltipsDB(filepath string) map[int32]WowheadItemResponse {
 
 	fmt.Printf("\n--\nTOOLTIPS LOADED: %d\n--\n", len(db))
 	return db
+}
+
+func readFileLines(filePath string) []string {
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatalf("Failed to open %s: %s", filePath, err)
+	}
+	defer file.Close()
+
+	lines := []string{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	return lines
 }
 
 func readCsvFile(filePath string) [][]string {

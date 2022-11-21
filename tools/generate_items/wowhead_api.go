@@ -242,68 +242,33 @@ func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
 	return allowlist
 }
 
-// At least one of these regexes must be present for the item to be equippable.
-var requiredEquippableRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`<td>Head</td>`),
-	regexp.MustCompile(`<td>Neck</td>`),
-	regexp.MustCompile(`<td>Shoulder</td>`),
-	regexp.MustCompile(`<td>Back</td>`),
-	regexp.MustCompile(`<td>Chest</td>`),
-	regexp.MustCompile(`<td>Wrist</td>`),
-	regexp.MustCompile(`<td>Hands</td>`),
-	regexp.MustCompile(`<td>Waist</td>`),
-	regexp.MustCompile(`<td>Legs</td>`),
-	regexp.MustCompile(`<td>Feet</td>`),
-	regexp.MustCompile(`<td>Finger</td>`),
-	regexp.MustCompile(`<td>Trinket</td>`),
-	regexp.MustCompile(`<td>Ranged</td>`),
-	regexp.MustCompile(`<td>Thrown</td>`),
-	regexp.MustCompile(`<td>Relic</td>`),
-	regexp.MustCompile(`<td>Main Hand</td>`),
-	regexp.MustCompile(`<td>Two-Hand</td>`),
-	regexp.MustCompile(`<td>One-Hand</td>`),
-	regexp.MustCompile(`<td>Off Hand</td>`),
-	regexp.MustCompile(`<td>Held In Off-hand</td>`),
-	regexp.MustCompile(`<td>Held In Off-Hand</td>`),
-}
-
-// If any of these regexes are present, the item is not equippable.
-var nonEquippableRegexes = []*regexp.Regexp{
+var patternRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`Design:`),
 	regexp.MustCompile(`Recipe:`),
 	regexp.MustCompile(`Pattern:`),
 	regexp.MustCompile(`Plans:`),
 	regexp.MustCompile(`Schematic:`),
-	regexp.MustCompile(`Random enchantment`),
-}
-
-func (item WowheadItemResponse) IsEquippable() bool {
-	found := false
-	for _, pattern := range requiredEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			found = true
-		}
-	}
-	if !found {
-		return false
-	}
-
-	for _, pattern := range nonEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			return false
-		}
-	}
-
-	return true
 }
 
 func (item WowheadItemResponse) IsPattern() bool {
-	for _, pattern := range nonEquippableRegexes {
+	for _, pattern := range patternRegexes {
 		if pattern.MatchString(item.Tooltip) {
 			return true
 		}
 	}
 	return false
+}
+
+var randomEnchantRegex = regexp.MustCompile(`Random enchantment`)
+
+func (item WowheadItemResponse) IsRandomEnchant() bool {
+	return randomEnchantRegex.MatchString(item.Tooltip)
+}
+
+func (item WowheadItemResponse) IsEquippable() bool {
+	return item.GetItemType() != proto.ItemType_ItemTypeUnknown &&
+		!item.IsPattern() &&
+		!item.IsRandomEnchant()
 }
 
 var itemLevelRegex = regexp.MustCompile(`Item Level <!--ilvl-->([0-9]+)<`)
@@ -371,7 +336,7 @@ func (item WowheadItemResponse) GetItemType() proto.ItemType {
 			return itemType
 		}
 	}
-	panic("Could not find item type from tooltip: " + item.Tooltip)
+	return proto.ItemType_ItemTypeUnknown
 }
 
 var armorTypePatterns = map[proto.ArmorType]*regexp.Regexp{

@@ -24,28 +24,6 @@ func EnchantToDBKey(enchant *proto.UIEnchant) EnchantDBKey {
 	}
 }
 
-func mergeItemProtos(dst, src *proto.UIItem) {
-	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
-	if src.Stats != nil {
-		dst.Stats = src.Stats
-		src.Stats = nil
-	}
-	if src.SocketBonus != nil {
-		dst.SocketBonus = src.SocketBonus
-		src.SocketBonus = nil
-	}
-	googleProto.Merge(dst, src)
-}
-
-func mergeGemProtos(dst, src *proto.UIGem) {
-	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
-	if src.Stats != nil {
-		dst.Stats = src.Stats
-		src.Stats = nil
-	}
-	googleProto.Merge(dst, src)
-}
-
 type WowDatabase struct {
 	items    map[int32]*proto.UIItem
 	enchants map[EnchantDBKey]*proto.UIEnchant
@@ -75,11 +53,6 @@ func NewWowDatabase(itemOverrides []*proto.UIItem, gemOverrides []*proto.UIGem, 
 			db.items[itemProto.Id] = itemProto
 		}
 	}
-	for _, itemOverride := range itemOverrides {
-		if _, ok := db.items[itemOverride.Id]; ok {
-			mergeItemProtos(db.items[itemOverride.Id], itemOverride)
-		}
-	}
 
 	for id, response := range itemTooltipsDB {
 		if response.IsGem() {
@@ -88,15 +61,11 @@ func NewWowDatabase(itemOverrides []*proto.UIItem, gemOverrides []*proto.UIGem, 
 			db.gems[gemProto.Id] = gemProto
 		}
 	}
-	for _, gemOverride := range gemOverrides {
-		if _, ok := db.gems[gemOverride.Id]; ok {
-			mergeGemProtos(db.gems[gemOverride.Id], gemOverride)
-		}
-	}
 
-	for _, enchant := range enchantOverrides {
-		db.enchants[EnchantToDBKey(enchant)] = enchant
-	}
+	db.MergeItems(itemOverrides)
+	db.MergeGems(gemOverrides)
+	db.MergeEnchants(enchantOverrides)
+
 	for _, enchant := range db.enchants {
 		if enchant.ItemId != 0 {
 			if tooltip, ok := itemTooltipsDB[enchant.ItemId]; ok {
@@ -111,16 +80,83 @@ func NewWowDatabase(itemOverrides []*proto.UIItem, gemOverrides []*proto.UIGem, 
 	}
 
 	for _, itemID := range extraItemIcons {
-		if itemID != 0 {
-			if tooltip, ok := itemTooltipsDB[itemID]; ok {
-				db.itemIcons[itemID] = &proto.IconData{Id: itemID, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
-			}
+		if tooltip, ok := itemTooltipsDB[itemID]; ok {
+			db.itemIcons[itemID] = &proto.IconData{Id: itemID, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
 		}
+		//if item, ok := db.items[itemID]; ok {
+		//	db.itemIcons[itemID] = &proto.IconData{Id: itemID, Name: item.Name, Icon: item.Icon}
+		//}
 	}
 
-	db.applyGlobalFilters()
-
 	return db
+}
+
+func (db *WowDatabase) MergeItems(arr []*proto.UIItem) {
+	for _, item := range arr {
+		db.MergeItem(item)
+	}
+}
+func (db *WowDatabase) MergeItem(newItem *proto.UIItem) {
+	if curItem, ok := db.items[newItem.Id]; ok {
+		mergeItemProtos(curItem, newItem)
+	} else {
+		db.items[newItem.Id] = newItem
+	}
+}
+func mergeItemProtos(dst, src *proto.UIItem) {
+	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+	if src.Stats != nil {
+		dst.Stats = src.Stats
+		src.Stats = nil
+	}
+	if src.SocketBonus != nil {
+		dst.SocketBonus = src.SocketBonus
+		src.SocketBonus = nil
+	}
+	googleProto.Merge(dst, src)
+}
+
+func (db *WowDatabase) MergeEnchants(arr []*proto.UIEnchant) {
+	for _, enchant := range arr {
+		db.MergeEnchant(enchant)
+	}
+}
+func (db *WowDatabase) MergeEnchant(newEnchant *proto.UIEnchant) {
+	key := EnchantToDBKey(newEnchant)
+	if curEnchant, ok := db.enchants[key]; ok {
+		mergeEnchantProtos(curEnchant, newEnchant)
+	} else {
+		db.enchants[key] = newEnchant
+	}
+}
+func mergeEnchantProtos(dst, src *proto.UIEnchant) {
+	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+	if src.Stats != nil {
+		dst.Stats = src.Stats
+		src.Stats = nil
+	}
+	googleProto.Merge(dst, src)
+}
+
+func (db *WowDatabase) MergeGems(arr []*proto.UIGem) {
+	for _, gem := range arr {
+		db.MergeGem(gem)
+	}
+}
+func (db *WowDatabase) MergeGem(newGem *proto.UIGem) {
+	if curGem, ok := db.gems[newGem.Id]; ok {
+		mergeGemProtos(curGem, newGem)
+	} else {
+		db.gems[newGem.Id] = newGem
+	}
+}
+func mergeGemProtos(dst, src *proto.UIGem) {
+	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+	if src.Stats != nil {
+		dst.Stats = src.Stats
+		src.Stats = nil
+	}
+	googleProto.Merge(dst, src)
 }
 
 // Filters out entities which shouldn't be included anywhere.
