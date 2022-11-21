@@ -13,7 +13,7 @@ func main() {
 	}
 
 	db := NewWowDatabase(
-		getItemOverrides(),
+		ItemOverrides,
 		GemOverrides,
 		EnchantOverrides,
 		getWowheadTooltipsDB("./assets/item_data/all_item_tooltips.csv"),

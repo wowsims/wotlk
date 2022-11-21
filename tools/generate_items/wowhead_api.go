@@ -586,6 +586,37 @@ func (item WowheadItemResponse) IsGem() bool {
 	return item.GetSocketColor() != proto.GemColor_GemColorUnknown &&
 		!strings.Contains(item.GetName(), "Design:")
 }
+func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
+	weaponDamageMin, weaponDamageMax := item.GetWeaponDamage()
+	return &proto.UIItem{
+		Name: item.GetName(),
+		Icon: item.GetIcon(),
+
+		Type:             item.GetItemType(),
+		ArmorType:        item.GetArmorType(),
+		WeaponType:       item.GetWeaponType(),
+		HandType:         item.GetHandType(),
+		RangedWeaponType: item.GetRangedWeaponType(),
+
+		Stats:       toSlice(item.GetStats()),
+		GemSockets:  item.GetGemSockets(),
+		SocketBonus: toSlice(item.GetSocketBonus()),
+
+		WeaponDamageMin: weaponDamageMin,
+		WeaponDamageMax: weaponDamageMax,
+		WeaponSpeed:     item.GetWeaponSpeed(),
+
+		Ilvl:    int32(item.GetItemLevel()),
+		Phase:   int32(item.GetPhase()),
+		Quality: proto.ItemQuality(item.GetQuality()),
+		Unique:  item.GetUnique(),
+		Heroic:  item.IsHeroic(),
+
+		ClassAllowlist:     item.GetClassAllowlist(),
+		RequiredProfession: item.GetRequiredProfession(),
+		SetName:            item.GetItemSetName(),
+	}
+}
 func (item WowheadItemResponse) ToGemProto() *proto.UIGem {
 	return &proto.UIGem{
 		Name:  item.GetName(),
