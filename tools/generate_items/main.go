@@ -4,8 +4,9 @@ import (
 	"flag"
 )
 
+var outDir = flag.String("outDir", "", "Path to output directory for writing generated .go files.")
+
 func main() {
-	outDir := flag.String("outDir", "", "Path to output directory for writing generated .go files.")
 	flag.Parse()
 
 	if *outDir == "" {
@@ -20,5 +21,5 @@ func main() {
 		getWowheadTooltipsDB("./assets/spell_data/all_spell_tooltips.csv"))
 
 	db.applyGlobalFilters()
-	writeDatabaseFile(db)
+	db.WriteBinaryAndJson("./assets/database/db.bin", "./assets/database/db.json")
 }

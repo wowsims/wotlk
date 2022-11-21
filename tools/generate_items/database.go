@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strings"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	_ "github.com/wowsims/wotlk/sim/encounters" // Needed for preset encounters.
+	"github.com/wowsims/wotlk/tools"
 	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -275,6 +279,38 @@ func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
 	})
 
 	return uiDB
+}
+
+func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
+	uiDB := db.toUIDatabase()
+
+	// Write database as a binary file.
+	outbytes, err := googleProto.Marshal(uiDB)
+	if err != nil {
+		log.Fatalf("[ERROR] Failed to marshal db: %s", err.Error())
+	}
+	os.WriteFile(binFilePath, outbytes, 0666)
+
+	// Also write in JSON format so we can manually inspect the contents.
+	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
+	builder := &strings.Builder{}
+	builder.WriteString("{\n")
+
+	tools.WriteProtoArrayToBuilder(uiDB.Items, builder, "items")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uiDB.Enchants, builder, "enchants")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uiDB.Gems, builder, "gems")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uiDB.ItemIcons, builder, "itemIcons")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uiDB.SpellIcons, builder, "spellIcons")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uiDB.Encounters, builder, "encounters")
+	builder.WriteString("\n")
+
+	builder.WriteString("}")
+	os.WriteFile(jsonFilePath, []byte(builder.String()), 0666)
 }
 
 func toSlice(stats Stats) []float64 {
