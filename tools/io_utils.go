@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -48,6 +49,25 @@ func readFileLinesInternal(filePath string, throwIfMissing bool) []string {
 	return lines
 }
 
+func ReadMap(filePath string) map[string]string {
+	return readMapInternal(filePath, true)
+}
+func ReadMapOrNil(filePath string) map[string]string {
+	return readMapInternal(filePath, false)
+}
+func readMapInternal(filePath string, throwIfMissing bool) map[string]string {
+	res := make(map[string]string)
+	if lines := readFileLinesInternal(filePath, throwIfMissing); lines != nil {
+		for _, line := range lines {
+			splitIndex := strings.Index(line, ",")
+			keyStr := line[:splitIndex]
+			valStr := line[splitIndex+1:]
+			res[keyStr] = valStr
+		}
+	}
+	return res
+}
+
 func WriteFileLines(filePath string, lines []string) {
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -57,6 +77,20 @@ func WriteFileLines(filePath string, lines []string) {
 	for _, line := range lines {
 		file.WriteString(line)
 	}
+}
+
+func WriteMap(filePath string, contents map[string]string) {
+	lines := make([]string, len(contents))
+	i := 0
+	for k, v := range contents {
+		lines[i] = fmt.Sprintf("%s,%s", k, v)
+		i++
+	}
+
+	// Sort so the output is stable.
+	sort.Strings(lines)
+
+	WriteFileLines(filePath, lines)
 }
 
 func ReadCsvFile(filePath string) [][]string {

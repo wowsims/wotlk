@@ -192,6 +192,16 @@ func MapSlice[I any, O any](src []I, f func(I) O) []O {
 	return dst
 }
 
+// Returns a new map by applying f to each key/value pair in src.
+func MapMap[KI comparable, VI any, KO comparable, VO any](src map[KI]VI, f func(KI, VI) (KO, VO)) map[KO]VO {
+	dst := make(map[KO]VO)
+	for ki, vi := range src {
+		ko, vo := f(ki, vi)
+		dst[ko] = vo
+	}
+	return dst
+}
+
 // Returns a new slice containing only the elements for which f returns true.
 func FilterSlice[T any](src []T, f func(T) bool) []T {
 	var dst []T
