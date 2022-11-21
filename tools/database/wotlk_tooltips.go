@@ -43,8 +43,8 @@ func (wtm *WotlkTooltipManager) Read() map[int32]WotlkItemResponse {
 func NewWotlkItemTooltipManager(filePath string) *WotlkTooltipManager {
 	return &WotlkTooltipManager{
 		TooltipManager{
-			FilePath: filePath,
-			UrlPattern: "https://wotlk.evowow.com/?item=%d&power",
+			FilePath:   filePath,
+			UrlPattern: "https://wotlk.evowow.com/?item=%s&power",
 		},
 	}
 }

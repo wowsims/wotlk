@@ -9,6 +9,8 @@ import (
 	"github.com/wowsims/wotlk/tools/database"
 )
 
+// go run ./tools/database/gen_db
+
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
 
 func main() {
