@@ -53,7 +53,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	}
 
 	extraHit := warrior.Talents.ImprovedRevenge > 0 && warrior.Env.GetNumTargets() > 1
-	rollMultiplier := 1 + 0.3*float64(warrior.Talents.ImprovedRevenge)
 
 	warrior.Revenge = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -76,14 +75,13 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			},
 		},
 
-		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault),
+		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault) + 0.3*float64(warrior.Talents.ImprovedRevenge),
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  121,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dmgFromAP := 0.31 * spell.MeleeAttackPower()
-			baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+			baseDamage := sim.Roll(1636, 1998) + 0.31*spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
@@ -92,7 +90,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			if extraHit {
 				if sim.RandomFloat("Revenge Target Roll") <= 0.5*float64(warrior.Talents.ImprovedRevenge) {
 					otherTarget := sim.Environment.NextTargetUnit(target)
-					baseDamage := sim.Roll(1636, 1998)*rollMultiplier + dmgFromAP
+					baseDamage := sim.Roll(1636, 1998) + 0.31*spell.MeleeAttackPower()
 					spell.CalcAndDealDamage(sim, otherTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 				}
 			}
