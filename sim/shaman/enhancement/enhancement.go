@@ -104,16 +104,11 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
-	enh.DelayDPSCooldownsForArmorDebuffs(time.Second * 3)
-
-	// This needs to be called after DPS cooldowns are delayed, which also happens
-	// after finalization.
-	//enh.Env.RegisterPostFinalizeEffect(enh.SetupRotationSchedule)
+	enh.DelayDPSCooldowns(3 * time.Second)
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
-	enh.scheduler.Reset(sim, enh.GetCharacter())
 }
 
 func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, reactionTime time.Duration) bool {
