@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -193,20 +192,7 @@ type ItemFilter struct {
 //
 // If equipChecksOnly is true, will only check conditions related to whether
 // the item is equippable.
-func (filter *ItemFilter) Matches(item items.Item, equipChecksOnly bool) bool {
-	if filter.Class != proto.Class_ClassUnknown && len(item.ClassAllowlist) > 0 {
-		found := false
-		for _, class := range item.ClassAllowlist {
-			if class == filter.Class {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-
+func (filter *ItemFilter) Matches(item Item, equipChecksOnly bool) bool {
 	if item.Type == proto.ItemType_ItemTypeWeapon {
 		if len(filter.WeaponTypes) > 0 {
 			found := false
@@ -271,10 +257,10 @@ func (filter *ItemFilter) Matches(item items.Item, equipChecksOnly bool) bool {
 	return true
 }
 
-func (filter *ItemFilter) FindAllItems() []items.Item {
-	filteredItems := []items.Item{}
+func (filter *ItemFilter) FindAllItems() []Item {
+	filteredItems := []Item{}
 
-	for _, item := range items.ByID {
+	for _, item := range ItemsByID {
 		if filter.Matches(item, false) {
 			filteredItems = append(filteredItems, item)
 		}
@@ -287,19 +273,22 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 	filteredSets := []*ItemSet{}
 
 	for _, set := range GetAllItemSets() {
-		firstItem := items.ByID[set.ItemIDs()[0]]
-		if filter.Matches(firstItem, true) {
-			filteredSets = append(filteredSets, set)
+		itemIDs := set.ItemIDs()
+		if len(itemIDs) > 0 {
+			firstItem := ItemsByID[itemIDs[0]]
+			if filter.Matches(firstItem, true) {
+				filteredSets = append(filteredSets, set)
+			}
 		}
 	}
 
 	return filteredSets
 }
 
-func (filter *ItemFilter) FindAllMetaGems() []items.Gem {
-	filteredGems := []items.Gem{}
+func (filter *ItemFilter) FindAllMetaGems() []Gem {
+	filteredGems := []Gem{}
 
-	for _, gem := range items.GemsByID {
+	for _, gem := range GemsByID {
 		if gem.Color == proto.GemColor_GemColorMeta {
 			if !strings.Contains(gem.Name, "Skyfire") &&
 				!strings.Contains(gem.Name, "Earthstorm") &&
@@ -328,10 +317,10 @@ type ItemsTestGenerator struct {
 
 	initialized bool
 
-	items []items.Item
+	items []Item
 	sets  []*ItemSet
 
-	metagems []items.Gem
+	metagems []Gem
 
 	metaSocketIdx int
 }
@@ -353,7 +342,7 @@ func (generator *ItemsTestGenerator) init() {
 	generator.items = generator.ItemFilter.FindAllItems()
 	generator.sets = generator.ItemFilter.FindAllSets()
 
-	baseEquipment := items.ProtoToEquipment(generator.Player.Equipment)
+	baseEquipment := ProtoToEquipment(generator.Player.Equipment)
 	generator.metaSocketIdx = -1
 	for i, socketColor := range baseEquipment[proto.ItemSlot_ItemSlotHead].GemSockets {
 		if socketColor == proto.GemColor_GemColorMeta {
@@ -377,7 +366,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	label := ""
 
 	playerCopy := googleProto.Clone(generator.Player).(*proto.Player)
-	equipment := items.ProtoToEquipment(playerCopy.Equipment)
+	equipment := ProtoToEquipment(playerCopy.Equipment)
 	if testIdx < len(generator.items) {
 		testItem := generator.items[testIdx]
 		equipment.EquipItem(generator.items[testIdx])
@@ -385,7 +374,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	} else if testIdx < len(generator.items)+len(generator.sets) {
 		testSet := generator.sets[testIdx-len(generator.items)]
 		for _, itemID := range testSet.ItemIDs() {
-			setItem := items.ByID[itemID]
+			setItem := ItemsByID[itemID]
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
@@ -393,7 +382,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 		testMetaGem := generator.metagems[testIdx-len(generator.items)-len(generator.sets)]
 		headItem := &equipment[proto.ItemSlot_ItemSlotHead]
 		for len(headItem.Gems) <= generator.metaSocketIdx {
-			headItem.Gems = append(headItem.Gems, items.Gem{})
+			headItem.Gems = append(headItem.Gems, Gem{})
 		}
 		headItem.Gems[generator.metaSocketIdx] = testMetaGem
 		label = strings.ReplaceAll(testMetaGem.Name, " ", "")

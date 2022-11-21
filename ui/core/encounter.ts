@@ -2,8 +2,8 @@ import { Encounter as EncounterProto } from './proto/common.js';
 import { MobType } from './proto/common.js';
 import { Stat } from './proto/common.js';
 import { Target as TargetProto } from './proto/common.js';
-import { PresetEncounter } from './proto/api.js';
-import { PresetTarget } from './proto/api.js';
+import { PresetEncounter } from './proto/common.js';
+import { PresetTarget } from './proto/common.js';
 import { Target } from './target.js';
 import { Stats } from './proto_utils/stats.js';
 

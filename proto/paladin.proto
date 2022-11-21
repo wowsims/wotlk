@@ -214,6 +214,8 @@ message ProtectionPaladin {
 	message Rotation {
 		bool hammer_first = 1;
 		bool use_custom_prio = 2;
+		bool squeeze_holy_wrath = 4;
+		double wait_slack = 5;
 
 		enum SpellOption {
 			NoSpell = 0;

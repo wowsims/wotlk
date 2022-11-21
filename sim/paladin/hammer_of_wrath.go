@@ -15,7 +15,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 	paladin.HammerOfWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48806},
 		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellDamage,
+		ProcMask:     core.ProcMaskMelee,
 		Flags:        core.SpellFlagMeleeMetrics,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -46,7 +46,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1139, 1257) +
 				.15*spell.SpellPower() +
-				.15*spell.RangedAttackPower(target) // NOTE: Possible implementation bug server side, in-game HOW uses RAP instead of MAP
+				.15*spell.MeleeAttackPower()
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 		},

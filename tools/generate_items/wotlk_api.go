@@ -1,16 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -166,33 +160,23 @@ func (item WotlkItemResponse) GetClassAllowlist() []proto.Class {
 	return allowlist
 }
 
-func (item WotlkItemResponse) IsEquippable() bool {
-	found := false
-	for _, pattern := range requiredEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			found = true
-		}
-	}
-	if !found {
-		return false
-	}
-
-	for _, pattern := range nonEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			return false
-		}
-	}
-
-	return true
-}
-
 func (item WotlkItemResponse) IsPattern() bool {
-	for _, pattern := range nonEquippableRegexes {
+	for _, pattern := range patternRegexes {
 		if pattern.MatchString(item.Tooltip) {
 			return true
 		}
 	}
 	return false
+}
+
+func (item WotlkItemResponse) IsRandomEnchant() bool {
+	return randomEnchantRegex.MatchString(item.Tooltip)
+}
+
+func (item WotlkItemResponse) IsEquippable() bool {
+	return item.GetItemType() != proto.ItemType_ItemTypeUnknown &&
+		!item.IsPattern() &&
+		!item.IsRandomEnchant()
 }
 
 var wotlkItemLevelRegex = regexp.MustCompile("Item Level ([0-9]+)<")
@@ -231,7 +215,7 @@ func (item WotlkItemResponse) GetItemType() proto.ItemType {
 			return itemType
 		}
 	}
-	panic("Could not find item type from tooltip: " + item.Tooltip)
+	return proto.ItemType_ItemTypeUnknown
 }
 
 var wotlkArmorTypePatterns = map[proto.ArmorType]*regexp.Regexp{
@@ -439,78 +423,6 @@ var wotlkItemSetNameRegex = regexp.MustCompile("<a href=\\\"\\?itemset=([0-9]+)\
 
 func (item WotlkItemResponse) GetItemSetName() string {
 	return item.GetTooltipRegexString(wotlkItemSetNameRegex, 2)
-}
-
-func getWotlkItemResponse(itemID int, tooltipsDB map[int]string) WotlkItemResponse {
-	// If the db already has it, just return the db value.
-	var tooltipBytes []byte
-
-	if tooltipStr, ok := tooltipsDB[itemID]; ok {
-		tooltipBytes = []byte(tooltipStr)
-	} else {
-		fmt.Printf("Item DB missing ID: %d\n", itemID)
-		url := fmt.Sprintf("https://wotlkdb.com/?item=%d&power", itemID)
-
-		httpClient := http.Client{
-			Timeout: 5 * time.Second,
-		}
-
-		result, err := httpClient.Get(url)
-		if err != nil {
-			fmt.Printf("Error fetching %d: %s\n", itemID, err)
-			return WotlkItemResponse{}
-		}
-		defer result.Body.Close()
-
-		body, _ := io.ReadAll(result.Body)
-		bstr := string(body)
-		bstr = strings.Replace(bstr, fmt.Sprintf("$WowheadPower.registerItem('%d', 0, ", itemID), "", 1)
-		bstr = strings.TrimSuffix(bstr, ";")
-		bstr = strings.TrimSuffix(bstr, ")")
-		bstr = strings.ReplaceAll(bstr, "\n", "")
-		bstr = strings.ReplaceAll(bstr, "\t", "")
-		bstr = strings.Replace(bstr, "name_enus: '", "\"name\": \"", 1)
-		bstr = strings.Replace(bstr, "quality:", "\"quality\":", 1)
-		bstr = strings.Replace(bstr, "icon: '", "\"icon\": \"", 1)
-		bstr = strings.Replace(bstr, "tooltip_enus: '", "\"tooltip\": \"", 1)
-		bstr = strings.ReplaceAll(bstr, "',", "\",")
-		bstr = strings.ReplaceAll(bstr, "\\'", "'")
-		// replace the '} with "}
-		if strings.HasSuffix(bstr, "'}") {
-			bstr = bstr[:len(bstr)-2] + "\"}"
-		}
-
-		fmt.Printf("Found Item %d: %s\n", itemID, bstr)
-
-		fmt.Printf("Writing to all_item_tooltips.csv now...\n")
-		tooltipBytes = []byte(bstr)
-		alltooltips, err := os.OpenFile("./assets/item_data/all_item_tooltips.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			panic(err)
-		}
-		line := fmt.Sprintf("%d, %s, %s\n", itemID, url, bstr)
-		n, err := alltooltips.WriteString(line)
-		if n != len(line) {
-			log.Fatalf("Unexpected number of bytes written: %d ... expected: %d", n, len(line))
-		}
-		if err != nil {
-			log.Fatalf("Failed to append to item tooltips: %s", err)
-		}
-		err = alltooltips.Close()
-		if err != nil {
-			log.Fatalf("Failed to close item tooltips: %s", err)
-		}
-	}
-
-	//fmt.Printf(string(tooltipStr))
-	itemResponse := WotlkItemResponse{}
-	err := json.Unmarshal(tooltipBytes, &itemResponse)
-	if err != nil {
-		fmt.Printf("Failed to decode tooltipBytes for item: %d\n", itemID)
-		log.Fatal(err)
-	}
-
-	return itemResponse
 }
 
 func (item WotlkItemResponse) IsHeroic() bool {

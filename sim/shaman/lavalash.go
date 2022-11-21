@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -25,7 +24,7 @@ func (shaman *Shaman) registerLavaLashSpell() {
 
 	manaCost := 0.04 * shaman.BaseMana
 
-	flatDamageBonus := core.TernaryFloat64(shaman.Equip[items.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
+	flatDamageBonus := core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
 
 	imbueMultiplier := 1.0
 	if shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon || shaman.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank {
@@ -36,7 +35,7 @@ func (shaman *Shaman) registerLavaLashSpell() {
 	}
 
 	var indomitabilityAura *core.Aura
-	switch shaman.Equip[items.ItemSlotRanged].ID {
+	switch shaman.Equip[core.ItemSlotRanged].ID {
 	case DeadlyGladiatorsTotemOfIndomitability:
 		indomitabilityAura = shaman.NewTemporaryStatsAura("Deadly Aggression", core.ActionID{SpellID: 60549}, stats.Stats{stats.AttackPower: 120}, time.Second*10)
 	case FuriousGladiatorsTotemOfIndomitability:

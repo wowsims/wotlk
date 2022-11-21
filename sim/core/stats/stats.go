@@ -334,7 +334,7 @@ type PseudoStats struct {
 	CanBlock bool
 	CanParry bool
 
-	ParryHaste bool
+	ParryHaste       bool
 	TightEnemyDamage bool
 
 	// Avoidance % not affected by Diminishing Returns
@@ -387,7 +387,7 @@ func NewPseudoStats() PseudoStats {
 		MeleeHasteRatingPerHastePercent: 32.79,
 
 		HealingDealtMultiplier: 1,
-		BlockValueMultiplier: 1,
+		BlockValueMultiplier:   1,
 
 		// Target effects.
 		DamageTakenMultiplier:       1,

@@ -9,14 +9,11 @@ import { Player } from '../proto/api.js';
 import { ResourceType } from '../proto/api.js';
 import { ArmorType } from '../proto/common.js';
 import { Class } from '../proto/common.js';
-import { Enchant } from '../proto/common.js';
 import { EnchantType } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
-import { Item } from '../proto/common.js';
 import { Race } from '../proto/common.js';
 import { Faction } from '../proto/common.js';
 import { RaidTarget } from '../proto/common.js';
@@ -25,8 +22,13 @@ import { Spec } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
 import { Blessings } from '../proto/paladin.js';
-import { BlessingsAssignment } from '../proto/ui.js';
-import { BlessingsAssignments } from '../proto/ui.js';
+import {
+	BlessingsAssignment,
+	BlessingsAssignments,
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from '../proto/ui.js';
 
 import { Stats } from './stats.js';
 
@@ -1660,6 +1662,9 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 		return false;
 
 	if ((enchant.enchantType == EnchantType.EnchantTypeShield) != (item.weaponType == WeaponType.WeaponTypeShield))
+		return false;
+
+	if (enchant.enchantType == EnchantType.EnchantTypeStaff && item.weaponType != WeaponType.WeaponTypeStaff)
 		return false;
 
 	if (item.weaponType == WeaponType.WeaponTypeOffHand)

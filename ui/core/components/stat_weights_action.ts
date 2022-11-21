@@ -1,6 +1,5 @@
 import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
 import { ItemSlot } from '../proto/common.js';
-import { Gem } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
@@ -15,6 +14,9 @@ import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { ResultsViewer } from '../components/results_viewer.js';
 import { combinations, combinationsWithDups, permutations, getEnumValues, maxIndex, sum } from '../utils.js';
+import {
+	UIGem as Gem,
+} from '../proto/ui.js';
 
 import * as Gems from '../proto_utils/gems.js';
 
@@ -279,7 +281,7 @@ class EpWeightsMenu extends Popup {
 		epWeights = new Stats(epWeights.asArray().map(w => w == 0 ? 1e-8 : w));
 
 		const gear = this.simUI.player.getGear();
-		const allGems = this.simUI.sim.getGems();
+		const allGems = this.simUI.sim.db.getGems();
 		const phase = this.simUI.sim.getPhase();
 		const isBlacksmithing = this.simUI.player.isBlacksmithing();
 		const isJewelcrafting = this.simUI.player.hasProfession(Profession.Jewelcrafting);

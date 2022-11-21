@@ -2,7 +2,6 @@ package balance
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
@@ -94,6 +93,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		moonkin.Rotation.MaximizeMfUptime = false
 		moonkin.Rotation.MaximizeIsUptime = true
 		moonkin.Rotation.MaintainFaerieFire = true
+		moonkin.Rotation.PlayerLatency = 200
 	}
 
 	if !moonkin.Rotation.UseMf {
@@ -117,8 +117,8 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		if moonkin.HasProfession(proto.Profession_Engineering) {
 			moonkin.hyperSpeedMCD = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 54758})
 		}
-		moonkin.onUseTrinket1 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[items.ItemSlotTrinket1].ID})
-		moonkin.onUseTrinket2 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[items.ItemSlotTrinket2].ID})
+		moonkin.onUseTrinket1 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID})
+		moonkin.onUseTrinket2 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket2].ID})
 	}
 }
 

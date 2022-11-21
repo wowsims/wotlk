@@ -281,10 +281,10 @@ func (dk *Deathknight) applyIcyTalons() {
 		Label:    "Icy Talons",
 		Duration: time.Second * 20.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= icyTalonsCoeff
+			dk.MultiplyAttackSpeed(sim, icyTalonsCoeff)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= icyTalonsCoeff
+			dk.MultiplyAttackSpeed(sim, 1/icyTalonsCoeff)
 		},
 	})
 }

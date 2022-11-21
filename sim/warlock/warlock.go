@@ -33,7 +33,6 @@ type Warlock struct {
 	ConflagrateDot        *core.Dot
 	DrainSoul             *core.Spell
 	DrainSoulDot          *core.Dot
-	DrainSoulChannelling  *core.Spell
 	Shadowburn            *core.Spell
 
 	CurseOfElements     *core.Spell
@@ -66,6 +65,7 @@ type Warlock struct {
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
+	DrainSoulRolloverPower  float64
 	DPSPAverage             float64
 	PreviousTime            time.Duration
 	SpellsRotation          []SpellRotation
@@ -120,6 +120,10 @@ func (warlock *Warlock) Initialize() {
 		warlock.registerShadowBurnSpell()
 	}
 
+	if warlock.Talents.ImprovedSoulLeech > 0 {
+		core.InitReplenishmentAuras(warlock.GetCharacter(), core.ActionID{SpellID: 54118})
+	}
+
 	warlock.defineRotation()
 }
 
@@ -139,7 +143,6 @@ func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {
-
 }
 
 func NewWarlock(character core.Character, options *proto.Player) *Warlock {

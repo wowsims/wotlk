@@ -1,25 +1,28 @@
 import {
 	Class,
-	Cooldowns,
 	Consumes,
-	Enchant,
-	Gem,
+	Cooldowns,
+	Faction,
 	GemColor,
 	Glyphs,
 	HandType,
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
-	Item,
 	Profession,
 	Race,
 	RaidTarget,
 	RangedWeaponType,
+	SimDatabase,
 	Spec,
-	Faction,
 	Stat,
 	WeaponType,
 } from './proto/common.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from './proto/ui.js';
 
 import { PlayerStats } from './proto/api.js';
 import { Player as PlayerProto } from './proto/api.js';
@@ -93,6 +96,7 @@ export class Player<SpecType extends Spec> {
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
+	private healingEnabled: boolean = false;
 
 	private itemEPCache: Map<number, number> = new Map<number, number>();
 	private gemEPCache: Map<number, number> = new Map<number, number>();
@@ -216,17 +220,17 @@ export class Player<SpecType extends Spec> {
 
 	// Returns all items that this player can wear in the given slot.
 	getItems(slot: ItemSlot): Array<Item> {
-		return this.sim.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
+		return this.sim.db.getItems(slot).filter(item => canEquipItem(item, this.spec, slot));
 	}
 
 	// Returns all enchants that this player can wear in the given slot.
 	getEnchants(slot: ItemSlot): Array<Enchant> {
-		return this.sim.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
+		return this.sim.db.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
 	}
 
 	// Returns all gems that this player can wear of the given color.
 	getGems(socketColor?: GemColor): Array<Gem> {
-		return this.sim.getGems(socketColor);
+		return this.sim.db.getGems(socketColor);
 	}
 
 	getEpWeights(): Stats {
@@ -552,6 +556,15 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
 
+	enableHealing() {
+		this.healingEnabled = true;
+		var hm = this.getHealingModel();
+		if (hm.cadenceSeconds == 0) {
+			hm.cadenceSeconds = 2;
+			this.setHealingModel(0, hm)
+		}
+	}
+
 	getHealingModel(): HealingModel {
 		// Make a defensive copy
 		return HealingModel.clone(this.healingModel);
@@ -563,6 +576,10 @@ export class Player<SpecType extends Spec> {
 
 		// Make a defensive copy
 		this.healingModel = HealingModel.clone(newHealingModel);
+		// If we have enabled healing model and try to set 0s cadence, default to 2s.
+		if (this.healingModel.cadenceSeconds == 0 && this.healingEnabled) {
+			this.healingModel.cadenceSeconds = 2;
+		}
 		this.healingModelChangeEmitter.emit(eventID);
 	}
 
@@ -626,14 +643,14 @@ export class Player<SpecType extends Spec> {
 		}
 
 		const slot = getEligibleItemSlots(item)[0];
-		const enchants = this.sim.getEnchants(slot);
+		const enchants = this.sim.db.getEnchants(slot);
 		if (enchants.length > 0) {
 			ep += Math.max(...enchants.map(enchant => this.computeEnchantEP(enchant)));
 		}
 
 		// Compare whether its better to match sockets + get socket bonus, or just use best gems.
 		const bestGemEPNotMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
+			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
 			if (gems.length > 0) {
 				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
 			} else {
@@ -642,7 +659,7 @@ export class Player<SpecType extends Spec> {
 		}));
 
 		const bestGemEPMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
+			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
 			if (gems.length > 0) {
 				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
 			} else {
@@ -663,15 +680,16 @@ export class Player<SpecType extends Spec> {
 		const langPrefix = lang ? lang + '.' : '';
 		parts.push(`domain=${langPrefix}wotlk`);
 
+		const isBlacksmithing = this.hasProfession(Profession.Blacksmithing);
 		if (equippedItem.gems.length > 0) {
-			parts.push('gems=' + equippedItem.gems.map(gem => gem ? gem.id : 0).join(':'));
+			parts.push('gems=' + equippedItem.curGems(isBlacksmithing).map(gem => gem ? gem.id : 0).join(':'));
 		}
 		if (equippedItem.enchant != null) {
 			parts.push('ench=' + equippedItem.enchant.effectId);
 		}
 		parts.push('pcs=' + this.gear.asArray().filter(ei => ei != null).map(ei => ei!.item.id).join(':'));
 
-		if (equippedItem.hasExtraSocket(this.hasProfession(Profession.Blacksmithing))) {
+		if (equippedItem.hasExtraSocket(isBlacksmithing)) {
 			parts.push('sock');
 		}
 
@@ -778,13 +796,14 @@ export class Player<SpecType extends Spec> {
 	}
 
 	toProto(forExport?: boolean): PlayerProto {
+		const gear = this.getGear();
 		return withSpecProto(
 			this.spec,
 			PlayerProto.create({
 				name: this.getName(),
 				race: this.getRace(),
 				class: this.getClass(),
-				equipment: this.getGear().asSpec(),
+				equipment: gear.asSpec(),
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().asArray(),
 				buffs: this.getBuffs(),
@@ -796,6 +815,7 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
+				database: forExport ? SimDatabase.create() : gear.toDatabase(),
 			}),
 			this.getRotation(),
 			forExport ? this.specTypeFunctions.talentsCreate() : this.getTalents(),
@@ -806,7 +826,7 @@ export class Player<SpecType extends Spec> {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
-			this.setGear(eventID, proto.equipment ? this.sim.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, new Stats(proto.bonusStats));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());

@@ -129,9 +129,13 @@ func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
 		return
 	}
 
-	ghoulPet.MultiplyMeleeSpeed(sim, 1/ghoulPet.ownerMeleeMultiplier)
+	ghoulPet.MultiplyMeleeSpeed(sim, 1.0/ghoulPet.ownerMeleeMultiplier)
 	ghoulPet.ownerMeleeMultiplier = ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier
 	ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.ownerMeleeMultiplier)
+
+	if sim.Log != nil {
+		sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.ownerMeleeMultiplier)
+	}
 }
 
 func (ghoulPet *GhoulPet) Initialize() {

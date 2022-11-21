@@ -1,16 +1,13 @@
 import { ArmorType } from './proto/common.js';
 import { Class, Faction } from './proto/common.js';
 import { Consumes } from './proto/common.js';
-import { Enchant } from './proto/common.js';
 import { Encounter as EncounterProto } from './proto/common.js';
 import { EquipmentSpec } from './proto/common.js';
-import { Gem } from './proto/common.js';
 import { GemColor } from './proto/common.js';
 import { ItemQuality } from './proto/common.js';
 import { ItemSlot } from './proto/common.js';
 import { ItemSpec } from './proto/common.js';
 import { ItemType } from './proto/common.js';
-import { Item } from './proto/common.js';
 import { Profession } from './proto/common.js';
 import { Race } from './proto/common.js';
 import { RaidTarget } from './proto/common.js';
@@ -18,9 +15,7 @@ import { Spec } from './proto/common.js';
 import { Stat } from './proto/common.js';
 import { WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
-import { PresetEncounter, PresetTarget } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
-import { GearListRequest, GearListResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
@@ -28,13 +23,17 @@ import {
 	DatabaseFilters,
 	SimSettings as SimSettingsProto,
 } from './proto/ui.js';
+import {
+	UIEnchant as Enchant,
+	UIGem as Gem,
+	UIItem as Item,
+} from './proto/ui.js';
 
+import { Database } from './proto_utils/database.js';
 import { EquippedItem } from './proto_utils/equipped_item.js';
 import { Gear } from './proto_utils/gear.js';
 import { SimResult } from './proto_utils/sim_result.js';
 import { Stats } from './proto_utils/stats.js';
-import { gemEligibleForSocket } from './proto_utils/gems.js';
-import { gemMatchesSocket } from './proto_utils/gems.js';
 import { SpecRotation } from './proto_utils/utils.js';
 import { SpecTalents } from './proto_utils/utils.js';
 import { SpecTypeFunctions } from './proto_utils/utils.js';
@@ -43,7 +42,6 @@ import { SpecOptions } from './proto_utils/utils.js';
 import { specToClass } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { getEligibleItemSlots } from './proto_utils/utils.js';
-import { getEligibleEnchantSlots } from './proto_utils/utils.js';
 import { playerToSpec } from './proto_utils/utils.js';
 
 import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
@@ -87,12 +85,7 @@ export class Sim {
 	readonly raid: Raid;
 	readonly encounter: Encounter;
 
-	// Database
-	private items: Record<number, Item> = {};
-	private enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
-	private gems: Record<number, Gem> = {};
-	private presetEncounters: Record<string, PresetEncounter> = {};
-	private presetTargets: Record<string, PresetTarget> = {};
+	private db_: Database|null = null;
 
 	readonly iterationsChangeEmitter = new TypedEvent<void>();
 	readonly phaseChangeEmitter = new TypedEvent<void>();
@@ -116,29 +109,16 @@ export class Sim {
 	// Fires when a raid sim API call completes.
 	readonly simResultEmitter = new TypedEvent<SimResult>();
 
-	private readonly _initPromise: Promise<void>;
+	private readonly _initPromise: Promise<any>;
 	private lastUsedRngSeed: number = 0;
 
 	// These callbacks are needed so we can apply BuffBot modifications automatically before sending requests.
 	private modifyRaidProto: ((raidProto: RaidProto) => void) = () => { };
 
 	constructor() {
-		this.workerPool = new WorkerPool(3);
-
-		this._initPromise = this.workerPool.getGearList(GearListRequest.create()).then(result => {
-			result.items.forEach(item => this.items[item.id] = item);
-			result.enchants.forEach(enchant => {
-				const slots = getEligibleEnchantSlots(enchant);
-				slots.forEach(slot => {
-					if (!this.enchantsBySlot[slot]) {
-						this.enchantsBySlot[slot] = [];
-					}
-					this.enchantsBySlot[slot]!.push(enchant);
-				});
-			});
-			result.gems.forEach(gem => this.gems[gem.id] = gem);
-			result.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
-			result.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
+		this.workerPool = new WorkerPool(1);
+		this._initPromise = Database.get().then(db => {
+			this.db_ = db;
 		});
 
 		this.raid = new Raid(this);
@@ -169,6 +149,10 @@ export class Sim {
 		return this._initPromise;
 	}
 
+	get db(): Database {
+		return this.db_!;
+	}
+
 	setModifyRaidProto(newModFn: (raidProto: RaidProto) => void) {
 		this.modifyRaidProto = newModFn;
 	}
@@ -183,7 +167,7 @@ export class Sim {
 					return;
 				}
 
-				let gear = this.lookupEquipmentSpec(player.equipment);
+				let gear = this.db.lookupEquipmentSpec(player.equipment);
 				let gearChanged = false;
 
 				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
@@ -331,41 +315,6 @@ export class Sim {
 		}
 	}
 
-	getItems(slot: ItemSlot): Array<Item> {
-		let items = Object.values(this.items);
-		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		return items;
-	}
-
-	getEnchants(slot: ItemSlot): Array<Enchant> {
-		return this.enchantsBySlot[slot] || [];
-	}
-
-	getGems(socketColor?: GemColor): Array<Gem> {
-		let gems = Object.values(this.gems);
-		if (socketColor) {
-			gems = gems.filter(gem => gemEligibleForSocket(gem, socketColor));
-		}
-		return gems;
-	}
-
-	getMatchingGems(socketColor: GemColor): Array<Gem> {
-		return Object.values(this.gems).filter(gem => gemMatchesSocket(gem, socketColor));
-	}
-
-	getPresetEncounter(path: string): PresetEncounter | null {
-		return this.presetEncounters[path] || null;
-	}
-	getPresetTarget(path: string): PresetTarget | null {
-		return this.presetTargets[path] || null;
-	}
-	getAllPresetEncounters(): Array<PresetEncounter> {
-		return Object.values(this.presetEncounters);
-	}
-	getAllPresetTargets(): Array<PresetTarget> {
-		return Object.values(this.presetTargets);
-	}
-
 	getPhase(): number {
 		return this.phase;
 	}
@@ -487,50 +436,6 @@ export class Sim {
 			this.iterations = newIterations;
 			this.iterationsChangeEmitter.emit(eventID);
 		}
-	}
-
-	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
-		const item = this.items[itemSpec.id];
-		if (!item)
-			return null;
-
-		let enchant: Enchant | null = null;
-		if (itemSpec.enchant) {
-			const slots = getEligibleItemSlots(item);
-			for (let i = 0; i < slots.length; i++) {
-				enchant = (this.enchantsBySlot[slots[i]] || [])
-						.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
-				if (enchant) {
-					break;
-				}
-			}
-		}
-
-		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
-
-		return new EquippedItem(item, enchant, gems);
-	}
-
-	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {
-		// EquipmentSpec is supposed to be indexed by slot, but here we assume
-		// it isn't just in case.
-		const gearMap: Partial<Record<ItemSlot, EquippedItem | null>> = {};
-
-		equipSpec.items.forEach(itemSpec => {
-			const item = this.lookupItemSpec(itemSpec);
-			if (!item)
-				return;
-
-			const itemSlots = getEligibleItemSlots(item.item);
-
-			const assignedSlot = itemSlots.find(slot => !gearMap[slot]);
-			if (assignedSlot == null)
-				throw new Error('No slots left to equip ' + Item.toJsonString(item.item));
-
-			gearMap[assignedSlot] = item;
-		});
-
-		return new Gear(gearMap);
 	}
 
 	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);

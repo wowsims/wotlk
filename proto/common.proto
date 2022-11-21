@@ -628,6 +628,15 @@ message Encounter {
 	repeated Target targets = 6;
 }
 
+message PresetTarget {
+	string path = 1;
+	Target target = 2;
+}
+message PresetEncounter {
+	string path = 1;
+	repeated PresetTarget targets = 2;
+}
+
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;
@@ -638,17 +647,16 @@ message EquipmentSpec {
 	repeated ItemSpec items = 1;
 }
 
-message Item {
+message SimDatabase {
+	repeated SimItem items = 1;
+	repeated SimEnchant enchants = 2;
+	repeated SimGem gems = 3;
+}
+
+// Contains only the Item info needed by the sim.
+message SimItem {
 	int32 id = 1;
-	// This is unused by most items. For most items we set id to the
-	// wowhead/in-game ID directly. For random enchant items though we need to
-	// use unique hardcoded IDs so this field holds the wowhead ID instead.
-	int32 wowhead_id = 16;
-
 	string name = 2;
-
-	// Classes that are allowed to use the item. Empty indicates no special class restrictions.
-	repeated Class class_allowlist = 15;
 
 	ItemType type = 3;
 	ArmorType armor_type = 4;
@@ -660,17 +668,11 @@ message Item {
 	repeated GemColor gem_sockets = 9;
 	repeated double socketBonus = 10;
 
-	// Weapon stats, needed for computing proper EP for melee weapons
-	double weapon_damage_min = 17;
-	double weapon_damage_max = 18;
-	double weapon_speed = 19;
+	double weapon_damage_min = 11;
+	double weapon_damage_max = 12;
+	double weapon_speed = 13;
 
-	int32 phase = 11;
-	ItemQuality quality = 12;
-	bool unique = 13;
-	int32 ilvl = 20;
-	Profession required_profession = 21;
-	bool heroic = 22;
+	string set_name = 14;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when
@@ -680,43 +682,23 @@ enum EnchantType {
 	EnchantTypeTwoHand = 1;
 	EnchantTypeShield = 2;
 	EnchantTypeKit = 3;
+	EnchantTypeStaff = 4;
 }
 
-message Enchant {
-	// All enchants have an effect ID. Some also have an item ID, others have a spell ID,
-	// and yet others have both item and spell IDs. No single ID alone is not enough
-	// to uniquely identify an enchant. Uniqueness requires either effect ID + slot, or
-	// effect ID + item/spell ID.
-	int32 effect_id = 2; // ID of the effect.
-	int32 item_id = 1;   // ID of the enchant "item". Might be 0 if not available.
-	int32 spell_id = 10; // ID of the enchant "spell". Might be 0 if not available.
-
-	string name = 3;     
-
-	ItemType type = 4;   // Which type of item this enchant can be applied to.
-	EnchantType enchant_type = 9;
-
-	repeated double stats = 7;
-
-	ItemQuality quality = 8;
-	int32 phase = 11;
-	Profession required_profession = 13;
-
-	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
-	repeated Class class_allowlist = 12;
+// Contains only the Enchant info needed by the sim.
+message SimEnchant {
+	int32 effect_id = 1;
+	string name = 2;     
+	ItemType type = 3;
+	repeated double stats = 4;
 }
 
-message Gem {
+// Contains only the Gem info needed by the sim.
+message SimGem {
 	int32 id = 1;
 	string name = 2;
-
-	repeated double stats = 3;
-	GemColor color = 4;
-
-	int32 phase = 5;
-	ItemQuality quality = 6;
-	bool unique = 7;
-	Profession required_profession = 8;
+	GemColor color = 3;
+	repeated double stats = 4;
 }
 
 message RaidTarget {
@@ -789,12 +771,8 @@ message Cooldowns {
 message HealingModel {
 	// Healing per second to apply.
 	double hps = 1;
-
 	// How often healing is applied.
 	double cadence_seconds = 2;
-
-	
-	
 	double inspiration_uptime = 3;
 }
 

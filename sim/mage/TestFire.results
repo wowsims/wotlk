@@ -456,6 +456,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-TheTwinBladesofAzzinoth"
+ value: {
+  dps: 4553.54793
+  tps: 4090.52712
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-ThunderingSkyflareDiamond"
  value: {
   dps: 5481.34365
@@ -514,22 +521,22 @@ dps_results: {
 dps_results: {
  key: "TestFire-Average-Default"
  value: {
-  dps: 5746.2592
-  tps: 5147.67811
+  dps: 5746.00994
+  tps: 5147.41397
  }
 }
 dps_results: {
  key: "TestFire-Settings-Troll-P1Fire-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 17570.10925
-  tps: 20374.35138
+  dps: 17567.56382
+  tps: 20372.24914
  }
 }
 dps_results: {
  key: "TestFire-Settings-Troll-P1Fire-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1728.84969
-  tps: 1604.33208
+  dps: 1728.76796
+  tps: 1604.25709
  }
 }
 dps_results: {

@@ -1,7 +1,7 @@
 package balance
 
 import (
-	"github.com/wowsims/wotlk/sim/core/items"
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -67,6 +67,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			IsInsideEclipseThreshold: 15.0,
 			UseSmartCooldowns:        true,
 			MaximizeIsUptime:         true,
+			PlayerLatency:            200,
 		},
 	},
 }
@@ -83,7 +84,7 @@ var PlayerOptionsAOE = &proto.Player_BalanceDruid{
 	},
 }
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 40467,
 		"enchant": 3820,

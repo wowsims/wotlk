@@ -2,7 +2,6 @@ package rogue
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/items"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -358,7 +357,7 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
 }
 
-var PreRaidGear = items.EquipmentSpecFromJsonString(`{"items": [
+var PreRaidGear = core.EquipmentSpecFromJsonString(`{"items": [
     {
       "id": 42550,
       "enchant": 3817,
@@ -445,7 +444,7 @@ var PreRaidGear = items.EquipmentSpecFromJsonString(`{"items": [
     }
   ]}`)
 
-var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
     {
       "id": 40499,
       "enchant": 3817,
@@ -536,7 +535,7 @@ var P1Gear = items.EquipmentSpecFromJsonString(`{"items": [
       "id": 40385
     }
   ]}`)
-var GearWithoutRED = items.EquipmentSpecFromJsonString(`{"items": [
+var GearWithoutRED = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 	  "id": 37293,
 	  "enchant": 3817,
@@ -623,7 +622,7 @@ var GearWithoutRED = items.EquipmentSpecFromJsonString(`{"items": [
 	  "id": 37191
 	}
   ]}`)
-var GearWithRED = items.EquipmentSpecFromJsonString(`{"items": [
+var GearWithRED = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 	  "id": 37293,
 	  "enchant": 3817,
@@ -710,7 +709,7 @@ var GearWithRED = items.EquipmentSpecFromJsonString(`{"items": [
 	  "id": 37191
 	}
   ]}`)
-var MutilateP1Gear = items.EquipmentSpecFromJsonString(`{"items": [
+var MutilateP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{
 		"id": 29044,
 		"enchant": 3003,
