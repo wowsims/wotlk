@@ -296,7 +296,7 @@ func (shaman *Shaman) setupProcTrackers() {
 	snapshotManager.AddProc(40255, "Dying Curse Proc", false)
 	snapshotManager.AddProc(40682, "Sundial of the Exiled Proc", false)
 	snapshotManager.AddProc(37660, "Forge Ember Proc", false)
-	snapshotManager.AddProc(45518, "Flare of the Heavens  Proc", false)
+	snapshotManager.AddProc(45518, "Flare of the Heavens Proc", false)
 	snapshotManager.AddProc(54572, "Charred Twilight Scale Proc", false)
 	snapshotManager.AddProc(54588, "Charred Twilight Scale H Proc", false)
 	snapshotManager.AddProc(47213, "Abyssal Rune Proc", false)
