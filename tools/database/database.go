@@ -8,7 +8,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	_ "github.com/wowsims/wotlk/sim/encounters" // Needed for preset encounters.
 	"github.com/wowsims/wotlk/tools"
 	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
@@ -29,70 +28,25 @@ func EnchantToDBKey(enchant *proto.UIEnchant) EnchantDBKey {
 }
 
 type WowDatabase struct {
-	items    map[int32]*proto.UIItem
-	enchants map[EnchantDBKey]*proto.UIEnchant
-	gems     map[int32]*proto.UIGem
+	Items    map[int32]*proto.UIItem
+	Enchants map[EnchantDBKey]*proto.UIEnchant
+	Gems     map[int32]*proto.UIGem
 
-	itemIcons  map[int32]*proto.IconData
-	spellIcons map[int32]*proto.IconData
+	ItemIcons  map[int32]*proto.IconData
+	SpellIcons map[int32]*proto.IconData
 
-	encounters []*proto.PresetEncounter
+	Encounters []*proto.PresetEncounter
 }
 
-func NewWowDatabase(itemOverrides []*proto.UIItem, gemOverrides []*proto.UIGem, enchantOverrides []*proto.UIEnchant, itemTooltipsDB map[int32]WowheadItemResponse, spellTooltipsDB map[int32]WowheadItemResponse) *WowDatabase {
-	db := &WowDatabase{
-		items:    make(map[int32]*proto.UIItem),
-		enchants: make(map[EnchantDBKey]*proto.UIEnchant),
-		gems:     make(map[int32]*proto.UIGem),
+func NewWowDatabase() *WowDatabase {
+	return &WowDatabase{
+		Items:    make(map[int32]*proto.UIItem),
+		Enchants: make(map[EnchantDBKey]*proto.UIEnchant),
+		Gems:     make(map[int32]*proto.UIGem),
 
-		itemIcons:  make(map[int32]*proto.IconData),
-		spellIcons: make(map[int32]*proto.IconData),
-		encounters: core.PresetEncounters,
+		ItemIcons:  make(map[int32]*proto.IconData),
+		SpellIcons: make(map[int32]*proto.IconData),
 	}
-
-	for id, response := range itemTooltipsDB {
-		if response.IsEquippable() {
-			itemProto := response.ToItemProto()
-			itemProto.Id = id
-			db.items[itemProto.Id] = itemProto
-		}
-	}
-
-	for id, response := range itemTooltipsDB {
-		if response.IsGem() {
-			gemProto := response.ToGemProto()
-			gemProto.Id = id
-			db.gems[gemProto.Id] = gemProto
-		}
-	}
-
-	db.MergeItems(itemOverrides)
-	db.MergeGems(gemOverrides)
-	db.MergeEnchants(enchantOverrides)
-
-	for _, enchant := range db.enchants {
-		if enchant.ItemId != 0 {
-			if tooltip, ok := itemTooltipsDB[enchant.ItemId]; ok {
-				db.itemIcons[enchant.ItemId] = &proto.IconData{Id: enchant.ItemId, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
-			}
-		}
-		if enchant.SpellId != 0 {
-			if tooltip, ok := spellTooltipsDB[enchant.SpellId]; ok {
-				db.spellIcons[enchant.SpellId] = &proto.IconData{Id: enchant.SpellId, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
-			}
-		}
-	}
-
-	for _, itemID := range extraItemIcons {
-		if tooltip, ok := itemTooltipsDB[itemID]; ok {
-			db.itemIcons[itemID] = &proto.IconData{Id: itemID, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
-		}
-		//if item, ok := db.items[itemID]; ok {
-		//	db.itemIcons[itemID] = &proto.IconData{Id: itemID, Name: item.Name, Icon: item.Icon}
-		//}
-	}
-
-	return db
 }
 
 func (db *WowDatabase) MergeItems(arr []*proto.UIItem) {
@@ -100,24 +54,21 @@ func (db *WowDatabase) MergeItems(arr []*proto.UIItem) {
 		db.MergeItem(item)
 	}
 }
-func (db *WowDatabase) MergeItem(newItem *proto.UIItem) {
-	if curItem, ok := db.items[newItem.Id]; ok {
-		mergeItemProtos(curItem, newItem)
+func (db *WowDatabase) MergeItem(src *proto.UIItem) {
+	if dst, ok := db.Items[src.Id]; ok {
+		// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+		if src.Stats != nil {
+			dst.Stats = src.Stats
+			src.Stats = nil
+		}
+		if src.SocketBonus != nil {
+			dst.SocketBonus = src.SocketBonus
+			src.SocketBonus = nil
+		}
+		googleProto.Merge(dst, src)
 	} else {
-		db.items[newItem.Id] = newItem
+		db.Items[src.Id] = src
 	}
-}
-func mergeItemProtos(dst, src *proto.UIItem) {
-	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
-	if src.Stats != nil {
-		dst.Stats = src.Stats
-		src.Stats = nil
-	}
-	if src.SocketBonus != nil {
-		dst.SocketBonus = src.SocketBonus
-		src.SocketBonus = nil
-	}
-	googleProto.Merge(dst, src)
 }
 
 func (db *WowDatabase) MergeEnchants(arr []*proto.UIEnchant) {
@@ -125,21 +76,18 @@ func (db *WowDatabase) MergeEnchants(arr []*proto.UIEnchant) {
 		db.MergeEnchant(enchant)
 	}
 }
-func (db *WowDatabase) MergeEnchant(newEnchant *proto.UIEnchant) {
-	key := EnchantToDBKey(newEnchant)
-	if curEnchant, ok := db.enchants[key]; ok {
-		mergeEnchantProtos(curEnchant, newEnchant)
+func (db *WowDatabase) MergeEnchant(src *proto.UIEnchant) {
+	key := EnchantToDBKey(src)
+	if dst, ok := db.Enchants[key]; ok {
+		// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+		if src.Stats != nil {
+			dst.Stats = src.Stats
+			src.Stats = nil
+		}
+		googleProto.Merge(dst, src)
 	} else {
-		db.enchants[key] = newEnchant
+		db.Enchants[key] = src
 	}
-}
-func mergeEnchantProtos(dst, src *proto.UIEnchant) {
-	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
-	if src.Stats != nil {
-		dst.Stats = src.Stats
-		src.Stats = nil
-	}
-	googleProto.Merge(dst, src)
 }
 
 func (db *WowDatabase) MergeGems(arr []*proto.UIGem) {
@@ -147,25 +95,38 @@ func (db *WowDatabase) MergeGems(arr []*proto.UIGem) {
 		db.MergeGem(gem)
 	}
 }
-func (db *WowDatabase) MergeGem(newGem *proto.UIGem) {
-	if curGem, ok := db.gems[newGem.Id]; ok {
-		mergeGemProtos(curGem, newGem)
+func (db *WowDatabase) MergeGem(src *proto.UIGem) {
+	if dst, ok := db.Gems[src.Id]; ok {
+		// googleproto.Merge concatenates lists but we want replacement, so do them manually.
+		if src.Stats != nil {
+			dst.Stats = src.Stats
+			src.Stats = nil
+		}
+		googleProto.Merge(dst, src)
 	} else {
-		db.gems[newGem.Id] = newGem
+		db.Gems[src.Id] = src
 	}
 }
-func mergeGemProtos(dst, src *proto.UIGem) {
-	// googleproto.Merge concatenates lists but we want replacement, so do them manually.
-	if src.Stats != nil {
-		dst.Stats = src.Stats
-		src.Stats = nil
+
+func (db *WowDatabase) AddItemIcon(id int32, tooltips map[int32]WowheadItemResponse) {
+	if tooltip, ok := tooltips[id]; ok {
+		db.ItemIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
+	} else {
+		panic(fmt.Sprintf("No item tooltip with id %s", id))
 	}
-	googleProto.Merge(dst, src)
+}
+
+func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResponse) {
+	if tooltip, ok := tooltips[id]; ok {
+		db.SpellIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
+	} else {
+		panic(fmt.Sprintf("No spell tooltip with id %s", id))
+	}
 }
 
 // Filters out entities which shouldn't be included anywhere.
 func (db *WowDatabase) ApplyGlobalFilters() {
-	db.items = core.FilterMap(db.items, func(_ int32, item *proto.UIItem) bool {
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
 		if _, ok := itemDenyList[item.Id]; ok {
 			return false
 		}
@@ -178,7 +139,7 @@ func (db *WowDatabase) ApplyGlobalFilters() {
 		return true
 	})
 
-	db.gems = core.FilterMap(db.gems, func(_ int32, gem *proto.UIGem) bool {
+	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
 		if _, ok := gemDenyList[gem.Id]; ok {
 			return false
 		}
@@ -191,17 +152,17 @@ func (db *WowDatabase) ApplyGlobalFilters() {
 		return true
 	})
 
-	db.itemIcons = core.FilterMap(db.itemIcons, func(_ int32, icon *proto.IconData) bool {
+	db.ItemIcons = core.FilterMap(db.ItemIcons, func(_ int32, icon *proto.IconData) bool {
 		return icon.Name != "" && icon.Icon != ""
 	})
-	db.spellIcons = core.FilterMap(db.spellIcons, func(_ int32, icon *proto.IconData) bool {
+	db.SpellIcons = core.FilterMap(db.SpellIcons, func(_ int32, icon *proto.IconData) bool {
 		return icon.Name != "" && icon.Icon != ""
 	})
 }
 
-// Returns only items which are worth including in the sim.
-func (db *WowDatabase) getSimmableItems() map[int32]*proto.UIItem {
-	return core.FilterMap(db.items, func(_ int32, item *proto.UIItem) bool {
+// Filters out entities which shouldn't be included in the sim.
+func (db *WowDatabase) ApplySimmableFilters() {
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
 		if _, ok := itemAllowList[item.Id]; ok {
 			return true
 		}
@@ -229,11 +190,8 @@ func (db *WowDatabase) getSimmableItems() map[int32]*proto.UIItem {
 
 		return true
 	})
-}
 
-// Returns only gems which are worth including in the sim.
-func (db *WowDatabase) getSimmableGems() map[int32]*proto.UIGem {
-	return core.FilterMap(db.gems, func(id int32, gem *proto.UIGem) bool {
+	db.Gems = core.FilterMap(db.Gems, func(id int32, gem *proto.UIGem) bool {
 		if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
 			return false
 		}
@@ -241,51 +199,51 @@ func (db *WowDatabase) getSimmableGems() map[int32]*proto.UIGem {
 	})
 }
 
-func (db *WowDatabase) toUIDatabase() *proto.UIDatabase {
-	uiDB := &proto.UIDatabase{
-		Encounters: db.encounters,
+func (db *WowDatabase) toUIProto() *proto.UIDatabase {
+	uidb := &proto.UIDatabase{
+		Encounters: db.Encounters,
 	}
 
-	for _, v := range db.getSimmableItems() {
-		uiDB.Items = append(uiDB.Items, v)
+	for _, v := range db.Items {
+		uidb.Items = append(uidb.Items, v)
 	}
-	for _, v := range db.getSimmableGems() {
-		uiDB.Gems = append(uiDB.Gems, v)
+	for _, v := range db.Gems {
+		uidb.Gems = append(uidb.Gems, v)
 	}
-	for _, v := range db.enchants {
-		uiDB.Enchants = append(uiDB.Enchants, v)
+	for _, v := range db.Enchants {
+		uidb.Enchants = append(uidb.Enchants, v)
 	}
-	for _, v := range db.itemIcons {
-		uiDB.ItemIcons = append(uiDB.ItemIcons, v)
+	for _, v := range db.ItemIcons {
+		uidb.ItemIcons = append(uidb.ItemIcons, v)
 	}
-	for _, v := range db.spellIcons {
-		uiDB.SpellIcons = append(uiDB.SpellIcons, v)
+	for _, v := range db.SpellIcons {
+		uidb.SpellIcons = append(uidb.SpellIcons, v)
 	}
 
-	slices.SortStableFunc(uiDB.Items, func(v1, v2 *proto.UIItem) bool {
+	slices.SortStableFunc(uidb.Items, func(v1, v2 *proto.UIItem) bool {
 		return v1.Id < v2.Id
 	})
-	slices.SortStableFunc(uiDB.Enchants, func(v1, v2 *proto.UIEnchant) bool {
+	slices.SortStableFunc(uidb.Enchants, func(v1, v2 *proto.UIEnchant) bool {
 		return v1.EffectId < v2.EffectId || v1.EffectId == v2.EffectId && v1.Type < v2.Type
 	})
-	slices.SortStableFunc(uiDB.Gems, func(v1, v2 *proto.UIGem) bool {
+	slices.SortStableFunc(uidb.Gems, func(v1, v2 *proto.UIGem) bool {
 		return v1.Id < v2.Id
 	})
-	slices.SortStableFunc(uiDB.ItemIcons, func(v1, v2 *proto.IconData) bool {
+	slices.SortStableFunc(uidb.ItemIcons, func(v1, v2 *proto.IconData) bool {
 		return v1.Id < v2.Id
 	})
-	slices.SortStableFunc(uiDB.SpellIcons, func(v1, v2 *proto.IconData) bool {
+	slices.SortStableFunc(uidb.SpellIcons, func(v1, v2 *proto.IconData) bool {
 		return v1.Id < v2.Id
 	})
 
-	return uiDB
+	return uidb
 }
 
 func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
-	uiDB := db.toUIDatabase()
+	uidb := db.toUIProto()
 
 	// Write database as a binary file.
-	outbytes, err := googleProto.Marshal(uiDB)
+	outbytes, err := googleProto.Marshal(uidb)
 	if err != nil {
 		log.Fatalf("[ERROR] Failed to marshal db: %s", err.Error())
 	}
@@ -296,17 +254,17 @@ func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
 	builder := &strings.Builder{}
 	builder.WriteString("{\n")
 
-	tools.WriteProtoArrayToBuilder(uiDB.Items, builder, "items")
+	tools.WriteProtoArrayToBuilder(uidb.Items, builder, "items")
 	builder.WriteString(",\n")
-	tools.WriteProtoArrayToBuilder(uiDB.Enchants, builder, "enchants")
+	tools.WriteProtoArrayToBuilder(uidb.Enchants, builder, "enchants")
 	builder.WriteString(",\n")
-	tools.WriteProtoArrayToBuilder(uiDB.Gems, builder, "gems")
+	tools.WriteProtoArrayToBuilder(uidb.Gems, builder, "gems")
 	builder.WriteString(",\n")
-	tools.WriteProtoArrayToBuilder(uiDB.ItemIcons, builder, "itemIcons")
+	tools.WriteProtoArrayToBuilder(uidb.ItemIcons, builder, "itemIcons")
 	builder.WriteString(",\n")
-	tools.WriteProtoArrayToBuilder(uiDB.SpellIcons, builder, "spellIcons")
+	tools.WriteProtoArrayToBuilder(uidb.SpellIcons, builder, "spellIcons")
 	builder.WriteString(",\n")
-	tools.WriteProtoArrayToBuilder(uiDB.Encounters, builder, "encounters")
+	tools.WriteProtoArrayToBuilder(uidb.Encounters, builder, "encounters")
 	builder.WriteString("\n")
 
 	builder.WriteString("}")

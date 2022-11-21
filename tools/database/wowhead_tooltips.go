@@ -26,7 +26,7 @@ func (wtm *WowheadTooltipManager) Read() map[int32]WowheadItemResponse {
 func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
-			FilePath: filePath,
+			FilePath:   filePath,
 			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%d",
 		},
 	}
@@ -35,7 +35,7 @@ func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 func NewWowheadSpellTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
-			FilePath: filePath,
+			FilePath:   filePath,
 			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/spell/%d",
 		},
 	}
@@ -586,6 +586,7 @@ func (item WowheadItemResponse) IsGem() bool {
 func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 	weaponDamageMin, weaponDamageMax := item.GetWeaponDamage()
 	return &proto.UIItem{
+		Id:   item.ID,
 		Name: item.GetName(),
 		Icon: item.GetIcon(),
 
@@ -616,6 +617,7 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 }
 func (item WowheadItemResponse) ToGemProto() *proto.UIGem {
 	return &proto.UIGem{
+		Id:    item.ID,
 		Name:  item.GetName(),
 		Icon:  item.GetIcon(),
 		Color: item.GetSocketColor(),

@@ -230,7 +230,7 @@ var itemDenyList = map[int32]struct{}{
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.
-var extraItemIcons = []int32{
+var ExtraItemIcons = []int32{
 	// Pet foods
 	33874,
 	43005,
