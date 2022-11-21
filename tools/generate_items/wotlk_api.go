@@ -160,33 +160,23 @@ func (item WotlkItemResponse) GetClassAllowlist() []proto.Class {
 	return allowlist
 }
 
-func (item WotlkItemResponse) IsEquippable() bool {
-	found := false
-	for _, pattern := range requiredEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			found = true
-		}
-	}
-	if !found {
-		return false
-	}
-
-	for _, pattern := range nonEquippableRegexes {
-		if pattern.MatchString(item.Tooltip) {
-			return false
-		}
-	}
-
-	return true
-}
-
 func (item WotlkItemResponse) IsPattern() bool {
-	for _, pattern := range nonEquippableRegexes {
+	for _, pattern := range patternRegexes {
 		if pattern.MatchString(item.Tooltip) {
 			return true
 		}
 	}
 	return false
+}
+
+func (item WotlkItemResponse) IsRandomEnchant() bool {
+	return randomEnchantRegex.MatchString(item.Tooltip)
+}
+
+func (item WotlkItemResponse) IsEquippable() bool {
+	return item.GetItemType() != proto.ItemType_ItemTypeUnknown &&
+		!item.IsPattern() &&
+		!item.IsRandomEnchant()
 }
 
 var wotlkItemLevelRegex = regexp.MustCompile("Item Level ([0-9]+)<")
@@ -225,7 +215,7 @@ func (item WotlkItemResponse) GetItemType() proto.ItemType {
 			return itemType
 		}
 	}
-	panic("Could not find item type from tooltip: " + item.Tooltip)
+	return proto.ItemType_ItemTypeUnknown
 }
 
 var wotlkArmorTypePatterns = map[proto.ArmorType]*regexp.Regexp{
