@@ -16,34 +16,34 @@ func (prot *ProtectionPaladin) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-//nolint:unused
-func (prot *ProtectionPaladin) nextCDAt(sim *core.Simulation) time.Duration {
-	nextCDAt := core.MinDuration(prot.HolyShield.ReadyAt(), prot.JudgementOfWisdom.ReadyAt())
-	nextCDAt = core.MinDuration(nextCDAt, prot.Consecration.ReadyAt())
-	return nextCDAt
-}
-
 func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
 	target := prot.CurrentTarget
-
-	nextSwingAt := prot.AutoAttacks.NextAttackAt()
+	
 	isExecutePhase := sim.IsExecutePhase20()
 
 	// Forced CD remaining on HotR/ShoR to cast the other. Can't be exactly 3sec or lusted consecration GCDs will desync us.
 	gapSlack := time.Millisecond * 4000
+
+	// Allowed time to wait for HotR/ShoR to come off cooldown so we can cast them on cooldown and maintain 969.
+	maxWait := time.Duration(prot.Rotation.WaitSlack) * time.Millisecond
+
+	// Helper vars since we call these repeatedly in many cases
+	nextHammer := prot.HammerOfTheRighteous.TimeToReady(sim)
+	nextShield := prot.ShieldOfRighteousness.TimeToReady(sim)
 
 	if prot.GCD.IsReady(sim) {
 
 		if !prot.Rotation.UseCustomPrio {
 
 			// Standard rotation. Enforce 6sec CDs to have 1 GCD between, filling with 9sec abilities.
+			// HammerFirst flag flips ShoR and HotR in the rotation prio order
 			if prot.Rotation.HammerFirst && prot.HammerOfTheRighteous.IsReady(sim) {
 				// Always cast HotR if ready
 				prot.HammerOfTheRighteous.Cast(sim, target)
 			} else if prot.Rotation.HammerFirst &&
 				prot.ShieldOfRighteousness.IsReady(sim) &&
-				(prot.HammerOfTheRighteous.TimeToReady(sim) < gapSlack) {
+				(nextHammer < gapSlack) {
 				// Cast ShoR if ready but only if you've spent a global since HotR
 				prot.ShieldOfRighteousness.Cast(sim, target)
 			} else if !prot.Rotation.HammerFirst && prot.ShieldOfRighteousness.IsReady(sim) {
@@ -51,9 +51,19 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 				prot.ShieldOfRighteousness.Cast(sim, target)
 			} else if !prot.Rotation.HammerFirst &&
 				prot.HammerOfTheRighteous.IsReady(sim) &&
-				(prot.ShieldOfRighteousness.TimeToReady(sim) < gapSlack) {
+				(nextShield < gapSlack) {
 				// Cast HotR if ready but only if you've spent a global since ShoR
 				prot.HammerOfTheRighteous.Cast(sim, target)
+
+			// Maximum WaitSlack checking here to see if we should delay casting anything else because it will clip our 6
+			// This callback method is probably inefficient, TODO perf improvement
+			} else if (nextHammer < maxWait) && (nextShield < gapSlack-maxWait) {
+				if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds())) }
+				prot.waitUntilNextEvent(sim, prot.customRotation)
+			} else if (nextShield < maxWait)  && (nextHammer < gapSlack-maxWait) {
+				if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds())) }
+				prot.waitUntilNextEvent(sim, prot.customRotation)
+				
 			} else if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
 				// TODO: Prio may depend on gear; consider Glyph behavior
 				prot.HammerOfWrath.Cast(sim, target)
@@ -108,8 +118,12 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 						break rotationLoop
 					}
 				case int32(proto.ProtectionPaladin_Rotation_ShieldOfRighteousness):
-					if prot.ShieldOfRighteousness.IsReady(sim) && (prot.HammerOfTheRighteous.TimeToReady(sim) < gapSlack) {
+					if prot.ShieldOfRighteousness.IsReady(sim) && (nextHammer < gapSlack) {
 						prot.ShieldOfRighteousness.Cast(sim, target)
+						break rotationLoop
+					} else if (nextShield < maxWait) && (nextHammer < gapSlack-maxWait) {
+						if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds())) }
+						prot.waitUntilNextEvent(sim, prot.customRotation)
 						break rotationLoop
 					}
 				case int32(proto.ProtectionPaladin_Rotation_AvengersShield):
@@ -118,8 +132,12 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 						break rotationLoop
 					}
 				case int32(proto.ProtectionPaladin_Rotation_HammerOfTheRighteous):
-					if prot.HammerOfTheRighteous.IsReady(sim) && (prot.ShieldOfRighteousness.TimeToReady(sim) < gapSlack) {
+					if prot.HammerOfTheRighteous.IsReady(sim) && (nextShield < gapSlack) {
 						prot.HammerOfTheRighteous.Cast(sim, target)
+						break rotationLoop
+					} else if (nextHammer < maxWait && (nextShield < gapSlack-maxWait)) {
+						if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds())) }
+						prot.waitUntilNextEvent(sim, prot.customRotation)
 						break rotationLoop
 					}
 				case int32(proto.ProtectionPaladin_Rotation_HolyShield):
@@ -134,9 +152,18 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 
 	}
 
+	prot.waitUntilNextEvent(sim, prot.customRotation)
+
+}
+
+// Helper function for finding the next event
+func (prot *ProtectionPaladin) waitUntilNextEvent(sim *core.Simulation, rotationCallback func(*core.Simulation)) {
+	// Find the minimum possible next event that is greater than the current time
+	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
+
 	// All possible next events
 	events := []time.Duration{
-		nextSwingAt,
+		prot.AutoAttacks.NextAttackAt(),
 		prot.GCD.ReadyAt(),
 		prot.JudgementOfWisdom.ReadyAt(),
 		prot.HammerOfWrath.ReadyAt(),
@@ -149,14 +176,6 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 		prot.HolyShield.ReadyAt(),
 	}
 
-	prot.waitUntilNextEvent(sim, events, prot.customRotation)
-
-}
-
-// Helper function for finding the next event
-func (prot *ProtectionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration, rotationCallback func(*core.Simulation)) {
-	// Find the minimum possible next event that is greater than the current time
-	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
 	for _, elem := range events {
 		if elem > sim.CurrentTime && elem < nextEventAt {
 			nextEventAt = elem

@@ -66,6 +66,14 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 
+		// "Dispelling" eclipse effects before casting if needed
+		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 && rotation.UseMf {
+			lunarIsActive = false
+		}
+		if float64(solarUptime-moonkin.Wrath.CurCast.CastTime) <= 0 && rotation.UseIs {
+			solarIsActive = false
+		}
+
 		if lunarIsActive {
 			lunarIsActive = lunarUptime < (moonkin.LunarEclipseProcAura.Duration - playerLatency)
 			fishingForSolar = false
@@ -73,14 +81,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		if solarIsActive {
 			solarIsActive = solarUptime < (moonkin.SolarEclipseProcAura.Duration - playerLatency)
 			fishingForLunar = false
-		}
-
-		// "Dispelling" eclipse effects before casting if needed
-		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 && rotation.UseMf {
-			lunarIsActive = false
-		}
-		if float64(solarUptime-moonkin.Wrath.CurCast.CastTime) <= 0 && rotation.UseIs {
-			solarIsActive = false
 		}
 
 		// Eclipse
