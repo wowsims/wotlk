@@ -10,6 +10,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+const CryingWind int32 = 45270
+
 func (druid *Druid) registerInsectSwarmSpell() {
 	actionID := core.ActionID{SpellID: 48468}
 	baseCost := 0.08 * druid.BaseMana
@@ -17,6 +19,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
+	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == CryingWind, 396, 0)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -66,7 +69,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		TickLength:    time.Second * 2,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = 215 + 0.2*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage = 215 + (0.2 * (dot.Spell.SpellPower() + idolSpellPower))
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
