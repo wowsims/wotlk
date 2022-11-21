@@ -38,12 +38,17 @@ export const ProtectionPaladinRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
 			fieldName: 'hammerFirst',
 			label: 'Open with HotR',
-			labelTooltip: 'Open with Hammer of the Righteous instead of Shield of Righteousness. Recommended for AoE.',
+			labelTooltip: 'Open with Hammer of the Righteous instead of Shield of Righteousness in the standard rotation. Recommended for AoE.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
 			fieldName: 'squeezeHolyWrath',
 			label: 'Squeeze Holy Wrath',
-			labelTooltip: 'Squeeze a Holy Wrath cast during sufficiently hasted GCDs (Bloodlust)',
+			labelTooltip: 'Squeeze a Holy Wrath cast during sufficiently hasted GCDs (Bloodlust) in the standard rotation.',
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecProtectionPaladin>({
+			fieldName: 'waitSlack',
+			label: 'Max Wait Time (ms)',
+			labelTooltip: 'Maximum time in milliseconds to prioritize waiting for next Hammer/Shield to maintain 969. Affects standard and custom priority.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecProtectionPaladin>({
 			fieldName: 'useCustomPrio',
