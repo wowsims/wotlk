@@ -230,6 +230,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			timeUntilSwing := enh.AutoAttacks.NextAttackAt() - sim.CurrentTime
 			if timeUntilSwing <= time.Millisecond*time.Duration(rotation.options.DelayGcdWeave) && timeUntilSwing != 0 {
 				delay := enh.AutoAttacks.NextAttackAt() + time.Millisecond*100
+				if delay < sim.CurrentTime {
+					delay = sim.CurrentTime + time.Millisecond*100
+				}
+
 				enh.HardcastWaitUntil(sim, delay, func(_ *core.Simulation, _ *core.Unit) {
 					enh.GCD.Reset()
 					enh.CastLightningBoltWeave(sim, 0)
