@@ -288,8 +288,14 @@ legend {
 .nav-tabs {
 	font-size: clamp(10px, 1.5vw, 15px);
 
+	.nav-item:not(:first-child):not(:last-child) {
+		.nav-link {
+			margin-left: .1vw;
+			margin-right: .1vw
+		};
+	}
+
 	.nav-link {
-		margin: .1vh .1vw;
 		border-radius: 0;
 		color: var(--main-text-color) !important;
 		font-weight: 700;

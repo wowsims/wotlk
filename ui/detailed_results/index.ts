@@ -65,99 +65,101 @@ Chart.defaults.color = colorSettings.mainTextColor;
 
 const layoutHTML = `
 <div class="dr-root">
-	<ul class="dr-toolbar nav nav-tabs" role="tablist">
-		<li class="results-filter"></li>
-		<li class="tabs-filler"></li>
-		<li class="nav-item dr-tab-tab damage-metrics" role="presentation">
-			<a
-				class="nav-link active"
-				data-bs-toggle="tab"
-				data-bs-target="#damageTab"
-				type="button"
-				role="tab"
-				aria-controls="damageTab"
-				aria-selected="true"
-			>DAMAGE</a>
-		</li>
-		<li class="nav-item dr-tab-tab healing-metrics" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#healingTab"
-				type="button"
-				role="tab"
-				aria-controls="healingTab"
-				aria-selected="false"
-			>HEALING</a>
-		</li>
-		<li class="nav-item dr-tab-tab threat-metrics" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#damageTakenTab"
-				type="button"
-				role="tab"
-				aria-controls="damageTakenTab"
-				aria-selected="false"
-			>DAMAGE TAKEN</a>
-		</li>
-		<li class="nav-item dr-tab-tab" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#buffsTab"
-				type="button"
-				role="tab"
-				aria-controls="buffsTab"
-				aria-selected="false"
-			>BUFFS</a>
-		</li>
-		<li class="nav-item dr-tab-tab" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#debuffsTab"
-				type="button"
-				role="tab"
-				aria-controls="debuffsTab"
-				aria-selected="false"
-			>DEBUFFS</a>
-		</li>
-		<li class="nav-item dr-tab-tab" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#castsTab"
-				type="button"
-				role="tab"
-				aria-controls="castsTab"
-				aria-selected="false"
-			>CASTS</a>
-		</li>
-		<li class="nav-item dr-tab-tab" role="presentation">
-			<a
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#resourcesTab"
-				type="button"
-				role="tab"
-				aria-controls="resourcesTab"
-				aria-selected="false"
-			>RESOURCES</a>
-		</li>
-		<li class="nav-item dr-tab-tab" role="presentation">
-			<a
-				id="timelineTabTab"
-				class="nav-link"
-				data-bs-toggle="tab"
-				data-bs-target="#timelineTab"
-				type="button"
-				role="tab"
-				aria-controls="timelineTab"
-				aria-selected="false"
-			>TIMELINE</a>
-		</li>
-	</ul>
+	<div class="dr-toolbar">
+		<div class="results-filter"></div>
+		<div class="tabs-filler"></div>
+		<ul class="dr-toolbar nav nav-tabs" role="tablist">
+			<li class="nav-item dr-tab-tab damage-metrics" role="presentation">
+				<a
+					class="nav-link active"
+					data-bs-toggle="tab"
+					data-bs-target="#damageTab"
+					type="button"
+					role="tab"
+					aria-controls="damageTab"
+					aria-selected="true"
+				>DAMAGE</a>
+			</li>
+			<li class="nav-item dr-tab-tab healing-metrics" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#healingTab"
+					type="button"
+					role="tab"
+					aria-controls="healingTab"
+					aria-selected="false"
+				>HEALING</a>
+			</li>
+			<li class="nav-item dr-tab-tab threat-metrics" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#damageTakenTab"
+					type="button"
+					role="tab"
+					aria-controls="damageTakenTab"
+					aria-selected="false"
+				>DAMAGE TAKEN</a>
+			</li>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#buffsTab"
+					type="button"
+					role="tab"
+					aria-controls="buffsTab"
+					aria-selected="false"
+				>BUFFS</a>
+			</li>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#debuffsTab"
+					type="button"
+					role="tab"
+					aria-controls="debuffsTab"
+					aria-selected="false"
+				>DEBUFFS</a>
+			</li>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#castsTab"
+					type="button"
+					role="tab"
+					aria-controls="castsTab"
+					aria-selected="false"
+				>CASTS</a>
+			</li>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#resourcesTab"
+					type="button"
+					role="tab"
+					aria-controls="resourcesTab"
+					aria-selected="false"
+				>RESOURCES</a>
+			</li>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					id="timelineTabTab"
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#timelineTab"
+					type="button"
+					role="tab"
+					aria-controls="timelineTab"
+					aria-selected="false"
+				>TIMELINE</a>
+			</li>
+		</ul>
+	</div>
 	<div class="tab-content">
 		<div id="damageTab" class="tab-pane dr-tab-content damage-content fade active show">
 			<div class="dr-row topline-results">

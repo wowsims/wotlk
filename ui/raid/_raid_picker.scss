@@ -13,11 +13,12 @@
 }
 
 .party-picker-root {
-	margin: 15px;
+	margin-right: var(--bs-gap);
+	margin-bottom: var(--bs-gap);
 }
 
 .party-header, .player-picker-root {
-	margin: 3px;
+	margin: 3px 0;
 }
 
 .party-header {
@@ -145,8 +146,10 @@
 }
 
 .new-player-picker {
+	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
+	margin-top: calc(var(--bs-gap) / -2);
+	margin-right: calc(-1 * var(--bs-gap));
 	background: var(--sidebar-bg-color);
-	padding: 5px;
 }
 
 .new-player-picker-controls {

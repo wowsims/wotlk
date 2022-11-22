@@ -58,22 +58,11 @@ body.new-tab {
 }
 
 .dr-toolbar {
-	border-bottom: 0;
-}
+	display: flex;
 
-.nav-tabs {
-	border-bottom-color: var(--theme-color-primary);
-	color: var(--main-text-color);
-}
-.nav-tabs>li>a {
-	color: var(--main-text-color) !important;
-	border: none !important;
-	border-radius: 0 !important;
-	margin: 0.1vh 0.1vw 0.1vh 0.1vw;
-	font-weight: bold;
-}
-.nav-tabs>li>a:hover, .nav-tabs>li.active>a {
-	background-color: var(--theme-color-primary) !important;
+	.nav-tabs {
+		border-bottom: 0;
+	}
 }
 
 .results-filter {
