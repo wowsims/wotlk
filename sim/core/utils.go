@@ -183,6 +183,25 @@ func WithinToleranceFloat64(expectedValue float64, actualValue float64, toleranc
 	return actualValue >= (expectedValue-tolerance) && actualValue <= (expectedValue+tolerance)
 }
 
+// Returns a new slice by applying f to each element in src.
+func MapSlice[I any, O any](src []I, f func(I) O) []O {
+	dst := make([]O, len(src))
+	for i, e := range src {
+		dst[i] = f(e)
+	}
+	return dst
+}
+
+// Returns a new map by applying f to each key/value pair in src.
+func MapMap[KI comparable, VI any, KO comparable, VO any](src map[KI]VI, f func(KI, VI) (KO, VO)) map[KO]VO {
+	dst := make(map[KO]VO)
+	for ki, vi := range src {
+		ko, vo := f(ki, vi)
+		dst[ko] = vo
+	}
+	return dst
+}
+
 // Returns a new slice containing only the elements for which f returns true.
 func FilterSlice[T any](src []T, f func(T) bool) []T {
 	var dst []T

@@ -169,9 +169,8 @@ sim/core/proto/api.pb.go: proto/*.proto
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go
 
-sim/core/items/all_items.go: tools/generate_items/*.go $(call rwildcard,sim/core/proto,*.go)
-	go run tools/generate_items/*.go -outDir=sim/core/items
-	gofmt -w ./sim/core/items
+sim/core/items/all_items.go: $(call rwildcard,tools/database,*.go) $(call rwildcard,sim/core/proto,*.go)
+	go run tools/database/gen_db/*.go -outDir=./assets
 
 .PHONY: test
 test: $(OUT_DIR)/lib.wasm binary_dist/dist.go
