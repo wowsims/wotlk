@@ -241,33 +241,46 @@ export abstract class SimUI extends Component {
 	addTab(title: string, cssClass: string, innerHTML: string) {
 		const simTabsContainer = this.rootElem.getElementsByClassName('sim-tabs')[0] as HTMLElement;
 		const simTabContentsContainer = this.rootElem.getElementsByClassName('tab-content')[0] as HTMLElement;
-		const topBar = simTabsContainer.getElementsByClassName('sim-top-bar')[0] as HTMLElement;
+		const toolbars = simTabsContainer.getElementsByClassName('sim-toolbar')[0] as HTMLElement;
 
 		const contentId = cssClass.replace(/\s+/g, '-') + '-tab';
-		const isFirstTab = simTabsContainer.children.length == 1;
+		const isFirstTab = simTabsContainer.children.length == 0;
 
-		const newTab = document.createElement('li');
-		newTab.innerHTML = `<a data-toggle="tab" href="#${contentId}">${title}</a>`;
-		newTab.classList.add(cssClass + '-tab');
+		const listItemFragment = document.createElement('fragment');
+		listItemFragment.innerHTML = `
+			<li class="${cssClass}-tab nav-item" role="presentation">
+				<a
+					class="nav-link ${isFirstTab ? 'active' : ''}"
+					data-bs-toggle="tab"
+					data-bs-target="#${contentId}"
+					type="button"
+					role="tab"
+					aria-controls="${contentId}"
+					aria-selected="${isFirstTab}"
+				>${title}</a>
+			</li>
+		`;
 
-		const newContent = document.createElement('div');
-		newContent.id = contentId;
-		newContent.classList.add(cssClass, 'tab-pane', 'fade');
-		newContent.innerHTML = innerHTML;
+		const tabFragment = document.createElement('fragment');
+		tabFragment.innerHTML = `
+			<div
+				id="${contentId}"
+				class="tab-pane fade ${isFirstTab ? 'active show' : ''}"
+			>${innerHTML}</div>
+		`;
 
-		if (isFirstTab) {
-			newTab.classList.add('active');
-			newContent.classList.add('active', 'in');
-		}
-
-		simTabsContainer.insertBefore(newTab, topBar);
-		simTabContentsContainer.appendChild(newContent);
+		simTabsContainer.appendChild(listItemFragment.children[0] as HTMLElement);
+		simTabContentsContainer.appendChild(tabFragment.children[0] as HTMLElement);
 	}
 
 	addToolbarItem(elem: HTMLElement) {
-		const topBar = this.rootElem.getElementsByClassName('sim-top-bar')[0] as HTMLElement;
-		elem.classList.add('sim-top-bar-item');
-		topBar.appendChild(elem);
+		const toolbar = this.rootElem.getElementsByClassName('sim-toolbar')[0] as HTMLElement;
+		const toolbarItem = document.createElement('div');
+
+		toolbarItem.appendChild(elem);
+		toolbarItem.classList.add('sim-toolbar-item');
+
+		toolbar.appendChild(toolbarItem);
 	}
 
 	private updateWarnings() {
@@ -379,24 +392,29 @@ export abstract class SimUI extends Component {
 
 const simHTML = `
 <div class="sim-root">
-  <section class="sim-sidebar">
+  <aside class="sim-sidebar">
     <div class="sim-sidebar-title"></div>
     <div class="sim-sidebar-actions within-raid-sim-hide"></div>
     <div class="sim-sidebar-results within-raid-sim-hide"></div>
     <div class="sim-sidebar-footer"></div>
-  </section>
-  <section class="sim-main">
-		<div class="sim-toolbar">
-			<ul class="sim-tabs nav nav-tabs">
-				<li class="sim-top-bar">
+  </aside>
+  <div class="sim-main">
+		<header class="sim-header">
+			<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
+			<div class="sim-toolbar">
+				<div class="sim-toolbar-item">
 					<span class="notices fas fa-exclamation-circle"></span>
+				</div>
+				<div class="sim-toolbar-item">
 					<span class="warnings fa fa-exclamation-triangle"></span>
+				</div>
+				<div class="sim-toolbar-item">
 					<div class="known-issues">Known Issues</div>
-				</li>
-			</ul>
-    </div>
-    <div class="tab-content">
-    </div>
+				</div>
+			</div>
+    </header>
+    <main class="tab-content">
+    </main>
   </section>
 </div>
 `;

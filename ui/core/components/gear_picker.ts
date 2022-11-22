@@ -434,7 +434,7 @@ class SelectorModal extends Popup {
 		const tabElem = document.createElement('li');
 		this.tabsElem.appendChild(tabElem);
 		const tabContentId = (label + '-tab').split(' ').join('');
-		tabElem.innerHTML = `<a class="selector-modal-item-tab" data-toggle="tab" href="#${tabContentId}"></a>`;
+		tabElem.innerHTML = `<a class="selector-modal-item-tab" data-bs-toggle="tab" href="#${tabContentId}"></a>`;
 
 		const tabAnchor = tabElem.getElementsByClassName('selector-modal-item-tab')[0] as HTMLAnchorElement;
 		tabAnchor.dataset.label = label;

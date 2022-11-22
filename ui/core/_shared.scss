@@ -1,5 +1,9 @@
 :root {
-	--theme-color-primary: DarkSlateGrey;
+	--bs-body-bg: black;
+	--bs-body-color: white;
+	--bs-body-font-size: 14px;
+	--bs-gap: 1vw;
+	--theme-color-primary: black;
 	--theme-color-background: DarkSlateGrey;
 	--theme-color-background-raw: 0, 0, 0;
 	--theme-background-image: linear-gradient(black, black);
@@ -257,4 +261,23 @@ $sim-transitions: .2s ease-in;
 	height: 49px;
 	width: 49px;
 	display: block;
+}
+
+input, select {
+	color: var(--main-text-color);
+	background-color: #1e2633;
+	border: 1px solid #373e58;
+	padding: 3px;
+}
+
+.dropdown-item {
+	color: var(--main-text-color);
+
+	&:hover {
+		color: var(--main-text-color);
+	}
+}
+
+.tab-pane {
+	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
 }

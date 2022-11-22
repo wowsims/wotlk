@@ -21,8 +21,8 @@ export function newRaidImporters(simUI: RaidSimUI): HTMLElement {
 	const importSettings = document.createElement('div');
 	importSettings.classList.add('import-settings', 'sim-dropdown-menu');
 	importSettings.innerHTML = `
-		<span id='importMenuLink' class='dropdown-toggle fas fa-file-import' role='button' data-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
-		<div class='dropdown-menu dropdown-menu-right' aria-labelledby='importMenuLink'>
+		<span id='importMenuLink' class='dropdown-toggle fas fa-file-import' role='button' data-bs-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
+		<div class='dropdown-menu dropdown-menu-end' aria-labelledby='importMenuLink'>
 		</div>
 	`;
 	const linkElem = importSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
@@ -50,8 +50,8 @@ export function newRaidExporters(simUI: RaidSimUI): HTMLElement {
 	const exportSettings = document.createElement('div');
 	exportSettings.classList.add('export-settings', 'sim-dropdown-menu');
 	exportSettings.innerHTML = `
-		<span id='exportMenuLink' class='dropdown-toggle fas fa-file-export' role='button' data-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
-		<div class='dropdown-menu dropdown-menu-right' aria-labelledby='exportMenuLink'>
+		<span id='exportMenuLink' class='dropdown-toggle fas fa-file-export' role='button' data-bs-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
+		<div class='dropdown-menu dropdown-menu-end' aria-labelledby='exportMenuLink'>
 		</div>
 	`;
 	const linkElem = exportSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;

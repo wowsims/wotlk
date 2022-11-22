@@ -23,8 +23,8 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 	const exportSettings = document.createElement('div');
 	exportSettings.classList.add('export-settings', 'sim-dropdown-menu');
 	exportSettings.innerHTML = `
-		<span id="exportMenuLink" class="dropdown-toggle fas fa-file-export" role="button" data-toggle="dropdown" aria-haspopup="true" arai-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
+		<span id="exportMenuLink" class="dropdown-toggle fas fa-file-export" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="exportMenuLink">
 		</div>
 	`;
 	const linkElem = exportSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;

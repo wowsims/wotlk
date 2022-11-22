@@ -22,8 +22,8 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 	const importSettings = document.createElement('div');
 	importSettings.classList.add('import-settings', 'sim-dropdown-menu');
 	importSettings.innerHTML = `
-		<span id="importMenuLink" class="dropdown-toggle fas fa-file-import" role="button" data-toggle="dropdown" aria-haspopup="true" arai-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-right" aria-labelledby="importMenuLink">
+		<span id="importMenuLink" class="dropdown-toggle fas fa-file-import" role="button" data-bs-toggle="dropdown" aria-haspopup="true" arai-expanded="false"></span>
+		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="importMenuLink">
 		</div>
 	`;
 	const linkElem = importSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
