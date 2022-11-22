@@ -62,7 +62,7 @@ func main() {
 
 	output, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(finalResult)
 	if err != nil {
-		log.Fatalf("faield to marshal final results: %s", err)
+		log.Fatalf("failed to marshal final results: %s", err)
 	}
 
 	err = os.WriteFile(*outfile, output, 0666)
