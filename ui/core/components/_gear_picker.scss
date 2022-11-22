@@ -64,7 +64,6 @@
 	color: white;
 }
 .item-picker-name:hover {
-	text-decoration: none;
 	color: white;
 }
 
@@ -75,27 +74,26 @@
 }
 .item-picker-enchant:hover {
   color: lawngreen;
-  text-decoration: none;
   cursor: pointer;
 }
 
-.selector-modal {
-}
-
-.selector-modal-tab-content-header {
-  margin: 5px;
-	display: flex;
-	align-items: center;
-}
-
-.selector-modal-remove-button {
+.selector-modal-tab-content {
+  .selector-modal-tab-pane {
+    padding: 0;
+  
+    .selector-modal-tab-content-header {
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .selector-modal-tab-gem-icon {
   @include wowhead-background-icon;
   width: 35px;
   height: 35px;
-	margin: 5px 20px;
+  background-size: 35px !important;
 }
 
 .selector-modal-tab-gem-icon:hover, li.active>.selector-modal-tab-gem-icon {
@@ -177,7 +175,6 @@
 
 .selector-modal-list-item-name {
   font-size: 18px;
-  text-decoration: none !important;
   cursor: pointer;
   margin-left: 10px;
 	letter-spacing: normal;

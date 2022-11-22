@@ -192,10 +192,6 @@ $sim-transitions: .2s ease-in;
 	display: grid !important;
 }
 
-.dropdown-option-container:hover {
-	text-decoration: none;
-}
-
 .dropdown-option-container {
 	background-color: gray;
 }
@@ -264,7 +260,11 @@ $sim-transitions: .2s ease-in;
 	display: block;
 }
 
-input, select {
+a {
+	text-decoration: none;
+}
+
+input, select, .sim-input {
 	color: var(--main-text-color);
 	background-color: #1e2633;
 	border: 1px solid #373e58;
@@ -286,6 +286,7 @@ legend {
 }
 
 .nav-tabs {
+	align-items: flex-end;
 	font-size: clamp(10px, 1.5vw, 15px);
 
 	.nav-item:not(:first-child):not(:last-child) {
@@ -296,6 +297,7 @@ legend {
 	}
 
 	.nav-link {
+		margin-bottom: 0;
 		border-radius: 0;
 		color: var(--main-text-color) !important;
 		font-weight: 700;

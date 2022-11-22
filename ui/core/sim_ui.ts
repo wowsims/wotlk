@@ -246,8 +246,8 @@ export abstract class SimUI extends Component {
 		const contentId = cssClass.replace(/\s+/g, '-') + '-tab';
 		const isFirstTab = simTabsContainer.children.length == 0;
 
-		const listItemFragment = document.createElement('fragment');
-		listItemFragment.innerHTML = `
+		const tabFragment = document.createElement('fragment');
+		tabFragment.innerHTML = `
 			<li class="${cssClass}-tab nav-item" role="presentation">
 				<a
 					class="nav-link ${isFirstTab ? 'active' : ''}"
@@ -261,16 +261,16 @@ export abstract class SimUI extends Component {
 			</li>
 		`;
 
-		const tabFragment = document.createElement('fragment');
-		tabFragment.innerHTML = `
+		const tabContentFragment = document.createElement('fragment');
+		tabContentFragment.innerHTML = `
 			<div
 				id="${contentId}"
 				class="tab-pane fade ${isFirstTab ? 'active show' : ''}"
 			>${innerHTML}</div>
 		`;
 
-		simTabsContainer.appendChild(listItemFragment.children[0] as HTMLElement);
-		simTabContentsContainer.appendChild(tabFragment.children[0] as HTMLElement);
+		simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
+		simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
 	}
 
 	addToolbarItem(elem: HTMLElement) {
