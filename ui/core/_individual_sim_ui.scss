@@ -60,9 +60,7 @@
 .left-gear-panel {
   min-width: calc(550px + 2vw);
   flex: 3;
-  padding-left: 1vw;
-  padding-right: 1vw;
-  padding-top: 1vh;
+  padding-right: var(--bs-gap);
 }
 @media only screen and (max-width: calc(800px + 1vw)) {
   .left-gear-panel {
@@ -72,6 +70,7 @@
 
 .right-gear-panel {
   text-align: center;
+  padding-left: var(--bs-gap);
   border-left: 3px solid var(--main-text-color);
   position: relative;
   flex: 1.25;
@@ -131,6 +130,7 @@
   border: 2px solid var(--main-text-color);
   padding: 4px;
   margin: 5px;
+  background: var(--bg-dark-transparent);
 	display: grid;
 	transform: none !important;
 }
@@ -240,14 +240,16 @@
   text-align: right;
 }
 
-.talents-tab {
+.player-pet-toggle {
+	display: none;
+
+  &.active {
+    display: flex;
+    justify-content: center;
+    margin-bottom: calc(var(--bs-gap) / 2);
+  }
 }
 
-.player-pet-toggle {
-	display: flex;
-	justify-content: center;
-	padding: 10px;
-}
 .player-pet-toggle > * {
 	margin: 0 10px;
 }

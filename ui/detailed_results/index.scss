@@ -46,10 +46,11 @@ body.new-tab {
 }
 
 .dr-root > .tab-content {
+	border: 1px solid white;
+	background: var(--bg-dark-transparent);
 	flex-grow: 1;
 	height: 100%;
 	overflow: auto;
-	padding: 10px 0px 0 10px;
 }
 
 .table-container {
@@ -58,22 +59,10 @@ body.new-tab {
 
 .dr-toolbar {
 	display: flex;
-	background-color: #1112187d;
-}
 
-.nav-tabs {
-	border-bottom-color: var(--theme-color-primary);
-	color: var(--main-text-color);
-}
-.nav-tabs>li>a {
-	color: var(--main-text-color) !important;
-	border: none !important;
-	border-radius: 0 !important;
-	margin: 0.1vh 0.1vw 0.1vh 0.1vw;
-	font-weight: bold;
-}
-.nav-tabs>li>a:hover, .nav-tabs>li.active>a {
-	background-color: var(--theme-color-primary) !important;
+	.nav-tabs {
+		border-bottom: 0;
+	}
 }
 
 .results-filter {
@@ -92,13 +81,6 @@ body.new-tab {
 .other-metrics {
 	display: flex;
 	width: 100%;
-}
-
-.topline-results {
-}
-
-.damage-content {
-	padding-right: 10px;
 }
 
 .metrics-table {

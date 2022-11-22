@@ -1,5 +1,9 @@
 :root {
-	--theme-color-primary: DarkSlateGrey;
+	--bs-body-bg: black;
+	--bs-body-color: white;
+	--bs-body-font-size: 14px;
+	--bs-gap: 1vw;
+	--theme-color-primary: black;
 	--theme-color-background: DarkSlateGrey;
 	--theme-color-background-raw: 0, 0, 0;
 	--theme-background-image: linear-gradient(black, black);
@@ -10,6 +14,7 @@
 	--sidebar-bg-color: DarkKhaki;
 	--sidebar-text-color: White;
 	--sidebar-highlight-color: Blue;
+	--bg-dark-transparent: #1112187d;
 }
 
 .hide {
@@ -187,10 +192,6 @@ $sim-transitions: .2s ease-in;
 	display: grid !important;
 }
 
-.dropdown-option-container:hover {
-	text-decoration: none;
-}
-
 .dropdown-option-container {
 	background-color: gray;
 }
@@ -257,4 +258,57 @@ $sim-transitions: .2s ease-in;
 	height: 49px;
 	width: 49px;
 	display: block;
+}
+
+a {
+	text-decoration: none;
+}
+
+input, select, .sim-input {
+	color: var(--main-text-color);
+	background-color: #1e2633;
+	border: 1px solid #373e58;
+	padding: 3px;
+}
+
+// Override Bootstrap styling to keep inline with fieldset border
+legend {
+	float: none;
+	width: auto;
+}
+
+.dropdown-item {
+	color: var(--main-text-color);
+
+	&:hover {
+		color: var(--main-text-color);
+	}
+}
+
+.nav-tabs {
+	align-items: flex-end;
+	font-size: clamp(10px, 1.5vw, 15px);
+
+	.nav-item:not(:first-child):not(:last-child) {
+		.nav-link {
+			margin-left: .1vw;
+			margin-right: .1vw
+		};
+	}
+
+	.nav-link {
+		margin-bottom: 0;
+		border-radius: 0;
+		color: var(--main-text-color) !important;
+		font-weight: 700;
+
+		&:hover, &.active {
+			background-color: var(--theme-color-primary);
+			border-color: var(--theme-color-primary);
+		}
+	}
+}
+
+.tab-pane {
+	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
 }

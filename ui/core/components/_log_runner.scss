@@ -5,14 +5,13 @@
 }
 
 .log-runner-control-bar {
-}
-
-.log-runner-button {
-	margin: 5px;
-	color: black;
+	margin-bottom: calc(var(--bs-gap) / 2);
 }
 
 .log-runner-logs {
+	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
+	border: 1px solid white;
+	background-color: var(--bg-dark-transparent);
 	overflow-y: scroll;
 	flex-grow: 1;
 }

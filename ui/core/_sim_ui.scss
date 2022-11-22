@@ -1,7 +1,6 @@
 @import "./components/close_button";
 @import "./components/number_picker";
 @import "./components/title";
-@import "./shared";
 
 html {
 	overflow: hidden;
@@ -15,20 +14,6 @@ td, th {
   padding: auto;
 }
 
-input, select {
-	color: var(--main-text-color);
-	background-color: #1e2633;
-	border: 1px solid #373e58;
-	padding: 3px;
-}
-
-.sim-input {
-	color: var(--main-text-color);
-	background-color: #1e2633;
-	border: 1px solid #373e58;
-	padding: 3px;
-}
-
 .sim-root {
   height: 100%;
   display: flex;
@@ -36,33 +21,8 @@ input, select {
   overflow-y: auto;
 }
 
-.sim-sidebar {
-  height: 100%;
-  min-width: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: #111218;
-  flex: 1;
-  overflow-y: auto;
-}
-
 .sim-sidebar>div {
   margin: 10px 0;
-}
-
-.sim-sidebar-title {
-	margin: 0 0 50px 0 !important;
-}
-
-.sim-sidebar-title, .sim-toolbar {
-	min-height: 60px;
-	border-bottom: 1px solid white;
-	display: flex;
-}
-
-.sim-title-root {
-	width: 100%;
 }
 
 .sim-sidebar-actions {
@@ -146,24 +106,10 @@ input, select {
   overflow-y: auto;
   flex: 4;
   min-width: calc(275px + 1vw);
-}
 
-.nav-tabs {
-	padding-left: 40px;
-	padding-top: 15px;
-	border-bottom-color: var(--theme-color-primary);
-	color: var(--main-text-color);
-	font-size: clamp(10px, 1.5vw, 15px);
-}
-.nav-tabs>li>a {
-	color: var(--main-text-color) !important;
-	border: none !important;
-	border-radius: 0 !important;
-	margin: 0.1vh 0.1vw 0.1vh 0.1vw;
-	font-weight: bold;
-}
-.nav-tabs>li>a:hover, .nav-tabs>li.active>a {
-	background-color: var(--theme-color-primary) !important;
+	.tab-pane {
+		overflow-y: auto;
+	}
 }
 
 .sim-main > .tab-content {
@@ -174,29 +120,56 @@ input, select {
 	height: 100%;
 }
 
-.sim-toolbar {
+.sim-sidebar {
+  height: 100%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #111218;
+  flex: 1;
+	overflow-y: auto;
+
+	.sim-sidebar-title {
+		margin: 0 0 50px 0 !important;
+	}
+}
+
+.sim-sidebar-title, .sim-header {
+	height: 60px;
+	border-bottom: 1px solid white;
+}
+
+.sim-header {
+	padding: 0 var(--bs-gap);
 	display: flex;
-	align-items: flex-end;
+	justify-content: space-between;
 	background-color: #1112187d;
-}
 
-.sim-tabs {
-	padding-top: 0;
-	width: 100%;
-	border: none;
-}
+	.sim-tabs, .sim-toolbar {
+		flex-direction: row;
+	}
 
-.sim-top-bar {
-	float: right !important;
-	display: flex !important;
-	align-items: center !important;
-	margin-right: 10px;
-}
+	.sim-tabs {
+		padding-top: var(--bs-gap);
+		border-bottom: 0;
+	}
 
-.sim-top-bar-item {
-	cursor: pointer;
-	font-size: clamp(12px, 2vw, 20px);
-	margin-right: 12px;
+	.sim-toolbar {
+		display: flex;
+		align-items: center;
+		font-size: clamp(12px, 2vw, 20px);
+
+		.sim-toolbar-item {
+			margin-left: var(--bs-gap);
+			display: flex;
+			cursor: pointer;
+
+			.dropdown-toggle::after {
+				content: none;
+			}
+		}
+	}
 }
 
 .sim-dropdown-menu {
@@ -207,7 +180,6 @@ input, select {
 	border: 1px solid var(--theme-color-primary);
 	text-align: right;
 	min-width: auto;
-	color: white;
 	font-weight: bold;
 	top: 120%;
 }
@@ -246,7 +218,6 @@ input, select {
 	background-color: red;
 	border: 2px solid var(--main-text-color);
 	padding: 2px;
-	margin: 0 10px;
 	font-size: 14px;
 	font-weight: 900;
 }
