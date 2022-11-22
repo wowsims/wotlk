@@ -94,6 +94,13 @@ func (dk *Deathknight) RotationActionCallback_FS(sim *core.Simulation, target *c
 	return -1
 }
 
+func (dk *Deathknight) RotationActionCallback_HB(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	dk.HowlingBlast.Cast(sim, target)
+
+	s.Advance()
+	return -1
+}
+
 func (dk *Deathknight) RotationActionCallback_Pesti(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.Pestilence.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)

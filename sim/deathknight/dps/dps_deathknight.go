@@ -145,7 +145,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 	dk.CustomRotation = dk.makeCustomRotation()
 	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
-		if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() > dk.FrostPointsInUnholy()) {
+		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) && (dk.Talents.FrigidDreadplate == 0) {
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				if dk.Rotation.DesyncRotation {
 					dk.setupFrostSubBloodDesyncERWOpener()
@@ -155,11 +155,12 @@ func (dk *DpsDeathknight) SetupRotations() {
 			} else {
 				dk.setupFrostSubBloodNoERWOpener()
 			}
-		} else if dk.Talents.HowlingBlast && (dk.FrostPointsInBlood() <= dk.FrostPointsInUnholy()) {
+		} else if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 2) && (dk.Talents.FrigidDreadplate == 0) {
 			dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				dk.setupFrostSubUnholyERWOpener()
 			} else {
+				panic("you can't unh sub without ERW in the opener...yet")
 				dk.setupFrostSubUnholyERWOpener()
 			}
 		} else if dk.Talents.SummonGargoyle {
