@@ -34,16 +34,7 @@
   </body>
   <!-- Load wowhead scripts after done loading everything else -->
   <script>const whTooltips = {colorLinks: true};</script>
-  <!--<script src="https://wow.zamimg.com/js/tooltips.js"></script>-->
-  <script>
-    $.getScript("https://wow.zamimg.com/js/tooltips.js")
-    .done(function(script, status) {
-      // Workaround for WH.PageMeta.restrictedDataEnvs not being set on external sites.
-      // https://wow.zamimg.com/widgets/power/demo.html should be checked in future to see
-      // if wowhead has resolved this issue.
-      WH.PageMeta.restrictedDataEnvs = []
-    }).fail((j, s, e) => console.log("Failed to load tooltips."));
-  </script>
+  <script src="https://wow.zamimg.com/js/tooltips.js"></script>
 	<!--<script>const aowow_tooltips = {colorlinks: true}</script>
 	<script type="text/javascript" src="https://wotlk.evowow.com/static/widgets/power.js"></script>-->
 </html>
