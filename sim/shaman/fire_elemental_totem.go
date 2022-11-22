@@ -59,8 +59,23 @@ func (shaman *Shaman) registerFireElementalTotem() {
 	})
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell:    shaman.FireElementalTotem,
-		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
-		Type:     core.CooldownTypeDPS,
+		Spell: shaman.FireElementalTotem,
+		Type:  core.CooldownTypeUnknown,
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			success := shaman.fireElementalSnapShot.CanSnapShot(sim, shaman.SpellGCD()+50*time.Millisecond)
+
+			if (sim.Encounter.Duration <= 120*time.Second && sim.CurrentTime >= 10*time.Second) || (sim.Encounter.Duration > 120*time.Second && sim.CurrentTime >= 20*time.Second) {
+				success = true
+			}
+
+			if success {
+				shaman.castFireElemental = true
+				shaman.fireElementalSnapShot.ActivateMajorCooldowns(sim)
+				shaman.fireElementalSnapShot.ResetProcTrackers()
+				shaman.castFireElemental = false
+			}
+
+			return success
+		},
 	})
 }

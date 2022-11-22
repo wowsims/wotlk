@@ -1,8 +1,9 @@
 package core
 
 import (
-	"golang.org/x/exp/slices"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -246,6 +247,26 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
 				mcd.timings = append(mcd.timings, delay)
+			}
+		}
+	})
+}
+
+// Adds a delay to the first usage of all CDs overriding shouldActivate for cooldownTypeDPS,
+// MCDs that have a user-specified timing are not delayed.
+// This function should be called from Agent.Init().
+func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
+	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
+		return
+	}
+
+	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
+		for i := range mcdm.initialMajorCooldowns {
+			mcd := &mcdm.initialMajorCooldowns[i]
+			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
+				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
+					return sim.CurrentTime >= delay
+				}
 			}
 		}
 	})

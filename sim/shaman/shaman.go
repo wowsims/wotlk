@@ -106,8 +106,10 @@ type Shaman struct {
 	FeralSpirit  *core.Spell
 	SpiritWolves *SpiritWolves
 
-	FireElemental      *FireElemental
-	FireElementalTotem *core.Spell
+	castFireElemental     bool
+	FireElemental         *FireElemental
+	FireElementalTotem    *core.Spell
+	fireElementalSnapShot *core.SnapshotManager
 
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
@@ -223,12 +225,22 @@ func (shaman *Shaman) Initialize() {
 
 	shaman.registerBloodlustCD()
 
+	if shaman.Totems.UseFireElemental {
+		shaman.fireElementalSnapShot = core.NewSnapshotManager(shaman.GetCharacter())
+		shaman.setupProcTrackers()
+	}
+
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
 }
 
 func (shaman *Shaman) Reset(sim *core.Simulation) {
+	if shaman.Totems.UseFireElemental {
+		shaman.setupFireElementalCooldowns()
+		shaman.castFireElemental = false
+	}
+
 	// Check to see if we are casting a totem to set its expire time.
 	for i := range shaman.NextTotemDrops {
 		shaman.NextTotemDrops[i] = core.NeverExpires
@@ -263,6 +275,94 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 	}
 
 	shaman.FlameShock.CD.Reset()
+}
+
+func (shaman *Shaman) setupProcTrackers() {
+	snapshotManager := shaman.fireElementalSnapShot
+
+	snapshotManager.AddProc(40212, "Potion of Wild Magic", true)
+	snapshotManager.AddProc(33697, "Blood Fury", true)
+	snapshotManager.AddProc(59620, "Berserking MH Proc", false)
+	snapshotManager.AddProc(59620, "Berserking OH Proc", false)
+
+	//AP Ring Procs
+	snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
+	snapshotManager.AddProc(50401, "Ashen Band of Unmatched Vengeance Proc", false)
+	snapshotManager.AddProc(50402, "Ashen Band of Endless Vengeance Proc", false)
+	snapshotManager.AddProc(52571, "Ashen Band of Unmatched Might Proc", false)
+	snapshotManager.AddProc(52572, "Ashen Band of Endless Might Proc", false)
+
+	//SP Trinket Procs
+	snapshotManager.AddProc(40255, "Dying Curse Proc", false)
+	snapshotManager.AddProc(40682, "Sundial of the Exiled Proc", false)
+	snapshotManager.AddProc(37660, "Forge Ember Proc", false)
+	snapshotManager.AddProc(45518, "Flare of the Heavens Proc", false)
+	snapshotManager.AddProc(54572, "Charred Twilight Scale Proc", false)
+	snapshotManager.AddProc(54588, "Charred Twilight Scale H Proc", false)
+	snapshotManager.AddProc(47213, "Abyssal Rune Proc", false)
+
+	//AP Trinket Procs
+	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)
+	snapshotManager.AddProc(45522, "Blood of the Old God Proc", false)
+	snapshotManager.AddProc(40767, "Sonic Booster Proc", false)
+	snapshotManager.AddProc(44914, "Anvil of Titans Proc", false)
+	snapshotManager.AddProc(45286, "Pyrite Infuser Proc", false)
+	snapshotManager.AddProc(47214, "Banner of Victory Proc", false)
+	snapshotManager.AddProc(49074, "Coren's Chromium Coaster Proc", false)
+	snapshotManager.AddProc(50342, "Whispering Fanged Skull Proc", false)
+	snapshotManager.AddProc(50343, "Whispering Fanged Skull H Proc", false)
+	snapshotManager.AddProc(54569, "Sharpened Twilight Scale Proc", false)
+	snapshotManager.AddProc(54590, "Sharpened Twilight Scale H Proc", false)
+	snapshotManager.AddProc(47115, "Deaths Verdict Agility Proc", false)
+	snapshotManager.AddProc(47131, "Deaths Verdict H Agility Proc", false)
+	snapshotManager.AddProc(47303, "Deaths Choice Agility Proc", false)
+	snapshotManager.AddProc(47464, "Deaths Choice H Agility Proc", false)
+	snapshotManager.AddProc(71492, "Deathbringer's Will Strength Proc", false)
+	snapshotManager.AddProc(71561, "Deathbringer's Will H Strength Proc", false)
+	snapshotManager.AddProc(71492, "Deathbringer's Will Agility Proc", false)
+	snapshotManager.AddProc(71561, "Deathbringer's Will H Agility Proc", false)
+	snapshotManager.AddProc(71492, "Deathbringer's Will AP Proc", false)
+	snapshotManager.AddProc(71561, "Deathbringer's Will H AP Proc", false)
+}
+
+func (shaman *Shaman) setupFireElementalCooldowns() {
+	shaman.fireElementalSnapShot.ClearMajorCooldowns()
+
+	// blood fury (orc)
+	shaman.fireElementalCooldownSync(core.ActionID{SpellID: 33697}, false)
+
+	// potion of Wild Magic
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 40212}, true)
+
+	//active sp trinkets
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 37873}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 45148}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 48724}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 50357}, false)
+
+	// active ap trinkets
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 35937}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 36871}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 37166}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 37556}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 37557}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 38080}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 38081}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 38761}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 39257}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 45263}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 46086}, false)
+	shaman.fireElementalCooldownSync(core.ActionID{ItemID: 47734}, false)
+}
+
+func (shaman *Shaman) fireElementalCooldownSync(actionID core.ActionID, isPotion bool) {
+	if majorCd := shaman.Character.GetMajorCooldown(actionID); majorCd != nil {
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			return shaman.castFireElemental || (shaman.FireElementalTotem.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || shaman.FireElementalTotem.CD.ReadyAt() > shaman.Env.Encounter.Duration
+		}
+
+		shaman.fireElementalSnapShot.AddMajorCooldown(majorCd)
+	}
 }
 
 func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
