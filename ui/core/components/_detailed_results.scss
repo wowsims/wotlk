@@ -4,16 +4,10 @@
 	flex-direction: column;
 }
 
-.detailed-results-controls-div {
-	background-color: #1112187d;
-}
-
 .detailed-results-new-tab-button {
-	margin: 5px;
-	color: black;
+	margin-bottom: calc(var(--bs-gap) / 2);
 }
 
 .detailed-results-iframe {
 	flex-grow: 1;
-	border: 1px solid var(--main-text-color);
 }

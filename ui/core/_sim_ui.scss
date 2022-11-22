@@ -112,10 +112,6 @@ td, th {
 	}
 }
 
-.nav-tabs>li>a:hover, .nav-tabs>li.active>a {
-	background-color: var(--theme-color-primary) !important;
-}
-
 .sim-main > .tab-content {
 	flex-grow: 1;
 	height: 80%;
@@ -157,19 +153,6 @@ td, th {
 	.sim-tabs {
 		padding-top: var(--bs-gap);
 		border-bottom: 0;
-		font-size: clamp(10px, 1.5vw, 15px);
-
-		.nav-link {
-			margin: .1vh .1vw;
-			border-radius: 0;
-			color: var(--main-text-color) !important;
-			font-weight: 700;
-
-			&:hover, &.active {
-				background-color: var(--theme-color-primary);
-				border-color: var(--theme-color-primary);
-			}
-		}
 	}
 
 	.sim-toolbar {

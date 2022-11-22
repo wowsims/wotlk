@@ -1021,23 +1021,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTalentsTab() {
 		this.addTab('TALENTS', 'talents-tab', `
-			<div class="player-pet-toggle">
-			</div>
+			<div class="player-pet-toggle"></div>
 			<div class="talents-content">
 				<div class="talents-tab-content">
-					<div class="talents-picker">
-					</div>
+					<div class="talents-picker"></div>
 					<div class="glyphs-picker">
-					<span>Glyphs</span>
+						<span>Glyphs</span>
 					</div>
 				</div>
-				<div class="saved-talents-manager">
-				</div>
+				<div class="saved-talents-manager"></div>
 			</div>
 			<div class="talents-content">
 				<div class="talents-tab-content">
-					<div class="pet-talents-picker">
-					</div>
+					<div class="pet-talents-picker"></div>
 				</div>
 			</div>
 		`);
@@ -1106,6 +1102,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				});
 				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
 				updateToggle();
+
+				toggleContainer.classList.add('active');
 			}
 		});
 	}

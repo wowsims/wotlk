@@ -130,6 +130,7 @@
   border: 2px solid var(--main-text-color);
   padding: 4px;
   margin: 5px;
+  background: var(--bg-dark-transparent);
 	display: grid;
 	transform: none !important;
 }
@@ -239,14 +240,16 @@
   text-align: right;
 }
 
-.talents-tab {
+.player-pet-toggle {
+	display: none;
+
+  &.active {
+    display: flex;
+    justify-content: center;
+    margin-bottom: calc(var(--bs-gap) / 2);
+  }
 }
 
-.player-pet-toggle {
-	display: flex;
-	justify-content: center;
-	padding: 10px;
-}
 .player-pet-toggle > * {
 	margin: 0 10px;
 }

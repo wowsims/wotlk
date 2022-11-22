@@ -14,6 +14,7 @@
 	--sidebar-bg-color: DarkKhaki;
 	--sidebar-text-color: White;
 	--sidebar-highlight-color: Blue;
+	--bg-dark-transparent: #1112187d;
 }
 
 .hide {
@@ -270,11 +271,33 @@ input, select {
 	padding: 3px;
 }
 
+// Override Bootstrap styling to keep inline with fieldset border
+legend {
+	float: none;
+	width: auto;
+}
+
 .dropdown-item {
 	color: var(--main-text-color);
 
 	&:hover {
 		color: var(--main-text-color);
+	}
+}
+
+.nav-tabs {
+	font-size: clamp(10px, 1.5vw, 15px);
+
+	.nav-link {
+		margin: .1vh .1vw;
+		border-radius: 0;
+		color: var(--main-text-color) !important;
+		font-weight: 700;
+
+		&:hover, &.active {
+			background-color: var(--theme-color-primary);
+			border-color: var(--theme-color-primary);
+		}
 	}
 }
 
