@@ -124,7 +124,7 @@ var ItemOverrides = []*proto.UIItem{
 }
 
 // Keep these sorted by item ID.
-var itemAllowList = map[int32]struct{}{
+var ItemAllowList = map[int32]struct{}{
 	11815: struct{}{}, // Hand of Justice
 	12590: struct{}{}, // Felstriker
 	15808: struct{}{}, // Fine Light Crossbow (for hunter testing).
@@ -207,7 +207,7 @@ var itemAllowList = map[int32]struct{}{
 }
 
 // Keep these sorted by item ID.
-var itemDenyList = map[int32]struct{}{
+var ItemDenyList = map[int32]struct{}{
 	17782: struct{}{}, // talisman of the binding shard
 	17783: struct{}{}, // talisman of the binding fragment
 	17802: struct{}{}, // Deprecated version of Thunderfury
@@ -348,7 +348,7 @@ var ExtraItemIcons = []int32{
 }
 
 // If any of these match the item name, don't include it.
-var denyListNameRegexes = []*regexp.Regexp{
+var DenyListNameRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`30 Epic`),
 	regexp.MustCompile(`63 Blue`),
 	regexp.MustCompile(`63 Green`),
@@ -378,7 +378,7 @@ var denyListNameRegexes = []*regexp.Regexp{
 var GemOverrides = []*proto.UIGem{
 	{Id: 33131, Stats: stats.Stats{stats.AttackPower: 32, stats.RangedAttackPower: 32}.ToFloatArray()},
 }
-var gemDenyList = map[int32]struct{}{
+var GemDenyList = map[int32]struct{}{
 	// pvp non-unique gems not in game currently.
 	32735: struct{}{},
 	35489: struct{}{},

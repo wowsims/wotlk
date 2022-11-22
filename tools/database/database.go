@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/tools"
 	"golang.org/x/exp/slices"
@@ -122,81 +121,6 @@ func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResp
 	} else {
 		panic(fmt.Sprintf("No spell tooltip with id %s", id))
 	}
-}
-
-// Filters out entities which shouldn't be included anywhere.
-func (db *WowDatabase) ApplyGlobalFilters() {
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		if _, ok := itemDenyList[item.Id]; ok {
-			return false
-		}
-
-		for _, pattern := range denyListNameRegexes {
-			if pattern.MatchString(item.Name) {
-				return false
-			}
-		}
-		return true
-	})
-
-	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
-		if _, ok := gemDenyList[gem.Id]; ok {
-			return false
-		}
-
-		for _, pattern := range denyListNameRegexes {
-			if pattern.MatchString(gem.Name) {
-				return false
-			}
-		}
-		return true
-	})
-
-	db.ItemIcons = core.FilterMap(db.ItemIcons, func(_ int32, icon *proto.IconData) bool {
-		return icon.Name != "" && icon.Icon != ""
-	})
-	db.SpellIcons = core.FilterMap(db.SpellIcons, func(_ int32, icon *proto.IconData) bool {
-		return icon.Name != "" && icon.Icon != ""
-	})
-}
-
-// Filters out entities which shouldn't be included in the sim.
-func (db *WowDatabase) ApplySimmableFilters() {
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		if _, ok := itemAllowList[item.Id]; ok {
-			return true
-		}
-
-		if item.Quality < proto.ItemQuality_ItemQualityUncommon {
-			return false
-		} else if item.Quality > proto.ItemQuality_ItemQualityLegendary {
-			return false
-		} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
-			if item.Ilvl < 145 {
-				return false
-			}
-			if item.Ilvl < 149 && item.SetName == "" {
-				return false
-			}
-		} else {
-			// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-			if item.Ilvl < 140 {
-				return false
-			}
-		}
-		if item.Ilvl == 0 {
-			fmt.Printf("Missing ilvl: %s\n", item.Name)
-		}
-
-		return true
-	})
-
-	db.Gems = core.FilterMap(db.Gems, func(id int32, gem *proto.UIGem) bool {
-		if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
-			return false
-		}
-		return true
-	})
 }
 
 func (db *WowDatabase) toUIProto() *proto.UIDatabase {

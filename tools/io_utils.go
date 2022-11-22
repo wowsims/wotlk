@@ -23,6 +23,8 @@ import (
 	googleProto "google.golang.org/protobuf/proto"
 )
 
+var readWebThreads = flag.Int("readWebThreads", 8, "number of parallel workers to fetch web pages")
+
 func ReadFileLines(filePath string) []string {
 	return readFileLinesInternal(filePath, true)
 }
@@ -155,8 +157,6 @@ func InterfaceSlice(slice interface{}) []interface{} {
 
 	return ret
 }
-
-var readWebThreads = flag.Int("readWebThreads", 8, "number of parallel workers to fetch web pages")
 
 // Fetches web results from all the given urls, and returns a parallel array of page contents.
 func ReadWebMulti(urls []string) []string {
