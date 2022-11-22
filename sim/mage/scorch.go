@@ -24,7 +24,7 @@ func (mage *Mage) registerScorchSpell() {
 		ActionID:     core.ActionID{SpellID: 42859},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | HotStreakSpells,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
