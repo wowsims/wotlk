@@ -24,6 +24,7 @@ type Druid struct {
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
+	RaidBuffTargets   int
 
 	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
@@ -33,6 +34,7 @@ type Druid struct {
 	ForceOfNature    *core.Spell
 	Hurricane        *core.Spell
 	InsectSwarm      *core.Spell
+	GiftOfTheWild    *core.Spell
 	Lacerate         *core.Spell
 	MangleBear       *core.Spell
 	MangleCat        *core.Spell
@@ -255,6 +257,7 @@ func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
 	druid.registerSwipeBearSpell()
 	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()
+	druid.registerFakeGotw()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {

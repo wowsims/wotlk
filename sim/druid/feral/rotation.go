@@ -93,11 +93,7 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 	}
 	cat.readyToShift = false
 
-	if !cat.InForm(druid.Cat | druid.Bear) {
-		panic("unsupported shift, must be in form")
-	}
-
-	toCat := cat.InForm(druid.Bear)
+	toCat := !cat.InForm(druid.Cat)
 	if powershift {
 		toCat = !toCat
 	}
@@ -113,6 +109,16 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 		cat.checkQueueMaul(sim)
 		return true
 	}
+}
+
+func (cat *FeralDruid) flowerCast(sim *core.Simulation) {
+	cat.readyToGift = false
+	cat.ClearForm(sim)
+
+	if !cat.GiftOfTheWild.Cast(sim, &cat.Unit) {
+		panic("gotw cast failed")
+	}
+	cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
 }
 
 func (cat *FeralDruid) canBite(sim *core.Simulation) bool {
@@ -186,6 +192,12 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) doRotation(sim *core.Simulation) {
+	// If previously decided to gift, then gift
+	if cat.readyToGift {
+		cat.flowerCast(sim)
+		return
+	}
+
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
@@ -286,12 +298,29 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	lacRemain := core.TernaryDuration(cat.LacerateDot.IsActive(), cat.LacerateDot.RemainingDuration(sim), time.Duration(0))
 	emergencyBearweave := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && (float64(lacRemain) < (2.5+latencySecs)*float64(time.Second)) && (lacRemain < simTimeRemain)
 
+	// As an alternative to bearweaving, cast GotW on the raid under
+	// analagous conditions to the above. Only difference is that there is
+	// more available time/Energy leeway for the technique, since
+	// flowershifts take only 3 seconds to execute.
+	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
+
+	flowerEnd := time.Duration(float64(sim.CurrentTime) + (3.0+2*latencySecs)*float64(time.Second))
+	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!ripRefreshPending || cat.RipDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd)
+
 	if bearweaveNow || emergencyBearweave {
 		// oom check, if we arent able to shift into bear and back
 		// then abandon bearweave
 		if cat.CurrentMana() < shiftCost*2.0 {
 			bearweaveNow = false
 			emergencyBearweave = false
+			cat.Metrics.MarkOOM(sim)
+		}
+	}
+
+	if flowershiftNow {
+		// if we cant cast and get back then abandon flowershift
+		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.BaseCost {
+			flowershiftNow = false
 			cat.Metrics.MarkOOM(sim)
 		}
 	}
@@ -320,7 +349,16 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	excessE := curEnergy - floatingEnergy
 	timeToNextAction := time.Duration(0)
 
-	if !cat.CatFormAura.IsActive() {
+	if !cat.CatFormAura.IsActive() && rotation.FlowerWeave {
+		// If the previous GotW cast was unsuccessful and we still have
+		// leeway available, then try again. Otherwise, shift back into Cat
+		// Form.
+		if flowershiftNow {
+			cat.flowerCast(sim)
+		} else {
+			cat.readyToShift = true
+		}
+	} else if !cat.CatFormAura.IsActive() {
 		// Shift back into Cat Form if (a) our first bear auto procced
 		// Clearcasting, or (b) our first bear auto didn't generate enough
 		// Rage to Mangle or Maul, or (c) we don't have enough time or
@@ -424,6 +462,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	} else if bearweaveNow {
 		cat.readyToShift = true
+	} else if flowershiftNow && curEnergy < 42 {
+		cat.readyToGift = true
 	} else if (rotation.MangleSpam && !isClearcast) || cat.PseudoStats.InFrontOfTarget {
 		if cat.MangleCat != nil && excessE >= cat.CurrentMangleCatCost() {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
@@ -475,6 +515,7 @@ type FeralDruidRotation struct {
 	RevitFreq          float64
 	LacerateTime       time.Duration
 	SnekWeave          bool
+	FlowerWeave        bool
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
@@ -493,5 +534,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
+		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
 	}
 }

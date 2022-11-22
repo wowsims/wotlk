@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -317,11 +318,20 @@ func (druid *Druid) applyOmenOfClarity() {
 				chanceToProc := (castTime / 60) * 3.5
 				if spell == druid.Typhoon { // Add Typhoon
 					chanceToProc *= 0.25
-				} else if spell == druid.Moonfire { // Add GotW
+				} else if spell == druid.Moonfire { // Add Moonfire
 					chanceToProc *= 0.076
 				} else {
 					chanceToProc *= 0.666
 				}
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ClearcastingAura.Activate(sim)
+				}
+			}
+		},
+		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == druid.GiftOfTheWild {
+				// Based on ingame testing by druid discord, subject to change or incorrectness
+				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
 					druid.ClearcastingAura.Activate(sim)
 				}
