@@ -52,6 +52,9 @@ func (warlock *Warlock) corruptionTracker() float64 {
 
 func (warlock *Warlock) defineRotation() {
 
+	warlock.initProcTrackers()
+	warlock.setupDSCooldowns()
+
 	rotationType := warlock.Rotation.Type
 	curse := warlock.Rotation.Curse
 	secondaryDot := warlock.Rotation.SecondaryDot
@@ -302,6 +305,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	tickLength := warlock.DrainSoulDot.TickPeriod()
 	previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
 	humanReactionTime := time.Millisecond * 150
+	nextTick := previousTickAt + tickLength + humanReactionTime
 
 	allCDs := []time.Duration{
 		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
@@ -320,6 +324,29 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 		if sim.Log != nil {
 			warlock.Log(sim, "Number of Ticks until next clip [%d]", NumberOfPotentialClips)
+		}
+
+		warlock.DSProcCheck(sim, warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		Tracker := []float64{
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+		}
+		for i, cd := range warlock.procTrackers {
+			curAura := cd.aura
+			curExpire := cd.expiresAt.Seconds()
+
+			if cd.didActivate && cd.isActive && curExpire < float64(nextTick.Seconds()) {
+				Tracker[i] = curExpire
+
+				if sim.Log != nil {
+					warlock.Log(sim, "Aura Name: [%s]", curAura.Label)
+					warlock.Log(sim, "Expires At: [%d]", Tracker[i])
+				}
+			}
 		}
 
 		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
