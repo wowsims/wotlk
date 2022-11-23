@@ -95,7 +95,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 
 		if uh > fr && uh > bl {
 			// Unholy
-			dk.Rotation.BtGhoulFrenzy = true
+			dk.Rotation.BtGhoulFrenzy = false
 			dk.Rotation.UseEmpowerRuneWeapon = true
 			dk.Rotation.HoldErwArmy = false
 			dk.Rotation.UseGargoyle = true
