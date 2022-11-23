@@ -17,6 +17,11 @@ func (priest *Priest) registerMindBlastSpell() {
 		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
 	swpMod := normMod * (1 + 0.02*float64(priest.Talents.TwistedFaith))
 
+	var replSrc core.ReplenishmentSource
+	if priest.Talents.VampiricTouch {
+		replSrc = core.NewReplenishmentSource(priest.GetCharacter(), core.ActionID{SpellID: 48160})
+	}
+
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48127},
 		SpellSchool:  core.SpellSchoolShadow,
@@ -62,6 +67,10 @@ func (priest *Priest) registerMindBlastSpell() {
 				priest.ImprovedSpiritTap.Activate(sim)
 			}
 			spell.DealDamage(sim, result)
+
+			if priest.VampiricTouchDot != nil && priest.VampiricTouchDot.IsActive() {
+				priest.Env.Raid.ProcReplenishment(sim, replSrc)
+			}
 		},
 	})
 }

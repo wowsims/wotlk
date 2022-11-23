@@ -97,7 +97,6 @@ func (hunter *Hunter) ApplyTalents() {
 		hunter.MultiplyStat(stats.Agility, 1.0+agiBonus)
 	}
 	if hunter.Talents.HuntingParty > 0 {
-		// TODO: Activate replenishment
 		agiBonus := 0.01 * float64(hunter.Talents.HuntingParty)
 		hunter.MultiplyStat(stats.Agility, 1.0+agiBonus)
 	}
@@ -114,6 +113,7 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.applyExposeWeakness()
 	hunter.applyMasterTactician()
 	hunter.applySniperTraining()
+	hunter.applyHuntingParty()
 
 	hunter.registerReadinessCD()
 }
@@ -778,6 +778,36 @@ func (hunter *Hunter) applySniperTraining() {
 	})
 
 	core.ApplyFixedUptimeAura(stAura, uptime, time.Second*15)
+}
+
+func (hunter *Hunter) applyHuntingParty() {
+	if hunter.Talents.HuntingParty == 0 {
+		return
+	}
+
+	procChance := float64(hunter.Talents.HuntingParty) / 3
+	replSrc := core.NewReplenishmentSource(hunter.GetCharacter(), core.ActionID{SpellID: 53292})
+
+	hunter.RegisterAura(core.Aura{
+		Label:    "Hunting Party",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.DidCrit() {
+				return
+			}
+
+			if spell != hunter.SteadyShot && spell != hunter.ArcaneShot && spell != hunter.ExplosiveShotR4 && spell != hunter.ExplosiveShotR3 {
+				return
+			}
+
+			if procChance == 1 || sim.RandomFloat("Hunting Party") < procChance {
+				hunter.Env.Raid.ProcReplenishment(sim, replSrc)
+			}
+		},
+	})
 }
 
 func (hunter *Hunter) registerReadinessCD() {

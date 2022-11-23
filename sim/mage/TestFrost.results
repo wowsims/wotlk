@@ -591,22 +591,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2620.19821
-  tps: 2942.67325
+  dps: 2632.47287
+  tps: 2802.7712
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2620.19821
-  tps: 2197.35315
+  dps: 2632.47287
+  tps: 2201.12206
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-FrostRotation-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3094.08225
-  tps: 2434.74265
+  dps: 3086.60074
+  tps: 2426.22217
  }
 }
 dps_results: {

@@ -26,7 +26,6 @@ type manaBar struct {
 	JowiseManaMetrics     *ResourceMetrics
 	PleaManaMetrics       *ResourceMetrics
 
-	replenishmentDep  *stats.StatDependency
 	ReplenishmentAura *Aura
 }
 
