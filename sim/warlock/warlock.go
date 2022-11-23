@@ -123,10 +123,6 @@ func (warlock *Warlock) Initialize() {
 		warlock.registerShadowBurnSpell()
 	}
 
-	if warlock.Talents.ImprovedSoulLeech > 0 {
-		core.InitReplenishmentAuras(warlock.GetCharacter(), core.ActionID{SpellID: 54118})
-	}
-
 	warlock.defineRotation()
 }
 

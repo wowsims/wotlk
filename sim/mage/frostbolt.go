@@ -12,6 +12,12 @@ func (mage *Mage) registerFrostboltSpell() {
 	baseCost := .11 * mage.BaseMana
 	spellCoeff := (3.0/3.5)*0.95 + 0.05*float64(mage.Talents.EmpoweredFrostbolt)
 
+	replProcChance := float64(mage.Talents.EnduringWinter) / 3
+	var replSrc core.ReplenishmentSource
+	if replProcChance > 0 {
+		replSrc = mage.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 44561})
+	}
+
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42842},
 		SpellSchool:  core.SpellSchoolFrost,
@@ -40,6 +46,10 @@ func (mage *Mage) registerFrostboltSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(799, 861) + spellCoeff*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+			if replProcChance == 1 || sim.RandomFloat("Enduring Winter") < replProcChance {
+				mage.Env.Raid.ProcReplenishment(sim, replSrc)
+			}
 		},
 	})
 }

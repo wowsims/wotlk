@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -138,7 +139,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		replenishmentActionID.SpellID = 44561
 	}
 	if !(replenishmentActionID.IsEmptyAction()) {
-		MakePermanent(ReplenishmentAura(&character.Unit, replenishmentActionID))
+		MakePermanent(replenishmentAura(&character.Unit, replenishmentActionID))
 	}
 
 	kingsAgiIntSpiAmount := 1.0
@@ -1011,110 +1012,106 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 	})
 }
 
-var ReplenishmentAuraTag = "Replenishment"
-
 const ReplenishmentAuraDuration = time.Second * 15
 
-func ReplenishmentAura(unit *Unit, actionID ActionID) *Aura {
-	if !(actionID.SpellID == 54118 || actionID.SpellID == 48160 || actionID.SpellID == 31878 || actionID.SpellID == 53292 || actionID.SpellID == 44561) {
-		panic("Wrong Replenishment Action ID")
+// Creates the actual replenishment aura for a unit.
+func replenishmentAura(unit *Unit, _ ActionID) *Aura {
+	if unit.ReplenishmentAura != nil {
+		return unit.ReplenishmentAura
 	}
 
-	if unit.HasManaBar() && unit.replenishmentDep == nil {
-		unit.replenishmentDep = unit.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
-	}
+	replenishmentDep := unit.NewDynamicStatDependency(stats.Mana, stats.MP5, 0.01)
 
-	unit.ReplenishmentAura = unit.GetOrRegisterAura(Aura{
-		Label:    "Replenishment-" + ActionID{SpellID: 57669}.String(),
-		Tag:      ReplenishmentAuraTag,
+	unit.ReplenishmentAura = unit.RegisterAura(Aura{
+		Label:    "Replenishment",
 		ActionID: ActionID{SpellID: 57669},
-		Priority: 1,
 		Duration: ReplenishmentAuraDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if aura.Unit.HasManaBar() {
-				aura.Unit.EnableDynamicStatDep(sim, aura.Unit.replenishmentDep)
-			}
+			aura.Unit.EnableDynamicStatDep(sim, replenishmentDep)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if aura.Unit.HasManaBar() {
-				aura.Unit.DisableDynamicStatDep(sim, aura.Unit.replenishmentDep)
-			}
+			aura.Unit.DisableDynamicStatDep(sim, replenishmentDep)
 		},
 	})
+
 	return unit.ReplenishmentAura
 }
 
-func InitReplenishmentAuras(character *Character, actionID ActionID) {
-	for _, unit := range character.Env.Raid.AllUnits {
-		if unit.HasManaBar() {
-			ReplenishmentAura(unit, actionID)
-		}
-	}
-}
+type ReplenishmentSource int
 
-func ReplenishmentAuraTargetting(character *Character) []*Unit {
+// Returns a new aura whose activation will give the Replenishment buff to 10 party/raid members.
+func (raid *Raid) NewReplenishmentSource(actionID ActionID) ReplenishmentSource {
+	newReplSource := ReplenishmentSource(len(raid.curReplenishmentUnits))
+	raid.curReplenishmentUnits = append(raid.curReplenishmentUnits, []*Unit{})
 
-	var unitsWithManaIssues [25]*Unit
-	var unitsMana [25]float64
-
-	len := 0
-	for _, unit := range character.Env.Raid.AllUnits {
-		if unit.HasManaBar() {
-			unitsMana[len] = unit.CurrentManaPercent()
-			unitPointer := unit
-			unitsWithManaIssues[len] = unitPointer
-			len++
-		}
-	}
-	if len == 0 {
-		return nil
+	if raid.replenishmentUnits != nil {
+		return newReplSource
 	}
 
-	var chosenUnits []*Unit
-	if len <= 10 {
-		chosenUnits = make([]*Unit, len)
-		for i := 0; i < len; i++ {
-			chosenUnits[i] = unitsWithManaIssues[i]
-		}
-	} else {
-		chosenUnits = make([]*Unit, 10)
-		for i := 0; i < 10; i++ {
-			chosenUnits[i] = unitsWithManaIssues[i]
-		}
-		var chosenIndexes [10]int
-		for j := 0; j < 10; j++ {
-			chosenIndexes[j] = -1
-			lastMana := 1.0
-			for i := 0; i < len; i++ {
-				// Check first for Units that don't already have the buff
-				if !contains(chosenIndexes, i) && unitsMana[i] < lastMana && !unitsWithManaIssues[i].HasActiveAuraWithTag(ReplenishmentAuraTag) {
-					chosenIndexes[j] = i
-					chosenUnits[j] = unitsWithManaIssues[i]
-					lastMana = unitsMana[i]
-				}
+	// Get the list of all eligible units (party/raid members + their pets, but no guardians).
+	var manaUsers []*Unit
+	for _, party := range raid.Parties {
+		for _, player := range party.Players {
+			character := player.GetCharacter()
+			if character.HasManaBar() {
+				manaUsers = append(manaUsers, &character.Unit)
 			}
-			if chosenIndexes[j] == -1 { // If you couldn't find anyone that didn't have the replenishment buff, refresh replenishment
-				lastMana := 1.0
-				for i := 0; i < len; i++ {
-					if !contains(chosenIndexes, i) && unitsMana[i] < lastMana {
-						chosenIndexes[j] = i
-						chosenUnits[j] = unitsWithManaIssues[i]
-						lastMana = unitsMana[chosenIndexes[j]]
-					}
-				}
+		}
+		for _, petAgent := range party.Pets {
+			pet := petAgent.GetPet()
+			if pet.HasManaBar() && !pet.IsGuardian() {
+				manaUsers = append(manaUsers, &pet.Unit)
 			}
 		}
 	}
-	return chosenUnits
+	raid.replenishmentUnits = manaUsers
+
+	// Initialize replenishment aura for all applicable units.
+	for _, unit := range raid.replenishmentUnits {
+		replenishmentAura(unit, actionID)
+	}
+
+	return newReplSource
 }
 
-func contains(s [10]int, e int) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
+func (raid *Raid) resetReplenishment(_ *Simulation) {
+	raid.leftoverReplenishmentUnits = raid.replenishmentUnits
+	for i := 0; i < len(raid.curReplenishmentUnits); i++ {
+		raid.curReplenishmentUnits[i] = nil
 	}
-	return false
+}
+
+func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
+	// If the raid is fully covered by one or more replenishment sources, we can
+	// skip the mana sorting.
+	if len(raid.curReplenishmentUnits)*10 >= len(raid.replenishmentUnits) {
+		if len(raid.curReplenishmentUnits[src]) == 0 {
+			if len(raid.leftoverReplenishmentUnits) > 10 {
+				raid.curReplenishmentUnits[src] = raid.leftoverReplenishmentUnits[:10]
+				raid.leftoverReplenishmentUnits = raid.leftoverReplenishmentUnits[10:]
+			} else {
+				raid.curReplenishmentUnits[src] = raid.leftoverReplenishmentUnits
+				raid.leftoverReplenishmentUnits = nil
+			}
+		}
+		for _, unit := range raid.curReplenishmentUnits[src] {
+			unit.ReplenishmentAura.Activate(sim)
+		}
+		return
+	}
+
+	eligible := append(raid.curReplenishmentUnits[src], raid.leftoverReplenishmentUnits...)
+	slices.SortFunc(eligible, func(v1, v2 *Unit) bool {
+		return v1.CurrentManaPercent() < v2.CurrentManaPercent()
+	})
+	raid.curReplenishmentUnits[src] = eligible[:10]
+	raid.leftoverReplenishmentUnits = eligible[10:]
+	for _, unit := range raid.curReplenishmentUnits[src] {
+		unit.ReplenishmentAura.Activate(sim)
+	}
+	for _, unit := range raid.leftoverReplenishmentUnits {
+		unit.ReplenishmentAura.Deactivate(sim)
+	}
 }
 
 var spellPowerBuffTag = "SpellPowerBuff"

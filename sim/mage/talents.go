@@ -25,7 +25,6 @@ func (mage *Mage) ApplyTalents() {
 	mage.registerIcyVeinsCD()
 	mage.registerColdSnapCD()
 	mage.registerSummonWaterElementalCD()
-	// TODO: Enduring Winter
 
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.ArcaneMeditation) / 6
 
