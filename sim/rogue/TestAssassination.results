@@ -465,8 +465,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TheFistsofFury"
  value: {
-  dps: 6130.58133
-  tps: 4352.71275
+  dps: 4959.1329
+  tps: 3520.98436
  }
 }
 dps_results: {
