@@ -529,6 +529,7 @@ class SelectorModal extends Popup {
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
 		const initialFilters = this.player.sim.getFilters();
+		let lastFavElem: HTMLElement|null = null;
 
 		const listItemElems = itemData.map((itemData, itemIdx) => {
 			const item = itemData.item;
@@ -669,7 +670,12 @@ class SelectorModal extends Popup {
 			if (isFavorite) {
 				favoriteElem.classList.add('fa-solid');
 				listItemElem.dataset.fav = 'true';
-				listElem.prepend(listItemElem);
+				if (lastFavElem == null) {
+					listElem.prepend(listItemElem);
+				} else {
+					lastFavElem.after(listItemElem)
+				}
+				lastFavElem = listItemElem;
 			} else {
 				favoriteElem.classList.add('fa-regular');
 				listItemElem.dataset.fav = 'false';
