@@ -4,14 +4,6 @@ document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(toggle => {
   let dropdown = new bootstrap.Dropdown(toggle);
   let dropdownMenu = toggle.nextElementSibling as HTMLElement;
 
-  toggle.addEventListener('focusin', event => {
-    dropdown.show();
-  })
-
-  toggle.addEventListener('focusout', event => {
-    dropdown.hide();
-  })
-
   toggle.addEventListener('mouseover', event => {
     dropdown.show();
   });
