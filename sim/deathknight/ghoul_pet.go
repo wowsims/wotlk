@@ -25,14 +25,18 @@ type GhoulPet struct {
 
 func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := float64(dk.Talents.NervesOfColdSteel)
+	nocsHit := 0.0
+	if dk.nervesOfColdSteelActive() {
+		nocsHit = float64(dk.Talents.NervesOfColdSteel)
+	}
+
 	armyGhoulPetBaseStats := stats.Stats{
 		stats.Agility:     856,
 		stats.Strength:    0,
 		stats.AttackPower: -20,
 
-		stats.MeleeHit: -nocsHit * core.MeleeHitRatingPerHitChance,
-		stats.SpellHit: -nocsHit * core.SpellHitRatingPerHitChance,
+		stats.MeleeHit:  -nocsHit * core.MeleeHitRatingPerHitChance,
+		stats.Expertise: -nocsHit * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 
 		stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 	}
@@ -74,14 +78,18 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := float64(dk.Talents.NervesOfColdSteel)
+	nocsHit := 0.0
+	if dk.nervesOfColdSteelActive() {
+		nocsHit = float64(dk.Talents.NervesOfColdSteel)
+	}
+
 	ghoulPetBaseStats := stats.Stats{
 		stats.Agility:     856,
 		stats.Strength:    331,
 		stats.AttackPower: -20,
 
-		stats.MeleeHit: -nocsHit * core.MeleeHitRatingPerHitChance,
-		stats.SpellHit: -nocsHit * core.SpellHitRatingPerHitChance,
+		stats.MeleeHit:  -nocsHit * core.MeleeHitRatingPerHitChance,
+		stats.Expertise: -nocsHit * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 
 		stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 	}
@@ -238,12 +246,10 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
 
 			stats.MeleeHit: math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit: math.Floor(ownerHitChance) * core.SpellHitRatingPerHitChance,
 
 			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
-			stats.SpellHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
 }
@@ -263,7 +269,6 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead) * 0.05,
 
 			stats.MeleeHit: math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit: math.Floor(ownerHitChance) * core.SpellHitRatingPerHitChance,
 
 			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
 
