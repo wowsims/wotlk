@@ -28,7 +28,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	dk.modifyShadowDamageModifier(0.02 * float64(dk.Talents.BlackIce))
 
 	// Nerves Of Cold Steel
-	if dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand {
+	if dk.nervesOfColdSteelActive() {
 		dk.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(dk.Talents.NervesOfColdSteel))
 		dk.AutoAttacks.OHConfig.DamageMultiplier *= dk.nervesOfColdSteelBonus()
 	}
@@ -82,6 +82,10 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	if dk.Talents.TundraStalker > 0 {
 		dk.applyTundaStalker()
 	}
+}
+
+func (dk *Deathknight) nervesOfColdSteelActive() bool {
+	return dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand
 }
 
 func (dk *Deathknight) nervesOfColdSteelBonus() float64 {

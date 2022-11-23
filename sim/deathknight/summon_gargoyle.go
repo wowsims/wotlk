@@ -79,7 +79,10 @@ type GargoylePet struct {
 
 func (dk *Deathknight) NewGargoyle() *GargoylePet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+	nocsHit := 0.0
+	if dk.nervesOfColdSteelActive() {
+		nocsHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+	}
 	gargoyle := &GargoylePet{
 		Pet: core.NewPet(
 			"Gargoyle",
