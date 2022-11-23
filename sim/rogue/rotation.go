@@ -248,8 +248,12 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rogue.Builder = rogue.SinisterStrike
 	rogue.BuilderPoints = 1
 	if rogue.Talents.Mutilate {
-		rogue.Builder = rogue.Mutilate
-		rogue.BuilderPoints = 2
+		mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+		ohDagger := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+		if mhDagger && ohDagger {
+			rogue.Builder = rogue.Mutilate
+			rogue.BuilderPoints = 2
+		}
 		rogue.setupAssassinationRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() > 3
