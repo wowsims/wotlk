@@ -450,7 +450,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 
 	procChance := float64(paladin.Talents.JudgementsOfTheWise) / 3
 	paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
-	replSrc := core.NewReplenishmentSource(paladin.GetCharacter(), core.ActionID{SpellID: 31878})
+	replSrc := paladin.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 31878})
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31878},

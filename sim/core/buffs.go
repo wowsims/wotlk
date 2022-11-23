@@ -1040,17 +1040,17 @@ func replenishmentAura(unit *Unit, _ ActionID) *Aura {
 type ReplenishmentSource int
 
 // Returns a new aura whose activation will give the Replenishment buff to 10 party/raid members.
-func NewReplenishmentSource(character *Character, actionID ActionID) ReplenishmentSource {
-	newReplSource := ReplenishmentSource(len(character.Env.Raid.curReplenishmentUnits))
-	character.Env.Raid.curReplenishmentUnits = append(character.Env.Raid.curReplenishmentUnits, []*Unit{})
+func (raid *Raid) NewReplenishmentSource(actionID ActionID) ReplenishmentSource {
+	newReplSource := ReplenishmentSource(len(raid.curReplenishmentUnits))
+	raid.curReplenishmentUnits = append(raid.curReplenishmentUnits, []*Unit{})
 
-	if character.Env.Raid.replenishmentUnits != nil {
+	if raid.replenishmentUnits != nil {
 		return newReplSource
 	}
 
 	// Get the list of all eligible units (party/raid members + their pets, but no guardians).
 	var manaUsers []*Unit
-	for _, party := range character.Env.Raid.Parties {
+	for _, party := range raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
 			if character.HasManaBar() {
@@ -1064,27 +1064,26 @@ func NewReplenishmentSource(character *Character, actionID ActionID) Replenishme
 			}
 		}
 	}
-	character.Env.Raid.replenishmentUnits = manaUsers
-	character.RegisterResetEffect(func(sim *Simulation) {
-		character.Env.Raid.leftoverReplenishmentUnits = character.Env.Raid.replenishmentUnits
-		for i := 0; i < len(character.Env.Raid.curReplenishmentUnits); i++ {
-			character.Env.Raid.curReplenishmentUnits[i] = nil
-		}
-	})
+	raid.replenishmentUnits = manaUsers
 
 	// Initialize replenishment aura for all applicable units.
-	for _, unit := range character.Env.Raid.replenishmentUnits {
+	for _, unit := range raid.replenishmentUnits {
 		replenishmentAura(unit, actionID)
 	}
 
 	return newReplSource
 }
 
-func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
-	// This function uses several heuristics to cover common cases, so we don't
-	// have to do actual sorting most of the time.
+func (raid *Raid) resetReplenishment(_ *Simulation) {
+	raid.leftoverReplenishmentUnits = raid.replenishmentUnits
+	for i := 0; i < len(raid.curReplenishmentUnits); i++ {
+		raid.curReplenishmentUnits[i] = nil
+	}
+}
 
-	// Raid covered by one or more replenishment sources.
+func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
+	// If the raid is fully covered by one or more replenishment sources, we can
+	// skip the mana sorting.
 	if len(raid.curReplenishmentUnits)*10 >= len(raid.replenishmentUnits) {
 		if len(raid.curReplenishmentUnits[src]) == 0 {
 			if len(raid.leftoverReplenishmentUnits) > 10 {

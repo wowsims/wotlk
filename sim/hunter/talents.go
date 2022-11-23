@@ -786,7 +786,7 @@ func (hunter *Hunter) applyHuntingParty() {
 	}
 
 	procChance := float64(hunter.Talents.HuntingParty) / 3
-	replSrc := core.NewReplenishmentSource(hunter.GetCharacter(), core.ActionID{SpellID: 53292})
+	replSrc := hunter.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 53292})
 
 	hunter.RegisterAura(core.Aura{
 		Label:    "Hunting Party",

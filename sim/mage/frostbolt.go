@@ -15,7 +15,7 @@ func (mage *Mage) registerFrostboltSpell() {
 	replProcChance := float64(mage.Talents.EnduringWinter) / 3
 	var replSrc core.ReplenishmentSource
 	if replProcChance > 0 {
-		replSrc = core.NewReplenishmentSource(mage.GetCharacter(), core.ActionID{SpellID: 44561})
+		replSrc = mage.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 44561})
 	}
 
 	mage.Frostbolt = mage.RegisterSpell(core.SpellConfig{
