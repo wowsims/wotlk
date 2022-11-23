@@ -106,7 +106,7 @@ export const BloodTalents = {
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useDeathAndDecay: true,
-	btGhoulFrenzy: true,
+	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
 	useGargoyle: true,
 	useEmpowerRuneWeapon: true,
