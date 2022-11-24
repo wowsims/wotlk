@@ -1,7 +1,6 @@
 package deathknight
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -95,7 +94,7 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 				// Convert dk melee hit to garg spell hit
 				// We convert 8 melee hit to 17 spell hit (as thats how pets scale their hit/expertise)
 				ownerHitChance := (ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance)
-				hitRatingFromOwner := ((math.Floor(ownerHitChance) / 8.0) * 17.0) * core.SpellHitRatingPerHitChance
+				hitRatingFromOwner := ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance
 
 				return stats.Stats{
 					stats.AttackPower: ownerStats[stats.AttackPower],
