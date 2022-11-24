@@ -123,8 +123,6 @@
   #homepage {
     .homepage-content-container {
       .info-container {
-        margin-bottom: map.get($spacers, 3);
-
         .wowsims-info {
           width: 100%;
         }
@@ -181,6 +179,10 @@
     }
 
     .homepage-content-container {
+      .info-container {
+        margin-bottom: map.get($spacers, 3);
+      }
+
       .sim-links-container {
         .sim-links {
           .sim-link, .sim-link-dropdown {
