@@ -151,20 +151,29 @@ message BalanceDruid {
 			Manual = 2;
 		}
 		Type type = 1;
-		bool use_battle_res = 2;
-		bool use_is = 3;
-		bool use_mf = 4;
+
+		enum MfUsage {
+			NoMf = 0;
+			BeforeLunar = 1;
+			MaximizeMf = 2;
+		}
+		MfUsage mf_usage = 2;
+
+		enum IsUsage {
+			NoIs = 0;
+			BeforeSolar = 1;
+			MaximizeIs = 2;
+		}
+		IsUsage is_usage = 3;
+
+		bool use_battle_res = 4;
 		bool use_wrath = 5;
 		bool use_starfire = 6;
 		bool use_typhoon = 7;
 		bool use_hurricane = 8;
-		int32 mf_inside_eclipse_threshold = 9;
-		int32 is_inside_eclipse_threshold = 10;
-		bool use_smart_cooldowns = 11;
-		bool maximize_mf_uptime = 12;
-		bool maximize_is_uptime = 13;
-		bool maintain_faerie_fire = 14;
-		int32 player_latency = 15;
+		bool use_smart_cooldowns = 9;
+		bool maintain_faerie_fire = 10;
+		int32 player_latency = 11;
 	}
 
   Rotation rotation = 1;

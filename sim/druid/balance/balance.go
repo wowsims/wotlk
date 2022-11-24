@@ -80,28 +80,16 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
+		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_NoMf
+		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
 		moonkin.Rotation.UseBattleRes = false
-		moonkin.Rotation.UseMf = false
-		moonkin.Rotation.UseIs = true
 		moonkin.Rotation.UseStarfire = true
 		moonkin.Rotation.UseWrath = true
 		moonkin.Rotation.UseTyphoon = false
 		moonkin.Rotation.UseHurricane = false
-		moonkin.Rotation.MfInsideEclipseThreshold = 15
-		moonkin.Rotation.IsInsideEclipseThreshold = 15
 		moonkin.Rotation.UseSmartCooldowns = true
-		moonkin.Rotation.MaximizeMfUptime = false
-		moonkin.Rotation.MaximizeIsUptime = true
 		moonkin.Rotation.MaintainFaerieFire = true
 		moonkin.Rotation.PlayerLatency = 200
-	}
-
-	if !moonkin.Rotation.UseMf {
-		moonkin.Rotation.MfInsideEclipseThreshold = 15
-	}
-
-	if !moonkin.Rotation.UseIs {
-		moonkin.Rotation.IsInsideEclipseThreshold = 15
 	}
 
 	if moonkin.Rotation.UseSmartCooldowns {
