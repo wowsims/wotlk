@@ -1,26 +1,31 @@
 import {
 	Consumes,
-	Debuffs, Glyphs,
+	Debuffs,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
 	IndividualBuffs,
 	PartyBuffs,
+	Potions,
 	RaidBuffs,
 	RaidTarget,
 	TristateEffect
 } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import {SavedTalents} from '../core/proto/ui.js';
 
 import {
-	BalanceDruid_Rotation as BalanceDruidRotation,
 	BalanceDruid_Options as BalanceDruidOptions,
-	BalanceDruid_Rotation_Type as RotationType, DruidMajorGlyph, DruidMinorGlyph,
+	BalanceDruid_Rotation as BalanceDruidRotation,
+	BalanceDruid_Rotation_IsUsage,
+	BalanceDruid_Rotation_MfUsage,
+	BalanceDruid_Rotation_Type as RotationType,
+	DruidMajorGlyph,
+	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { NO_TARGET } from "../core/proto_utils/utils";
+import {NO_TARGET} from "../core/proto_utils/utils";
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -45,13 +50,12 @@ export const StandardTalents = {
 
 export const DefaultRotation = BalanceDruidRotation.create({
     type: RotationType.Adaptive,
+	useSmartCooldowns : true,
+	mfUsage : BalanceDruid_Rotation_MfUsage.NoMf,
+	isUsage : BalanceDruid_Rotation_IsUsage.MaximizeIs,
+	useStarfire:       true,
+	useWrath:          true,
     useBattleRes: false,
-    useIs: true,
-    useMf: false,
-    isInsideEclipseThreshold: 15,
-    mfInsideEclipseThreshold: 0,
-    useSmartCooldowns : true,
-	maximizeIsUptime : true,
 	playerLatency : 200,
 });
 

@@ -59,15 +59,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type:                     proto.BalanceDruid_Rotation_Adaptive,
-			UseIs:                    true,
-			UseStarfire:              true,
-			UseWrath:                 true,
-			UseBattleRes:             true,
-			IsInsideEclipseThreshold: 15.0,
-			UseSmartCooldowns:        true,
-			MaximizeIsUptime:         true,
-			PlayerLatency:            200,
+			Type: proto.BalanceDruid_Rotation_Adaptive,
 		},
 	},
 }

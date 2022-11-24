@@ -220,7 +220,6 @@ func (druid *Druid) Initialize() {
 		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
 		druid.HasSetBonus(ItemSetGladiatorsWildhide, 2),
 		druid.HasSetBonus(ItemSetGladiatorsWildhide, 4),
-
 		druid.HasSetBonus(ItemSetNightsongBattlegear, 2),
 		druid.HasSetBonus(ItemSetNightsongBattlegear, 4),
 	}
