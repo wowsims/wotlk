@@ -279,7 +279,6 @@ func (druid *Druid) applyOmenOfClarity() {
 		},
 	})
 
-	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -302,6 +301,8 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
+			// Not ideal to have new ppm manager here, but this needs to account for feral druid bear<->cat swaps
+			ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
