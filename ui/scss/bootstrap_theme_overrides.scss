@@ -24,7 +24,11 @@ $custom-colors: (
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+$enable-negative-margins: true;
+
 $dropdown-bg: black;
 $dropdown-border-radius: 0;
 $dropdown-color: white;
 $dropdown-padding-y: 0;
+
+$navbar-padding-y: 0;

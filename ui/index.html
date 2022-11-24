@@ -21,29 +21,34 @@
 		<div id="homepage">
 			<header class="homepage-header">
 				<div class="container homepage-header-container">
-					<nav class="navbar navbar-expand-lg flex-wrap w-100">
-						<div class="d-flex w-100">
-							<a href="#" class="navbar-brand d-flex align-items-center p-0">
-								<img class="wowsims-logo" src="/wotlk/assets/img/WoW-Simulator-Icon.png" height="75">
+					<nav class="navbar navbar-dark navbar-expand-md flex-wrap align-items-end w-100">
+						<div class="navbar-brand-container order-0">
+							<a href="#" class="navbar-brand d-flex align-items-center p-0 m-0">
+								<img class="wowsims-logo" src="/wotlk/assets/img/WoW-Simulator-Icon.png">
 								<h2 class="wowsims-title">WoWSims</h2>
 							</a>
-							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-								<span class="navbar-toggler-icon"></span>
+							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homepageHeaderCollapse" aria-controls="homepageHeaderCollapse" aria-expanded="false" aria-label="Toggle navigation">
+								<i class="fa-solid fa-bars fa-2x"></i>
 							</button>
-							<div class="collapse navbar-collapse homepage-header-collapse">
-								<a href="https://discord.gg/p3DgvmnDCS" target="_blank" class="me-3">
-									<p class="m-0"><i class="discord-link fa fa-brands fa-discord fa-xl"></i>&nbsp;</p>
+						</div>
+						<h2 class="wrath-title w-100 order-1 order-md-2">Wrath of the Lich King</h2>
+						<div id="homepageHeaderCollapse" class="collapse navbar-collapse homepage-header-collapse order-2 order-md-1">
+							<div class="navbar-nav">
+								<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homepageHeaderCollapse" aria-controls="homepageHeaderCollapse" aria-expanded="false" aria-label="Toggle navigation">
+									<i class="fa-solid fa-times fa-2x"></i>
+								</button>
+								<a href="https://discord.gg/p3DgvmnDCS" target="_blank" class="nav-link">
+									<p class="m-0"><i class="discord-link fa fa-brands fa-discord fa-2x"></i>&nbsp;</p>
 								</a>
-								<a href="https://github.com/wowsims/wotlk" target="_blank" class="me-3">
-									<p class="m-0"><i class="github-link fa fa-brands fa-github fa-xl"></i>&nbsp;</p>
+								<a href="https://github.com/wowsims/wotlk" target="_blank" class="nav-link">
+									<p class="m-0"><i class="github-link fa fa-brands fa-github fa-2x"></i>&nbsp;</p>
 								</a>
-								<a href="https://patreon.com/wowsims" target="_blank">
-									<i class="patreon-link fa fa-brands fa-patreon fa-xl me-2"></i>
-									<span>Support our devs</span>
+								<a href="https://patreon.com/wowsims" target="_blank" class="nav-link">
+									<i class="patreon-link fa fa-brands fa-patreon fa-2x me-2"></i>
+									<span class="fs-4 d-md-none d-lg-block">Support our devs</span>
 								</a>
 							</div>
 						</div>
-						<h2 class="wrath-title">Wrath of the Lich King</h2>
 					</nav>
 				</div>
 			</header>
@@ -169,7 +174,7 @@
 										<a href="/wotlk/deathknight/" class="sim-link text-death-knight">
 											<div class="sim-link-content">
 												<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
-												<span class="sim-link-label">Dps</span>
+												<span class="sim-link-label">DPS</span>
 											</div>
 										</a>
 									</li>
