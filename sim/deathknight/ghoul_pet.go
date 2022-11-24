@@ -1,7 +1,6 @@
 package deathknight
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -245,9 +244,8 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead),
 
-			stats.MeleeHit: math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance,
-
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit:  ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 		}
@@ -268,9 +266,8 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
 			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead) * 0.05,
 
-			stats.MeleeHit: math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance,
-
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.MeleeHit:  ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 
 			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 			stats.SpellHaste: ownerStats[stats.MeleeHaste],
