@@ -403,6 +403,7 @@ class SelectorModal extends Popup {
 					};
 
 					this.player.gearChangeEmitter.on(updateGemIcon);
+					this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateGemIcon));
 					updateGemIcon();
 				});
 		});
@@ -450,6 +451,7 @@ class SelectorModal extends Popup {
 			<li class="nav-item">
 				<a
 					class="nav-link selector-modal-item-tab ${selected ? 'active' : ''}"
+					data-content-id="${tabContentId}"
 					data-bs-toggle="tab"
 					data-bs-target="#${tabContentId}"
 					type="button"
@@ -715,8 +717,9 @@ class SelectorModal extends Popup {
 				}
 			});
 		};
-		updateSelected();
 		this.player.gearChangeEmitter.on(updateSelected);
+		this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateSelected));
+		updateSelected();
 
 		const applyFilters = () => {
 			let validItemElems = listItemElems;
@@ -798,9 +801,11 @@ class SelectorModal extends Popup {
 
 		this.player.sim.phaseChangeEmitter.on(applyFilters);
 		this.player.sim.filtersChangeEmitter.on(applyFilters);
-		this.player.gearChangeEmitter.on(() => {
-			applyFilters();
-			updateSelected();
+		this.player.gearChangeEmitter.on(applyFilters);
+		this.addOnDisposeCallback(() => {
+			this.player.sim.phaseChangeEmitter.off(applyFilters);
+			this.player.sim.filtersChangeEmitter.off(applyFilters);
+			this.player.gearChangeEmitter.off(applyFilters);
 		});
 
 		applyFilters();
@@ -811,7 +816,7 @@ class SelectorModal extends Popup {
 			.filter(tab => tab.dataset.label.includes(labelSubstring));
 
 		const contentElems = tabElems
-			.map(tabElem => document.getElementById(tabElem.getAttribute('href').substring(1)))
+			.map(tabElem => document.getElementById(tabElem.dataset.contentId!.substring(1)))
 			.filter(tabElem => Boolean(tabElem));
 
 		tabElems.forEach(elem => elem.parentElement.remove());
