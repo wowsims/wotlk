@@ -47,7 +47,7 @@ export const FrostTalents = {
 export const FrostUnholyTalents = {
 	name: 'Frost UH',
 	data: SavedTalents.create({
-		talentsString: '-32002350352203012300033101351-230200305003',
+		talentsString: '01-32002350342203012300033101351-230200305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfObliterate,
 			major2: DeathknightMajorGlyph.GlyphOfFrostStrike,
@@ -117,10 +117,12 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
+	oblitDelayDuration: 1000.0,
+	//oblitdelay is here as a temporary fix
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
-	startingRunicPower: 0,
+	startingRunicPower: 40,
 	petUptime: 1,
 	precastGhoulFrenzy: false,
 	precastHornOfWinter: true,
@@ -140,7 +142,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	useAms: false,
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
-	oblitDelayDuration: 0,
+	oblitDelayDuration: 1000.0,
   frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   frostCustomRotation: CustomRotation.create({
 		spells: [
@@ -739,6 +741,105 @@ export const P1_FROST_BIS_PRESET = {
 			"enchant": 3604,
 			"gems": [
 				39996,
+				0
+			]
+		},
+		{
+			"id": 40278,
+			"gems": [
+				39996,
+				42142
+			]
+		},
+		{
+			"id": 40556,
+			"enchant": 3823,
+			"gems": [
+				42142,
+				39996
+			]
+		},
+		{
+			"id": 40591,
+			"enchant": 3606
+		},
+		{
+			"id": 39401
+		},
+		{
+			"id": 40075
+		},
+		{
+			"id": 40256
+		},
+		{
+			"id": 42987
+		},
+		{
+			"id": 40189,
+			"enchant": 3370
+		},
+		{
+			"id": 40189,
+			"enchant": 3368
+		},
+		{
+			"id": 40207
+		}
+  ]}`),
+};
+
+export const P1_FROSTSUBUNH_BIS_PRESET = {
+	name: 'P1 Frost Sub Unh',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 44006,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				42702
+			]
+		},
+		{
+			"id": 44664,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 40557,
+			"enchant": 3808,
+			"gems": [
+				40003
+			]
+		},
+		{
+			"id": 40403,
+			"enchant": 3831
+		},
+		{
+			"id": 40550,
+			"enchant": 3832,
+			"gems": [
+				42142,
+				40003
+			]
+		},
+		{
+			"id": 40330,
+			"enchant": 3845,
+			"gems": [
+				39996,
+				0
+			]
+		},
+		{
+			"id": 40552,
+			"enchant": 3604,
+			"gems": [
+				40058,
 				0
 			]
 		},

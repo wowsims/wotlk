@@ -17,7 +17,7 @@ func (dk *DpsDeathknight) dndExperimentalOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UP).
 		NewAction(dk.RotationActionCallback_Garg).
-		NewAction(dk.RotationActionUH_CancelBT)
+		NewAction(dk.RotationAction_CancelBT)
 
 	if dk.Rotation.UseEmpowerRuneWeapon {
 		dk.RotationSequence.

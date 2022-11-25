@@ -78,3 +78,9 @@ func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterC
 func (dk *DpsDeathknight) shShouldSpreadDisease(sim *core.Simulation) bool {
 	return dk.sr.recastedFF && dk.sr.recastedBP && dk.Env.GetNumTargets() > 1
 }
+
+func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	dk.BloodTapAura.Deactivate(sim)
+	s.Advance()
+	return sim.CurrentTime
+}
