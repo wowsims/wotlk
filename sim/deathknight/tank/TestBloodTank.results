@@ -437,15 +437,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 1481.10784
-  tps: 4771.93369
+  dps: 1536.89737
+  tps: 4953.79631
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-ScourgebornePlate"
  value: {
-  dps: 1375.71074
-  tps: 4460.12095
+  dps: 1404.66448
+  tps: 4552.1175
  }
 }
 dps_results: {

@@ -517,16 +517,16 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionBattlegear"
  value: {
-  dps: 5094.23133
-  tps: 5195.55264
-  dtps: 8.4691
+  dps: 5224.57593
+  tps: 5326.81619
+  dtps: 8.70559
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionPlate"
  value: {
-  dps: 4731.00633
-  tps: 4829.81207
+  dps: 4810.61767
+  tps: 4909.43462
   dtps: 8.81553
  }
 }

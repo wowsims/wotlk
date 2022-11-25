@@ -178,15 +178,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterBattlegear"
  value: {
-  dps: 5877.84524
-  tps: 3312.60179
+  dps: 6062.28377
+  tps: 3418.6059
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
-  dps: 5493.62709
-  tps: 3108.79852
+  dps: 5671.11737
+  tps: 3211.31574
  }
 }
 dps_results: {

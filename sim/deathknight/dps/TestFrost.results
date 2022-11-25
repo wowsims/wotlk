@@ -430,15 +430,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 6898.32617
-  tps: 4076.76677
+  dps: 7126.06172
+  tps: 4212.87531
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-ScourgebornePlate"
  value: {
-  dps: 6310.44702
-  tps: 3726.08626
+  dps: 6411.77846
+  tps: 3785.7983
  }
 }
 dps_results: {

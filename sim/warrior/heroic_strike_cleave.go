@@ -54,9 +54,6 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
-			if sim.CurrentTime < warrior.Hardcast.Expires {
-				return
-			}
 			if !result.Landed() {
 				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
 			}

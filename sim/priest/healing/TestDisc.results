@@ -285,9 +285,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-GarbofFaith"
  value: {
-  dps: 89.88633
-  tps: 45.45754
-  hps: 4469.25496
+  dps: 92.91668
+  tps: 46.83095
+  hps: 4670.61942
  }
 }
 dps_results: {
@@ -429,9 +429,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-RegaliaofFaith"
  value: {
-  dps: 87.40038
-  tps: 45.22864
-  hps: 4670.56416
+  dps: 89.09854
+  tps: 46.47125
+  hps: 4882.8708
  }
 }
 dps_results: {

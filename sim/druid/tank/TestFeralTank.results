@@ -157,15 +157,15 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 1216.61075
-  tps: 1630.86285
+  dps: 1250.28314
+  tps: 1681.57578
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-DreamwalkerGarb"
  value: {
-  dps: 942.17376
-  tps: 1244.07467
+  dps: 995.44562
+  tps: 1324.22115
  }
 }
 dps_results: {
