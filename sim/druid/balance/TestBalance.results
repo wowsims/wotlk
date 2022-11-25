@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7492.50566
-  tps: 7334.37445
+  dps: 7494.81913
+  tps: 7336.76337
  }
 }
 dps_results: {
@@ -395,15 +395,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4229.20933
-  tps: 4063.56502
+  dps: 4304.45146
+  tps: 4140.21605
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 6481.00649
-  tps: 6318.05982
+  dps: 6566.32878
+  tps: 6403.62894
  }
 }
 dps_results: {

@@ -6,9 +6,9 @@ import (
 	"github.com/wowsims/wotlk/tools/database"
 )
 
-// go run ./tools/database/gen_tooltips -source=wowhead-items -output=assets/database/wowhead_item_tooltips.csv
-// go run ./tools/database/gen_tooltips -source=wowhead-spells -output=assets/database/wowhead_spell_tooltips.csv
-// go run ./tools/database/gen_tooltips -source=wotlk-items -output=assets/database/wotlk_items_tooltips.csv
+// go run ./tools/database/gen_tooltips -source=wowhead-items -output=assets/db_inputs/wowhead_item_tooltips.csv
+// go run ./tools/database/gen_tooltips -source=wowhead-spells -output=assets/db_inputs/wowhead_spell_tooltips.csv
+// go run ./tools/database/gen_tooltips -source=wotlk-items -output=assets/db_inputs/wotlk_items_tooltips.csv
 
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
 var maxId = flag.Int("maxid", 57000, "Maximum ID to scan for")

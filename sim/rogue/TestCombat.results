@@ -192,8 +192,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6272.35598
-  tps: 4453.37275
+  dps: 6277.97116
+  tps: 4457.35952
  }
 }
 dps_results: {
@@ -458,8 +458,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 5957.37169
-  tps: 4229.7339
+  dps: 6052.67027
+  tps: 4297.39589
  }
 }
 dps_results: {

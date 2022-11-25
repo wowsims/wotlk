@@ -239,7 +239,7 @@ dps_results: {
  value: {
   dps: 105.0593
   tps: 47.52796
-  hps: 4588.96178
+  hps: 4590.47457
  }
 }
 dps_results: {
@@ -477,17 +477,17 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-SanctificationGarb"
  value: {
-  dps: 96.73642
-  tps: 41.92165
-  hps: 3816.65451
+  dps: 97.784
+  tps: 42.46191
+  hps: 3898.69152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SanctificationRegalia"
  value: {
-  dps: 98.32542
-  tps: 42.54722
-  hps: 4070.27912
+  dps: 99.34345
+  tps: 43.14435
+  hps: 4169.73439
  }
 }
 dps_results: {

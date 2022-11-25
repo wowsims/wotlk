@@ -143,15 +143,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 1564.91474
-  tps: 5000.52484
+  dps: 1588.53814
+  tps: 5064.09632
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-DarkrunedPlate"
  value: {
-  dps: 1400.96568
-  tps: 4534.3433
+  dps: 1417.08666
+  tps: 4579.89959
  }
 }
 dps_results: {
@@ -227,8 +227,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1448.88549
-  tps: 4709.35339
+  dps: 1450.21297
+  tps: 4712.10592
  }
 }
 dps_results: {

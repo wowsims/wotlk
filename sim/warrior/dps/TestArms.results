@@ -220,8 +220,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7974.36315
-  tps: 6524.31283
+  dps: 7981.63041
+  tps: 6530.60524
  }
 }
 dps_results: {
@@ -437,15 +437,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 7777.83948
-  tps: 6365.08823
+  dps: 7948.98347
+  tps: 6506.60885
  }
 }
 dps_results: {
  key: "TestArms-AllItems-SiegebreakerPlate"
  value: {
-  dps: 6824.68949
-  tps: 5559.92279
+  dps: 6893.96283
+  tps: 5612.44621
  }
 }
 dps_results: {

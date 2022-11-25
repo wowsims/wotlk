@@ -45,16 +45,16 @@ character_stats_results: {
 dps_results: {
  key: "TestRetribution-AllItems-AegisBattlegear"
  value: {
-  dps: 5463.40151
-  tps: 5561.84864
+  dps: 5534.41921
+  tps: 5632.82884
   dtps: 8.493
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-AegisPlate"
  value: {
-  dps: 4939.29532
-  tps: 5038.02911
+  dps: 4986.25087
+  tps: 5084.98465
   dtps: 8.85978
  }
 }
@@ -245,8 +245,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 5779.35599
-  tps: 5879.9759
+  dps: 5782.28203
+  tps: 5882.90195
   dtps: 8.54061
  }
 }

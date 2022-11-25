@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6779.45893
-  tps: 3835.65218
+  dps: 6782.3872
+  tps: 3837.48626
  }
 }
 dps_results: {
@@ -668,15 +668,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 6291.23868
-  tps: 3581.78342
+  dps: 6405.006
+  tps: 3649.05778
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5718.84919
-  tps: 3255.95842
+  dps: 5778.21605
+  tps: 3280.78875
  }
 }
 dps_results: {
