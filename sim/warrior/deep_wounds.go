@@ -7,6 +7,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
+const munchingWindow = time.Millisecond * 10
+
 var DeepWoundsActionID = core.ActionID{SpellID: 12867}
 
 func (warrior *Warrior) applyDeepWounds() {
@@ -40,7 +42,11 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 			if result.Outcome.Matches(core.OutcomeCrit) {
-				warrior.procDeepWounds(sim, result.Target, spell.IsMH())
+				if warrior.WarriorInputs.Munch {
+					warrior.procMunchedDeepWounds(sim, result.Target, spell.IsMH())
+				} else {
+					warrior.procDeepWounds(sim, result.Target, spell.IsMH())
+				}
 				warrior.procBloodFrenzy(sim, result, time.Second*6)
 			}
 		},
@@ -88,4 +94,24 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 
 	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
 	warrior.DeepWounds.Cast(sim, target)
+}
+
+func (warrior *Warrior) procMunchedDeepWounds(sim *core.Simulation, target *core.Unit, isMh bool) {
+	procAt := sim.CurrentTime + munchingWindow
+	i := target.Index
+	if warrior.munchedDeepWoundsProcs[i] != nil {
+		procAt = warrior.munchedDeepWoundsProcs[i].NextActionAt
+		warrior.munchedDeepWoundsProcs[i].Cancel(sim)
+	}
+	warrior.munchedDeepWoundsProcs[i] = core.StartDelayedAction(sim, core.DelayedActionOptions{
+		DoAt:     procAt,
+		Priority: core.ActionPriorityAuto,
+		OnAction: func(s *core.Simulation) {
+			warrior.procDeepWounds(s, target, isMh)
+			warrior.munchedDeepWoundsProcs[i] = nil
+		},
+		CleanUp: func(s *core.Simulation) {
+			warrior.munchedDeepWoundsProcs[i] = nil
+		},
+	})
 }

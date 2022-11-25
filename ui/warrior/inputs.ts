@@ -40,6 +40,12 @@ export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWar
 	labelTooltip: 'Initial rage at the start of each iteration.',
 });
 
+export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
+	fieldName: 'munch',
+	label: 'Munching',
+	labelTooltip: 'Apply "munching" to Deep Wounds',
+});
+
 export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarrior, WarriorShout>({
 	fieldName: 'shout',
 	values: [
