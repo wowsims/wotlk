@@ -77,7 +77,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
 				return false
 			}
-			if shaman.SearingTotemDot.IsActive() || shaman.FireElemental.IsEnabled() {
+			if shaman.SearingTotemDot.IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(s) {
 				return false
 			}
 			return true
@@ -152,7 +152,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
 				return false
 			}
-			if shaman.MagmaTotemDot.IsActive() || shaman.FireElemental.IsEnabled() {
+			if shaman.MagmaTotemDot.IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(s) {
 				return false
 			}
 			return true
