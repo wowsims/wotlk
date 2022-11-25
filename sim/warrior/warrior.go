@@ -243,62 +243,62 @@ func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duratio
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9611,
-		stats.Strength:    185,
+		stats.Strength:    175,
 		stats.Agility:     110,
 		stats.Stamina:     167,
 		stats.Intellect:   37,
 		stats.Spirit:      61,
-		stats.AttackPower: 590,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9651,
-		stats.Strength:    186,
+		stats.Strength:    179,
 		stats.Agility:     109,
 		stats.Stamina:     171,
 		stats.Intellect:   35,
 		stats.Spirit:      58,
-		stats.AttackPower: 592,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9581,
-		stats.Strength:    175,
+		stats.Strength:    169,
 		stats.Agility:     116,
 		stats.Stamina:     164,
 		stats.Intellect:   42,
 		stats.Spirit:      59,
-		stats.AttackPower: 570,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9621,
-		stats.Strength:    184,
+		stats.Strength:    174,
 		stats.Agility:     113,
 		stats.Stamina:     168,
 		stats.Intellect:   36,
 		stats.Spirit:      63,
-		stats.AttackPower: 588,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9611,
-		stats.Strength:    181,
+		stats.Strength:    179,
 		stats.Agility:     118,
 		stats.Stamina:     167,
 		stats.Intellect:   36,
 		stats.Spirit:      59,
-		stats.AttackPower: 582,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9641,
-		stats.Strength:    187,
+		stats.Strength:    177,
 		stats.Agility:     110,
 		stats.Stamina:     170,
 		stats.Intellect:   33,
 		stats.Spirit:      62,
-		stats.AttackPower: 594,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -308,17 +308,17 @@ func init() {
 		stats.Stamina:     170,
 		stats.Intellect:   31,
 		stats.Spirit:      61,
-		stats.AttackPower: 578,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9631,
-		stats.Strength:    185,
+		stats.Strength:    175,
 		stats.Agility:     115,
 		stats.Stamina:     169,
 		stats.Intellect:   32,
 		stats.Spirit:      60,
-		stats.AttackPower: 590,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
@@ -328,7 +328,7 @@ func init() {
 		stats.Stamina:     160,
 		stats.Intellect:   34,
 		stats.Spirit:      64,
-		stats.AttackPower: 566,
+		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 }
