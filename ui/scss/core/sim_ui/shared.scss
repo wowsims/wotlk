@@ -1,0 +1,279 @@
+html {
+	overflow: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+td, th {
+  padding: auto;
+}
+
+.sim-ui {
+	height: 100%;
+}
+
+.sim-root {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+.sim-sidebar>div {
+  margin: 10px 0;
+}
+
+.sim-sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sim-sidebar-actions-button {
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+  margin: 5px;
+
+  background: transparent;
+  color: var(--main-text-color);
+  border: 1px solid var(--theme-color-primary);
+  font-weight: 1000;
+  transition: all .2s ease-in;
+}
+
+.sim-sidebar-actions-button:hover {
+  color: var(--main-text-color);
+  background: var(--theme-color-primary);
+}
+
+.iterations-picker {
+  text-align: center;
+}
+
+.iterations-picker .input-label {
+  color: var(--sidebar-text-color);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sim-sidebar-results {
+  flex-grow: 1;
+}
+
+.sim-sidebar-results {
+  height: 100%;
+  position: relative;
+}
+
+.sim-sidebar-results > div {
+  @include vertical-horizontal-center;
+  width: 100%;
+	text-align: center;
+}
+
+.results-pending .loader {
+  margin: auto;
+}
+
+.sim-sidebar-actions, .sim-sidebar-footer {
+	margin: 0 !important;
+	display: flex;
+}
+
+.iterations-label {
+	color: var(--sidebar-text-color);
+}
+
+.results-sim {
+	color: var(--sidebar-text-color);
+	text-shadow: 0 0 10px var(--sidebar-highlight-color);
+}
+
+.sim-main {
+  height: 100%;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+	background-image:
+		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+		var(--theme-background-image);
+	background-size: cover;
+	background-position: center center;
+  color: var(--main-text-color);
+  overflow-y: auto;
+  flex: 4;
+  min-width: calc(275px + 1vw);
+
+	.tab-pane {
+		overflow-y: auto;
+	}
+}
+
+.sim-main > .tab-content {
+	flex-grow: 1;
+	height: 80%;
+}
+.sim-main > .tab-content > .tab-pane {
+	height: 100%;
+}
+
+.sim-sidebar {
+  height: 100%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #111218;
+  flex: 1;
+	overflow-y: auto;
+
+	.sim-sidebar-title {
+		margin: 0 0 50px 0 !important;
+	}
+}
+
+.sim-sidebar-title, .sim-header {
+	height: 60px;
+	border-bottom: 1px solid white;
+}
+
+.sim-header {
+	padding: 0 var(--bs-gap);
+	display: flex;
+	justify-content: space-between;
+	background-color: #1112187d;
+
+	.sim-tabs, .sim-toolbar {
+		flex-direction: row;
+	}
+
+	.sim-tabs {
+		border-bottom: 0;
+	}
+
+	.sim-toolbar {
+		display: flex;
+		align-items: center;
+		font-size: clamp(12px, 2vw, 20px);
+
+		.sim-toolbar-item {
+			margin-left: var(--bs-gap);
+			display: flex;
+			cursor: pointer;
+
+			.dropdown-toggle::after {
+				content: none;
+			}
+		}
+	}
+}
+
+.sim-dropdown-menu {
+	position: relative;
+}
+.sim-dropdown-menu .dropdown-menu {
+	background-color: #111218;
+	border: 1px solid var(--theme-color-primary);
+	text-align: right;
+	min-width: auto;
+	font-weight: bold;
+	top: 120%;
+}
+.sim-dropdown-menu .dropdown-item {
+	display: block;
+	padding: 5px 20px;
+	user-select: none;
+	white-space: nowrap;
+}
+.sim-dropdown-menu .dropdown-item:hover {
+	background-color: #2a2c3b;
+}
+
+.notices {
+	font-size: 30px;
+	color: blue;
+	margin: 0 20px;
+	text-shadow:
+			0 0 10px white,
+			0 0 10px white,
+			0 0 10px white;
+}
+
+.warnings {
+	font-size: 30px;
+	color: yellow;
+	margin: 0 20px;
+	text-shadow:
+			0 0 10px red,
+			0 0 10px red,
+			0 0 10px red;
+}
+
+.known-issues {
+	display: none;
+	background-color: red;
+	border: 2px solid var(--main-text-color);
+	padding: 2px;
+	font-size: 14px;
+	font-weight: 900;
+}
+
+.downbin {
+	mask: url(/wotlk/assets/img/gauge.svg);
+	mask-size: cover;
+	-webkit-mask: url(/wotlk/assets/img/gauge.svg);
+	-webkit-mask-size: cover;
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+}
+
+.downbinnorm {
+	background-color: white;
+}
+
+.downbinalert {
+	background-color: red;
+}
+
+.hide-damage-metrics .damage-metrics {
+	display: none !important;
+}
+
+.hide-threat-metrics .threat-metrics {
+	display: none !important;
+}
+
+.hide-healing-metrics .healing-metrics {
+	display: none !important;
+}
+
+.hide-experimental .experimental {
+	display: none !important;
+}
+
+.hide-in-front-of-target .in-front-of-target {
+	display: none !important;
+}
+
+// TODO: Replace with Bootstrap media query once on to node module
+@media only screen and (max-width: 992px) {
+	.sim-header {
+		overflow-x: scroll;
+
+		.sim-tabs {
+			flex-wrap: nowrap;
+
+			.sim-link {
+				white-space: nowrap;
+			}
+		}
+	}
+
+	.known-issues {
+		white-space: nowrap;
+	}
+}

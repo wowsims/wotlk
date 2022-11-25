@@ -19,13 +19,18 @@
 @import "bootstrap/scss/helpers";
 @import "bootstrap/scss/transitions";
 @import "bootstrap/scss/dropdown";
+@import "bootstrap/scss/nav";
 @import "bootstrap/scss/navbar";
 
 // Bootstrap Utilities API
-@import "bootstrap/scss/utilities/api";
+@import "./bootstrap/scss/utilities/api";
 
-// custom Bootstrap style overrides
-@import "bootstrap_style_overrides";
+// Custom Bootstrap style overrides
+@import "./bootstrap_style_overrides";
+
+// Import other plugin styles
+@import "tippy.js/dist/tippy";
 
 // Custom styles
-@import "global";
+@import "./global";
+@import "./global_old";

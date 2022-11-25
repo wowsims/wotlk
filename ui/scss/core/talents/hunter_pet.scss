@@ -1,0 +1,18 @@
+.hunter-pet-talents-cunning, .hunter-pet-talents-ferocity, .hunter-pet-talents-tenacity {
+	display: none !important;
+}
+
+.cunning .hunter-pet-talents-cunning {
+	display: initial !important;
+}
+.ferocity .hunter-pet-talents-ferocity {
+	display: initial !important;
+}
+.tenacity .hunter-pet-talents-tenacity {
+	display: initial !important;
+}
+
+.pet-talents-container .saved-data-container {
+	display: flex;
+	justify-content: center;
+}

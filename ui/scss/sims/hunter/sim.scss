@@ -1,0 +1,22 @@
+// Set color variables which control the site theme.
+.hunter-sim-ui {
+	--theme-color-primary: #2ead50;
+	--theme-color-background: #0c190f;
+	--theme-color-background-raw: 12, 25, 15;
+	--theme-background-image: url('/wotlk/assets/img/hunter_background.jpg');
+	--theme-background-opacity: 0.9;
+	--main-text-color: White;
+}
+
+// Set grid width for icon sections based on how many buffs we configured.
+.hunter-sim-ui .self-buffs-section {
+  grid-template-columns: repeat(2, 1fr);
+}
+.hunter-sim-ui .PetBuffs-section {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+// Hunter has a lot of EP stats, so make the text smaller so it fits vertically.
+.hunter-sim-ui .character-stats-table-row {
+  font-size: 11px;
+}

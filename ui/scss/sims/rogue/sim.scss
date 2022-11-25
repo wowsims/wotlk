@@ -1,0 +1,19 @@
+// Set color variables which control the site theme.
+.rogue-sim-ui {
+	--theme-color-primary: #a7ba27;
+	--theme-color-background: #19190c;
+	--theme-color-background-raw: 25, 25, 12;
+	--theme-background-image: url('/wotlk/assets/img/rogue_background.jpg');
+	--theme-background-opacity: 0.95;
+	--main-text-color: White;
+}
+
+// Set grid width for icon sections based on how many buffs we configured.
+.rogue-sim-ui .self-buffs-section {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+// Rogue has a lot of EP stats, so make the text smaller so it fits vertically.
+.rogue-sim-ui .character-stats-table-row {
+  font-size: 11px;
+}
