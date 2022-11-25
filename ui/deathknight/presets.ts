@@ -122,7 +122,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
-	startingRunicPower: 40,
+	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: false,
 	precastHornOfWinter: true,
