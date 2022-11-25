@@ -1,0 +1,34 @@
+$death-knight: rgb(194, 46, 70);
+$druid:        rgb(255, 125, 10);
+$hunter:       rgb(171, 212, 115);
+$mage:         rgb(105, 204, 240);
+$paladin:      rgb(245, 140, 186);
+$priest:       rgb(255, 255, 255);
+$rogue:        rgb(255, 245, 105);
+$shaman:       rgb(36, 89, 255);
+$warlock:      rgb(148, 130, 201);
+$warrior:      rgb(199, 156, 110);
+
+$custom-colors: (
+  "death-knight": $death-knight,
+  "druid":        $druid,
+  "hunter":       $hunter,
+  "mage":         $mage,
+  "paladin":      $paladin,
+  "priest":       $priest,
+  "rogue":        $rogue,
+  "shaman":       $shaman,
+  "warlock":      $warlock,
+  "warrior":      $warrior
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+$enable-negative-margins: true;
+
+$dropdown-bg: black;
+$dropdown-border-radius: 0;
+$dropdown-color: white;
+$dropdown-padding-y: 0;
+
+$navbar-padding-y: 0;

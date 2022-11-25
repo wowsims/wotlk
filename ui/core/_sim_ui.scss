@@ -258,3 +258,22 @@ td, th {
 .hide-in-front-of-target .in-front-of-target {
 	display: none !important;
 }
+
+// TODO: Replace with Bootstrap media query once on to node module
+@media only screen and (max-width: 992px) {
+	.sim-header {
+		overflow-x: scroll;
+
+		.sim-tabs {
+			flex-wrap: nowrap;
+
+			.sim-link {
+				white-space: nowrap;
+			}
+		}
+	}
+
+	.known-issues {
+		white-space: nowrap;
+	}
+}

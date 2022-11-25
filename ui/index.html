@@ -1,266 +1,275 @@
+<!DOCTYPE html>
 <html>
+	<head>
+		<title>WoWSims - Wrath of the Lich King</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 
-<head>
-    <title>Wowsims</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <script src="./index.ts" type="module"></script>
-    <link rel="icon" type="image/x-icon" href="/wotlk/assets/favicon_io/favicon.ico">
-    <style>
-        a {
-            text-decoration: none;
-        }
+		<link rel="icon" href="/wotlk/assets/favicon_io/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="./index.scss">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	</head>
+	<body>
+		<div class="bg-image"></div>
+		<div id="homepage">
+			<header class="homepage-header">
+				<div class="container homepage-header-container">
+					<nav class="navbar navbar-dark navbar-expand-md flex-wrap align-items-end w-100">
+						<div class="navbar-brand-container order-0">
+							<a href="#" class="navbar-brand d-flex align-items-center p-0 m-0">
+								<img class="wowsims-logo" src="/wotlk/assets/img/WoW-Simulator-Icon.png">
+								<h2 class="wowsims-title">WoWSims</h2>
+							</a>
+							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homepageHeaderCollapse" aria-controls="homepageHeaderCollapse" aria-expanded="false" aria-label="Toggle navigation">
+								<i class="fa-solid fa-bars fa-2x"></i>
+							</button>
+						</div>
+						<h2 class="wrath-title w-100 order-1 order-md-2">Wrath of the Lich King</h2>
+						<div id="homepageHeaderCollapse" class="collapse navbar-collapse homepage-header-collapse order-2 order-md-1">
+							<div class="navbar-nav">
+								<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homepageHeaderCollapse" aria-controls="homepageHeaderCollapse" aria-expanded="false" aria-label="Toggle navigation">
+									<i class="fa-solid fa-times fa-2x"></i>
+								</button>
+								<a href="https://discord.gg/p3DgvmnDCS" target="_blank" class="nav-link">
+									<p class="m-0"><i class="discord-link fa fa-brands fa-discord fa-2x"></i>&nbsp;</p>
+								</a>
+								<a href="https://github.com/wowsims/wotlk" target="_blank" class="nav-link">
+									<p class="m-0"><i class="github-link fa fa-brands fa-github fa-2x"></i>&nbsp;</p>
+								</a>
+								<a href="https://patreon.com/wowsims" target="_blank" class="nav-link">
+									<i class="patreon-link fa fa-brands fa-patreon fa-2x me-2"></i>
+									<span class="fs-4 d-md-none d-lg-block">Support our devs</span>
+								</a>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</header>
+			<main>
+				<div class="container homepage-content-container">
+					<div class="info-container">
+						<p class="wowsims-info">
+							Welcome to WoWSims! This is a community-driven project to provide simulations for WotLK Classes & Raids
+							together with the leading theorycrafters and class representatives.
+						</p>
+					</div>
+					<div class="sim-links-container">
+						<div class="sim-links">
+							<a href="/wotlk/raid/" class="sim-link raid-sim-link text-white">
+								<div class="sim-link-content">
+									<img src="/wotlk/assets/img/raid_icon.png" class="sim-link-icon">
+									<span class="sim-link-label">Full Raid Sim</span>
+								</div>
+							</a>
+						</div>
 
-        .content {
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            margin-left: auto;
-            margin-right: auto;
-            height: 90%;
-            width: 75%;
-            text-align: center;
-        }
+						<div class="sim-links">
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-warrior" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/warrior_icon.png" class="sim-link-icon">
+										<span class="sim-link-label">Warrior</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/warrior/" class="sim-link text-warrior">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/warrior_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">DPS</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/protection_warrior/" class="sim-link text-warrior">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/protection_warrior_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Protection</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-paladin" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/paladin_icon.png" class="sim-link-icon">
+										<span class="sim-link-label">Paladin</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/protection_paladin/" class="sim-link text-paladin">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/protection_paladin_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Protection</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/retribution_paladin/" class="sim-link text-paladin">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/retribution_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Retribution</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<a href="/wotlk/hunter/" class="sim-link text-hunter">
+								<div class="sim-link-content">
+									<img src="/wotlk/assets/img/hunter_icon.png" class="sim-link-icon">
+									<span class="sim-link-label">Hunter</span>
+								</div>
+							</a>
+							<a href="/wotlk/rogue/" class="sim-link text-rogue">
+								<div class="sim-link-content">
+									<img src="/wotlk/assets/img/rogue_icon.png" class="sim-link-icon">
+									<span class="sim-link-label">Rogue</span>
+								</div>
+							</a>
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-priest" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/priest_icon.png" class="sim-link-icon">
+										<span class="sim-link-label">Priest</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/shadow_priest/" class="sim-link text-priest">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/shadow_priest_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Shadow</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/smite_priest/" class="sim-link text-priest">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/smite_priest_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Smite</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
 
-        .dropdown-option:hover {
-            background-color: rgba(255, 255, 255, 0.3) !important; 
-        }
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-death-knight" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+										<span class="sim-link-label">Death Knight</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/deathknight/" class="sim-link text-death-knight">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">DPS</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/tank_deathknight/" class="sim-link text-death-knight">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Tank</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
 
-        .dropdown-option {
-            flex: 0;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.1);
-            height: clamp(25px, 5px + 4.6vh, 60px);
-            padding-left: 6px;
-            padding-right: 6px;
-            white-space: nowrap;
-        }
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-shaman" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/shaman_icon.png" class="sim-link-icon">
+										<span class="sim-link-label">Shaman</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/elemental_shaman/" class="sim-link text-shaman">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/elemental_shaman_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Elemental</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/enhancement_shaman/" class="sim-link text-shaman">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/enhancement_shaman_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Enhancement</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
 
-        .sim-title-dropdown {
-            display: flex;
-            flex-direction: row;
-            margin: 0 auto;
-            flex-wrap: wrap;
-            justify-content: space-evenly;
-        }
+							<a href="/wotlk/mage/" class="sim-link text-mage">
+								<div class="sim-link-content">
+									<img src="/wotlk/assets/img/mage_icon.png" class="sim-link-icon">
+									<span class="sim-link-label">Mage</span>
+								</div>
+							</a>
 
-        .sim-title-dropdown-option-container {
-            margin-top: 10px;
-            margin-left: 10px;
-        }
+							<a href="/wotlk/warlock/" class="sim-link text-warlock">
+								<div class="sim-link-content">
+									<img src="/wotlk/assets/img/warlock_icon.png" class="sim-link-icon">
+									<span class="sim-link-label">Warlock</span>
+								</div>
+							</a>
 
-        .dropdown-panel .sim-title-spec-label {
-            text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black;
-        }
-
-        .sim-title-spec-label {
-            font-size: clamp(0.6rem, -1rem + 4vw, 1rem);
-            font-weight: bold;
-        }
-
-        .sim-title-label {
-            margin: 2px 5px;
-        }
-
-        .sim-title-icon {
-            width: clamp(22px, 4px + 3.4vh, 40px);
-        }
-
-        @font-face {
-            font-family: SimDefaultFont;
-            src: url(/wotlk/assets/fonts/PlusJakartaSans-Regular.woff2);
-        }
-
-        @font-face {
-            font-family: SimDefaultFont;
-            src: url(/wotlk/assets/fonts/PlusJakartaSans-Bold.woff2);
-            font-weight: bold;
-        }
-
-        * {
-            font-family: SimDefaultFont;
-            letter-spacing: 1px;
-        }
-
-        .bg-image {
-            background-image: url("assets/img/wotlk.jpg");
-            /* filter: brightness(20%) blur(2px); */
-            height: 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-
-        .info h2 {
-            font-size: clamp(2rem, -0.8rem + 7vw, 3.5rem);
-            color: #e0a335;
-        }
-        .info p {
-            font-size: clamp(0.8rem, -1rem + 4vw, 1.5rem);
-            color: white;
-        }
-    </style>
-</head>
-
-<body style="background-color: black">
-    <div class="bg-image"></div>
-    <div class="content">
-        <img src="/wotlk/assets/img/WoW-Simulator-Icon.png" style="height: 75px;">
-        <div class="info">
-            <h2>WoW WotLK Sims</h2>
-            <p>Welcome to WoWSims. This is a community-driven project to provide simulations for WotLK Classes & Raids
-                together with the leading theorycrafters and class representatives.</p>
-        </div>
-        <hr style="width: 50%">
-        <div class="dropdown-panel sim-title-dropdown within-raid-sim-hide">
-            <a href="/wotlk/raid/" class="sim-title-dropdown-option-container" style="flex-basis:100%; color:white">
-                <div class="sim-title-option dropdown-option" style="background-color: rgba(0, 0, 0, 0.5); justify-content: center;">
-                    <img src="/wotlk/assets/img/raid_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">RAID</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/balance_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/balance_druid_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">BALANCE DRUID</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/feral_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/feral_druid_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">FERAL DRUID</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/feral_tank_druid/" class="sim-title-dropdown-option-container" style="color: rgb(255, 125, 10);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/feral_druid_tank_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">FERAL TANK DRUID</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/hunter/" class="sim-title-dropdown-option-container" style="color: rgb(171, 212, 115);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/hunter_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">HUNTER</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/mage/" class="sim-title-dropdown-option-container" style="color: rgb(105, 204, 240);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/mage_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">MAGE</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/retribution_paladin/" class="sim-title-dropdown-option-container" style="color: rgb(245, 140, 186);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/retribution_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">RETRIBUTION PALADIN</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/protection_paladin/" class="sim-title-dropdown-option-container" style="color: rgb(245, 140, 186);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/protection_paladin_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">PROTECTION PALADIN</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/shadow_priest/" class="sim-title-dropdown-option-container" style="color: rgb(255, 255, 255);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/shadow_priest_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">SHADOW PRIEST</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/smite_priest/" class="sim-title-dropdown-option-container" style="color: rgb(255, 255, 255);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/smite_priest_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">SMITE PRIEST</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/rogue/" class="sim-title-dropdown-option-container" style="color: rgb(255, 245, 105);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/rogue_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">ROGUE</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/elemental_shaman/" class="sim-title-dropdown-option-container" style="color: rgb(36, 89, 255);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/elemental_shaman_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">ELEMENTAL SHAMAN</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/enhancement_shaman/" class="sim-title-dropdown-option-container" style="color: rgb(36, 89, 255);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/enhancement_shaman_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">ENHANCEMENT SHAMAN</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/warlock/" class="sim-title-dropdown-option-container" style="color: rgb(148, 130, 201);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/warlock_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">WARLOCK</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/warrior/" class="sim-title-dropdown-option-container" style="color: rgb(199, 156, 110);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/warrior_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">WARRIOR</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/protection_warrior/" class="sim-title-dropdown-option-container" style="color: rgb(199, 156, 110);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/protection_warrior_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">PROTECTION WARRIOR</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/deathknight/" class="sim-title-dropdown-option-container" style="color: rgb(194, 46, 70);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/death_knight_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">DEATH KNIGHT</span>
-                    </div>
-                </div>
-            </a>
-            <a href="/wotlk/tank_deathknight/" class="sim-title-dropdown-option-container" style="color: rgb(194, 46, 70);">
-                <div class="sim-title-option dropdown-option">
-                    <img src="/wotlk/assets/img/death_knight_icon.png" class="sim-title-icon">
-                    <div class="sim-title-label-container">
-                        <span class="sim-title-spec-label sim-title-label">DEATH KNIGHT TANK</span>
-                    </div>
-                </div>
-            </a>
-        </div>
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-druid" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/druid_icon.png" class="sim-link-icon">
+										<div>
+										</div>
+										<span class="sim-link-label">Druid</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/balance_druid/" class="sim-link text-druid">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/balance_druid_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Balance</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/feral_druid/" class="sim-link text-druid">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/feral_druid_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Feral DPS</span>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/feral_tank_druid/" class="sim-link text-druid">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/feral_druid_tank_icon.png" class="sim-link-icon">
+												<span class="sim-link-label">Feral Tank</span>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
     </div>
-</body>
-
+		<script src="./index.ts" type="module"></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-T3HBB0LXNX"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-YEJ8MEHGV2');
+		</script>
+	</body>
 </html>

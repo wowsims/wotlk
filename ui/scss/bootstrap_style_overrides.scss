@@ -1,0 +1,82 @@
+@use "sass:map";
+
+@font-face {
+	font-family: SimDefaultFont;
+	src: url(/wotlk/assets/fonts/PlusJakartaSans-Regular.woff2);
+}
+
+@font-face {
+	font-family: SimDefaultFont;
+	src: url(/wotlk/assets/fonts/PlusJakartaSans-Bold.woff2);
+	font-weight: bold;
+}
+
+:root {
+  --bs-body-bg: black;
+  --bs-body-color: white;
+  --bs-body-font-family: SimDefaultFont;
+  --bs-body-line-height: 1.25;
+  --bs-primary: #e0a335;
+  --bs-primary-rgb: 224,163,53;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+}
+
+.navbar {
+  .navbar-toggler {
+    border: 0;
+    box-shadow: none;
+    color: white;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .navbar {
+    .navbar-collapse {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: rgba(0,0,0,.9);
+      z-index: 1000;
+  
+      .navbar-nav {
+        position: relative;
+        align-items: flex-start;
+
+        .navbar-toggler {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+
+        .nav-link {
+          padding-bottom: map.get($spacers, 3);
+
+          &:first-of-type {
+            padding-top: map.get($spacers, 2);
+          }
+        }
+      }
+    }
+  }
+}
