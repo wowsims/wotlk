@@ -138,8 +138,10 @@ export class CharacterStats extends Component {
 			}
 		} else if (stat == Stat.StatSpellHaste) {
 			displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
+		} else if (stat == Stat.StatArmorPenetration) {
+			displayStr += ` (${(rawValue / Mechanics.ARMOR_PEN_PER_PERCENT_ARMOR).toFixed(2)}%)`;
 		} else if (stat == Stat.StatExpertise) {
-			displayStr += ` (${(Math.floor(Number(rawValue.toFixed(2)) / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION)).toFixed(0)})`;
+			displayStr += ` (${(Math.floor(rawValue / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION) / 4).toFixed(2)}%)`;
 		} else if (stat == Stat.StatDefense) {
 			displayStr += ` (${(Mechanics.CHARACTER_LEVEL * 5 + rawValue / Mechanics.DEFENSE_RATING_PER_DEFENSE).toFixed(1)})`;
 		} else if (stat == Stat.StatBlock) {
