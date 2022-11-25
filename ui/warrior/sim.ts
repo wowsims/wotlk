@@ -21,6 +21,7 @@ import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents as Warrior
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as WarriorInputs from './inputs.js';
@@ -62,6 +63,16 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatArmorPenetration,
 				Stat.StatArmor,
 			],
+			modifyDisplayStats: (player: Player<Spec.SpecWarrior>) => {
+				let stats = new Stats();
+				if (!player.getInFrontOfTarget()) {
+					// When behind target, dodge is the only outcome affected by Expertise.
+					stats = stats.addStat(Stat.StatExpertise, player.getTalents().weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION);
+				}
+				return {
+					talents: stats,
+				};
+			},
 
 			defaults: {
 				// Default equipped gear.
