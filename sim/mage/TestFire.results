@@ -220,8 +220,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-FrostfireGarb"
  value: {
-  dps: 4798.88866
-  tps: 4297.72198
+  dps: 4921.29143
+  tps: 4400.11045
  }
 }
 dps_results: {

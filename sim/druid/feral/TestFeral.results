@@ -150,15 +150,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 6479.91646
-  tps: 4920.90168
+  dps: 6670.65895
+  tps: 5057.7977
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-DreamwalkerGarb"
  value: {
-  dps: 5432.57902
-  tps: 4113.62876
+  dps: 5650.69515
+  tps: 4283.06586
  }
 }
 dps_results: {

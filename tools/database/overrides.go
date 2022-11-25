@@ -225,7 +225,7 @@ var ItemDenyList = map[int32]struct{}{
 	34578: struct{}{}, // Battlemaster's Determination
 	34579: struct{}{}, // Battlemaster's Audacity
 	34580: struct{}{}, // Battlemaster's Perseverence
-	43727: struct{}{}, // Bonescythe Breastplate
+
 	53500: struct{}{}, // Tectonic Plate
 }
 

@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-GarbofFaith"
  value: {
-  dps: 3009.25077
-  tps: 2563.80237
+  dps: 3156.4766
+  tps: 2685.08255
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-RegaliaofFaith"
  value: {
-  dps: 3000.96533
-  tps: 2558.93246
+  dps: 3112.46931
+  tps: 2651.21492
  }
 }
 dps_results: {

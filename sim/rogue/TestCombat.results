@@ -80,8 +80,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BonescytheBattlegear"
  value: {
-  dps: 5689.72863
-  tps: 4039.70733
+  dps: 5844.2987
+  tps: 4149.45208
  }
 }
 dps_results: {

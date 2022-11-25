@@ -220,8 +220,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-FrostfireGarb"
  value: {
-  dps: 5847.10841
-  tps: 3513.63155
+  dps: 5995.81999
+  tps: 3600.36949
  }
 }
 dps_results: {

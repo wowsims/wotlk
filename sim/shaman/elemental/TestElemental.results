@@ -222,15 +222,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-EarthshatterBattlegear"
  value: {
-  dps: 3394.28527
-  tps: 2035.48879
+  dps: 3407.14443
+  tps: 2042.89515
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-EarthshatterGarb"
  value: {
-  dps: 3862.67863
-  tps: 2309.02968
+  dps: 3960.36775
+  tps: 2370.97554
  }
 }
 dps_results: {

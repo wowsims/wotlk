@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-GarbofFaith"
  value: {
-  dps: 4501.8833
-  tps: 3470.81333
+  dps: 4649.80261
+  tps: 3585.00086
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-RegaliaofFaith"
  value: {
-  dps: 4318.44294
-  tps: 3329.07279
+  dps: 4427.58189
+  tps: 3411.03953
  }
 }
 dps_results: {

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -68,6 +69,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 
 		for _, pattern := range database.DenyListNameRegexes {
 			if pattern.MatchString(item.Name) {
+				return false
+			}
+		}
+		return true
+	})
+
+	// There is an 'unavailable' version of every naxx set, e.g. https://www.wowhead.com/wotlk/item=43728/bonescythe-gauntlets
+	heroesItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return strings.HasPrefix(item.Name, "Heroes' ")
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		nameToMatch := "Heroes' " + item.Name
+		for _, heroItem := range heroesItems {
+			if heroItem.Name == nameToMatch {
 				return false
 			}
 		}

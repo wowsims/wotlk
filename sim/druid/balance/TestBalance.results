@@ -157,15 +157,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4103.73847
-  tps: 3936.41213
+  dps: 4139.45764
+  tps: 3972.99655
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
-  dps: 5992.80445
-  tps: 5828.90268
+  dps: 6310.59371
+  tps: 6152.4596
  }
 }
 dps_results: {

@@ -469,17 +469,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 7094.79463
-  tps: 4479.72498
-  hps: 253.03258
+  dps: 7339.17956
+  tps: 4633.53562
+  hps: 266.39186
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ScourgebornePlate"
  value: {
-  dps: 6584.16128
-  tps: 4111.29839
-  hps: 270.47305
+  dps: 6709.12044
+  tps: 4184.47237
+  hps: 277.91964
  }
 }
 dps_results: {

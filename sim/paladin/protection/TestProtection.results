@@ -472,15 +472,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-RedemptionBattlegear"
  value: {
-  dps: 2982.91219
-  tps: 7130.68188
+  dps: 3086.52726
+  tps: 7356.69446
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-RedemptionPlate"
  value: {
-  dps: 2956.30631
-  tps: 7128.74005
+  dps: 3016.17236
+  tps: 7266.35993
  }
 }
 dps_results: {
