@@ -420,8 +420,8 @@ func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpen
 	}
 	rp.runeStates |= isDeaths[slot]
 
-	// revertOnSpend == true overrides anything
-	rp.runeMeta[slot].revertOnSpend = rp.runeMeta[slot].revertOnSpend || revertOnSpend
+	isBloodTapped := rp.btslot == slot
+	rp.runeMeta[slot].revertOnSpend = !isBloodTapped && (rp.runeMeta[slot].revertOnSpend || revertOnSpend)
 
 	if rp.runeMeta[slot].revertOnSpend {
 		rp.runeMeta[slot].revertAt = NeverExpires
