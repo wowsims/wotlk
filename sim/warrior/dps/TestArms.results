@@ -605,8 +605,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Average-Default"
  value: {
-  dps: 8362.36341
-  tps: 6844.14681
+  dps: 8354.17053
+  tps: 6837.44232
  }
 }
 dps_results: {

@@ -645,9 +645,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Average-Default"
  value: {
-  dps: 102.22553
-  tps: 48.15232
-  hps: 4596.82793
+  dps: 102.02521
+  tps: 48.05818
+  hps: 4587.83877
  }
 }
 dps_results: {

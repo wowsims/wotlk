@@ -521,8 +521,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-Average-Default"
  value: {
-  dps: 5746.00994
-  tps: 5147.41397
+  dps: 5738.09422
+  tps: 5140.3235
  }
 }
 dps_results: {

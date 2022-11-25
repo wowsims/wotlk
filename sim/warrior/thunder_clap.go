@@ -52,8 +52,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 
 			for _, aoeTarget := range sim.Encounter.Targets {
-				result := spell.CalcDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
-				spell.DealDamage(sim, result)
+				result := spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
 				if result.Landed() {
 					tcAuras[aoeTarget.Index].Activate(sim)
 				}

@@ -77,17 +77,23 @@ export class SimResult {
 	readonly encounterMetrics: EncounterMetrics;
 	readonly logs: Array<SimLog>;
 
+	private players: Array<UnitMetrics>;
+	private units: Array<UnitMetrics>;
+
 	private constructor(request: RaidSimRequest, result: RaidSimResult, raidMetrics: RaidMetrics, encounterMetrics: EncounterMetrics, logs: Array<SimLog>) {
 		this.request = request;
 		this.result = result;
 		this.raidMetrics = raidMetrics;
 		this.encounterMetrics = encounterMetrics;
 		this.logs = logs;
+
+		this.players = raidMetrics.parties.map(party => party.players).flat();
+		this.units = this.players.concat(encounterMetrics.targets);
 	}
 
 	getPlayers(filter?: SimResultFilter): Array<UnitMetrics> {
 		if (filter?.player || filter?.player === 0) {
-			const player = this.getPlayerWithIndex(filter.player);
+			const player = this.getUnitWithIndex(filter.player);
 			return player ? [player] : [];
 		} else {
 			return this.raidMetrics.parties.map(party => party.players).flat();
@@ -100,12 +106,12 @@ export class SimResult {
 	}
 
 	getPlayerWithIndex(unitIndex: number): UnitMetrics | null {
-		return this.raidMetrics.parties[Math.floor(unitIndex / MAX_PARTY_SIZE)].players[unitIndex % MAX_PARTY_SIZE]
+		return this.players.find(player => player.unitIndex == unitIndex) || null;
 	}
 
 	getTargets(filter?: SimResultFilter): Array<UnitMetrics> {
 		if (filter?.target || filter?.target === 0) {
-			const target = this.getTargetWithIndex(filter.target);
+			const target = this.getUnitWithIndex(filter.target);
 			return target ? [target] : [];
 		} else {
 			return this.encounterMetrics.targets.slice();
@@ -116,7 +122,7 @@ export class SimResult {
 		return this.getTargets().find(target => target.unitIndex == unitIndex) || null;
 	}
 	getUnitWithIndex(unitIndex: number): UnitMetrics | null {
-		return this.getPlayerWithIndex(unitIndex) || this.getTargetWithIndex(unitIndex);
+		return this.units.find(unit => unit.unitIndex == unitIndex) || null;
 	}
 
 	getDamageMetrics(filter: SimResultFilter): DistributionMetricsProto {

@@ -645,9 +645,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Average-Default"
  value: {
-  dps: 96.96815
-  tps: 53.69062
-  hps: 5591.12892
+  dps: 96.79165
+  tps: 53.59264
+  hps: 5580.92036
  }
 }
 dps_results: {
