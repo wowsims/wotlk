@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7045.32445
-  tps: 6308.30124
+  dps: 7039.24562
+  tps: 6302.85882
  }
 }
 dps_results: {

@@ -272,10 +272,10 @@ export class RaidSimResultsManager {
 
 	static makeToplineResultsContent(simResult: SimResult, filter?: SimResultFilter): string {
 		const players = simResult.getPlayers(filter);
-		const playerMetrics = players.length == 1 ? players[0] : null;
 		let content = '';
 
-		if (playerMetrics) {
+		if (players.length == 1) {
+			const playerMetrics = players[0];
 			if (playerMetrics.getTargetIndex(filter) == null) {
 				const dpsMetrics = simResult.raidMetrics.dps;
 				const tpsMetrics = playerMetrics.tps;
@@ -299,7 +299,6 @@ export class RaidSimResultsManager {
 				`;
 			} else {
 				const actions = simResult.getActionMetrics(filter);
-				const targetActions = simResult.getTargets(filter)[0].actions.map(action => action.forTarget(filter));
 				if (actions.length > 0) {
 					const mergedActions = ActionMetrics.merge(actions);
 					content += `
@@ -311,6 +310,8 @@ export class RaidSimResultsManager {
 						</div>
 					`;
 				}
+
+				const targetActions = simResult.getTargets(filter)[0].actions.map(action => action.forTarget(filter));
 				if (targetActions.length > 0) {
 					const mergedTargetActions = ActionMetrics.merge(targetActions);
 					content += `

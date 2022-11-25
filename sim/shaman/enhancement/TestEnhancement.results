@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
-  dps: 6805.25335
-  tps: 3852.70867
+  dps: 6798.88007
+  tps: 3849.10068
  }
 }
 dps_results: {

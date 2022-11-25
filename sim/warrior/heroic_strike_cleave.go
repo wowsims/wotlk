@@ -31,17 +31,14 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			},
 
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.glyphOfRevengeProcAura != nil {
-					if warrior.glyphOfRevengeProcAura.IsActive() {
-						cast.Cost = 0
-
-						warrior.glyphOfRevengeProcAura.Deactivate(sim)
-					}
+				if warrior.glyphOfRevengeProcAura.IsActive() {
+					cast.Cost = 0
+					warrior.glyphOfRevengeProcAura.Deactivate(sim)
 				}
 			},
 		},
 
-		BonusCritRating:  (float64(warrior.Talents.Incite)*5 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
+		BonusCritRating:  (5*float64(warrior.Talents.Incite) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,

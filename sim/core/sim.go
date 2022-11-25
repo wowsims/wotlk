@@ -350,6 +350,12 @@ func (sim *Simulation) runOnce() {
 		pa.OnAction(sim)
 	}
 
+	// The last event loop will leave CurrentTime at some value close to but not
+	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
+	// during the doneIteration phase will return the Duration value, which is
+	// intuitive.
+	sim.CurrentTime = sim.Duration
+
 	for _, pa := range sim.pendingActions {
 		if pa.CleanUp != nil {
 			pa.CleanUp(sim)
@@ -360,10 +366,10 @@ func (sim *Simulation) runOnce() {
 	sim.Encounter.doneIteration(sim)
 
 	for _, unit := range sim.Raid.AllUnits {
-		unit.Metrics.doneIteration(unit, sim.rand.GetSeed(), sim.CurrentTime.Seconds())
+		unit.Metrics.doneIteration(unit, sim.rand.GetSeed(), sim.Duration.Seconds())
 	}
 	for _, target := range sim.Encounter.Targets {
-		target.Metrics.doneIteration(&target.Unit, sim.rand.GetSeed(), sim.CurrentTime.Seconds())
+		target.Metrics.doneIteration(&target.Unit, sim.rand.GetSeed(), sim.Duration.Seconds())
 	}
 }
 

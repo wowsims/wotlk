@@ -563,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Average-Default"
  value: {
-  dps: 5415.95447
-  tps: 4174.30504
+  dps: 5411.11934
+  tps: 4170.57867
  }
 }
 dps_results: {
