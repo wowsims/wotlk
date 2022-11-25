@@ -14,6 +14,11 @@ td, th {
   padding: auto;
 }
 
+// TODO: Remove once individual sims are using the Bootstrap node module
+input, textarea {
+  color: white;
+}
+
 .sim-root {
   height: 100%;
   display: flex;
