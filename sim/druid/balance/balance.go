@@ -44,11 +44,9 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 	return moonkin
 }
 
-type BalanceCooldown struct {
-	Name     string
+type BalanceOnUseTrinket struct {
+	Cooldown *core.MajorCooldown
 	Stat     stats.Stat
-	Priority float64
-	ID       core.ActionID
 }
 
 type BalanceDruid struct {
@@ -61,8 +59,8 @@ type BalanceDruid struct {
 	hyperSpeedMCD      *core.MajorCooldown
 	potionSpeedMCD     *core.MajorCooldown
 	potionWildMagicMCD *core.MajorCooldown
-	onUseTrinket1      *core.MajorCooldown
-	onUseTrinket2      *core.MajorCooldown
+	onUseTrinket1      BalanceOnUseTrinket
+	onUseTrinket2      BalanceOnUseTrinket
 	potionUsed         bool
 }
 
@@ -105,8 +103,14 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		if moonkin.HasProfession(proto.Profession_Engineering) {
 			moonkin.hyperSpeedMCD = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 54758})
 		}
-		moonkin.onUseTrinket1 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID})
-		moonkin.onUseTrinket2 = moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket2].ID})
+		moonkin.onUseTrinket1 = BalanceOnUseTrinket{
+			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID}),
+			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket1].ID),
+		}
+		moonkin.onUseTrinket2 = BalanceOnUseTrinket{
+			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket2].ID}),
+			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket2].ID),
+		}
 	}
 }
 
@@ -117,4 +121,14 @@ func (moonkin *BalanceDruid) getBalanceMajorCooldown(actionID core.ActionID) *co
 		return majorCd
 	}
 	return nil
+}
+
+func getOnUseTrinketStat(itemId int32) stats.Stat {
+	if itemId == 45466 || itemId == 48722 || itemId == 47726 || itemId == 47946 || itemId == 36972 {
+		return stats.SpellHaste
+	}
+	if itemId == 50259 {
+		return stats.SpellCrit
+	}
+	return stats.SpellPower
 }
