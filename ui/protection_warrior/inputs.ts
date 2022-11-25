@@ -57,6 +57,12 @@ export const PrecastShout = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecPr
 	labelTooltip: 'Selected shout is cast 10 seconds before combat starts.',
 });
 
+export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionWarrior>({
+	fieldName: 'munch',
+	label: 'Munching',
+	labelTooltip: 'Apply "munching" to Deep Wounds',
+});
+
 export const ProtectionWarriorRotationConfig = {
 	inputs: [
 		InputHelpers.makeCustomRotationInput<Spec.SpecProtectionWarrior, SpellOption>({

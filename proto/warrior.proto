@@ -200,6 +200,7 @@ message Warrior {
 		bool use_recklessness = 2;
 		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
+		bool munch = 5;
 	}
 	Options options = 3;
 }
@@ -250,6 +251,7 @@ message ProtectionWarrior {
 		bool precast_shout_t2 = 6;
 		bool precast_shout_sapphire = 7;
 		bool use_shattering_throw = 8;
+		bool munch = 9;
 	}
 	Options options = 3;
 }
