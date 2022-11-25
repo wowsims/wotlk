@@ -136,15 +136,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7231.09668
-  tps: 4275.94969
+  dps: 7338.44621
+  tps: 4339.63726
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedPlate"
  value: {
-  dps: 6354.83055
-  tps: 3751.86336
+  dps: 6442.79042
+  tps: 3803.79028
  }
 }
 dps_results: {
@@ -220,8 +220,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7629.4144
-  tps: 4514.69914
+  dps: 7633.2693
+  tps: 4517.01208
  }
 }
 dps_results: {

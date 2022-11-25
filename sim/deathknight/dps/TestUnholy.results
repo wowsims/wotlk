@@ -149,17 +149,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7433.12932
-  tps: 4761.66399
-  hps: 252.47755
+  dps: 7563.34221
+  tps: 4856.52453
+  hps: 260.62971
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedPlate"
  value: {
-  dps: 6612.39439
-  tps: 4144.07964
-  hps: 287.16556
+  dps: 6682.89641
+  tps: 4191.51773
+  hps: 294.16388
  }
 }
 dps_results: {
@@ -237,8 +237,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7621.7973
-  tps: 4826.99226
+  dps: 7626.04411
+  tps: 4831.05686
   hps: 270.35651
  }
 }

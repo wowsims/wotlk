@@ -64,5 +64,5 @@ func (tm *TooltipManager) Fetch(minId, maxId int32) {
 		strDB[k] = v
 	}
 
-	tools.WriteMap(tm.FilePath, strDB)
+	tools.WriteMapSortByIntKey(tm.FilePath, strDB)
 }

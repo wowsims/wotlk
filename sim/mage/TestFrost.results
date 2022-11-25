@@ -192,8 +192,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 4241.40486
-  tps: 3560.83516
+  dps: 4245.43564
+  tps: 3564.46286
  }
 }
 dps_results: {
@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-KirinTorGarb"
  value: {
-  dps: 4017.39728
-  tps: 3366.23003
+  dps: 4073.15161
+  tps: 3413.61426
  }
 }
 dps_results: {

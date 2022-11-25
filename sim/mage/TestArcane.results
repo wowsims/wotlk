@@ -192,8 +192,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6593.35117
-  tps: 3959.51486
+  dps: 6599.31784
+  tps: 3963.09486
  }
 }
 dps_results: {
@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-KirinTorGarb"
  value: {
-  dps: 6042.64063
-  tps: 3624.38434
+  dps: 6107.79271
+  tps: 3660.53449
  }
 }
 dps_results: {

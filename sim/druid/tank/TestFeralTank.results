@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 1107.88549
-  tps: 1507.33342
+  dps: 1106.62471
+  tps: 1505.26611
  }
 }
 dps_results: {
@@ -395,15 +395,15 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-NightsongBattlegear"
  value: {
-  dps: 1253.34179
-  tps: 1679.12583
+  dps: 1283.56215
+  tps: 1727.69335
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-NightsongGarb"
  value: {
-  dps: 993.55984
-  tps: 1322.80367
+  dps: 996.21034
+  tps: 1319.28207
  }
 }
 dps_results: {
