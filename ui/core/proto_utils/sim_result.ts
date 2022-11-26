@@ -108,6 +108,9 @@ export class SimResult {
 	getPlayerWithIndex(unitIndex: number): UnitMetrics | null {
 		return this.players.find(player => player.unitIndex == unitIndex) || null;
 	}
+	getPlayerWithRaidIndex(raidIndex: number): UnitMetrics | null {
+		return this.players.find(player => player.index == raidIndex) || null;
+	}
 
 	getTargets(filter?: SimResultFilter): Array<UnitMetrics> {
 		if (filter?.target || filter?.target === 0) {
