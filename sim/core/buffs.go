@@ -678,15 +678,15 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 
 var TricksOfTheTradeAuraTag = "TricksOfTheTrade"
 
-const TricksOfTheTradeDuration = time.Second * 10 // Assuming rogues have Glyph of TotT by default (which might not be the case).
-const TricksOfTheTradeCD = time.Second * 3600     // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
+const TricksOfTheTradeCD = time.Second * 3600 // CD is 30s from the time buff ends (so 40s with glyph) but that's in order to be able to set the number of TotT you'll have during the fight
 
 func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	if numTricksOfTheTrades == 0 {
 		return
 	}
 
-	TotTAura := TricksOfTheTradeAura(agent.GetCharacter(), -1)
+	// Assuming rogues have Glyph of TotT by default (which might not be the case).
+	TotTAura := TricksOfTheTradeAura(agent.GetCharacter(), -1, true)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -694,7 +694,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 			ActionID:         ActionID{SpellID: 57933, Tag: -1},
 			AuraTag:          TricksOfTheTradeAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
-			AuraDuration:     TricksOfTheTradeDuration,
+			AuraDuration:     TotTAura.Duration,
 			AuraCD:           TricksOfTheTradeCD,
 			Type:             CooldownTypeDPS,
 
@@ -706,14 +706,14 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 		numTricksOfTheTrades)
 }
 
-func TricksOfTheTradeAura(character *Character, actionTag int32) *Aura {
+func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	return character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),
 		Tag:      TricksOfTheTradeAuraTag,
 		ActionID: actionID,
-		Duration: TricksOfTheTradeDuration,
+		Duration: TernaryDuration(glyphed, time.Second*10, time.Second*6),
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.DamageDealtMultiplier *= 1.15
 		},
