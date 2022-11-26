@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 4872.24551
-  tps: 3459.29431
+  dps: 4872.26367
+  tps: 3459.3072
  }
 }
 dps_results: {
@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Gladiator'sVestments"
  value: {
-  dps: 6243.1545
-  tps: 4432.63969
+  dps: 6243.16591
+  tps: 4432.6478
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 6368.71235
-  tps: 4521.78577
+  dps: 6368.72414
+  tps: 4521.79414
  }
 }
 dps_results: {
@@ -458,15 +458,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 6052.67027
-  tps: 4297.39589
+  dps: 6052.67944
+  tps: 4297.4024
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-TheFistsofFury"
  value: {
-  dps: 5630.26222
-  tps: 3997.48618
+  dps: 5630.26635
+  tps: 3997.48911
  }
 }
 dps_results: {
@@ -528,8 +528,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5175.07206
-  tps: 3674.30116
+  dps: 5175.0753
+  tps: 3674.30346
  }
 }
 dps_results: {
@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Average-Default"
  value: {
-  dps: 6426.35961
-  tps: 4562.71532
+  dps: 6426.59115
+  tps: 4562.87972
  }
 }
 dps_results: {

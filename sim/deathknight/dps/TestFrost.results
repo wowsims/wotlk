@@ -52,8 +52,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7693.22518
-  tps: 4553.0875
+  dps: 7693.25744
+  tps: 4553.10685
  }
 }
 dps_results: {
@@ -73,22 +73,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 6479.20171
-  tps: 3828.83106
+  dps: 6479.2423
+  tps: 3828.85541
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6372.33043
-  tps: 3767.70098
+  dps: 6372.36982
+  tps: 3767.72462
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6083.46024
-  tps: 3593.78618
+  dps: 6083.47932
+  tps: 3593.79763
  }
 }
 dps_results: {
@@ -143,8 +143,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedPlate"
  value: {
-  dps: 6442.79042
-  tps: 3803.79028
+  dps: 6442.82689
+  tps: 3803.81216
  }
 }
 dps_results: {
@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7664.45475
-  tps: 4535.64719
+  dps: 7664.48655
+  tps: 4535.66627
  }
 }
 dps_results: {
@@ -451,8 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 6801.28343
-  tps: 4015.05563
+  dps: 6801.31665
+  tps: 4015.07557
  }
 }
 dps_results: {
@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6493.21993
-  tps: 3833.9854
+  dps: 6493.26289
+  tps: 3834.01118
  }
 }
 dps_results: {
@@ -612,8 +612,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6343.4093
-  tps: 3750.22163
+  dps: 6343.43841
+  tps: 3750.2391
  }
 }
 dps_results: {
@@ -633,8 +633,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 7928.30373
-  tps: 4686.86215
+  dps: 7928.72144
+  tps: 4687.11278
  }
 }
 dps_results: {
@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5854.77216
-  tps: 3441.72566
+  dps: 5854.79944
+  tps: 3441.74203
  }
 }
 dps_results: {

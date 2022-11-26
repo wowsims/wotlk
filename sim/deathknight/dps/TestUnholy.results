@@ -413,16 +413,16 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7618.4798
-  tps: 4812.25314
+  dps: 7618.48484
+  tps: 4812.25818
   hps: 271.6243
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7627.82044
-  tps: 4820.40637
+  dps: 7627.82548
+  tps: 4820.41141
   hps: 271.6243
  }
 }
@@ -469,8 +469,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 7333.18228
-  tps: 4629.19123
+  dps: 7333.18494
+  tps: 4629.19388
   hps: 264.53762
  }
 }
@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-SparkofLife-37657"
  value: {
-  dps: 7651.5033
-  tps: 4804.98183
+  dps: 7651.50607
+  tps: 4804.9846
   hps: 273.52599
  }
 }
@@ -701,8 +701,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8156.17497
-  tps: 5096.02619
+  dps: 8156.44922
+  tps: 5096.20758
   hps: 272.96251
  }
 }
@@ -717,8 +717,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7570.171
-  tps: 4848.73011
+  dps: 7570.17605
+  tps: 4848.73515
   hps: 205.8913
  }
 }
