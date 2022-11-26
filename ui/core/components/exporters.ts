@@ -63,7 +63,7 @@ export abstract class Exporter extends Popup {
 		this.rootElem.innerHTML = `
 			<span class="exporter-title">${title}</span>
 			<div class="export-content">
-				<textarea class="exporter-textarea" readonly></textarea>
+				<textarea class="exporter-textarea form-control" readonly></textarea>
 			</div>
 			<div class="actions-row">
 				<button class="exporter-button sim-button clipboard-button">COPY TO CLIPBOARD</button>

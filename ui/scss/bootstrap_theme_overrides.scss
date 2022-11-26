@@ -1,3 +1,11 @@
+// Define and overwrite Bootstrap Variables
+// See bootstrap/scss/_variables.scss for a complete list of definitions, or
+// individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
+
+// Theme variable overrides
+$primary: #e0a335;
+
+// Custom theme color mapping
 $death-knight: rgb(194, 46, 70);
 $druid:        rgb(255, 125, 10);
 $hunter:       rgb(171, 212, 115);
@@ -19,16 +27,29 @@ $custom-colors: (
   "rogue":        $rogue,
   "shaman":       $shaman,
   "warlock":      $warlock,
-  "warrior":      $warrior
+  "warrior":      $warrior,
+  "primary":      $primary
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+// Variables overrides
 $enable-negative-margins: true;
+
+$body-bg: black;
+$body-color: white;
 
 $dropdown-bg: black;
 $dropdown-border-radius: 0;
 $dropdown-color: white;
 $dropdown-padding-y: 0;
 
+$input-bg: black;
+$input-color: white;
+$input-focus-bg: black;
+$input-focus-color: white;
+
+$navbar-dark-color: white;
+$navbar-dark-hover-color: $primary;
+$navbar-dark-active-color: $primary;
 $navbar-padding-y: 0;
