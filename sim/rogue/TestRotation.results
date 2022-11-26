@@ -118,7 +118,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
@@ -339,7 +339,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -560,7 +560,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -781,7 +781,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
@@ -1002,7 +1002,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -1223,7 +1223,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
@@ -1456,7 +1456,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
@@ -1665,7 +1665,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -1874,7 +1874,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -2083,7 +2083,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
@@ -2292,7 +2292,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 10
   }
   casts: {
@@ -2501,7 +2501,7 @@ casts_results: {
    value: 5
   }
   casts: {
-   key: "spell_id:57934 tag:1"
+   key: "spell_id:57934"
    value: 0
   }
   casts: {
