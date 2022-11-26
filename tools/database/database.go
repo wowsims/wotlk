@@ -48,6 +48,28 @@ func NewWowDatabase() *WowDatabase {
 	}
 }
 
+func (db *WowDatabase) Clone() *WowDatabase {
+	other := NewWowDatabase()
+
+	for k, v := range db.Items {
+		other.Items[k] = v
+	}
+	for k, v := range db.Enchants {
+		other.Enchants[k] = v
+	}
+	for k, v := range db.Gems {
+		other.Gems[k] = v
+	}
+	for k, v := range db.ItemIcons {
+		other.ItemIcons[k] = v
+	}
+	for k, v := range db.SpellIcons {
+		other.SpellIcons[k] = v
+	}
+
+	return other
+}
+
 func (db *WowDatabase) MergeItems(arr []*proto.UIItem) {
 	for _, item := range arr {
 		db.MergeItem(item)
