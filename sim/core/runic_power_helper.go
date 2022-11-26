@@ -141,8 +141,8 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		slot = 1
 	}
 	if slot > -1 {
-		rp.ConvertToDeath(sim, slot, false, sim.CurrentTime+time.Second*20)
 		rp.btslot = slot
+		rp.ConvertToDeath(sim, slot, sim.CurrentTime+time.Second*20)
 	}
 
 	slot = -1

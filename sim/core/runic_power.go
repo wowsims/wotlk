@@ -25,7 +25,6 @@ type RuneMeta struct {
 	lastSpendTime time.Duration // last time the rune was spent.
 	regenAt       time.Duration // time at which the rune will no longer be spent.
 	revertAt      time.Duration // time at which rune will no longer be kind death.
-	revertOnSpend bool
 }
 
 type RunicPowerBar struct {
@@ -92,7 +91,6 @@ func ResetRunes(runeMeta *RuneMeta) {
 	runeMeta.revertAt = NeverExpires
 	runeMeta.lastRegenTime = -1
 	runeMeta.lastSpendTime = -1
-	runeMeta.revertOnSpend = false
 }
 
 func (rp *RunicPowerBar) reset(sim *Simulation) {
@@ -394,7 +392,6 @@ func (rp *RunicPowerBar) AnyRuneReadyAt(sim *Simulation) time.Duration {
 func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int8) {
 	rp.runeStates = ^isDeaths[slot] & rp.runeStates
 	rp.runeMeta[slot].revertAt = NeverExpires
-	rp.runeMeta[slot].revertOnSpend = false
 
 	if !rp.isACopy && rp.runeStates&isSpents[slot] == 0 {
 		metrics := rp.bloodRuneGainMetrics
@@ -414,16 +411,13 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int8) {
 
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
-func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpend bool, revertAt time.Duration) {
+func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertAt time.Duration) {
 	if slot == -1 {
 		return
 	}
 	rp.runeStates |= isDeaths[slot]
 
-	isBloodTapped := rp.btslot == slot
-	rp.runeMeta[slot].revertOnSpend = !isBloodTapped && (rp.runeMeta[slot].revertOnSpend || revertOnSpend)
-
-	if rp.runeMeta[slot].revertOnSpend {
+	if rp.btslot != slot {
 		rp.runeMeta[slot].revertAt = NeverExpires
 	} else {
 		if rp.runeMeta[slot].revertAt != NeverExpires {
@@ -1066,9 +1060,8 @@ func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	slot := rp.ReadyDeathRune()
-	if rp.runeMeta[slot].revertOnSpend {
+	if rp.btslot != slot {
 		// disable revert at
-		rp.runeMeta[slot].revertOnSpend = false
 		rp.runeMeta[slot].revertAt = NeverExpires
 		// clear death bit to revert.
 		rp.runeStates = ^isDeaths[slot] & rp.runeStates
