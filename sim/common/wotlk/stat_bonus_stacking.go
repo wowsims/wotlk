@@ -197,6 +197,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  OnCastComplete,
+		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:       "DMC Berserker",
