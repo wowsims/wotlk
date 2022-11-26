@@ -27,7 +27,7 @@
         .wowsims-title {
           @extend .display-1;
           @extend .fw-bold;
-          color: var(--bs-primary);
+          color: $primary;
           @extend .text-primary;
           margin: 0;
         }
