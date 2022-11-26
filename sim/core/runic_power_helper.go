@@ -131,31 +131,24 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 }
 
 func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
-	// so in english
-	// 1. try to convert active blood rune -> death rune
-	// 2. if no active blood, convert inactive blood rune -> death rune
+	// 1. converts a blood rune -> death rune
 	// 3. then convert one inactive blood or death rune -> active
 
 	slot := int8(-1)
-	if rp.runeStates&isSpentDeath[0] == 0 {
-		slot = 0 //
-	} else if rp.runeStates&isSpentDeath[1] == 0 {
-		slot = 1
-	} else if rp.runeStates&isDeaths[0] == 0 {
+	if rp.runeStates&isDeaths[0] == 0 {
 		slot = 0
 	} else if rp.runeStates&isDeaths[1] == 0 {
 		slot = 1
 	}
-	// If we found a blood rune, convert to death.
 	if slot > -1 {
 		rp.ConvertToDeath(sim, slot, false, sim.CurrentTime+time.Second*20)
 		rp.btslot = slot
 	}
 
 	slot = -1
-	if rp.runeStates&isSpents[0] > 0 {
+	if rp.runeStates&isSpents[0] == isSpents[0] {
 		slot = 0
-	} else if rp.runeStates&isSpents[1] > 0 {
+	} else if rp.runeStates&isSpents[1] == isSpents[1] {
 		slot = 1
 	}
 	if slot > -1 {
