@@ -185,8 +185,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 6312.1529
-  tps: 4481.62856
+  dps: 6327.30539
+  tps: 4492.38682
  }
 }
 dps_results: {
@@ -458,8 +458,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 6052.67944
-  tps: 4297.4024
+  dps: 6093.42943
+  tps: 4326.3349
  }
 }
 dps_results: {
