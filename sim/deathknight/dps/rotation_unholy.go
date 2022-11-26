@@ -266,7 +266,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		dk.RotationSequence.Clear()
 
 		if dk.BloodTapAura.IsActive() {
-			dk.RotationSequence.NewAction(dk.RotationActionUH_CancelBT)
+			dk.RotationSequence.NewAction(dk.RotationAction_CancelBT)
 		}
 
 		didErw := false
@@ -286,7 +286,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 				dk.RotationSequence.
 					NewAction(dk.RotationActionCallback_BT).
 					NewAction(dk.RotationActionCallback_BP).
-					NewAction(dk.RotationActionUH_CancelBT)
+					NewAction(dk.RotationAction_CancelBT)
 			}
 		}
 
@@ -312,7 +312,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 		dk.RotationSequence.Clear().
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_GF).
-			NewAction(dk.RotationActionUH_CancelBT)
+			NewAction(dk.RotationAction_CancelBT)
 	} else {
 		if dk.ur.ffFirst {
 			dk.RotationSequence.Clear().
@@ -405,12 +405,6 @@ func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulati
 		}
 		return sim.CurrentTime
 	}
-}
-
-func (dk *DpsDeathknight) RotationActionUH_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	dk.BloodTapAura.Deactivate(sim)
-	s.Advance()
-	return sim.CurrentTime
 }
 
 func (dk *DpsDeathknight) RotationActionUH_ResetToSsMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
