@@ -74,7 +74,7 @@ dps_results: {
  key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
   dps: 5631.46644
-  tps: 5470.82133
+  tps: 5470.79933
  }
 }
 dps_results: {
@@ -157,8 +157,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4139.45764
-  tps: 3972.99655
+  dps: 4139.45742
+  tps: 3972.78084
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4366.58527
-  tps: 4204.75537
+  dps: 4366.56737
+  tps: 4204.54982
  }
 }
 dps_results: {
@@ -346,8 +346,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 4177.6554
-  tps: 4011.50755
+  dps: 4177.60171
+  tps: 4011.3542
  }
 }
 dps_results: {
@@ -374,8 +374,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 4533.56148
-  tps: 4372.41588
+  dps: 4533.53933
+  tps: 4372.17242
  }
 }
 dps_results: {
@@ -396,7 +396,7 @@ dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
   dps: 4304.45146
-  tps: 4140.21605
+  tps: 4140.10605
  }
 }
 dps_results: {
@@ -486,8 +486,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Runetotem'sBattlegear"
  value: {
-  dps: 4533.56148
-  tps: 4372.41588
+  dps: 4533.53933
+  tps: 4372.17242
  }
 }
 dps_results: {
@@ -542,8 +542,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 4784.91802
-  tps: 4617.94478
+  dps: 4784.86133
+  tps: 4617.70044
  }
 }
 dps_results: {
@@ -571,14 +571,14 @@ dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
   dps: 3249.44
-  tps: 3085.48725
+  tps: 3085.35977
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartRegalia"
  value: {
   dps: 5019.94218
-  tps: 4863.88809
+  tps: 4863.84409
  }
 }
 dps_results: {
@@ -634,7 +634,7 @@ dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
   dps: 4831.7008
-  tps: 4665.20016
+  tps: 4665.04486
  }
 }
 dps_results: {
@@ -647,8 +647,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 7521.76793
-  tps: 7362.81356
+  dps: 7528.35553
+  tps: 7369.3019
  }
 }
 dps_results: {
