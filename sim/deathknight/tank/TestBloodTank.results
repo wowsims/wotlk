@@ -640,8 +640,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1822.20132
-  tps: 6339.67025
+  dps: 1822.28719
+  tps: 6339.91256
   dtps: 252.23477
  }
 }
