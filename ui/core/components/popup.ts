@@ -25,7 +25,10 @@ export class Popup extends Component {
 		}
 
 		$(this.rootElem).bPopup({
-			onClose: () => this.rootElem.remove(),
+			onClose: () => {
+				this.rootElem.remove();
+				this.dispose();
+			},
 		});
 	}
 
@@ -36,5 +39,6 @@ export class Popup extends Component {
 	close() {
 		$(this.rootElem).bPopup().close();
 		this.rootElem.remove();
+		this.dispose();
 	}
 }

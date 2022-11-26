@@ -2,6 +2,7 @@ package balance
 
 import (
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -36,12 +37,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
-		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+		moonkin.useTrinkets(stats.SpellPower, sim, target)
 		return moonkin.ForceOfNature
 	} else if moonkin.Starfall.IsReady(sim) {
-		moonkin.castMajorCooldown(moonkin.onUseTrinket1, sim, target)
-		moonkin.castMajorCooldown(moonkin.onUseTrinket2, sim, target)
+		moonkin.useTrinkets(stats.SpellPower, sim, target)
 		return moonkin.Starfall
 	} else if moonkin.Typhoon.IsReady(sim) && rotation.UseTyphoon {
 		return moonkin.Typhoon
@@ -100,12 +99,14 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+					moonkin.useTrinkets(stats.SpellHaste, sim, target)
 				}
 				return moonkin.Starfire
 			} else if solarIsActive {
 				if rotation.UseWrath {
 					if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
+						moonkin.useTrinkets(stats.SpellCrit, sim, target)
 					}
 					return moonkin.Wrath
 				}
@@ -150,5 +151,14 @@ func (moonkin *BalanceDruid) castMajorCooldown(mcd *core.MajorCooldown, sim *cor
 			moonkin.potionUsed = true
 		}
 		moonkin.UpdateMajorCooldowns()
+	}
+}
+
+func (moonkin *BalanceDruid) useTrinkets(stat stats.Stat, sim *core.Simulation, target *core.Unit) {
+	if moonkin.onUseTrinket1.Stat == stat {
+		moonkin.castMajorCooldown(moonkin.onUseTrinket1.Cooldown, sim, target)
+	}
+	if moonkin.onUseTrinket2.Stat == stat {
+		moonkin.castMajorCooldown(moonkin.onUseTrinket2.Cooldown, sim, target)
 	}
 }

@@ -165,6 +165,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.InspirationUptime,
 					ProtectionWarriorInputs.StartingRage,
 					ProtectionWarriorInputs.PrecastShout,
+					ProtectionWarriorInputs.Munch,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

@@ -236,6 +236,9 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 				}
 				continue
 			}
+		} else if stat == stats.Expertise {
+			// Expertise is non-linear, so adjust in increments that match the stepwise reduction.
+			statMod = ExpertisePerQuarterPercentReduction
 		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod

@@ -42,6 +42,7 @@ func NewProtectionWarrior(character core.Character, options *proto.Player) *Prot
 			PrecastShout:         warOptions.Options.PrecastShout,
 			PrecastShoutSapphire: warOptions.Options.PrecastShoutSapphire,
 			PrecastShoutT2:       warOptions.Options.PrecastShoutT2,
+			Munch:                warOptions.Options.Munch,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,

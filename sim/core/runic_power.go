@@ -278,7 +278,7 @@ func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
+	return MaxDuration(rp.CurrentRuneGrace(sim, 4), rp.CurrentRuneGrace(sim, 5))
 }
 
 func (rp *RunicPowerBar) CurrentRuneGraces(sim *Simulation) (time.Duration, time.Duration, time.Duration) {

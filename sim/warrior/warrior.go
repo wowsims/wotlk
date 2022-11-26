@@ -14,6 +14,7 @@ type WarriorInputs struct {
 	PrecastShoutSapphire bool
 	PrecastShoutT2       bool
 	RendCdThreshold      time.Duration
+	Munch                bool
 }
 
 const (
@@ -39,6 +40,8 @@ type Warrior struct {
 	glyphOfRevengeProcAura *core.Aura
 	lastTasteForBloodProc  time.Duration
 	Ymirjar4pcProcAura     *core.Aura
+
+	munchedDeepWoundsProcs []*core.PendingAction
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -165,6 +168,7 @@ func (warrior *Warrior) Initialize() {
 	for i := range warrior.DeepWoundsDots {
 		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(int32(i)))
 	}
+	warrior.munchedDeepWoundsProcs = make([]*core.PendingAction, warrior.Env.GetNumTargets())
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {

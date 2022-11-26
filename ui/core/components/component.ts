@@ -1,4 +1,7 @@
 export abstract class Component {
+	private disposeCallbacks: Array<() => void> = [];
+	private disposed: boolean = false;
+
 	readonly rootElem: HTMLElement;
 
 	constructor(parentElem: HTMLElement | null, rootCssClass: string, rootElem?: HTMLElement) {
@@ -7,5 +10,19 @@ export abstract class Component {
 		if (parentElem) {
 			parentElem.appendChild(this.rootElem);
 		}
+	}
+
+	addOnDisposeCallback(callback: () => void) {
+		this.disposeCallbacks.push(callback);
+	}
+
+	dispose() {
+		if (this.disposed) {
+			return;
+		}
+		this.disposed = true;
+
+		this.disposeCallbacks.forEach(callback => callback());
+		this.disposeCallbacks = [];
 	}
 }
