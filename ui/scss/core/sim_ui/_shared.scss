@@ -1,3 +1,7 @@
+@use "sass:map";
+
+$header-height: 65px;
+
 html {
 	overflow: hidden;
 }
@@ -12,41 +16,18 @@ td, th {
 
 .sim-ui {
 	height: 100%;
-}
 
-.sim-root {
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-}
+	.sim-root {
+		height: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		overflow-y: auto;
+	}
 
-.sim-sidebar>div {
-  margin: 10px 0;
-}
-
-.sim-sidebar-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.sim-sidebar-actions-button {
-  width: 150px;
-  height: 40px;
-  cursor: pointer;
-  margin: 5px;
-
-  background: transparent;
-  color: var(--main-text-color);
-  border: 1px solid var(--theme-color-primary);
-  font-weight: 1000;
-  transition: all .2s ease-in;
-}
-
-.sim-sidebar-actions-button:hover {
-  color: var(--main-text-color);
-  background: var(--theme-color-primary);
+	#simSidebar #simTitle, #simHeader {
+		height: $header-height;
+		border-bottom: 1px solid $border-color;
+	}
 }
 
 .iterations-picker {
@@ -76,11 +57,6 @@ td, th {
 
 .results-pending .loader {
   margin: auto;
-}
-
-.sim-sidebar-actions, .sim-sidebar-footer {
-	margin: 0 !important;
-	display: flex;
 }
 
 .iterations-label {
@@ -118,57 +94,6 @@ td, th {
 }
 .sim-main > .tab-content > .tab-pane {
 	height: 100%;
-}
-
-.sim-sidebar {
-  height: 100%;
-  min-width: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: #111218;
-  flex: 1;
-	overflow-y: auto;
-
-	.sim-sidebar-title {
-		margin: 0 0 50px 0 !important;
-	}
-}
-
-.sim-sidebar-title, .sim-header {
-	height: 60px;
-	border-bottom: 1px solid white;
-}
-
-.sim-header {
-	padding: 0 var(--bs-gap);
-	display: flex;
-	justify-content: space-between;
-	background-color: #1112187d;
-
-	.sim-tabs, .sim-toolbar {
-		flex-direction: row;
-	}
-
-	.sim-tabs {
-		border-bottom: 0;
-	}
-
-	.sim-toolbar {
-		display: flex;
-		align-items: center;
-		font-size: clamp(12px, 2vw, 20px);
-
-		.sim-toolbar-item {
-			margin-left: var(--bs-gap);
-			display: flex;
-			cursor: pointer;
-
-			.dropdown-toggle::after {
-				content: none;
-			}
-		}
-	}
 }
 
 .sim-dropdown-menu {
@@ -261,7 +186,7 @@ td, th {
 
 // TODO: Replace with Bootstrap media query once on to node module
 @media only screen and (max-width: 992px) {
-	.sim-header {
+	#simHeader {
 		overflow-x: scroll;
 
 		.sim-tabs {

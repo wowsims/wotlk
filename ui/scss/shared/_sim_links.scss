@@ -1,0 +1,42 @@
+@use "sass:map";
+
+.sim-link {
+  display: flex;
+
+  &:hover, &.show {
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  .sim-link-content {
+    padding: map.get($spacers, 2);
+    display: flex;
+    align-items: center;
+
+    .sim-link-icon {
+      margin-right: map.get($spacers, 2);
+      width: 64px;
+    }
+
+    .sim-link-label {
+      font-size: map.get($font-sizes, 3);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+  }
+}
+
+.sim-link-dropdown {
+  .dropdown-menu {
+    background: rgba(0,0,0,.5);
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .sim-link-dropdown {
+    .dropdown-menu {
+      position: relative !important;
+      inset: 0 !important;
+      transform: none !important;
+    }
+  }
+}

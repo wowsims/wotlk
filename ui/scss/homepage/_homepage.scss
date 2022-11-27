@@ -43,7 +43,7 @@
 
     .wrath-title {
       @extend .fw-bold;
-      color: var(--color-wrath-blue);
+      color: var(--wrath-blue);
       margin: 0;
     }
   }
@@ -80,39 +80,8 @@
           margin-right: 25%;
         }
 
-        .sim-link {
-          display: flex;
-
-          &:hover, &.show {
-            background-color: rgba(0,0,0,0.5);
-          }
-
-          &.raid-sim-link {
-            flex-grow: 0;
-          }
-
-          .sim-link-content {
-            padding: map.get($spacers, 2);
-            display: flex;
-            align-items: center;
-
-            .sim-link-icon {
-              padding-right: map.get($spacers, 2);
-              width: 64px;
-            }
-
-            .sim-link-label {
-              @extend .fw-bold;
-              @extend .fs-3;
-            }
-          }
-        }
-
-        .sim-link-dropdown {
-          .dropdown-menu {
-            background: rgba(0,0,0,.5);
-            border: 0;
-          }
+        .raid-sim-link {
+          flex-grow: 0 !important;
         }
       }
     }
@@ -187,17 +156,6 @@
         .sim-links {
           .sim-link, .sim-link-dropdown {
             flex: 1 100% !important;
-          }
-
-          .sim-link {
-            .sim-link-content {
-              display: flex;
-              align-items: center;
-
-              .sim-link-icon {
-                width: 64px;
-              }
-            }
           }
         }
       }

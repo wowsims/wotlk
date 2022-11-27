@@ -1,7 +1,7 @@
 import { Component } from './components/component.js';
 import { NumberPicker } from './components/number_picker.js';
 import { ResultsViewer } from './components/results_viewer.js';
-import { Title } from './components/title.js';
+import { SimTitleDropdown } from './components/sim_title_dropdown.js';
 import { Spec } from './proto/common.js';
 import { SimOptions } from './proto/api.js';
 import { LaunchStatus } from './launched_sims.js';
@@ -10,6 +10,8 @@ import { specToLocalStorageKey } from './proto_utils/utils.js';
 import { Sim, SimError } from './sim.js';
 import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
+
+// import initializeCustomDropdownHandling from '../shared/bootstrap_overrides';
 
 declare var tippy: any;
 declare var pako: any;
@@ -146,8 +148,8 @@ export abstract class SimUI extends Component {
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
 
-		const titleElem = this.rootElem.getElementsByClassName('sim-sidebar-title')[0] as HTMLElement;
-		const title = new Title(titleElem, config.spec);
+		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
+		const title = new SimTitleDropdown(titleElem, config.spec);
 
 		const simActionsContainer = this.rootElem.getElementsByClassName('sim-sidebar-actions')[0] as HTMLElement;
 		const iterationsPicker = new NumberPicker(simActionsContainer, this.sim, {
@@ -225,6 +227,8 @@ export abstract class SimUI extends Component {
 			downloadBinary.classList.add('downbinnorm');
 			this.addToolbarItem(downloadBinary);
 		}
+
+		// initializeCustomDropdownHandling();
 	}
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
@@ -232,7 +236,7 @@ export abstract class SimUI extends Component {
 		const iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
 
 		const button = document.createElement('button');
-		button.classList.add('sim-sidebar-actions-button', cssClass);
+		button.classList.add('sim-sidebar-actions-button', 'btn', 'btn-outline-primary', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
 		simActionsContainer.insertBefore(button, iterationsPicker);
@@ -392,14 +396,16 @@ export abstract class SimUI extends Component {
 
 const simHTML = `
 <div class="sim-root">
-  <aside class="sim-sidebar">
-    <div class="sim-sidebar-title"></div>
-    <div class="sim-sidebar-actions within-raid-sim-hide"></div>
-    <div class="sim-sidebar-results within-raid-sim-hide"></div>
-    <div class="sim-sidebar-footer"></div>
+  <aside id="simSidebar"">
+    <div id="simTitle"></div>
+		<div id="simSidebarContent">
+			<div class="sim-sidebar-actions within-raid-sim-hide"></div>
+			<div class="sim-sidebar-results within-raid-sim-hide"></div>
+			<div class="sim-sidebar-footer"></div>
+		</div>
   </aside>
   <div class="sim-main">
-		<header class="sim-header">
+		<header id="simHeader">
 			<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
 			<div class="sim-toolbar">
 				<div class="sim-toolbar-item">

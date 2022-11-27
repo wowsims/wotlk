@@ -2,6 +2,8 @@ import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap';
 import tippy from 'tippy.js';
 
+import './shared/bootstrap_overrides';
+
 declare global {
   interface Window {
     Popper: any;
@@ -14,13 +16,12 @@ window.Popper = Popper;
 window.bootstrap = bootstrap;
 window.tippy = tippy;
 
-import './shared/bootstrap_overrides';
-
 function docReady(fn: any) {
   // see if DOM is already available
   if (document.readyState === "complete" || document.readyState === "interactive") {
       // call on next available tick
       setTimeout(fn, 1);
+      // initializeCustomDropdownHandling();
   } else {
       document.addEventListener("DOMContentLoaded", fn);
   }
