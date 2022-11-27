@@ -28,7 +28,6 @@
           @extend .display-1;
           @extend .fw-bold;
           color: $primary;
-          @extend .text-primary;
           margin: 0;
         }
       }
@@ -42,9 +41,9 @@
     }
 
     .wrath-title {
-      @extend .fw-bold;
-      color: var(--wrath-blue);
+      color: $wrath-blue;
       margin: 0;
+      font-weight: bold;
     }
   }
 
@@ -82,6 +81,18 @@
 
         .raid-sim-link {
           flex-grow: 0 !important;
+        }
+
+        .sim-link {
+          .sim-link-content {
+            .sim-link-label:first-of-type {
+              font-size: 1rem;
+            }
+
+            .sim-link-label:last-of-type {
+              font-size: 1.75rem;
+            }
+          }
         }
       }
     }

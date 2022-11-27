@@ -31,23 +31,6 @@ $icon-size: 48px;
     .sim-link-content {
       padding-left: $gap-width;
       padding-right: $gap-width;
-
-      .sim-link-icon {
-        width: 48px;
-        height: 48px;
-      }
-
-      .sim-link-label {
-        &:first-child {
-          font-size: 0.75rem !important;
-          font-weight: normal;
-        }
-
-        &:last-child {
-          font-size: 1.25rem !important;
-          font-weight: bold;
-        }
-      }
     }
   }
 }

@@ -13,14 +13,25 @@
     align-items: center;
 
     .sim-link-icon {
+      width: 48px;
+      height: 48px;
       margin-right: map.get($spacers, 2);
-      width: 64px;
     }
 
     .sim-link-label {
       font-size: map.get($font-sizes, 3);
       font-weight: bold;
       white-space: nowrap;
+
+      &:first-child {
+        font-size: 0.75rem;
+        font-weight: normal;
+      }
+
+      &:last-child {
+        font-size: 1.25rem;
+        font-weight: bold;
+      }
     }
   }
 }
