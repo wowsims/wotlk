@@ -783,4 +783,8 @@ message CustomRotation {
 message CustomSpell {
 	// This should usually be a spec-specific enum value.
 	int32 spell = 1;
+
+	// Desired cast rate for this spell. Not used by most custom rotations, this is
+	// primarily for healers.
+	double casts_per_minute = 2;
 }

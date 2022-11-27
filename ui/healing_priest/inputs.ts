@@ -1,3 +1,4 @@
+import { CustomRotation } from '../core/proto/common.js';
 import { Race, RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
@@ -7,6 +8,13 @@ import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { Target } from '../core/target.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
+
+import {
+	HealingPriest,
+	HealingPriest_Rotation as PriestRotation,
+	HealingPriest_Rotation_RotationType as RotationType,
+	HealingPriest_Rotation_SpellOption as SpellOption,
+} from '../core/proto/priest.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -41,5 +49,30 @@ export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Spe
 
 export const HealingPriestRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecHealingPriest, RotationType>({
+			fieldName: 'type',
+			label: 'Type',
+			values: [
+				{ name: 'Cycle', value: RotationType.Cycle },
+				{ name: 'Custom', value: RotationType.Custom },
+			],
+		}),
+		InputHelpers.makeCustomRotationInput<Spec.SpecHealingPriest, SpellOption>({
+			fieldName: 'customRotation',
+			numColumns: 2,
+			showCastsPerMinute: true,
+			values: [
+				{ actionId: ActionId.fromSpellId(48063), value: SpellOption.GreaterHeal },
+				{ actionId: ActionId.fromSpellId(48071), value: SpellOption.FlashHeal },
+				{ actionId: ActionId.fromSpellId(48068), value: SpellOption.Renew },
+				{ actionId: ActionId.fromSpellId(48066), value: SpellOption.PowerWordShield },
+				{ actionId: ActionId.fromSpellId(48089), value: SpellOption.CircleOfHealing },
+				{ actionId: ActionId.fromSpellId(48072), value: SpellOption.PrayerOfHealing },
+				{ actionId: ActionId.fromSpellId(48113), value: SpellOption.PrayerOfMending },
+				{ actionId: ActionId.fromSpellId(53007), value: SpellOption.Penance },
+				{ actionId: ActionId.fromSpellId(48120), value: SpellOption.BindingHeal },
+			],
+			showWhen: (player: Player<Spec.SpecHealingPriest>) => player.getRotation().type == RotationType.Custom,
+		}),
 	],
 };
