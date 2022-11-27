@@ -12,29 +12,6 @@ import {
 } from '../proto_utils/utils.js';
 import { classList, getClassIcon, getSpecIcon } from '../proto_utils/class_spec_utils.js';
 
-declare var tippy: any;
-
-interface RaidLinkOptions {
-  linkType: 		'Raid',
-  isCurrentSim: boolean,
-}
-
-// Classes with only a single spec sim implemented should pass specIndex
-// so that class styling applies but no dropdown logic is implemented
-interface ClassLinkOptions {
-  linkType: 	'Class',
-  classIndex: Class,
-  specIndex?: Spec,
-}
-
-interface SpecLinkOptions {
-  linkType: 		'Spec',
-  specIndex: 	  Spec,
-  isCurrentSim: boolean
-}
-
-type SimLinkOptions = RaidLinkOptions | ClassLinkOptions | SpecLinkOptions;
-
 interface ClassOptions {
   type: 'Class',
   index: Class
@@ -51,26 +28,25 @@ interface RaidOptions {
 
 // Dropdown menu for selecting a player.
 export class SimTitleDropdown extends Component {
-  // private readonly buttonElem: HTMLElement;
 
   private readonly dropdownMenu: HTMLElement;
 
   private readonly specLabels: Record<Spec, string> = {
-    [Spec.SpecBalanceDruid]: 			 'Balance',
-    [Spec.SpecElementalShaman]: 	 'Elemental',
+    [Spec.SpecBalanceDruid]: 	     'Balance',
+    [Spec.SpecElementalShaman]:    'Elemental',
     [Spec.SpecEnhancementShaman]:  'Enhancement',
-    [Spec.SpecFeralDruid]: 				 'Feral',
-    [Spec.SpecFeralTankDruid]: 		 'Feral Tank',
-    [Spec.SpecHunter]: 						 'Hunter',
-    [Spec.SpecMage]: 					     'Mage',
-    [Spec.SpecRogue]: 						 'Rogue',
+    [Spec.SpecFeralDruid]: 		     'Feral',
+    [Spec.SpecFeralTankDruid]: 	   'Feral Tank',
+    [Spec.SpecHunter]: 			       'Hunter',
+    [Spec.SpecMage]:               'Mage',
+    [Spec.SpecRogue]: 			       'Rogue',
     [Spec.SpecRetributionPaladin]: 'Retribution',
     [Spec.SpecProtectionPaladin]:  'Protection',
-    [Spec.SpecHealingPriest]: 		 'Priest',
-    [Spec.SpecShadowPriest]: 			 'Shadow',
-    [Spec.SpecSmitePriest]: 			 'Smite',
-    [Spec.SpecWarlock]: 					 'Warlock',
-    [Spec.SpecWarrior]: 					 'DPS',
+    [Spec.SpecHealingPriest]: 	   'Priest',
+    [Spec.SpecShadowPriest]: 	     'Shadow',
+    [Spec.SpecSmitePriest]: 	     'Smite',
+    [Spec.SpecWarlock]: 		       'Warlock',
+    [Spec.SpecWarrior]: 		       'DPS',
     [Spec.SpecProtectionWarrior]:  'Protection',
     [Spec.SpecDeathknight]:        'DPS',
     [Spec.SpecTankDeathknight]:    'Tank',

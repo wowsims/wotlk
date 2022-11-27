@@ -11,8 +11,6 @@ import { Sim, SimError } from './sim.js';
 import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
-// import initializeCustomDropdownHandling from '../shared/bootstrap_overrides';
-
 declare var tippy: any;
 declare var pako: any;
 
@@ -227,8 +225,6 @@ export abstract class SimUI extends Component {
 			downloadBinary.classList.add('downbinnorm');
 			this.addToolbarItem(downloadBinary);
 		}
-
-		// initializeCustomDropdownHandling();
 	}
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
