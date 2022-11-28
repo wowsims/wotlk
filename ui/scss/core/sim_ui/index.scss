@@ -1,10 +1,12 @@
 // Import system-wide styles
 @import "../../index";
 
-// Import Sim UI Styles
-@import "./shared";
-
 // Import Components
 @import "../components/close_button";
 @import "../components/number_picker";
-@import "../components/title";
+@import "../../shared/sim_links";
+
+// Import Sim UI Styles
+@import "./shared";
+@import "./sidebar";
+@import "./header";

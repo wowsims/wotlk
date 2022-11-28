@@ -1,25 +1,37 @@
+@use "sass:map";
+
 .character-stats-root {
   width: 100%;
-  height: 100%;
-  padding: 10px;
-}
 
-.character-stats-table {
-  width: 100%;
-}
+  .character-stats-label {
+    margin-bottom: map.get($spacers, 2);
+  }
 
-.character-stats-table-row {
-  width: 100%;
-}
+  .character-stats-table {
+    width: 100%;
 
-.character-stats-table-label {
-  text-align: left;
-  padding: 8px 10px 1px 10px;
-}
+    .character-stats-table-row {
+      border-top: 1px solid $border-color;
+      font-size: 0.75rem;
 
-.character-stats-table-value {
-  text-align: right;
-  padding: 8px 10px 1px 10px;
+      .character-stats-table-label,
+      .character-stats-table-value {
+        padding-top: map.get($spacers, 2);
+        padding-bottom: map.get($spacers, 2);
+      }
+
+      .character-stats-table-label {
+        padding-right: map.get($spacers, 2);
+        text-align: left;
+      }
+
+      .character-stats-table-value {
+        padding-left: map.get($spacers, 2);
+        font-weight: bold;
+        text-align: right;
+      }
+    }
+  }
 }
 
 .character-stats-tooltip-row {

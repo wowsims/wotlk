@@ -311,11 +311,11 @@ func init() {
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
-		stats.Strength:  115,
-		stats.Agility:   204,
-		stats.Stamina:   89,
-		stats.Intellect: 39,
-		stats.Spirit:    58,
+		stats.Strength:  113,
+		stats.Agility:   189,
+		stats.Stamina:   107,
+		stats.Intellect: 43,
+		stats.Spirit:    69,
 
 		stats.AttackPower: 140,
 		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
@@ -325,7 +325,7 @@ func init() {
 		stats.Health:    3524,
 		stats.Strength:  109,
 		stats.Agility:   193,
-		stats.Stamina:   105,
+		stats.Stamina:   107,
 		stats.Intellect: 43,
 		stats.Spirit:    67,
 

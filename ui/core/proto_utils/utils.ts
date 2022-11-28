@@ -121,11 +121,25 @@ export const specNames: Record<Spec, string> = {
 	[Spec.SpecShadowPriest]: 'Shadow Priest',
 	[Spec.SpecSmitePriest]: 'Smite Priest',
 	[Spec.SpecWarlock]: 'Warlock',
-	[Spec.SpecWarrior]: 'Warrior',
+	[Spec.SpecWarrior]: 'DPS Warrior',
 	[Spec.SpecProtectionWarrior]: 'Protection Warrior',
-	[Spec.SpecDeathknight]: 'Death Knight',
-	[Spec.SpecTankDeathknight]: 'Death Knight Tank',
+	[Spec.SpecDeathknight]: 'DPS Death Knight',
+	[Spec.SpecTankDeathknight]: 'Tank Death Knight',
 };
+
+export const classNames: Record<Class, string> = {
+	[Class.ClassUnknown]: '',
+	[Class.ClassDruid]: 'Druid',
+	[Class.ClassHunter]: 'Hunter',
+	[Class.ClassMage]: 'Mage',
+	[Class.ClassPaladin]: 'Paladin',
+	[Class.ClassPriest]: 'Priest',
+	[Class.ClassRogue]: 'Rogue',
+	[Class.ClassShaman]: 'Shaman',
+	[Class.ClassWarlock]: 'Warlock',
+	[Class.ClassWarrior]: 'Warrior',
+	[Class.ClassDeathknight]: 'Death Knight'
+}
 
 export const classColors: Record<Class, string> = {
 	[Class.ClassUnknown]: '#fff',
@@ -216,7 +230,7 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 	],
 };
 
-export const titleIcons: Record<Spec, string> = {
+export const titleIcons: Record<Class|Spec, string> = {
 	[Spec.SpecBalanceDruid]: '/wotlk/assets/img/balance_druid_icon.png',
 	[Spec.SpecElementalShaman]: '/wotlk/assets/img/elemental_shaman_icon.png',
 	[Spec.SpecEnhancementShaman]: '/wotlk/assets/img/enhancement_shaman_icon.png',
@@ -238,6 +252,7 @@ export const titleIcons: Record<Spec, string> = {
 };
 
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
+export const raidSimLabel: string = 'Full Raid Sim';
 
 export function getTalentTreePoints(talentsString: string): Array<number> {
 	const trees = talentsString.split('-');

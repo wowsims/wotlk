@@ -19,7 +19,7 @@ func (prot *ProtectionPaladin) OnGCDReady(sim *core.Simulation) {
 func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
 	target := prot.CurrentTarget
-	
+
 	isExecutePhase := sim.IsExecutePhase20()
 
 	// Forced CD remaining on HotR/ShoR to cast the other. Can't be exactly 3sec or lusted consecration GCDs will desync us.
@@ -55,15 +55,19 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 				// Cast HotR if ready but only if you've spent a global since ShoR
 				prot.HammerOfTheRighteous.Cast(sim, target)
 
-			// Maximum WaitSlack checking here to see if we should delay casting anything else because it will clip our 6
-			// This callback method is probably inefficient, TODO perf improvement
+				// Maximum WaitSlack checking here to see if we should delay casting anything else because it will clip our 6
+				// This callback method is probably inefficient, TODO perf improvement
 			} else if (nextHammer < maxWait) && (nextShield < gapSlack-maxWait) {
-				if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds())) }
+				if sim.Log != nil {
+					prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds()))
+				}
 				prot.waitUntilNextEvent(sim, prot.customRotation)
-			} else if (nextShield < maxWait)  && (nextHammer < gapSlack-maxWait) {
-				if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds())) }
+			} else if (nextShield < maxWait) && (nextHammer < gapSlack-maxWait) {
+				if sim.Log != nil {
+					prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds()))
+				}
 				prot.waitUntilNextEvent(sim, prot.customRotation)
-				
+
 			} else if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
 				// TODO: Prio may depend on gear; consider Glyph behavior
 				prot.HammerOfWrath.Cast(sim, target)
@@ -122,7 +126,9 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 						prot.ShieldOfRighteousness.Cast(sim, target)
 						break rotationLoop
 					} else if (nextShield < maxWait) && (nextHammer < gapSlack-maxWait) {
-						if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds())) }
+						if sim.Log != nil {
+							prot.Log(sim, "Waiting %d ms to cast ShoR...", int32(nextShield.Milliseconds()))
+						}
 						prot.waitUntilNextEvent(sim, prot.customRotation)
 						break rotationLoop
 					}
@@ -135,8 +141,10 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 					if prot.HammerOfTheRighteous.IsReady(sim) && (nextShield < gapSlack) {
 						prot.HammerOfTheRighteous.Cast(sim, target)
 						break rotationLoop
-					} else if (nextHammer < maxWait && (nextShield < gapSlack-maxWait)) {
-						if sim.Log != nil { prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds())) }
+					} else if nextHammer < maxWait && (nextShield < gapSlack-maxWait) {
+						if sim.Log != nil {
+							prot.Log(sim, "Waiting %d ms to cast HotR...", int32(nextHammer.Milliseconds()))
+						}
 						prot.waitUntilNextEvent(sim, prot.customRotation)
 						break rotationLoop
 					}
