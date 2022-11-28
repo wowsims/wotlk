@@ -71,13 +71,19 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	obAt := core.MaxDuration(frAt, uhAt)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 	delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
+	bothblAt := dk.BloodRuneBothReadyAt()
+
+	if dk.Talents.Epidemic == 2 {
+		obAt = core.MinDuration(obAt, bothblAt)
+	}
+
 	//diseases last until end of fight
 	if diseaseExpiresAt >= sim.GetMaxDuration() {
-		if sim.CurrentTime >= obAt {
+		if sim.CurrentTime >= obAt || sim.CurrentTime >= bothblAt {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd > sim.GetMaxDuration() && obAt < sim.GetMaxDuration() {
+		} else if sim.CurrentTime+spGcd > sim.GetMaxDuration() && (obAt <= sim.GetMaxDuration() || bothblAt <= sim.GetMaxDuration()) {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -161,11 +167,11 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
 		}
 	} else if sim.CurrentTime+abGcd < diseaseExpiresAt { //there's time until disease fall so press normal prio
-		if sim.CurrentTime >= obAt {
+		if sim.CurrentTime >= obAt && (dk.Talents.Epidemic == 2 || (dk.CurrentFrostRunes() >= 1 && dk.CurrentUnholyRunes() >= 1)) {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd > obAt+delayAmount {
+		} else if sim.CurrentTime+spGcd > obAt+delayAmount && (dk.Talents.Epidemic == 2 || (dk.CurrentFrostRunes() >= 1 && dk.CurrentUnholyRunes() >= 1)) {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
