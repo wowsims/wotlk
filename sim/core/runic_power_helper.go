@@ -143,6 +143,8 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 	if slot > -1 {
 		rp.btslot = slot
 		rp.ConvertToDeath(sim, slot, sim.CurrentTime+time.Second*20)
+		rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
+		rp.onDeathRuneGain(sim)
 	}
 
 	slot = -1
@@ -152,10 +154,7 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		slot = 1
 	}
 	if slot > -1 {
-		rp.runeStates = ^isSpents[slot] & rp.runeStates // unset spent flag for this rune.
-		rp.runeMeta[slot].regenAt = NeverExpires        // no regen timer if there was one
-		rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
-		rp.onDeathRuneGain(sim)
+		rp.RegenRune(sim.CurrentTime, slot)
 	}
 
 	// if PA isn't running, make it run 20s from now to disable BT

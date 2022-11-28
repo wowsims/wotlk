@@ -791,7 +791,7 @@ func (rp *RunicPowerBar) UnholyRuneSpentAt(dur time.Duration) int32 {
 	return -1
 }
 
-func (rp *RunicPowerBar) RegenRune(regenAt time.Duration, slot int32) {
+func (rp *RunicPowerBar) RegenRune(regenAt time.Duration, slot int8) {
 	checkSpent := isSpents[slot]
 	if checkSpent&rp.runeStates > 0 {
 		rp.runeStates = ^checkSpent & rp.runeStates // unset spent flag for this rune.
@@ -970,7 +970,7 @@ func (rp *RunicPowerBar) Advance(sim *Simulation, newTime time.Duration) {
 	}
 }
 
-func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, slot int32) {
+func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, slot int8) {
 	if rp.runeMeta[slot].regenAt > newTime {
 		return
 	}
