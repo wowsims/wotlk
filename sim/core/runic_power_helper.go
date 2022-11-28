@@ -143,8 +143,6 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 	if slot > -1 {
 		rp.btslot = slot
 		rp.ConvertToDeath(sim, slot, sim.CurrentTime+time.Second*20)
-		rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
-		rp.onDeathRuneGain(sim)
 	}
 
 	slot = -1
@@ -155,6 +153,15 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 	}
 	if slot > -1 {
 		rp.RegenRune(sim.CurrentTime, slot)
+
+		metrics := rp.bloodRuneGainMetrics
+		onGain := rp.onBloodRuneGain
+		if rp.runeStates&isDeaths[slot] == isDeaths[slot] {
+			metrics = rp.deathRuneGainMetrics
+			onGain = rp.onDeathRuneGain
+		}
+		rp.GainRuneMetrics(sim, metrics, 1)
+		onGain(sim)
 	}
 
 	// if PA isn't running, make it run 20s from now to disable BT
