@@ -10,7 +10,7 @@ WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")
 
-local version = "2.3"
+local version = "2.4"
 
 local defaults = {
 	profile = {
@@ -169,21 +169,39 @@ function WowSimsExporter:GetGearEnchantGems(type)
         local itemLink = GetInventoryItemLink("player", slotId)
 
         if itemLink then
-            local Id, Enchant, Gem1, Gem2, Gem3, Gem4 = self:ParseItemLink(itemLink)
-
-			item = {}
-			item.id = tonumber(Id)
-			item.enchant = tonumber(Enchant)
-			item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
-
-			gear[slotNum] = item
+			gear[slotNum] = self:ParseItemLink(itemLink)
         end
     end
+
+    local bagSlots = {BANK_CONTAINER}
+    for bagNum = 0, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
+        if GetContainerNumSlots(bagNum) > 0 then
+            table.insert(bagSlots, bagNum)
+        end
+    end
+
+    local bags = {}
+
+    for bagNum = 1, #bagSlots do
+        local slotCount = GetContainerNumSlots(bagSlots[bagNum])
+        for slotNum = 1, slotCount do
+            local _,_,_,_,_,_,itemLink = GetContainerItemInfo(bagSlots[bagNum], slotNum)
+            if itemLink and IsEquippableItem(itemLink) then
+                local _,_,_,_,_,_,_,_,itemEquipLoc,_,_ = GetItemInfo(itemLink)
+
+                if itemEquipLoc ~= "INVTYPE_BAG" then
+                    table.insert(bags, self:ParseItemLink(itemLink))
+                end
+            end
+        end
+    end
+
 	self.Character.spec = self:CheckCharacterSpec(self.Character.class)
 	self.Character.talents = self:CreateTalentEntry()
 	self:CreateGlyphEntry() -- wotlk
 	self:CreateProfessionEntry() -- wotlk
 	self.Character.gear.items = gear
+    self.Character.gear.bags = bags
 
     return self.Character
 end
@@ -195,7 +213,11 @@ function WowSimsExporter:ParseItemLink(itemLink)
         itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?"
     )
-    return Id, Enchant, Gem1, Gem2, Gem3, Gem4
+    item = {}
+    item.id = tonumber(Id)
+    item.enchant = tonumber(Enchant)
+    item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
+    return item
 end
 
 function WowSimsExporter:OnInitialize()
