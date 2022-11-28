@@ -31,30 +31,34 @@
   .nav-link {
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 }
 
 .nav-tabs {
-	.nav-link {
-		margin-bottom: 0;
-    border: 0;
-    font-size: .75rem;
-    font-weight: bold;
+  .nav-item {
+    .nav-link {
+      margin-bottom: 0;
+      border: 0;
+      font-size: .75rem;
+      font-weight: bold;
+      white-space: nowrap;
 
-    &.active {
-      position: relative;
+      &.active {
+        position: relative;
 
-      &::after {
-        content: "";
-        position: absolute;
-        height: 2px;
-        background: $nav-tabs-link-active-color;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        &::after {
+          content: "";
+          position: absolute;
+          height: 2px;
+          background: $nav-tabs-link-active-color;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
       }
     }
-	}
+  }
 }
 
 @include media-breakpoint-down(lg) {

@@ -1,7 +1,15 @@
 #simHeader {
 	padding-top: $gap-width;
 	display: flex;
+	align-items: flex-end;
 	background-color: #1112187d;
+
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
 	.sim-tabs {
 		border-bottom: 0;
@@ -15,11 +23,18 @@
 		
 			.import-link, .export-link {
 				padding: $nav-link-padding-y $nav-link-padding-x;
+				white-space: nowrap;
+			}
+
+			.dropdown-menu {
+				min-width: 100%;
+				border: 1px solid var(--theme-color-primary);
 			}
 		}
 	}
 
 	.sim-toolbar {
+		height: 100%;
 		margin-left: auto;
 		display: flex;
 		align-items: center;
@@ -35,26 +50,10 @@
 			}
 		}
 	}
+}
 
-	.sim-dropdown-menu {
-		position: relative;
-	}
-
-	.sim-dropdown-menu .dropdown-menu {
-		background-color: #111218;
-		border: 1px solid var(--theme-color-primary);
-		text-align: right;
-		min-width: auto;
-		font-weight: bold;
-		top: 120%;
-	}
-	.sim-dropdown-menu .dropdown-item {
-		display: block;
-		padding: 5px 20px;
-		user-select: none;
-		white-space: nowrap;
-	}
-	.sim-dropdown-menu .dropdown-item:hover {
-		background-color: #2a2c3b;
-	}
+@include media-breakpoint-down(lg) {
+	#simHeader {
+		padding-top: $gap-width-sm;
+	}	
 }

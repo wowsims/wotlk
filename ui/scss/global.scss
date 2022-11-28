@@ -1,13 +1,8 @@
 @use "sass:map";
 
 $gap-width: 1.5rem;
+$gap-width-sm: .5rem;
 $wrath-blue: #7FCBD8;
-
-:root {
-  --gap: $gap-width;
-
-  --wrath-blue: $wrath-blue;
-}
 
 * {
   letter-spacing: 1px;

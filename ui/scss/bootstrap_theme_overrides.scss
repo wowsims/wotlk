@@ -48,15 +48,18 @@ $link-decoration: none;
 $link-hover-color: white;
 
 // Component variable overrides
-$dropdown-bg: black;
+$dropdown-bg: $body-bg;
 $dropdown-border-radius: 0;
 $dropdown-border-width: 0;
 $dropdown-color: white;
+$dropdown-inner-border-radius: 0;
+$dropdown-link-active-bg: $dropdown-bg;
+$dropdown-link-hover-bg: darken($dropdown-bg, 3);
 $dropdown-padding-y: 0;
 
-$input-bg: black;
+$input-bg: $body-bg;
 $input-color: white;
-$input-focus-bg: black;
+$input-focus-bg: $body-bg;
 $input-focus-color: white;
 
 $navbar-dark-color: white;

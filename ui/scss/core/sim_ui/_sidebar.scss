@@ -47,3 +47,23 @@
     }
   }
 }
+
+@include media-breakpoint-down(xxl) {
+  #simSidebar {
+    #simSidebarContent {
+      padding-left: $gap-width-sm * 2;
+      padding-right: $gap-width-sm * 2;
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  #simSidebar {
+    #simSidebarContent {
+      padding-top: $gap-width-sm * 2;
+      padding-bottom: $gap-width-sm;
+      padding-left: $gap-width-sm;
+      padding-right: $gap-width-sm;
+    }
+  }
+}

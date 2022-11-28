@@ -1,5 +1,3 @@
-$icon-size: 48px;
-
 #simTitle {
   .sim-title-dropdown-root {
     .sim-link-dropdown {
@@ -16,7 +14,7 @@ $icon-size: 48px;
   }
 
   .dropdown-menu {
-    background: $body-bg;
+    background: $dropdown-bg;
 
     .dropdown-menu {
       min-width: 300px;
@@ -24,15 +22,37 @@ $icon-size: 48px;
   }
 
   .sim-link {
-    background: $body-bg;
+    background: $dropdown-bg;
 
     &:hover, &:focus, &.active, &.show {
-      background: darken($body-bg, 3);
+      background: $dropdown-link-hover-bg;
     }
 
     .sim-link-content {
       padding-left: $gap-width;
       padding-right: $gap-width;
+    }
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  #simTitle {
+    .sim-link {
+      .sim-link-content {
+        padding-left: $gap-width-sm * 2;
+        padding-right: $gap-width-sm * 2;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  #simTitle {
+    .sim-link {
+      .sim-link-content {
+        padding-left: $gap-width-sm;
+        padding-right: $gap-width-sm;
+      }
     }
   }
 }

@@ -17,7 +17,21 @@
 
     .tab-pane {
       padding-top: $gap-width;
-      padding-bottom: $gap-width
+      padding-bottom: $gap-width;
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  #simContent {
+    padding-left: $gap-width;
+    padding-right: $gap-width;
+
+    #simMain {
+      .tab-pane {
+        padding-top: $gap-width-sm * 2;
+        padding-bottom: $gap-width-sm * 2;
+      }
     }
   }
 }
