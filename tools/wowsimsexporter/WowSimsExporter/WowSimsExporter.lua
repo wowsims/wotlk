@@ -213,7 +213,7 @@ function WowSimsExporter:ParseItemLink(itemLink)
         itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?"
     )
-    item = {}
+    local item = {}
     item.id = tonumber(Id)
     item.enchant = tonumber(Enchant)
     item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
