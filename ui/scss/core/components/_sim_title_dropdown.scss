@@ -1,12 +1,14 @@
 $icon-size: 48px;
 
 #simTitle {
-  height: calc($header-height + 1px);
-  margin: 0;
-  border-bottom: 1px solid $border-color;
+  .sim-title-dropdown-root {
+    .sim-link-dropdown {
+      height: 100%;
 
-  &>.sim-title-dropdown-root {
-    &> .sim-link-dropdown {
+      &> .sim-link {
+        height: 100%;
+      }
+
       &> .dropdown-menu {
         width: 100%;
       }

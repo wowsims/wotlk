@@ -1,6 +1,6 @@
 @use "sass:map";
 
-$header-height: 65px;
+$sim-header-height: 72px;
 
 html {
 	overflow: hidden;
@@ -25,8 +25,12 @@ td, th {
 	}
 
 	#simSidebar #simTitle, #simHeader {
-		height: $header-height;
+		height: $sim-header-height;
 		border-bottom: 1px solid $border-color;
+
+		.sim-title-dropdown-root {
+			height: $sim-header-height - 1px;
+		}
 	}
 }
 
@@ -66,55 +70,6 @@ td, th {
 .results-sim {
 	color: var(--sidebar-text-color);
 	text-shadow: 0 0 10px var(--sidebar-highlight-color);
-}
-
-.sim-main {
-  height: 100%;
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-	background-image:
-		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
-		var(--theme-background-image);
-	background-size: cover;
-	background-position: center center;
-  color: var(--main-text-color);
-  overflow-y: auto;
-  flex: 4;
-  min-width: calc(275px + 1vw);
-
-	.tab-pane {
-		overflow-y: auto;
-	}
-}
-
-.sim-main > .tab-content {
-	flex-grow: 1;
-	height: 80%;
-}
-.sim-main > .tab-content > .tab-pane {
-	height: 100%;
-}
-
-.sim-dropdown-menu {
-	position: relative;
-}
-.sim-dropdown-menu .dropdown-menu {
-	background-color: #111218;
-	border: 1px solid var(--theme-color-primary);
-	text-align: right;
-	min-width: auto;
-	font-weight: bold;
-	top: 120%;
-}
-.sim-dropdown-menu .dropdown-item {
-	display: block;
-	padding: 5px 20px;
-	user-select: none;
-	white-space: nowrap;
-}
-.sim-dropdown-menu .dropdown-item:hover {
-	background-color: #2a2c3b;
 }
 
 .notices {

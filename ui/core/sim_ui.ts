@@ -41,6 +41,14 @@ export abstract class SimUI extends Component {
 
 	readonly resultsViewer: ResultsViewer
 
+	protected simActionsContainer: HTMLElement;
+	protected iterationsPicker: HTMLElement;
+
+	protected simTabsContainer: HTMLElement;
+	protected simTabContentsContainer: HTMLElement;
+	protected importExportContainer: HTMLElement;
+	protected simToolbar: HTMLElement;
+
 	private warnings: Array<SimWarning>;
 	private warningsTippy: any;
 
@@ -143,14 +151,15 @@ export abstract class SimUI extends Component {
 			});
 		}
 
+		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
+		new SimTitleDropdown(titleElem, config.spec);
+
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
 
-		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
-		const title = new SimTitleDropdown(titleElem, config.spec);
+		this.simActionsContainer = this.rootElem.getElementsByClassName('sim-sidebar-actions')[0] as HTMLElement;
 
-		const simActionsContainer = this.rootElem.getElementsByClassName('sim-sidebar-actions')[0] as HTMLElement;
-		const iterationsPicker = new NumberPicker(simActionsContainer, this.sim, {
+		new NumberPicker(this.simActionsContainer, this.sim, {
 			label: 'Iterations',
 			extraCssClasses: [
 				'iterations-picker',
@@ -162,6 +171,13 @@ export abstract class SimUI extends Component {
 				sim.setIterations(eventID, newValue);
 			},
 		});
+
+		this.iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
+
+		this.simTabsContainer = this.rootElem.querySelector('#simHeader .sim-tabs') as HTMLElement;
+		this.simTabContentsContainer = this.rootElem.querySelector('#simMain.tab-content') as HTMLElement;
+		this.importExportContainer = this.rootElem.querySelector('#simHeader .import-export') as HTMLElement;
+		this.simToolbar = this.rootElem.querySelector('#simHeader .sim-toolbar') as HTMLElement;
 
 		const reportBug = document.createElement('span');
 		reportBug.classList.add('report-bug', 'fa', 'fa-bug');
@@ -228,23 +244,16 @@ export abstract class SimUI extends Component {
 	}
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
-		const simActionsContainer = this.rootElem.getElementsByClassName('sim-sidebar-actions')[0] as HTMLElement;
-		const iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
-
 		const button = document.createElement('button');
 		button.classList.add('sim-sidebar-actions-button', 'btn', 'btn-outline-primary', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
-		simActionsContainer.insertBefore(button, iterationsPicker);
+		this.simActionsContainer.insertBefore(button, this.iterationsPicker);
 	}
 
 	addTab(title: string, cssClass: string, innerHTML: string) {
-		const simTabsContainer = this.rootElem.getElementsByClassName('sim-tabs')[0] as HTMLElement;
-		const simTabContentsContainer = this.rootElem.getElementsByClassName('tab-content')[0] as HTMLElement;
-		const toolbars = simTabsContainer.getElementsByClassName('sim-toolbar')[0] as HTMLElement;
-
 		const contentId = cssClass.replace(/\s+/g, '-') + '-tab';
-		const isFirstTab = simTabsContainer.children.length == 0;
+		const isFirstTab = this.simTabsContainer.children.length == 0;
 
 		const tabFragment = document.createElement('fragment');
 		tabFragment.innerHTML = `
@@ -269,18 +278,15 @@ export abstract class SimUI extends Component {
 			>${innerHTML}</div>
 		`;
 
-		simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
-		simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
+		this.simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
+		this.simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
 	}
 
 	addToolbarItem(elem: HTMLElement) {
-		const toolbar = this.rootElem.getElementsByClassName('sim-toolbar')[0] as HTMLElement;
 		const toolbarItem = document.createElement('div');
-
 		toolbarItem.appendChild(elem);
 		toolbarItem.classList.add('sim-toolbar-item');
-
-		toolbar.appendChild(toolbarItem);
+		this.simToolbar.appendChild(toolbarItem);
 	}
 
 	private updateWarnings() {
@@ -400,9 +406,10 @@ const simHTML = `
 			<div class="sim-sidebar-footer"></div>
 		</div>
   </aside>
-  <div class="sim-main">
+  <div id="simContent" class="container-fluid">
 		<header id="simHeader">
 			<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
+			<div class="import-export"></div>
 			<div class="sim-toolbar">
 				<div class="sim-toolbar-item">
 					<span class="notices fas fa-exclamation-circle"></span>
@@ -415,7 +422,7 @@ const simHTML = `
 				</div>
 			</div>
     </header>
-    <main class="tab-content">
+    <main id="simMain" class="tab-content">
     </main>
   </section>
 </div>

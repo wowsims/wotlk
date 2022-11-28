@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // Define and overwrite Bootstrap Variables
 // See bootstrap/scss/_variables.scss for a complete list of definitions, or
 // individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
@@ -33,7 +35,7 @@ $custom-colors: (
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-// Variables overrides
+// Global variable overrides
 $enable-negative-margins: true;
 
 $body-bg: #15171e;
@@ -41,6 +43,11 @@ $body-color: white;
 
 $border-color: #4c4e54;
 
+$link-color: #a5b1d6;
+$link-decoration: none;
+$link-hover-color: white;
+
+// Component variable overrides
 $dropdown-bg: black;
 $dropdown-border-radius: 0;
 $dropdown-border-width: 0;
@@ -56,3 +63,8 @@ $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;
 $navbar-dark-active-color: $primary;
 $navbar-padding-y: 0;
+
+$nav-link-padding-y: map.get($spacers, 3);
+
+$nav-tabs-link-active-bg: transparent;
+$nav-tabs-link-active-color: white;

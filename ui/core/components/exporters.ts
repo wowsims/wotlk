@@ -20,28 +20,28 @@ declare var tippy: any;
 declare var pako: any;
 
 export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const exportSettings = document.createElement('div');
-	exportSettings.classList.add('export-settings', 'sim-dropdown-menu');
-	exportSettings.innerHTML = `
-		<span id="exportMenuLink" class="dropdown-toggle fas fa-file-export" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="exportMenuLink">
+	const exportFragment = document.createElement('fragment');
+	exportFragment.innerHTML = `
+		<div class="dropdown sim-dropdown-menu">
+			<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+				<i class="fas fa-file-export"></i>
+				Export
+			</a>
+			<ul class="dropdown-menu"></ul>
 		</div>
 	`;
-	const linkElem = exportSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Export',
-		'allowHTML': true,
-	});
 
-	const menuElem = exportSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
+	const menuElem = exportFragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
 	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		if (!showInRaidSim) {
-			itemElem.classList.add('within-raid-sim-hide');
-		}
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
+		const itemFragment = document.createElement('fragment');
+		itemFragment.innerHTML = `
+			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
+				<a href="javascript:void(0)" class="dropdown-item" role="button">${label}</a>
+			</li>
+		`;
+		const itemElem = itemFragment.children[0] as HTMLElement;
+		const linkElem = itemElem.children[0] as HTMLElement;
+		linkElem.addEventListener('click', onClick);
 		menuElem.appendChild(itemElem);
 	};
 
@@ -50,7 +50,7 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 	addMenuItem('80U EP', () => new Individual80UEPExporter(menuElem, simUI), false);
 	addMenuItem('Pawn EP', () => new IndividualPawnEPExporter(menuElem, simUI), false);
 
-	return exportSettings;
+	return exportFragment.children[0] as HTMLElement;
 }
 
 export abstract class Exporter extends Popup {

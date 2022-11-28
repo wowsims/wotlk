@@ -1,7 +1,6 @@
 @use "sass:map";
 
 $gap-width: 1.5rem;
-
 $wrath-blue: #7FCBD8;
 
 :root {
@@ -29,13 +28,7 @@ body {
 }
 
 a {
-  color: white;
-  text-decoration: none;
   outline: none;
-
-  &:hover, &:focus, &.active {
-    color: var(--bs-primary);
-  }
 }
 
 label {

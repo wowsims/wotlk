@@ -1,18 +1,26 @@
 #simHeader {
-	padding: 0 var(--bs-gap);
+	padding-top: $gap-width;
 	display: flex;
-	justify-content: space-between;
 	background-color: #1112187d;
-
-	.sim-tabs, .sim-toolbar {
-		flex-direction: row;
-	}
 
 	.sim-tabs {
 		border-bottom: 0;
 	}
 
+	.import-export {
+		display: flex;
+
+		.sim-dropdown-menu {
+			display: flex;
+		
+			.import-link, .export-link {
+				padding: $nav-link-padding-y $nav-link-padding-x;
+			}
+		}
+	}
+
 	.sim-toolbar {
+		margin-left: auto;
 		display: flex;
 		align-items: center;
 		font-size: clamp(12px, 2vw, 20px);
@@ -26,5 +34,27 @@
 				content: none;
 			}
 		}
+	}
+
+	.sim-dropdown-menu {
+		position: relative;
+	}
+
+	.sim-dropdown-menu .dropdown-menu {
+		background-color: #111218;
+		border: 1px solid var(--theme-color-primary);
+		text-align: right;
+		min-width: auto;
+		font-weight: bold;
+		top: 120%;
+	}
+	.sim-dropdown-menu .dropdown-item {
+		display: block;
+		padding: 5px 20px;
+		user-select: none;
+		white-space: nowrap;
+	}
+	.sim-dropdown-menu .dropdown-item:hover {
+		background-color: #2a2c3b;
 	}
 }
