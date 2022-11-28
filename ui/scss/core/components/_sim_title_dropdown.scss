@@ -15,6 +15,7 @@ $icon-size: 48px;
 
   .dropdown-menu {
     background: $body-bg;
+    z-index: 1500;
 
     .dropdown-menu {
       min-width: 300px;
