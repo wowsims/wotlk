@@ -28,6 +28,11 @@ export class CharacterStats extends Component {
 		this.player = player;
 		this.modifyDisplayStats = modifyDisplayStats;
 
+		const label = document.createElement('label');
+		label.classList.add('character-stats-label');
+		label.textContent = 'Stats';
+		this.rootElem.appendChild(label);
+
 		const table = document.createElement('table');
 		table.classList.add('character-stats-table');
 		this.rootElem.appendChild(table);

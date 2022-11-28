@@ -101,6 +101,21 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		},
 	}
 
+	onDeadlyTick := func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
+		dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+	}
+
+	if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
+		metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+		onDeadlyTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
+			result := dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+			if result.Landed() {
+				rogue.AddEnergy(sim, 1, metrics)
+			}
+		}
+	}
 	numTargets := rogue.Env.GetNumTargets()
 	for i := int32(0); i < numTargets; i++ {
 		target := rogue.Env.GetTargetUnit(i)
@@ -110,19 +125,8 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 			// TODO: MAP part snapshots
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
-				dot.Spell.CalcAndDealDamage(sim, target, baseDmg, dot.OutcomeTick)
-			},
+			OnTick: onDeadlyTick,
 		})
-
-		if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
-			metrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
-			dot.OnPeriodicDamageDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				rogue.AddEnergy(sim, 1, metrics)
-			}
-		}
-
 		rogue.deadlyPoisonDots = append(rogue.deadlyPoisonDots, dot)
 	}
 }
