@@ -791,49 +791,40 @@ func (rp *RunicPowerBar) UnholyRuneSpentAt(dur time.Duration) int32 {
 	return -1
 }
 
-func (rp *RunicPowerBar) RegenRune(regenAt time.Duration, slot int8) {
+func (rp *RunicPowerBar) RegenRune(sim *Simulation, regenAt time.Duration, slot int8) {
 	checkSpent := isSpents[slot]
 	if checkSpent&rp.runeStates > 0 {
 		rp.runeStates = ^checkSpent & rp.runeStates // unset spent flag for this rune.
 		rp.runeMeta[slot].lastRegenTime = regenAt
 		rp.runeMeta[slot].regenAt = NeverExpires
+
+		if !rp.isACopy {
+			metrics := rp.bloodRuneGainMetrics
+			onGain := rp.onBloodRuneGain
+			if rp.runeStates&(isDeaths[slot]) > 0 {
+				metrics = rp.deathRuneGainMetrics
+				onGain = rp.onDeathRuneGain
+			} else if slot == 2 || slot == 3 {
+				metrics = rp.frostRuneGainMetrics
+				onGain = rp.onFrostRuneGain
+			} else if slot == 4 || slot == 5 {
+				metrics = rp.unholyRuneGainMetrics
+				onGain = rp.onUnholyRuneGain
+			}
+
+			rp.GainRuneMetrics(sim, metrics, 1)
+			onGain(sim)
+		}
 	}
 }
 
 func (rp *RunicPowerBar) RegenAllRunes(sim *Simulation) {
-	startBlood := rp.CurrentBloodRunes()
-	startFrost := rp.CurrentFrostRunes()
-	startUnholy := rp.CurrentUnholyRunes()
-	startDeath := rp.CurrentDeathRunes()
-
-	rp.RegenRune(sim.CurrentTime, 0)
-	rp.RegenRune(sim.CurrentTime, 1)
-	rp.RegenRune(sim.CurrentTime, 2)
-	rp.RegenRune(sim.CurrentTime, 3)
-	rp.RegenRune(sim.CurrentTime, 4)
-	rp.RegenRune(sim.CurrentTime, 5)
-
-	if !rp.isACopy {
-		if rp.CurrentBloodRunes()-startBlood > 0 {
-			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, rp.CurrentBloodRunes()-startBlood)
-			rp.onBloodRuneGain(sim)
-		}
-
-		if rp.CurrentFrostRunes()-startFrost > 0 {
-			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, rp.CurrentFrostRunes()-startFrost)
-			rp.onFrostRuneGain(sim)
-		}
-
-		if rp.CurrentUnholyRunes()-startUnholy > 0 {
-			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, rp.CurrentUnholyRunes()-startUnholy)
-			rp.onUnholyRuneGain(sim)
-		}
-
-		if rp.CurrentDeathRunes()-startDeath > 0 {
-			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, rp.CurrentDeathRunes()-startDeath)
-			rp.onDeathRuneGain(sim)
-		}
-	}
+	rp.RegenRune(sim, sim.CurrentTime, 0)
+	rp.RegenRune(sim, sim.CurrentTime, 1)
+	rp.RegenRune(sim, sim.CurrentTime, 2)
+	rp.RegenRune(sim, sim.CurrentTime, 3)
+	rp.RegenRune(sim, sim.CurrentTime, 4)
+	rp.RegenRune(sim, sim.CurrentTime, 5)
 }
 
 func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int8 {
@@ -978,23 +969,7 @@ func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, sl
 		return
 	}
 
-	metrics := rp.bloodRuneGainMetrics
-	onGain := rp.onBloodRuneGain
-	if rp.runeStates&(isDeaths[slot]) > 0 {
-		metrics = rp.deathRuneGainMetrics
-		onGain = rp.onDeathRuneGain
-	} else if slot == 2 || slot == 3 {
-		metrics = rp.frostRuneGainMetrics
-		onGain = rp.onFrostRuneGain
-	} else if slot == 4 || slot == 5 {
-		metrics = rp.unholyRuneGainMetrics
-		onGain = rp.onUnholyRuneGain
-	}
-	rp.RegenRune(newTime, slot)
-	if !rp.isACopy {
-		rp.GainRuneMetrics(sim, metrics, 1)
-		onGain(sim)
-	}
+	rp.RegenRune(sim, newTime, slot)
 }
 
 func (rp *RunicPowerBar) findAndRegen(sim *Simulation, newTime time.Duration) {
