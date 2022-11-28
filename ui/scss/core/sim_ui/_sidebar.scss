@@ -1,0 +1,49 @@
+@use "sass:map";
+
+@import "../components/sim_title_dropdown";
+
+#simSidebar {
+  height: 100%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: $body-bg;
+  flex: 1;
+	overflow-y: visible;
+
+  #simSidebarContent {
+    padding-top: $gap-width;
+    padding-left: $gap-width;
+    padding-right: $gap-width;
+    padding-bottom: map.get($spacers, 3);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .sim-sidebar-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    
+      .sim-sidebar-actions-button {
+        width: 150px;
+        height: 40px;
+        cursor: pointer;
+        margin: 5px;
+      
+        // TODO: Use bootstrap buttons
+        background: transparent;
+        color: var(--main-text-color);
+        border: 1px solid var(--theme-color-primary);
+        font-weight: 1000;
+        transition: all .2s ease-in;
+
+        &:hover {
+          color: var(--main-text-color);
+          background: var(--theme-color-primary);
+        }
+      }
+    }
+  }
+}

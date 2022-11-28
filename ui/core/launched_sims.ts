@@ -1,4 +1,5 @@
-import { Spec } from './proto/common.js';
+import { Class, Spec } from './proto/common';
+import { classSpecMap } from './proto_utils/class_spec_utils';
 
 // This file is for anything related to launching a new sim. DO NOT touch this
 // file until your sim is ready to launch!
@@ -43,4 +44,14 @@ export function getLaunchedSims(): Array<Spec> {
 	return Object.keys(simLaunchStatuses)
 		.map(specStr => parseInt(specStr) as Spec)
 		.filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
+}
+
+export function getLaunchedSimsForClass(classIndex: Class): Array<Spec> {
+	let specs = classSpecMap.get(classIndex) as Array<Spec>;
+
+	return specs.filter( (specIndex) => isSimLaunched(specIndex));
+}
+
+export function isSimLaunched(specIndex: Spec): boolean {
+	return simLaunchStatuses[specIndex] > LaunchStatus.Unlaunched;
 }

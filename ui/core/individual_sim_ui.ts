@@ -78,7 +78,6 @@ import { newGlyphsPicker } from './talents/factory.js';
 import { newTalentsPicker } from './talents/factory.js';
 import { professionNames, raceNames } from './proto_utils/names.js';
 import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
-import { specNames } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { specToLocalStorageKey } from './proto_utils/utils.js';
 

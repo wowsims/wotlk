@@ -1,5 +1,13 @@
+@use "sass:map";
+
+$gap-width: 1.5rem;
+
+$wrath-blue: #7FCBD8;
+
 :root {
-  --color-wrath-blue: #7FCBD8;
+  --gap: $gap-width;
+
+  --wrath-blue: $wrath-blue;
 }
 
 * {
@@ -28,6 +36,10 @@ a {
   &:hover, &:focus, &.active {
     color: var(--bs-primary);
   }
+}
+
+label {
+  font-weight: bold;
 }
 
 hr {
