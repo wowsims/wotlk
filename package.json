@@ -22,8 +22,8 @@
     "scripts": {
         "build": "bazel build //...",
         "test": "bazel test //...",
-        "watch-frontend": "npx nodemon -e ts,proto --ignore dist/ --exec make ",
-        "watch-backend": "npx nodemon -e go,proto --ignore dist/ --signal SIGTERM --exec make rundevserver ",
+        "watch-frontend": "npx nodemon -e ts,proto --ignore dist/ --exec make",
+        "watch-backend": "npx nodemon -e go,proto --ignore dist/ --signal SIGTERM --exec 'make rundevserver || exit 1'",
         "watch": "npm run watch-frontend & npm run watch-backend"
     },
     "dependencies": {
