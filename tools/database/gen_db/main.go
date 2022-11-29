@@ -93,6 +93,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		return true
 	})
 
+	// There is an 'unavailable' version of many t8 set pieces, e.g. https://www.wowhead.com/wotlk/item=46235/darkruned-gauntlets
+	valorousItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return strings.HasPrefix(item.Name, "Valorous ")
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		nameToMatch := "Valorous " + item.Name
+		for _, item := range valorousItems {
+			if item.Name == nameToMatch {
+				return false
+			}
+		}
+		return true
+	})
+
 	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
 		if _, ok := database.GemDenyList[gem.Id]; ok {
 			return false
