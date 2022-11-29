@@ -215,7 +215,7 @@ setup:
 host: $(OUT_DIR)/.dirstamp node_modules air
 ifeq ($(WATCH), 1)
 	ulimit -n 10240
-	air -tmp_dir "/tmp" -build.include_ext "go,ts,js,html" -build.bin "true" -build.args_bin "http-server $(OUT_DIR)/.." -build.cmd "make" -build.exclude_dir "dist,node_modules,tools"
+	air -tmp_dir "/tmp" -build.include_ext "go,ts,js,html" -build.bin "npx" -build.args_bin "http-server $(OUT_DIR)/.." -build.cmd "make" -build.exclude_dir "dist,node_modules,tools"
 else
 	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
