@@ -1,6 +1,8 @@
 import * as bootstrap from 'bootstrap';
 import { isDescendant } from './utils';
 
+bootstrap.Dropdown.Default.offset = [0,0];
+
 let body = document.querySelector('body') as HTMLElement;
 
 // Custom dropdown event handlers for mouseover dropdowns

@@ -151,7 +151,7 @@ export class SimTitleDropdown extends Component {
 
     let fragment = document.createElement('fragment');
     fragment.innerHTML = `
-      <a href="javascript:void(0)" class="sim-link ${textKlass}" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+      <a href="javascript:void(0)" class="sim-link ${textKlass}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
@@ -195,7 +195,7 @@ export class SimTitleDropdown extends Component {
 
     let fragment = document.createElement('fragment');
     fragment.innerHTML = `
-      <a href="${href}" class="sim-link ${textKlass}" ${specIndexes.length > 1 ? 'role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false"' : ''}>
+      <a href="${href}" class="sim-link ${textKlass}" ${specIndexes.length > 1 ? 'role="button" data-bs-toggle="dropdown" aria-expanded="false"' : ''}>
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
