@@ -179,6 +179,9 @@ func (warrior *Warrior) Reset(_ *core.Simulation) {
 	if warrior.Shout != nil && warrior.PrecastShout {
 		warrior.shoutExpiresAt = warrior.shoutDuration - time.Second*10
 	}
+	for i := range warrior.munchedDeepWoundsProcs {
+		warrior.munchedDeepWoundsProcs[i] = nil
+	}
 }
 
 func NewWarrior(character core.Character, talents *proto.WarriorTalents, inputs WarriorInputs) *Warrior {

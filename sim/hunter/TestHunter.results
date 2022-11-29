@@ -416,8 +416,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-ScourgestalkerBattlegear"
  value: {
-  dps: 6773.75785
-  tps: 5821.68838
+  dps: 6860.5323
+  tps: 5906.0124
  }
 }
 dps_results: {

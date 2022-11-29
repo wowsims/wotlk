@@ -1,0 +1,30 @@
+#simHeader {
+	padding: 0 var(--bs-gap);
+	display: flex;
+	justify-content: space-between;
+	background-color: #1112187d;
+
+	.sim-tabs, .sim-toolbar {
+		flex-direction: row;
+	}
+
+	.sim-tabs {
+		border-bottom: 0;
+	}
+
+	.sim-toolbar {
+		display: flex;
+		align-items: center;
+		font-size: clamp(12px, 2vw, 20px);
+
+		.sim-toolbar-item {
+			margin-left: var(--bs-gap);
+			display: flex;
+			cursor: pointer;
+
+			.dropdown-toggle::after {
+				content: none;
+			}
+		}
+	}
+}

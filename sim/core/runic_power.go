@@ -25,7 +25,6 @@ type RuneMeta struct {
 	lastSpendTime time.Duration // last time the rune was spent.
 	regenAt       time.Duration // time at which the rune will no longer be spent.
 	revertAt      time.Duration // time at which rune will no longer be kind death.
-	revertOnSpend bool
 }
 
 type RunicPowerBar struct {
@@ -92,7 +91,6 @@ func ResetRunes(runeMeta *RuneMeta) {
 	runeMeta.revertAt = NeverExpires
 	runeMeta.lastRegenTime = -1
 	runeMeta.lastSpendTime = -1
-	runeMeta.revertOnSpend = false
 }
 
 func (rp *RunicPowerBar) reset(sim *Simulation) {
@@ -403,7 +401,6 @@ func (rp *RunicPowerBar) AnyRuneReadyAt(sim *Simulation) time.Duration {
 func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int8) {
 	rp.runeStates = ^isDeaths[slot] & rp.runeStates
 	rp.runeMeta[slot].revertAt = NeverExpires
-	rp.runeMeta[slot].revertOnSpend = false
 
 	if !rp.isACopy && rp.runeStates&isSpents[slot] == 0 {
 		metrics := rp.bloodRuneGainMetrics
@@ -423,16 +420,13 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int8) {
 
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
-func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertOnSpend bool, revertAt time.Duration) {
+func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertAt time.Duration) {
 	if slot == -1 {
 		return
 	}
 	rp.runeStates |= isDeaths[slot]
 
-	// revertOnSpend == true overrides anything
-	rp.runeMeta[slot].revertOnSpend = rp.runeMeta[slot].revertOnSpend || revertOnSpend
-
-	if rp.runeMeta[slot].revertOnSpend {
+	if rp.btslot != slot {
 		rp.runeMeta[slot].revertAt = NeverExpires
 	} else {
 		if rp.runeMeta[slot].revertAt != NeverExpires {
@@ -806,49 +800,40 @@ func (rp *RunicPowerBar) UnholyRuneSpentAt(dur time.Duration) int32 {
 	return -1
 }
 
-func (rp *RunicPowerBar) RegenRune(regenAt time.Duration, slot int32) {
+func (rp *RunicPowerBar) RegenRune(sim *Simulation, regenAt time.Duration, slot int8) {
 	checkSpent := isSpents[slot]
 	if checkSpent&rp.runeStates > 0 {
 		rp.runeStates = ^checkSpent & rp.runeStates // unset spent flag for this rune.
 		rp.runeMeta[slot].lastRegenTime = regenAt
 		rp.runeMeta[slot].regenAt = NeverExpires
+
+		if !rp.isACopy {
+			metrics := rp.bloodRuneGainMetrics
+			onGain := rp.onBloodRuneGain
+			if rp.runeStates&(isDeaths[slot]) > 0 {
+				metrics = rp.deathRuneGainMetrics
+				onGain = rp.onDeathRuneGain
+			} else if slot == 2 || slot == 3 {
+				metrics = rp.frostRuneGainMetrics
+				onGain = rp.onFrostRuneGain
+			} else if slot == 4 || slot == 5 {
+				metrics = rp.unholyRuneGainMetrics
+				onGain = rp.onUnholyRuneGain
+			}
+
+			rp.GainRuneMetrics(sim, metrics, 1)
+			onGain(sim)
+		}
 	}
 }
 
 func (rp *RunicPowerBar) RegenAllRunes(sim *Simulation) {
-	startBlood := rp.CurrentBloodRunes()
-	startFrost := rp.CurrentFrostRunes()
-	startUnholy := rp.CurrentUnholyRunes()
-	startDeath := rp.CurrentDeathRunes()
-
-	rp.RegenRune(sim.CurrentTime, 0)
-	rp.RegenRune(sim.CurrentTime, 1)
-	rp.RegenRune(sim.CurrentTime, 2)
-	rp.RegenRune(sim.CurrentTime, 3)
-	rp.RegenRune(sim.CurrentTime, 4)
-	rp.RegenRune(sim.CurrentTime, 5)
-
-	if !rp.isACopy {
-		if rp.CurrentBloodRunes()-startBlood > 0 {
-			rp.GainRuneMetrics(sim, rp.bloodRuneGainMetrics, rp.CurrentBloodRunes()-startBlood)
-			rp.onBloodRuneGain(sim)
-		}
-
-		if rp.CurrentFrostRunes()-startFrost > 0 {
-			rp.GainRuneMetrics(sim, rp.frostRuneGainMetrics, rp.CurrentFrostRunes()-startFrost)
-			rp.onFrostRuneGain(sim)
-		}
-
-		if rp.CurrentUnholyRunes()-startUnholy > 0 {
-			rp.GainRuneMetrics(sim, rp.unholyRuneGainMetrics, rp.CurrentUnholyRunes()-startUnholy)
-			rp.onUnholyRuneGain(sim)
-		}
-
-		if rp.CurrentDeathRunes()-startDeath > 0 {
-			rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, rp.CurrentDeathRunes()-startDeath)
-			rp.onDeathRuneGain(sim)
-		}
-	}
+	rp.RegenRune(sim, sim.CurrentTime, 0)
+	rp.RegenRune(sim, sim.CurrentTime, 1)
+	rp.RegenRune(sim, sim.CurrentTime, 2)
+	rp.RegenRune(sim, sim.CurrentTime, 3)
+	rp.RegenRune(sim, sim.CurrentTime, 4)
+	rp.RegenRune(sim, sim.CurrentTime, 5)
 }
 
 func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int8 {
@@ -985,7 +970,7 @@ func (rp *RunicPowerBar) Advance(sim *Simulation, newTime time.Duration) {
 	}
 }
 
-func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, slot int32) {
+func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, slot int8) {
 	if rp.runeMeta[slot].regenAt > newTime {
 		return
 	}
@@ -993,23 +978,7 @@ func (rp *RunicPowerBar) TryRegenRune(sim *Simulation, newTime time.Duration, sl
 		return
 	}
 
-	metrics := rp.bloodRuneGainMetrics
-	onGain := rp.onBloodRuneGain
-	if rp.runeStates&(isDeaths[slot]) > 0 {
-		metrics = rp.deathRuneGainMetrics
-		onGain = rp.onDeathRuneGain
-	} else if slot == 2 || slot == 3 {
-		metrics = rp.frostRuneGainMetrics
-		onGain = rp.onFrostRuneGain
-	} else if slot == 4 || slot == 5 {
-		metrics = rp.unholyRuneGainMetrics
-		onGain = rp.onUnholyRuneGain
-	}
-	rp.RegenRune(newTime, slot)
-	if !rp.isACopy {
-		rp.GainRuneMetrics(sim, metrics, 1)
-		onGain(sim)
-	}
+	rp.RegenRune(sim, newTime, slot)
 }
 
 func (rp *RunicPowerBar) findAndRegen(sim *Simulation, newTime time.Duration) {
@@ -1075,9 +1044,8 @@ func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	}
 
 	slot := rp.ReadyDeathRune()
-	if rp.runeMeta[slot].revertOnSpend {
+	if rp.btslot != slot {
 		// disable revert at
-		rp.runeMeta[slot].revertOnSpend = false
 		rp.runeMeta[slot].revertAt = NeverExpires
 		// clear death bit to revert.
 		rp.runeStates = ^isDeaths[slot] & rp.runeStates

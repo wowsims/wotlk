@@ -121,7 +121,7 @@ func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, cur
 }
 
 func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
-	if rp.btslot == -1 || rp.runeMeta[rp.btslot].revertOnSpend {
+	if rp.btslot == -1 {
 		return
 	}
 	rp.ConvertFromDeath(sim, rp.btslot)
@@ -131,38 +131,28 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 }
 
 func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
-	// so in english
-	// 1. try to convert active blood rune -> death rune
-	// 2. if no active blood, convert inactive blood rune -> death rune
-	// 3. then convert one inactive death rune -> active
+	// 1. converts a blood rune -> death rune
+	// 2. then convert one inactive blood or death rune -> active
 
 	slot := int8(-1)
-	if rp.runeStates&isSpentDeath[0] == 0 {
-		slot = 0 //
-	} else if rp.runeStates&isSpentDeath[1] == 0 {
-		slot = 1
-	} else if rp.runeStates&isDeaths[0] == 0 {
+	if rp.runeStates&isDeaths[0] == 0 {
 		slot = 0
 	} else if rp.runeStates&isDeaths[1] == 0 {
 		slot = 1
 	}
-	// If we found a blood rune, convert to death.
 	if slot > -1 {
-		rp.ConvertToDeath(sim, slot, false, sim.CurrentTime+time.Second*20)
 		rp.btslot = slot
+		rp.ConvertToDeath(sim, slot, sim.CurrentTime+time.Second*20)
 	}
 
 	slot = -1
-	if rp.runeStates&isSpentDeath[0] == isSpentDeath[0] {
+	if rp.runeStates&isSpents[0] == isSpents[0] {
 		slot = 0
-	} else if rp.runeStates&isSpentDeath[1] == isSpentDeath[1] {
+	} else if rp.runeStates&isSpents[1] == isSpents[1] {
 		slot = 1
 	}
 	if slot > -1 {
-		rp.runeStates = ^isSpents[slot] & rp.runeStates // unset spent flag for this rune.
-		rp.runeMeta[slot].regenAt = NeverExpires        // no regen timer if there was one
-		rp.GainRuneMetrics(sim, rp.deathRuneGainMetrics, 1)
-		rp.onDeathRuneGain(sim)
+		rp.RegenRune(sim, sim.CurrentTime, slot)
 	}
 
 	// if PA isn't running, make it run 20s from now to disable BT

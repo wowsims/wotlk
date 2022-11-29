@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-DeathbringerGarb"
  value: {
-  dps: 6568.76787
-  tps: 5865.85527
+  dps: 6715.6336
+  tps: 5999.92055
  }
 }
 dps_results: {
