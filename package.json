@@ -21,7 +21,10 @@
     },
     "scripts": {
         "build": "bazel build //...",
-        "test": "bazel test //..."
+        "test": "bazel test //...",
+        "watch-frontend": "npx nodemon -e ts,proto --ignore dist/ --exec make ",
+        "watch-backend": "npx nodemon -e go,proto --ignore dist/ --signal SIGTERM --exec make rundevserver ",
+        "watch": "npm run watch-frontend & npm run watch-backend"
     },
     "dependencies": {
         "@popperjs/core": "^2.11.6",
