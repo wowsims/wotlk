@@ -45,16 +45,16 @@ character_stats_results: {
 dps_results: {
  key: "TestRetribution-AllItems-AegisBattlegear"
  value: {
-  dps: 5534.41921
-  tps: 5632.82884
+  dps: 5639.90314
+  tps: 5738.26524
   dtps: 8.493
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-AegisPlate"
  value: {
-  dps: 4986.25087
-  tps: 5084.98465
+  dps: 5037.90197
+  tps: 5136.63575
   dtps: 8.85978
  }
 }
