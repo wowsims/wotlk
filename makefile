@@ -150,8 +150,20 @@ devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 		exit 1; \
 	fi
 
-rundevserver: devserver
+.PHONY: air
+air:
+ifeq ($(WATCH), 1)
+	@ ! command -v air && curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin || true
+endif
+
+rundevserver: devserver air
+ifeq ($(WATCH), 1)
+	ulimit -n 10240
+	air -tmp_dir "/tmp" -build.include_ext "go,ts,js,html" -build.bin "true" -build.cmd "make" -build.exclude_dir "dist,node_modules,sim,tools" &
+	air -tmp_dir "/tmp" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimwotlk" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
+else
 	./wowsimwotlk --usefs=true --launch=false
+endif
 
 release: wowsimwotlk
 	GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
@@ -200,7 +212,12 @@ setup:
 
 # Host a local server, for dev testing
 .PHONY: host
-host: $(OUT_DIR)/.dirstamp node_modules
+host: $(OUT_DIR)/.dirstamp node_modules air
+ifeq ($(WATCH), 1)
+	ulimit -n 10240
+	air -tmp_dir "/tmp" -build.include_ext "go,ts,js,html" -build.bin "true" -build.args_bin "http-server $(OUT_DIR)/.." -build.cmd "make" -build.exclude_dir "dist,node_modules,tools"
+else
 	# Intentionally serve one level up, so the local site has 'wotlk' as the first
 	# directory just like github pages.
 	npx http-server $(OUT_DIR)/..
+endif
