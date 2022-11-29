@@ -137,6 +137,7 @@ var ItemAllowList = map[int32]struct{}{
 	20837: struct{}{}, // Sunstrider Axe
 	20966: struct{}{}, // Jade Pendant of Blasting
 	24114: struct{}{}, // Braided Eternium Chain
+	28572: struct{}{}, // Blade of the Unrequited
 	28830: struct{}{}, // Dragonspine Trophy
 	29383: struct{}{}, // Bloodlust Brooch
 	29387: struct{}{}, // Gnomeregan Auto-Blocker 600
