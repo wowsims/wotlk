@@ -136,15 +136,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7316.5305
-  tps: 4326.76714
+  dps: 7328.2078
+  tps: 4331.79484
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedPlate"
  value: {
-  dps: 6389.34265
-  tps: 3771.88924
+  dps: 6452.2862
+  tps: 3809.00671
  }
 }
 dps_results: {

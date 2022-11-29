@@ -149,17 +149,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7544.1793
-  tps: 4825.67473
-  hps: 263.07407
+  dps: 7690.31091
+  tps: 4892.48767
+  hps: 283.98585
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DarkrunedPlate"
  value: {
-  dps: 6664.38969
-  tps: 4179.56875
-  hps: 290.73139
+  dps: 6764.36984
+  tps: 4251.56774
+  hps: 298.15193
  }
 }
 dps_results: {

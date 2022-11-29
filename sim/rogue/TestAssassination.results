@@ -458,8 +458,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 6757.64255
-  tps: 4797.92621
+  dps: 6903.99481
+  tps: 4901.83631
  }
 }
 dps_results: {

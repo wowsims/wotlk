@@ -712,15 +712,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 3528.4249
-  tps: 2115.94348
+  dps: 3552.63781
+  tps: 2129.95166
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 4142.02246
-  tps: 2516.70773
+  dps: 4284.7624
+  tps: 2601.71757
  }
 }
 dps_results: {

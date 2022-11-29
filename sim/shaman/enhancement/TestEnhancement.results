@@ -668,15 +668,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 6405.006
-  tps: 3649.05778
+  dps: 6560.28766
+  tps: 3730.75331
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5778.21605
-  tps: 3280.78875
+  dps: 6161.213
+  tps: 3507.86358
  }
 }
 dps_results: {

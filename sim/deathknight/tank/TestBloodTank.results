@@ -143,15 +143,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 1575.70349
-  tps: 5066.54748
+  dps: 1619.92196
+  tps: 5168.37684
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-DarkrunedPlate"
  value: {
-  dps: 1410.37862
-  tps: 4565.5992
+  dps: 1429.14622
+  tps: 4620.82444
  }
 }
 dps_results: {
