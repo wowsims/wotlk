@@ -477,17 +477,17 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-SanctificationGarb"
  value: {
-  dps: 93.70534
-  tps: 46.86365
-  hps: 4707.00472
+  dps: 95.39273
+  tps: 47.77926
+  hps: 4840.96637
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-SanctificationRegalia"
  value: {
-  dps: 93.89421
-  tps: 47.64846
-  hps: 5063.01138
+  dps: 95.10307
+  tps: 48.46596
+  hps: 5225.29316
  }
 }
 dps_results: {
