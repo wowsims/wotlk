@@ -738,36 +738,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 18437.31478
-  tps: 10251.67884
+  dps: 18468.93502
+  tps: 10295.96356
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6539.08899
-  tps: 3395.52813
+  dps: 6543.07266
+  tps: 3396.94522
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8106.22997
-  tps: 3748.26426
+  dps: 8124.13453
+  tps: 3761.88364
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12687.85751
-  tps: 7516.69322
+  dps: 12684.85104
+  tps: 7508.5982
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3744.07992
-  tps: 1910.34124
+  dps: 3707.24394
+  tps: 1887.09665
  }
 }
 dps_results: {
@@ -822,36 +822,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 18198.39229
-  tps: 10217.94181
+  dps: 18225.38021
+  tps: 10245.9404
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6490.86821
-  tps: 3411.86914
+  dps: 6502.02136
+  tps: 3421.0632
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8021.47526
-  tps: 3807.43762
+  dps: 8048.8596
+  tps: 3822.02819
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12411.40468
-  tps: 7451.38959
+  dps: 12650.22465
+  tps: 7630.44162
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3655.92041
-  tps: 1893.40167
+  dps: 3678.05146
+  tps: 1910.59547
  }
 }
 dps_results: {
