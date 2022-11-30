@@ -72,6 +72,8 @@ type Warlock struct {
 	DPSPAverage             float64
 	PreviousTime            time.Duration
 	SpellsRotation          []SpellRotation
+
+	petStmBonusSP float64
 }
 
 type SpellRotation struct {
@@ -142,6 +144,9 @@ func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {
+	if sim.CurrentTime == 0 {
+		warlock.petStmBonusSP = 0
+	}
 }
 
 func NewWarlock(character core.Character, options *proto.Player) *Warlock {
