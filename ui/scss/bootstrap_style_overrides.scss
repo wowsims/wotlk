@@ -21,6 +21,14 @@
   display: flex;
 }
 
+.link-danger {
+  color: $link-danger-color !important;
+
+  &:hover, &:focus, &.active {
+    color: darken($link-danger-color, 3) !important;
+  }
+}
+
 .navbar {
   .navbar-toggler {
     border: 0;
@@ -40,7 +48,7 @@
     .nav-link {
       margin-bottom: 0;
       border: 0;
-      font-size: .75rem;
+      font-size: $content-font-size;
       font-weight: bold;
       white-space: nowrap;
 

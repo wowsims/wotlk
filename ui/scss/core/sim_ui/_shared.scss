@@ -24,12 +24,23 @@ td, th {
 		overflow-y: auto;
 	}
 
-	#simSidebar #simTitle, #simHeader {
-		height: $sim-header-height;
-		border-bottom: 1px solid $border-color;
+	#simContent {
+		padding-left: $gap-width * 2;
+  	padding-right: $gap-width * 2;
 
-		.sim-title-dropdown-root {
-			height: $sim-header-height - 1px;
+		#noticesBanner {
+			background: lighten($body-bg, 3);
+			margin-left: -$gap-width * 2;
+			margin-right: -$gap-width * 2;
+		}
+
+		#simTitle, #simHeader {
+			height: $sim-header-height;
+			border-bottom: 1px solid $border-color;
+	
+			.sim-title-dropdown-root {
+				height: $sim-header-height - 1px;
+			}
 		}
 	}
 }
@@ -72,53 +83,6 @@ td, th {
 	text-shadow: 0 0 10px var(--sidebar-highlight-color);
 }
 
-.notices {
-	font-size: 30px;
-	color: blue;
-	margin: 0 20px;
-	text-shadow:
-			0 0 10px white,
-			0 0 10px white,
-			0 0 10px white;
-}
-
-.warnings {
-	font-size: 30px;
-	color: yellow;
-	margin: 0 20px;
-	text-shadow:
-			0 0 10px red,
-			0 0 10px red,
-			0 0 10px red;
-}
-
-.known-issues {
-	display: none;
-	background-color: red;
-	border: 2px solid var(--main-text-color);
-	padding: 2px;
-	font-size: 14px;
-	font-weight: 900;
-}
-
-.downbin {
-	mask: url(/wotlk/assets/img/gauge.svg);
-	mask-size: cover;
-	-webkit-mask: url(/wotlk/assets/img/gauge.svg);
-	-webkit-mask-size: cover;
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-}
-
-.downbinnorm {
-	background-color: white;
-}
-
-.downbinalert {
-	background-color: red;
-}
-
 .hide-damage-metrics .damage-metrics {
 	display: none !important;
 }
@@ -139,21 +103,16 @@ td, th {
 	display: none !important;
 }
 
-// TODO: Replace with Bootstrap media query once on to node module
-@media only screen and (max-width: 992px) {
-	#simHeader {
-		overflow-x: scroll;
+@include media-breakpoint-down(lg) {
+	.sim-ui {
+		#simContent {
+			padding-left: $gap-width;
+    	padding-right: $gap-width;
 
-		.sim-tabs {
-			flex-wrap: nowrap;
-
-			.sim-link {
-				white-space: nowrap;
+			#noticesBanner {
+				margin-left: -$gap-width;
+				margin-right: -$gap-width;
 			}
 		}
-	}
-
-	.known-issues {
-		white-space: nowrap;
 	}
 }

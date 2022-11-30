@@ -23,7 +23,7 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 	importFragment.innerHTML = `
 		<div class="dropdown sim-dropdown-menu">
 			<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-				<i class="fas fa-file-import"></i>
+				<i class="fa fa-download"></i>
 				Import
 			</a>
 			<ul class="dropdown-menu"></ul>
@@ -35,7 +35,12 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 		const itemFragment = document.createElement('fragment');
 		itemFragment.innerHTML = `
 			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
-				<a href="javascript:void(0)" class="dropdown-item" role="button">${label}</a>
+				<a
+					href="javascript:void(0)"
+					class="dropdown-item"
+					role="button"
+					onclick="${onClick}"
+				>${label}</a>
 			</li>
 		`;
 		const itemElem = itemFragment.children[0] as HTMLElement;
@@ -44,7 +49,7 @@ export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualS
 		menuElem.appendChild(itemElem);
 	};
 
-	addMenuItem('Json', () => new IndividualJsonImporter(menuElem, simUI), true);
+	addMenuItem('JSON', () => new IndividualJsonImporter(menuElem, simUI), true);
 	addMenuItem('80U', () => new Individual80UImporter(menuElem, simUI), true);
 	addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
 

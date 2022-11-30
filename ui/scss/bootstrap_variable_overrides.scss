@@ -29,8 +29,7 @@ $custom-colors: (
   "rogue":        $rogue,
   "shaman":       $shaman,
   "warlock":      $warlock,
-  "warrior":      $warrior,
-  "primary":      $primary
+  "warrior":      $warrior
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
@@ -46,8 +45,11 @@ $border-color: #4c4e54;
 $link-color: #a5b1d6;
 $link-decoration: none;
 $link-hover-color: white;
+$link-transition: color .15s ease-in-out;
 
 // Component variable overrides
+$alert-border-radius: 0;
+
 $dropdown-bg: $body-bg;
 $dropdown-border-radius: 0;
 $dropdown-border-width: 0;
@@ -68,6 +70,9 @@ $navbar-dark-active-color: $primary;
 $navbar-padding-y: 0;
 
 $nav-link-padding-y: map.get($spacers, 3);
-
+$nav-link-transition: $link-transition;
 $nav-tabs-link-active-bg: transparent;
 $nav-tabs-link-active-color: white;
+
+$tooltip-bg: #424557;
+$tooltip-max-width: 15vw;

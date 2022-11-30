@@ -204,3 +204,10 @@
 	min-width: 50px;
 	text-align: right;
 }
+
+@include media-breakpoint-down(lg) {
+  .item-picker-icon {
+    width: 48px;
+    height: 48px;
+  }
+}

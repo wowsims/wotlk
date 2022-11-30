@@ -81,6 +81,8 @@ import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { specToLocalStorageKey } from './proto_utils/utils.js';
 
+import { Tooltip } from 'bootstrap';
+
 import * as IconInputs from './components/icon_inputs.js';
 import * as InputHelpers from './components/input_helpers.js';
 import * as Mechanics from './constants/mechanics.js';
@@ -294,14 +296,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addGearTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
-		this.addToolbarComponents();
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
 			this.addLogTab();
 		}
 
-		this.addImportExportDropdowns();
+		this.addTopbarComponents();
 
 		this.player.changeEmitter.on(() => this.recomputeSettingsLayout());
 	}
@@ -1111,22 +1112,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const logRunner = new LogRunner(this.rootElem.getElementsByClassName('log-runner')[0] as HTMLElement, this);
 	}
 
-	private addImportExportDropdowns() {
-		this.importExportContainer.appendChild(newIndividualImporters(this));
-		this.importExportContainer.appendChild(newIndividualExporters(this));
-	}
-
-	private addToolbarComponents() {
-		const optionsMenu = document.createElement('span');
-		optionsMenu.classList.add('fas', 'fa-cog');
-		tippy(optionsMenu, {
-			'content': 'Options',
-			'allowHTML': true,
-		});
-		optionsMenu.addEventListener('click', event => {
-			new SettingsMenu(this.rootElem, this);
-		});
-		this.addToolbarItem(optionsMenu);
+	private addTopbarComponents() {
+		this.addImportLink(newIndividualImporters(this));
+		this.addExportLink(newIndividualExporters(this));
 	}
 
 	applyDefaults(eventID: EventID) {

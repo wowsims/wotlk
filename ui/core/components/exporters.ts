@@ -24,7 +24,7 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 	exportFragment.innerHTML = `
 		<div class="dropdown sim-dropdown-menu">
 			<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-				<i class="fas fa-file-export"></i>
+				<i class="fa fa-right-from-bracket"></i>
 				Export
 			</a>
 			<ul class="dropdown-menu"></ul>
@@ -36,7 +36,12 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 		const itemFragment = document.createElement('fragment');
 		itemFragment.innerHTML = `
 			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
-				<a href="javascript:void(0)" class="dropdown-item" role="button">${label}</a>
+				<a
+					href="javascript:void(0)"
+					class="dropdown-item"
+					role="button"
+					onclick="${onclick}"
+				>${label}</a>
 			</li>
 		`;
 		const itemElem = itemFragment.children[0] as HTMLElement;
@@ -46,7 +51,7 @@ export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualS
 	};
 
 	addMenuItem('Link', () => new IndividualLinkExporter(menuElem, simUI), false);
-	addMenuItem('Json', () => new IndividualJsonExporter(menuElem, simUI), true);
+	addMenuItem('JSON', () => new IndividualJsonExporter(menuElem, simUI), true);
 	addMenuItem('80U EP', () => new Individual80UEPExporter(menuElem, simUI), false);
 	addMenuItem('Pawn EP', () => new IndividualPawnEPExporter(menuElem, simUI), false);
 

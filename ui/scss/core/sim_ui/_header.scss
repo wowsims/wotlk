@@ -1,9 +1,9 @@
+@use "sass:map";
+
 #simHeader {
 	padding-top: $gap-width;
 	display: flex;
 	align-items: flex-end;
-	background-color: #1112187d;
-
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none;  /* Firefox */
 
@@ -24,6 +24,7 @@
 			.import-link, .export-link {
 				padding: $nav-link-padding-y $nav-link-padding-x;
 				white-space: nowrap;
+				transition: $link-transition;
 			}
 
 			.dropdown-menu {
@@ -38,15 +39,26 @@
 		margin-left: auto;
 		display: flex;
 		align-items: center;
-		font-size: clamp(12px, 2vw, 20px);
+		font-size: $content-font-size;
 
 		.sim-toolbar-item {
-			margin-left: var(--bs-gap);
+			margin-left: map.get($spacers, 3);
 			display: flex;
-			cursor: pointer;
+			transition: $link-transition;
 
-			.dropdown-toggle::after {
-				content: none;
+			.warnings {
+				text-shadow:
+						0 0 10px $danger,
+						0 0 10px $danger,
+						0 0 10px $danger;
+			}
+
+			.known-issues {
+				color: #ef9eaa;
+			}
+
+			.patreon-link {
+				margin-left: map.get($spacers, 3);
 			}
 		}
 	}
@@ -55,5 +67,25 @@
 @include media-breakpoint-down(lg) {
 	#simHeader {
 		padding-top: $gap-width-sm;
+		overflow-x: scroll;
 	}	
 }
+
+// TODO: Replace with Bootstrap media query once on to node module
+// @media only screen and (max-width: 992px) {
+// 	#simHeader {
+// 		overflow-x: scroll;
+
+// 		.sim-tabs {
+// 			flex-wrap: nowrap;
+
+// 			.sim-link {
+// 				white-space: nowrap;
+// 			}
+// 		}
+// 	}
+
+// 	.known-issues {
+// 		white-space: nowrap;
+// 	}
+// }

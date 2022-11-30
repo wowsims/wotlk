@@ -2,6 +2,7 @@ import { Component } from './components/component.js';
 import { NumberPicker } from './components/number_picker.js';
 import { ResultsViewer } from './components/results_viewer.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
+import { SimHeader } from './components/sim_header';
 import { Spec } from './proto/common.js';
 import { SimOptions } from './proto/api.js';
 import { LaunchStatus } from './launched_sims.js';
@@ -11,12 +12,14 @@ import { Sim, SimError } from './sim.js';
 import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
+import { Tooltip } from 'bootstrap';
+
 declare var tippy: any;
 declare var pako: any;
 
 const URLMAXLEN = 2048;
 const noticeText = '';
-//const noticeText = 'We are looking for help migrating our sims to Wrath of the Lich King. If you\'d like to participate in a fun side project working with an open-source community please <a href="https://discord.gg/jJMPr9JWwx" target="_blank">join our discord!</a>';
+// const noticeText = "We're looking for help migrating our sims to Wrath of the Lich King. If you\'d like to participate in a fun side project working with an open-source community please, <a href='https://discord.gg/jJMPr9JWwx' target='_blank'>join our Discord!</a>";
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
@@ -41,22 +44,26 @@ export abstract class SimUI extends Component {
 
 	readonly resultsViewer: ResultsViewer
 
-	protected simActionsContainer: HTMLElement;
-	protected iterationsPicker: HTMLElement;
+	protected readonly simHeader: SimHeader;
 
-	protected simTabsContainer: HTMLElement;
-	protected simTabContentsContainer: HTMLElement;
-	protected importExportContainer: HTMLElement;
-	protected simToolbar: HTMLElement;
+	protected readonly simContentContainer: HTMLElement;
+	protected readonly simMain: HTMLElement;
+	protected readonly simActionsContainer: HTMLElement;
+	protected readonly iterationsPicker: HTMLElement;
+	protected readonly simTabContentsContainer: HTMLElement;
 
-	private warnings: Array<SimWarning>;
 	private warningsTippy: any;
 
 	constructor(parentElem: HTMLElement, sim: Sim, config: SimUIConfig) {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
 		this.rootElem.innerHTML = simHTML;
+		this.simContentContainer = this.rootElem.querySelector('#simContent') as HTMLElement;
+		this.simHeader = new SimHeader(this.simContentContainer, this);
+		this.simMain = simMain;
+		this.simContentContainer.appendChild(simMain);
 		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
+
 		if (!this.isWithinRaidSim) {
 			this.rootElem.classList.add('not-within-raid-sim');
 		}
@@ -107,49 +114,8 @@ export abstract class SimUI extends Component {
 		updateShowExperimental();
 		this.sim.showExperimentalChangeEmitter.on(updateShowExperimental);
 
-		const noticesElem = document.getElementsByClassName('notices')[0] as HTMLElement;
-		if (noticeText) {
-			tippy(noticesElem, {
-				content: noticeText,
-				allowHTML: true,
-				interactive: true,
-			});
-		} else {
-			noticesElem.remove();
-		}
-
-		this.warnings = [];
-		const warningsElem = document.getElementsByClassName('warnings')[0] as HTMLElement;
-		this.warningsTippy = tippy(warningsElem, {
-			content: '',
-			allowHTML: true,
-		});
-		this.updateWarnings();
-
-		let statusStr = '';
-		if (config.launchStatus == LaunchStatus.Unlaunched) {
-			statusStr = 'This sim is a WORK IN PROGRESS. It is not fully developed and should not be used for general purposes.';
-		} else if (config.launchStatus == LaunchStatus.Alpha) {
-			statusStr = 'This sim is in ALPHA. Bugs are expected; please let us know if you find one!';
-		} else if (config.launchStatus == LaunchStatus.Beta) {
-			statusStr = 'This sim is in BETA. There may still be a few bugs; please let us know if you find one!';
-		}
-		if (statusStr) {
-			config.knownIssues = [statusStr].concat(config.knownIssues || []);
-		}
-		if (config.knownIssues && config.knownIssues.length) {
-			const knownIssuesContainer = document.getElementsByClassName('known-issues')[0] as HTMLElement;
-			knownIssuesContainer.style.display = 'initial';
-			tippy(knownIssuesContainer, {
-				content: `
-				<ul class="known-issues-tooltip">
-					${config.knownIssues.map(issue => '<li>' + issue + '</li>').join('')}
-				</ul>
-				`,
-				allowHTML: true,
-				interactive: true,
-			});
-		}
+		this.addNoticeBanner();
+		this.addKnownIssues(config);
 
 		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
 		new SimTitleDropdown(titleElem, config.spec);
@@ -173,22 +139,7 @@ export abstract class SimUI extends Component {
 		});
 
 		this.iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
-
-		this.simTabsContainer = this.rootElem.querySelector('#simHeader .sim-tabs') as HTMLElement;
 		this.simTabContentsContainer = this.rootElem.querySelector('#simMain.tab-content') as HTMLElement;
-		this.importExportContainer = this.rootElem.querySelector('#simHeader .import-export') as HTMLElement;
-		this.simToolbar = this.rootElem.querySelector('#simHeader .sim-toolbar') as HTMLElement;
-
-		const reportBug = document.createElement('span');
-		reportBug.classList.add('report-bug', 'fa', 'fa-bug');
-		tippy(reportBug, {
-			'content': 'Report a bug / request a feature',
-			'allowHTML': true,
-		});
-		reportBug.addEventListener('click', event => {
-			window.open('https://github.com/wowsims/wotlk/issues/new/choose', '_blank');
-		});
-		this.addToolbarItem(reportBug);
 
 		if (!this.isWithinRaidSim) {
 			window.addEventListener('message', async event => {
@@ -196,50 +147,6 @@ export abstract class SimUI extends Component {
 					this.runSimOnce();
 				}
 			});
-		}
-
-		const patreon = document.createElement('span');
-		patreon.classList.add('patreon-link', 'fa', 'fa-brands', 'fa-patreon');
-		tippy(patreon, {
-			'content': 'Support our devs on Patreon',
-			'allowHTML': true,
-		});
-		patreon.addEventListener('click', event => {
-			window.open('https://patreon.com/wowsims', '_blank');
-		});
-		this.addToolbarItem(patreon);
-
-		const downloadBinary = document.createElement('span');
-		// downloadBinary.src = "/wotlk/assets/img/gauge.svg"
-		downloadBinary.classList.add('downbin', 'hide');
-		downloadBinary.addEventListener('click', event => {
-			window.open('https://github.com/wowsims/wotlk/releases', '_blank');
-		});
-
-		if (document.location.href.includes("localhost")) {
-			fetch(document.location.protocol + "//" + document.location.host + "/version").then(resp => {
-				resp.json()
-					.then((versionInfo) => {
-						if (versionInfo.outdated == 2) {
-							tippy(downloadBinary, {
-								'content': 'Newer version of simulator available for download',
-								'allowHTML': true,
-							});
-							downloadBinary.classList.add('downbinalert');
-							this.addToolbarItem(downloadBinary);
-						}
-					})
-					.catch(error => {
-						console.warn('No version info found!');
-					});
-			});
-		} else {
-			tippy(downloadBinary, {
-				'content': 'Download simulator for faster simulating',
-				'allowHTML': true,
-			});
-			downloadBinary.classList.add('downbinnorm');
-			this.addToolbarItem(downloadBinary);
 		}
 	}
 
@@ -253,22 +160,9 @@ export abstract class SimUI extends Component {
 
 	addTab(title: string, cssClass: string, innerHTML: string) {
 		const contentId = cssClass.replace(/\s+/g, '-') + '-tab';
-		const isFirstTab = this.simTabsContainer.children.length == 0;
+		const isFirstTab = this.simTabContentsContainer.children.length == 0;
 
-		const tabFragment = document.createElement('fragment');
-		tabFragment.innerHTML = `
-			<li class="${cssClass}-tab nav-item" role="presentation">
-				<a
-					class="nav-link ${isFirstTab ? 'active' : ''}"
-					data-bs-toggle="tab"
-					data-bs-target="#${contentId}"
-					type="button"
-					role="tab"
-					aria-controls="${contentId}"
-					aria-selected="${isFirstTab}"
-				>${title}</a>
-			</li>
-		`;
+		this.simHeader.addTab(title, contentId);
 
 		const tabContentFragment = document.createElement('fragment');
 		tabContentFragment.innerHTML = `
@@ -277,38 +171,45 @@ export abstract class SimUI extends Component {
 				class="tab-pane fade ${isFirstTab ? 'active show' : ''}"
 			>${innerHTML}</div>
 		`;
-
-		this.simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
 		this.simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
 	}
 
-	addToolbarItem(elem: HTMLElement) {
-		const toolbarItem = document.createElement('div');
-		toolbarItem.appendChild(elem);
-		toolbarItem.classList.add('sim-toolbar-item');
-		this.simToolbar.appendChild(toolbarItem);
+	addWarning(warning: SimWarning) {
+		this.simHeader.addWarning(warning);
 	}
 
-	private updateWarnings() {
-		const activeWarnings = this.warnings.map(warning => warning.getContent()).flat().filter(content => content != '');
+	protected addImportLink(link: HTMLElement) {
+		this.simHeader.addImportLink(link);
+	}
 
-		const warningsElem = document.getElementsByClassName('warnings')[0] as HTMLElement;
-		if (activeWarnings.length == 0) {
-			warningsElem.style.display = 'none';
+	protected addExportLink(link: HTMLElement) {
+		this.simHeader.addExportLink(link);
+	}
+
+	private addNoticeBanner() {
+		const noticesElem = document.querySelector('#noticesBanner') as HTMLElement;
+		if (noticeText) {
+			noticesElem.insertAdjacentHTML('afterbegin', noticeText);
 		} else {
-			warningsElem.style.display = 'initial';
-			this.warningsTippy.setContent(`
-				<ul class="known-issues-tooltip">
-					${activeWarnings.map(content => '<li>' + content + '</li>').join('')}
-				</ul>`
-			);
+			noticesElem.remove();
 		}
 	}
 
-	addWarning(warning: SimWarning) {
-		this.warnings.push(warning);
-		warning.updateOn.on(() => this.updateWarnings());
-		this.updateWarnings();
+	private addKnownIssues(config: SimUIConfig) {
+		let statusStr = '';
+		if (config.launchStatus == LaunchStatus.Unlaunched) {
+			statusStr = 'This sim is a WORK IN PROGRESS. It is not fully developed and should not be used for general purposes.';
+		} else if (config.launchStatus == LaunchStatus.Alpha) {
+			statusStr = 'This sim is in ALPHA. Bugs are expected; please let us know if you find one!';
+		} else if (config.launchStatus == LaunchStatus.Beta) {
+			statusStr = 'This sim is in BETA. There may still be a few bugs; please let us know if you find one!';
+		}
+		if (statusStr) {
+			config.knownIssues = [statusStr].concat(config.knownIssues || []);
+		}
+		if (config.knownIssues && config.knownIssues.length) {
+			config.knownIssues.forEach(issue => this.simHeader.addKnownIssue(issue));
+		}
 	}
 
 	// Returns a key suitable for the browser's localStorage feature.
@@ -397,8 +298,8 @@ export abstract class SimUI extends Component {
 }
 
 const simHTML = `
-<div class="sim-root">
-  <aside id="simSidebar"">
+<div class="sim-root">\
+  <aside id="simSidebar">
     <div id="simTitle"></div>
 		<div id="simSidebarContent">
 			<div class="sim-sidebar-actions within-raid-sim-hide"></div>
@@ -407,23 +308,17 @@ const simHTML = `
 		</div>
   </aside>
   <div id="simContent" class="container-fluid">
-		<header id="simHeader">
-			<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-			<div class="import-export"></div>
-			<div class="sim-toolbar">
-				<div class="sim-toolbar-item">
-					<span class="notices fas fa-exclamation-circle"></span>
-				</div>
-				<div class="sim-toolbar-item">
-					<span class="warnings fa fa-exclamation-triangle"></span>
-				</div>
-				<div class="sim-toolbar-item">
-					<div class="known-issues">Known Issues</div>
-				</div>
-			</div>
-    </header>
-    <main id="simMain" class="tab-content">
-    </main>
+		<div id="noticesBanner" class="alert mb-0 text-center">
+			<a href="javascript:void(0)" class="ml-auto" role="button" data-bs-dismiss="alert" aria-label="Close">
+				<i class="fas fa-times fa-xl"></i>
+			</a>
+		</div>
+	</div>
   </section>
 </div>
 `;
+
+// TODO: Build SimMain component instead
+let simMainFragment = document.createElement('fragment');
+simMainFragment.innerHTML = `<main id="simMain" class="tab-content"></main>`;
+const simMain = simMainFragment.children[0] as HTMLElement;
