@@ -275,6 +275,15 @@ func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
 
 // This function is an intermediary, it is used when sim has a GCD ready, not much to see here.
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
+	if warlock.Options.Summon != proto.Warlock_Options_NoSummon && warlock.Talents.DemonicKnowledge > 0 {
+		// TODO: investigate a better way of handling this like a "reverse inheritance" for pets.
+		bonus := (warlock.Pet.GetStat(stats.Stamina) + warlock.Pet.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
+		if bonus != warlock.petStmBonusSP {
+			warlock.AddStatDynamic(sim, stats.SpellPower, bonus-warlock.petStmBonusSP)
+			warlock.petStmBonusSP = bonus
+		}
+	}
+
 	warlock.tryUseGCD(sim)
 }
 
