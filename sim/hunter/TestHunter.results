@@ -416,8 +416,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-ScourgestalkerBattlegear"
  value: {
-  dps: 6773.75785
-  tps: 5821.68838
+  dps: 6860.5323
+  tps: 5906.0124
  }
 }
 dps_results: {
@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Average-Default"
  value: {
-  dps: 7115.54207
-  tps: 6123.41837
+  dps: 7115.74878
+  tps: 6123.62508
  }
 }
 dps_results: {
@@ -633,15 +633,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6424.02933
-  tps: 4976.89643
+  dps: 6424.37669
+  tps: 4977.24379
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6424.02933
-  tps: 4011.20528
+  dps: 6424.37669
+  tps: 4011.55264
  }
 }
 dps_results: {
@@ -801,15 +801,15 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6550.70843
-  tps: 4974.33258
+  dps: 6551.0601
+  tps: 4974.68425
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-BM-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6550.70843
-  tps: 4008.94083
+  dps: 6551.0601
+  tps: 4009.29251
  }
 }
 dps_results: {

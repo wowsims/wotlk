@@ -277,7 +277,7 @@ export class RaidSimResultsManager {
 		if (players.length == 1) {
 			const playerMetrics = players[0];
 			if (playerMetrics.getTargetIndex(filter) == null) {
-				const dpsMetrics = simResult.raidMetrics.dps;
+				const dpsMetrics = playerMetrics.dps;
 				const tpsMetrics = playerMetrics.tps;
 				const dtpsMetrics = playerMetrics.dtps;
 				content += `

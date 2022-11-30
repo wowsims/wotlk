@@ -41,7 +41,13 @@ func main() {
 	db.MergeItems(database.ItemOverrides)
 	db.MergeGems(database.GemOverrides)
 	db.MergeEnchants(database.EnchantOverrides)
+	ApplyGlobalFilters(db)
 
+	leftovers := db.Clone()
+	ApplyNonSimmableFilters(leftovers)
+	leftovers.WriteBinaryAndJson(fmt.Sprintf("%s/leftover_db.bin", dbDir), fmt.Sprintf("%s/leftover_db.json", dbDir))
+
+	ApplySimmableFilters(db)
 	for _, enchant := range db.Enchants {
 		if enchant.ItemId != 0 {
 			db.AddItemIcon(enchant.ItemId, itemTooltips)
@@ -55,8 +61,6 @@ func main() {
 		db.AddItemIcon(itemID, itemTooltips)
 	}
 
-	ApplyGlobalFilters(db)
-	ApplySimmableFilters(db)
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
 }
 
@@ -89,6 +93,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		return true
 	})
 
+	// There is an 'unavailable' version of many t8 set pieces, e.g. https://www.wowhead.com/wotlk/item=46235/darkruned-gauntlets
+	valorousItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return strings.HasPrefix(item.Name, "Valorous ")
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		nameToMatch := "Valorous " + item.Name
+		for _, item := range valorousItems {
+			if item.Name == nameToMatch {
+				return false
+			}
+		}
+		return true
+	})
+
 	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
 		if _, ok := database.GemDenyList[gem.Id]; ok {
 			return false
@@ -112,39 +130,48 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 
 // Filters out entities which shouldn't be included in the sim.
 func ApplySimmableFilters(db *database.WowDatabase) {
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		if _, ok := database.ItemAllowList[item.Id]; ok {
-			return true
-		}
-
-		if item.Quality < proto.ItemQuality_ItemQualityUncommon {
-			return false
-		} else if item.Quality > proto.ItemQuality_ItemQualityLegendary {
-			return false
-		} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
-			if item.Ilvl < 145 {
-				return false
-			}
-			if item.Ilvl < 149 && item.SetName == "" {
-				return false
-			}
-		} else {
-			// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-			if item.Ilvl < 140 {
-				return false
-			}
-		}
-		if item.Ilvl == 0 {
-			fmt.Printf("Missing ilvl: %s\n", item.Name)
-		}
-
-		return true
+	db.Items = core.FilterMap(db.Items, simmableItemFilter)
+	db.Gems = core.FilterMap(db.Gems, simmableGemFilter)
+}
+func ApplyNonSimmableFilters(db *database.WowDatabase) {
+	db.Items = core.FilterMap(db.Items, func(id int32, item *proto.UIItem) bool {
+		return !simmableItemFilter(id, item)
 	})
-
 	db.Gems = core.FilterMap(db.Gems, func(id int32, gem *proto.UIGem) bool {
-		if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
+		return !simmableGemFilter(id, gem)
+	})
+}
+func simmableItemFilter(_ int32, item *proto.UIItem) bool {
+	if _, ok := database.ItemAllowList[item.Id]; ok {
+		return true
+	}
+
+	if item.Quality < proto.ItemQuality_ItemQualityUncommon {
+		return false
+	} else if item.Quality > proto.ItemQuality_ItemQualityLegendary {
+		return false
+	} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
+		if item.Ilvl < 145 {
 			return false
 		}
-		return true
-	})
+		if item.Ilvl < 149 && item.SetName == "" {
+			return false
+		}
+	} else {
+		// Epic and legendary items might come from classic, so use a lower ilvl threshold.
+		if item.Ilvl < 140 {
+			return false
+		}
+	}
+	if item.Ilvl == 0 {
+		fmt.Printf("Missing ilvl: %s\n", item.Name)
+	}
+
+	return true
+}
+func simmableGemFilter(_ int32, gem *proto.UIGem) bool {
+	if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
+		return false
+	}
+	return true
 }

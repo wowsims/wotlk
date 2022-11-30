@@ -569,13 +569,10 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 			},
 			OnExpire: func(aura *Aura, sim *Simulation) {
 				aura.Unit.PseudoStats.BonusSpellHitRatingTaken -= 3 * SpellHitRatingPerHitChance
-				if mainAura.IsActive() {
-					mainAura.Deactivate(sim)
-				}
 			},
 		})
-
 	}
+
 	mainAura = target.GetOrRegisterAura(Aura{
 		Label:    label,
 		Tag:      MinorArmorReductionAuraTag,
@@ -584,15 +581,12 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 		Duration: time.Minute * 5,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
-			if imp {
+			if secondaryAura != nil {
 				secondaryAura.Activate(sim)
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
-			if imp && secondaryAura.IsActive() {
-				secondaryAura.Deactivate(sim)
-			}
 		},
 	})
 	return mainAura
@@ -669,23 +663,36 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 }
 
 func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
-	APReduction := 478 * (1 + 0.1*float64(points))
-	bonus := stats.Stats{stats.AttackPower: -APReduction}
+	apReduction := 478 * (1 + 0.1*float64(points))
+	bonus := stats.Stats{stats.AttackPower: -apReduction}
 	armorReduction := 0.05
 
-	return target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Weakness",
+	secondaryAura := target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Weakness Secondary",
 		Tag:      MinorArmorReductionAuraTag,
+		Duration: time.Minute * 2,
 		Priority: armorReduction,
+		// no ActionID to hide this secondary effect from stats
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
+		},
+	})
+
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Weakness" + strconv.Itoa(int(points)),
+		Tag:      APReductionAuraTag,
+		Priority: apReduction,
 		ActionID: ActionID{SpellID: 50511},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus)
-			aura.Unit.PseudoStats.ArmorMultiplier *= 1.0 - armorReduction
+			secondaryAura.Activate(sim)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
-			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
 		},
 	})
 }

@@ -416,15 +416,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SanctificationGarb"
  value: {
-  dps: 3234.3671
-  tps: 2753.8782
+  dps: 3321.85268
+  tps: 2824.04752
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-SanctificationRegalia"
  value: {
-  dps: 3213.71439
-  tps: 2732.70008
+  dps: 3343.75148
+  tps: 2839.03017
  }
 }
 dps_results: {

@@ -36,34 +36,6 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
 }
 
-//original opener
-//func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
-//	dk.setupUnbreakableArmorCooldowns()
-//
-//	dk.RotationSequence.
-//		NewAction(dk.RotationActionCallback_IT).
-//		NewAction(dk.RotationActionCallback_PS).
-//		NewAction(dk.RotationActionCallback_BT).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
-//		NewAction(dk.RotationActionCallback_UA_Frost).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_FS).
-//		NewAction(dk.RotationActionCallback_ERW).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_FS).
-//		NewAction(dk.RotationActionCallback_FS).
-//		NewAction(dk.RotationActionCallback_FS).
-//		NewAction(dk.RotationActionCallback_RD).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-//		NewAction(dk.RotationActionCallback_BS).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence_Pesti).
-//		NewAction(dk.RotationActionCallback_FS).
-//		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
-//}
-
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 	advance := true
@@ -166,12 +138,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *c
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
+		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
-		//end of fight logic entering
-		//NewAction(dk.RotationActionCallback_FrostSubUnholy_EndOfFight).
 		NewAction(dk.RotationActionCallback_Pesti).
 		//NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
 		NewAction(dk.RotationActionCallback_BS).

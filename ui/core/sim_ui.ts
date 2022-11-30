@@ -248,7 +248,7 @@ export abstract class SimUI extends Component {
 		button.classList.add('sim-sidebar-actions-button', 'btn', 'btn-outline-primary', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
-		this.simActionsContainer.insertBefore(button, this.iterationsPicker);
+		this.simActionsContainer.appendChild(button);
 	}
 
 	addTab(title: string, cssClass: string, innerHTML: string) {

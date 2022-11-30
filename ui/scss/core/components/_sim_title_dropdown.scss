@@ -15,6 +15,7 @@
 
   .dropdown-menu {
     background: $dropdown-bg;
+    z-index: 1500;
 
     .dropdown-menu {
       min-width: 300px;

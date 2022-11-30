@@ -87,8 +87,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-DeathbringerGarb"
  value: {
-  dps: 6568.76787
-  tps: 5865.85527
+  dps: 6715.6336
+  tps: 5999.92055
  }
 }
 dps_results: {
@@ -304,7 +304,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7039.24562
+  dps: 7039.27301
   tps: 6302.85882
  }
 }
@@ -353,14 +353,14 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9981.59502
+  dps: 9981.67586
   tps: 10999.61773
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6319.81158
+  dps: 6319.87834
   tps: 5361.47576
  }
 }
