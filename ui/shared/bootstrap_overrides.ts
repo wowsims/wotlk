@@ -17,24 +17,22 @@ body.addEventListener('mouseleave', event => {
   let e = event as MouseEvent;
   let target = event.target as HTMLElement;
   let toggle = target.closest('[data-bs-toggle=dropdown]');
+  // Hide dropdowns when hovering off of the toggle, so long as the new target is not part of the dropdown as well
   if (toggle) {
     let dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
     let dropdownMenu = toggle.nextElementSibling as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement;
-    if (!isDescendant(relatedTarget, dropdownMenu))
+    if (relatedTarget == null || !isDescendant(relatedTarget, dropdownMenu))
       dropdown.hide();
   }
-}, true);
 
-body.addEventListener('mouseleave', event => {
-  let e = event as MouseEvent;
-  let target = event.target as HTMLElement;
   let dropdownMenu = target.closest('.dropdown-menu') as HTMLElement;
+  // Hide dropdowns when hovering off of the menu, so long as the new target is not part of the dropdown as well
   if (dropdownMenu) {
     let toggle = dropdownMenu.previousElementSibling as HTMLElement;
     let dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
     let relatedTarget = e.relatedTarget as HTMLElement;
-    if (!isDescendant(relatedTarget, dropdownMenu) && e.relatedTarget != toggle)
+    if (relatedTarget == null || (!isDescendant(relatedTarget, dropdownMenu) && e.relatedTarget != toggle))
       dropdown.hide();
   }
 }, true);
