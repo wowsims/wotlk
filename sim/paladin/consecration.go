@@ -45,9 +45,11 @@ func (paladin *Paladin) registerConsecrationSpell() {
 	})
 
 	paladin.Consecration = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskEmpty,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagMeleeMetrics,
+
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
