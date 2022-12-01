@@ -34,8 +34,8 @@
 
 .item-picker-icon {
   @include wowhead-background-icon;
-  width: 8vh;
-  height: 8vh;
+  width: 64px;
+  height: 64px;
   border: 2px solid dimgray;
 }
 
@@ -203,4 +203,11 @@
 	color: white;
 	min-width: 50px;
 	text-align: right;
+}
+
+@include media-breakpoint-down(lg) {
+  .item-picker-icon {
+    width: 48px;
+    height: 48px;
+  }
 }

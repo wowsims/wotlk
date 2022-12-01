@@ -119,19 +119,8 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.addToolbarItem(newRaidImporters(this));
-		this.addToolbarItem(newRaidExporters(this));
-
-		const settingsMenu = document.createElement('span');
-		settingsMenu.classList.add('fas', 'fa-cog');
-		tippy(settingsMenu, {
-			'content': 'Settings',
-			'allowHTML': true,
-		});
-		settingsMenu.addEventListener('click', event => {
-			new SettingsMenu(this.rootElem, this);
-		});
-		this.addToolbarItem(settingsMenu);
+		this.addImportLink(newRaidImporters(this));
+		this.addExportLink(newRaidExporters(this));
 	}
 
 	private addRaidTab() {
