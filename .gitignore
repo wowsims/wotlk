@@ -26,3 +26,6 @@ sim/priest/healing/TestHealing.results
 
 #macos
 .DS_Store
+
+# air tmp dir
+tmp/
