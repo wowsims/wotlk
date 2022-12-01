@@ -679,7 +679,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
+			{ item: Potions.RunicHealingInjector, stats: [Stat.StatStamina] },
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
+			{ item: Potions.RunicManaInjector, stats: [Stat.StatIntellect] },
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
 			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
