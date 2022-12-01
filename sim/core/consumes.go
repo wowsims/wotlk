@@ -503,6 +503,9 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 			if defaultPotion == proto.Potions_RunicManaPotion {
 				character.ExpectedBonusMana += float64((4200 + 4400) / 2)
 			}
+			if defaultPotion == proto.Potions_RunicManaInjector {
+				character.ExpectedBonusMana += (4200 + 4400) / 2 * 1.25
+			}
 
 			return func(sim *Simulation, character *Character) {
 				usedDefaultPotion = true
@@ -513,6 +516,9 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 				}
 				if defaultPotion == proto.Potions_RunicManaPotion {
 					character.ExpectedBonusMana -= float64((4200 + 4400) / 2)
+				}
+				if defaultPotion == proto.Potions_RunicManaInjector {
+					character.ExpectedBonusMana -= (4200 + 4400) / 2 * 1.25
 				}
 			}
 		}
