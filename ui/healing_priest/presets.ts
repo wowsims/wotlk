@@ -74,7 +74,7 @@ export const DefaultOptions = Options.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	defaultPotion: Potions.RunicManaPotion,
+	defaultPotion: Potions.RunicManaInjector,
 	prepopPotion: Potions.PotionOfWildMagic,
 });
 
