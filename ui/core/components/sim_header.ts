@@ -16,6 +16,7 @@ export class SimHeader extends Component {
   private simTabsContainer: HTMLElement;
 	private importExportContainer: HTMLElement;
 	private simToolbar: HTMLElement;
+	private socials: HTMLElement;
   private warningsLink: HTMLElement;
 	private knownIssuesLink: HTMLElement;
 
@@ -29,13 +30,16 @@ export class SimHeader extends Component {
     this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
 		this.importExportContainer = this.rootElem.querySelector('.import-export') as HTMLElement;
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;	
+		this.socials = this.rootElem.querySelector('.sim-toolbar .sim-toolbar-socials') as HTMLElement;
     this.warningsLink = this.rootElem.querySelector('.sim-toolbar .warnings') as HTMLElement;
     this.knownIssuesLink = this.rootElem.querySelector('.sim-toolbar .known-issues') as HTMLElement;
 
     this.addBugReportLink();
     this.addDownloadBinaryLink();
     this.addSimOptionsLink();
-    this.addPatreonLink();
+    this.addDiscordLink();
+		this.addGitHubLink();
+		this.addPatreonlink();
   }
 
   addTab(title: string, contentId: string) {
@@ -71,7 +75,14 @@ export class SimHeader extends Component {
 		const toolbarItem = document.createElement('div');
 		toolbarItem.appendChild(elem);
 		toolbarItem.classList.add('sim-toolbar-item');
-		this.simToolbar.appendChild(toolbarItem);
+		this.simToolbar.insertBefore(toolbarItem, this.socials);
+	}
+
+	private addToolbarSocial(elem: HTMLElement) {
+		const toolbarItem = document.createElement('div');
+		toolbarItem.appendChild(elem);
+		toolbarItem.classList.add('sim-toolbar-item');
+		this.socials.appendChild(toolbarItem);
 	}
 
   addWarning(warning: SimWarning) {
@@ -114,7 +125,7 @@ export class SimHeader extends Component {
     new Tooltip(this.knownIssuesLink);
 	}
 
-  addBugReportLink() {
+  private addBugReportLink() {
 		let bugReportFragment = document.createElement('fragment');
 		bugReportFragment.innerHTML = `
 			<a
@@ -135,7 +146,7 @@ export class SimHeader extends Component {
 		this.addToolbarItem(bugReportLink);
 	}
 
-  addDownloadBinaryLink() {
+  private addDownloadBinaryLink() {
     let downloadFragment = document.createElement('fragment');
     downloadFragment.innerHTML = `
       <a
@@ -172,7 +183,7 @@ export class SimHeader extends Component {
 		}
   }
 
-  addSimOptionsLink() {
+  private addSimOptionsLink() {
 		let optionsFragment = document.createElement('fragment');
 		optionsFragment.innerHTML = `
 			<a
@@ -193,7 +204,47 @@ export class SimHeader extends Component {
 		this.addToolbarItem(optionsLink);
 	}
 
-	addPatreonLink() {
+	private addDiscordLink() {
+		let discordFragment = document.createElement('fragment');
+		discordFragment.innerHTML = `
+			<a
+				href="https://discord.gg/p3DgvmnDCS"
+				target="_blank"
+				class="link-alt discord-link"
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				data-bs-title="Join us on Discord"
+			>
+				<i class="fab fa-discord fa-lg"></i>
+			</a>
+		`;
+
+		let discordLink = discordFragment.children[0] as HTMLElement;
+		new Tooltip(discordLink);
+		this.addToolbarSocial(discordLink);
+	}
+
+	private addGitHubLink() {
+		let githubFragment = document.createElement('fragment');
+		githubFragment.innerHTML = `
+			<a
+				href="https://github.com/wowsims/wotlk"
+				target="_blank"
+				class="link-alt github-link"
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				data-bs-title="Contribute on GitHub"
+			>
+				<i class="fab fa-github fa-lg"></i>
+			</a>
+		`;
+
+		let githubLink = githubFragment.children[0] as HTMLElement;
+		new Tooltip(githubLink);
+		this.addToolbarSocial(githubFragment.children[0] as HTMLElement);
+	}
+
+	private addPatreonlink() {
 		let patreonFragment = document.createElement('fragment');
 		patreonFragment.innerHTML = `
 			<a href="https://patreon.com/wowsims" target="_blank" class="link-alt patreon-link">
@@ -201,9 +252,10 @@ export class SimHeader extends Component {
 				<span>Support our devs</span>
 			</a>
 		`;
+
 		let patreonLink = patreonFragment.children[0] as HTMLElement;
-		this.addToolbarItem(patreonLink);
-    patreonLink.parentElement?.classList.add('py-2', 'border-start');
+		new Tooltip(patreonLink);
+		this.addToolbarSocial(patreonFragment.children[0] as HTMLElement);
 	}
 }
 
@@ -213,19 +265,19 @@ headerFragment.innerHTML = `
     <ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
     <div class="import-export"></div>
     <div class="sim-toolbar">
-    <div class="sim-toolbar-item hide">
-      <a
-        href="javascript:void(0)"
-        class="warnings link-warning"
-        role="button"
-        data-bs-toggle="tooltip"
-        data-bs-placement="bottom"
-        data-bs-html="true"
-        data-bs-title="<ul class='text-start ps-3 mb-0'></ul>"
-      >
-        <i class="fas fa-exclamation-triangle fa-3x"></i>
-      </a>
-    </div>
+			<div class="sim-toolbar-item hide">
+				<a
+					href="javascript:void(0)"
+					class="warnings link-warning"
+					role="button"
+					data-bs-toggle="tooltip"
+					data-bs-placement="bottom"
+					data-bs-html="true"
+					data-bs-title="<ul class='text-start ps-3 mb-0'></ul>"
+				>
+					<i class="fas fa-exclamation-triangle fa-3x"></i>
+				</a>
+			</div>
       <div class="sim-toolbar-item">
         <a
           href="javascript:void(0)"
@@ -237,6 +289,7 @@ headerFragment.innerHTML = `
           data-bs-title="<ul class='text-start ps-3 mb-0'></ul>"
         >Known Issues</a>
       </div>
+			<div class="sim-toolbar-socials"></div>
     </div>
   </header>
 `;

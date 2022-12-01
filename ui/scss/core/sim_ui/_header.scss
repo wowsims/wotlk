@@ -3,7 +3,9 @@
 #simHeader {
 	padding-top: $gap-width;
 	display: flex;
-	align-items: flex-end;
+	align-items: stretch;
+	white-space: nowrap;
+	overflow-x: scroll;
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none;  /* Firefox */
 
@@ -11,39 +13,32 @@
 		display: none;
 	}
 
+	.sim-tabs, .import-export, .sim-toolbar {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+	}
+
 	.sim-tabs {
 		border-bottom: 0;
 	}
 
 	.import-export {
-		display: flex;
-
-		.sim-dropdown-menu {
-			display: flex;
-		
-			.import-link, .export-link {
-				padding: $nav-link-padding-y $nav-link-padding-x;
-				white-space: nowrap;
-				transition: $link-transition;
-			}
-
-			.dropdown-menu {
-				min-width: 100%;
-				border: 1px solid var(--theme-color-primary);
-			}
+		.import-link, .export-link {
+			padding: $nav-link-padding-y $nav-link-padding-x;
+			transition: $link-transition;
 		}
 	}
 
 	.sim-toolbar {
-		height: 100%;
 		margin-left: auto;
-		display: flex;
-		align-items: center;
-		font-size: $content-font-size;
 
-		.sim-toolbar-item {
+		.sim-toolbar-item, .sim-toolbar-socials {
 			margin-left: map.get($spacers, 3);
 			display: flex;
+		}
+
+		.sim-toolbar-item {
 			transition: $link-transition;
 
 			.warnings {
@@ -56,10 +51,21 @@
 			.known-issues {
 				color: #ef9eaa;
 			}
+		}
 
-			.patreon-link {
-				margin-left: map.get($spacers, 3);
-			}
+		.sim-toolbar-socials {
+			padding: map.get($spacers, 2) 0;
+			border-left: 1px solid $border-color;
+		}
+	}
+
+	.sim-dropdown-menu {
+		display: flex;
+		// Needed so that dropdowns don't clip the header with overflow-x set
+		position: unset;
+
+		.dropdown-menu {
+			border: 1px solid var(--theme-color-primary);
 		}
 	}
 }
@@ -67,7 +73,10 @@
 @include media-breakpoint-down(lg) {
 	#simHeader {
 		padding-top: $gap-width-sm;
-		overflow-x: scroll;
+		
+		.sim-tabs, .import-export {
+			align-items: flex-end;
+		}
 	}	
 }
 

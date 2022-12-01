@@ -24,6 +24,15 @@ td, th {
 		overflow-y: auto;
 	}
 
+	#simTitle, #simHeader {
+		height: $sim-header-height;
+		border-bottom: 1px solid $border-color;
+
+		.sim-title-dropdown-root {
+			height: $sim-header-height - 1px;
+		}
+	}
+
 	#simContent {
 		padding-left: $gap-width * 2;
   	padding-right: $gap-width * 2;
@@ -32,15 +41,6 @@ td, th {
 			background: lighten($body-bg, 3);
 			margin-left: -$gap-width * 2;
 			margin-right: -$gap-width * 2;
-		}
-
-		#simTitle, #simHeader {
-			height: $sim-header-height;
-			border-bottom: 1px solid $border-color;
-	
-			.sim-title-dropdown-root {
-				height: $sim-header-height - 1px;
-			}
 		}
 	}
 }
@@ -104,7 +104,17 @@ td, th {
 }
 
 @include media-breakpoint-down(lg) {
+	$sim-header-height: 65px;
+
 	.sim-ui {
+		#simTitle, #simHeader {
+			height: $sim-header-height;
+	
+			.sim-title-dropdown-root {
+				height: $sim-header-height - 1px;
+			}
+		}
+
 		#simContent {
 			padding-left: $gap-width;
     	padding-right: $gap-width;
