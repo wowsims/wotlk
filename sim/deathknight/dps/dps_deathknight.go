@@ -145,7 +145,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 	dk.CustomRotation = dk.makeCustomRotation()
 	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
-		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) && (dk.Talents.FrigidDreadplate == 0) {
+		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) {
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				if dk.Rotation.DesyncRotation {
 					dk.setupFrostSubBloodDesyncERWOpener()
@@ -155,7 +155,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			} else {
 				dk.setupFrostSubBloodNoERWOpener()
 			}
-		} else if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 2) && (dk.Talents.FrigidDreadplate == 0) {
+		} else if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 2) {
 			dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				dk.setupFrostSubUnholyERWOpener()
