@@ -91,10 +91,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			const rightClick = isRightClick(event);
 
 			if (rightClick) {
-				if (this.currentValue > 0) {
-					this.currentValue--;
-					this.inputChanged(TypedEvent.nextEventID());
-				}
+				this.handleRightClick(event)
 			} else {
 				this.handleLeftClick(event)
 			}
@@ -117,6 +114,19 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			this.inputChanged(TypedEvent.nextEventID());
 		}
 		event.preventDefault();
+	}
+
+	handleRightClick = (event: UIEvent) => {
+		if (this.currentValue > 0) {
+			this.currentValue--;
+		} else { // roll over
+			if (this.config.states === 0) {
+				this.currentValue = 1
+			} else {
+				this.currentValue = this.config.states - 1
+			}
+		}
+		this.inputChanged(TypedEvent.nextEventID());
 	}
 
 	getInputElem(): HTMLElement {
