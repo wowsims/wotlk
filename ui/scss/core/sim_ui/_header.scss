@@ -17,6 +17,8 @@
 		display: flex;
 		flex-wrap: nowrap;
 		align-items: flex-end;
+		font-size: $content-font-size;
+		font-weight: bold;
 	}
 
 	.sim-tabs {
@@ -26,8 +28,6 @@
 	.import-export {
 		.import-link, .export-link {
 			padding: $nav-link-padding-y $nav-link-padding-x;
-			font-size: $content-font-size;
-			font-weight: bold;
 			transition: $nav-link-transition;
 		}
 	}
