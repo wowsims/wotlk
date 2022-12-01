@@ -428,7 +428,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 
 	private addSettingsTab() {
-		this.addTab('Fight Settings', 'settings-tab', `
+		this.addTab('Settings', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
 					<fieldset class="settings-section encounter-section within-raid-sim-hide">
@@ -1097,7 +1097,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addDetailedResultsTab() {
-		this.addTab('Detailed Results', 'detailed-results-tab', `
+		this.addTab('Results', 'detailed-results-tab', `
 			<div class="detailed-results">
 			</div>
 		`);
