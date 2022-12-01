@@ -96,26 +96,27 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 					this.inputChanged(TypedEvent.nextEventID());
 				}
 			} else {
-				if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
-					this.currentValue++;
-					this.inputChanged(TypedEvent.nextEventID());
-				}
+				this.handleLeftClick(event)
 			}
 		});
 
 		this.rootAnchor.addEventListener('touchstart', event => {
-			if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
-				this.currentValue++;
-				this.inputChanged(TypedEvent.nextEventID());
-			} else if (this.currentValue > 0) { // roll over
-				this.currentValue = 0;
-				this.inputChanged(TypedEvent.nextEventID());
-			}
-			event.preventDefault();
+			this.handleLeftClick(event)
 		});
 		this.rootAnchor.addEventListener('touchend', event => {
 			event.preventDefault();
 		});
+	}
+
+	handleLeftClick = (event: UIEvent) => {
+		if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
+			this.currentValue++;
+			this.inputChanged(TypedEvent.nextEventID());
+		} else if (this.currentValue > 0) { // roll over
+			this.currentValue = 0;
+			this.inputChanged(TypedEvent.nextEventID());
+		}
+		event.preventDefault();
 	}
 
 	getInputElem(): HTMLElement {
