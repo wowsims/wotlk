@@ -49,6 +49,8 @@
 			transition: $link-transition;
 
 			.warnings {
+				margin-top: $nav-link-padding-y / 2;
+				margin-bottom: $nav-link-padding-y / 2;
 				text-shadow:
 						0 0 10px $danger,
 						0 0 10px $danger,
