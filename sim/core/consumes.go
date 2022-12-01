@@ -494,6 +494,7 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 			}
 		}
 
+		hasEngi := character.HasProfession(proto.Profession_Engineering)
 		defaultPotionSpell := defaultMCD.Spell
 		defaultMCD.ActivationFactory = func(sim *Simulation) CooldownActivation {
 			usedDefaultPotion = false
@@ -504,7 +505,11 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 				character.ExpectedBonusMana += float64((4200 + 4400) / 2)
 			}
 			if defaultPotion == proto.Potions_RunicManaInjector {
-				character.ExpectedBonusMana += (4200 + 4400) / 2 * 1.25
+				multiplier := 1.0
+				if hasEngi {
+					multiplier = 1.25
+				}
+				character.ExpectedBonusMana += (4200 + 4400) / 2 * multiplier
 			}
 
 			return func(sim *Simulation, character *Character) {
@@ -518,7 +523,11 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 					character.ExpectedBonusMana -= float64((4200 + 4400) / 2)
 				}
 				if defaultPotion == proto.Potions_RunicManaInjector {
-					character.ExpectedBonusMana -= (4200 + 4400) / 2 * 1.25
+					multiplier := 1.0
+					if hasEngi {
+						multiplier = 1.25
+					}
+					character.ExpectedBonusMana -= (4200 + 4400) / 2 * multiplier
 				}
 			}
 		}
