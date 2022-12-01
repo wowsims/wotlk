@@ -19,7 +19,6 @@ declare var pako: any;
 
 const URLMAXLEN = 2048;
 const noticeText = '';
-// const noticeText = "We're looking for help migrating our sims to Wrath of the Lich King. If you\'d like to participate in a fun side project working with an open-source community, please <a href='https://discord.gg/jJMPr9JWwx' target='_blank'>join our Discord!</a>";
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
