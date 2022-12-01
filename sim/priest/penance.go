@@ -58,9 +58,9 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
-			(1 + .05*float64(priest.Talents.SearingLight)) *
-			core.TernaryFloat64(isHeal, 1+.01*float64(priest.Talents.TwinDisciplines), 1),
-		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
+			core.TernaryFloat64(isHeal, 1, 1+.05*float64(priest.Talents.SearingLight)) *
+			(1 + .01*float64(priest.Talents.TwinDisciplines)),
+		CritMultiplier:   core.TernaryFloat64(isHeal, priest.DefaultHealingCritMultiplier(), priest.DefaultSpellCritMultiplier()),
 		ThreatMultiplier: 0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -109,7 +109,7 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			if priest.IsOpponent(target) {
-				baseDamage := 375 + 0.4286*dot.Spell.SpellPower()
+				baseDamage := 375 + 0.1905*dot.Spell.SpellPower()
 				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			} else {
 				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower()
