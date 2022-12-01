@@ -80,7 +80,10 @@ func (hpriest *HealingPriest) Initialize() {
 
 	hpriest.RegisterHymnOfHopeCD()
 
-	hpriest.CustomRotation = hpriest.makeCustomRotation()
+	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {
+		hpriest.CustomRotation = hpriest.makeCustomRotation()
+	}
+
 	if hpriest.CustomRotation == nil {
 		hpriest.rotation.Type = proto.HealingPriest_Rotation_Cycle
 		hpriest.spellCycle = []*core.Spell{

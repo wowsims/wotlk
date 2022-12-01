@@ -115,5 +115,7 @@ func (priest *Priest) makeWeakenedSoul(target *core.Unit) *core.Aura {
 }
 
 func (priest *Priest) CanCastPWS(sim *core.Simulation, target *core.Unit) bool {
-	return priest.PowerWordShield.IsReady(sim) && !priest.WeakenedSouls[target.UnitIndex].IsActive()
+	return priest.PowerWordShield.IsReady(sim) &&
+		priest.WeakenedSouls[target.UnitIndex] != nil &&
+		!priest.WeakenedSouls[target.UnitIndex].IsActive()
 }

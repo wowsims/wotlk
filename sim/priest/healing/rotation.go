@@ -47,14 +47,44 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 		},
 		int32(proto.HealingPriest_Rotation_Renew): {
 			Spell: hpriest.Renew,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				for _, unit := range hpriest.Env.AllUnits {
+					renewHot := hpriest.RenewHots[unit.UnitIndex]
+					if renewHot != nil && !renewHot.IsActive() {
+						success := hpriest.Renew.Cast(sim, unit)
+						return success, hpriest.Renew.CurCast.Cost
+					}
+				}
+				panic("No valid Renew target")
+			},
 			Condition: func(sim *core.Simulation) bool {
-				return !hpriest.RenewHots[hpriest.CurrentTarget.UnitIndex].IsActive()
+				for _, unit := range hpriest.Env.AllUnits {
+					renewHot := hpriest.RenewHots[unit.UnitIndex]
+					if renewHot != nil && !renewHot.IsActive() {
+						return true
+					}
+				}
+				return false
 			},
 		},
 		int32(proto.HealingPriest_Rotation_PowerWordShield): {
 			Spell: hpriest.PowerWordShield,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				for _, unit := range hpriest.Env.AllUnits {
+					if hpriest.CanCastPWS(sim, unit) {
+						success := hpriest.PowerWordShield.Cast(sim, unit)
+						return success, hpriest.PowerWordShield.CurCast.Cost
+					}
+				}
+				panic("No valid PowerWordShield target")
+			},
 			Condition: func(sim *core.Simulation) bool {
-				return hpriest.CanCastPWS(sim, hpriest.CurrentTarget)
+				for _, unit := range hpriest.Env.AllUnits {
+					if hpriest.CanCastPWS(sim, unit) {
+						return true
+					}
+				}
+				return false
 			},
 		},
 		int32(proto.HealingPriest_Rotation_CircleOfHealing): {
@@ -70,9 +100,9 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 			},
 		},
 		int32(proto.HealingPriest_Rotation_Penance): {
-			Spell: hpriest.Penance,
+			Spell: hpriest.PenanceHeal,
 			Condition: func(sim *core.Simulation) bool {
-				return hpriest.Penance.IsReady(sim)
+				return hpriest.PenanceHeal.IsReady(sim)
 			},
 		},
 		int32(proto.HealingPriest_Rotation_BindingHeal): {

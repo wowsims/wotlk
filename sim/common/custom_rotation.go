@@ -54,7 +54,8 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 		if customSpell.Action == nil && customSpell.Spell != nil {
 			spell := customSpell.Spell
 			customSpell.Action = func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				return spell.Cast(sim, target), spell.DefaultCast.Cost
+				success := spell.Cast(sim, target)
+				return success, spell.CurCast.Cost
 			}
 		}
 		if customSpell.Condition == nil {
@@ -101,9 +102,10 @@ func (cr *CustomRotation) chooseSpellBasic(sim *core.Simulation) *CustomSpell {
 }
 
 func (cr *CustomRotation) chooseSpellCPM(sim *core.Simulation) *CustomSpell {
-	for _, customSpell := range cr.spells {
+	for i, _ := range cr.spells {
+		customSpell := &cr.spells[i]
 		if customSpell.CPM(sim) <= customSpell.DesiredCPM && customSpell.Condition(sim) {
-			return &customSpell
+			return customSpell
 		}
 	}
 	return nil
