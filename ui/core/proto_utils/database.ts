@@ -49,8 +49,8 @@ export class Database {
 	private readonly gems: Record<number, Gem> = {};
 	private readonly presetEncounters: Record<string, PresetEncounter> = {};
 	private readonly presetTargets: Record<string, PresetTarget> = {};
-	private readonly itemIcons: Record<number, IconData>;
-	private readonly spellIcons: Record<number, IconData>;
+	private readonly itemIcons: Record<number, Promise<IconData>>;
+	private readonly spellIcons: Record<number, Promise<IconData>>;
 
 	private constructor(db: UIDatabase) {
 		db.items.forEach(item => this.items[item.id] = item);
@@ -70,18 +70,18 @@ export class Database {
 
 		this.itemIcons = {};
 		this.spellIcons = {};
-		db.items.forEach(item => this.itemIcons[item.id] = IconData.create({
+		db.items.forEach(item => this.itemIcons[item.id] = new Promise((resolve, _) => resolve(IconData.create({
 			id: item.id,
 			name: item.name,
 			icon: item.icon,
-		}));
-		db.gems.forEach(gem => this.itemIcons[gem.id] = IconData.create({
+		}))));
+		db.gems.forEach(gem => this.itemIcons[gem.id] = new Promise((resolve, _) => resolve(IconData.create({
 			id: gem.id,
 			name: gem.name,
 			icon: gem.icon,
-		}));
-		db.itemIcons.forEach(data => this.itemIcons[data.id] = data);
-		db.spellIcons.forEach(data => this.spellIcons[data.id] = data);
+		}))));
+		db.itemIcons.forEach(data => this.itemIcons[data.id] = new Promise((resolve, _) => resolve(data)));
+		db.spellIcons.forEach(data => this.spellIcons[data.id] = new Promise((resolve, _) => resolve(data)));
 	}
 
 	getItems(slot: ItemSlot): Array<Item> {
@@ -166,17 +166,17 @@ export class Database {
 	static async getItemIconData(itemId: number): Promise<IconData> {
 		const db = await Database.get();
 		if (!db.itemIcons[itemId]) {
-			db.itemIcons[itemId] = await Database.getWowheadItemTooltipData(itemId);
+			db.itemIcons[itemId] = Database.getWowheadItemTooltipData(itemId);
 		}
-		return db.itemIcons[itemId];
+		return await db.itemIcons[itemId];
 	}
 
 	static async getSpellIconData(spellId: number): Promise<IconData> {
 		const db = await Database.get();
 		if (!db.spellIcons[spellId]) {
-			db.spellIcons[spellId] = await Database.getWowheadSpellTooltipData(spellId);
+			db.spellIcons[spellId] = Database.getWowheadSpellTooltipData(spellId);
 		}
-		return db.spellIcons[spellId];
+		return await db.spellIcons[spellId];
 	}
 
 	private static async getWowheadItemTooltipData(id: number): Promise<IconData> {
