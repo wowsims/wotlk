@@ -489,15 +489,11 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
 
 	rvDots := make([]*core.Dot, paladin.Env.GetNumTargets())
-	rvSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    dotActionID,
+	rvProc := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
-
-		DamageMultiplier: 1,
-		CritMultiplier:   paladin.MeleeCritMultiplier(),
-		ThreatMultiplier: 1,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rvDots[target.Index].ApplyOrReset(sim)
@@ -505,21 +501,23 @@ func (paladin *Paladin) applyRighteousVengeance() {
 		},
 	})
 
-	onTick := func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-		dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-	}
-	if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
-		onTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickPhysicalCrit)
-		}
-	}
+	rvSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID.WithTag(2),
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
+
+		DamageMultiplier: 1,
+		CritMultiplier:   paladin.MeleeCritMultiplier(),
+		ThreatMultiplier: 1,
+	})
 
 	for i := range rvDots {
 		target := paladin.Env.GetTargetUnit(int32(i))
 		rvDots[i] = core.NewDot(core.Dot{
 			Spell: rvSpell,
 			Aura: target.RegisterAura(core.Aura{
-				Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)) + " - " + strconv.Itoa(int(target.Index)),
+				Label:    "Righteous Vengeance (DoT) - " + strconv.Itoa(int(paladin.Index)),
 				ActionID: rvSpell.ActionID,
 			}),
 			NumberOfTicks: 4,
@@ -527,8 +525,15 @@ func (paladin *Paladin) applyRighteousVengeance() {
 
 			SnapshotAttackerMultiplier: 1,
 
-			OnTick: onTick,
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				if paladin.HasTuralyonsOrLiadrinsBattlegear2Pc {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeMeleeSpecialCritOnly)
+				} else {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
+				}
+			},
 		})
+
 	}
 
 	paladin.RegisterAura(core.Aura{
@@ -555,7 +560,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 			newDamage := result.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
 
 			dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
-			rvSpell.Cast(sim, result.Target)
+			rvProc.Cast(sim, result.Target)
 		},
 	})
 }
