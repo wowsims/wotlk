@@ -63,7 +63,7 @@ export const DefaultOptions = ElementalShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaPotion,
+	defaultPotion: Potions.RunicManaInjector,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
 });

@@ -3,7 +3,7 @@
 @import "bootstrap/scss/variables";
 
 // Custom Bootstrap theme overrides
-@import "bootstrap_theme_overrides";
+@import "bootstrap_variable_overrides";
 
 // Bootstrap configuration
 @import "bootstrap/scss/maps";
@@ -21,18 +21,20 @@
 @import "bootstrap/scss/dropdown";
 @import "bootstrap/scss/nav";
 @import "bootstrap/scss/navbar";
+@import "bootstrap/scss/alert";
+@import "bootstrap/scss/tooltip";
 
 @import "bootstrap/scss/helpers";
 
 // Bootstrap Utilities API
 @import "./bootstrap/scss/utilities/api";
 
+// Custom styles
+@import "./global";
+@import "./global_old";
+
 // Custom Bootstrap style overrides
 @import "./bootstrap_style_overrides";
 
 // Import other plugin styles
 @import "tippy.js/dist/tippy";
-
-// Custom styles
-@import "./global";
-@import "./global_old";

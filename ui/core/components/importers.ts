@@ -19,36 +19,41 @@ declare var $: any;
 declare var tippy: any;
 
 export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const importSettings = document.createElement('div');
-	importSettings.classList.add('import-settings', 'sim-dropdown-menu');
-	importSettings.innerHTML = `
-		<span id="importMenuLink" class="dropdown-toggle fas fa-file-import" role="button" data-bs-toggle="dropdown" aria-haspopup="true" arai-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="importMenuLink">
+	const importFragment = document.createElement('fragment');
+	importFragment.innerHTML = `
+		<div class="dropdown sim-dropdown-menu">
+			<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+				<i class="fa fa-download"></i>
+				Import
+			</a>
+			<ul class="dropdown-menu"></ul>
 		</div>
 	`;
-	const linkElem = importSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Import',
-		'allowHTML': true,
-	});
 
-	const menuElem = importSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
+	const menuElem = importFragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
 	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		if (!showInRaidSim) {
-			itemElem.classList.add('within-raid-sim-hide');
-		}
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
+		const itemFragment = document.createElement('fragment');
+		itemFragment.innerHTML = `
+			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
+				<a
+					href="javascript:void(0)"
+					class="dropdown-item"
+					role="button"
+					onclick="${onClick}"
+				>${label}</a>
+			</li>
+		`;
+		const itemElem = itemFragment.children[0] as HTMLElement;
+		const linkElem = itemElem.children[0] as HTMLElement;
+		linkElem.addEventListener('click', onClick);
 		menuElem.appendChild(itemElem);
 	};
 
-	addMenuItem('Json', () => new IndividualJsonImporter(menuElem, simUI), true);
+	addMenuItem('JSON', () => new IndividualJsonImporter(menuElem, simUI), true);
 	addMenuItem('80U', () => new Individual80UImporter(menuElem, simUI), true);
 	addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
 
-	return importSettings;
+	return importFragment.children[0] as HTMLElement;
 }
 
 export abstract class Importer extends Popup {

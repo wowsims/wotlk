@@ -1,0 +1,37 @@
+#simContent {
+  height: 100%;
+  min-width: calc(275px + 1vw);
+  display: flex;
+  flex-flow: column;
+  flex: 4;
+	background-image:
+		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+		var(--theme-background-image);
+	background-size: cover;
+	background-position: center center;
+  color: var(--main-text-color);
+  overflow-y: auto;
+
+  #simMain {
+    height: 80%;
+    display: flex;
+    flex-grow: 1;
+
+    .tab-pane {
+      flex-grow: 1;
+      padding-top: $gap-width;
+      padding-bottom: $gap-width;
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  #simContent {
+    #simMain {
+      .tab-pane {
+        padding-top: $gap-width-sm * 2;
+        padding-bottom: $gap-width-sm * 2;
+      }
+    }
+  }
+}

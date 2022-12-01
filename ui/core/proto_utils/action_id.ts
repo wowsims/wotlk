@@ -257,6 +257,13 @@ export class ActionId {
 					name += ' (DoT)'
 				}
 				break;
+			case 'Righteous Vengeance':
+				if (this.tag == 1) {
+					name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			case 'Holy Shield':
 				if (this.tag == 1) {
 					name += ' (Proc)';

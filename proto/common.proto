@@ -250,6 +250,8 @@ enum Potions {
 	InsaneStrengthPotion = 11;
 	IronshieldPotion = 12;
 	HeroicPotion = 13;
+	RunicManaInjector = 14;
+	RunicHealingInjector = 15;
 }
 
 enum Conjured {
