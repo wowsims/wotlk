@@ -362,7 +362,9 @@ function makeMultistateMultiplierIndividualBuffInput(id: ActionId, numStates: nu
 function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
 	return makeConsumeInputFactory(consumesFieldName, [
 		{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
+		{ actionId: ActionId.fromItemId(41166), value: Potions.RunicHealingInjector },
 		{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
+		{ actionId: ActionId.fromItemId(42545), value: Potions.RunicManaInjector },
 		{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
 		{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
 		{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
