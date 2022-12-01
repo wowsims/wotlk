@@ -6,3 +6,12 @@
 .custom-spells-picker {
 	text-align: center;
 }
+
+.custom-spell-picker-root {
+	display: flex;
+	align-items: center;
+}
+
+.custom-spell-picker-root .number-picker-input {
+	width: 40px;
+}
