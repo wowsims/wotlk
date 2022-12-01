@@ -24,6 +24,11 @@ td, th {
 		overflow-y: auto;
 	}
 
+	#noticesBanner {
+		width: 100%;
+		background: lighten($body-bg, 5);
+	}
+
 	#simTitle, #simHeader {
 		height: $sim-header-height;
 		border-bottom: 1px solid $border-color;
@@ -36,12 +41,6 @@ td, th {
 	#simContent {
 		padding-left: $gap-width * 2;
   	padding-right: $gap-width * 2;
-
-		#noticesBanner {
-			background: lighten($body-bg, 3);
-			margin-left: -$gap-width * 2;
-			margin-right: -$gap-width * 2;
-		}
 	}
 }
 
@@ -118,11 +117,15 @@ td, th {
 		#simContent {
 			padding-left: $gap-width;
     	padding-right: $gap-width;
+		}
+	}
+}
 
-			#noticesBanner {
-				margin-left: -$gap-width;
-				margin-right: -$gap-width;
-			}
+@include media-breakpoint-down(sm) {
+  .sim-ui {
+		#simContent {
+			padding-left: $gap-width-sm;
+			padding-right: $gap-width-sm;
 		}
 	}
 }

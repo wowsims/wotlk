@@ -188,9 +188,8 @@ export abstract class SimUI extends Component {
 
 	private addNoticeBanner() {
 		const noticesElem = document.querySelector('#noticesBanner') as HTMLElement;
-		if (noticeText) {
-			noticesElem.insertAdjacentHTML('afterbegin', noticeText);
-		} else {
+
+		if (!noticeText) {
 			noticesElem.remove();
 		}
 	}
@@ -298,7 +297,8 @@ export abstract class SimUI extends Component {
 }
 
 const simHTML = `
-<div class="sim-root">\
+<div class="sim-root">
+	<div id="noticesBanner" class="alert border-bottom mb-0 text-center">${noticeText}</div>
   <aside id="simSidebar">
     <div id="simTitle"></div>
 		<div id="simSidebarContent">
@@ -308,11 +308,6 @@ const simHTML = `
 		</div>
   </aside>
   <div id="simContent" class="container-fluid">
-		<div id="noticesBanner" class="alert mb-0 text-center">
-			<a href="javascript:void(0)" class="ml-auto" role="button" data-bs-dismiss="alert" aria-label="Close">
-				<i class="fas fa-times fa-xl"></i>
-			</a>
-		</div>
 	</div>
   </section>
 </div>
