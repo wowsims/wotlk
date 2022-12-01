@@ -97,7 +97,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			// Unholy
 			dk.Rotation.BtGhoulFrenzy = false
 			dk.Rotation.UseEmpowerRuneWeapon = true
-			dk.Rotation.HoldErwArmy = false
+			dk.Rotation.HoldErwArmy = true
 			dk.Rotation.UseGargoyle = true
 			dk.Rotation.ArmyOfTheDead = proto.Deathknight_Rotation_AsMajorCd
 			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy

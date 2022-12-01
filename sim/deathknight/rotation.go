@@ -165,7 +165,7 @@ func (dk *Deathknight) RotationActionCallback_BP(sim *core.Simulation, target *c
 	waitTime := time.Duration(-1)
 	if !casted && !dk.BloodPresence.IsReady(sim) {
 		if dk.BloodPresence.CD.ReadyAt() != sim.CurrentTime {
-			waitTime = sim.CurrentTime
+			waitTime = dk.BloodPresence.CD.ReadyAt()
 		}
 	}
 
