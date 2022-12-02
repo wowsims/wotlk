@@ -60,7 +60,6 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	// the spellID that deals damage in the combat log is 50590, but we don't use it here
 	actionID := core.ActionID{SpellID: 50589}
 	baseCost := 0.64 * warlock.BaseMana
-	spellSchool := core.SpellSchoolFire
 
 	warlock.ImmolationAuraDot = core.NewDot(core.Dot{
 		Aura: warlock.RegisterAura(core.Aura{
@@ -84,7 +83,7 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

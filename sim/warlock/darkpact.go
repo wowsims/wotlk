@@ -9,6 +9,10 @@ import (
 )
 
 func (warlock *Warlock) registerDarkPactSpell() {
+	if !warlock.Talents.DarkPact {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 59092}
 	baseRestore := 1200.0
 	manaMetrics := warlock.NewManaMetrics(actionID)

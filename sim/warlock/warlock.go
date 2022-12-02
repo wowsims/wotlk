@@ -59,6 +59,7 @@ type Warlock struct {
 	MetamorphosisAura      *core.Aura
 	ImmolationAura         *core.Spell
 	ImmolationAuraDot      *core.Dot
+	HauntDebuffAura        *core.Aura
 	MoltenCoreAura         *core.Aura
 	DecimationAura         *core.Aura
 	PyroclasmAura          *core.Aura
@@ -92,6 +93,13 @@ func (warlock *Warlock) GetWarlock() *Warlock {
 	return warlock
 }
 
+func (warlock *Warlock) GrandSpellstoneBonus() float64 {
+	return core.TernaryFloat64(warlock.Options.WeaponImbue == proto.Warlock_Options_GrandSpellstone, 0.01, 0)
+}
+func (warlock *Warlock) GrandFirestoneBonus() float64 {
+	return core.TernaryFloat64(warlock.Options.WeaponImbue == proto.Warlock_Options_GrandFirestone, 0.01, 0)
+}
+
 func (warlock *Warlock) Initialize() {
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
@@ -111,19 +119,13 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerHauntSpell()
 	warlock.registerChaosBoltSpell()
 
-	if warlock.Talents.DemonicEmpowerment {
-		warlock.registerDemonicEmpowermentSpell()
-	}
+	warlock.registerDemonicEmpowermentSpell()
 	if warlock.Talents.Metamorphosis {
 		warlock.registerMetamorphosisSpell()
 		warlock.registerImmolationAuraSpell()
 	}
-	if warlock.Talents.DarkPact {
-		warlock.registerDarkPactSpell()
-	}
-	if warlock.Talents.Shadowburn {
-		warlock.registerShadowBurnSpell()
-	}
+	warlock.registerDarkPactSpell()
+	warlock.registerShadowBurnSpell()
 
 	warlock.defineRotation()
 }
