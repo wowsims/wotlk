@@ -600,7 +600,13 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 4400
+				manaGain := 4400.0
+				if alchStoneEquipped && potionType == proto.Potions_RunicManaPotion {
+					manaGain *= 1.4
+				} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
+					manaGain *= 1.25
+				}
+				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= manaGain
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
