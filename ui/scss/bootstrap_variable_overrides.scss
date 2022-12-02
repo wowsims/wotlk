@@ -4,9 +4,6 @@
 // See bootstrap/scss/_variables.scss for a complete list of definitions, or
 // individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
 
-// Theme variable overrides
-$primary: #e0a335;
-
 // Custom theme color mapping
 $death-knight: rgb(194, 46, 70);
 $druid:        rgb(255, 125, 10);
@@ -19,7 +16,7 @@ $shaman:       rgb(36, 89, 255);
 $warlock:      rgb(148, 130, 201);
 $warrior:      rgb(199, 156, 110);
 
-$custom-colors: (
+$class-colors: (
   "death-knight": $death-knight,
   "druid":        $druid,
   "hunter":       $hunter,
@@ -29,12 +26,30 @@ $custom-colors: (
   "rogue":        $rogue,
   "shaman":       $shaman,
   "warlock":      $warlock,
-  "warrior":      $warrior
+  "warrior":      $warrior,
+);
+
+$theme-colors: map-merge($theme-colors, $class-colors);
+
+// Theme variable overrides
+@if variable-exists(theme) {
+  $primary: map.get($class-colors, $theme);
+}
+
+@if not variable-exists(theme) {
+  $primary: #e0a335;
+}
+
+$custom-colors: (
+  "primary": $primary
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
-// Global variable overrides
+// Custom variables
+$content-font-size: .75rem;
+
+// Global Bootstrap variable overrides
 $enable-negative-margins: true;
 
 $body-bg: #15171e;
@@ -50,6 +65,12 @@ $link-transition: color .15s ease-in-out;
 // Component variable overrides
 $alert-border-radius: 0;
 
+$btn-font-size: $content-font-size;
+$btn-border-radius: 0;
+$btn-border-radius-sm: 0;
+$btn-border-radius-lg: 0;
+$btn-font-weight: bold;
+
 $dropdown-bg: $body-bg;
 $dropdown-border-radius: 0;
 $dropdown-border-width: 0;
@@ -59,10 +80,19 @@ $dropdown-link-active-bg: $dropdown-bg;
 $dropdown-link-hover-bg: darken($dropdown-bg, 3);
 $dropdown-padding-y: 0;
 
-$input-bg: $body-bg;
+$form-label-margin-bottom: .25rem;
+$form-label-font-size: $content-font-size;
+$form-label-font-weight: normal;
+
+$input-bg: lighten($body-bg, 12);
+$input-border-radius: 0;
+$input-border-color: lighten($body-bg, 15);
 $input-color: white;
-$input-focus-bg: $body-bg;
+$input-focus-bg: lighten($body-bg, 12);
+$input-focus-border-color: lighten($body-bg, 20);
+$input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
 $input-focus-color: white;
+$input-font-size: $content-font-size;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;

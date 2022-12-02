@@ -1,4 +1,5 @@
 @use "sass:map";
+@use "sass:math";
 
 #simHeader {
 	padding-top: $gap-width;
@@ -49,8 +50,8 @@
 			transition: $link-transition;
 
 			.warnings {
-				margin-top: $nav-link-padding-y / 2;
-				margin-bottom: $nav-link-padding-y / 2;
+				margin-top: math.div($nav-link-padding-y, 2);
+				margin-bottom: math.div($nav-link-padding-y, 2);
 				text-shadow:
 						0 0 10px $danger,
 						0 0 10px $danger,
@@ -63,13 +64,13 @@
 		}
 
 		.sim-toolbar-socials {
-			margin-top: $nav-link-padding-y / 2;
-			margin-bottom: $nav-link-padding-y / 2;
+			margin-top: math.div($nav-link-padding-y, 2);
+			margin-bottom: math.div($nav-link-padding-y, 2);
 			border-left: 1px solid $border-color;
 
 			a {
-				margin-top: $nav-link-padding-y / 2;
-				margin-bottom: $nav-link-padding-y / 2;
+				margin-top: math.div($nav-link-padding-y, 2);
+				margin-bottom: math.div($nav-link-padding-y, 2);
 			}
 		}
 	}
