@@ -1,0 +1,78 @@
+@use "sass:map";
+
+// Define and overwrite Bootstrap Variables
+// See bootstrap/scss/_variables.scss for a complete list of definitions, or
+// individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
+
+// Theme variable overrides
+$primary: #e0a335;
+
+// Custom theme color mapping
+$death-knight: rgb(194, 46, 70);
+$druid:        rgb(255, 125, 10);
+$hunter:       rgb(171, 212, 115);
+$mage:         rgb(105, 204, 240);
+$paladin:      rgb(245, 140, 186);
+$priest:       rgb(255, 255, 255);
+$rogue:        rgb(255, 245, 105);
+$shaman:       rgb(36, 89, 255);
+$warlock:      rgb(148, 130, 201);
+$warrior:      rgb(199, 156, 110);
+
+$custom-colors: (
+  "death-knight": $death-knight,
+  "druid":        $druid,
+  "hunter":       $hunter,
+  "mage":         $mage,
+  "paladin":      $paladin,
+  "priest":       $priest,
+  "rogue":        $rogue,
+  "shaman":       $shaman,
+  "warlock":      $warlock,
+  "warrior":      $warrior
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// Global variable overrides
+$enable-negative-margins: true;
+
+$body-bg: #15171e;
+$body-color: white;
+
+$border-color: #4c4e54;
+
+$link-color: #a5b1d6;
+$link-decoration: none;
+$link-hover-color: white;
+$link-transition: color .15s ease-in-out;
+
+// Component variable overrides
+$alert-border-radius: 0;
+
+$dropdown-bg: $body-bg;
+$dropdown-border-radius: 0;
+$dropdown-border-width: 0;
+$dropdown-color: white;
+$dropdown-inner-border-radius: 0;
+$dropdown-link-active-bg: $dropdown-bg;
+$dropdown-link-hover-bg: darken($dropdown-bg, 3);
+$dropdown-padding-y: 0;
+
+$input-bg: $body-bg;
+$input-color: white;
+$input-focus-bg: $body-bg;
+$input-focus-color: white;
+
+$navbar-dark-color: white;
+$navbar-dark-hover-color: $primary;
+$navbar-dark-active-color: $primary;
+$navbar-padding-y: 0;
+
+$nav-link-padding-y: map.get($spacers, 3);
+$nav-link-transition: $link-transition;
+$nav-tabs-link-active-bg: transparent;
+$nav-tabs-link-active-color: white;
+
+$tooltip-bg: #424557;
+$tooltip-max-width: 15vw;

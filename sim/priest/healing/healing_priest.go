@@ -1,6 +1,7 @@
 package healing
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/priest"
@@ -26,7 +27,8 @@ func RegisterHealingPriest() {
 type HealingPriest struct {
 	*priest.Priest
 
-	rotation *proto.HealingPriest_Rotation
+	rotation       *proto.HealingPriest_Rotation
+	CustomRotation *common.CustomRotation
 
 	// Spells to rotate through for cyclic rotation.
 	spellCycle     []*core.Spell
@@ -78,14 +80,21 @@ func (hpriest *HealingPriest) Initialize() {
 
 	hpriest.RegisterHymnOfHopeCD()
 
-	hpriest.spellCycle = []*core.Spell{
-		hpriest.GreaterHeal,
-		hpriest.FlashHeal,
-		hpriest.CircleOfHealing,
-		hpriest.BindingHeal,
-		hpriest.PrayerOfHealing,
-		hpriest.PrayerOfMending,
-		hpriest.PenanceHeal,
+	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {
+		hpriest.CustomRotation = hpriest.makeCustomRotation()
+	}
+
+	if hpriest.CustomRotation == nil {
+		hpriest.rotation.Type = proto.HealingPriest_Rotation_Cycle
+		hpriest.spellCycle = []*core.Spell{
+			hpriest.GreaterHeal,
+			hpriest.FlashHeal,
+			hpriest.CircleOfHealing,
+			hpriest.BindingHeal,
+			hpriest.PrayerOfHealing,
+			hpriest.PrayerOfMending,
+			hpriest.PenanceHeal,
+		}
 	}
 }
 

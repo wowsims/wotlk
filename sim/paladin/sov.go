@@ -45,7 +45,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		ActionID:    core.ActionID{SpellID: 31803, Tag: 1}, // Holy Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
-		Flags:       core.SpellFlagMeleeMetrics,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Does no damage, just applies dot and rolls.
@@ -203,6 +202,7 @@ func (paladin *Paladin) createSealOfVengeanceDot(target *core.Unit) *core.Dot {
 			ActionID:    dotActionID,
 			SpellSchool: core.SpellSchoolHoly,
 			ProcMask:    core.ProcMaskSpellDamage,
+			Flags:       core.SpellFlagMeleeMetrics,
 
 			DamageMultiplier: 1 *
 				(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),

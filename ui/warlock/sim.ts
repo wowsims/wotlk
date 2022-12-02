@@ -49,6 +49,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
+				Stat.StatStamina,
 			],
 			// Reference stat against which to calculate EP. DPS classes use either spell power or attack power.
 			epReferenceStat: Stat.StatSpellPower,
@@ -62,6 +63,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
+				Stat.StatStamina,
 			],
 
 			defaults: {
@@ -76,6 +78,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					[Stat.StatSpellHit]: 0.93,
 					[Stat.StatSpellCrit]: 0.52,
 					[Stat.StatSpellHaste]: 0.77,
+					[Stat.StatStamina]: 0.01,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

@@ -358,7 +358,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 		timeToOOM := unitMetrics.FirstOOMTimestamp
 		if !unitMetrics.WentOOM {
 			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
-			manaSpentPerSecond := (unitMetrics.ManaSpent - unitMetrics.ManaGained) / encounterDurationSeconds
+			manaSpentPerSecond := (unitMetrics.ManaSpent - (unitMetrics.ManaGained - unitMetrics.BonusManaGained)) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
 		}

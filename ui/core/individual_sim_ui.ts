@@ -81,6 +81,8 @@ import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
 import { specToEligibleRaces } from './proto_utils/utils.js';
 import { specToLocalStorageKey } from './proto_utils/utils.js';
 
+import { Tooltip } from 'bootstrap';
+
 import * as IconInputs from './components/icon_inputs.js';
 import * as InputHelpers from './components/input_helpers.js';
 import * as Mechanics from './constants/mechanics.js';
@@ -291,7 +293,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		this.addSidebarComponents();
-		this.addTopbarComponents();
 		this.addGearTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
@@ -300,6 +301,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.addDetailedResultsTab();
 			this.addLogTab();
 		}
+
+		this.addTopbarComponents();
 
 		this.player.changeEmitter.on(() => this.recomputeSettingsLayout());
 	}
@@ -365,24 +368,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.individualConfig.modifyDisplayStats);
 	}
 
-	private addTopbarComponents() {
-		this.addToolbarItem(newIndividualImporters(this));
-		this.addToolbarItem(newIndividualExporters(this));
-
-		const optionsMenu = document.createElement('span');
-		optionsMenu.classList.add('fas', 'fa-cog');
-		tippy(optionsMenu, {
-			'content': 'Options',
-			'allowHTML': true,
-		});
-		optionsMenu.addEventListener('click', event => {
-			new SettingsMenu(this.rootElem, this);
-		});
-		this.addToolbarItem(optionsMenu);
-	}
-
 	private addGearTab() {
-		this.addTab('GEAR', 'gear-tab', `
+		this.addTab('Gear', 'gear-tab', `
 			<div class="gear-tab-columns">
 				<div class="left-gear-panel">
 					<div class="gear-picker">
@@ -441,7 +428,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 
 	private addSettingsTab() {
-		this.addTab('SETTINGS', 'settings-tab', `
+		this.addTab('Settings', 'settings-tab', `
 			<div class="settings-inputs">
 				<div class="settings-section-container">
 					<fieldset class="settings-section encounter-section within-raid-sim-hide">
@@ -692,7 +679,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const potionOptions = this.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
+			{ item: Potions.RunicHealingInjector, stats: [Stat.StatStamina] },
 			{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
+			{ item: Potions.RunicManaInjector, stats: [Stat.StatIntellect] },
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
 			{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
 			{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
@@ -1019,7 +1008,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addTalentsTab() {
-		this.addTab('TALENTS', 'talents-tab', `
+		this.addTab('Talents', 'talents-tab', `
 			<div class="player-pet-toggle"></div>
 			<div class="talents-content">
 				<div class="talents-tab-content">
@@ -1108,7 +1097,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addDetailedResultsTab() {
-		this.addTab('DETAILED RESULTS', 'detailed-results-tab', `
+		this.addTab('Results', 'detailed-results-tab', `
 			<div class="detailed-results">
 			</div>
 		`);
@@ -1117,12 +1106,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addLogTab() {
-		this.addTab('LOG', 'log-tab', `
+		this.addTab('Log', 'log-tab', `
 			<div class="log-runner">
 			</div>
 		`);
 
 		const logRunner = new LogRunner(this.rootElem.getElementsByClassName('log-runner')[0] as HTMLElement, this);
+	}
+
+	private addTopbarComponents() {
+		this.addImportLink(newIndividualImporters(this));
+		this.addExportLink(newIndividualExporters(this));
 	}
 
 	applyDefaults(eventID: EventID) {

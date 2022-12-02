@@ -91,31 +91,42 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			const rightClick = isRightClick(event);
 
 			if (rightClick) {
-				if (this.currentValue > 0) {
-					this.currentValue--;
-					this.inputChanged(TypedEvent.nextEventID());
-				}
+				this.handleRightClick(event)
 			} else {
-				if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
-					this.currentValue++;
-					this.inputChanged(TypedEvent.nextEventID());
-				}
+				this.handleLeftClick(event)
 			}
 		});
 
 		this.rootAnchor.addEventListener('touchstart', event => {
-			if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
-				this.currentValue++;
-				this.inputChanged(TypedEvent.nextEventID());
-			} else if (this.currentValue > 0) { // roll over
-				this.currentValue = 0;
-				this.inputChanged(TypedEvent.nextEventID());
-			}
-			event.preventDefault();
+			this.handleLeftClick(event)
 		});
 		this.rootAnchor.addEventListener('touchend', event => {
 			event.preventDefault();
 		});
+	}
+
+	handleLeftClick = (event: UIEvent) => {
+		if (this.config.states == 0 || (this.currentValue + 1) < this.config.states) {
+			this.currentValue++;
+			this.inputChanged(TypedEvent.nextEventID());
+		} else if (this.currentValue > 0) { // roll over
+			this.currentValue = 0;
+			this.inputChanged(TypedEvent.nextEventID());
+		}
+		event.preventDefault();
+	}
+
+	handleRightClick = (event: UIEvent) => {
+		if (this.currentValue > 0) {
+			this.currentValue--;
+		} else { // roll over
+			if (this.config.states === 0) {
+				this.currentValue = 1
+			} else {
+				this.currentValue = this.config.states - 1
+			}
+		}
+		this.inputChanged(TypedEvent.nextEventID());
 	}
 
 	getInputElem(): HTMLElement {

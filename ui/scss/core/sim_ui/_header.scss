@@ -1,30 +1,112 @@
-#simHeader {
-	padding: 0 var(--bs-gap);
-	display: flex;
-	justify-content: space-between;
-	background-color: #1112187d;
+@use "sass:map";
 
-	.sim-tabs, .sim-toolbar {
-		flex-direction: row;
+#simHeader {
+	padding-top: $gap-width;
+	display: flex;
+	align-items: stretch;
+	white-space: nowrap;
+	overflow-x: scroll;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	.sim-tabs, .import-export, .sim-toolbar {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: flex-end;
+		font-size: $content-font-size;
+		font-weight: bold;
 	}
 
 	.sim-tabs {
 		border-bottom: 0;
 	}
 
+	.import-export {
+		.import-link, .export-link {
+			padding: $nav-link-padding-y $nav-link-padding-x;
+			transition: $nav-link-transition;
+		}
+	}
+
 	.sim-toolbar {
-		display: flex;
-		align-items: center;
-		font-size: clamp(12px, 2vw, 20px);
+		margin-left: auto;
+
+		.sim-toolbar-item, .sim-toolbar-socials {
+			margin-left: map.get($spacers, 3);
+			display: flex;
+
+			a {
+				margin-top: $nav-link-padding-y;
+				margin-bottom: $nav-link-padding-y;
+			}
+		}
 
 		.sim-toolbar-item {
-			margin-left: var(--bs-gap);
-			display: flex;
-			cursor: pointer;
+			transition: $link-transition;
 
-			.dropdown-toggle::after {
-				content: none;
+			.warnings {
+				margin-top: $nav-link-padding-y / 2;
+				margin-bottom: $nav-link-padding-y / 2;
+				text-shadow:
+						0 0 10px $danger,
+						0 0 10px $danger,
+						0 0 10px $danger;
+			}
+
+			.known-issues {
+				color: #ef9eaa;
+			}
+		}
+
+		.sim-toolbar-socials {
+			margin-top: $nav-link-padding-y / 2;
+			margin-bottom: $nav-link-padding-y / 2;
+			border-left: 1px solid $border-color;
+
+			a {
+				margin-top: $nav-link-padding-y / 2;
+				margin-bottom: $nav-link-padding-y / 2;
 			}
 		}
 	}
+
+	.sim-dropdown-menu {
+		display: flex;
+		// Needed so that dropdowns don't clip the header with overflow-x set
+		position: unset;
+
+		.dropdown-menu {
+			top: -2px;
+			border: 1px solid var(--theme-color-primary);
+		}
+	}
 }
+
+@include media-breakpoint-down(lg) {
+	#simHeader {
+		padding-top: $gap-width-sm;
+	}	
+}
+
+// TODO: Replace with Bootstrap media query once on to node module
+// @media only screen and (max-width: 992px) {
+// 	#simHeader {
+// 		overflow-x: scroll;
+
+// 		.sim-tabs {
+// 			flex-wrap: nowrap;
+
+// 			.sim-link {
+// 				white-space: nowrap;
+// 			}
+// 		}
+// 	}
+
+// 	.known-issues {
+// 		white-space: nowrap;
+// 	}
+// }
