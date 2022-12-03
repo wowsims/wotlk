@@ -126,15 +126,18 @@ export function downloadString(data: string, fileName: string) {
 	downloadAnchorNode.remove();
 }
 
-export function formatDeltaTextElem(elem: HTMLElement, before: number, after: number, precision: number) {
+export function formatDeltaTextElem(elem: HTMLElement, before: number, after: number, precision: number, lowerIsBetter?: boolean) {
 	const delta = after - before;
-	const deltaStr = delta.toFixed(precision);
+	let deltaStr = delta.toFixed(precision);
 	if (delta >= 0) {
-		elem.textContent = '+' + deltaStr;
+		deltaStr = '+' + deltaStr;
+	}
+	elem.textContent = deltaStr;
+
+	if (delta >= 0 != Boolean(lowerIsBetter)) {
 		elem.classList.remove('negative');
 		elem.classList.add('positive');
 	} else {
-		elem.textContent = '' + deltaStr;
 		elem.classList.remove('positive');
 		elem.classList.add('negative');
 	}
