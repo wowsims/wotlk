@@ -4,18 +4,17 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
 	baseCost := 0.14 * warlock.BaseMana
-	actionID := core.ActionID{SpellID: 47838}
-	spellSchool := core.SpellSchoolFire
 	spellCoeff := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		ActionID:     core.ActionID{SpellID: 47838},
+		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -37,9 +36,13 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.Emberstorm) +
+			core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfIncinerate), 0.05, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetMaleficRaiment, 4), 0.06, 0),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(582, 676) + spellCoeff*spell.SpellPower()

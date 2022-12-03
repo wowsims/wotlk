@@ -9,9 +9,6 @@ import (
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
-	actionID := core.ActionID{SpellID: 59172}
-	spellSchool := core.SpellSchoolFire
-
 	baseCost := 0.07 * warlock.BaseMana
 	spellCoeff := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
@@ -19,8 +16,8 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 	// TODO If there's bosses with elevated fire resistances, we'd need another spell flag,
 	//  or add an unlimited amount of "bonusSpellPenetration".
 	warlock.ChaosBolt = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		ActionID:     core.ActionID{SpellID: 59172},
+		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -44,9 +41,11 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		BonusCritRating: 0 +
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.Emberstorm),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1429, 1813) + spellCoeff*spell.SpellPower()

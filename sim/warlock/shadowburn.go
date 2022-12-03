@@ -9,9 +9,11 @@ import (
 )
 
 func (warlock *Warlock) registerShadowBurnSpell() {
+	if !warlock.Talents.Shadowburn {
+		return
+	}
+
 	baseCost := 0.2 * warlock.BaseMana
-	actionID := core.ActionID{SpellID: 47827}
-	spellSchool := core.SpellSchoolShadow
 	spellCoeff := 0.429 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowburn) {
@@ -25,8 +27,8 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	}
 
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		ActionID:     core.ActionID{SpellID: 47827},
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -45,9 +47,11 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 		BonusCritRating: 0 +
 			warlock.masterDemonologistShadowCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(775, 865) + spellCoeff*spell.SpellPower()

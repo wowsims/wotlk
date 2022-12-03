@@ -154,7 +154,7 @@ func (warlock *Warlock) defineRotation() {
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength) + time.Millisecond*1000
 		}
-		return core.MaxDuration(0, warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
+		return core.MaxDuration(0, warlock.HauntDebuffAura.RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
 		//On the other hand, reapplying this when not 0, but say 0.5 or 1, is not a tick loss as it is for other dots.
 	}
@@ -317,7 +317,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	nextTick := previousTickAt + tickLength + humanReactionTime
 
 	allCDs := []time.Duration{
-		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
+		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura.RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
 		core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-hauntcasttime),
 		core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
 	}
@@ -647,7 +647,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	//}
 
 	if filler == warlock.DrainSoul {
-		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura(warlock.CurrentTarget).Duration/3 {
+		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura.Duration/3 {
 			spell = filler
 		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
 			spell = filler

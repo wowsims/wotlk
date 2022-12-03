@@ -10,13 +10,12 @@ import (
 
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
-	spellSchool := core.SpellSchoolShadow
 	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
 	baseCost := warlock.BaseMana * 0.14
 
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
 		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
@@ -30,18 +29,19 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			},
 		},
 
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandSpellstoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery),
 		// For performance optimization, the execute modifier is basekit since we never use it before execute
 		DamageMultiplier: (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.DrainSoulDot.Apply(sim)
 				warlock.DrainSoulDot.Aura.UpdateExpires(warlock.DrainSoulDot.Aura.ExpiresAt())
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 
@@ -60,7 +60,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			baseDmg := 142 + 0.429*dot.Spell.SpellPower()
 
 			auras := []*core.Aura{
-				warlock.HauntDebuffAura(target),
+				warlock.HauntDebuffAura,
 				warlock.UnstableAfflictionDot.Aura,
 				warlock.CorruptionDot.Aura,
 				warlock.SeedDots[target.Index].Aura,
