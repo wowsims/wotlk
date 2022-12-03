@@ -1,6 +1,7 @@
 package druid
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -279,7 +280,6 @@ func (druid *Druid) applyOmenOfClarity() {
 		},
 	})
 
-	ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -302,17 +302,36 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
+			// Not ideal to have new ppm manager here, but this needs to account for feral druid bear<->cat swaps
+			ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				druid.ClearcastingAura.Activate(sim)
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
-				chanceToProc := (spell.CurCast.CastTime.Seconds() / 60) * 3.5
-				if spell == druid.Typhoon { // Add Wild Growth
+				// Heavily based on comment here
+				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
+				// Instants are treated as 1.5
+				castTime := spell.DefaultCast.CastTime.Seconds()
+				if castTime == 0 {
+					castTime = 1.5
+				}
+
+				chanceToProc := (castTime / 60) * 3.5
+				if spell == druid.Typhoon { // Add Typhoon
 					chanceToProc *= 0.25
-				} else if spell == druid.Moonfire { // Add GotW
+				} else if spell == druid.Moonfire { // Add Moonfire
 					chanceToProc *= 0.076
 				} else {
 					chanceToProc *= 0.666
 				}
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ClearcastingAura.Activate(sim)
+				}
+			}
+		},
+		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == druid.GiftOfTheWild {
+				// Based on ingame testing by druid discord, subject to change or incorrectness
+				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
 					druid.ClearcastingAura.Activate(sim)
 				}

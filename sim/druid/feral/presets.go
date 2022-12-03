@@ -39,7 +39,8 @@ var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DruidMajorGlyph_GlyphOfRip),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
 	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
-	// No interesting minor glyphs.
+
+	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTheWild),
 }
 
 var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
@@ -59,6 +60,9 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 			MaintainFaerieFire: true,
 			BerserkBiteThresh:  30.0,
 			MaxRoarOffset:      14.0,
+			SnekWeave:          true,
+			FlowerWeave:        false,
+			RaidTargets:        30,
 		},
 	},
 }
