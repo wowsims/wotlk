@@ -226,8 +226,8 @@ export class RaidSimResultsManager {
 			const refPlayerMetrics = this.referenceData.simResult.getPlayers()[0]!;
 			formatDeltaTextElem(simReferenceTtoDiffElem, refPlayerMetrics.tto.avg, curPlayerMetrics.tto.avg, 2);
 			formatDeltaTextElem(simReferenceTpsDiffElem, refPlayerMetrics.tps.avg, curPlayerMetrics.tps.avg, 2);
-			formatDeltaTextElem(simReferenceDtpsDiffElem, refPlayerMetrics.dtps.avg, curPlayerMetrics.dtps.avg, 2);
-			formatDeltaTextElem(simReferenceCodDiffElem, refPlayerMetrics.chanceOfDeath, curPlayerMetrics.chanceOfDeath, 1);
+			formatDeltaTextElem(simReferenceDtpsDiffElem, refPlayerMetrics.dtps.avg, curPlayerMetrics.dtps.avg, 2, true);
+			formatDeltaTextElem(simReferenceCodDiffElem, refPlayerMetrics.chanceOfDeath, curPlayerMetrics.chanceOfDeath, 1, true);
 		}
 	}
 
