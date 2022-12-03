@@ -39,7 +39,7 @@ type StatWeightsResult struct {
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
 		Dps:  swr.Dps.ToProto(),
-		Hps:  swr.Dps.ToProto(),
+		Hps:  swr.Hps.ToProto(),
 		Tps:  swr.Tps.ToProto(),
 		Dtps: swr.Dtps.ToProto(),
 	}
@@ -169,7 +169,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 			dtpsHistsLow[stat] = dtpsMetrics.Hist
 		} else {
 			resultHigh.Dps.Weights[stat] = dpsDiff
-			resultHigh.Hps.Weights[stat] = tpsDiff
+			resultHigh.Hps.Weights[stat] = hpsDiff
 			resultHigh.Tps.Weights[stat] = tpsDiff
 			resultHigh.Dtps.Weights[stat] = dtpsDiff
 			resultHigh.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
@@ -194,8 +194,6 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 	const defaultStatMod = 10.0
 	const meleeHitStatMod = defaultStatMod
 	const spellHitStatMod = defaultStatMod
-	//const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
-	//const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
 	statModsLow := stats.Stats{}
 	statModsHigh := stats.Stats{}
 
@@ -260,7 +258,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 
 	for _, stat := range statsToWeigh {
 		// Check for hard caps. Hard caps will have a high diff of exactly 0 because RNG is fixed.
-		if resultHigh.Dps.Weights[stat] == 0 {
+		if resultHigh.Dps.Weights[stat] == 0 && resultHigh.Hps.Weights[stat] == 0 {
 			statModsHigh[stat] = 0
 			continue
 		}
