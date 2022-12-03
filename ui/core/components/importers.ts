@@ -73,7 +73,7 @@ export abstract class Importer extends Popup {
 			<div class="import-description">
 			</div>
 			<div class="import-content">
-				<textarea class="importer-textarea"></textarea>
+				<textarea class="importer-textarea form-control"></textarea>
 			</div>
 			<div class="actions-row">
 		`;
