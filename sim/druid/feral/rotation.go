@@ -118,7 +118,9 @@ func (cat *FeralDruid) flowerCast(sim *core.Simulation) {
 	if !cat.GiftOfTheWild.Cast(sim, &cat.Unit) {
 		panic("gotw cast failed")
 	}
-	cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+	// Purposely just using 'Cancel' here to avoid any caster melee attacks
+	// Basically mimicing a '/stopattack' macro on cast
+	cat.AutoAttacks.CancelAutoSwing(sim)
 }
 
 func (cat *FeralDruid) canBite(sim *core.Simulation) bool {
