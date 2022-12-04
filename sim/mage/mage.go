@@ -32,17 +32,6 @@ func RegisterMage() {
 	)
 }
 
-type MageTierSets struct {
-	t7_2  bool
-	t7_4  bool
-	t8_2  bool
-	t8_4  bool
-	t9_2  bool
-	t9_4  bool
-	t10_2 bool
-	t10_4 bool
-}
-
 type Mage struct {
 	core.Character
 	Talents *proto.MageTalents
@@ -108,8 +97,6 @@ type Mage struct {
 
 	IgniteDots []*core.Dot
 
-	MageTier MageTierSets
-
 	manaTracker common.ManaSpendingRateTracker
 }
 
@@ -139,17 +126,6 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
-	mage.MageTier = MageTierSets{
-		mage.HasSetBonus(ItemSetFrostfireGarb, 2),
-		mage.HasSetBonus(ItemSetFrostfireGarb, 4),
-		mage.HasSetBonus(ItemSetKirinTorGarb, 2),
-		mage.HasSetBonus(ItemSetKirinTorGarb, 4),
-		mage.HasSetBonus(ItemSetKhadgarsRegalia, 2) || mage.HasSetBonus(ItemSetSunstridersRegalia, 2),
-		mage.HasSetBonus(ItemSetKhadgarsRegalia, 4) || mage.HasSetBonus(ItemSetSunstridersRegalia, 4),
-		mage.HasSetBonus(ItemSetBloodmagesRegalia, 2),
-		mage.HasSetBonus(ItemSetBloodmagesRegalia, 4),
-	}
-
 	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()

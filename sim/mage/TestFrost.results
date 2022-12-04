@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 4623.40941
-  tps: 3894.69609
+  dps: 4747.52748
+  tps: 4012.99666
  }
 }
 dps_results: {
@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-KirinTorGarb"
  value: {
-  dps: 4221.40429
-  tps: 3535.7814
+  dps: 4220.7957
+  tps: 3534.77779
  }
 }
 dps_results: {
@@ -425,13 +425,6 @@ dps_results: {
  value: {
   dps: 4119.53612
   tps: 3450.76036
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-Sunstrider'sRegalia"
- value: {
-  dps: 4213.43688
-  tps: 3536.85287
  }
 }
 dps_results: {
