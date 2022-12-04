@@ -11,7 +11,6 @@ func init() {
 	// Keep these in order by item ID.
 
 	// TODO: Destructive Skyflare (1% spell reflect)
-	// TODO: Invigorating Earthsiege (heal on crits)
 
 	core.NewItemEffect(41333, func(agent core.Agent) {
 		agent.GetCharacter().MultiplyStat(stats.Intellect, 1.02)
@@ -32,6 +31,38 @@ func init() {
 		character.AddStat(stats.Armor, character.Equip.Stats()[stats.Armor]*0.02)
 	})
 
+	core.NewItemEffect(41385, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		healSpell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: 41385},
+			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskSpellHealing,
+			Flags:       core.SpellFlagNoOnCastComplete,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultHealingCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseHealing := 0.02 * target.MaxHealth()
+				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
+			},
+		})
+
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:       "Invigorating Earthsiege Diamond",
+			ProcMask:   core.ProcMaskMeleeOrRanged,
+			Callback:   OnSpellHitDealt | OnPeriodicDamageDealt | OnHealDealt | OnPeriodicHealDealt,
+			Outcome:    core.OutcomeCrit,
+			ProcChance: 0.5,
+			ICD:        time.Second * 45,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				healSpell.Cast(sim, &character.Unit)
+			},
+		})
+	})
+
 	core.NewItemEffect(41389, func(agent core.Agent) {
 		agent.GetCharacter().MultiplyStat(stats.Mana, 1.02)
 	})
@@ -50,30 +81,15 @@ func init() {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura("Thundering Skyflare Diamond Proc", core.ActionID{SpellID: 55379}, stats.Stats{stats.MeleeHaste: 480}, time.Second*6)
 
-		icd := core.Cooldown{
-			Timer:    character.NewTimer(),
-			Duration: time.Second * 40,
-		}
-		ppmm := character.AutoAttacks.NewPPMManager(1.0, core.ProcMaskMeleeOrRanged)
-
-		character.RegisterAura(core.Aura{
-			Label:    "Thundering Skyflare Diamond",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// Mask 68, melee or ranged auto attacks.
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskWhiteHit) {
-					return
-				}
-				if !icd.IsReady(sim) {
-					return
-				}
-				if !ppmm.Proc(sim, spell.ProcMask, "Thundering Skyflare Diamond") {
-					return
-				}
-				icd.Use(sim)
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:     "Thundering Skyflare Diamond",
+			Callback: OnSpellHitDealt,
+			// Mask 68, melee or ranged auto attacks.
+			ProcMask: core.ProcMaskWhiteHit,
+			Outcome:  core.OutcomeLanded,
+			PPM:      1,
+			ICD:      time.Second * 40,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
 		})
@@ -81,23 +97,14 @@ func init() {
 
 	core.NewItemEffect(41401, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		icd := core.Cooldown{
-			Timer:    character.NewTimer(),
-			Duration: time.Second * 15,
-		}
 		manaMetrics := character.NewManaMetrics(core.ActionID{ItemID: 41401})
 
-		character.RegisterAura(core.Aura{
-			Label:    "Insightful Earthsiege Diamond",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if !icd.IsReady(sim) || sim.RandomFloat("Insightful Earthsiege Diamond") > 0.05 {
-					return
-				}
-				icd.Use(sim)
+		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			Name:       "Insightful Earthsiege Diamond",
+			Callback:   OnCastComplete,
+			ProcChance: 0.05,
+			ICD:        time.Second * 15,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				character.AddMana(sim, 600, manaMetrics, false)
 			},
 		})
