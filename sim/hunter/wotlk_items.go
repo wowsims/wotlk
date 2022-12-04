@@ -237,9 +237,9 @@ func init() {
 				})
 			}
 
-			triggerAura := wotlk.MakeProcTriggerAura(&hunter.Unit, wotlk.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&hunter.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
-				Callback:   wotlk.OnSpellHitDealt,
+				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: procChance,
