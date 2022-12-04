@@ -338,18 +338,20 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
+	cheapestSpell := core.TernaryFloat64(enh.LavaLash == nil, enh.LightningBolt.CurCast.Cost, enh.LavaBurst.CurCast.Cost)
+
 	// Incase the array is empty
 	if len(rotation.spellPriority) == 0 {
 		enh.DoNothing()
 	}
 
 	//Mana guard, our cheapest spell.
-	if enh.CurrentMana() < enh.LavaLash.CurCast.Cost {
+	if enh.CurrentMana() < cheapestSpell {
 		// Lets top off lightning shield stacks before waiting for mana.
 		if enh.LightningShieldAura.GetStacks() < 3 {
 			enh.LightningShield.Cast(sim, nil)
 		}
-		enh.WaitForMana(sim, enh.LavaLash.CurCast.Cost)
+		enh.WaitForMana(sim, cheapestSpell)
 		return
 	}
 
