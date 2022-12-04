@@ -50,10 +50,10 @@ func init() {
 			},
 		})
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Invigorating Earthsiege Diamond",
 			ProcMask:   core.ProcMaskMeleeOrRanged,
-			Callback:   OnSpellHitDealt | OnPeriodicDamageDealt | OnHealDealt | OnPeriodicHealDealt,
+			Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt | core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.5,
 			ICD:        time.Second * 45,
@@ -81,9 +81,9 @@ func init() {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura("Thundering Skyflare Diamond Proc", core.ActionID{SpellID: 55379}, stats.Stats{stats.MeleeHaste: 480}, time.Second*6)
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:     "Thundering Skyflare Diamond",
-			Callback: OnSpellHitDealt,
+			Callback: core.CallbackOnSpellHitDealt,
 			// Mask 68, melee or ranged auto attacks.
 			ProcMask: core.ProcMaskWhiteHit,
 			Outcome:  core.OutcomeLanded,
@@ -99,9 +99,9 @@ func init() {
 		character := agent.GetCharacter()
 		manaMetrics := character.NewManaMetrics(core.ActionID{ItemID: 41401})
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Insightful Earthsiege Diamond",
-			Callback:   OnCastComplete,
+			Callback:   core.CallbackOnCastComplete,
 			ProcChance: 0.05,
 			ICD:        time.Second * 15,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {

@@ -290,8 +290,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-KirinTorGarb"
  value: {
-  dps: 6227.73768
-  tps: 3729.94693
+  dps: 6341.04684
+  tps: 3797.06525
  }
 }
 dps_results: {
