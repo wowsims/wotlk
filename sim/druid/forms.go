@@ -330,3 +330,31 @@ func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 		}
 	}
 }
+
+func (druid *Druid) applyMoonkinForm() {
+	if !druid.InForm(Moonkin) || !druid.Talents.MoonkinForm {
+		return
+	}
+
+	druid.MultiplyStat(stats.Intellect, 1+(0.02*float64(druid.Talents.Furor)))
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
+	if druid.Talents.ImprovedMoonkinForm > 0 {
+		druid.AddStatDependency(stats.Spirit, stats.SpellPower, 0.1*float64(druid.Talents.ImprovedMoonkinForm))
+	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
+	druid.RegisterAura(core.Aura{
+		Label:    "Moonkin Form",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				if spell == druid.Moonfire || spell == druid.Starfire || spell == druid.Wrath {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, false)
+				}
+			}
+		},
+	})
+}

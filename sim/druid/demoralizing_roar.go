@@ -28,7 +28,6 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 

@@ -239,6 +239,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-Gladiator'sRegalia"
+ value: {
+  dps: 5400.87357
+  tps: 4825.57478
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 5507.29819
