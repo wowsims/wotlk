@@ -18,6 +18,8 @@ const (
 	OnSpellHitDealt Callback = 1 << iota
 	OnSpellHitTaken
 	OnPeriodicDamageDealt
+	OnHealDealt
+	OnPeriodicHealDealt
 	OnCastComplete
 )
 
@@ -76,6 +78,10 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 		handler(sim, spell, result)
 	}
 
+	if config.ProcChance == 0 {
+		config.ProcChance = 1
+	}
+
 	if config.Callback.Matches(OnSpellHitDealt) {
 		aura.OnSpellHitDealt = callback
 	}
@@ -85,8 +91,11 @@ func applyProcTriggerCallback(unit *core.Unit, aura *core.Aura, config ProcTrigg
 	if config.Callback.Matches(OnPeriodicDamageDealt) {
 		aura.OnPeriodicDamageDealt = callback
 	}
-	if config.ProcChance == 0 {
-		config.ProcChance = 1
+	if config.Callback.Matches(OnHealDealt) {
+		aura.OnHealDealt = callback
+	}
+	if config.Callback.Matches(OnPeriodicHealDealt) {
+		aura.OnPeriodicHealDealt = callback
 	}
 	if config.Callback.Matches(OnCastComplete) {
 		aura.OnCastComplete = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {

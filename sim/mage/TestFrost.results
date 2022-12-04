@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 4183.76883
-  tps: 3503.75223
+  dps: 4187.57667
+  tps: 3506.19477
  }
 }
 dps_results: {
