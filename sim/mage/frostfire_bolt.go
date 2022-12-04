@@ -18,7 +18,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | HotStreakSpells,
+		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 25,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -32,7 +32,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		},
 
 		BonusCritRating: 0 +
-			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,

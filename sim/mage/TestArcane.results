@@ -428,13 +428,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestArcane-AllItems-Sunstrider'sRegalia"
- value: {
-  dps: 6322.67936
-  tps: 3791.30607
- }
-}
-dps_results: {
  key: "TestArcane-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 6500.73807

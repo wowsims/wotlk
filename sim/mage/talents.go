@@ -650,6 +650,9 @@ func (mage *Mage) applyBrainFreeze() {
 		return
 	}
 
+	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
+
 	mage.BrainFreezeAura = mage.RegisterAura(core.Aura{
 		Label:    "Brain Freeze Proc",
 		ActionID: core.ActionID{SpellID: 44549},
@@ -668,8 +671,13 @@ func (mage *Mage) applyBrainFreeze() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == mage.FrostfireBolt || spell == mage.Fireball {
-				aura.Deactivate(sim)
-				mage.BrainFreezeActivatedAt = 0
+				if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
+					aura.Deactivate(sim)
+					mage.BrainFreezeActivatedAt = 0
+				}
+				if t10ProcAura != nil {
+					t10ProcAura.Activate(sim)
+				}
 			}
 		},
 	})
