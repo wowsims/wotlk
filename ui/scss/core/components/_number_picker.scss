@@ -1,5 +1,8 @@
+@use "sass:map";
+
 @import "./input";
 
 .number-picker-input {
   width: 5rem;
+  margin: 5px;
 }
