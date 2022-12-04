@@ -91,6 +91,18 @@ export class SimResult {
 		this.units = this.players.concat(encounterMetrics.targets);
 	}
 
+	get iterations() {
+		return this.request.simOptions?.iterations || 1;
+	}
+
+	get duration() {
+		return this.result.avgIterationDuration || 1;
+	}
+
+	get firstIterationDuration() {
+		return this.result.firstIterationDuration || 1;
+	}
+
 	getPlayers(filter?: SimResultFilter): Array<UnitMetrics> {
 		if (filter?.player || filter?.player === 0) {
 			const player = this.getUnitWithIndex(filter.player);

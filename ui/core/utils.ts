@@ -126,7 +126,7 @@ export function downloadString(data: string, fileName: string) {
 	downloadAnchorNode.remove();
 }
 
-export function formatDeltaTextElem(elem: HTMLElement, before: number, after: number, precision: number, lowerIsBetter?: boolean) {
+export function formatDeltaTextElem(elem: HTMLElement, before: number, after: number, precision: number, lowerIsBetter?: boolean, noColor?: boolean) {
 	const delta = after - before;
 	let deltaStr = delta.toFixed(precision);
 	if (delta >= 0) {
@@ -134,7 +134,10 @@ export function formatDeltaTextElem(elem: HTMLElement, before: number, after: nu
 	}
 	elem.textContent = deltaStr;
 
-	if (delta >= 0 != Boolean(lowerIsBetter)) {
+	if (noColor) {
+		elem.classList.remove('positive');
+		elem.classList.remove('negative');
+	} else if (delta >= 0 != Boolean(lowerIsBetter)) {
 		elem.classList.remove('negative');
 		elem.classList.add('positive');
 	} else {
