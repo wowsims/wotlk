@@ -157,7 +157,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	}
 
 	// Calculate when roar would end if casted now
-	newRoarDur := cat.SavageRoarDurationTable()[cat.ComboPoints()]
+	newRoarDur := cat.SavageRoarDurationTable[cat.ComboPoints()]
 
 	// Clip as soon as we have enough CPs for the new roar to expire well
 	// after the current rip

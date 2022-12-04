@@ -34,7 +34,6 @@ func (druid *Druid) registerSwipeBearSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -71,7 +70,6 @@ func (druid *Druid) registerSwipeCatSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -90,7 +88,7 @@ func (druid *Druid) registerSwipeCatSpell() {
 }
 
 func (druid *Druid) CanSwipeCat() bool {
-	return druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentSwipeCatCost() || druid.ClearcastingAura.IsActive())
+	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentSwipeCatCost()
 }
 
 func (druid *Druid) CurrentSwipeCatCost() float64 {

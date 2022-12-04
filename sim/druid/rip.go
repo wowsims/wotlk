@@ -38,11 +38,10 @@ func (druid *Druid) registerRipSpell() {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating:  core.TernaryFloat64(druid.HasT9FeralSetBonus(4), 5*core.CritRatingPerCritChance, 0.0),
+		BonusCritRating:  core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 4), 5*core.CritRatingPerCritChance, 0.0),
 		DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
 		CritMultiplier:   druid.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -100,7 +99,7 @@ func (druid *Druid) MaxRipTicks() int32 {
 }
 
 func (druid *Druid) CanRip() bool {
-	return druid.InForm(Cat) && druid.ComboPoints() > 0 && ((druid.CurrentEnergy() >= druid.CurrentRipCost()) || druid.ClearcastingAura.IsActive())
+	return druid.InForm(Cat) && druid.ComboPoints() > 0 && druid.CurrentEnergy() >= druid.CurrentRipCost()
 }
 
 func (druid *Druid) CurrentRipCost() float64 {

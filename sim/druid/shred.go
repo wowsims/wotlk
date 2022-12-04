@@ -31,7 +31,6 @@ func (druid *Druid) registerShredSpell() {
 				Cost: baseCost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -73,7 +72,7 @@ func (druid *Druid) registerShredSpell() {
 }
 
 func (druid *Druid) CanShred() bool {
-	return !druid.PseudoStats.InFrontOfTarget && (druid.CurrentEnergy() >= druid.CurrentShredCost() || druid.ClearcastingAura.IsActive())
+	return !druid.PseudoStats.InFrontOfTarget && druid.CurrentEnergy() >= druid.CurrentShredCost()
 }
 
 func (druid *Druid) CurrentShredCost() float64 {

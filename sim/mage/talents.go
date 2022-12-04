@@ -361,7 +361,7 @@ func (mage *Mage) applyMasterOfElements() {
 			}
 			if result.Outcome.Matches(core.OutcomeCrit) {
 				if refundCoeff < 0 {
-					mage.SpendMana(sim, spell.BaseCost*refundCoeff, manaMetrics)
+					mage.SpendMana(sim, -1*spell.BaseCost*refundCoeff, manaMetrics)
 				} else {
 					mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
 				}

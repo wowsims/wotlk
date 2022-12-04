@@ -33,7 +33,6 @@ func (druid *Druid) registerMangleBearSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -89,7 +88,6 @@ func (druid *Druid) registerMangleCatSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -119,7 +117,7 @@ func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
 }
 
 func (druid *Druid) CanMangleCat() bool {
-	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentMangleCatCost() || druid.ClearcastingAura.IsActive())
+	return druid.MangleCat != nil && druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentMangleCatCost()
 }
 
 func (druid *Druid) CurrentMangleCatCost() float64 {

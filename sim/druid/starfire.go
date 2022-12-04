@@ -12,17 +12,9 @@ import (
 const IvoryMoongoddess int32 = 27518
 const ShootingStar int32 = 40321
 
-func (druid *Druid) applySwiftStarfireBonus(sim *core.Simulation, cast *core.Cast) {
-	if druid.SwiftStarfireAura.IsActive() && druid.setBonuses.balance_pvp_4 {
-		cast.CastTime -= 1500 * time.Millisecond
-		druid.SwiftStarfireAura.Deactivate(sim)
-	}
-}
-
 func (druid *Druid) registerStarfireSpell() {
 	actionID := core.ActionID{SpellID: 48465}
 	baseCost := 0.16 * druid.BaseMana
-	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
 	spellCoeff := 1.0
 	bonusCoeff := 0.04 * float64(druid.Talents.WrathOfCenarius)
 
@@ -30,6 +22,7 @@ func (druid *Druid) registerStarfireSpell() {
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == ShootingStar, 165, 0)
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
+	maxMoonfireTicks := druid.moonfireTicks() + core.TernaryInt32(hasGlyph, 3, 0)
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -41,48 +34,26 @@ func (druid *Druid) registerStarfireSpell() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * druid.talentBonuses.moonglow,
+				Cost:     baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*3500 - druid.talentBonuses.starlightWrath,
-			},
-
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				druid.applyNaturesSwiftness(cast)
-				druid.ApplyClearcasting(sim, spell, cast)
-				druid.applySwiftStarfireBonus(sim, cast)
-				if druid.HasActiveAura("Elune's Wrath") {
-					cast.CastTime = 0
-					druid.GetAura("Elune's Wrath").Deactivate(sim)
-				}
+				CastTime: druid.starfireCastTime(),
 			},
 		},
 
 		BonusCritRating: 0 +
-			druid.talentBonuses.naturesMajesty +
-			core.TernaryFloat64(druid.setBonuses.balance_t6_2, 5*core.CritRatingPerCritChance, 0) + // T2-2P
-			core.TernaryFloat64(druid.setBonuses.balance_t7_4, 5*core.CritRatingPerCritChance, 0), // T7-4P
-		DamageMultiplier: (1 + druid.talentBonuses.moonfury) *
-			core.TernaryFloat64(druid.setBonuses.balance_t9_4, 1.04, 1), // T9-4P
-		CritMultiplier:   druid.SpellCritMultiplier(1, druid.talentBonuses.vengeance),
+			2*float64(druid.Talents.NaturesMajesty)*core.CritRatingPerCritChance +
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartRegalia, 4), 5*core.CritRatingPerCritChance, 0) +
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerGarb, 4), 5*core.CritRatingPerCritChance, 0),
+		DamageMultiplier: (1 + []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury]) *
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsRegalia, 4), 1.04, 1),
+		CritMultiplier:   druid.BalanceCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1038, 1222) + ((spell.SpellPower() + idolSpellPower) * spellCoeff) + (spell.SpellPower() * bonusCoeff)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
-				if result.DidCrit() {
-					if druid.Talents.MoonkinForm {
-						druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, true)
-					}
-					if druid.setBonuses.balance_t10_4 {
-						if druid.LasherweaveDot.IsActive() {
-							druid.LasherweaveDot.Refresh(sim)
-						} else {
-							druid.LasherweaveDot.Apply(sim)
-						}
-					}
-				}
-				if hasGlyph && druid.MoonfireDot.IsActive() && druid.MoonfireDot.NumberOfTicks < druid.maxMoonfireTicks() {
+				if hasGlyph && druid.MoonfireDot.IsActive() && druid.MoonfireDot.NumberOfTicks < maxMoonfireTicks {
 					druid.MoonfireDot.NumberOfTicks += 1
 					druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)
 				}
@@ -90,4 +61,8 @@ func (druid *Druid) registerStarfireSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
+}
+
+func (druid *Druid) starfireCastTime() time.Duration {
+	return time.Millisecond*3500 - time.Millisecond*100*time.Duration(druid.Talents.StarlightWrath)
 }

@@ -45,7 +45,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var T84PcProcChance = 0.1
+const T84PcProcChance = 0.1
 
 // T9
 var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
@@ -90,3 +90,16 @@ func (mage *Mage) BloodmagesRegalia2pcAura() *core.Aura {
 		},
 	})
 }
+
+var ItemSetGladiatorsRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.SpellPower, 29)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 88)
+		},
+	},
+})

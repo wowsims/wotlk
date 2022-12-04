@@ -239,6 +239,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-Gladiator'sRegalia"
+ value: {
+  dps: 4270.82104
+  tps: 3563.68944
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 4263.14851
