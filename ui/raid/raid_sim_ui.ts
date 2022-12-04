@@ -23,10 +23,11 @@ import { EventID, TypedEvent } from "../core/typed_event.js";
 import { AssignmentsPicker } from "./assignments_picker.js";
 import { BlessingsPicker } from "./blessings_picker.js";
 import { BuffBot } from "./buff_bot.js";
-import { newRaidExporters, newRaidImporters } from "./import_export.js";
 import { implementedSpecs } from "./presets.js";
 import { RaidPicker } from "./raid_picker.js";
 import { TanksPicker } from "./tanks_picker.js";
+
+import * as ImportExport from "./import_export.js";
 
 declare var Muuri: any;
 declare var tippy: any;
@@ -119,8 +120,10 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.addImportLink(newRaidImporters(this));
-		this.addExportLink(newRaidExporters(this));
+		this.simHeader.addImportLink('JSON', parent => new ImportExport.RaidJsonImporter(parent, this));
+		this.simHeader.addImportLink('WCL', parent => new ImportExport.RaidWCLImporter(parent, this));
+
+		this.simHeader.addExportLink('JSON', parent => new ImportExport.RaidJsonExporter(parent, this));
 	}
 
 	private addRaidTab() {
