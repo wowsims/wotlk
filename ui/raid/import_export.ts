@@ -17,64 +17,7 @@ import { RaidSimUI } from './raid_sim_ui.js';
 declare var $: any;
 declare var tippy: any;
 
-export function newRaidImporters(simUI: RaidSimUI): HTMLElement {
-	const importSettings = document.createElement('div');
-	importSettings.classList.add('import-settings', 'sim-dropdown-menu');
-	importSettings.innerHTML = `
-		<span id='importMenuLink' class='dropdown-toggle fas fa-file-import' role='button' data-bs-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
-		<div class='dropdown-menu dropdown-menu-end' aria-labelledby='importMenuLink'>
-		</div>
-	`;
-	const linkElem = importSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Import',
-		'allowHTML': true,
-	});
-
-	const menuElem = importSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, experimental: boolean, onClick: () => void) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('Json', false, () => new RaidJsonImporter(menuElem, simUI));
-	addMenuItem('WCL', true, () => new RaidWCLImporter(menuElem, simUI));
-
-	return importSettings;
-}
-
-export function newRaidExporters(simUI: RaidSimUI): HTMLElement {
-	const exportSettings = document.createElement('div');
-	exportSettings.classList.add('export-settings', 'sim-dropdown-menu');
-	exportSettings.innerHTML = `
-		<span id='exportMenuLink' class='dropdown-toggle fas fa-file-export' role='button' data-bs-toggle='dropdown' aria-haspopup='true' arai-expanded='false'></span>
-		<div class='dropdown-menu dropdown-menu-end' aria-labelledby='exportMenuLink'>
-		</div>
-	`;
-	const linkElem = exportSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Export',
-		'allowHTML': true,
-	});
-
-	const menuElem = exportSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, onClick: () => void) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('Json', () => new RaidJsonExporter(menuElem, simUI));
-
-	return exportSettings;
-}
-
-class RaidJsonImporter extends Importer {
+export class RaidJsonImporter extends Importer {
 	private readonly simUI: RaidSimUI;
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
 		super(parent, 'JSON Import', true);
@@ -97,7 +40,7 @@ class RaidJsonImporter extends Importer {
 	}
 }
 
-class RaidJsonExporter extends Exporter {
+export class RaidJsonExporter extends Exporter {
 	private readonly simUI: RaidSimUI;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
@@ -111,7 +54,7 @@ class RaidJsonExporter extends Exporter {
 	}
 }
 
-class RaidWCLImporter extends Importer {
+export class RaidWCLImporter extends Importer {
 
 	private queryCounter: number = 0;
 
