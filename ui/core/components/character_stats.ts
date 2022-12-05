@@ -1,4 +1,3 @@
-import { PlayerStats } from '..//proto/api.js';
 import { Stat, Class } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
@@ -12,7 +11,6 @@ import { NumberPicker } from './number_picker';
 import { Component } from './component.js';
 
 import { Popover, Tooltip } from 'bootstrap';
-import { eventNames } from 'process';
 
 declare var tippy: any;
 

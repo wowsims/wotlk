@@ -33,6 +33,10 @@
   .left-gear-panel {
     margin: 0;
   }
+
+  .right-gear-panel {
+    margin-top: $gap-width;
+  }
 }
 
 @media only screen and (max-width: calc(800px + 1vw)) {
