@@ -1,4 +1,4 @@
-import { Dropdown } from 'bootstrap';
+import { Dropdown, Popover, Tooltip } from 'bootstrap';
 import { isDescendant } from './utils';
 
 Dropdown.Default.offset = [0,0];
@@ -38,3 +38,38 @@ body.addEventListener('mouseleave', event => {
       dropdown.hide();
   }
 }, true);
+
+let closePopovers = () => {
+  document.querySelectorAll('[data-bs-toggle="popover"][aria-describedby]').forEach(e => {
+    let p = Popover.getOrCreateInstance(e);
+    p.hide();
+  });
+}
+
+body.addEventListener('show.bs.popover', (event) => {
+  closePopovers();
+
+  document.querySelectorAll('[data-bs-toggle="tooltip"][aria-describedby]').forEach(e => {
+    let t = Tooltip.getOrCreateInstance(e);
+    t.hide();
+  });
+
+  document.querySelectorAll('.tooltip').forEach(e => e.remove());
+}, true);
+
+body.addEventListener('show.bs.tooltip', (event) => {
+  document.querySelectorAll('[data-bs-toggle="tooltip"][aria-describedby]').forEach(e => {
+    let t = Tooltip.getOrCreateInstance(e);
+    t.hide();
+  });
+
+  document.querySelectorAll('.tooltip').forEach(e => e.remove());
+}, true);
+
+document.onkeydown = (event) => {
+  event = event || window.event;
+
+  if (event.key == 'Escape') {
+    closePopovers();
+  }
+}

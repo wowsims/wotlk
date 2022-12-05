@@ -1,6 +1,5 @@
 import { ActionId } from './proto_utils/action_id.js';
 import { BattleElixir, HandType } from './proto/common.js';
-import { BonusStatsPicker } from './components/bonus_stats_picker.js';
 import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
 import { CharacterStats, StatMods } from './components/character_stats.js';
 import { Class } from './proto/common.js';
@@ -372,20 +371,15 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addTab('Gear', 'gear-tab', `
 			<div class="gear-tab-columns">
 				<div class="left-gear-panel">
-					<div class="gear-picker">
-					</div>
+					<div class="gear-picker"></div>
 				</div>
 				<div class="right-gear-panel">
-					<div class="bonus-stats-picker">
-					</div>
-					<div class="saved-gear-manager">
-					</div>
+					<div class="saved-gear-manager"></div>
 				</div>
 			</div>
 		`);
 
 		const gearPicker = new GearPicker(this.rootElem.getElementsByClassName('gear-picker')[0] as HTMLElement, this.player);
-		const bonusStatsPicker = new BonusStatsPicker(this.rootElem.getElementsByClassName('bonus-stats-picker')[0] as HTMLElement, this.player, this.individualConfig.epStats);
 
 		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rootElem.getElementsByClassName('saved-gear-manager')[0] as HTMLElement, this.player, {
 			label: 'Gear',

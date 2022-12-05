@@ -2,7 +2,11 @@
 
 @import "./input";
 
-.number-picker-input {
-  width: 5rem;
-  margin: 5px;
+.number-picker-root {
+  display: flex;
+
+  .number-picker-input {
+    width: 5rem;
+    margin: 5px;
+  }
 }

@@ -22,12 +22,16 @@
 .left-gear-panel {
   min-width: calc(550px + 2vw);
   flex: 3;
-  padding-right: var(--bs-gap);
+  margin-right: $gap-width * 2;
 }
 
 @include media-breakpoint-down(lg) {
   .gear-tab-columns {
     flex-flow: column;
+  }
+
+  .left-gear-panel {
+    margin: 0;
   }
 }
 
@@ -38,24 +42,15 @@
 }
 
 .right-gear-panel {
-  text-align: center;
-  padding-left: var(--bs-gap);
-  border-left: 3px solid var(--main-text-color);
   position: relative;
   flex: 1.25;
   min-width: 250px;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
+
 @media only screen and (max-width: calc(1050px + 2vw)) {
   .right-gear-panel {
     min-width: 275px;
-    border-left: none;
   }
-}
-
-.saved-gear-manager {
-  text-align: right;
 }
 
 .saved-data-set-chip {

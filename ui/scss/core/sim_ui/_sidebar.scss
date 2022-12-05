@@ -33,6 +33,7 @@
 
       .iterations-picker {
         width: 100%;
+        flex-flow: column;
 
         .number-picker-input {
           width: 100%;

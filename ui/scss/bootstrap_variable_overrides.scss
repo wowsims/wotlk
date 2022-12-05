@@ -40,8 +40,11 @@ $theme-colors: map-merge($theme-colors, $class-colors);
   $primary: #e0a335;
 }
 
+$success: #7cfc00;
+
 $custom-colors: (
-  "primary": $primary
+  "primary": $primary,
+  "success": $success
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
@@ -104,5 +107,10 @@ $nav-link-transition: $link-transition;
 $nav-tabs-link-active-bg: transparent;
 $nav-tabs-link-active-color: white;
 
-$tooltip-bg: #424557;
+$popover-bg: #424557;
+$popover-body-color: white;
+$popover-body-padding-x: map.get($spacers, 2);
+$popover-body-padding-y: map.get($spacers, 2);
+
+$tooltip-bg: $popover-bg;
 $tooltip-max-width: 15vw;
