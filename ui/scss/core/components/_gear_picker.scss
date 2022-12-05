@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @import "./filters_menu";
 @import "./popup";
 
@@ -15,11 +17,15 @@
 
 .item-picker-root {
   display: flex;
-  margin: 3px;
+  margin-bottom: map.get($spacers, 2);
 }
 .gear-picker-left .item-picker-root {
   flex-direction: row;
   text-align: left;
+
+  &:nth-child(6) {
+    margin-bottom: map.get($spacers, 5);
+  }
 }
 .gear-picker-right .item-picker-root {
   flex-direction: row-reverse;

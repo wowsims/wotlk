@@ -382,6 +382,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const gearPicker = new GearPicker(this.rootElem.getElementsByClassName('gear-picker')[0] as HTMLElement, this.player);
 
 		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rootElem.getElementsByClassName('saved-gear-manager')[0] as HTMLElement, this.player, {
+			title: {
+				text: "Gear Sets"
+			},
 			label: 'Gear',
 			storageKey: this.getSavedGearStorageKey(),
 			getData: (player: Player<any>) => {

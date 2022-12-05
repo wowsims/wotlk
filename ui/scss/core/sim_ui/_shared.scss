@@ -2,89 +2,65 @@
 
 $sim-header-height: 72px;
 
-html {
-	overflow: hidden;
-}
-
-body {
-  margin: 0;
-}
-
 td, th {
   padding: auto;
 }
 
 .sim-ui {
 	height: 100%;
+	overflow: auto;
 
 	.sim-root {
 		height: 100%;
 		display: flex;
-		flex-wrap: wrap;
-		overflow-y: auto;
-	}
 
-	#noticesBanner {
-		width: 100%;
-		background: lighten($body-bg, 5);
-	}
-		
-	#simSidebar {
-		height: 100%;
-		overflow-y: visible;
-
-		#simTitle {
-			height: $sim-header-height;
-			border-bottom: 1px solid $border-color;
-
-			.sim-title-dropdown-root {
-				height: $sim-header-height - 1px;
+		#simBgImage {
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 20%;
+			right: 0;
+			background-image:
+				linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+				var(--theme-background-image);
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			z-index: -1;
+		}
+	
+		#noticesBanner {
+			width: 100%;
+			background: lighten($body-bg, 5);
+		}
+	
+		#simSidebar {
+			width: 20%;
+	
+			#simTitle {
+				height: $sim-header-height;
+				border-bottom: 1px solid $border-color;
+	
+				.sim-title-dropdown-root {
+					height: $sim-header-height - 1px;
+				}
+			}
+		}
+	
+		#simContent {
+			width: 80%;
+			padding-left: $gap-width * 2;
+			padding-right: $gap-width * 2;
+	
+			#simHeader {
+				height: $sim-header-height;
+				border-bottom: 1px solid $border-color;
 			}
 		}
 	}
-
-	#simHeader {
-		height: $sim-header-height;
-		border-bottom: 1px solid $border-color;
-	}
-
-	#simContent {
-		height: 100%;
-		padding-left: $gap-width * 2;
-  	padding-right: $gap-width * 2;
-		flex: 4;
-  	overflow-y: auto;
-	}
 }
 
-.sim-sidebar-results {
-  flex-grow: 1;
-}
-
-.sim-sidebar-results {
-  height: 100%;
-  position: relative;
-}
-
-.sim-sidebar-results > div {
-  @include vertical-horizontal-center;
-  width: 100%;
-	text-align: center;
-}
-
-.results-pending .loader {
-  margin: auto;
-}
-
-.iterations-label {
-	color: var(--sidebar-text-color);
-}
-
-.results-sim {
-	color: var(--sidebar-text-color);
-	text-shadow: 0 0 10px var(--sidebar-highlight-color);
-}
-
+// TODO: Move these to an organized partial
 .hide-damage-metrics .damage-metrics {
 	display: none !important;
 }
@@ -104,48 +80,47 @@ td, th {
 .hide-in-front-of-target .in-front-of-target {
 	display: none !important;
 }
-
-@include media-breakpoint-down(xxl) {
-	.sim-ui {
-		#simSidebar, #simContent {
-			height: unset;
-			overflow: unset;
-		}
-
-		#simContent {
-			flex: 3;
-		}
-	}
-}
-
-@include media-breakpoint-down(xl) {
-	.sim-ui {
-		.sim-root {
-			flex-direction: column;
-			flex-wrap: nowrap;
-		}
-	}
-}
+// END TODO
 
 @include media-breakpoint-down(lg) {
 	$sim-header-height: 65px;
 
 	.sim-ui {
-		#simSidebar #simTitle {
-			height: $sim-header-height;
-	
-			.sim-title-dropdown-root {
-				height: $sim-header-height - 1px;
+		.sim-root {
+			flex-direction: column;
+			flex-wrap: nowrap;
+
+			#simBgImage {
+				left: 0;
 			}
-		}
 
-		#simHeader {
-			height: $sim-header-height;
-		}
+			#simSidebar, #simContent {
+				width: 100%;
+			}
 
-		#simContent {
-			padding-left: $gap-width;
-    	padding-right: $gap-width;
+			#simSidebar {
+				#simTitle {
+					height: $sim-header-height;
+		
+					.sim-title-dropdown-root {
+						height: $sim-header-height - 1px;
+					}
+				}
+
+				#simSidebarContent {
+					padding-left: $gap-width-sm;
+					padding-right: $gap-width-sm;
+				}
+			}
+
+			#simContent {
+				padding-left: $gap-width-sm;
+				padding-right: $gap-width-sm;
+
+				#simHeader {
+					height: $sim-header-height;
+				}
+			}
 		}
 	}
 }
