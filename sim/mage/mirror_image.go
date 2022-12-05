@@ -13,6 +13,21 @@ func (mage *Mage) registerMirrorImageCD() {
 	baseCost := mage.BaseMana * 0.1
 	summonDuration := time.Second * 30
 
+	var t10Aura *core.Aura
+	if mage.HasSetBonus(ItemSetBloodmagesRegalia, 4) {
+		t10Aura = mage.RegisterAura(core.Aura{
+			Label:    "Mirror Image Bonus Damage T10 4PC",
+			ActionID: core.ActionID{SpellID: 70748},
+			Duration: time.Second * 30,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				mage.PseudoStats.DamageDealtMultiplier *= 1.18
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				mage.PseudoStats.DamageDealtMultiplier /= 1.18
+			},
+		})
+	}
+
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 55342},
 
@@ -32,8 +47,8 @@ func (mage *Mage) registerMirrorImageCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mage.mirrorImage.EnableWithTimeout(sim, mage.mirrorImage, summonDuration)
-			if mage.MageTier.t10_4 {
-				bloodmageDamageAura.Activate(sim)
+			if t10Aura != nil {
+				t10Aura.Activate(sim)
 			}
 		},
 	})

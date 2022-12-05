@@ -30,7 +30,7 @@ type CapacitorDamageEffect struct {
 	Name      string
 	ID        int32
 	MaxStacks int32
-	Trigger   ProcTrigger
+	Trigger   core.ProcTrigger
 
 	School core.SpellSchool
 	MinDmg float64
@@ -74,7 +74,7 @@ func newCapacitorDamageEffect(config CapacitorDamageEffect) {
 			capacitorAura.Activate(sim)
 			capacitorAura.AddStack(sim)
 		}
-		MakeProcTriggerAura(&character.Unit, config.Trigger)
+		core.MakeProcTriggerAura(&character.Unit, config.Trigger)
 	})
 }
 
@@ -85,8 +85,8 @@ func init() {
 		Name:      "Thunder Capacitor",
 		ID:        38072,
 		MaxStacks: 4,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
+		Trigger: core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2500,
@@ -99,8 +99,8 @@ func init() {
 		Name:      "Reign of the Unliving",
 		ID:        47182,
 		MaxStacks: 3,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
+		Trigger: core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
@@ -113,8 +113,8 @@ func init() {
 		Name:      "Reign of the Unliving H",
 		ID:        47188,
 		MaxStacks: 3,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
+		Trigger: core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
@@ -130,8 +130,8 @@ func init() {
 		Name:      "Reign of the Dead",
 		ID:        47316,
 		MaxStacks: 3,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
+		Trigger: core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
@@ -144,8 +144,8 @@ func init() {
 		Name:      "Reign of the Dead H",
 		ID:        47477,
 		MaxStacks: 3,
-		Trigger: ProcTrigger{
-			Callback: OnSpellHitDealt,
+		Trigger: core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
@@ -222,9 +222,9 @@ func init() {
 				},
 			})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
-				Callback:   OnSpellHitDealt,
+				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMelee,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.45,

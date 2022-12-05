@@ -14,10 +14,6 @@
 	--sidebar-highlight-color: Blue;
 }
 
-.hide {
-	display: none !important;
-}
-
 @font-face {
 	font-family: SimDefaultFont;
 	src: url(/wotlk/assets/fonts/PlusJakartaSans-Regular.woff2);
@@ -280,32 +276,4 @@ legend {
 	&:hover {
 		color: var(--main-text-color);
 	}
-}
-
-.nav-tabs {
-	align-items: flex-end;
-	font-size: clamp(10px, 1.5vw, 15px);
-
-	.nav-item:not(:first-child):not(:last-child) {
-		.nav-link {
-			margin-left: .1vw;
-			margin-right: .1vw
-		};
-	}
-
-	.nav-link {
-		margin-bottom: 0;
-		border-radius: 0;
-		color: var(--main-text-color) !important;
-		font-weight: 700;
-
-		&:hover, &.active {
-			background-color: var(--theme-color-primary);
-			border-color: var(--theme-color-primary);
-		}
-	}
-}
-
-.tab-pane {
-	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
 }

@@ -21,6 +21,14 @@
   display: flex;
 }
 
+.link-danger {
+  color: $link-danger-color !important;
+
+  &:hover, &:focus, &.active {
+    color: darken($link-danger-color, 3) !important;
+  }
+}
+
 .navbar {
   .navbar-toggler {
     border: 0;
@@ -31,6 +39,39 @@
   .nav-link {
     display: flex;
     align-items: center;
+    white-space: nowrap;
+  }
+}
+
+.nav-tabs {
+  .nav-item {
+    .nav-link {
+      margin-bottom: 0;
+      border: 0;
+      font-size: $content-font-size;
+      font-weight: bold;
+      white-space: nowrap;
+
+      &.active {
+        position: relative;
+
+        &::after {
+          content: "";
+          position: absolute;
+          height: 2px;
+          background: $nav-tabs-link-active-color;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  .tooltip {
+    --bs-tooltip-max-width: #{$tooltip-max-width-lg};
   }
 }
 
@@ -74,5 +115,11 @@
         }
       }
     }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .tooltip {
+    --bs-tooltip-max-width: #{$tooltip-max-width-sm};
   }
 }

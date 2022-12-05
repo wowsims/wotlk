@@ -239,6 +239,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-Gladiator'sRegalia"
+ value: {
+  dps: 6466.76449
+  tps: 3875.90487
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 6626.56635
@@ -290,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-KirinTorGarb"
  value: {
-  dps: 6227.73768
-  tps: 3729.94693
+  dps: 6341.04684
+  tps: 3797.06525
  }
 }
 dps_results: {
@@ -425,13 +432,6 @@ dps_results: {
  value: {
   dps: 6400.5233
   tps: 3842.18322
- }
-}
-dps_results: {
- key: "TestArcane-AllItems-Sunstrider'sRegalia"
- value: {
-  dps: 6322.67936
-  tps: 3791.30607
  }
 }
 dps_results: {

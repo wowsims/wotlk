@@ -1,7 +1,9 @@
 package healing
 
 import (
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (hpriest *HealingPriest) OnGCDReady(sim *core.Simulation) {
@@ -9,10 +11,14 @@ func (hpriest *HealingPriest) OnGCDReady(sim *core.Simulation) {
 }
 
 func (hpriest *HealingPriest) tryUseGCD(sim *core.Simulation) {
-	spell := hpriest.chooseSpell(sim)
+	if hpriest.CustomRotation != nil {
+		hpriest.CustomRotation.Cast(sim)
+	} else {
+		spell := hpriest.chooseSpell(sim)
 
-	if success := spell.Cast(sim, hpriest.CurrentTarget); !success {
-		hpriest.WaitForMana(sim, spell.CurCast.Cost)
+		if success := spell.Cast(sim, hpriest.CurrentTarget); !success {
+			hpriest.WaitForMana(sim, spell.CurCast.Cost)
+		}
 	}
 }
 
@@ -29,4 +35,78 @@ func (hpriest *HealingPriest) chooseSpell(sim *core.Simulation) *core.Spell {
 		hpriest.nextCycleIndex = (hpriest.nextCycleIndex + 1) % len(hpriest.spellCycle)
 		return spell
 	}
+}
+
+func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
+	return common.NewCustomRotation(hpriest.rotation.CustomRotation, hpriest.GetCharacter(), map[int32]common.CustomSpell{
+		int32(proto.HealingPriest_Rotation_GreaterHeal): {
+			Spell: hpriest.GreaterHeal,
+		},
+		int32(proto.HealingPriest_Rotation_FlashHeal): {
+			Spell: hpriest.FlashHeal,
+		},
+		int32(proto.HealingPriest_Rotation_Renew): {
+			Spell: hpriest.Renew,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				for _, unit := range hpriest.Env.AllUnits {
+					renewHot := hpriest.RenewHots[unit.UnitIndex]
+					if renewHot != nil && !renewHot.IsActive() {
+						success := hpriest.Renew.Cast(sim, unit)
+						return success, hpriest.Renew.CurCast.Cost
+					}
+				}
+				panic("No valid Renew target")
+			},
+			Condition: func(sim *core.Simulation) bool {
+				for _, unit := range hpriest.Env.AllUnits {
+					renewHot := hpriest.RenewHots[unit.UnitIndex]
+					if renewHot != nil && !renewHot.IsActive() {
+						return true
+					}
+				}
+				return false
+			},
+		},
+		int32(proto.HealingPriest_Rotation_PowerWordShield): {
+			Spell: hpriest.PowerWordShield,
+			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
+				for _, unit := range hpriest.Env.AllUnits {
+					if hpriest.CanCastPWS(sim, unit) {
+						success := hpriest.PowerWordShield.Cast(sim, unit)
+						return success, hpriest.PowerWordShield.CurCast.Cost
+					}
+				}
+				panic("No valid PowerWordShield target")
+			},
+			Condition: func(sim *core.Simulation) bool {
+				for _, unit := range hpriest.Env.AllUnits {
+					if hpriest.CanCastPWS(sim, unit) {
+						return true
+					}
+				}
+				return false
+			},
+		},
+		int32(proto.HealingPriest_Rotation_CircleOfHealing): {
+			Spell: hpriest.CircleOfHealing,
+		},
+		int32(proto.HealingPriest_Rotation_PrayerOfHealing): {
+			Spell: hpriest.PrayerOfHealing,
+		},
+		int32(proto.HealingPriest_Rotation_PrayerOfMending): {
+			Spell: hpriest.PrayerOfMending,
+			Condition: func(sim *core.Simulation) bool {
+				return hpriest.PrayerOfMending.IsReady(sim)
+			},
+		},
+		int32(proto.HealingPriest_Rotation_Penance): {
+			Spell: hpriest.PenanceHeal,
+			Condition: func(sim *core.Simulation) bool {
+				return hpriest.PenanceHeal.IsReady(sim)
+			},
+		},
+		int32(proto.HealingPriest_Rotation_BindingHeal): {
+			Spell: hpriest.BindingHeal,
+		},
+	})
 }

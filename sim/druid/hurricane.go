@@ -50,13 +50,11 @@ func (druid *Druid) registerHurricaneSpell() {
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 10,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				druid.applyNaturesSwiftness(cast)
-				druid.ApplyClearcasting(sim, spell, cast)
-			},
 		},
 
-		DamageMultiplier: 1 + druid.talentBonuses.galeWinds + druid.talentBonuses.genesis,
+		DamageMultiplier: 1 +
+			0.15*float64(druid.Talents.GaleWinds) +
+			0.01*float64(druid.Talents.Genesis),
 		ThreatMultiplier: 1,
 		CritMultiplier:   1,
 

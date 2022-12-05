@@ -39,7 +39,7 @@ type StatWeightsResult struct {
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
 		Dps:  swr.Dps.ToProto(),
-		Hps:  swr.Dps.ToProto(),
+		Hps:  swr.Hps.ToProto(),
 		Tps:  swr.Tps.ToProto(),
 		Dtps: swr.Dtps.ToProto(),
 	}
@@ -159,23 +159,23 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 			resultLow.Hps.Weights[stat] = hpsDiff
 			resultLow.Tps.Weights[stat] = tpsDiff
 			resultLow.Dtps.Weights[stat] = dtpsDiff
-			resultLow.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
-			resultLow.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
-			resultLow.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
-			resultLow.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
+			resultLow.Dps.WeightsStdev[stat] = math.Sqrt(math.Pow(dpsMetrics.Stdev, 2)+math.Pow(baselineDpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultLow.Hps.WeightsStdev[stat] = math.Sqrt(math.Pow(hpsMetrics.Stdev, 2)+math.Pow(baselineHpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultLow.Tps.WeightsStdev[stat] = math.Sqrt(math.Pow(tpsMetrics.Stdev, 2)+math.Pow(baselineTpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultLow.Dtps.WeightsStdev[stat] = math.Sqrt(math.Pow(dtpsMetrics.Stdev, 2)+math.Pow(baselineDtpsMetrics.Stdev, 2)) / math.Abs(value)
 			dpsHistsLow[stat] = dpsMetrics.Hist
 			hpsHistsLow[stat] = hpsMetrics.Hist
 			tpsHistsLow[stat] = tpsMetrics.Hist
 			dtpsHistsLow[stat] = dtpsMetrics.Hist
 		} else {
 			resultHigh.Dps.Weights[stat] = dpsDiff
-			resultHigh.Hps.Weights[stat] = tpsDiff
+			resultHigh.Hps.Weights[stat] = hpsDiff
 			resultHigh.Tps.Weights[stat] = tpsDiff
 			resultHigh.Dtps.Weights[stat] = dtpsDiff
-			resultHigh.Dps.WeightsStdev[stat] = dpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Hps.WeightsStdev[stat] = hpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Tps.WeightsStdev[stat] = tpsMetrics.Stdev / math.Abs(value)
-			resultHigh.Dtps.WeightsStdev[stat] = dtpsMetrics.Stdev / math.Abs(value)
+			resultHigh.Dps.WeightsStdev[stat] = math.Sqrt(math.Pow(dpsMetrics.Stdev, 2)+math.Pow(baselineDpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultHigh.Hps.WeightsStdev[stat] = math.Sqrt(math.Pow(hpsMetrics.Stdev, 2)+math.Pow(baselineHpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultHigh.Tps.WeightsStdev[stat] = math.Sqrt(math.Pow(tpsMetrics.Stdev, 2)+math.Pow(baselineTpsMetrics.Stdev, 2)) / math.Abs(value)
+			resultHigh.Dtps.WeightsStdev[stat] = math.Sqrt(math.Pow(dtpsMetrics.Stdev, 2)+math.Pow(baselineDtpsMetrics.Stdev, 2)) / math.Abs(value)
 			dpsHistsHigh[stat] = dpsMetrics.Hist
 			hpsHistsHigh[stat] = hpsMetrics.Hist
 			tpsHistsHigh[stat] = tpsMetrics.Hist
@@ -194,8 +194,6 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 	const defaultStatMod = 10.0
 	const meleeHitStatMod = defaultStatMod
 	const spellHitStatMod = defaultStatMod
-	//const meleeHitStatMod = MeleeHitRatingPerHitChance * 0.5
-	//const spellHitStatMod = SpellHitRatingPerHitChance * 0.5
 	statModsLow := stats.Stats{}
 	statModsHigh := stats.Stats{}
 
@@ -260,7 +258,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 
 	for _, stat := range statsToWeigh {
 		// Check for hard caps. Hard caps will have a high diff of exactly 0 because RNG is fixed.
-		if resultHigh.Dps.Weights[stat] == 0 {
+		if resultHigh.Dps.Weights[stat] == 0 && resultHigh.Hps.Weights[stat] == 0 {
 			statModsHigh[stat] = 0
 			continue
 		}

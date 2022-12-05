@@ -3,14 +3,11 @@
 @import "../components/sim_title_dropdown";
 
 #simSidebar {
-  height: 100%;
-  min-width: 250px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   background: $body-bg;
   flex: 1;
-	overflow-y: visible;
 
   #simSidebarContent {
     padding-top: $gap-width;
@@ -22,28 +19,49 @@
     flex-grow: 1;
 
     .sim-sidebar-actions {
+      padding-left: $gap-width * 2;
+      padding-right: $gap-width * 2;
       display: flex;
       flex-direction: column;
       align-items: center;
-    
-      .sim-sidebar-actions-button {
-        width: 150px;
-        height: 40px;
-        cursor: pointer;
-        margin: 5px;
-      
-        // TODO: Use bootstrap buttons
-        background: transparent;
-        color: var(--main-text-color);
-        border: 1px solid var(--theme-color-primary);
-        font-weight: 1000;
-        transition: all .2s ease-in;
 
-        &:hover {
-          color: var(--main-text-color);
-          background: var(--theme-color-primary);
+      &> * {
+        margin-bottom: map.get($spacers, 3);
+      }
+
+      .iterations-picker {
+        width: 100%;
+        flex-flow: column;
+
+        .number-picker-input {
+          width: 100%;
+          margin: 0;
         }
       }
+    }
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  #simSidebar {
+    #simSidebarContent {
+      padding-left: $gap-width-sm * 2;
+      padding-right: $gap-width-sm * 2;
+
+      .sim-sidebar-actions {
+        padding: 0;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  #simSidebar {
+    #simSidebarContent {
+      padding-top: $gap-width-sm * 2;
+      padding-bottom: $gap-width-sm;
+      padding-left: $gap-width-sm;
+      padding-right: $gap-width-sm;
     }
   }
 }

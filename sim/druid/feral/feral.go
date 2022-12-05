@@ -42,6 +42,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Options.PrepopOoc
+	cat.RaidBuffTargets = int(core.MaxInt32(feralOptions.Rotation.RaidTargets, 1))
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -76,6 +77,7 @@ type FeralDruid struct {
 	prepopOoc      bool
 	missChance     float64
 	readyToShift   bool
+	readyToGift    bool
 	waitingForTick bool
 	latency        time.Duration
 	maxRipTicks    int32

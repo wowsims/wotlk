@@ -59,9 +59,9 @@ func init() {
 					return character.NewTemporaryStatsAura("DMC Greatness "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       "DMC Greatness",
-				Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
+				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
@@ -92,9 +92,9 @@ func init() {
 					return character.NewTemporaryStatsAura(name+" "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
-				Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
+				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,

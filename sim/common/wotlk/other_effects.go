@@ -25,9 +25,9 @@ func init() {
 			}
 		})
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Essence of Gossamer Trigger",
-			Callback:   OnSpellHitTaken,
+			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
 			Harmful:    true,
 			ProcChance: 0.05,
@@ -91,9 +91,9 @@ func init() {
 				return
 			}
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
-				Callback:   OnSpellHitDealt,
+				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMeleeOrRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.35,
@@ -117,9 +117,9 @@ func init() {
 		actionID := core.ActionID{ItemID: 40382}
 		manaMetrics := character.NewManaMetrics(actionID)
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Soul of the Dead",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskSpellDamage,
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.25,
@@ -198,8 +198,8 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 184, stats.SpellCrit: 184},
 		})
 
-		applyProcTriggerCallback(&character.Unit, activeAura, ProcTrigger{
-			Callback: OnSpellHitDealt,
+		core.ApplyProcTriggerCallback(&character.Unit, activeAura, core.ProcTrigger{
+			Callback: core.CallbackOnSpellHitDealt,
 			ProcMask: core.ProcMaskSpellDamage,
 			Outcome:  core.OutcomeCrit,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
@@ -289,9 +289,9 @@ func init() {
 				Duration: time.Second * 30,
 			}
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
-				Callback: OnSpellHitTaken,
+				Callback: core.CallbackOnSpellHitTaken,
 				ProcMask: core.ProcMaskMelee,
 				Harmful:  true,
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
@@ -328,9 +328,9 @@ func init() {
 				BonusPerStack: stats.Stats{stats.SpellPower: amount},
 			})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
-				Callback:   OnSpellHitDealt,
+				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskSpellDamage,
 				Harmful:    true,
 				ProcChance: 0.10,

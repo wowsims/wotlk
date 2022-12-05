@@ -45,8 +45,8 @@ character_stats_results: {
 dps_results: {
  key: "TestWarlock-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 7022.54262
-  tps: 6301.35069
+  dps: 7022.41252
+  tps: 6301.22059
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7039.27301
-  tps: 6302.85882
+  dps: 7039.30366
+  tps: 6302.8884
  }
 }
 dps_results: {
@@ -353,43 +353,43 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9981.67586
-  tps: 10999.61773
+  dps: 10616.96388
+  tps: 11601.04679
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6319.87834
-  tps: 5361.47576
+  dps: 6795.45264
+  tps: 5790.5857
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7187.08582
-  tps: 6030.22503
+  dps: 7721.47054
+  tps: 6508.26194
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7055.04563
-  tps: 9168.98544
+  dps: 7321.18968
+  tps: 9398.54966
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3721.39337
-  tps: 3453.50859
+  dps: 3905.44562
+  tps: 3621.65476
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3890.26424
-  tps: 3521.23585
+  dps: 4061.05518
+  tps: 3675.25085
  }
 }
 dps_results: {

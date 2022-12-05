@@ -1,6 +1,6 @@
 @use "sass:map";
 
-$header-height: 65px;
+$sim-header-height: 72px;
 
 html {
 	overflow: hidden;
@@ -24,20 +24,37 @@ td, th {
 		overflow-y: auto;
 	}
 
-	#simSidebar #simTitle, #simHeader {
-		height: $header-height;
+	#noticesBanner {
+		width: 100%;
+		background: lighten($body-bg, 5);
+	}
+		
+	#simSidebar {
+		height: 100%;
+		overflow-y: visible;
+
+		#simTitle {
+			height: $sim-header-height;
+			border-bottom: 1px solid $border-color;
+
+			.sim-title-dropdown-root {
+				height: $sim-header-height - 1px;
+			}
+		}
+	}
+
+	#simHeader {
+		height: $sim-header-height;
 		border-bottom: 1px solid $border-color;
 	}
-}
 
-.iterations-picker {
-  text-align: center;
-}
-
-.iterations-picker .input-label {
-  color: var(--sidebar-text-color);
-  font-size: 16px;
-  font-weight: 700;
+	#simContent {
+		height: 100%;
+		padding-left: $gap-width * 2;
+  	padding-right: $gap-width * 2;
+		flex: 4;
+  	overflow-y: auto;
+	}
 }
 
 .sim-sidebar-results {
@@ -68,102 +85,6 @@ td, th {
 	text-shadow: 0 0 10px var(--sidebar-highlight-color);
 }
 
-.sim-main {
-  height: 100%;
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-	background-image:
-		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
-		var(--theme-background-image);
-	background-size: cover;
-	background-position: center center;
-  color: var(--main-text-color);
-  overflow-y: auto;
-  flex: 4;
-  min-width: calc(275px + 1vw);
-
-	.tab-pane {
-		overflow-y: auto;
-	}
-}
-
-.sim-main > .tab-content {
-	flex-grow: 1;
-	height: 80%;
-}
-.sim-main > .tab-content > .tab-pane {
-	height: 100%;
-}
-
-.sim-dropdown-menu {
-	position: relative;
-}
-.sim-dropdown-menu .dropdown-menu {
-	background-color: #111218;
-	border: 1px solid var(--theme-color-primary);
-	text-align: right;
-	min-width: auto;
-	font-weight: bold;
-	top: 120%;
-}
-.sim-dropdown-menu .dropdown-item {
-	display: block;
-	padding: 5px 20px;
-	user-select: none;
-	white-space: nowrap;
-}
-.sim-dropdown-menu .dropdown-item:hover {
-	background-color: #2a2c3b;
-}
-
-.notices {
-	font-size: 30px;
-	color: blue;
-	margin: 0 20px;
-	text-shadow:
-			0 0 10px white,
-			0 0 10px white,
-			0 0 10px white;
-}
-
-.warnings {
-	font-size: 30px;
-	color: yellow;
-	margin: 0 20px;
-	text-shadow:
-			0 0 10px red,
-			0 0 10px red,
-			0 0 10px red;
-}
-
-.known-issues {
-	display: none;
-	background-color: red;
-	border: 2px solid var(--main-text-color);
-	padding: 2px;
-	font-size: 14px;
-	font-weight: 900;
-}
-
-.downbin {
-	mask: url(/wotlk/assets/img/gauge.svg);
-	mask-size: cover;
-	-webkit-mask: url(/wotlk/assets/img/gauge.svg);
-	-webkit-mask-size: cover;
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-}
-
-.downbinnorm {
-	background-color: white;
-}
-
-.downbinalert {
-	background-color: red;
-}
-
 .hide-damage-metrics .damage-metrics {
 	display: none !important;
 }
@@ -184,21 +105,56 @@ td, th {
 	display: none !important;
 }
 
-// TODO: Replace with Bootstrap media query once on to node module
-@media only screen and (max-width: 992px) {
-	#simHeader {
-		overflow-x: scroll;
+@include media-breakpoint-down(xxl) {
+	.sim-ui {
+		#simSidebar, #simContent {
+			height: unset;
+			overflow: unset;
+		}
 
-		.sim-tabs {
-			flex-wrap: nowrap;
-
-			.sim-link {
-				white-space: nowrap;
-			}
+		#simContent {
+			flex: 3;
 		}
 	}
+}
 
-	.known-issues {
-		white-space: nowrap;
+@include media-breakpoint-down(xl) {
+	.sim-ui {
+		.sim-root {
+			flex-direction: column;
+			flex-wrap: nowrap;
+		}
+	}
+}
+
+@include media-breakpoint-down(lg) {
+	$sim-header-height: 65px;
+
+	.sim-ui {
+		#simSidebar #simTitle {
+			height: $sim-header-height;
+	
+			.sim-title-dropdown-root {
+				height: $sim-header-height - 1px;
+			}
+		}
+
+		#simHeader {
+			height: $sim-header-height;
+		}
+
+		#simContent {
+			padding-left: $gap-width;
+    	padding-right: $gap-width;
+		}
+	}
+}
+
+@include media-breakpoint-down(sm) {
+  .sim-ui {
+		#simContent {
+			padding-left: $gap-width-sm;
+			padding-right: $gap-width-sm;
+		}
 	}
 }

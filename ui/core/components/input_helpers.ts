@@ -459,6 +459,7 @@ interface WrappedCustomRotationInputConfig<SpecType extends Spec, T> {
 	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
 
 	numColumns: number,
+	showCastsPerMinute?: boolean,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 
 	showWhen?: (player: Player<SpecType>) => boolean,
@@ -474,6 +475,7 @@ export function makeCustomRotationInput<SpecType extends Spec, T>(config: Wrappe
 		}),
 		showWhen: config.showWhen,
 		numColumns: config.numColumns,
+		showCastsPerMinute: config.showCastsPerMinute || false,
 		values: config.values,
 	}
 }

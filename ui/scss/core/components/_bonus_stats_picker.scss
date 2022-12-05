@@ -1,11 +1,23 @@
+.bonus-stats-picker {
+	.bonus-stats-root {
+		margin-bottom: $gap-width * 2;
+		text-align: right;
+
+		.number-picker-root {
+			display: flex;
+  		align-items: center;
+			justify-content: flex-end;
+
+			.form-label {
+				margin: 1px;
+			}
+		}
+	}
+}
+
 .bonus-stats-label {
   font-size: 18px;
   font-weight: 700;
-}
-
-.bonus-stats-root .number-picker-root {
-  display: flex;
-  align-items: center;
 }
 
 .bonus-stats-root .input-label-div {

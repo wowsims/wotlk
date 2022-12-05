@@ -79,6 +79,7 @@ If you want to develop on Windows, we recommend setting up a Ubuntu virtual mach
 We use a makefile for our build system. These commands will usually be all you need while developing for this project:
 ```sh
 # Installs a pre-commit git hook so that your go code is automatically formatted (if you don't use an IDE that supports that).  If you want to manually format go code you can run make fmt.
+# Also installs `air` to reload the dev servers automatically
 make setup
 
 # Run all the tests. Currently only the backend sim has tests.
@@ -92,6 +93,9 @@ make update-tests
 # Recompiles the entire client before launching using `make dist/wotlk`
 make host
 
+# With file-watching so the server auto-restarts and recompiles on Go or TS changes:
+WATCH=1 make host
+
 # Delete all generated files (.pb.go and .ts proto files, and dist/)
 make clean
 
@@ -102,6 +106,9 @@ make host_$spec
 # This is the fastest way to iterate on core go simulator code so you don't have to wait for client rebuilds.
 # To rebuild client for a spec just do 'make $spec' and refresh browser.
 make rundevserver
+
+# With file-watching so the server auto-restarts and recompiles on Go or TS changes:
+WATCH=1 make rundevserver
 
 # Creates the 'wowsimwotlk' binary that can host the UI and run simulations natively (instead of with wasm).
 # Builds the UI and the compiles it into the binary so that you can host the sim as a server instead of wasm on the client.

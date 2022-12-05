@@ -64,13 +64,6 @@ func (warlock *Warlock) ApplyTalents() {
 				warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
 			}
 		}
-		// Extract stats for demonic knowledge
-		if warlock.Talents.DemonicKnowledge > 0 {
-			petChar := warlock.Pet.GetCharacter()
-			bonus := (petChar.GetStat(stats.Stamina) + petChar.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
-			warlock.AddStat(stats.SpellPower, bonus)
-			//TODO : pet buffs influence
-		}
 	}
 
 	// Demonic Tactics, applies even without pet out

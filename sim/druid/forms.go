@@ -37,6 +37,8 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 		druid.CatFormAura.Deactivate(sim)
 	} else if druid.InForm(Bear) {
 		druid.BearFormAura.Deactivate(sim)
+	} else if druid.InForm(Moonkin) {
+		panic("cant clear moonkin form")
 	}
 	druid.form = Humanoid
 	druid.SetCurrentPowerBar(core.ManaBar)
@@ -51,11 +53,7 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 	druid.CatFormAura.Deactivate(sim)
 	druid.TryUseCooldowns(sim)
 
-	if druid.GCD.IsReady(sim) {
-		return druid.CatForm.Cast(sim, nil)
-	}
-
-	return true
+	return druid.CatForm.Cast(sim, nil)
 }
 
 // Handles things that function for *both* cat/bear
@@ -152,6 +150,10 @@ func (druid *Druid) registerCatFormSpell() {
 			if druid.BerserkAura.IsActive() {
 				druid.PseudoStats.CostMultiplier *= 2.0
 			}
+
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(0)
+			druid.AutoAttacks.ReplaceMHSwing = nil
+			druid.AutoAttacks.EnableAutoSwing(sim)
 		},
 	})
 
@@ -268,6 +270,10 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.UpdateManaRegenRates()
 			druid.EnrageAura.Deactivate(sim)
 			druid.MaulQueueAura.Deactivate(sim)
+
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(0)
+			druid.AutoAttacks.ReplaceMHSwing = nil
+			druid.AutoAttacks.EnableAutoSwing(sim)
 		},
 	})
 
@@ -323,4 +329,32 @@ func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 			}
 		}
 	}
+}
+
+func (druid *Druid) applyMoonkinForm() {
+	if !druid.InForm(Moonkin) || !druid.Talents.MoonkinForm {
+		return
+	}
+
+	druid.MultiplyStat(stats.Intellect, 1+(0.02*float64(druid.Talents.Furor)))
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
+	if druid.Talents.ImprovedMoonkinForm > 0 {
+		druid.AddStatDependency(stats.Spirit, stats.SpellPower, 0.1*float64(druid.Talents.ImprovedMoonkinForm))
+	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
+	druid.RegisterAura(core.Aura{
+		Label:    "Moonkin Form",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				if spell == druid.Moonfire || spell == druid.Starfire || spell == druid.Wrath {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, false)
+				}
+			}
+		},
+	})
 }

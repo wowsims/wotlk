@@ -22,21 +22,16 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 		this.positive = config.positive || false;
 
 		this.inputElem = document.createElement('input');
-		if (this.float) {
-			this.inputElem.type = 'text';
-			this.inputElem.inputMode = 'numeric';
-		} else {
-			this.inputElem.type = 'number';
-			if (this.positive) {
-				this.inputElem.min = "0"
-				this.inputElem.onchange = e => {
-					this.inputElem.value = Math.abs(parseInt(this.inputElem.value)).toString()
-				}
+		this.inputElem.type = 'text';
+		this.inputElem.classList.add('form-control', 'number-picker-input');
+
+		if (this.positive) {
+			this.inputElem.onchange = e => {
+				this.inputElem.value = Math.abs(parseInt(this.inputElem.value)).toString()
 			}
 		}
-		this.inputElem.classList.add('number-picker-input');
-		this.rootElem.appendChild(this.inputElem);
 
+		this.rootElem.appendChild(this.inputElem);
 		this.init();
 
 		this.inputElem.addEventListener('change', event => {
