@@ -68,105 +68,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFishFeast,
 });
 
-
-export const SWP_PRESET = {
-	name: 'SWP Pre-Raid Preset',
-	tooltip: "Pre-raid preset that includes some gear from SWP.",
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 34332,
-			"enchant": 3820,
-			"gems": [
-				40049,
-				41285
-			]
-		},
-		{
-			"id": 37595
-		},
-		{
-			"id": 31023,
-			"enchant": 3810,
-			"gems": [
-				42144,
-				40049
-			]
-		},
-		{
-			"id": 41610,
-			"enchant": 3722
-		},
-		{
-			"id": 39592,
-			"enchant": 3832,
-			"gems": [
-				42144,
-				40025
-			]
-		},
-		{
-			"id": 34437,
-			"enchant": 2332,
-			"gems": [
-				40049,
-				0
-			]
-		},
-		{
-			"id": 34344,
-			"enchant": 3246,
-			"gems": [
-				40049,
-				42144,
-				0
-			]
-		},
-		{
-			"id": 34542,
-			"gems": [
-				40049,
-				39998
-			]
-		},
-		{
-			"id": 37791,
-			"enchant": 3719
-		},
-		{
-			"id": 34566,
-			"enchant": 3826,
-			"gems": [
-				40049
-			]
-		},
-		{
-			"id": 43253,
-			"gems": [
-				40027
-			]
-		},
-		{
-			"id": 37694
-		},
-		{
-			"id": 40682
-		},
-		{
-			"id": 37873
-		},
-		{
-			"id": 41384,
-			"enchant": 3834
-		},
-		{
-			"id": 40698
-		},
-		{
-			"id": 32330
-		}
-  ]}`),
-};
-
 export const PRE_RAID_PRESET = {
 	name: 'Pre-raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -352,4 +253,123 @@ export const P1_PRESET = {
 			"id": 40267
 		}
   ]}`),
+};
+
+export const P2_PRESET = {
+	name: 'P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+		  "id": 46209,
+		  "enchant": 3820,
+		  "gems": [
+			41285,
+			40048
+		  ]
+		},
+		{
+		  "id": 45933,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 46211,
+		  "enchant": 3810,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45242,
+		  "enchant": 3722,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45867,
+		  "enchant": 3832,
+		  "gems": [
+			39998,
+			39998
+		  ]
+		},
+		{
+		  "id": 45460,
+		  "enchant": 2332,
+		  "gems": [
+			39998,
+			0
+		  ]
+		},
+		{
+		  "id": 46207,
+		  "enchant": 3604,
+		  "gems": [
+			39998,
+			0
+		  ]
+		},
+		{
+		  "id": 45616,
+		  "enchant": 3599,
+		  "gems": [
+			39998,
+			39998,
+			39998
+		  ]
+		},
+		{
+		  "id": 46210,
+		  "enchant": 3721,
+		  "gems": [
+			39998,
+			40027
+		  ]
+		},
+		{
+		  "id": 45537,
+		  "enchant": 3606,
+		  "gems": [
+			39998,
+			40027
+		  ]
+		},
+		{
+		  "id": 46046,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45495,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45518
+		},
+		{
+		  "id": 45148
+		},
+		{
+		  "id": 46035,
+		  "enchant": 3834,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45470,
+		  "enchant": 1128,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 40267
+		}
+	  ]}`),
 };
