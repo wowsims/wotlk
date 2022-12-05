@@ -1,9 +1,12 @@
+@use "sass:map";
+
 @import "./input";
 
 .number-picker-root {
-}
+  display: flex;
 
-.number-picker-input {
-  margin: 5px;
-  width: 92px;
+  .number-picker-input {
+    width: 5rem;
+    margin: 5px;
+  }
 }

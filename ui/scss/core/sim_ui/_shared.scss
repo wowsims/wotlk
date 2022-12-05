@@ -29,29 +29,27 @@ td, th {
 		background: lighten($body-bg, 5);
 	}
 
-	#simTitle, #simHeader {
-		height: $sim-header-height;
-		border-bottom: 1px solid $border-color;
+	#simSidebar {
+		height: 100%;
+		overflow-y: visible;
 
-		.sim-title-dropdown-root {
-			height: $sim-header-height - 1px;
+		#simTitle, #simHeader {
+			height: $sim-header-height;
+			border-bottom: 1px solid $border-color;
+	
+			.sim-title-dropdown-root {
+				height: $sim-header-height - 1px;
+			}
 		}
 	}
 
 	#simContent {
+		height: 100%;
 		padding-left: $gap-width * 2;
   	padding-right: $gap-width * 2;
+		flex: 4;
+  	overflow-y: auto;
 	}
-}
-
-.iterations-picker {
-  text-align: center;
-}
-
-.iterations-picker .input-label {
-  color: var(--sidebar-text-color);
-  font-size: 16px;
-  font-weight: 700;
 }
 
 .sim-sidebar-results {
@@ -100,6 +98,28 @@ td, th {
 
 .hide-in-front-of-target .in-front-of-target {
 	display: none !important;
+}
+
+@include media-breakpoint-down(xxl) {
+	.sim-ui {
+		#simSidebar, #simContent {
+			height: unset;
+			overflow: unset;
+		}
+
+		#simContent {
+			flex: 3;
+		}
+	}
+}
+
+@include media-breakpoint-down(xl) {
+	.sim-ui {
+		.sim-root {
+			flex-direction: column;
+			flex-wrap: nowrap;
+		}
+	}
 }
 
 @include media-breakpoint-down(lg) {

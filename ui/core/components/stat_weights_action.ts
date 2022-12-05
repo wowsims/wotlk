@@ -25,7 +25,7 @@ import { Popup } from './popup.js';
 declare var tippy: any;
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epReferenceStat: Stat) {
-	simUI.addAction('STAT WEIGHTS', 'ep-weights-action', () => {
+	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epReferenceStat);
 	});
 }
