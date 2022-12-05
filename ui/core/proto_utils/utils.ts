@@ -106,6 +106,19 @@ export const naturalSpecOrder: Array<Spec> = [
 	Spec.SpecTankDeathknight,
 ];
 
+export const naturalClassOrder: Array<Class> = [
+	Class.ClassDeathknight,
+	Class.ClassDruid,
+	Class.ClassHunter,
+	Class.ClassMage,
+	Class.ClassPaladin,
+	Class.ClassPriest,
+	Class.ClassRogue,
+	Class.ClassShaman,
+	Class.ClassWarlock,
+	Class.ClassWarrior,
+]
+
 export const specNames: Record<Spec, string> = {
 	[Spec.SpecBalanceDruid]: 'Balance Druid',
 	[Spec.SpecElementalShaman]: 'Elemental Shaman',
@@ -241,7 +254,7 @@ export const titleIcons: Record<Class|Spec, string> = {
 	[Spec.SpecRogue]: '/wotlk/assets/img/rogue_icon.png',
 	[Spec.SpecRetributionPaladin]: '/wotlk/assets/img/retribution_icon.png',
 	[Spec.SpecProtectionPaladin]: '/wotlk/assets/img/protection_paladin_icon.png',
-	[Spec.SpecHealingPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
+	[Spec.SpecHealingPriest]: '/wotlk/assets/img/priest_icon.png',
 	[Spec.SpecShadowPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
 	[Spec.SpecSmitePriest]: '/wotlk/assets/img/smite_priest_icon.png',
 	[Spec.SpecWarlock]: '/wotlk/assets/img/warlock_icon.png',
