@@ -206,9 +206,9 @@ export class SavedDataManager<ModObject, T> extends Component {
 		let savedDataCreateFragment = document.createElement('fragment');
 		savedDataCreateFragment.innerHTML = `
 			<div class="saved-data-create-container">
-				<label class="form-label">Current ${this.config.label} Name</label>
+				<label class="form-label">${this.config.label} Name</label>
 				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
-				<button class="saved-data-save-button btn btn-primary">Save Current ${this.config.label}</button>
+				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
 			</div>
 		`;
 

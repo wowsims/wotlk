@@ -385,7 +385,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			title: {
 				text: "Gear Sets"
 			},
-			label: 'Gear',
+			label: 'Gear Set',
 			storageKey: this.getSavedGearStorageKey(),
 			getData: (player: Player<any>) => {
 				return SavedGearSet.create({
