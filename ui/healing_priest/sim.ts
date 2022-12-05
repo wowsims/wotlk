@@ -108,6 +108,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					HealingPriestInputs.RaptureChance,
 				],
 			},
 			encounterPicker: {

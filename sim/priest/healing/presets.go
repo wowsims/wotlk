@@ -94,6 +94,7 @@ var PlayerOptionsDisc = &proto.Player_HealingPriest{
 		Options: &proto.HealingPriest_Options{
 			UseInnerFire:   true,
 			UseShadowfiend: true,
+			RaptureChance:  0.8,
 		},
 		Rotation: &proto.HealingPriest_Rotation{},
 	},

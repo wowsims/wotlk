@@ -361,6 +361,12 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 			manaSpentPerSecond := (unitMetrics.ManaSpent - (unitMetrics.ManaGained - unitMetrics.BonusManaGained)) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
+			timeToOOM = MinDuration(timeToOOM, time.Minute*60)
+		}
+
+		if timeToOOM < 0 {
+			// This happens sometimes when staying at 100% mana throughout the sim duration.
+			timeToOOM = time.Minute * 60
 		}
 
 		unitMetrics.tto.Total = timeToOOM.Seconds()
