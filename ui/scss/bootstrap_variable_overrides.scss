@@ -91,6 +91,7 @@ $input-bg: lighten($body-bg, 12);
 $input-border-radius: 0;
 $input-border-color: lighten($body-bg, 15);
 $input-color: white;
+$input-disabled-bg: lighten($body-bg, 20);
 $input-focus-bg: lighten($body-bg, 12);
 $input-focus-border-color: lighten($body-bg, 20);
 $input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
