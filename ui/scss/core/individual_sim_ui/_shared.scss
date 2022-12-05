@@ -25,7 +25,7 @@
   margin-right: $gap-width * 2;
 }
 
-@include media-breakpoint-down(lg) {
+@include media-breakpoint-down(xl) {
   .gear-tab-columns {
     flex-flow: column;
   }

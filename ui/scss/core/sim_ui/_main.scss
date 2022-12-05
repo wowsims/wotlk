@@ -2,7 +2,6 @@
   min-width: calc(275px + 1vw);
   display: flex;
   flex-flow: column;
-  flex: 4;
 	background-image:
 		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
 		var(--theme-background-image);

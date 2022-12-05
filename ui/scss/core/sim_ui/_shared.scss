@@ -44,9 +44,10 @@ td, th {
 	}
 
 	#simContent {
+		height: 100%;
 		padding-left: $gap-width * 2;
   	padding-right: $gap-width * 2;
-		height: 100%;
+		flex: 4;
   	overflow-y: auto;
 	}
 }
@@ -104,6 +105,19 @@ td, th {
 		#simSidebar, #simContent {
 			height: unset;
 			overflow: unset;
+		}
+
+		#simContent {
+			flex: 3;
+		}
+	}
+}
+
+@include media-breakpoint-down(xl) {
+	.sim-ui {
+		.sim-root {
+			flex-direction: column;
+			flex-wrap: nowrap;
 		}
 	}
 }
