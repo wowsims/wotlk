@@ -218,7 +218,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 		//newVtDamage := spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget)
 		//if newVtDamage != vtDamage {
-		//	panic(fmt.Sprintf("Old vt: %0.01f, new vt: %0.01f", vtDamage, newVtDamage))
+		//panic(fmt.Sprintf("Old vt: %0.01f, new vt: %0.01f", vtDamage, newVtDamage))
 		//}
 
 		// If there is at least 2 VT ticks then it's worth using
@@ -630,6 +630,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			bestIdx = 4
 			spriest.PrevTicks = 0
 		}
+
+		if castMf2 == 1 && allCDs[mbIdb].Seconds() == 0 {
+			bestIdx = 0
+		}
+
 		if currentWait > 0 && bestIdx != 5 && bestIdx != 4 {
 			spriest.WaitUntil(sim, sim.CurrentTime+currentWait)
 			return
@@ -703,7 +708,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			spriest.WaitUntil(sim, sim.CurrentTime+nextCD)
 			return
 		}
-		spell = spriest.MindFlay[numTicks]
+		if numTicks == 2 && allCDs[mbIdb].Seconds() == 0 {
+			spell = spriest.MindBlast
+		} else {
+			spell = spriest.MindFlay[numTicks]
+		}
 	} else {
 
 		mbcd := spriest.MindBlast.TimeToReady(sim)
@@ -871,17 +880,20 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		//}
 
 		if sim.Log != nil {
-			//spriest.Log(sim, "bestIdx %d", bestIdx)
-			//spriest.Log(sim, "nextIdx %d", nextIdx)
-			//spriest.Log(sim, "spellDamages[bestIdx]  %d", spellDamages[bestIdx])
-			//spriest.Log(sim, "spellDamages[nextIdx]  %d", spellDamages[nextIdx])
+			spriest.Log(sim, "bestIdx %d", bestIdx)
+			spriest.Log(sim, "nextIdx %d", nextIdx)
+			spriest.Log(sim, "spellDamages[bestIdx]  %d", spellDamages[bestIdx])
+			spriest.Log(sim, "spellDamages[nextIdx]  %d", spellDamages[nextIdx])
+			spriest.Log(sim, "numTicks %d", numTicks)
 		}
 
-		if bestIdx != nextIdx && spellDamages[nextIdx] < spellDamages[bestIdx] {
+		if bestIdx != nextIdx && spellDamages[nextIdx] < spellDamages[bestIdx] && bestIdx != 4 {
 			numTicks_Base = allCDs[bestIdx].Seconds() / tickLength.Seconds()
 			numTicks_floored = math.Floor(allCDs[bestIdx].Seconds() / tickLength.Seconds())
 			numTicks = int(numTicks_Base)
-
+			if sim.Log != nil {
+				spriest.Log(sim, "numTicks2 %d", numTicks)
+			}
 			AlmostAnotherTick := numTicks_Base - numTicks_floored
 
 			if AlmostAnotherTick > 0.75 {
@@ -901,11 +913,6 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				core.MaxDuration(0, allCDs[2]-mfTime),
 				core.MaxDuration(0, allCDs[3]-mfTime),
 				0,
-			}
-			if sim.Log != nil {
-				//spriest.Log(sim, "numTicks %d", numTicks)
-				//spriest.Log(sim, "cdDiffs[bestIdx] %d", cdDiffs[bestIdx])
-				//spriest.Log(sim, "mid_ticks2 %d", numTicks)
 			}
 			if deltaTime.Seconds() < -0.33 {
 				numTicks -= 1
@@ -1026,6 +1033,10 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			}
 		}
 
+		if sim.Log != nil {
+			spriest.Log(sim, "numTicks3 %d", numTicks)
+		}
+
 		if numTicks > 3 {
 			if (allCDs[bestIdx] - time.Duration(numTicks-1)*tickLength - gcd) >= 0 {
 				//if (allCDs[3]-time.Duration(numTicks-1)*tickLength <= 0) || (allCDs[0]-time.Duration(numTicks-1)*tickLength <= 0) { \\might need to readd this for later phases
@@ -1111,6 +1122,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 			}
 
 			numTicks += highestPossibleIdx
+			if sim.Log != nil {
+				spriest.Log(sim, "numTicks4 %d", numTicks)
+			}
 			// if sim.Log != nil {
 			// 	spriest.Log(sim, "final_ticks %d", numTicks)
 			// }
