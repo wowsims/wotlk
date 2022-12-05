@@ -39,7 +39,7 @@
     flex-direction: column;
 
     .number-picker-input {
-      width: 8vw;
+      width: 8rem;
       margin: 0 !important;
       flex: 1;
     }
@@ -47,7 +47,6 @@
 }
 
 .character-stats-tooltip-row {
-  width: 8vw;
 	display: flex;
 	justify-content: space-between;
 

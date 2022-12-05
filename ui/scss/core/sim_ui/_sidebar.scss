@@ -3,13 +3,11 @@
 @import "../components/sim_title_dropdown";
 
 #simSidebar {
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   background: $body-bg;
   flex: 1;
-	overflow-y: visible;
 
   #simSidebarContent {
     padding-top: $gap-width;

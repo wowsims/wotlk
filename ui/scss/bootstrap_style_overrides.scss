@@ -69,6 +69,12 @@
   }
 }
 
+@include media-breakpoint-down(xl) {
+  .tooltip {
+    --bs-tooltip-max-width: #{$tooltip-max-width-lg};
+  }
+}
+
 @include media-breakpoint-down(lg) {
   .container {
     width: 100%;
@@ -109,5 +115,11 @@
         }
       }
     }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .tooltip {
+    --bs-tooltip-max-width: #{$tooltip-max-width-sm};
   }
 }

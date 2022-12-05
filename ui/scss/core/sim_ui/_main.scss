@@ -1,5 +1,4 @@
 #simContent {
-  height: 100%;
   min-width: calc(275px + 1vw);
   display: flex;
   flex-flow: column;
@@ -10,7 +9,6 @@
 	background-size: cover;
 	background-position: center center;
   color: var(--main-text-color);
-  overflow-y: auto;
 
   #simMain {
     height: 80%;
