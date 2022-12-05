@@ -1,12 +1,13 @@
 import { Spec } from '../proto/common.js';
 import { EventID, TypedEvent } from '../typed_event.js';
+import { ContentBlock, ContentBlockTitleConfig } from './content_block';
 
 import { Component } from '../components/component.js';
-
-declare var tippy: any;
+import { Tooltip } from 'bootstrap';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
+	title?: ContentBlockTitleConfig;
 	presetsOnly?: boolean;
 	storageKey: string;
 	changeEmitters: Array<TypedEvent<any>>,
@@ -42,7 +43,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private readonly presets: Array<SavedData<ModObject, T>>;
 
 	private readonly savedDataDiv: HTMLElement;
-	private readonly saveInput: HTMLInputElement;
+	private readonly saveInput?: HTMLInputElement;
 	private frozen: boolean;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: SavedDataManagerConfig<ModObject, T>) {
@@ -54,44 +55,17 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.presets = [];
 		this.frozen = false;
 
-		this.rootElem.innerHTML = `
-    <div class="saved-data-container">
-    </div>
-    <div class="saved-data-create-container presets-only-hide">
-      <input class="saved-data-save-input" type="text" placeholder="Label">
-      <button class="saved-data-save-button sim-button">SAVE CURRENT ${config.label.toUpperCase()}</button>
-    </div>
-    `;
-
-		if (config.presetsOnly) {
-			this.rootElem.classList.add('presets-only');
-		}
-
-		this.savedDataDiv = this.rootElem.getElementsByClassName('saved-data-container')[0] as HTMLElement;
-
-		this.saveInput = this.rootElem.getElementsByClassName('saved-data-save-input')[0] as HTMLInputElement;
-		const saveButton = this.rootElem.getElementsByClassName('saved-data-save-button')[0] as HTMLButtonElement;
-		saveButton.addEventListener('click', event => {
-			if (this.frozen)
-				return;
-
-			const newName = this.saveInput.value;
-			if (!newName) {
-				alert(`Choose a label for your saved ${config.label}!`);
-				return;
-			}
-
-			if (newName in this.presets) {
-				alert(`${config.label} with name ${newName} already exists.`);
-				return;
-			}
-
-			this.addSavedData({
-				name: newName,
-				data: config.getData(this.modObject),
-			});
-			this.saveUserData();
+		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', {
+			title: config.title
 		});
+
+		contentBlock.bodyElement.innerHTML = `<div class="saved-data-container"></div>`;
+		this.savedDataDiv = contentBlock.bodyElement.querySelector('.saved-data-container') as HTMLElement;
+
+		if (!config.presetsOnly) {
+			contentBlock.bodyElement.appendChild(this.buildCreateContainer());
+			this.saveInput = contentBlock.bodyElement.querySelector('.saved-data-save-input') as HTMLInputElement;
+		}
 	}
 
 	addSavedData(config: SavedDataConfig<ModObject, T>) {
@@ -114,23 +88,32 @@ export class SavedDataManager<ModObject, T> extends Component {
 	}
 
 	private makeSavedData(config: SavedDataConfig<ModObject, T>): SavedData<ModObject, T> {
-		const dataElem = document.createElement('div');
-		dataElem.classList.add('saved-data-set-chip');
-		dataElem.innerHTML = `
-    <span class="saved-data-set-name">${config.name}</span>
-    <span class="saved-data-set-tooltip fa fa-info-circle"></span>
-    <span class="saved-data-set-delete fa fa-times"></span>
-    `;
+		const dataElemFragment = document.createElement('fragment');
+		dataElemFragment.innerHTML = `
+			<div class="saved-data-set-chip badge rounded-pill">
+				<a href="javascript:void(0)" class="saved-data-set-name" role="button">${config.name}</a>
+			</div>
+		`;
 
+		const dataElem = dataElemFragment.children[0] as HTMLElement;
 		dataElem.addEventListener('click', event => {
 			this.config.setData(TypedEvent.nextEventID(), this.modObject, config.data);
-			this.saveInput.value = config.name;
+
+			if (this.saveInput)
+				this.saveInput.value = config.name;
 		});
 
-		if (config.isPreset) {
-			dataElem.classList.add('saved-data-preset');
-		} else {
-			const deleteButton = dataElem.getElementsByClassName('saved-data-set-delete')[0] as HTMLElement;
+		if (!config.isPreset) {
+			let deleteFragment = document.createElement('fragment');
+			deleteFragment.innerHTML = `
+				<a href="javascript:void(0)" class="saved-data-set-delete" role="button">
+					<i class="fa fa-times fa-lg"></i>
+				</a>
+			`;
+
+			const deleteButton = deleteFragment.children[0] as HTMLElement;
+			dataElem.appendChild(deleteButton);
+
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
 				const shouldDelete = confirm(`Delete saved ${this.config.label} '${config.name}'?`);
@@ -145,11 +128,12 @@ export class SavedDataManager<ModObject, T> extends Component {
 		}
 
 		if (config.tooltip) {
-			dataElem.classList.add('saved-data-has-tooltip');
-			tippy(dataElem.getElementsByClassName('saved-data-set-tooltip')[0], {
-				'content': config.tooltip,
-				'allowHTML': true,
-			});
+			dataElem.setAttribute('data-bs-toggle', 'tooltip');
+			dataElem.setAttribute('data-bs-title', config.tooltip);
+			dataElem.setAttribute('data-bs-trigger', 'hover');
+			dataElem.setAttribute('data-bs-placement', 'bottom');
+			dataElem.setAttribute('data-bs-html', 'true');
+			Tooltip.getOrCreateInstance(dataElem);
 		}
 
 		const checkActive = () => {
@@ -216,5 +200,42 @@ export class SavedDataManager<ModObject, T> extends Component {
 	freeze() {
 		this.frozen = true;
 		this.rootElem.classList.add('frozen');
+	}
+
+	private buildCreateContainer(): HTMLElement {
+		let savedDataCreateFragment = document.createElement('fragment');
+		savedDataCreateFragment.innerHTML = `
+			<div class="saved-data-create-container">
+				<label class="form-label">${this.config.label} Name</label>
+				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
+				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
+			</div>
+		`;
+
+		const saveButton = savedDataCreateFragment.querySelector('.saved-data-save-button') as HTMLButtonElement;
+
+		saveButton.addEventListener('click', event => {
+			if (this.frozen)
+				return;
+
+			const newName = this.saveInput?.value;
+			if (!newName) {
+				alert(`Choose a label for your saved ${this.config.label}!`);
+				return;
+			}
+
+			if (newName in this.presets) {
+				alert(`${this.config.label} with name ${newName} already exists.`);
+				return;
+			}
+
+			this.addSavedData({
+				name: newName,
+				data: this.config.getData(this.modObject),
+			});
+			this.saveUserData();
+		});
+
+		return savedDataCreateFragment.children[0] as HTMLElement;
 	}
 }

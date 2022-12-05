@@ -46,22 +46,12 @@ export class CharacterStats extends Component {
 			row.classList.add('character-stats-table-row');
 			row.innerHTML = `
 				<td class="character-stats-table-label">${statName}</td>
-				<td class="character-stats-table-value" data-bs-toggle="tooltip" data-bs-html="true"></td>
-				<td
-					class="character-stats-bonus-stats"
-					data-bs-toggle="tooltip"
-					data-bs-title="Bonus ${statName}"
-					data-bs-direction="right"
-				></td>
+				<td class="character-stats-table-value"></td
 			`;
 			table.appendChild(row);
 
 			const valueElem = row.getElementsByClassName('character-stats-table-value')[0] as HTMLTableCellElement;
 			this.valueElems.push(valueElem);
-
-			const bonusStatsElem = row.getElementsByClassName('character-stats-bonus-stats')[0] as HTMLElement;
-			bonusStatsElem.appendChild(this.bonusStatsLink(stat));
-			new Tooltip(bonusStatsElem);
 		});
 
 		this.updateStats(player);
@@ -100,6 +90,7 @@ export class CharacterStats extends Component {
 			let valueElem = fragment.children[0] as HTMLElement;
 			this.valueElems[idx].innerHTML = '';
 			this.valueElems[idx].appendChild(valueElem);
+			this.valueElems[idx].appendChild(this.bonusStatsLink(stat));
 
 			let bonusStatValue = player.getBonusStats().getStat(stat);
 			
@@ -216,7 +207,7 @@ export class CharacterStats extends Component {
 		fragment.innerHTML = `
 			<a
 				href="javascript:void(0)"
-				class="add-bonus-stats text-white ms-1"
+				class="add-bonus-stats text-white ms-2"
 				role="button"
 				data-bs-toggle="popover"
 				data-bs-content="<div></div>"

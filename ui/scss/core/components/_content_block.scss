@@ -1,0 +1,21 @@
+@use "sass:map";
+
+.content-block {
+  display: flex;
+  flex-direction: column;
+
+  .content-block-header {
+    border-bottom: 1px solid $border-color;
+    margin-bottom: map.get($spacers, 4);
+    display: flex;
+
+    .content-block-title {
+      font-weight: bold;
+    }
+  }
+
+  .content-block-body {
+    display: flex;
+    flex-direction: column;
+  }
+}
