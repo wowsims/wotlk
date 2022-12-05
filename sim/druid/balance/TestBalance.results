@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4120.6189
-  tps: 3954.14643
+  dps: 4532.99259
+  tps: 4371.72023
  }
 }
 dps_results: {

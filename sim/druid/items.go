@@ -210,11 +210,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 
 			procChance := 0.02
 
-			cca := druid.GetOrRegisterAura(core.Aura{
-				Label:    "Clearcasting",
-				ActionID: core.ActionID{SpellID: 16870},
-				Duration: time.Second * 15,
-			})
+			cca := druid.GetAura("Clearcasting")
 
 			icd := core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -226,6 +222,10 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
+					cca = druid.GetAura("Clearcasting")
+					if cca == nil {
+						panic("no valid clearcasting aura")
+					}
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					isLacerate := druid.LacerateDot != nil && druid.LacerateDot.Spell == spell
