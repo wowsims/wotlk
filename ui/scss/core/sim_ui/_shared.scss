@@ -28,19 +28,24 @@ td, th {
 		width: 100%;
 		background: lighten($body-bg, 5);
 	}
-
+		
 	#simSidebar {
 		height: 100%;
 		overflow-y: visible;
 
-		#simTitle, #simHeader {
+		#simTitle {
 			height: $sim-header-height;
 			border-bottom: 1px solid $border-color;
-	
+
 			.sim-title-dropdown-root {
 				height: $sim-header-height - 1px;
 			}
 		}
+	}
+
+	#simHeader {
+		height: $sim-header-height;
+		border-bottom: 1px solid $border-color;
 	}
 
 	#simContent {
@@ -126,12 +131,16 @@ td, th {
 	$sim-header-height: 65px;
 
 	.sim-ui {
-		#simTitle, #simHeader {
+		#simSidebar #simTitle {
 			height: $sim-header-height;
 	
 			.sim-title-dropdown-root {
 				height: $sim-header-height - 1px;
 			}
+		}
+
+		#simHeader {
+			height: $sim-header-height;
 		}
 
 		#simContent {
