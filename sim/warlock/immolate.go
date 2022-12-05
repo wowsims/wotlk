@@ -5,17 +5,17 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerImmolateSpell() {
-	baseCost := 0.17 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47811}
-	spellSchool := core.SpellSchoolFire
+	baseCost := 0.17 * warlock.BaseMana
 
 	warlock.Immolate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -35,9 +35,14 @@ func (warlock *Warlock) registerImmolateSpell() {
 		BonusCritRating: 0 +
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.Emberstorm) +
+			0.1*float64(warlock.Talents.ImprovedImmolate) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 2), 0.1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetGuldansRegalia, 4), 0.1, 0),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 460 + 0.2*spell.SpellPower()
@@ -54,13 +59,20 @@ func (warlock *Warlock) registerImmolateSpell() {
 	warlock.ImmolateDot = core.NewDot(core.Dot{
 		Spell: warlock.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
-			SpellSchool: spellSchool,
+			SpellSchool: core.SpellSchoolFire,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			BonusCritRating:          warlock.Immolate.BonusCritRating,
-			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-			CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-			ThreatMultiplier:         warlock.Immolate.ThreatMultiplier,
+			BonusCritRating: warlock.Immolate.BonusCritRating,
+			DamageMultiplierAdditive: 1 +
+				warlock.GrandSpellstoneBonus() +
+				0.03*float64(warlock.Talents.Emberstorm) +
+				0.03*float64(warlock.Talents.Aftermath) +
+				0.1*float64(warlock.Talents.ImprovedImmolate) +
+				core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0) +
+				core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 2), 0.1, 0) +
+				core.TernaryFloat64(warlock.HasSetBonus(ItemSetGuldansRegalia, 4), 0.1, 0),
+			CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+			ThreatMultiplier: warlock.Immolate.ThreatMultiplier,
 		}),
 		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "Immolate-" + strconv.Itoa(int(warlock.Index)),

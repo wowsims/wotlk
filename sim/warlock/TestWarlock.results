@@ -45,8 +45,8 @@ character_stats_results: {
 dps_results: {
  key: "TestWarlock-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 7022.54262
-  tps: 6301.35069
+  dps: 7022.41252
+  tps: 6301.22059
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7039.27301
-  tps: 6302.85882
+  dps: 7039.30366
+  tps: 6302.8884
  }
 }
 dps_results: {

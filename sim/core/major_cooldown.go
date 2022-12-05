@@ -22,6 +22,7 @@ const (
 	CooldownTypeUnknown CooldownType = 0
 	CooldownTypeMana    CooldownType = 1 << iota
 	CooldownTypeDPS
+	CooldownTypeExplosive
 	CooldownTypeSurvival
 )
 
@@ -245,7 +246,7 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
+			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) && !mcd.Type.Matches(CooldownTypeExplosive) {
 				mcd.timings = append(mcd.timings, delay)
 			}
 		}
@@ -264,7 +265,11 @@ func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
+				oldShouldActivate := mcd.ShouldActivate
 				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
+					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
+						return false
+					}
 					return sim.CurrentTime >= delay
 				}
 			}

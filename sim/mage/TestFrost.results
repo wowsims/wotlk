@@ -73,8 +73,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 4623.40941
-  tps: 3894.69609
+  dps: 4747.52748
+  tps: 4012.99666
  }
 }
 dps_results: {
@@ -239,6 +239,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-Gladiator'sRegalia"
+ value: {
+  dps: 4270.82104
+  tps: 3563.68944
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 4263.14851
@@ -276,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 4183.76883
-  tps: 3503.75223
+  dps: 4187.57667
+  tps: 3506.19477
  }
 }
 dps_results: {
@@ -290,8 +297,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-KirinTorGarb"
  value: {
-  dps: 4132.82869
-  tps: 3462.12978
+  dps: 4220.7957
+  tps: 3534.77779
  }
 }
 dps_results: {
@@ -425,13 +432,6 @@ dps_results: {
  value: {
   dps: 4119.53612
   tps: 3450.76036
- }
-}
-dps_results: {
- key: "TestFrost-AllItems-Sunstrider'sRegalia"
- value: {
-  dps: 4213.43688
-  tps: 3536.85287
  }
 }
 dps_results: {

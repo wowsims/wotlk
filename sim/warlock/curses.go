@@ -121,19 +121,17 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
 	actionID := core.ActionID{SpellID: 47864}
-	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.1 * warlock.BaseMana
 	numberOfTicks := int32(12)
 	totalBaseDmg := 1740.0
-	agonyEffect := totalBaseDmg * 0.056
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
 		numberOfTicks += 2
-		totalBaseDmg += 2 * agonyEffect // Glyphed ticks
+		totalBaseDmg += 2 * totalBaseDmg * 0.056 // Glyphed ticks
 	}
 
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -144,9 +142,12 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			},
 		},
 
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:          0, // TODO : curses flat threat on application
+		DamageMultiplierAdditive: 1 +
+			0.03*float64(warlock.Talents.ShadowMastery) +
+			0.01*float64(warlock.Talents.Contagion) +
+			0.05*float64(warlock.Talents.ImprovedCurseOfAgony),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO : curses flat threat on application
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
@@ -178,12 +179,11 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 
 func (warlock *Warlock) registerCurseOfDoomSpell() {
 	actionID := core.ActionID{SpellID: 47867}
-	spellSchool := core.SpellSchoolShadow
 	baseCost := 0.15 * warlock.BaseMana
 
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -199,9 +199,10 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 			},
 		},
 
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:          0, // TODO
+		DamageMultiplierAdditive: 1 +
+			0.03*float64(warlock.Talents.ShadowMastery),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		FlatThreatBonus:  0, // TODO
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)

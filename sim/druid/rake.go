@@ -10,12 +10,8 @@ import (
 
 func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
-
 	cost := 40.0 - float64(druid.Talents.Ferocity)
-
 	mangleAura := core.MangleAura(druid.CurrentTarget)
-
-	t9bonus := core.TernaryInt32(druid.HasT9FeralSetBonus(2), 1, 0)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -30,7 +26,6 @@ func (druid *Druid) registerRakeSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -64,7 +59,7 @@ func (druid *Druid) registerRakeSpell() {
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
-		NumberOfTicks: 3 + t9bonus,
+		NumberOfTicks: 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0),
 		TickLength:    time.Second * 3,
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -79,7 +74,7 @@ func (druid *Druid) registerRakeSpell() {
 }
 
 func (druid *Druid) CanRake() bool {
-	return druid.InForm(Cat) && ((druid.CurrentEnergy() >= druid.CurrentRakeCost()) || druid.ClearcastingAura.IsActive())
+	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentRakeCost()
 }
 
 func (druid *Druid) CurrentRakeCost() float64 {

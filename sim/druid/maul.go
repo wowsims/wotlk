@@ -31,7 +31,6 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			DefaultCast: core.Cast{
 				Cost: cost,
 			},
-			ModifyCast: druid.ApplyClearcasting,
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),

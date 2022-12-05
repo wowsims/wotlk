@@ -600,7 +600,13 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 4400
+				manaGain := 4400.0
+				if alchStoneEquipped && potionType == proto.Potions_RunicManaPotion {
+					manaGain *= 1.4
+				} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
+					manaGain *= 1.25
+				}
+				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= manaGain
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -1169,73 +1175,51 @@ var CobaltFragBombActionID = ActionID{ItemID: 40771}
 
 func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
+	hasFiller := consumes.FillerExplosive != proto.Explosive_ExplosiveUnknown
 	if !character.HasProfession(proto.Profession_Engineering) {
 		return
 	}
-	if !consumes.ThermalSapper && !consumes.ExplosiveDecoy && consumes.FillerExplosive == proto.Explosive_ExplosiveUnknown {
+	if !consumes.ThermalSapper && !consumes.ExplosiveDecoy && !hasFiller {
 		return
 	}
-	explosivesTimer := character.NewTimer()
 	sharedTimer := character.NewTimer()
 
-	var explosives []*Spell
-
-	var sapper *Spell
 	if consumes.ThermalSapper {
-		sapper = character.newThermalSapperSpell(sharedTimer)
-		explosives = append(explosives, sapper)
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    character.newThermalSapperSpell(sharedTimer),
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.03,
+		})
 	}
 
-	var decoy *Spell
 	if consumes.ExplosiveDecoy {
-		decoy = character.newExplosiveDecoySpell(sharedTimer)
-		explosives = append(explosives, decoy)
-	}
-
-	var filler *Spell
-	switch consumes.FillerExplosive {
-	case proto.Explosive_ExplosiveSaroniteBomb:
-		filler = character.newSaroniteBombSpell(sharedTimer)
-		explosives = append(explosives, filler)
-	case proto.Explosive_ExplosiveCobaltFragBomb:
-		filler = character.newCobaltFragBombSpell(sharedTimer)
-		explosives = append(explosives, filler)
-	}
-
-	spell := character.RegisterSpell(SpellConfig{
-		ActionID: ThermalSapperActionID,
-		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
-
-		Cast: CastConfig{
-			CD: Cooldown{
-				Timer:    explosivesTimer,
-				Duration: time.Minute,
-			},
-		},
-
-		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
-			if sapper != nil && sapper.IsReady(sim) {
-				sapper.Cast(sim, target)
-			} else if decoy != nil && decoy.IsReady(sim) && (sim.GetRemainingDuration() < time.Minute*2 || filler == nil) {
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    character.newExplosiveDecoySpell(sharedTimer),
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.02,
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Decoy puts other explosives on 2m CD, so only use if there won't be enough
 				// time to use another explosive OR there is no filler explosive.
-				decoy.Cast(sim, target)
-			} else if filler != nil && filler.IsReady(sim) {
-				filler.Cast(sim, target)
-			}
+				return sim.GetRemainingDuration() < time.Minute || !hasFiller
+			},
+		})
+	}
 
-			nextExplosiveAt := sim.CurrentTime + time.Minute*5
-			for _, explosive := range explosives {
-				nextExplosiveAt = MinDuration(explosive.ReadyAt(), nextExplosiveAt)
-			}
-			explosivesTimer.Set(nextExplosiveAt)
-		},
-	})
+	if hasFiller {
+		var filler *Spell
+		switch consumes.FillerExplosive {
+		case proto.Explosive_ExplosiveSaroniteBomb:
+			filler = character.newSaroniteBombSpell(sharedTimer)
+		case proto.Explosive_ExplosiveCobaltFragBomb:
+			filler = character.newCobaltFragBombSpell(sharedTimer)
+		}
 
-	character.AddMajorCooldown(MajorCooldown{
-		Spell: spell,
-		Type:  CooldownTypeDPS,
-	})
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    filler,
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.01,
+		})
+	}
 }
 
 // Creates a spell object for the common explosive case.

@@ -24,6 +24,7 @@ type Druid struct {
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
+	RaidBuffTargets   int
 
 	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
@@ -33,6 +34,7 @@ type Druid struct {
 	ForceOfNature    *core.Spell
 	Hurricane        *core.Spell
 	InsectSwarm      *core.Spell
+	GiftOfTheWild    *core.Spell
 	Lacerate         *core.Spell
 	MangleBear       *core.Spell
 	MangleCat        *core.Spell
@@ -57,7 +59,6 @@ type Druid struct {
 
 	InsectSwarmDot    *core.Dot
 	LacerateDot       *core.Dot
-	LasherweaveDot    *core.Dot
 	MoonfireDot       *core.Dot
 	RakeDot           *core.Dot
 	RipDot            *core.Dot
@@ -68,20 +69,19 @@ type Druid struct {
 	BerserkAura          *core.Aura
 	CatFormAura          *core.Aura
 	ClearcastingAura     *core.Aura
-	SwiftStarfireAura    *core.Aura
 	DemoralizingRoarAura *core.Aura
 	EnrageAura           *core.Aura
 	FaerieFireAura       *core.Aura
 	MangleAura           *core.Aura
 	MaulQueueAura        *core.Aura
 	NaturesGraceProcAura *core.Aura
-	NaturesSwiftnessAura *core.Aura
 	TigersFuryAura       *core.Aura
 	SavageRoarAura       *core.Aura
 	SolarEclipseProcAura *core.Aura
 	LunarEclipseProcAura *core.Aura
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
+	SavageRoarDurationTable        [6]time.Duration
 
 	LunarICD core.Cooldown
 	SolarICD core.Cooldown
@@ -89,68 +89,12 @@ type Druid struct {
 	Treant2  *TreantPet
 	Treant3  *TreantPet
 
-	form          DruidForm
-	disabledMCDs  []*core.MajorCooldown
-	setBonuses    druidTierSets
-	talentBonuses talentBonuses
-}
-
-type talentBonuses struct {
-	galeWinds       float64
-	genesis         float64
-	moonfury        float64
-	moonglow        float64
-	naturesMajesty  float64
-	vengeance       float64
-	naturesSplendor int32
-	starlightWrath  time.Duration
-}
-
-type druidTierSets struct {
-	balance_t6_2  bool
-	balance_t7_2  bool
-	balance_t7_4  bool
-	balance_t8_2  bool
-	balance_t8_4  bool
-	balance_t9_2  bool
-	balance_t9_4  bool
-	balance_t10_2 bool
-	balance_t10_4 bool
-	balance_pvp_2 bool
-	balance_pvp_4 bool
-
-	feral_t8_2 bool
-	feral_t8_4 bool
+	form         DruidForm
+	disabledMCDs []*core.MajorCooldown
 }
 
 type SelfBuffs struct {
 	InnervateTarget *proto.RaidTarget
-}
-
-// Registering non-unique Talent effects
-func (druid *Druid) RegisterTalentsBonuses() {
-	druid.talentBonuses = talentBonuses{
-		galeWinds:       0.15 * float64(druid.Talents.GaleWinds),
-		genesis:         0.01 * float64(druid.Talents.Genesis),                   // additive damage bonus
-		moonfury:        []float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury], // additive damage bonus
-		moonglow:        1 - 0.03*float64(druid.Talents.Moonglow),                // cost reduction
-		naturesMajesty:  2 * float64(druid.Talents.NaturesMajesty) * core.CritRatingPerCritChance,
-		vengeance:       0.2 * float64(druid.Talents.Vengeance),
-		naturesSplendor: core.TernaryInt32(druid.Talents.NaturesSplendor, 1, 0),
-		starlightWrath:  time.Millisecond * 100 * time.Duration(druid.Talents.StarlightWrath),
-	}
-}
-
-func (druid *Druid) ResetTalentsBonuses() {
-	druid.talentBonuses = talentBonuses{
-		moonfury:        0,
-		genesis:         0,
-		moonglow:        0,
-		naturesMajesty:  0,
-		vengeance:       0,
-		naturesSplendor: 0,
-		starlightWrath:  0,
-	}
 }
 
 func (druid *Druid) GetCharacter() *core.Character {
@@ -183,6 +127,10 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
+func (druid *Druid) BalanceCritMultiplier() float64 {
+	return druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))
+}
+
 func (druid *Druid) MeleeCritMultiplier() float64 {
 	// Assumes that Predatory Instincts is a primary rather than secondary modifier for now, but this needs to confirmed!
 	primaryModifier := 1.0
@@ -206,23 +154,6 @@ func (druid *Druid) Initialize() {
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
-
-	// Bonus sets
-	druid.setBonuses = druidTierSets{
-		druid.HasSetBonus(ItemSetThunderheartRegalia, 2),
-		druid.HasSetBonus(ItemSetDreamwalkerGarb, 2),
-		druid.HasSetBonus(ItemSetDreamwalkerGarb, 4),
-		druid.HasSetBonus(ItemSetNightsongGarb, 2),
-		druid.HasSetBonus(ItemSetNightsongGarb, 4),
-		druid.HasSetBonus(ItemSetMalfurionsRegalia, 2) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 2),
-		druid.HasSetBonus(ItemSetMalfurionsRegalia, 4) || druid.HasSetBonus(ItemSetRunetotemsRegalia, 4),
-		druid.HasSetBonus(ItemSetLasherweaveRegalia, 2),
-		druid.HasSetBonus(ItemSetLasherweaveRegalia, 4),
-		druid.HasSetBonus(ItemSetGladiatorsWildhide, 2),
-		druid.HasSetBonus(ItemSetGladiatorsWildhide, 4),
-		druid.HasSetBonus(ItemSetNightsongBattlegear, 2),
-		druid.HasSetBonus(ItemSetNightsongBattlegear, 4),
-	}
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -234,7 +165,6 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerStarfallSpell()
 	druid.registerTyphoonSpell()
 	druid.registerForceOfNatureCD()
-	druid.registerLasherweaveDot()
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
@@ -255,6 +185,7 @@ func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
 	druid.registerSwipeBearSpell()
 	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()
+	druid.registerFakeGotw()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {

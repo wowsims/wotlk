@@ -1,4 +1,5 @@
 import { Encounter as EncounterProto } from '../proto/common.js';
+import { DistributionMetrics as DistributionMetricsProto } from '../proto/api.js';
 import { Raid as RaidProto } from '../proto/api.js';
 import { RaidSimRequest, RaidSimResult, ProgressMetrics } from '../proto/api.js';
 import { SimRunData } from '../proto/ui.js';
@@ -206,29 +207,54 @@ export class RaidSimResultsManager {
 		}
 		simReferenceElem.classList.add('has-reference');
 
-		const simReferenceDpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dps-diff')[0] as HTMLSpanElement;
-		const currentDpsMetrics = this.currentData.simResult.raidMetrics.dps;
-		const referenceDpsMetrics = this.referenceData.simResult.raidMetrics.dps;
-		formatDeltaTextElem(simReferenceDpsDiffElem, referenceDpsMetrics.avg, currentDpsMetrics.avg, 2);
-
-		const simReferenceHpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-hps-diff')[0] as HTMLSpanElement;
-		const currentHpsMetrics = this.currentData.simResult.raidMetrics.hps;
-		const referenceHpsMetrics = this.referenceData.simResult.raidMetrics.hps;
-		formatDeltaTextElem(simReferenceHpsDiffElem, referenceHpsMetrics.avg, currentHpsMetrics.avg, 2);
-
+		this.formatToplineResult('results-sim-reference-dps-diff', res => res.raidMetrics.dps, 2);
+		this.formatToplineResult('results-sim-reference-hps-diff', res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
-			const simReferenceTtoDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tto-diff')[0] as HTMLSpanElement;
-			const simReferenceTpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')[0] as HTMLSpanElement;
-			const simReferenceDtpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')[0] as HTMLSpanElement;
-			const simReferenceCodDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-chanceOfDeath-diff')[0] as HTMLSpanElement;
-
-			const curPlayerMetrics = this.currentData.simResult.getPlayers()[0]!;
-			const refPlayerMetrics = this.referenceData.simResult.getPlayers()[0]!;
-			formatDeltaTextElem(simReferenceTtoDiffElem, refPlayerMetrics.tto.avg, curPlayerMetrics.tto.avg, 2);
-			formatDeltaTextElem(simReferenceTpsDiffElem, refPlayerMetrics.tps.avg, curPlayerMetrics.tps.avg, 2);
-			formatDeltaTextElem(simReferenceDtpsDiffElem, refPlayerMetrics.dtps.avg, curPlayerMetrics.dtps.avg, 2);
-			formatDeltaTextElem(simReferenceCodDiffElem, refPlayerMetrics.chanceOfDeath, curPlayerMetrics.chanceOfDeath, 1);
+			this.formatToplineResult('results-sim-reference-tto-diff', res => res.getPlayers()[0]!.tto, 2);
+			this.formatToplineResult('results-sim-reference-tps-diff', res => res.getPlayers()[0]!.tps, 2);
+			this.formatToplineResult('results-sim-reference-dtps-diff', res => res.getPlayers()[0]!.dtps, 2, true);
+			this.formatToplineResult('results-sim-reference-chanceOfDeath-diff', res => res.getPlayers()[0]!.chanceOfDeath, 1, true);
 		}
+	}
+
+	private formatToplineResult(className: string, getMetrics: (result: SimResult) => DistributionMetricsProto|number, precision: number, lowerIsBetter?: boolean) {
+		const elem = this.simUI.resultsViewer.contentElem.getElementsByClassName(className)[0] as HTMLSpanElement;
+		const cur = this.currentData!.simResult;
+		const ref = this.referenceData!.simResult;
+		const curMetricsTemp = getMetrics(cur);
+		const refMetricsTemp = getMetrics(ref);
+		if (typeof curMetricsTemp === 'number') {
+			const curMetrics = curMetricsTemp as number;
+			const refMetrics = refMetricsTemp as number;
+			formatDeltaTextElem(elem, refMetrics, curMetrics, precision, lowerIsBetter);
+		} else {
+			const curMetrics = curMetricsTemp as DistributionMetricsProto;
+			const refMetrics = refMetricsTemp as DistributionMetricsProto;
+			const isDiff = this.applyZTestTooltip(elem, ref.iterations, refMetrics.avg, refMetrics.stdev, cur.iterations, curMetrics.avg, curMetrics.stdev);
+			formatDeltaTextElem(elem, refMetrics.avg, curMetrics.avg, precision, lowerIsBetter, !isDiff);
+		}
+	}
+
+	private applyZTestTooltip(elem: HTMLElement, n1: number, avg1: number, stdev1: number, n2: number, avg2: number, stdev2: number): boolean {
+		const delta = avg1 - avg2;
+		const err1 = stdev1/Math.sqrt(n1);
+		const err2 = stdev2/Math.sqrt(n2);
+		const denom = Math.sqrt(Math.pow(err1, 2) + Math.pow(err2, 2));
+		const z = Math.abs(delta/denom);
+		const isDiff = z > 1.96;
+
+		let significance_str = '';
+		if (isDiff) { 
+			significance_str = `Difference is significantly different (Z = ${z.toFixed(3)}).`;
+		} else { 
+			significance_str = `Difference is not significantly different (Z = ${z.toFixed(3)}).`;
+		}
+		tippy(elem, {
+			'content': significance_str,
+			'allowHTML': true,
+		});
+
+		return isDiff;
 	}
 
 	getRunData(): SimRunData | null {

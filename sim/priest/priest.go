@@ -170,13 +170,13 @@ func (priest *Priest) Initialize() {
 	}
 }
 
-func (priest *Priest) RegisterHealingSpells() {
+func (priest *Priest) RegisterHealingSpells(raptureChance float64) {
 	priest.registerPenanceHealSpell()
 	priest.registerBindingHealSpell()
 	priest.registerCircleOfHealingSpell()
 	priest.registerFlashHealSpell()
 	priest.registerGreaterHealSpell()
-	priest.registerPowerWordShieldSpell()
+	priest.registerPowerWordShieldSpell(raptureChance)
 	priest.registerPrayerOfHealingSpell()
 	priest.registerPrayerOfMendingSpell()
 	priest.registerRenewSpell()

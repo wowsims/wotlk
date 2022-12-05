@@ -38,8 +38,6 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 		Rotation: balanceOptions.Rotation,
 	}
 
-	moonkin.ResetTalentsBonuses()
-	moonkin.RegisterTalentsBonuses()
 	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
 	return moonkin
 }

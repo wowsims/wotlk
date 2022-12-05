@@ -61,19 +61,11 @@ export class DetailedResults extends Component {
 		simResultsManager.currentChangeEmitter.on(() => {
 			const runData = simResultsManager.getRunData();
 			if (runData) {
+				this.updateSettings();
 				this.setSimRunData(runData);
 			}
 		});
 	}
-
-	// TODO: Decide whether to continue using this or just remove it.
-	//setPending() {
-	//	this.latestRun = null;
-	//	this.iframeElem.contentWindow!.postMessage(null, '*');
-	//	if (this.tabWindow) {
-	//		this.tabWindow.postMessage(null, '*');
-	//	}
-	//}
 
 	private setSimRunData(simRunData: SimRunData) {
 		this.latestRun = simRunData;

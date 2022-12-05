@@ -13,10 +13,10 @@ var ItemSetThunderheartRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Thunderheart Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// handled in moonfire.go in template construction
+			// Implemented in moonfire.go
 		},
 		4: func(agent core.Agent) {
-			// handled in starfire.go in template construction
+			// Implemented in starfire.go
 		},
 	},
 })
@@ -63,24 +63,10 @@ var ItemSetNightsongGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-// T9 Balance Alliance
+// T9 Balance
 var ItemSetMalfurionsRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Malfurion's Regalia",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
-			// Implemented in moonfire.go
-		},
-		4: func(agent core.Agent) {
-			// Increases the damage done by your Starfire and Wrath spells by 4%.
-			// Implemented in starfire.go and wrath.go
-		},
-	},
-})
-
-// T9 Balance Horde
-var ItemSetRunetotemsRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Runetotem's Regalia",
+	Name:            "Malfurion's Regalia",
+	AlternativeName: "Runetotem's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Moonfire ability now has a chance for its periodic damage to be critical strikes.
@@ -103,7 +89,53 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
-			// Implemented in spell files.
+			druid := agent.(DruidAgent).GetDruid()
+
+			lasherweaveDot := core.NewDot(core.Dot{
+				Spell: druid.RegisterSpell(core.SpellConfig{
+					ActionID:         core.ActionID{SpellID: 71023},
+					SpellSchool:      core.SpellSchoolNature,
+					ProcMask:         core.ProcMaskEmpty,
+					DamageMultiplier: 1,
+					ThreatMultiplier: 1,
+				}),
+				Aura: druid.CurrentTarget.RegisterAura(core.Aura{
+					Label:    "Languish",
+					ActionID: core.ActionID{SpellID: 71023},
+				}),
+				NumberOfTicks: 2,
+				TickLength:    time.Second * 2,
+
+				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+					dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				},
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				},
+			})
+
+			druid.RegisterAura(core.Aura{
+				Label:    "Lasherweave 4pc Trigger",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if spell != druid.Starfire && spell != druid.Wrath {
+						return
+					}
+					if !result.DidCrit() {
+						return
+					}
+
+					if lasherweaveDot.IsActive() {
+						lasherweaveDot.Refresh(sim)
+					} else {
+						lasherweaveDot.Apply(sim)
+					}
+				},
+			})
 		},
 	},
 })
@@ -119,12 +151,37 @@ var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			druid := agent.(DruidAgent).GetDruid()
 			druid.AddStat(stats.SpellPower, 88)
-			druid.SwiftStarfireAura = druid.RegisterAura(core.Aura{
-				Label:    "Moonkin Starfire Bonus",
+
+			percentReduction := float64(time.Millisecond*1500) / float64(druid.starfireCastTime())
+			swiftStarfireAura := druid.RegisterAura(core.Aura{
+				Label:    "Swift Starfire",
 				ActionID: core.ActionID{SpellID: 46832},
 				Duration: time.Second * 15,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					druid.Starfire.CastTimeMultiplier -= percentReduction
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					druid.Starfire.CastTimeMultiplier += percentReduction
+				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell == druid.Starfire {
+						aura.Deactivate(sim)
+					}
+				},
 			})
-			// Rest implemented in spells
+
+			druid.RegisterAura(core.Aura{
+				Label:    "Swift Starfire trigger",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell == druid.Wrath && sim.RandomFloat("Swift Starfire proc") > 0.85 {
+						swiftStarfireAura.Activate(sim)
+					}
+				},
+			})
 		},
 	},
 })
@@ -215,20 +272,9 @@ var ItemSetDreamwalkerBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetRunetotemsBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Runetotem's Battlegear",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// implemented in skills
-		},
-		4: func(agent core.Agent) {
-			// implemented in skills
-		},
-	},
-})
-
 var ItemSetMalfurionsBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Malfurion's Battlegear",
+	Name:            "Malfurion's Battlegear",
+	AlternativeName: "Runetotem's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// implemented in skills
@@ -238,10 +284,6 @@ var ItemSetMalfurionsBattlegear = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
-
-func (druid *Druid) HasT9FeralSetBonus(num int32) bool {
-	return druid.HasSetBonus(ItemSetRunetotemsBattlegear, num) || druid.HasSetBonus(ItemSetMalfurionsBattlegear, num)
-}
 
 func init() {
 
@@ -484,37 +526,5 @@ func init() {
 				procAura.Activate(sim)
 			},
 		}))
-	})
-}
-
-func (druid *Druid) registerLasherweaveDot() {
-	if !druid.setBonuses.balance_t10_4 {
-		return
-	}
-
-	dotSpell := druid.RegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 71023},
-		SpellSchool:      core.SpellSchoolNature,
-		ProcMask:         core.ProcMaskEmpty,
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-	})
-
-	druid.LasherweaveDot = core.NewDot(core.Dot{
-		Spell: dotSpell,
-		Aura: druid.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Languish",
-			ActionID: core.ActionID{SpellID: 71023},
-		}),
-		NumberOfTicks: 2,
-		TickLength:    time.Second * 2,
-
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-		},
 	})
 }

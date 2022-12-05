@@ -41,6 +41,8 @@ export class SimHeader extends Component {
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;	
 
 		this.warningsLink = this.addWarningsLink();
+		this.updateWarnings();
+
 		this.knownIssuesLink = this.addKnownIssuesLink();
     this.addBugReportLink();
     this.addDownloadBinaryLink();
@@ -69,13 +71,31 @@ export class SimHeader extends Component {
 		this.simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
 	}
 
-  addImportLink(importElem: HTMLElement) {
-    this.importExportContainer.appendChild(importElem);
+	addImportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		this.addImportExportLink('importFragment', label, onClick, hideInRaidSim);
   }
+	addExportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		this.addImportExportLink('exportFragment', label, onClick, hideInRaidSim);
+  }
+	private addImportExportLink(fragmentId: string, label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		const fragment = this.rootElem.getElementsByClassName(fragmentId)[0] as HTMLElement;
+		const menuElem = fragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
 
-  addExportLink(exportElem: HTMLElement) {
-    this.importExportContainer.appendChild(exportElem);
-  }
+		const itemFragment = document.createElement('fragment');
+		itemFragment.innerHTML = `
+			<li class="${hideInRaidSim ? 'within-raid-sim-hide' : ''}">
+				<a
+					href="javascript:void(0)"
+					class="dropdown-item"
+					role="button"
+				>${label}</a>
+			</li>
+		`;
+		const itemElem = itemFragment.children[0] as HTMLElement;
+		const linkElem = itemElem.children[0] as HTMLElement;
+		linkElem.addEventListener('click', () => onClick(menuElem));
+		menuElem.appendChild(itemFragment);
+	}
 
 	private addToolbarLink(args: ToolbarLinkArgs): HTMLElement {
 		let fragment = document.createElement('fragment');
@@ -268,7 +288,26 @@ let headerFragment = document.createElement('fragment');
 headerFragment.innerHTML = `
   <header id="simHeader">
     <ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-    <div class="import-export"></div>
+    <div class="import-export">
+			<fragment class="importFragment">
+				<div class="dropdown sim-dropdown-menu">
+					<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+						<i class="fa fa-download"></i>
+						Import
+					</a>
+					<ul class="dropdown-menu"></ul>
+				</div>
+			</fragment>
+			<fragment class="exportFragment">
+				<div class="dropdown sim-dropdown-menu">
+					<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+						<i class="fa fa-right-from-bracket"></i>
+						Export
+					</a>
+					<ul class="dropdown-menu"></ul>
+				</div>
+			</fragment>
+		</div>
     <div class="sim-toolbar">
 		</div>
   </header>

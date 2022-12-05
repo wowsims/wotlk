@@ -177,14 +177,6 @@ export abstract class SimUI extends Component {
 		this.simHeader.addWarning(warning);
 	}
 
-	protected addImportLink(link: HTMLElement) {
-		this.simHeader.addImportLink(link);
-	}
-
-	protected addExportLink(link: HTMLElement) {
-		this.simHeader.addExportLink(link);
-	}
-
 	private addNoticeBanner() {
 		const noticesElem = document.querySelector('#noticesBanner') as HTMLElement;
 
