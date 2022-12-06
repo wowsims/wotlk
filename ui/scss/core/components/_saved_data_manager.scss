@@ -23,6 +23,10 @@
         }
       }
 
+      &.disabled {
+        display: none;
+      }
+
       &:hover:not(.active) {
         background: rgba($primary, .2);
       }
