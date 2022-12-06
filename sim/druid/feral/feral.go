@@ -82,6 +82,7 @@ type FeralDruid struct {
 	waitingForTick bool
 	latency        time.Duration
 	maxRipTicks    int32
+	berserkUsed    bool
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -107,6 +108,7 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
+	cat.berserkUsed = false
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.ClearcastingAura.Activate(sim)
