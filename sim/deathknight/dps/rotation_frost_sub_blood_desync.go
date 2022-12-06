@@ -74,12 +74,38 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti_Desync).
 		NewAction(dk.RotationActionCallback_FS).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_FS_Special).
 		NewAction(dk.RotationActionCallback_HW).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_DesyncRotation)
+}
+
+func (dk *DpsDeathknight) canCastInDesyncWindow(sim *core.Simulation, spell *deathknight.RuneSpell) bool {
+	if !dk.RuneIsDeath(1) {
+		return true
+	}
+
+	gcd := dk.GetGcdDuration(spell)
+	u := dk.UnholyRuneReadyAt(sim)
+	f := dk.FrostRuneReadyAt(sim)
+	d := dk.RuneReadyAt(sim, 1)
+
+	if f <= sim.CurrentTime || u <= sim.CurrentTime {
+		return true
+	}
+
+	if !(d <= f && f < u) {
+		return true
+	}
+
+	if f+gcd >= u {
+		return false
+	}
+
+	return true
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_DesyncRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -102,6 +128,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_DesyncRotation(si
 	}
 
 	if dk.RotationActionCallback_LastSecondsCast(sim, target) {
+		return -1
+	}
+
+	if dk.RuneIsDeath(0) && dk.RuneIsDeath(1) && dk.LeftBloodRuneReady() && dk.RightBloodRuneReady() {
+		dk.Pestilence.Cast(sim, target)
 		return -1
 	}
 
@@ -138,37 +169,37 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_DesyncRotation(si
 
 	}
 
-	if km && dk.FrostStrike.CanCast(sim) && dk.shDiseaseCheck(sim, target, dk.FrostStrike, false, 1, 0) {
+	if km && dk.FrostStrike.CanCast(sim) && dk.shDiseaseCheck(sim, target, dk.FrostStrike, false, 1, 0) && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.FrostStrike.Cast(sim, target)
 		return -1
 	}
 
-	if f > 0 && u > 0 || ((f == 0 && u > 0 && d > 0) || (f > 0 && u == 0 && d > 0)) && dk.shDiseaseCheck(sim, target, dk.Obliterate, true, 1, 0) {
+	if ((f > 0 && u > 0) || (f == 0 && u > 0 && d > 0) || (f > 0 && u == 0 && d > 0)) && dk.shDiseaseCheck(sim, target, dk.Obliterate, true, 1, 0) && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.Obliterate.Cast(sim, target)
 		return -1
 	}
 
-	if t+abGcd <= ob && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+	if t+abGcd <= ob && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.FrostStrike.Cast(sim, target)
 		return -1
 	}
 
-	if t+spGcd <= ob && rime && dk.HowlingBlast.CanCast(sim) && dk.CurrentRunicPower() <= dk.MaxRunicPower()-5.0 {
+	if t+spGcd <= ob && rime && dk.HowlingBlast.CanCast(sim) && dk.CurrentRunicPower() <= dk.MaxRunicPower()-5.0 && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.HowlingBlast.Cast(sim, target)
 		return -1
 	}
 
-	if t+abGcd <= ob && dk.FrostStrike.CanCast(sim) {
+	if t+abGcd <= ob && dk.FrostStrike.CanCast(sim) && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.FrostStrike.Cast(sim, target)
 		return -1
 	}
 
-	if t+spGcd <= ob && dk.HornOfWinter.CanCast(sim) && dk.CurrentRunicPower()+10.0 <= dk.MaxRunicPower() {
+	if t+spGcd <= ob && dk.HornOfWinter.CanCast(sim) && dk.CurrentRunicPower()+10.0 <= dk.MaxRunicPower() && dk.canCastInDesyncWindow(sim, dk.FrostStrike) {
 		dk.HornOfWinter.Cast(sim, target)
 		return -1
 	}
 
-	if dk.LeftBloodRuneReady() {
+	if dk.LeftBloodRuneReady() && !dk.RuneIsDeath(0) {
 		dk.Pestilence.Cast(sim, target)
 		return -1
 	}

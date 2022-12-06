@@ -28,7 +28,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 					cast.GCD = 0
 					cast.Cost = 0
 				} else {
-					cast.GCD = dk.getModifiedGCD()
+					cast.GCD = dk.GetModifiedGCD()
 				}
 			},
 		},

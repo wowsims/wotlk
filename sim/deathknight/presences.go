@@ -216,7 +216,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	})
 }
 
-func (dk *Deathknight) getModifiedGCD() time.Duration {
+func (dk *Deathknight) GetModifiedGCD() time.Duration {
 	if dk.UnholyPresenceAura.IsActive() {
 		return time.Second
 	} else {

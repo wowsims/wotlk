@@ -386,6 +386,13 @@ func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
+func (rp *RunicPowerBar) RuneReadyAt(sim *Simulation, slot int8) time.Duration {
+	if rp.runeStates&isSpents[slot] != isSpents[slot] {
+		return sim.CurrentTime
+	}
+	return rp.runeMeta[slot].regenAt
+}
+
 // AnySpentRuneReadyAt returns the next time that a rune will regenerate.
 //
 //	It will be NeverExpires if there is no rune pending regeneration.

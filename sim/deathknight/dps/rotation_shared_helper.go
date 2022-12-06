@@ -18,10 +18,18 @@ func (sr *SharedRotation) Reset(sim *core.Simulation) {
 	sr.recastedBP = false
 }
 
+func (dk *DpsDeathknight) GetGcdDuration(spell *deathknight.RuneSpell) time.Duration {
+	gcd := dk.SpellGCD()
+	if spell.IsMelee() {
+		gcd = dk.GetModifiedGCD()
+	}
+	return gcd
+}
+
 func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-	castGcd := dk.SpellGCD() * time.Duration(casts)
+	castGcd := dk.GetGcdDuration(spell) * time.Duration(casts)
 
 	// FF is not active or will drop before Gcd is ready after this cast
 	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {

@@ -60,7 +60,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 				Cost:        baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),

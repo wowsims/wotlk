@@ -36,7 +36,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				Cost: baseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 				if dk.RimeAura.IsActive() {
 					cast.Cost = 0 // no runes, no regen
 					dk.RimeAura.Deactivate(sim)
