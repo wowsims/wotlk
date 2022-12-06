@@ -331,17 +331,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_HB(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.Rime() && !dk.KM() {
-		dk.HowlingBlast.Cast(sim, target)
-	} else {
-		dk.FrostStrike.Cast(sim, target)
-	}
-
-	s.Advance()
-	return -1
-}
-
 func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
@@ -357,16 +346,16 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_BS).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 }
 
@@ -381,14 +370,14 @@ func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_BS).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_HB).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 }
