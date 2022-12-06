@@ -17,6 +17,10 @@
     flex-direction: column;
     flex-grow: 1;
 
+    &> *:not(:last-child) {
+      margin-bottom: map.get($spacers, 4);
+    }
+
     .sim-sidebar-actions {
       padding-left: $gap-width * 2;
       padding-right: $gap-width * 2;
@@ -24,8 +28,8 @@
       flex-direction: column;
       align-items: center;
 
-      &> * {
-        margin-bottom: map.get($spacers, 3);
+      &> *:not(:last-child) {
+        margin-bottom: .75rem;
       }
 
       .iterations-picker {
@@ -44,19 +48,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-    
-    .results-pending .loader {
-      margin: auto;
-    }
-    
-    .iterations-label {
-      color: var(--sidebar-text-color);
-    }
-    
-    .results-sim {
-      color: var(--sidebar-text-color);
-      text-shadow: 0 0 10px var(--sidebar-highlight-color);
     }
   }
 }
