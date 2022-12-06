@@ -344,6 +344,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			0,
 			0,
 		}
+
 		for i, cd := range warlock.procTrackers {
 			curAura := cd.aura
 			curExpire := cd.expiresAt.Seconds()
@@ -357,6 +358,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				}
 			}
 		}
+
+		// Calculate DPS for each tick if one were to clip early
 
 		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
 			warlock.PseudoStats.DamageDealtMultiplier
@@ -653,17 +656,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = filler
 		}
 
-		//if spell == warlock.UnstableAffliction {
-		//	if allCDs[0]-hauntcasttime < time.Millisecond*15 {
+		currentWait := warlock.Haunt.TimeToReady(sim)
+		if spell == warlock.CurseOfAgony && currentWait < 1 {
+			if warlock.CorruptionDot.RemainingDuration(sim)-hauntcasttime-allCDs[0] < 0 {
+				spell = warlock.Haunt
 
-		//spell = warlock.Haunt
-		//currentWait := allCDs[0]
-		//if currentWait > 0 {
-		//	warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
-		//	return
-		//}
-		//	}
-		//}
+				if currentWait > 0 {
+					warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
+					return
+				}
+			}
+		}
 	}
 
 	if warlock.DrainSoulDot.IsActive() {
