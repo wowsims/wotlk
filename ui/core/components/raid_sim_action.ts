@@ -11,7 +11,7 @@ import { formatDeltaTextElem } from '../utils.js';
 declare var tippy: any;
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
-	simUI.addAction('Simulate DPS', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
+	simUI.addAction('Simulate', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
 		resultsManager.setSimProgress(progress);
 	}));
 
