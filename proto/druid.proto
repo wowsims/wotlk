@@ -223,6 +223,7 @@ message FeralDruid {
     int32 latency_ms = 2;
     bool prepop_ooc = 3;
     bool assume_bleed_active = 4;
+    bool pre_pop_berserk = 5;
   }
   Options options = 3;
 }
