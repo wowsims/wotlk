@@ -356,6 +356,15 @@ func (rp *RunicPowerBar) SpentUnholyRuneReadyAt() time.Duration {
 	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
+func (rp *RunicPowerBar) BloodRuneBothReadyAt() time.Duration {
+	if MaxDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt) > 150000000*time.Minute {
+		return MinDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+	} else {
+		return MaxDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+	}
+
+}
+
 func (rp *RunicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
 	if rp.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
 		return sim.CurrentTime

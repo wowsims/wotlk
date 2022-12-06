@@ -201,7 +201,7 @@ export const DefaultConsumes = Consumes.create({
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	name: 'Pre-Raid 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
 			"id": 41386,
@@ -297,7 +297,7 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
 export const P1_UNHOLY_2H_BIS_PRESET = {
 	name: 'P1 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
 			"id": 44006,
@@ -393,7 +393,7 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
 export const P1_UNHOLY_DW_PRERAID_PRESET = {
 	name: 'Pre-Raid DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 41386,
@@ -492,7 +492,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 export const P1_UNHOLY_DW_BIS_PRESET = {
 	name: 'P1 DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 44006,
