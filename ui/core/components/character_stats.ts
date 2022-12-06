@@ -1,4 +1,3 @@
-import { PlayerStats } from '..//proto/api.js';
 import { Stat, Class } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
@@ -8,7 +7,10 @@ import { EventID, TypedEvent } from '..//typed_event.js';
 
 import * as Mechanics from '../constants/mechanics.js';
 
+import { NumberPicker } from './number_picker';
 import { Component } from './component.js';
+
+import { Popover, Tooltip } from 'bootstrap';
 
 declare var tippy: any;
 
@@ -17,7 +19,6 @@ export type StatMods = { talents: Stats };
 export class CharacterStats extends Component {
 	readonly stats: Array<Stat>;
 	readonly valueElems: Array<HTMLTableCellElement>;
-	readonly tooltipElems: Array<HTMLElement>;
 
 	private readonly player: Player<any>;
 	private readonly modifyDisplayStats?: (player: Player<any>) => StatMods;
@@ -38,24 +39,29 @@ export class CharacterStats extends Component {
 		this.rootElem.appendChild(table);
 
 		this.valueElems = [];
-		this.tooltipElems = [];
 		this.stats.forEach(stat => {
+			let statName = getClassStatName(stat, player.getClass());
+
 			const row = document.createElement('tr');
 			row.classList.add('character-stats-table-row');
 			row.innerHTML = `
-				<td class="character-stats-table-label">
-					<span>${getClassStatName(stat, player.getClass()).toUpperCase()}<span>
-					<span class="character-stats-table-tooltip fas fa-search"></span>
-				</td>
-				<td class="character-stats-table-value"></td>
+				<td class="character-stats-table-label">${statName}</td>
+				<td class="character-stats-table-value" data-bs-toggle="tooltip" data-bs-html="true"></td>
+				<td
+					class="character-stats-bonus-stats"
+					data-bs-toggle="tooltip"
+					data-bs-title="Bonus ${statName}"
+					data-bs-direction="right"
+				></td>
 			`;
 			table.appendChild(row);
 
 			const valueElem = row.getElementsByClassName('character-stats-table-value')[0] as HTMLTableCellElement;
 			this.valueElems.push(valueElem);
 
-			const tooltipElem = row.getElementsByClassName('character-stats-table-tooltip')[0] as HTMLElement;
-			this.tooltipElems.push(tooltipElem);
+			const bonusStatsElem = row.getElementsByClassName('character-stats-bonus-stats')[0] as HTMLElement;
+			bonusStatsElem.appendChild(this.bonusStatsLink(stat));
+			new Tooltip(bonusStatsElem);
 		});
 
 		this.updateStats(player);
@@ -76,56 +82,82 @@ export class CharacterStats extends Component {
 		const talentsStats = new Stats(playerStats.talentsStats);
 		const buffsStats = new Stats(playerStats.buffsStats);
 		const consumesStats = new Stats(playerStats.consumesStats);
-		const debuffStats = CharacterStats.getDebuffStats(player);
+		const debuffStats = this.getDebuffStats();
+		const bonusStats = player.getBonusStats();
 		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats);
 
+		const baseDelta = baseStats.subtract(bonusStats);
 		const gearDelta = gearStats.subtract(baseStats);
 		const talentsDelta = talentsStats.subtract(gearStats).add(statMods.talents);
 		const buffsDelta = buffsStats.subtract(talentsStats);
 		const consumesDelta = consumesStats.subtract(buffsStats);
 
 		this.stats.forEach((stat, idx) => {
-			this.valueElems[idx].textContent = CharacterStats.statDisplayString(player, finalStats, stat);
+			let fragment = document.createElement('fragment');
+			fragment.innerHTML = `
+				<a href="javascript:void(0)" role="button" data-bs-toggle="tooltip" data-bs-html="true">${this.statDisplayString(finalStats, stat)}</a>
+			`
+			let valueElem = fragment.children[0] as HTMLElement;
+			this.valueElems[idx].innerHTML = '';
+			this.valueElems[idx].appendChild(valueElem);
 
-			tippy(this.tooltipElems[idx], {
-				'content': `
-					<div class="character-stats-tooltip-row">
-						<span>Base:</span>
-						<span>${CharacterStats.statDisplayString(player, baseStats, stat)}</span>
-					</div>
-					<div class="character-stats-tooltip-row">
-						<span>Gear:</span>
-						<span>${CharacterStats.statDisplayString(player, gearDelta, stat)}</span>
-					</div>
-					<div class="character-stats-tooltip-row">
-						<span>Talents:</span>
-						<span>${CharacterStats.statDisplayString(player, talentsDelta, stat)}</span>
-					</div>
-					<div class="character-stats-tooltip-row">
-						<span>Buffs:</span>
-						<span>${CharacterStats.statDisplayString(player, buffsDelta, stat)}</span>
-					</div>
-					<div class="character-stats-tooltip-row">
-						<span>Consumes:</span>
-						<span>${CharacterStats.statDisplayString(player, consumesDelta, stat)}</span>
-					</div>
-					${debuffStats.getStat(stat) == 0 ? '' : `
-					<div class="character-stats-tooltip-row">
-						<span>Debuffs:</span>
-						<span>${CharacterStats.statDisplayString(player, debuffStats, stat)}</span>
-					</div>
-					`}
-					<div class="character-stats-tooltip-row">
-						<span>Total:</span>
-						<span>${CharacterStats.statDisplayString(player, finalStats, stat)}</span>
-					</div>
-				`,
-				'allowHTML': true,
-			});
+			let bonusStatValue = player.getBonusStats().getStat(stat);
+			
+			if (bonusStatValue == 0) {
+				valueElem.classList.remove('text-success', 'text-danger');
+				valueElem.classList.add('text-white');
+			} else if (bonusStatValue > 0) {
+				valueElem.classList.remove('text-white', 'text-danger');
+				valueElem.classList.add('text-success');
+			} else if (bonusStatValue < 0) {
+				valueElem.classList.remove('text-white', 'text-success');
+				valueElem.classList.add('text-danger');
+			}
+
+			valueElem.setAttribute('data-bs-title', `
+				<div class="character-stats-tooltip-row">
+					<span>Base:</span>
+					<span>${this.statDisplayString(baseDelta, stat)}</span>
+				</div>
+				<div class="character-stats-tooltip-row">
+					<span>Gear:</span>
+					<span>${this.statDisplayString(gearDelta, stat)}</span>
+				</div>
+				<div class="character-stats-tooltip-row">
+					<span>Talents:</span>
+					<span>${this.statDisplayString(talentsDelta, stat)}</span>
+				</div>
+				<div class="character-stats-tooltip-row">
+					<span>Buffs:</span>
+					<span>${this.statDisplayString(buffsDelta, stat)}</span>
+				</div>
+				<div class="character-stats-tooltip-row">
+					<span>Consumes:</span>
+					<span>${this.statDisplayString(consumesDelta, stat)}</span>
+				</div>
+				${debuffStats.getStat(stat) == 0 ? '' : `
+				<div class="character-stats-tooltip-row">
+					<span>Debuffs:</span>
+					<span>${this.statDisplayString(debuffStats, stat)}</span>
+				</div>
+				`}
+				${bonusStatValue == 0 ? '' : `
+				<div class="character-stats-tooltip-row">
+					<span>Bonus:</span>
+					<span>${this.statDisplayString(this.player.getBonusStats(), stat)}</span>
+				</div>
+				`}
+				<div class="character-stats-tooltip-row">
+					<span>Total:</span>
+					<span>${this.statDisplayString(finalStats, stat)}</span>
+				</div>
+			`);
+
+			Tooltip.getOrCreateInstance(valueElem);
 		});
 	}
 
-	static statDisplayString(player: Player<any>, stats: Stats, stat: Stat): string {
+	private statDisplayString(stats: Stats, stat: Stat): string {
 		const rawValue = stats.getStat(stat);
 		let displayStr = String(Math.round(rawValue));
 
@@ -136,7 +168,7 @@ export class CharacterStats extends Component {
 		} else if (stat == Stat.StatMeleeCrit || stat == Stat.StatSpellCrit) {
 			displayStr += ` (${(rawValue / Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE).toFixed(2)}%)`;
 		} else if (stat == Stat.StatMeleeHaste) {
-			if ([Class.ClassDruid, Class.ClassShaman, Class.ClassPaladin, Class.ClassDeathknight].includes(player.getClass())) {
+			if ([Class.ClassDruid, Class.ClassShaman, Class.ClassPaladin, Class.ClassDeathknight].includes(this.player.getClass())) {
 				displayStr += ` (${(rawValue / Mechanics.SPECIAL_MELEE_HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
 			} else {
 				displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
@@ -160,10 +192,10 @@ export class CharacterStats extends Component {
 		return displayStr;
 	}
 
-	static getDebuffStats(player: Player<any>): Stats {
+	private getDebuffStats(): Stats {
 		let debuffStats = new Stats();
 
-		const debuffs = player.sim.raid.getDebuffs();
+		const debuffs = this.player.sim.raid.getDebuffs();
 		if (debuffs.misery || debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
 			debuffStats = debuffStats.addStat(Stat.StatSpellHit, 3 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 		}
@@ -176,5 +208,41 @@ export class CharacterStats extends Component {
 		}
 
 		return debuffStats;
+	}
+
+	private bonusStatsLink(stat: Stat): HTMLElement {
+		let statName = getClassStatName(stat, this.player.getClass());
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+			<a
+				href="javascript:void(0)"
+				class="add-bonus-stats text-white ms-1"
+				role="button"
+				data-bs-toggle="popover"
+				data-bs-content="<div></div>"
+				data-bs-html="true"
+			>
+				<i class="fas fa-plus-minus"></i>
+			</a>
+		`;
+
+		let link = fragment.children[0] as HTMLElement;
+		let popover = Popover.getOrCreateInstance(link, {customClass: 'bonus-stats-popover'});
+
+		link.addEventListener('shown.bs.popover', (event) => {
+			let popoverBody = document.querySelector('.popover.bonus-stats-popover .popover-body') as HTMLElement;
+			let picker = new NumberPicker(popoverBody, this.player, {
+				label: `Bonus ${statName}`,
+				changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
+				getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),
+				setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+					const bonusStats = player.getBonusStats().withStat(stat, newValue);
+					player.setBonusStats(eventID, bonusStats);
+					popover.hide();
+				},
+			});
+		});
+
+		return link as HTMLElement;
 	}
 }

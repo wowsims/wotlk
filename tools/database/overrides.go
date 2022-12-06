@@ -125,108 +125,109 @@ var ItemOverrides = []*proto.UIItem{
 
 // Keep these sorted by item ID.
 var ItemAllowList = map[int32]struct{}{
-	11815: struct{}{}, // Hand of Justice
-	12590: struct{}{}, // Felstriker
-	15808: struct{}{}, // Fine Light Crossbow (for hunter testing).
-	18843: struct{}{},
-	18844: struct{}{},
-	18847: struct{}{},
-	18848: struct{}{},
-	19019: struct{}{}, // Thunderfury
-	19808: struct{}{}, // Rockhide Strongfish
-	20837: struct{}{}, // Sunstrider Axe
-	20966: struct{}{}, // Jade Pendant of Blasting
-	24114: struct{}{}, // Braided Eternium Chain
-	28830: struct{}{}, // Dragonspine Trophy
-	29383: struct{}{}, // Bloodlust Brooch
-	29387: struct{}{}, // Gnomeregan Auto-Blocker 600
-	29994: struct{}{}, // Thalassian Wildercloak
-	29996: struct{}{}, // Rod of the Sun King
-	30032: struct{}{}, // Red Belt of Battle
-	30627: struct{}{}, // Tsunami Talisman
-	30720: struct{}{}, // Serpent-Coil Braid
-	32387: struct{}{}, // Idol of the Raven Goddess
-	32658: struct{}{}, // Badge of Tenacity
-	33135: struct{}{}, // Falling Star
-	33140: struct{}{}, // Blood of Amber
-	33143: struct{}{}, // Stone of Blades
-	33144: struct{}{}, // Facet of Eternity
-	33504: struct{}{}, // Libram of Divine Purpose
-	33506: struct{}{}, // Skycall Totem
-	33507: struct{}{}, // Stonebreaker's Totem
-	33510: struct{}{}, // Unseen moon idol
-	33829: struct{}{}, // Hex Shrunken Head
-	33831: struct{}{}, // Berserkers Call
-	34472: struct{}{}, // Shard of Contempt
-	34473: struct{}{}, // Commendation of Kael'thas
-	37032: struct{}{}, // Edge of the Tuskarr
-	37574: struct{}{}, // Libram of Furious Blows
-	38072: struct{}{}, // Thunder Capacitor
-	38212: struct{}{}, // Death Knight's Anguish
-	38287: struct{}{}, // Empty Mug of Direbrew
-	38289: struct{}{}, // Coren's Lucky Coin
-	39208: struct{}{}, // Sigil of the Dark Rider
-	41752: struct{}{}, // Brunnhildar Axe
-	6360:  struct{}{}, // Steelscale Crushfish
-	8345:  struct{}{}, // Wolfshead Helm
-	9449:  struct{}{}, // Manual Crowd Pummeler
+	11815: {}, // Hand of Justice
+	12590: {}, // Felstriker
+	15808: {}, // Fine Light Crossbow (for hunter testing).
+	18843: {},
+	18844: {},
+	18847: {},
+	18848: {},
+	19019: {}, // Thunderfury
+	19808: {}, // Rockhide Strongfish
+	20837: {}, // Sunstrider Axe
+	20966: {}, // Jade Pendant of Blasting
+	24114: {}, // Braided Eternium Chain
+	28572: {}, // Blade of the Unrequited
+	28830: {}, // Dragonspine Trophy
+	29383: {}, // Bloodlust Brooch
+	29387: {}, // Gnomeregan Auto-Blocker 600
+	29994: {}, // Thalassian Wildercloak
+	29996: {}, // Rod of the Sun King
+	30032: {}, // Red Belt of Battle
+	30627: {}, // Tsunami Talisman
+	30720: {}, // Serpent-Coil Braid
+	32387: {}, // Idol of the Raven Goddess
+	32658: {}, // Badge of Tenacity
+	33135: {}, // Falling Star
+	33140: {}, // Blood of Amber
+	33143: {}, // Stone of Blades
+	33144: {}, // Facet of Eternity
+	33504: {}, // Libram of Divine Purpose
+	33506: {}, // Skycall Totem
+	33507: {}, // Stonebreaker's Totem
+	33510: {}, // Unseen moon idol
+	33829: {}, // Hex Shrunken Head
+	33831: {}, // Berserkers Call
+	34472: {}, // Shard of Contempt
+	34473: {}, // Commendation of Kael'thas
+	37032: {}, // Edge of the Tuskarr
+	37574: {}, // Libram of Furious Blows
+	38072: {}, // Thunder Capacitor
+	38212: {}, // Death Knight's Anguish
+	38287: {}, // Empty Mug of Direbrew
+	38289: {}, // Coren's Lucky Coin
+	39208: {}, // Sigil of the Dark Rider
+	41752: {}, // Brunnhildar Axe
+	6360:  {}, // Steelscale Crushfish
+	8345:  {}, // Wolfshead Helm
+	9449:  {}, // Manual Crowd Pummeler
 
 	// Sets
-	27510: struct{}{}, // Tidefury Gauntlets
-	27802: struct{}{}, // Tidefury Shoulderguards
-	27909: struct{}{}, // Tidefury Kilt
-	28231: struct{}{}, // Tidefury Chestpiece
-	28349: struct{}{}, // Tidefury Helm
+	27510: {}, // Tidefury Gauntlets
+	27802: {}, // Tidefury Shoulderguards
+	27909: {}, // Tidefury Kilt
+	28231: {}, // Tidefury Chestpiece
+	28349: {}, // Tidefury Helm
 
-	15056: struct{}{}, // Stormshroud Armor
-	15057: struct{}{}, // Stormshroud Pants
-	15058: struct{}{}, // Stormshroud Shoulders
-	21278: struct{}{}, // Stormshroud Gloves
+	15056: {}, // Stormshroud Armor
+	15057: {}, // Stormshroud Pants
+	15058: {}, // Stormshroud Shoulders
+	21278: {}, // Stormshroud Gloves
 
 	// Undead Slaying Sets
 	// Plate
-	43068: struct{}{},
-	43069: struct{}{},
-	43070: struct{}{},
-	43071: struct{}{},
+	43068: {},
+	43069: {},
+	43070: {},
+	43071: {},
 	// Cloth
-	43072: struct{}{},
-	43073: struct{}{},
-	43074: struct{}{},
-	43075: struct{}{},
+	43072: {},
+	43073: {},
+	43074: {},
+	43075: {},
 	// Mail
-	43076: struct{}{},
-	43077: struct{}{},
-	43078: struct{}{},
-	43079: struct{}{},
+	43076: {},
+	43077: {},
+	43078: {},
+	43079: {},
 	//Leather
-	43080: struct{}{},
-	43081: struct{}{},
-	43082: struct{}{},
-	43083: struct{}{},
+	43080: {},
+	43081: {},
+	43082: {},
+	43083: {},
 }
 
 // Keep these sorted by item ID.
 var ItemDenyList = map[int32]struct{}{
-	17782: struct{}{}, // talisman of the binding shard
-	17783: struct{}{}, // talisman of the binding fragment
-	17802: struct{}{}, // Deprecated version of Thunderfury
-	18582: struct{}{},
-	18583: struct{}{},
-	18584: struct{}{},
-	24265: struct{}{},
-	32384: struct{}{},
-	32421: struct{}{},
-	32422: struct{}{},
-	33482: struct{}{},
-	33350: struct{}{},
-	34576: struct{}{}, // Battlemaster's Cruelty
-	34577: struct{}{}, // Battlemaster's Depreavity
-	34578: struct{}{}, // Battlemaster's Determination
-	34579: struct{}{}, // Battlemaster's Audacity
-	34580: struct{}{}, // Battlemaster's Perseverence
-
-	53500: struct{}{}, // Tectonic Plate
+	17782: {}, // talisman of the binding shard
+	17783: {}, // talisman of the binding fragment
+	17802: {}, // Deprecated version of Thunderfury
+	18582: {},
+	18583: {},
+	18584: {},
+	24265: {},
+	32384: {},
+	32421: {},
+	32422: {},
+	33482: {},
+	33350: {},
+	34576: {}, // Battlemaster's Cruelty
+	34577: {}, // Battlemaster's Depreavity
+	34578: {}, // Battlemaster's Determination
+	34579: {}, // Battlemaster's Audacity
+	34580: {}, // Battlemaster's Perseverence
+	50251: {}, // 'one hand shadows edge'
+	53500: {}, // Tectonic Plate
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.

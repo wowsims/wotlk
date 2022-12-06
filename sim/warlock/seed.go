@@ -22,22 +22,23 @@ func (warlock *Warlock) registerSeedSpell() {
 }
 
 func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
-	target := warlock.Env.GetTargetUnit(int32(targetIdx))
 	baseCost := 0.34 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47836, Tag: 1}
-	spellSchool := core.SpellSchoolShadow
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
-		SpellSchool: spellSchool,
+		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating: 0 +
 			warlock.masterDemonologistShadowCrit() +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.DefaultSpellCritMultiplier(),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery) +
+			0.01*float64(warlock.Talents.Contagion),
+		CritMultiplier:   warlock.DefaultSpellCritMultiplier(),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dmgFromSP := 0.2129 * spell.SpellPower()
@@ -56,7 +57,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 
 	warlock.Seeds[targetIdx] = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -69,8 +70,12 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 			},
 		},
 
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandSpellstoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery) +
+			0.01*float64(warlock.Talents.Contagion) +
+			core.TernaryFloat64(warlock.Talents.SiphonLife, 0.05, 0),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
@@ -85,6 +90,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		},
 	})
 
+	target := warlock.Env.GetTargetUnit(int32(targetIdx))
 	seedDmgTracker := 0.0
 	trySeedPop := func(sim *core.Simulation, dmg float64) {
 		seedDmgTracker += dmg

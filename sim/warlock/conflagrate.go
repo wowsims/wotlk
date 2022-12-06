@@ -11,7 +11,6 @@ import (
 
 func (warlock *Warlock) registerConflagrateSpell() {
 	actionID := core.ActionID{SpellID: 17962}
-	spellSchool := core.SpellSchoolFire
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
 	baseCost := 0.16 * warlock.BaseMana
@@ -22,7 +21,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -51,9 +50,14 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			warlock.masterDemonologistFireCrit() +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.Emberstorm) +
+			0.03*float64(warlock.Talents.Aftermath) +
+			0.1*float64(warlock.Talents.ImprovedImmolate) +
+			core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
@@ -68,13 +72,18 @@ func (warlock *Warlock) registerConflagrateSpell() {
 	warlock.ConflagrateDot = core.NewDot(core.Dot{
 		Spell: warlock.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
-			SpellSchool: spellSchool,
+			SpellSchool: core.SpellSchoolFire,
 			ProcMask:    core.ProcMaskSpellDamage,
 
-			BonusCritRating:          warlock.Conflagrate.BonusCritRating,
-			DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-			CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-			ThreatMultiplier:         warlock.Conflagrate.ThreatMultiplier,
+			BonusCritRating: warlock.Conflagrate.BonusCritRating,
+			DamageMultiplierAdditive: 1 +
+				warlock.GrandSpellstoneBonus() +
+				0.03*float64(warlock.Talents.Emberstorm) +
+				0.03*float64(warlock.Talents.Aftermath) +
+				0.1*float64(warlock.Talents.ImprovedImmolate) +
+				core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0),
+			CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+			ThreatMultiplier: warlock.Conflagrate.ThreatMultiplier,
 		}),
 		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),

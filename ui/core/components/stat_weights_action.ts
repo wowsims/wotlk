@@ -25,7 +25,7 @@ import { Popup } from './popup.js';
 declare var tippy: any;
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epReferenceStat: Stat) {
-	simUI.addAction('STAT WEIGHTS', 'ep-weights-action', () => {
+	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epReferenceStat);
 	});
 }
@@ -219,6 +219,8 @@ class EpWeightsMenu extends Popup {
 			<td>${getClassStatName(stat, this.simUI.player.getClass())}</td>
 			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-weight"><span>${result.hps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-ep"><span>${result.hps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
@@ -255,6 +257,12 @@ class EpWeightsMenu extends Popup {
 	private getPrevSimResult(): StatWeightsResult {
 		return this.simUI.prevEpSimResult || StatWeightsResult.create({
 			dps: {
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
+			},
+			hps: {
 				weights: new Stats().asArray(),
 				weightsStdev: new Stats().asArray(),
 				epValues: new Stats().asArray(),

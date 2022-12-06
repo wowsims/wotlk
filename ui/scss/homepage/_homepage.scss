@@ -1,9 +1,21 @@
 @use "sass:map";
 
+.homepage-image {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-image: url("/wotlk/assets/img/wotlk.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -1;
+}
+
 #homepage {
   height: 100%;
   display: flex;
   flex-direction: column;
+
 
   .homepage-header-container,
   .homepage-content-container,

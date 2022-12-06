@@ -10,14 +10,17 @@ import (
 
 func (warlock *Warlock) registerShadowBoltSpell() {
 	baseCost := 0.17 * warlock.BaseMana
-	actionID := core.ActionID{SpellID: 47809}
-	spellSchool := core.SpellSchoolShadow
 	spellCoeff := 0.857 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
 
+	var shadowMasteryAura *core.Aura
+	if ISBProcChance > 0 {
+		shadowMasteryAura = core.ShadowMasteryAura(warlock.CurrentTarget)
+	}
+
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		ActionID:     core.ActionID{SpellID: 47809},
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 20,
 		ResourceType: stats.Mana,
@@ -43,22 +46,25 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, false),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandFirestoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery) +
+			0.02*float64(warlock.Talents.ImprovedShadowBolt) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetMaleficRaiment, 4), 0.06, 0),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(694, 775) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
 				if result.Landed() {
 					// ISB debuff
 					if sim.Proc(ISBProcChance, "ISB") {
-						// TODO precalculate aura
-						core.ShadowMasteryAura(target).Activate(sim) // calls refresh if already active.
+						shadowMasteryAura.Activate(sim)
 					}
 				}
-				spell.DealDamage(sim, result)
 			})
 		},
 	})

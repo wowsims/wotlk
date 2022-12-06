@@ -1,0 +1,119 @@
+@use "sass:map";
+
+// Define and overwrite Bootstrap Variables
+// See bootstrap/scss/_variables.scss for a complete list of definitions, or
+// individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
+
+// Custom theme color mapping
+$death-knight: rgb(194, 46, 70);
+$druid:        rgb(255, 125, 10);
+$hunter:       rgb(171, 212, 115);
+$mage:         rgb(105, 204, 240);
+$paladin:      rgb(245, 140, 186);
+$priest:       rgb(255, 255, 255);
+$rogue:        rgb(255, 245, 105);
+$shaman:       rgb(36, 89, 255);
+$warlock:      rgb(148, 130, 201);
+$warrior:      rgb(199, 156, 110);
+
+$class-colors: (
+  "death-knight": $death-knight,
+  "druid":        $druid,
+  "hunter":       $hunter,
+  "mage":         $mage,
+  "paladin":      $paladin,
+  "priest":       $priest,
+  "rogue":        $rogue,
+  "shaman":       $shaman,
+  "warlock":      $warlock,
+  "warrior":      $warrior,
+);
+
+$theme-colors: map-merge($theme-colors, $class-colors);
+
+// Theme variable overrides
+@if variable-exists(theme) {
+  $primary: map.get($class-colors, $theme);
+}
+
+@if not variable-exists(theme) {
+  $primary: #e0a335;
+}
+
+$success: #7cfc00;
+
+$custom-colors: (
+  "primary": $primary,
+  "success": $success
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// Custom variables
+$content-font-size: .75rem;
+
+// Global Bootstrap variable overrides
+$enable-negative-margins: true;
+
+$body-bg: #15171e;
+$body-color: white;
+
+$border-color: #4c4e54;
+
+$link-color: #a5b1d6;
+$link-decoration: none;
+$link-hover-color: white;
+$link-transition: color .15s ease-in-out;
+
+// Component variable overrides
+$alert-border-radius: 0;
+
+$btn-font-size: $content-font-size;
+$btn-border-radius: 0;
+$btn-border-radius-sm: 0;
+$btn-border-radius-lg: 0;
+$btn-font-weight: bold;
+
+$dropdown-bg: $body-bg;
+$dropdown-border-radius: 0;
+$dropdown-border-width: 0;
+$dropdown-color: white;
+$dropdown-inner-border-radius: 0;
+$dropdown-link-active-bg: $dropdown-bg;
+$dropdown-link-hover-bg: darken($dropdown-bg, 3);
+$dropdown-padding-y: 0;
+
+$form-label-margin-bottom: .25rem;
+$form-label-font-size: $content-font-size;
+$form-label-font-weight: normal;
+
+$input-bg: lighten($body-bg, 12);
+$input-border-radius: 0;
+$input-border-color: lighten($body-bg, 15);
+$input-color: white;
+$input-disabled-bg: lighten($body-bg, 20);
+$input-focus-bg: lighten($body-bg, 12);
+$input-focus-border-color: lighten($body-bg, 20);
+$input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$input-focus-color: white;
+$input-font-size: $content-font-size;
+
+$navbar-dark-color: white;
+$navbar-dark-hover-color: $primary;
+$navbar-dark-active-color: $primary;
+$navbar-padding-y: 0;
+
+$nav-link-padding-y: map.get($spacers, 3);
+$nav-link-transition: $link-transition;
+$nav-tabs-link-active-bg: transparent;
+$nav-tabs-link-active-color: white;
+
+$popover-bg: #424557;
+$popover-body-color: white;
+$popover-body-padding-x: map.get($spacers, 2);
+$popover-body-padding-y: map.get($spacers, 2);
+
+$tooltip-bg: $popover-bg;
+$tooltip-max-width: 15vw;
+$tooltip-max-width-lg: 25vw;
+$tooltip-max-width-sm: 75vw;

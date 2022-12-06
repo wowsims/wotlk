@@ -17,16 +17,28 @@
 
 .gear-tab-columns {
 	display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  height: 100%;
 }
 
 .left-gear-panel {
   min-width: calc(550px + 2vw);
   flex: 3;
-  padding-right: var(--bs-gap);
+  margin-right: $gap-width * 2;
 }
+
+@include media-breakpoint-down(xl) {
+  .gear-tab-columns {
+    flex-flow: column;
+  }
+
+  .left-gear-panel {
+    margin: 0;
+  }
+
+  .right-gear-panel {
+    margin-top: $gap-width;
+  }
+}
+
 @media only screen and (max-width: calc(800px + 1vw)) {
   .left-gear-panel {
     min-width: calc(275px + 1vw);
@@ -34,38 +46,15 @@
 }
 
 .right-gear-panel {
-  text-align: center;
-  padding-left: var(--bs-gap);
-  border-left: 3px solid var(--main-text-color);
   position: relative;
   flex: 1.25;
   min-width: 250px;
-  min-height: 450px;
-  height: calc(90% - 60px);
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
+
 @media only screen and (max-width: calc(1050px + 2vw)) {
   .right-gear-panel {
     min-width: 275px;
-    border-left: none;
   }
-}
-
-.bonus-stats-root {
-  justify-content: end;
-  text-align: right;
-	color: var(--main-text-color);
-  margin-bottom: 20px;
-}
-
-.bonus-stats-root .number-picker-root {
-  justify-content: end;
-}
-
-.saved-gear-manager {
-  @include horizontal-right;
-  text-align: right;
 }
 
 .saved-data-set-chip {

@@ -1,4 +1,5 @@
 import { Consumes } from '../core/proto/common.js';
+import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -17,6 +18,8 @@ import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	HealingPriest_Rotation as Rotation,
+	HealingPriest_Rotation_RotationType as RotationType,
+	HealingPriest_Rotation_SpellOption as SpellOption,
 	HealingPriest_Options as Options,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
@@ -60,11 +63,21 @@ export const HolyTalents = {
 };
 
 export const DefaultRotation = Rotation.create({
+	type: RotationType.Cycle,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.PowerWordShield, castsPerMinute: 18 }),
+			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
+			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
+			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
+		],
+	}),
 });
 
 export const DefaultOptions = Options.create({
 	useInnerFire: true,
 	useShadowfiend: true,
+	raptureChance: 0.8,
 
 	powerInfusionTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
@@ -74,7 +87,7 @@ export const DefaultOptions = Options.create({
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-	defaultPotion: Potions.RunicManaPotion,
+	defaultPotion: Potions.RunicManaInjector,
 	prepopPotion: Potions.PotionOfWildMagic,
 });
 

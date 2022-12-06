@@ -15,6 +15,7 @@ export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 	setValue: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
 
 	numColumns: number,
+	showCastsPerMinute?: boolean,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 
 	showWhen?: (player: Player<SpecType>) => boolean,
@@ -76,6 +77,21 @@ class CustomSpellPicker<SpecType extends Spec, T> extends Component {
 				this.setSpell(eventID, spell);
 			},
 		});
+
+		if (config.showCastsPerMinute) {
+			new NumberPicker<CustomSpell>(this.rootElem, modSpell, {
+				label: 'CPM',
+				labelTooltip: 'Desired Casts-Per-Minute for this spell.',
+				float: true,
+				positive: true,
+				changedEvent: (spell: CustomSpell) => player.changeEmitter,
+				getValue: (spell: CustomSpell) => spell.castsPerMinute,
+				setValue: (eventID: EventID, spell: CustomSpell, newValue: number) => {
+					spell.castsPerMinute = newValue;
+					this.setSpell(eventID, spell);
+				},
+			});
+		}
 	}
 
 	private setSpell(eventID: EventID, spell: CustomSpell) {

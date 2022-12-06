@@ -306,14 +306,12 @@ window.addEventListener('message', async event => {
 			} else {
 				document.body.classList.add('hide-damage-metrics');
 				if (document.getElementById('damageTab')!.classList.contains('active')) {
-					document.getElementById('damageTab')!.classList.remove('active');
-					document.getElementById('damageTab')!.classList.remove('in');
-					document.getElementById('healingTab')!.classList.add('active');
-					document.getElementById('healingTab')!.classList.add('in');
+					document.getElementById('damageTab')!.classList.remove('active', 'show');
+					document.getElementById('healingTab')!.classList.add('active', 'show');
 
 					const toolbar = document.getElementsByClassName('dr-toolbar')[0] as HTMLElement;
-					(toolbar.getElementsByClassName('damage-metrics')[0] as HTMLElement).classList.remove('active');
-					(toolbar.getElementsByClassName('healing-metrics')[0] as HTMLElement).classList.add('active');
+					(toolbar.getElementsByClassName('damage-metrics')[0] as HTMLElement).children[0]!.classList.remove('active');
+					(toolbar.getElementsByClassName('healing-metrics')[0] as HTMLElement).children[0]!.classList.add('active');
 				}
 			}
 			if (settings.showThreatMetrics) {

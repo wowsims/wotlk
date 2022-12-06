@@ -12,13 +12,12 @@ import (
 func (warlock *Warlock) registerUnstableAfflictionSpell() {
 	baseCost := 0.15 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47843}
-	spellSchool := core.SpellSchoolShadow
 	spellCoeff := 0.2 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	canCrit := warlock.Talents.Pandemic
 
 	warlock.UnstableAffliction = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		SpellSchool:  spellSchool,
+		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -34,16 +33,20 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		BonusCritRating: 0 +
 			warlock.masterDemonologistShadowCrit() +
 			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
-		DamageMultiplierAdditive: warlock.staticAdditiveDamageMultiplier(actionID, spellSchool, true),
-		CritMultiplier:           warlock.SpellCritMultiplier(1, 1),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
+		DamageMultiplierAdditive: 1 +
+			warlock.GrandSpellstoneBonus() +
+			0.03*float64(warlock.Talents.ShadowMastery) +
+			core.TernaryFloat64(warlock.Talents.SiphonLife, 0.05, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 2), 0.2, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetGuldansRegalia, 4), 0.1, 0),
+		CritMultiplier:   warlock.SpellCritMultiplier(1, 1),
+		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.UnstableAfflictionDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 
@@ -51,7 +54,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		Spell: warlock.UnstableAffliction,
 		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "UnstableAffliction-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: core.ActionID{SpellID: 47843},
+			ActionID: actionID,
 		}),
 		NumberOfTicks: 5,
 		TickLength:    time.Second * 3,

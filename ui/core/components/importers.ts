@@ -18,39 +18,6 @@ import { Popup } from './popup.js';
 declare var $: any;
 declare var tippy: any;
 
-export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const importSettings = document.createElement('div');
-	importSettings.classList.add('import-settings', 'sim-dropdown-menu');
-	importSettings.innerHTML = `
-		<span id="importMenuLink" class="dropdown-toggle fas fa-file-import" role="button" data-bs-toggle="dropdown" aria-haspopup="true" arai-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="importMenuLink">
-		</div>
-	`;
-	const linkElem = importSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Import',
-		'allowHTML': true,
-	});
-
-	const menuElem = importSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		if (!showInRaidSim) {
-			itemElem.classList.add('within-raid-sim-hide');
-		}
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('Json', () => new IndividualJsonImporter(menuElem, simUI), true);
-	addMenuItem('80U', () => new Individual80UImporter(menuElem, simUI), true);
-	addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
-
-	return importSettings;
-}
-
 export abstract class Importer extends Popup {
 	private readonly textElem: HTMLTextAreaElement;
 	protected readonly descriptionElem: HTMLElement;
@@ -68,7 +35,7 @@ export abstract class Importer extends Popup {
 			<div class="import-description">
 			</div>
 			<div class="import-content">
-				<textarea class="importer-textarea"></textarea>
+				<textarea class="importer-textarea form-control"></textarea>
 			</div>
 			<div class="actions-row">
 		`;
@@ -152,7 +119,7 @@ export abstract class Importer extends Popup {
 	}
 }
 
-class IndividualJsonImporter<SpecType extends Spec> extends Importer {
+export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, 'JSON Import', true);
@@ -181,7 +148,7 @@ class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
-class Individual80UImporter<SpecType extends Spec> extends Importer {
+export class Individual80UImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, '80 Upgrades Import', true);
@@ -239,7 +206,7 @@ class Individual80UImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
-class IndividualAddonImporter<SpecType extends Spec> extends Importer {
+export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, 'Addon Import', true);

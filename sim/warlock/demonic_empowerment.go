@@ -9,6 +9,10 @@ import (
 )
 
 func (warlock *Warlock) registerDemonicEmpowermentSpell() {
+	if !warlock.Talents.DemonicEmpowerment {
+		return
+	}
+
 	var petAura core.Aura
 	switch warlock.Options.Summon {
 	case proto.Warlock_Options_Imp:

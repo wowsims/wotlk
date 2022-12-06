@@ -36,6 +36,9 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			cssClass: 'healing-priest-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				'Many trinket effects are not implemented.',
+				'Talents that apply to, "friendly targets at or below 50% health" are not implemented.',
+				'Prayer of Mending does not bounce.',
 			],
 
 			// All stats for which EP should be calculated.
@@ -105,6 +108,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					HealingPriestInputs.RaptureChance,
 				],
 			},
 			encounterPicker: {

@@ -16,7 +16,6 @@ var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			mage := agent.(MageAgent).GetMage()
-
 			mage.bonusCritDamage += .05
 		},
 	},
@@ -27,18 +26,18 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	Name: "Kirin Tor Garb",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-
-			applyProcAura := func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) bool {
-				if !spell.Flags.Matches(BarrageSpells) {
-					return false
-				}
-
-				return sim.RandomFloat("Mage2pT8") < .25
-
-			}
-
-			agent.GetCharacter().StatProcWithICD("Kirin Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second, 45*time.Second, applyProcAura)
-
+			mage := agent.(MageAgent).GetMage()
+			procAura := mage.NewTemporaryStatsAura("Kiron Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second)
+			core.MakeProcTriggerAura(&mage.Unit, core.ProcTrigger{
+				Name:       "Mage2pT8",
+				Callback:   core.CallbackOnSpellHitDealt,
+				ProcChance: 0.25,
+				ICD:        time.Second * 45,
+				SpellFlags: BarrageSpells,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					procAura.Activate(sim)
+				},
+			})
 		},
 		4: func(agent core.Agent) {
 			//Implemented at 10% chance needs testing
@@ -46,9 +45,12 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
+const T84PcProcChance = 0.1
+
 // T9
 var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Khadgar's Regalia",
+	Name:            "Khadgar's Regalia",
+	AlternativeName: "Sunstrider's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			//Implemented in initialization
@@ -59,50 +61,45 @@ var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{
 	},
 })
 
-// T9 horde
-var ItemSetSunstridersRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Sunstrider's Regalia",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			//Implemented in initialization
-		},
-		4: func(agent core.Agent) {
-			//Implemented in each spell
-		},
-	},
-})
-
-var bloodmageHasteAura *core.Aura
-var bloodmageDamageAura *core.Aura
 var ItemSetBloodmagesRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Bloodmage's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			agent.GetCharacter()
-			bloodmageHasteAura = agent.GetCharacter().RegisterAura(core.Aura{
-				Label:    "Spec Based Haste T10 2PC",
-				ActionID: core.ActionID{SpellID: 70752},
-				Duration: time.Second * 5,
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.MultiplyCastSpeed(1.12)
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.MultiplyCastSpeed(1 / 1.12)
-				},
-			})
+			// Implemented in each spell
 		},
 		4: func(agent core.Agent) {
-			bloodmageDamageAura = agent.GetCharacter().RegisterAura(core.Aura{
-				Label:    "Mirror Image Bonus Damage T10 4PC",
-				ActionID: core.ActionID{SpellID: 70748},
-				Duration: time.Second * 30,
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					agent.GetCharacter().PseudoStats.DamageDealtMultiplier *= 1.18
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					agent.GetCharacter().PseudoStats.DamageDealtMultiplier /= 1.18
-				},
-			})
+			// Implemented in mirror_image.go
+		},
+	},
+})
+
+func (mage *Mage) BloodmagesRegalia2pcAura() *core.Aura {
+	if !mage.HasSetBonus(ItemSetBloodmagesRegalia, 2) {
+		return nil
+	}
+
+	return mage.GetOrRegisterAura(core.Aura{
+		Label:    "Spec Based Haste T10 2PC",
+		ActionID: core.ActionID{SpellID: 70752},
+		Duration: time.Second * 5,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.MultiplyCastSpeed(1.12)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.MultiplyCastSpeed(1 / 1.12)
+		},
+	})
+}
+
+var ItemSetGladiatorsRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Gladiator's Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Resilience, 100)
+			agent.GetCharacter().AddStat(stats.SpellPower, 29)
+		},
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 88)
 		},
 	},
 })

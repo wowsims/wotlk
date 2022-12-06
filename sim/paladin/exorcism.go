@@ -13,9 +13,11 @@ func (paladin *Paladin) registerExorcismSpell() {
 	baseCost := paladin.BaseMana * 0.08 * (1 - 0.02*float64(paladin.Talents.Benediction))
 
 	paladin.Exorcism = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48801},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellDamage,
+		ActionID:    core.ActionID{SpellID: 48801},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagMeleeMetrics,
+
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

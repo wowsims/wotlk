@@ -494,6 +494,7 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 			}
 		}
 
+		hasEngi := character.HasProfession(proto.Profession_Engineering)
 		defaultPotionSpell := defaultMCD.Spell
 		defaultMCD.ActivationFactory = func(sim *Simulation) CooldownActivation {
 			usedDefaultPotion = false
@@ -502,6 +503,13 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 			}
 			if defaultPotion == proto.Potions_RunicManaPotion {
 				character.ExpectedBonusMana += float64((4200 + 4400) / 2)
+			}
+			if defaultPotion == proto.Potions_RunicManaInjector {
+				multiplier := 1.0
+				if hasEngi {
+					multiplier = 1.25
+				}
+				character.ExpectedBonusMana += (4200 + 4400) / 2 * multiplier
 			}
 
 			return func(sim *Simulation, character *Character) {
@@ -513,6 +521,13 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 				}
 				if defaultPotion == proto.Potions_RunicManaPotion {
 					character.ExpectedBonusMana -= float64((4200 + 4400) / 2)
+				}
+				if defaultPotion == proto.Potions_RunicManaInjector {
+					multiplier := 1.0
+					if hasEngi {
+						multiplier = 1.25
+					}
+					character.ExpectedBonusMana -= (4200 + 4400) / 2 * multiplier
 				}
 			}
 		}
@@ -531,8 +546,15 @@ func (character *Character) HasAlchStone() bool {
 }
 
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer, prepopTime time.Duration) MajorCooldown {
-	if potionType == proto.Potions_RunicHealingPotion {
-		actionID := ActionID{ItemID: 33447}
+	alchStoneEquipped := character.HasAlchStone()
+	hasEngi := character.HasProfession(proto.Profession_Engineering)
+
+	if potionType == proto.Potions_RunicHealingPotion || potionType == proto.Potions_RunicHealingInjector {
+		itemId := map[proto.Potions]int32{
+			proto.Potions_RunicHealingPotion:   33447,
+			proto.Potions_RunicHealingInjector: 41166,
+		}[potionType]
+		actionID := ActionID{ItemID: itemId}
 		healthMetrics := character.NewHealthMetrics(actionID)
 		return MajorCooldown{
 			Type: CooldownTypeSurvival,
@@ -553,13 +575,22 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 					healthGain := 2700.0 + (4500.0-2700.0)*sim.RandomFloat("RunicHealingPotion")
+
+					if alchStoneEquipped && potionType == proto.Potions_RunicHealingPotion {
+						healthGain *= 1.40
+					} else if hasEngi && potionType == proto.Potions_RunicHealingInjector {
+						healthGain *= 1.25
+					}
 					character.GainHealth(sim, healthGain, healthMetrics)
 				},
 			}),
 		}
-	} else if potionType == proto.Potions_RunicManaPotion {
-		alchStoneEquipped := character.HasAlchStone()
-		actionID := ActionID{ItemID: 33448}
+	} else if potionType == proto.Potions_RunicManaPotion || potionType == proto.Potions_RunicManaInjector {
+		itemId := map[proto.Potions]int32{
+			proto.Potions_RunicManaPotion:   33448,
+			proto.Potions_RunicManaInjector: 42545,
+		}[potionType]
+		actionID := ActionID{ItemID: itemId}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
 			Type: CooldownTypeMana,
@@ -569,7 +600,13 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 4400
+				manaGain := 4400.0
+				if alchStoneEquipped && potionType == proto.Potions_RunicManaPotion {
+					manaGain *= 1.4
+				} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
+					manaGain *= 1.25
+				}
+				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= manaGain
 			},
 			Spell: character.RegisterSpell(SpellConfig{
 				ActionID: actionID,
@@ -582,8 +619,10 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 					manaGain := 4200 + (4400.0-4200.0)*sim.RandomFloat("RunicManaPotion")
-					if alchStoneEquipped {
+					if alchStoneEquipped && potionType == proto.Potions_RunicManaPotion {
 						manaGain *= 1.4
+					} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
+						manaGain *= 1.25
 					}
 					character.AddMana(sim, manaGain, manaMetrics, true)
 				},
@@ -1136,73 +1175,51 @@ var CobaltFragBombActionID = ActionID{ItemID: 40771}
 
 func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
+	hasFiller := consumes.FillerExplosive != proto.Explosive_ExplosiveUnknown
 	if !character.HasProfession(proto.Profession_Engineering) {
 		return
 	}
-	if !consumes.ThermalSapper && !consumes.ExplosiveDecoy && consumes.FillerExplosive == proto.Explosive_ExplosiveUnknown {
+	if !consumes.ThermalSapper && !consumes.ExplosiveDecoy && !hasFiller {
 		return
 	}
-	explosivesTimer := character.NewTimer()
 	sharedTimer := character.NewTimer()
 
-	var explosives []*Spell
-
-	var sapper *Spell
 	if consumes.ThermalSapper {
-		sapper = character.newThermalSapperSpell(sharedTimer)
-		explosives = append(explosives, sapper)
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    character.newThermalSapperSpell(sharedTimer),
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.03,
+		})
 	}
 
-	var decoy *Spell
 	if consumes.ExplosiveDecoy {
-		decoy = character.newExplosiveDecoySpell(sharedTimer)
-		explosives = append(explosives, decoy)
-	}
-
-	var filler *Spell
-	switch consumes.FillerExplosive {
-	case proto.Explosive_ExplosiveSaroniteBomb:
-		filler = character.newSaroniteBombSpell(sharedTimer)
-		explosives = append(explosives, filler)
-	case proto.Explosive_ExplosiveCobaltFragBomb:
-		filler = character.newCobaltFragBombSpell(sharedTimer)
-		explosives = append(explosives, filler)
-	}
-
-	spell := character.RegisterSpell(SpellConfig{
-		ActionID: ThermalSapperActionID,
-		Flags:    SpellFlagNoOnCastComplete | SpellFlagNoMetrics | SpellFlagNoLogs,
-
-		Cast: CastConfig{
-			CD: Cooldown{
-				Timer:    explosivesTimer,
-				Duration: time.Minute,
-			},
-		},
-
-		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
-			if sapper != nil && sapper.IsReady(sim) {
-				sapper.Cast(sim, target)
-			} else if decoy != nil && decoy.IsReady(sim) && (sim.GetRemainingDuration() < time.Minute*2 || filler == nil) {
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    character.newExplosiveDecoySpell(sharedTimer),
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.02,
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Decoy puts other explosives on 2m CD, so only use if there won't be enough
 				// time to use another explosive OR there is no filler explosive.
-				decoy.Cast(sim, target)
-			} else if filler != nil && filler.IsReady(sim) {
-				filler.Cast(sim, target)
-			}
+				return sim.GetRemainingDuration() < time.Minute || !hasFiller
+			},
+		})
+	}
 
-			nextExplosiveAt := sim.CurrentTime + time.Minute*5
-			for _, explosive := range explosives {
-				nextExplosiveAt = MinDuration(explosive.ReadyAt(), nextExplosiveAt)
-			}
-			explosivesTimer.Set(nextExplosiveAt)
-		},
-	})
+	if hasFiller {
+		var filler *Spell
+		switch consumes.FillerExplosive {
+		case proto.Explosive_ExplosiveSaroniteBomb:
+			filler = character.newSaroniteBombSpell(sharedTimer)
+		case proto.Explosive_ExplosiveCobaltFragBomb:
+			filler = character.newCobaltFragBombSpell(sharedTimer)
+		}
 
-	character.AddMajorCooldown(MajorCooldown{
-		Spell: spell,
-		Type:  CooldownTypeDPS,
-	})
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    filler,
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 0.01,
+		})
+	}
 }
 
 // Creates a spell object for the common explosive case.

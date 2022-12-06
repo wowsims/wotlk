@@ -78,10 +78,7 @@ func (war *ProtectionWarrior) trySwapToDefensive(sim *core.Simulation) bool {
 func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 	return common.NewCustomRotation(war.Rotation.CustomRotation, war.GetCharacter(), map[int32]common.CustomSpell{
 		int32(proto.ProtectionWarrior_Rotation_Revenge): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.Revenge.CurCast.Cost
-				return war.Revenge.Cast(sim, target), cost
-			},
+			Spell: war.Revenge,
 			Condition: func(sim *core.Simulation) bool {
 				if !war.Rotation.PrioSslamOnShieldBlock {
 					return war.CanRevenge(sim)
@@ -95,10 +92,7 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 			},
 		},
 		int32(proto.ProtectionWarrior_Rotation_ShieldSlam): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.ShieldSlam.CurCast.Cost
-				return war.ShieldSlam.Cast(sim, target), cost
-			},
+			Spell: war.ShieldSlam,
 			Condition: func(sim *core.Simulation) bool {
 				if !war.Rotation.PrioSslamOnShieldBlock {
 					return war.CanShieldSlam(sim)
@@ -112,76 +106,36 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 			},
 		},
 		int32(proto.ProtectionWarrior_Rotation_Devastate): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.Devastate.CurCast.Cost
-				return war.Devastate.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.CanDevastate(sim)
-			},
+			Spell:     war.Devastate,
+			Condition: war.CanDevastate,
 		},
 		int32(proto.ProtectionWarrior_Rotation_SunderArmor): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.SunderArmor.CurCast.Cost
-				return war.SunderArmor.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.CanSunderArmor(sim)
-			},
+			Spell:     war.SunderArmor,
+			Condition: war.CanSunderArmor,
 		},
 		int32(proto.ProtectionWarrior_Rotation_DemoralizingShout): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.DemoralizingShout.CurCast.Cost
-				return war.DemoralizingShout.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.shouldDemoShout(sim)
-			},
+			Spell:     war.DemoralizingShout,
+			Condition: war.shouldDemoShout,
 		},
 		int32(proto.ProtectionWarrior_Rotation_ThunderClap): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.ThunderClap.CurCast.Cost
-				return war.ThunderClap.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.shouldThunderClap(sim)
-			},
+			Spell:     war.ThunderClap,
+			Condition: war.shouldThunderClap,
 		},
 		int32(proto.ProtectionWarrior_Rotation_Shout): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.Shout.CurCast.Cost
-				return war.Shout.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.ShouldShout(sim)
-			},
+			Spell:     war.Shout,
+			Condition: war.ShouldShout,
 		},
 		int32(proto.ProtectionWarrior_Rotation_MortalStrike): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.MortalStrike.CurCast.Cost
-				return war.MortalStrike.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.CanMortalStrike(sim)
-			},
+			Spell:     war.MortalStrike,
+			Condition: war.CanMortalStrike,
 		},
 		int32(proto.ProtectionWarrior_Rotation_ConcussionBlow): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.ConcussionBlow.CurCast.Cost
-				return war.ConcussionBlow.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.CanConcussionBlow(sim)
-			},
+			Spell:     war.ConcussionBlow,
+			Condition: war.CanConcussionBlow,
 		},
 		int32(proto.ProtectionWarrior_Rotation_Shockwave): {
-			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				cost := war.Shockwave.CurCast.Cost
-				return war.Shockwave.Cast(sim, target), cost
-			},
-			Condition: func(sim *core.Simulation) bool {
-				return war.CanShockwave(sim)
-			},
+			Spell:     war.Shockwave,
+			Condition: war.CanShockwave,
 		},
 	})
 }

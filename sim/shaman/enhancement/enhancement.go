@@ -45,6 +45,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		Shaman: shaman.NewShaman(character, enhOptions.Talents, totems, selfBuffs, true),
 	}
 
+	enh.EnableResumeAfterManaWait(enh.OnGCDReady)
 	enh.rotation = NewPriorityRotation(enh, enhOptions.Rotation)
 
 	// Enable Auto Attacks for this spec

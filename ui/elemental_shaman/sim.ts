@@ -153,9 +153,9 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.SWP_PRESET,
 					Presets.PRE_RAID_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET,
 				],
 			},
 		});

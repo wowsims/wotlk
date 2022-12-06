@@ -19,40 +19,6 @@ declare var $: any;
 declare var tippy: any;
 declare var pako: any;
 
-export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const exportSettings = document.createElement('div');
-	exportSettings.classList.add('export-settings', 'sim-dropdown-menu');
-	exportSettings.innerHTML = `
-		<span id="exportMenuLink" class="dropdown-toggle fas fa-file-export" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
-		<div class="dropdown-menu dropdown-menu-end" aria-labelledby="exportMenuLink">
-		</div>
-	`;
-	const linkElem = exportSettings.getElementsByClassName('dropdown-toggle')[0] as HTMLElement;
-	tippy(linkElem, {
-		'content': 'Export',
-		'allowHTML': true,
-	});
-
-	const menuElem = exportSettings.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemElem = document.createElement('span');
-		itemElem.classList.add('dropdown-item');
-		if (!showInRaidSim) {
-			itemElem.classList.add('within-raid-sim-hide');
-		}
-		itemElem.textContent = label;
-		itemElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('Link', () => new IndividualLinkExporter(menuElem, simUI), false);
-	addMenuItem('Json', () => new IndividualJsonExporter(menuElem, simUI), true);
-	addMenuItem('80U EP', () => new Individual80UEPExporter(menuElem, simUI), false);
-	addMenuItem('Pawn EP', () => new IndividualPawnEPExporter(menuElem, simUI), false);
-
-	return exportSettings;
-}
-
 export abstract class Exporter extends Popup {
 	private readonly textElem: HTMLElement;
 
@@ -103,7 +69,7 @@ export abstract class Exporter extends Popup {
 	abstract getData(): string;
 }
 
-class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
+export class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -117,7 +83,7 @@ class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
+export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -131,7 +97,7 @@ class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
+export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -203,7 +169,7 @@ class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
+export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {

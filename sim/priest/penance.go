@@ -57,14 +57,15 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		},
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + .05*float64(priest.Talents.SearingLight)) *
-			core.TernaryFloat64(isHeal, 1+.01*float64(priest.Talents.TwinDisciplines), 1),
-		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
+		DamageMultiplier: 1 +
+			core.TernaryFloat64(isHeal, 0, .05*float64(priest.Talents.SearingLight)) +
+			.01*float64(priest.Talents.TwinDisciplines),
+		CritMultiplier:   core.TernaryFloat64(isHeal, priest.DefaultHealingCritMultiplier(), priest.DefaultSpellCritMultiplier()),
 		ThreatMultiplier: 0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if isHeal {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				hot := penanceDots[target.UnitIndex]
 				hot.Apply(sim)
 				// Do immediate tick
@@ -72,6 +73,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			} else {
 				result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 				if result.Landed() {
+					spell.SpellMetrics[target.UnitIndex].Hits--
 					dot := penanceDots[target.UnitIndex]
 					dot.Apply(sim)
 					// Do immediate tick
@@ -90,7 +92,6 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 }
 
 func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, isHeal bool) *core.Dot {
-	// Return nil if isHeal doesn't match the target heal/damage type.
 	if isHeal == priest.IsOpponent(target) {
 		return nil
 	}
@@ -108,8 +109,8 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			if priest.IsOpponent(target) {
-				baseDamage := 375 + 0.4286*dot.Spell.SpellPower()
-				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHit)
+				baseDamage := 375 + 0.2290*dot.Spell.SpellPower()
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			} else {
 				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower()
 				dot.Spell.CalcAndDealPeriodicHealing(sim, target, baseHealing, dot.Spell.OutcomeHealingCrit)

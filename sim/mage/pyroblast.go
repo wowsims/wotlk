@@ -13,6 +13,9 @@ func (mage *Mage) registerPyroblastSpell() {
 	baseCost := .22 * mage.BaseMana
 	spellCoeff := 1.15 + 0.05*float64(mage.Talents.EmpoweredFire)
 
+	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
+
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
@@ -31,13 +34,13 @@ func (mage *Mage) registerPyroblastSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.HotStreakAura.IsActive() {
-					if mage.MageTier.t10_2 {
-						bloodmageHasteAura.Activate(sim)
-					}
 					cast.CastTime = 0
 					// cast.AfterCastDelay could be used for CQS to avoid ignite munching. Going to wait to implement for now though
-					if !mage.MageTier.t8_4 || sim.RandomFloat("MageT84PC") > .1 {
+					if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 						mage.HotStreakAura.Deactivate(sim)
+					}
+					if t10ProcAura != nil {
+						t10ProcAura.Activate(sim)
 					}
 				}
 			},
