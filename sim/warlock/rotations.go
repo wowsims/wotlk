@@ -471,7 +471,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
-
+			if warlock.T7FourSetBonus {
+				warlock.FakeSpiritsoftheDamnedAura.Activate(sim)
+			}
 			//These lines emulate you pre-casting a shadowbolt and having Life Tap on
 			//TODO: Illustration of Dragon Soul stacking to 10 with Life Funnel.
 		} else {
