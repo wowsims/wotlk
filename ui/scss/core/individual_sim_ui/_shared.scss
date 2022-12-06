@@ -57,19 +57,6 @@
   }
 }
 
-.saved-data-set-chip {
-	color: var(--main-text-color);
-	border-color: var(--theme-color-primary);
-}
-.saved-data-set-chip.active {
-	color: var(--main-text-color);
-	background-color: var(--theme-color-primary);
-}
-
-.saved-data-set-delete {
-	color: var(--main-text-color);
-}
-
 .settings-tab {
 	overflow-y: auto;
 }
@@ -222,8 +209,20 @@
 
 .saved-talents-manager {
   text-align: center;
-}
 
-.saved-talents-manager .saved-data-container, .saved-talents-manager .saved-data-create-container {
-  display: inline-block;
+  .content-block-body {
+    align-items: center;
+
+    .saved-data-container {
+      justify-content: center;
+    }
+
+    .saved-data-create-container {
+      align-items: flex-start;
+  
+      .saved-data-save-input, .saved-data-save-button {
+        width: 12rem;
+      }
+    }
+  }
 }

@@ -266,7 +266,7 @@ func (druid *Druid) applyOmenOfClarity() {
 	}
 
 	var affectedSpells []*core.Spell
-	druid.ClearcastingAura = druid.GetOrRegisterAura(core.Aura{
+	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
 		Label:    "Clearcasting",
 		ActionID: core.ActionID{SpellID: 16870},
 		Duration: time.Second * 15,

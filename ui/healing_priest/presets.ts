@@ -77,7 +77,7 @@ export const DefaultRotation = Rotation.create({
 export const DefaultOptions = Options.create({
 	useInnerFire: true,
 	useShadowfiend: true,
-	raptureChance: 0.8,
+	rapturesPerMinute: 5,
 
 	powerInfusionTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.

@@ -59,6 +59,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotWrist,
 			ItemSlot.ItemSlotMainHand,
 			ItemSlot.ItemSlotOffHand,
+			ItemSlot.ItemSlotRanged,
 		].map(slot => new ItemPicker(leftSide, player, slot));
 
 		const rightItemPickers = [
@@ -70,7 +71,6 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotFinger2,
 			ItemSlot.ItemSlotTrinket1,
 			ItemSlot.ItemSlotTrinket2,
-			ItemSlot.ItemSlotRanged,
 		].map(slot => new ItemPicker(rightSide, player, slot));
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);

@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (priest *Priest) registerPowerWordShieldSpell(raptureChance float64) {
+func (priest *Priest) registerPowerWordShieldSpell() {
 	actionID := core.ActionID{SpellID: 48066}
 	baseCost := 0.23 * priest.BaseMana
 	coeff := 0.8057 + 0.08*float64(priest.Talents.BorrowedTime)
@@ -23,12 +23,6 @@ func (priest *Priest) registerPowerWordShieldSpell(raptureChance float64) {
 			Timer:    priest.NewTimer(),
 			Duration: time.Second * 4,
 		}
-	}
-
-	raptureManaCoeff := []float64{0, .015, .020, .025}[priest.Talents.Rapture]
-	var raptureMetrics *core.ResourceMetrics
-	if priest.Talents.Rapture > 0 && raptureChance > 0 {
-		raptureMetrics = priest.NewManaMetrics(core.ActionID{SpellID: 47537})
 	}
 
 	var glyphHeal *core.Spell
@@ -87,10 +81,6 @@ func (priest *Priest) registerPowerWordShieldSpell(raptureChance float64) {
 
 			if glyphHeal != nil {
 				glyphHeal.Cast(sim, target)
-			}
-
-			if raptureMetrics != nil && sim.RandomFloat("Rapture") < raptureChance {
-				priest.AddMana(sim, raptureManaCoeff*priest.MaxMana(), raptureMetrics, false)
 			}
 		},
 	})

@@ -1,53 +1,73 @@
+@use "sass:map";
+
 .saved-data-manager-root {
+  .saved-data-container {
+    margin-bottom: map.get($spacers, 3);
+    display: flex;
+    flex-wrap: wrap;
+
+    .saved-data-set-chip {
+      padding: 0;
+      margin-bottom: map.get($spacers, 2);
+      margin-right: map.get($spacers, 2);
+      border: 1px solid $primary;
+      display: flex;
+      font-size: $content-font-size;
+      transition: $btn-transition;
+
+      &.active {
+        @extend .text-bg-primary;
+
+        .saved-data-set-name, .saved-data-set-delete {
+          color: color-contrast($primary);
+        }
+      }
+
+      &.disabled {
+        display: none;
+      }
+
+      &:hover:not(.active) {
+        background: rgba($primary, .2);
+      }
+
+      .saved-data-set-name {
+        padding: map.get($spacers, 2);
+        color: $body-color;
+      }
+
+      .saved-data-set-delete {
+        padding: map.get($spacers, 2) 0;
+        margin-right: map.get($spacers, 2);
+        color: $body-color;
+      }
+    }
+  }
+
+  .saved-data-create-container {
+    display: flex;
+    flex-direction: column;
+
+    .saved-data-save-input, .saved-data-save-button {
+      width: 10rem;
+    }
+
+    .saved-data-save-input {
+      margin-bottom: map.get($spacers, 2);
+    }
+  }
 }
 
-.saved-data-set-chip {
-  display: inline-block;
-  border: 2px solid black;
-  border-radius: 20px;
-  padding: 1px 5px;
-  margin: 5px 5px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.saved-data-set-chip.active {
-  background-color: black;
-  color: white;
-}
-.saved-data-set-chip.disabled {
-	display: none;
-}
+@include media-breakpoint-down(xxl) {
+  .saved-data-manager-root {
+    .saved-data-create-container {
+      .saved-data-save-input {
+        width: 100%;
+      }
 
-.saved-data-set-delete {
-  color: red;
-}
-.saved-data-set-delete:hover {
-  color: yellow;
-}
-
-.saved-data-manager-root.frozen .saved-data-set-delete {
-	display: none;
-}
-.saved-data-manager-root.frozen .saved-data-create-container {
-	display: none;
-}
-.saved-data-manager-root.frozen .saved-data-set-chip:first-child:nth-last-child(1) {
-	display: none;
-}
-
-.saved-data-set-chip:not(.saved-data-has-tooltip) .saved-data-set-tooltip {
-  display: none;
-}
-
-.saved-data-set-chip.saved-data-preset .saved-data-set-delete {
-  display: none;
-}
-
-.saved-data-save-input {
-  width: 100px;
-}
-
-.presets-only .presets-only-hide {
-	display: none;
+      .saved-data-save-button {
+        width: 100%;
+      }
+    }
+  }
 }

@@ -43,6 +43,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.RaidBuffTargets = int(core.MaxInt32(feralOptions.Rotation.RaidTargets, 1))
+	cat.PrePopBerserk = feralOptions.Options.PrePopBerserk
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -81,6 +82,7 @@ type FeralDruid struct {
 	waitingForTick bool
 	latency        time.Duration
 	maxRipTicks    int32
+	berserkUsed    bool
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -106,8 +108,12 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
+	cat.berserkUsed = false
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.ClearcastingAura.Activate(sim)
+	}
+	if cat.PrePopBerserk && cat.Talents.Berserk {
+		cat.Berserk.CD.UsePrePull(sim, time.Second)
 	}
 }

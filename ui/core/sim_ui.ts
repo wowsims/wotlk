@@ -289,6 +289,7 @@ export abstract class SimUI extends Component {
 
 const simHTML = `
 <div class="sim-root">
+	<div id="simBgImage"></div>
 	<div id="noticesBanner" class="alert border-bottom mb-0 text-center">${noticeText}</div>
   <aside id="simSidebar">
     <div id="simTitle"></div>

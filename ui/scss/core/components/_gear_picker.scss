@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @import "./filters_menu";
 @import "./popup";
 
@@ -15,20 +17,33 @@
 
 .item-picker-root {
   display: flex;
-  margin: 3px;
+  margin-bottom: map.get($spacers, 2);
 }
-.gear-picker-left .item-picker-root {
-  flex-direction: row;
-  text-align: left;
-}
-.gear-picker-right .item-picker-root {
-  flex-direction: row-reverse;
-  text-align: right;
-}
-@media only screen and (max-width: calc(800px + 1vw)) {
-  .gear-picker-right .item-picker-root {
-    text-align: left;
+
+.gear-picker-left {
+  .item-picker-root {
     flex-direction: row;
+    text-align: left;
+
+    &:nth-child(6) {
+      margin-bottom: map.get($spacers, 5);
+    }
+  }
+}
+
+.gear-picker-right {
+  .item-picker-root {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+}
+
+@media only screen and (max-width: calc(800px + 1vw)) {
+  .gear-picker-right {
+    .item-picker-root {
+      text-align: left;
+      flex-direction: row;
+    }
   }
 }
 
@@ -53,7 +68,7 @@
 }
 
 .item-picker-labels-container {
-  padding: 3px;
+  padding: .5rem;
 	text-shadow: 2px 2px 4px black;
   flex: 1;
 }

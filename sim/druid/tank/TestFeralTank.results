@@ -396,8 +396,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-NightsongBattlegear"
  value: {
-  dps: 1265.39658
-  tps: 1707.77779
+  dps: 1306.65091
+  tps: 1758.49423
  }
 }
 dps_results: {
