@@ -678,7 +678,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 				return
 			} else {
 				if rotType == proto.ShadowPriest_Rotation_Basic {
-					numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
+					//numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
+					numTicks = 3
 				} else if rotType == proto.ShadowPriest_Rotation_Clipping {
 					numTicks = spriest.ClippingMindflayRotation(sim, allCDs, gcd, tickLength)
 				}
