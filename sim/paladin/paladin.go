@@ -37,6 +37,7 @@ type Paladin struct {
 	SealOfVengeance       *core.Spell
 	SealOfRighteousness   *core.Spell
 	SealOfCommand         *core.Spell
+	AvengingWrath         *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -51,6 +52,7 @@ type Paladin struct {
 	SealOfVengeanceAura     *core.Aura
 	SealOfCommandAura       *core.Aura
 	SealOfRighteousnessAura *core.Aura
+	AvengingWrathAura       *core.Aura
 
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
