@@ -78,8 +78,9 @@ func (hpriest *HealingPriest) GetMainTarget() *core.Unit {
 func (hpriest *HealingPriest) Initialize() {
 	hpriest.CurrentTarget = hpriest.GetMainTarget()
 	hpriest.Priest.Initialize()
-	hpriest.Priest.RegisterHealingSpells(hpriest.Options.RaptureChance)
+	hpriest.Priest.RegisterHealingSpells()
 
+	hpriest.ApplyRapture(hpriest.Options.RapturesPerMinute)
 	hpriest.RegisterHymnOfHopeCD()
 
 	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {
