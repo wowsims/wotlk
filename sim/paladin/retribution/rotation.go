@@ -153,7 +153,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	if ret.GCD.IsReady(sim) {
 		switch {
-		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+		case isExecutePhase && ret.HammerOfWrath.IsReady(sim) && ret.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengingWrath):
 			if ret.AvengingWrath.IsReady(sim) {
 				success := ret.AvengingWrath.Cast(sim, target)
 				if !success {
@@ -180,6 +180,11 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			if !success {
 				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
 			}
+		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+			success := ret.HammerOfWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
+			}
 		case ret.DemonAndUndeadTargetCount >= ret.HolyWrathThreshold && ret.HolyWrath.IsReady(sim):
 			success := ret.HolyWrath.Cast(sim, target)
 			if !success {
@@ -203,7 +208,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			if !success {
 				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
-		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim) && (ret.ConsecrationDot.Duration+sim.CurrentTime) <= sim.Duration:
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim) &&
+			((ret.ConsecrationDot.TickLength*4)+sim.CurrentTime) <= sim.Duration:
 			success := ret.Consecration.Cast(sim, target)
 			if !success {
 				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
