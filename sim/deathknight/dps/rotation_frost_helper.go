@@ -51,7 +51,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 func (dk *DpsDeathknight) RotationActionCallback_EndOfFightCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	//enter end of fight prio only if there is 7s left and the fight is less than 100s.
 	//I didn't optimise for past 100s because it's a really minscule improvement and would require tons more conditions.
-	if sim.CurrentTime+7000*time.Millisecond > sim.GetMaxDuration() && sim.GetMaxDuration() < 100*time.Second {
+	if sim.CurrentTime+7000*time.Millisecond > sim.CurrentTime+sim.GetRemainingDuration() && sim.CurrentTime+sim.GetRemainingDuration() < 100*time.Second {
 		s.Clear().NewAction(dk.RotationActionCallback_EndOfFightPrio)
 	} else {
 		s.Advance()
@@ -73,26 +73,30 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
 	bothblAt := dk.BloodRuneBothReadyAt()
 
-	if dk.Talents.Epidemic == 2 {
+	if bothblAt > 9223372036854775800*time.Nanosecond {
+		bothblAt = 1
+	}
+
+	if dk.Talents.Epidemic == 2 || diseaseExpiresAt >= sim.CurrentTime+sim.GetRemainingDuration() {
 		obAt = core.MinDuration(obAt, bothblAt)
 	}
 
 	//diseases last until end of fight
-	if diseaseExpiresAt >= sim.GetMaxDuration() {
+	if diseaseExpiresAt >= sim.CurrentTime+sim.GetRemainingDuration() {
 		if sim.CurrentTime >= obAt || sim.CurrentTime >= bothblAt {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd > sim.GetMaxDuration() && (obAt <= sim.GetMaxDuration() || bothblAt <= sim.GetMaxDuration()) {
+		} else if sim.CurrentTime+spGcd > sim.CurrentTime+sim.GetRemainingDuration() && (obAt <= sim.CurrentTime+sim.GetRemainingDuration() || bothblAt <= sim.CurrentTime+sim.GetRemainingDuration()) {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd < sim.GetMaxDuration() && sim.CurrentTime+abGcd > sim.GetMaxDuration() && obAt < sim.GetMaxDuration() && dk.Rime() {
+		} else if sim.CurrentTime+spGcd < sim.CurrentTime+sim.GetRemainingDuration() && sim.CurrentTime+abGcd > sim.CurrentTime+sim.GetRemainingDuration() && obAt < sim.CurrentTime+sim.GetRemainingDuration() && dk.Rime() {
 			//if you can only cast a spell GCD to catch the last oblit before fight ends, and have rime, use it
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if (sim.CurrentTime+abGcd > sim.GetMaxDuration() || sim.CurrentTime+abGcd > obAt+delayAmount) && obAt < sim.GetMaxDuration() {
+		} else if (sim.CurrentTime+abGcd > sim.CurrentTime+sim.GetRemainingDuration() || sim.CurrentTime+abGcd > obAt+delayAmount) && obAt < sim.CurrentTime+sim.GetRemainingDuration() {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -117,21 +121,21 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
 		}
-	} else if diseaseExpiresAt >= sim.GetMaxDuration()-abGcd { //disease expires less than 1 gcd before end of fight
+	} else if diseaseExpiresAt >= sim.CurrentTime+sim.GetRemainingDuration()-abGcd { //disease expires less than 1 gcd before end of fight
 		if sim.CurrentTime >= obAt {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd > sim.GetMaxDuration() && obAt < sim.GetMaxDuration() {
+		} else if sim.CurrentTime+spGcd > sim.CurrentTime+sim.GetRemainingDuration() && obAt < sim.CurrentTime+sim.GetRemainingDuration() {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd < sim.GetMaxDuration() && sim.CurrentTime+abGcd > sim.GetMaxDuration() && obAt < sim.GetMaxDuration() && dk.Rime() {
+		} else if sim.CurrentTime+spGcd < sim.CurrentTime+sim.GetRemainingDuration() && sim.CurrentTime+abGcd > sim.CurrentTime+sim.GetRemainingDuration() && obAt < sim.CurrentTime+sim.GetRemainingDuration() && dk.Rime() {
 			//if you can only cast a spell GCD to catch the last oblit before fight ends, and have rime, use it
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+abGcd > sim.GetMaxDuration() && obAt < sim.GetMaxDuration() {
+		} else if sim.CurrentTime+abGcd > sim.CurrentTime+sim.GetRemainingDuration() && obAt < sim.CurrentTime+sim.GetRemainingDuration() {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -197,11 +201,11 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && diseaseExpiresAt > sim.GetMaxDuration()-abGcd {
+		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && diseaseExpiresAt > sim.CurrentTime+sim.GetRemainingDuration()-abGcd {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_BS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && diseaseExpiresAt < sim.GetMaxDuration()-abGcd {
+		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && diseaseExpiresAt < sim.CurrentTime+sim.GetRemainingDuration()-abGcd {
 			s.Clear().
 				NewAction(dk.RotationActionCallback_Pesti).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
