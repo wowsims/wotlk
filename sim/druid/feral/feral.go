@@ -43,6 +43,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Options.PrepopOoc
 	cat.RaidBuffTargets = int(core.MaxInt32(feralOptions.Rotation.RaidTargets, 1))
+	cat.PrePopBerserk = feralOptions.Options.PrePopBerserk
 	cat.setupRotation(feralOptions.Rotation)
 
 	// Passive Cat Form threat reduction
@@ -109,5 +110,8 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.ClearcastingAura.Activate(sim)
+	}
+	if cat.PrePopBerserk && cat.Talents.Berserk {
+		cat.Berserk.CD.UsePrePull(sim, time.Second)
 	}
 }

@@ -25,6 +25,7 @@ type Druid struct {
 	BleedsActive      int
 	AssumeBleedActive bool
 	RaidBuffTargets   int
+	PrePopBerserk     bool
 
 	Berserk          *core.Spell
 	DemoralizingRoar *core.Spell
