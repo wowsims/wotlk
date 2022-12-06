@@ -153,6 +153,18 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	if ret.GCD.IsReady(sim) {
 		switch {
+		case isExecutePhase && ret.HammerOfWrath.IsReady(sim):
+			if ret.AvengingWrath.IsReady(sim) {
+				success := ret.AvengingWrath.Cast(sim, target)
+				if !success {
+					ret.WaitForMana(sim, ret.AvengingWrath.CurCast.Cost)
+				}
+			}
+
+			success := ret.HammerOfWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
+			}
 		case ret.SelectedJudgement.IsReady(sim):
 			success := ret.SelectedJudgement.Cast(sim, target)
 			if !success {
