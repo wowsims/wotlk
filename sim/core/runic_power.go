@@ -365,7 +365,10 @@ func (rp *RunicPowerBar) BloodRuneBothReadyAt() time.Duration {
 
 }
 
-func (rp *RunicPowerBar) RuneReadyAt(slot int8) time.Duration {
+func (rp *RunicPowerBar) RuneReadyAt(sim *Simulation, slot int8) time.Duration {
+	if rp.runeStates&isSpents[slot] != isSpents[slot] {
+		return sim.CurrentTime
+	}
 	return rp.runeMeta[slot].regenAt
 }
 
@@ -393,13 +396,6 @@ func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 		return sim.CurrentTime
 	}
 	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
-}
-
-func (rp *RunicPowerBar) RuneReadyAt(sim *Simulation, slot int8) time.Duration {
-	if rp.runeStates&isSpents[slot] != isSpents[slot] {
-		return sim.CurrentTime
-	}
-	return rp.runeMeta[slot].regenAt
 }
 
 // AnySpentRuneReadyAt returns the next time that a rune will regenerate.
