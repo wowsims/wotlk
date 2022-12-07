@@ -64,6 +64,9 @@ type Paladin struct {
 	HasTuralyonsOrLiadrinsBattlegear2Pc bool
 
 	DemonAndUndeadTargetCount int32
+
+	AvoidClippingConsecration           bool
+	HoldLastAvengingWrathUntilExecution bool
 }
 
 // Implemented by each Paladin spec.

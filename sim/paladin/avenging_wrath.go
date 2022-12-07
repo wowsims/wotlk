@@ -60,9 +60,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		},
 		// modify this logic if it should ever not be spammed on CD / maybe should synced with other CDs
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengingWrath) &&
-				float64(paladin.AvengingWrath.CD.Duration+sim.CurrentTime) >= float64(sim.Duration) {
-
+			if paladin.HoldLastAvengingWrathUntilExecution && float64(paladin.AvengingWrath.CD.Duration+sim.CurrentTime) >= float64(sim.Duration) {
 				return false
 			}
 			return true
