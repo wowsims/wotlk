@@ -1,6 +1,7 @@
 package paladin
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -63,6 +64,13 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			if paladin.HoldLastAvengingWrathUntilExecution && float64(paladin.AvengingWrath.CD.Duration+sim.CurrentTime) >= float64(sim.Duration) {
 				return false
 			}
+
+			if paladin.CurrentSeal == paladin.SealOfVengeanceAura {
+				if paladin.CurrentTarget.GetAura("Holy Vengeance (DoT) -"+strconv.Itoa(int(paladin.Index))).GetStacks() < 5 {
+					return false
+				}
+			}
+
 			return true
 		},
 	})
