@@ -74,7 +74,6 @@
 }
 
 .item-picker-name {
-  font-size: clamp(16px, 17px, 18px);
 	letter-spacing: normal;
 	color: white;
 }
@@ -83,7 +82,7 @@
 }
 
 .item-picker-enchant {
-  font-size: clamp(12px, 13px, 14px);;
+  font-size: $content-font-size;
   color: lawngreen;
 	letter-spacing: normal;
 }
