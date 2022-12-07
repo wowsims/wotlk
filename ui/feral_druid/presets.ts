@@ -66,7 +66,7 @@ export const DefaultOptions = FeralDruidOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodFishFeast,
+	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
