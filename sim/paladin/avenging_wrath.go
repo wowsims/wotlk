@@ -61,7 +61,11 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		},
 		// modify this logic if it should ever not be spammed on CD / maybe should synced with other CDs
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if paladin.HoldLastAvengingWrathUntilExecution && float64(paladin.AvengingWrath.CD.Duration+sim.CurrentTime) >= float64(sim.Duration) {
+			if paladin.HoldLastAvengingWrathUntilExecution && float64(sim.CurrentTime+paladin.AvengingWrath.CD.Duration) >= float64(sim.Duration) {
+				if float64(sim.CurrentTime+paladin.AvengingWrathAura.Duration) >= float64(sim.Duration) {
+					// If we're cutting it close on iteration end time, pop AW anyways to try and get full duration.
+					return true
+				}
 				return false
 			}
 
