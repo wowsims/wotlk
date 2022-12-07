@@ -47,11 +47,10 @@ export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Spe
 	id: ActionId.fromSpellId(34433),
 });
 
-export const RaptureChance = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHealingPriest>({
-	fieldName: 'raptureChance',
-	label: 'PWS Absorb Chance (%)',
-	labelTooltip: 'Chance that each Power Word Shield cast will be fully absorbed, proccing Rapture mana return.',
-	percent: true,
+export const RapturesPerMinute = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHealingPriest>({
+	fieldName: 'rapturesPerMinute',
+	label: 'Raptures / Min',
+	labelTooltip: 'Number of times to proc Rapture each minute (due to a PWS being fully absorbed).',
 	showWhen: (player: Player<Spec.SpecHealingPriest>) => player.getTalents().rapture > 0,
 	changeEmitter: (player: Player<Spec.SpecHealingPriest>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 });

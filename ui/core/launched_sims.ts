@@ -25,7 +25,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecRogue]: LaunchStatus.Alpha,
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecHealingPriest]: LaunchStatus.Alpha,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
 	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,

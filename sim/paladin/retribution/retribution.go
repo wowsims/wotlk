@@ -29,19 +29,27 @@ func RegisterRetributionPaladin() {
 func NewRetributionPaladin(character core.Character, options *proto.Player) *RetributionPaladin {
 	retOptions := options.GetRetributionPaladin()
 
+	pal := paladin.NewPaladin(character, retOptions.Talents)
+
 	ret := &RetributionPaladin{
-		Paladin:                    paladin.NewPaladin(character, retOptions.Talents),
-		Rotation:                   retOptions.Rotation,
-		Judgement:                  retOptions.Options.Judgement,
-		Seal:                       retOptions.Options.Seal,
-		UseDivinePlea:              retOptions.Rotation.UseDivinePlea,
-		DivinePleaPercentage:       retOptions.Rotation.DivinePleaPercentage,
-		ExoSlack:                   retOptions.Rotation.ExoSlack,
-		ConsSlack:                  retOptions.Rotation.ConsSlack,
-		HolyWrathThreshold:         retOptions.Rotation.HolyWrathThreshold,
-		MaxSoVTargets:              retOptions.Rotation.SovTargets,
-		HasLightswornBattlegear2Pc: character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
+		Paladin:                             pal,
+		Rotation:                            retOptions.Rotation,
+		Judgement:                           retOptions.Options.Judgement,
+		Seal:                                retOptions.Options.Seal,
+		UseDivinePlea:                       retOptions.Rotation.UseDivinePlea,
+		AvoidClippingConsecration:           retOptions.Rotation.AvoidClippingConsecration,
+		HoldLastAvengingWrathUntilExecution: retOptions.Rotation.HoldLastAvengingWrathUntilExecution,
+		DivinePleaPercentage:                retOptions.Rotation.DivinePleaPercentage,
+		ExoSlack:                            retOptions.Rotation.ExoSlack,
+		ConsSlack:                           retOptions.Rotation.ConsSlack,
+		HolyWrathThreshold:                  retOptions.Rotation.HolyWrathThreshold,
+		MaxSoVTargets:                       retOptions.Rotation.SovTargets,
+		HasLightswornBattlegear2Pc:          character.HasSetBonus(paladin.ItemSetLightswornBattlegear, 2),
 	}
+
+	pal.AvoidClippingConsecration = retOptions.Rotation.AvoidClippingConsecration
+	pal.HoldLastAvengingWrathUntilExecution = retOptions.Rotation.HoldLastAvengingWrathUntilExecution
+
 	ret.PaladinAura = retOptions.Options.Aura
 
 	ret.RotatioOption = retOptions.Rotation.CustomRotation
@@ -74,9 +82,12 @@ func NewRetributionPaladin(character core.Character, options *proto.Player) *Ret
 type RetributionPaladin struct {
 	*paladin.Paladin
 
-	Judgement            proto.PaladinJudgement
-	Seal                 proto.PaladinSeal
-	UseDivinePlea        bool
+	Judgement                           proto.PaladinJudgement
+	Seal                                proto.PaladinSeal
+	UseDivinePlea                       bool
+	AvoidClippingConsecration           bool
+	HoldLastAvengingWrathUntilExecution bool
+
 	DivinePleaPercentage float64
 	ExoSlack             int32
 	ConsSlack            int32

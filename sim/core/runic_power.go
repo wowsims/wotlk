@@ -365,6 +365,15 @@ func (rp *RunicPowerBar) BloodRuneBothReadyAt() time.Duration {
 
 }
 
+func (rp *RunicPowerBar) RuneReadyAt(slot int8) time.Duration {
+	return rp.runeMeta[slot].regenAt
+}
+
+func (rp *RunicPowerBar) SpendRuneReadyAt(slot int8, spendAt time.Duration) time.Duration {
+	runeGraceDuration := rp.RuneGraceAt(slot, spendAt)
+	return spendAt + (rp.runeCD - runeGraceDuration)
+}
+
 func (rp *RunicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
 	if rp.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
 		return sim.CurrentTime
@@ -873,11 +882,15 @@ func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int8
 	return slot
 }
 
-func (rp *RunicPowerBar) LaunchRuneRegen(sim *Simulation, slot int8) {
-	var runeGracePeriod time.Duration
+func (rp *RunicPowerBar) RuneGraceAt(slot int8, at time.Duration) (runeGraceDuration time.Duration) {
 	if rp.runeMeta[slot].lastRegenTime != -1 {
-		runeGracePeriod = MinDuration(time.Millisecond*2500, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
+		runeGraceDuration = MinDuration(time.Millisecond*2500, at-rp.runeMeta[slot].lastRegenTime)
 	}
+	return runeGraceDuration
+}
+
+func (rp *RunicPowerBar) LaunchRuneRegen(sim *Simulation, slot int8) {
+	runeGracePeriod := rp.RuneGraceAt(slot, sim.CurrentTime)
 	rp.runeMeta[slot].regenAt = sim.CurrentTime + (rp.runeCD - runeGracePeriod)
 
 	rp.launchPA(sim, rp.runeMeta[slot].regenAt)

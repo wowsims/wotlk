@@ -106,6 +106,20 @@ export const RetributionPaladinSoVTargets = InputHelpers.makeRotationNumberInput
 	changeEmitter: (player: Player<Spec.SpecRetributionPaladin>) => player.changeEmitter,
 })
 
+export const RetributionPaladinRotationAvoidClippingConsecration = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'avoidClippingConsecration',
+	label: 'Avoid Clipping Consecration',
+	labelTooltip: 'Avoid clipping consecration at the end of a fight.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
+
+export const RetributionPaladinRotationHoldLastAvengingWrathUntilExecution = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'holdLastAvengingWrathUntilExecution',
+	label: 'Hold Avenging Wrath Until Execution',
+	labelTooltip: 'Hold last Avenging Wrath usage until the execution phase. This currently does not work if specific Avenging Wrath CD usage times are specified.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
+
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
 	fieldName: 'customRotation',
 	numColumns: 2,

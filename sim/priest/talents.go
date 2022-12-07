@@ -161,6 +161,29 @@ func (priest *Priest) applyGrace() {
 	})
 }
 
+// This one is called from healing priest sim initialization because it needs an input.
+func (priest *Priest) ApplyRapture(ppm float64) {
+	if priest.Talents.Rapture == 0 {
+		return
+	}
+
+	if ppm <= 0 {
+		return
+	}
+
+	raptureManaCoeff := []float64{0, .015, .020, .025}[priest.Talents.Rapture]
+	raptureMetrics := priest.NewManaMetrics(core.ActionID{SpellID: 47537})
+
+	priest.RegisterResetEffect(func(sim *core.Simulation) {
+		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			Period: time.Minute / time.Duration(ppm),
+			OnAction: func(sim *core.Simulation) {
+				priest.AddMana(sim, raptureManaCoeff*priest.MaxMana(), raptureMetrics, false)
+			},
+		})
+	})
+}
+
 func (priest *Priest) applyBorrowedTime() {
 	if priest.Talents.BorrowedTime == 0 {
 		return
