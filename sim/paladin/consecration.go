@@ -19,7 +19,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
 
-	consecrationDot := core.NewDot(core.Dot{
+	paladin.ConsecrationDot = core.NewDot(core.Dot{
 		Aura: paladin.RegisterAura(core.Aura{
 			Label:    "Consecration",
 			ActionID: actionID,
@@ -68,9 +68,9 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			consecrationDot.Apply(sim)
+			paladin.ConsecrationDot.Apply(sim)
 		},
 	})
 
-	consecrationDot.Spell = paladin.Consecration
+	paladin.ConsecrationDot.Spell = paladin.Consecration
 }

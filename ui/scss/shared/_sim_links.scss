@@ -19,12 +19,11 @@
     }
 
     .sim-link-label {
-      font-size: map.get($font-sizes, 3);
       font-weight: bold;
       white-space: nowrap;
 
       &:first-child {
-        font-size: $content-font-size;
+        font-size: .75rem;
         font-weight: normal;
       }
 

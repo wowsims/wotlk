@@ -43,7 +43,7 @@ func (druid *Druid) registerRipSpell() {
 
 		BonusCritRating:  core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 4), 5*core.CritRatingPerCritChance, 0.0),
 		DamageMultiplier: 1 + core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 0.15, 0),
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
