@@ -114,7 +114,9 @@ func (ret *RetributionPaladin) Initialize() {
 	ret.Paladin.Initialize()
 	ret.RegisterAvengingWrathCD()
 
-	ret.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	if ret.Seal != proto.PaladinSeal_Vengeance {
+		ret.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	}
 }
 
 func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
