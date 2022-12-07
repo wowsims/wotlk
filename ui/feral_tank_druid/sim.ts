@@ -73,7 +73,8 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
 				Stat.StatDodge,
-				Stat.StatResilience,
+				Stat.StatSpellHit,
+				Stat.StatSpellCrit,
 			],
 
 			defaults: {
@@ -81,19 +82,19 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatArmor]: 0.59,
-					[Stat.StatStamina]: 3.05,
-					[Stat.StatStrength]: 2.266,
-					[Stat.StatAgility]: 4.6,
+					[Stat.StatArmor]: 3.5665,
+					[Stat.StatStamina]: 7.3021,
+					[Stat.StatStrength]: 2.3786,
+					[Stat.StatAgility]: 4.4974,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatExpertise]: 7.3,
-					[Stat.StatMeleeHit]: 3.5,
-					[Stat.StatMeleeCrit]: 1.0,
-					[Stat.StatMeleeHaste]: 1.6,
-					[Stat.StatArmorPenetration]: 0.34,
-					[Stat.StatDefense]: 2.2,
-					[Stat.StatDodge]: 1.7,
-					[Stat.StatResilience]: 1.7,
+					[Stat.StatExpertise]: 2.6597,
+					[Stat.StatMeleeHit]: 2.9282,
+					[Stat.StatMeleeCrit]: 1.5143,
+					[Stat.StatMeleeHaste]: 2.0983,
+					[Stat.StatArmorPenetration]: 1.584,
+					[Stat.StatDefense]: 1.8171,
+					[Stat.StatDodge]: 2.0196,
+					[Stat.StatHealth]: 0.4465,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -105,7 +106,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
-					powerWordFortitude: TristateEffect.TristateEffectRegular,
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					shadowProtection: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					thorns: TristateEffect.TristateEffectImproved,
@@ -113,22 +114,26 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
 					unleashedRage: true,
+					windfuryTotem: TristateEffect.TristateEffectImproved,
+					arcaneEmpowerment: true,
+					moonkinAura: TristateEffect.TristateEffectImproved,
 				}),
 				partyBuffs: PartyBuffs.create({
-					braidedEterniumChain: true,
+					heroicPresence: true,
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
+					renewedHope: true,
 				}),
 				debuffs: Debuffs.create({
-					bloodFrenzy: true,
-					exposeArmor: true,
+					savageCombat: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					sunderArmor: true,
-					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					thunderClap: TristateEffect.TristateEffectImproved,
-					demoralizingShout: TristateEffect.TristateEffectImproved,
+					exposeArmor: true,
+					frostFever: TristateEffect.TristateEffectImproved,
+					masterPoisoner: true,
+					ebonPlaguebringer: true,
+					shadowMastery: true,
 				}),
 			},
 
@@ -139,6 +144,11 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			rotationInputs: DruidInputs.FeralTankDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+					IconInputs.HealthBuff,
+					IconInputs.SpellCritBuff,
+					IconInputs.SpellCritDebuff,
+					IconInputs.SpellHitDebuff,
+					IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
