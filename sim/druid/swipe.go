@@ -38,7 +38,7 @@ func (druid *Druid) registerSwipeBearSpell() {
 		},
 
 		DamageMultiplier: lbdm * thdm * fidm,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -74,7 +74,7 @@ func (druid *Druid) registerSwipeCatSpell() {
 		},
 
 		DamageMultiplier: fidm * weaponMulti,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

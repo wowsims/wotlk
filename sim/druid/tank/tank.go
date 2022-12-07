@@ -64,7 +64,7 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 			SwingSpeed:                 2.5,
 			NormalizedSwingSpeed:       2.5,
 			SwingDuration:              time.Millisecond * 2500,
-			CritMultiplier:             bear.MeleeCritMultiplier(),
+			CritMultiplier:             bear.MeleeCritMultiplier(druid.Bear),
 			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 		},
 		AutoSwingMelee: true,

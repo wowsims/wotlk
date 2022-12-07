@@ -30,7 +30,7 @@ func (druid *Druid) registerRakeSpell() {
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

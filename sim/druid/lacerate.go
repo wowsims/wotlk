@@ -42,7 +42,7 @@ func (druid *Druid) registerLacerateSpell() {
 		DamageMultiplier: 1 *
 			core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
 			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1),
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 0.5,
 		FlatThreatBonus:  267,
 
@@ -82,7 +82,7 @@ func (druid *Druid) registerLacerateSpell() {
 			DamageMultiplier: 1 *
 				core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
 				core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1.05, 1),
-			CritMultiplier:   druid.MeleeCritMultiplier(),
+			CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 			ThreatMultiplier: 0.5,
 		}),
 		Aura: druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
