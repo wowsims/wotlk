@@ -11,7 +11,7 @@ import (
 func (paladin *Paladin) RegisterAvengingWrathCD() {
 	actionID := core.ActionID{SpellID: 31884}
 
-	aura := paladin.RegisterAura(core.Aura{
+	paladin.AvengingWrathAura = paladin.RegisterAura(core.Aura{
 		Label:    "Avenging Wrath",
 		ActionID: actionID,
 		Duration: time.Second * 20,
@@ -31,7 +31,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 
 	baseCost := paladin.BaseMana * 0.08
 
-	spell := paladin.RegisterSpell(core.SpellConfig{
+	paladin.AvengingWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -48,18 +48,21 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			aura.Activate(sim)
+			paladin.AvengingWrathAura.Activate(sim)
 		},
 	})
 
 	paladin.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
+		Spell: paladin.AvengingWrath,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentMana() >= spell.DefaultCast.Cost
+			return character.CurrentMana() >= paladin.AvengingWrath.DefaultCast.Cost
 		},
 		// modify this logic if it should ever not be spammed on CD / maybe should synced with other CDs
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if paladin.HoldLastAvengingWrathUntilExecution && float64(paladin.AvengingWrath.CD.Duration+sim.CurrentTime) >= float64(sim.Duration) {
+				return false
+			}
 			return true
 		},
 	})

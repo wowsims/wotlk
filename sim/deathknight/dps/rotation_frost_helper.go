@@ -24,8 +24,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim
 }
 
 func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *deathknight.RuneSpell {
-	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
 
@@ -37,7 +35,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 		return dk.FrostStrike
 	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && rime {
 		return dk.HowlingBlast
-	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
+	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) {
 		return dk.FrostStrike
 	} else if sim.CurrentTime+spGcd <= untilTime && dk.HornOfWinter.CanCast(sim) {
 		return dk.HornOfWinter
