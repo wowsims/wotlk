@@ -76,11 +76,11 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	bothblAt := dk.BloodDeathRuneBothReadyAt()
 	spellHitcap := true
 
-	if bothblAt > 9223372036854775800*time.Nanosecond {
+	if bothblAt == core.NeverExpires {
 		bothblAt = 1
 	}
 	if bothblAt == -1 {
-		bothblAt = 9223372036854775800 * time.Nanosecond
+		bothblAt = core.NeverExpires
 	}
 
 	if dk.Talents.Epidemic == 2 || diseaseExpiresAt >= simDur {
