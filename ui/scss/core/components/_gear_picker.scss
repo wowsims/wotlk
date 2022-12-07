@@ -76,6 +76,7 @@
 .item-picker-name {
 	letter-spacing: normal;
 	color: white;
+  font-size: map.get($font-sizes, 6);
 }
 .item-picker-name:hover {
 	color: white;
