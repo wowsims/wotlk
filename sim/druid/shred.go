@@ -35,7 +35,7 @@ func (druid *Druid) registerShredSpell() {
 		},
 
 		DamageMultiplier: 2.25,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

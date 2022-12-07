@@ -61,7 +61,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 			SwingSpeed:                 1.0,
 			NormalizedSwingSpeed:       1.0,
 			SwingDuration:              time.Second,
-			CritMultiplier:             cat.MeleeCritMultiplier(),
+			CritMultiplier:             cat.MeleeCritMultiplier(druid.Cat),
 			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 		},
 		AutoSwingMelee: true,
