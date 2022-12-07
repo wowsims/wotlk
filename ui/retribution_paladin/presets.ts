@@ -67,6 +67,8 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	exoSlack: 500,
 	consSlack: 500,
 	useDivinePlea: true,
+	avoidClippingConsecration: true,
+	holdLastAvengingWrathUntilExecution: false,
 	divinePleaPercentage: 0.75,
 	holyWrathThreshold: 4,
 	sovTargets: 1,
