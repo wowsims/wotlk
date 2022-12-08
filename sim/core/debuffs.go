@@ -93,7 +93,8 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs) {
 	}
 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, 2))
+		points := Ternary(debuffs.CurseOfWeakness == proto.TristateEffect_TristateEffectImproved, 2, 1)
+		MakePermanent(CurseOfWeaknessAura(target, int32(points)))
 	}
 	if debuffs.Sting {
 		MakePermanent(StingAura(target))
@@ -561,7 +562,7 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 		secondaryAura = target.GetOrRegisterAura(Aura{
 			Label:    "Improved Faerie Fire Secondary",
 			Tag:      MinorSpellHitDebuffAuraTag,
-			Duration: time.Minute * 5,
+			Duration: NeverExpires,
 			Priority: 3,
 			// no ActionID to hide this secondary effect from stats
 			OnGain: func(aura *Aura, sim *Simulation) {
@@ -587,6 +588,9 @@ func FaerieFireAura(target *Unit, imp bool) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.ArmorMultiplier /= 1.0 - armorReduction
+			if secondaryAura != nil {
+				secondaryAura.Deactivate(sim)
+			}
 		},
 	})
 	return mainAura
@@ -670,7 +674,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	secondaryAura := target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness Secondary",
 		Tag:      MinorArmorReductionAuraTag,
-		Duration: time.Minute * 2,
+		Duration: NeverExpires,
 		Priority: armorReduction,
 		// no ActionID to hide this secondary effect from stats
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -693,6 +697,7 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, bonus.Multiply(-1))
+			secondaryAura.Deactivate(sim)
 		},
 	})
 }
