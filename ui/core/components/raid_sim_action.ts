@@ -184,7 +184,7 @@ export class RaidSimResultsManager {
 		setResultTooltip('results-sim-dtps', 'Damage Taken Per Second');
 		setResultTooltip('results-sim-cod', `
 			<p>Chance of Death</p>
-			<p>The yes percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the <b>Incoming HPS</b> and <b>Healing Cadence</b> options).</p>
+			<p>The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the <b>Incoming HPS</b> and <b>Healing Cadence</b> options).</p>
 			<p>DTPS alone is not a good measure of tankiness because it is not affected by health and ignores damage spikes. Chance of Death attempts to capture overall tankiness.</p>
 		`);
 
