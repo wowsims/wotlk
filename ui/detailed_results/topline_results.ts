@@ -32,8 +32,8 @@ export class ToplineResults extends ResultComponent {
 				content += `
 					<div class="dpasp damage-metrics">
 						<span class="topline-result-avg">${player.dpasp.avg.toFixed(1)} </span>
+						<span class="topline-result-label">DP Avg SP </span>
 						<span class="topline-result-stdev">(${"\u00B1"}${player.dpasp.stdev.toFixed(1)})</span>
-						<span class="topline-result-label"> DP Avg SP</span>
 					</div>
 				`;
 			}
