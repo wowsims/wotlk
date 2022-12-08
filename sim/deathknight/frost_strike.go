@@ -66,7 +66,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 				Cost: conf.BaseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 			IgnoreHaste: true,
 		}
