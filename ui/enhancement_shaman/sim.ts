@@ -24,6 +24,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { ItemSwapSection } from './item_swap_picker.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {
@@ -141,6 +142,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			},
 			customSections: [
 				TotemsSection,
+				ItemSwapSection
 			],
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.

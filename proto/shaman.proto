@@ -299,9 +299,11 @@ message EnhancementShaman {
         ShamanSyncType sync_type = 3;
         ShamanImbue imbue_mh = 4;
         ShamanImbue imbue_oh = 5;
+		ItemSwap weapon_swap = 6;
     }
 
     Rotation rotation = 1;
     ShamanTalents talents = 2;
     Options options = 3;
+
 }

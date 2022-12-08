@@ -790,3 +790,9 @@ message CustomSpell {
 	// primarily for healers.
 	double casts_per_minute = 2;
 }
+
+message ItemSwap {
+	ItemSpec mh_item = 1;
+	ItemSpec oh_item = 2;
+	ItemSpec ranged_item = 3;
+}
