@@ -58,6 +58,16 @@ func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
 
 // Handles things that function for *both* cat/bear
 func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
+	s := druid.GetFormShiftStats(enter_form)
+	druid.AddStatsDynamic(sim, s)
+
+	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
+	druid.PseudoStats.BaseDodge += pos * 0.02 * float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
+}
+
+func (druid *Druid) GetFormShiftStats(enter_form bool) stats.Stats {
+	s := stats.Stats{}
+
 	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
 	fap := 0.0
 	weapAp := 0.0
@@ -66,17 +76,58 @@ func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 		weapAp = weapon.Stats[stats.AttackPower]
 		fap = math.Floor((dps - 54.8) * 14)
 	}
-	druid.AddStatDynamic(sim, stats.AttackPower, pos*fap)
+
+	s[stats.AttackPower] = pos * fap
 
 	if druid.Talents.PredatoryStrikes > 0 {
-		druid.AddStatDynamic(sim, stats.AttackPower, pos*float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
+		s[stats.AttackPower] += pos * float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(core.CharacterLevel)
 
 		if fap > 0 {
-			druid.AddStatDynamic(sim, stats.AttackPower, pos*(fap+weapAp)*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
+			s[stats.AttackPower] += pos * (fap + weapAp) * ((0.2 / 3) * float64(druid.Talents.PredatoryStrikes))
 		}
 	}
-	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-	druid.PseudoStats.BaseDodge += pos * 0.02 * float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
+	s[stats.MeleeCrit] += pos * float64(druid.Talents.SharpenedClaws) * 2 * core.CritRatingPerCritChance
+	return s
+}
+
+type FormStatDep struct {
+	Src    stats.Stat
+	Dst    stats.Stat
+	Amount float64
+}
+
+type FormRawStat struct {
+	S      stats.Stat
+	Amount float64
+}
+
+type FormBonuses struct {
+	S    stats.Stats
+	Deps []*FormStatDep
+	Mul  []*FormRawStat
+}
+
+func (druid *Druid) GetCatFormBonuses(enable bool) FormBonuses {
+	f := FormBonuses{}
+	pos := core.TernaryFloat64(enable, 1.0, -1.0)
+
+	f.S[stats.AttackPower] += pos * float64(druid.Level) * 2
+	f.S[stats.MeleeCrit] += pos * 2 * float64(druid.Talents.MasterShapeshifter) * core.CritRatingPerCritChance
+
+	// Ap dep
+	f.Deps = append(f.Deps, &FormStatDep{
+		Src:    stats.Agility,
+		Dst:    stats.AttackPower,
+		Amount: pos,
+	})
+
+	hotw := 1.0 + 0.02*float64(druid.Talents.HeartOfTheWild)
+	f.Mul = append(f.Mul, &FormRawStat{
+		S:      stats.AttackPower,
+		Amount: core.Ternary(pos > 0, hotw, 1/hotw),
+	})
+
+	return f
 }
 
 func (druid *Druid) registerCatFormSpell() {
@@ -85,8 +136,19 @@ func (druid *Druid) registerCatFormSpell() {
 
 	srm := druid.getSavageRoarMultiplier()
 
-	apDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
-	catHotw := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+	bonuses := druid.GetCatFormBonuses(true)
+
+	var dynamicDeps []*stats.StatDependency
+	for _, d := range bonuses.Deps {
+		dynamicDeps = append(dynamicDeps, druid.NewDynamicStatDependency(d.Src, d.Dst, d.Amount))
+	}
+
+	for _, stat := range bonuses.Mul {
+		dynamicDeps = append(dynamicDeps, druid.NewDynamicMultiplyStat(stat.S, stat.Amount))
+	}
+
+	enabledStats := bonuses.S
+	disabledStats := druid.GetCatFormBonuses(false).S
 
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
@@ -115,10 +177,10 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.UpdateManaRegenRates()
 
 			druid.applyFeralShift(sim, true)
-			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
-			druid.EnableDynamicStatDep(sim, apDep)
-			druid.EnableDynamicStatDep(sim, catHotw)
-			druid.AddStatDynamic(sim, stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
+			druid.AddStatsDynamic(sim, enabledStats)
+			for _, d := range dynamicDeps {
+				druid.EnableDynamicStatDep(sim, d)
+			}
 
 			// These buffs stay up, but corresponding changes don't
 			if druid.SavageRoarAura.IsActive() {
@@ -142,10 +204,10 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
-			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
-			druid.DisableDynamicStatDep(sim, catHotw)
-			druid.DisableDynamicStatDep(sim, apDep)
-			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
+			for _, d := range dynamicDeps {
+				druid.DisableDynamicStatDep(sim, d)
+			}
+			druid.AddStatsDynamic(sim, disabledStats)
 			druid.applyFeralShift(sim, false)
 
 			druid.TigersFuryAura.Deactivate(sim)
