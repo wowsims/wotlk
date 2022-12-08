@@ -180,8 +180,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA(s
 
 func (dk *DpsDeathknight) getOblitDrift(sim *core.Simulation, castIn time.Duration) time.Duration {
 	spendAt := sim.CurrentTime + castIn
-	oblit1 := core.MinDuration(dk.RuneReadyAt(sim, 2), dk.RuneReadyAt(sim, 3))
-	oblit2 := core.MinDuration(dk.SpendRuneReadyAt(4, spendAt), dk.SpendRuneReadyAt(5, spendAt))
+	oblit1 := core.MaxDuration(dk.RuneReadyAt(sim, 2), dk.RuneReadyAt(sim, 3))
+	oblit2 := core.MaxDuration(dk.SpendRuneReadyAt(4, spendAt), dk.SpendRuneReadyAt(5, spendAt))
 	return oblit2 - oblit1
 }
 
