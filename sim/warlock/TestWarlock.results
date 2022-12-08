@@ -87,7 +87,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-DeathbringerGarb"
  value: {
-  dps: 6715.6336
+  dps: 6715.77584
   tps: 5999.92055
  }
 }
@@ -150,14 +150,14 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 6720.20939
+  dps: 6720.49547
   tps: 6021.72494
  }
 }
 dps_results: {
  key: "TestWarlock-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 6654.95241
+  dps: 6655.22921
   tps: 5871.47551
  }
 }
@@ -192,7 +192,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-MaleficRaiment"
  value: {
-  dps: 5138.26977
+  dps: 5138.5312
   tps: 4505.09104
  }
 }
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7049.30223
-  tps: 6312.23497
+  dps: 7049.4279
+  tps: 6312.28207
  }
 }
 dps_results: {
