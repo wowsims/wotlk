@@ -24,34 +24,12 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_Sequence1)
 }
 
-func (dk *DpsDeathknight) oblitRunesAt(sim *core.Simulation) time.Duration {
-	_, f, u := dk.NormalCurrentRunes()
-	d := dk.CurrentDeathRunes()
-
-	if f == 0 && u == 0 && d == 0 {
-		timings := [3]time.Duration{dk.NormalSpentFrostRuneReadyAt(sim), dk.NormalSpentUnholyRuneReadyAt(sim), dk.SpentDeathRuneReadyAt()}
-		if timings[0] > timings[2] {
-			timings[0], timings[2] = timings[2], timings[0]
-		}
-		if timings[0] > timings[1] {
-			timings[0], timings[1] = timings[1], timings[0]
-		}
-		if timings[1] > timings[2] {
-			timings[1], timings[2] = timings[2], timings[1]
-		}
-		return timings[1]
-	} else if f == 0 && u == 0 && d > 0 {
-		// Next Frost/Unholy
-		return core.MinDuration(dk.NormalSpentFrostRuneReadyAt(sim), dk.NormalSpentUnholyRuneReadyAt(sim))
-	} else if f == 0 && u > 0 && d == 0 {
-		// Next death rune or next f rune
-		return core.MinDuration(dk.NormalSpentFrostRuneReadyAt(sim), dk.SpentDeathRuneReadyAt())
-	} else if f > 0 && u == 0 && d == 0 {
-		// Next death rune or next f rune
-		return core.MinDuration(dk.NormalSpentUnholyRuneReadyAt(sim), dk.SpentDeathRuneReadyAt())
-	}
-
-	return sim.CurrentTime
+// We need to keep the B2 and F1 runes in sync and immediately use them for obliterate
+// otherwise if an unholy rune comes up then we can't continue the Desync rotation without
+// re-casting IT + PS
+func (dk *DpsDeathknight) canFitBeforeFirstOblit(sim *core.Simulation, gcd time.Duration) bool {
+	ob := core.MaxDuration(dk.RuneReadyAt(sim, 1), dk.RuneReadyAt(sim, 2))
+	return sim.CurrentTime+gcd < ob
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -68,15 +46,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *
 			}
 			casted = dk.Obliterate.Cast(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
-		} else if dk.KM() && dk.FrostStrike.CanCast(sim) {
-			dk.FrostStrike.Cast(sim, target)
-		} else if dk.Rime() {
-			dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) {
-			dk.FrostStrike.Cast(sim, target)
+			s.ConditionalAdvance(casted && advance)
+		} else {
+			dk.desync_Filler(sim, target)
 		}
-
-		s.ConditionalAdvance(casted && advance)
 	} else if !ff {
 		casted = dk.IcyTouch.Cast(sim, target)
 		advance = dk.LastOutcome.Matches(core.OutcomeLanded)
@@ -92,7 +65,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_UA(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	runeGrace := dk.RuneGraceAt(0, sim.CurrentTime)
-	waitFor := 100 * time.Millisecond
+	waitFor := 5 * time.Millisecond
 
 	if dk.UnbreakableArmor.IsReady(sim) && dk.BloodTap.IsReady(sim) {
 		dk.BloodTap.Cast(sim, target)
@@ -134,19 +107,28 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(
 	return sim.CurrentTime
 }
 
+func (dk *DpsDeathknight) desync_Filler(sim *core.Simulation, target *core.Unit) {
+	canFitAb := dk.canFitBeforeFirstOblit(sim, dk.GetModifiedGCD())
+	canFitSpell := dk.canFitBeforeFirstOblit(sim, dk.SpellGCD())
+
+	if canFitAb && dk.KM() && dk.FrostStrike.CanCast(sim) {
+		dk.FrostStrike.Cast(sim, target)
+	} else if canFitSpell && dk.Rime() {
+		dk.HowlingBlast.Cast(sim, target)
+	} else if canFitAb && dk.FrostStrike.CanCast(sim) {
+		dk.FrostStrike.Cast(sim, target)
+	} else if canFitSpell {
+		dk.HornOfWinter.Cast(sim, target)
+	}
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_FS_Dump(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if !dk.AllRunesSpent() {
 		s.Advance()
 		return sim.CurrentTime
 	}
 
-	if dk.KM() && dk.FrostStrike.CanCast(sim) {
-		dk.FrostStrike.Cast(sim, target)
-	} else if dk.Rime() {
-		dk.HowlingBlast.Cast(sim, target)
-	} else if dk.FrostStrike.CanCast(sim) {
-		dk.FrostStrike.Cast(sim, target)
-	}
+	dk.desync_Filler(sim, target)
 
 	return -1
 }
