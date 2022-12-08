@@ -341,9 +341,9 @@ func (unitMetrics *UnitMetrics) MarkOOM(sim *Simulation) {
 	}
 }
 
-func (unitMetrics *UnitMetrics) UpdateDpasp(dpasp float64) {
-	    // We store the total of seconds * average due to how DistributionMetrics work internally.
-		unitMetrics.dpasp.Total += dpasp
+func (unitMetrics *UnitMetrics) UpdateDpasp(dpspSeconds float64) {
+	    // We store the total of seconds * spell power due to how DistributionMetrics work internally.
+		unitMetrics.dpasp.Total += dpspSeconds
 }
 
 func (unitMetrics *UnitMetrics) reset() {
