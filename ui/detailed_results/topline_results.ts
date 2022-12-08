@@ -20,19 +20,36 @@ export class ToplineResults extends ResultComponent {
 			Spec.SpecProtectionWarrior,
 		];
 
-		const players = resultData.result.getPlayers(resultData.filter);
-		if (players.length == 1 && !noManaSpecs.includes(players[0].spec)) {
-			const player = players[0];
-			const secondsOOM = player.secondsOomAvg;
-			const percentOOM = secondsOOM / resultData.result.encounterMetrics.durationSeconds;
-			const dangerLevel = percentOOM < 0.01 ? 'safe' : (percentOOM < 0.05 ? 'warning' : 'danger');
+		const demonicPactSpecs = [
+			Spec.SpecWarlock
+		];
 
-			content += `
-				<div class="percent-oom ${dangerLevel} damage-metrics">
-					<span class="topline-result-avg">${secondsOOM.toFixed(1)}s</span>
-					<span class="topline-result-label"> spent OOM</span>
-				</div>
-			`;
+		const players = resultData.result.getPlayers(resultData.filter);
+		if (players.length == 1) {
+			const player = players[0];
+
+			if (demonicPactSpecs.includes(player.spec) && player.dpasp.avg > 0) {
+				content += `
+					<div class="dpasp damage-metrics">
+						<span class="topline-result-avg">${player.dpasp.avg.toFixed(1)} </span>
+						<span class="topline-result-stdev">(${"\u00B1"}${player.dpasp.stdev.toFixed(1)})</span>
+						<span class="topline-result-label"> DP Avg SP</span>
+					</div>
+				`;
+			}
+
+			if (!noManaSpecs.includes(player.spec)) {
+				const secondsOOM = player.secondsOomAvg;
+				const percentOOM = secondsOOM / resultData.result.encounterMetrics.durationSeconds;
+				const dangerLevel = percentOOM < 0.01 ? 'safe' : (percentOOM < 0.05 ? 'warning' : 'danger');
+
+				content += `
+					<div class="percent-oom ${dangerLevel} damage-metrics">
+						<span class="topline-result-avg">${secondsOOM.toFixed(1)}s</span>
+						<span class="topline-result-label"> spent OOM</span>
+					</div>
+				`;
+			}
 		}
 
 		this.rootElem.innerHTML = content;
