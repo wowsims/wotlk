@@ -178,7 +178,7 @@ func init() {
 			if spell.ResourceType == stats.Mana && spell.BaseCost > 0 {
 				defaultCastRatio := spell.DefaultCast.Cost / spell.BaseCost
 
-				spell.BaseCost = core.MaxFloat(spell.BaseCost-42, 0)
+				spell.BaseCost = core.MaxFloat(spell.BaseCost-44, 0)
 				spell.DefaultCast.Cost = spell.BaseCost * defaultCastRatio
 			}
 		}

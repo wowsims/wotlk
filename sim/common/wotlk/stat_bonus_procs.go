@@ -280,7 +280,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Pyrite Infuser",
 		ID:         45286,
-		Bonus:      stats.Stats{stats.AttackPower: 1234},
+		Bonus:      stats.Stats{stats.AttackPower: 1305},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
@@ -291,7 +291,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Pandora's Plea",
 		ID:         45490,
-		Bonus:      stats.Stats{stats.SpellPower: 751},
+		Bonus:      stats.Stats{stats.SpellPower: 794},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnCastComplete,
 		ProcChance: 0.1,
@@ -311,7 +311,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Flare of the Heavens",
 		ID:         45518,
-		Bonus:      stats.Stats{stats.SpellPower: 850},
+		Bonus:      stats.Stats{stats.SpellPower: 959},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -321,7 +321,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Show of Faith",
 		ID:         45535,
-		Bonus:      stats.Stats{stats.MP5: 241},
+		Bonus:      stats.Stats{stats.MP5: 272},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnCastComplete,
 		ProcChance: 0.10,
@@ -330,7 +330,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Comet's Trail",
 		ID:         45609,
-		Bonus:      stats.Stats{stats.SpellHaste: 726, stats.MeleeHaste: 726},
+		Bonus:      stats.Stats{stats.SpellHaste: 768, stats.MeleeHaste: 768},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
@@ -341,7 +341,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Elemental Focus Stone",
 		ID:         45866,
-		Bonus:      stats.Stats{stats.MeleeHaste: 522, stats.SpellHaste: 522},
+		Bonus:      stats.Stats{stats.MeleeHaste: 552, stats.SpellHaste: 552},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
@@ -353,7 +353,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sif's Remembrance",
 		ID:         45929,
-		Bonus:      stats.Stats{stats.MP5: 195},
+		Bonus:      stats.Stats{stats.MP5: 220},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnCastComplete,
 		ProcChance: 0.10,
@@ -362,7 +362,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Mjolnir Runestone",
 		ID:         45931,
-		Bonus:      stats.Stats{stats.ArmorPenetration: 665},
+		Bonus:      stats.Stats{stats.ArmorPenetration: 751},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
