@@ -40,7 +40,7 @@ func init() {
 	newHasteActive(38764, 208, time.Second*20, time.Minute*2) // Rune of Finite Variation
 	newHasteActive(40531, 491, time.Second*20, time.Minute*2) // Mark of Norgannon
 	newHasteActive(43836, 212, time.Second*20, time.Minute*2) // Thorny Rose Brooch
-	newHasteActive(45466, 432, time.Second*20, time.Minute*2) // Scale of Fates
+	newHasteActive(45466, 457, time.Second*20, time.Minute*2) // Scale of Fates
 	newHasteActive(46088, 375, time.Second*20, time.Minute*2) // Platinum Disks of Swiftness
 	newHasteActive(48722, 512, time.Second*20, time.Minute*2) // Shard of the Crystal Heart
 	newHasteActive(50260, 464, time.Second*20, time.Minute*2) // Ephemeral Snowflake
@@ -58,7 +58,7 @@ func init() {
 	newAttackPowerActive(38761, 248, time.Second*20, time.Minute*2)  // Talon of Hatred
 	newAttackPowerActive(39257, 670, time.Second*20, time.Minute*2)  // Loatheb's Shadow
 	newAttackPowerActive(44014, 432, time.Second*15, time.Minute*2)  // Fezzik's Pocketwatch
-	newAttackPowerActive(45263, 856, time.Second*20, time.Minute*2)  // Wrathstone
+	newAttackPowerActive(45263, 905, time.Second*20, time.Minute*2)  // Wrathstone
 	newAttackPowerActive(46086, 752, time.Second*20, time.Minute*2)  // Platinum Disks of Battle
 	newAttackPowerActive(47734, 1024, time.Second*20, time.Minute*2) // Mark of Supremacy
 
@@ -84,8 +84,8 @@ func init() {
 	newSpellPowerActive(43837, 281, time.Second*20, time.Minute*2) // Soflty Glowing Orb
 	newSpellPowerActive(44013, 281, time.Second*20, time.Minute*2) // Cannoneer's Fuselighter
 	newSpellPowerActive(44015, 281, time.Second*20, time.Minute*2) // Cannoneer's Morale
-	newSpellPowerActive(45148, 505, time.Second*20, time.Minute*2) // Living Flame
-	newSpellPowerActive(45292, 408, time.Second*20, time.Minute*2) // Energy Siphon
+	newSpellPowerActive(45148, 534, time.Second*20, time.Minute*2) // Living Flame
+	newSpellPowerActive(45292, 431, time.Second*20, time.Minute*2) // Energy Siphon
 	newSpellPowerActive(46087, 440, time.Second*20, time.Minute*2) // Platinum Disks of Sorcery
 	newSpellPowerActive(48724, 599, time.Second*20, time.Minute*2) // Talisman of Resurgence
 	newSpellPowerActive(50357, 716, time.Second*20, time.Minute*2) // Maghia's Misguided Quill
@@ -120,7 +120,7 @@ func init() {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Armor: bonus}, duration, cooldown)
 	})
 	newArmorActive(36993, 3570, time.Second*20, time.Minute*2) // Seal of the Pantheon
-	newArmorActive(45313, 5152, time.Second*20, time.Minute*2) // Furnace Stone
+	newArmorActive(45313, 5448, time.Second*20, time.Minute*2) // Furnace Stone
 
 	newBlockValueActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.BlockValue: bonus}, duration, cooldown)
@@ -133,7 +133,7 @@ func init() {
 	newDodgeActive(40257, 455, time.Second*20, time.Minute*2) // Defender's Code
 	newDodgeActive(40683, 335, time.Second*20, time.Minute*2) // Valor Medal of the First War
 	newDodgeActive(44063, 300, time.Second*10, time.Minute*1) // Figurine - Monarch Crab
-	newDodgeActive(45158, 432, time.Second*20, time.Minute*2) // Heart of Iron
+	newDodgeActive(45158, 457, time.Second*20, time.Minute*2) // Heart of Iron
 	newDodgeActive(49080, 335, time.Second*20, time.Minute*2) // Brawler's Souvenir
 	newDodgeActive(47735, 512, time.Second*20, time.Minute*2) // Glyph of Indomitability
 
