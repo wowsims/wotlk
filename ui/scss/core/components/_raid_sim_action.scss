@@ -27,6 +27,10 @@
 		content: "% Chance of Death";
 	}
 
+	.results-sim-percent-oom .topline-result-avg:after {
+		content: " spent OOM";
+	}
+
 	[class^='results-sim-'], [class*=' results-sim-'] {
 		font-weight: bold;
 
