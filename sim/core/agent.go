@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Agent can be thought of as the 'Player', i.e. the thing controlling the Character.
@@ -31,6 +32,10 @@ type Agent interface {
 	// All talent stats / auras should be added within this callback. This makes sure
 	// talents are applied at the right time so we can calculate groups of stats.
 	ApplyTalents()
+
+	// Any 'form' bonuses or dynamic buffs. This will be called twice, once to enable, then to disable
+	// Care should be taken here to avoid 'double dipping' on stats
+	ApplyFormBonuses(enable bool) stats.Stats
 
 	// Returns this Agent to its initial state. Called before each Sim iteration
 	// and once after the final iteration.

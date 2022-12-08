@@ -46,6 +46,7 @@ func (td *TargetDummy) GetCharacter() *Character {
 func (td *TargetDummy) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
 func (td *TargetDummy) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
 func (td *TargetDummy) ApplyGearBonuses()                          {}
+func (td *TargetDummy) ApplyFormBonuses(enable bool) stats.Stats   { return stats.Stats{} }
 func (td *TargetDummy) ApplyTalents()                              {}
 func (td *TargetDummy) Initialize()                                {}
 func (td *TargetDummy) Reset(sim *Simulation)                      {}

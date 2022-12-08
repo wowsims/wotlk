@@ -92,8 +92,18 @@ func (bear *FeralTankDruid) Initialize() {
 	bear.RegisterFeralSpells(float64(bear.Rotation.MaulRageThreshold))
 }
 
-func (bear *FeralTankDruid) ApplyGearBonuses() {
-	bear.AddStat(stats.Armor, bear.Equip.Stats()[stats.Armor]*3.7)
+func (bear *FeralTankDruid) ApplyFormBonuses(enable bool) stats.Stats {
+	bonuses := bear.GetBearFormBonuses(enable)
+
+	for _, d := range bonuses.Deps {
+		bear.AddStatDependency(d.Src, d.Dst, d.Amount)
+	}
+
+	for _, stat := range bonuses.Mul {
+		bear.MultiplyStat(stat.S, stat.Amount)
+	}
+
+	return bonuses.S.Add(bear.GetFormShiftStats(enable))
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {

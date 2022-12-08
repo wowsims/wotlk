@@ -75,13 +75,16 @@ export class CharacterStats extends Component {
 		const consumesStats = new Stats(playerStats.consumesStats);
 		const debuffStats = this.getDebuffStats();
 		const bonusStats = player.getBonusStats();
-		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats);
+		const formStats = new Stats(playerStats.formStats);
 
 		const baseDelta = baseStats.subtract(bonusStats);
 		const gearDelta = gearStats.subtract(baseStats);
 		const talentsDelta = talentsStats.subtract(gearStats).add(statMods.talents);
 		const buffsDelta = buffsStats.subtract(talentsStats);
+		const formDelta = formStats.subtract(buffsStats);
 		const consumesDelta = consumesStats.subtract(buffsStats);
+
+		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats).add(formDelta);
 
 		this.stats.forEach((stat, idx) => {
 			let fragment = document.createElement('fragment');
@@ -122,6 +125,12 @@ export class CharacterStats extends Component {
 					<span>Buffs:</span>
 					<span>${this.statDisplayString(buffsDelta, stat)}</span>
 				</div>
+				${formDelta.getStat(stat) == 0 ? '' : `
+				<div class="character-stats-tooltip-row">
+					<span>Form:</span>
+					<span>${this.statDisplayString(formDelta, stat)}</span>
+				</div>
+				`}
 				<div class="character-stats-tooltip-row">
 					<span>Consumes:</span>
 					<span>${this.statDisplayString(consumesDelta, stat)}</span>
