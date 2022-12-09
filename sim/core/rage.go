@@ -40,6 +40,9 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if unit.GetCurrentPowerBar() != RageBar {
+				return
+			}
 			if result.Outcome.Matches(OutcomeMiss) {
 				return
 			}
@@ -83,6 +86,9 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			unit.AddRage(sim, generatedRage, spell.ResourceMetrics)
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if unit.GetCurrentPowerBar() != RageBar {
+				return
+			}
 			generatedRage := result.Damage * 2.5 / RageFactor
 			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
 		},

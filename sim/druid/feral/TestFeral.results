@@ -677,7 +677,7 @@ dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 4405.60437
-  tps: 3262.87977
+  tps: 3262.90829
  }
 }
 dps_results: {
