@@ -45,8 +45,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatHealth,
 				Stat.StatStrength,
 				Stat.StatAgility,
-				Stat.StatIntellect,
-				Stat.StatSpirit,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -54,7 +52,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatArmorPenetration,
 				Stat.StatExpertise,
 				Stat.StatMana,
-				Stat.StatMP5,
 			],
 
 			defaults: {
