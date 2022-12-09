@@ -38,7 +38,7 @@ func init() {
 			ActionID:    core.ActionID{ItemID: 41385},
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskSpellHealing,
-			Flags:       core.SpellFlagNoOnCastComplete,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
 			DamageMultiplier: 1,
 			CritMultiplier:   character.DefaultHealingCritMultiplier(),

@@ -339,8 +339,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 6994.37113
-  tps: 5294.75544
+  dps: 6992.5591
+  tps: 5293.37228
   hps: 13.10942
  }
 }

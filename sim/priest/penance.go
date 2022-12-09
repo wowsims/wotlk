@@ -28,7 +28,9 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	penanceDots := make([]*core.Dot, len(priest.Env.AllUnits))
 
 	var procMask core.ProcMask
+	flags := core.SpellFlagChanneled
 	if isHeal {
+		flags |= core.SpellFlagHelpful
 		procMask = core.ProcMaskSpellHealing
 	} else {
 		procMask = core.ProcMaskSpellDamage
@@ -38,7 +40,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     procMask,
-		Flags:        core.SpellFlagChanneled,
+		Flags:        flags,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

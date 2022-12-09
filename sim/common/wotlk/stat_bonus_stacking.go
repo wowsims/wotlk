@@ -31,6 +31,7 @@ type StackingStatBonusEffect struct {
 	MaxStacks  int32
 	Callback   core.AuraCallback
 	ProcMask   core.ProcMask
+	SpellFlags core.SpellFlag
 	Outcome    core.HitOutcome
 	Harmful    bool
 	ProcChance float64
@@ -54,6 +55,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
+			SpellFlags: config.SpellFlags,
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
@@ -74,6 +76,7 @@ type StackingStatBonusCD struct {
 	CD          time.Duration
 	Callback    core.AuraCallback
 	ProcMask    core.ProcMask
+	SpellFlags  core.SpellFlag
 	Outcome     core.HitOutcome
 	Harmful     bool
 	ProcChance  float64
@@ -98,6 +101,7 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
+			SpellFlags: config.SpellFlags,
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
@@ -352,6 +356,16 @@ func init() {
 		IsDefensive: true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Light",
+		ID:         47728,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 66},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Fetish of Volatile Power",
 		ID:        47879,
 		Duration:  time.Second * 20,
@@ -362,6 +376,16 @@ func init() {
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Stone",
+		ID:         47880,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 66},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Vengeance of the Forsaken",
@@ -398,6 +422,16 @@ func init() {
 		Harmful:   true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Light H",
+		ID:         47947,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 74},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Victor's Call H",
 		ID:        47948,
 		Duration:  time.Second * 20,
@@ -430,6 +464,16 @@ func init() {
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Stone H",
+		ID:         48019,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 74},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Vengeance of the Forsaken H",

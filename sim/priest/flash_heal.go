@@ -16,6 +16,7 @@ func (priest *Priest) registerFlashHealSpell() {
 		ActionID:     core.ActionID{SpellID: 48071},
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     core.ProcMaskSpellHealing,
+		Flags:        core.SpellFlagHelpful,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

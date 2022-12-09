@@ -1,6 +1,7 @@
 package wotlk
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,6 +10,17 @@ import (
 )
 
 func init() {
+	// TODO
+	// Althor's Abacus
+	// Bauble of True Blood
+	// Glowing Twilight Scale
+	// The General's Heart
+	// Ephemeral Snowflake
+	// Purified Shard 2pc bonus
+	// Talisman of Troll Divinity
+	// Val'anyr
+	// Scarab Brooch
+
 	core.NewItemEffect(37220, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 37220}
@@ -112,6 +124,49 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(40258, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 40258}
+		hots := core.NewHotArray(
+			&character.Unit,
+			core.Dot{
+				Spell: character.GetOrRegisterSpell(core.SpellConfig{
+					ActionID:    actionID,
+					SpellSchool: core.SpellSchoolPhysical,
+					ProcMask:    core.ProcMaskSpellHealing,
+					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+					DamageMultiplier: 1,
+					ThreatMultiplier: 1,
+				}),
+				NumberOfTicks: 4,
+				TickLength:    time.Second * 3,
+				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+					dot.SnapshotBaseDamage = 3752.0 / 4
+					dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+				},
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+				},
+			},
+			core.Aura{
+				Label:    "Forethought Talisman" + strconv.Itoa(int(character.Index)),
+				ActionID: actionID,
+			})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Forethought Talisman",
+			Callback:   core.CallbackOnHealDealt,
+			Outcome:    core.OutcomeCrit,
+			ProcChance: 0.2,
+			ICD:        time.Second * 45,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				hot := hots[result.Target.UnitIndex]
+				hot.Apply(sim)
+			},
+		})
+	})
+
 	core.NewItemEffect(40382, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 40382}
@@ -119,8 +174,8 @@ func init() {
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Soul of the Dead",
-			Callback:   core.CallbackOnSpellHitDealt,
-			ProcMask:   core.ProcMaskSpellDamage,
+			Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnHealDealt,
+			ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
@@ -355,34 +410,91 @@ func init() {
 		})
 	})
 
-	// TODO: This item ID is wrong, can't remember what this is for, though.
-	//core.NewItemEffect(56186, func(agent core.Agent) {
-	//	character := agent.GetCharacter()
-	//	actionID := core.ActionID{ItemID: 56186}
-	//	manaMetrics := character.NewManaMetrics(actionID)
+	core.NewItemEffect(42413, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{SpellID: 56186}
+		manaMetrics := character.NewManaMetrics(actionID)
 
-	//	spell := character.RegisterSpell(core.SpellConfig{
-	//		ActionID: actionID,
-	//		Flags:    core.SpellFlagNoOnCastComplete,
-	//		Cast: core.CastConfig{
-	//			CD: core.Cooldown{
-	//				Timer:    character.NewTimer(),
-	//				Duration: time.Minute * 5,
-	//			},
-	//		},
-	//		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-	//			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-	//				NumTicks: 12,
-	//				Period:   time.Second * 1,
-	//				OnAction: func(sim *core.Simulation) {
-	//					character.AddMana(sim, 195, manaMetrics, false)
-	//				},
-	//			})
-	//		},
-	//	})
-	//	character.AddMajorCooldown(core.MajorCooldown{
-	//		Type:  core.CooldownTypeMana,
-	//		Spell: spell,
-	//	})
-	//})
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: actionID,
+			Flags:    core.SpellFlagNoOnCastComplete,
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 5,
+				},
+			},
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+					NumTicks: 12,
+					Period:   time.Second * 1,
+					OnAction: func(sim *core.Simulation) {
+						character.AddMana(sim, 195, manaMetrics, false)
+					},
+				})
+			},
+		})
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeMana,
+			Spell: spell,
+		})
+	})
+
+	core.NewItemEffect(47215, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{SpellID: 67667}
+		manaMetrics := character.NewManaMetrics(actionID)
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Tears of the Vanquished Trigger",
+			Callback:   core.CallbackOnCastComplete,
+			SpellFlags: core.SpellFlagHelpful,
+			ProcChance: 0.25,
+			ICD:        time.Second * 45,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				character.AddMana(sim, 500, manaMetrics, false)
+			},
+		})
+	})
+
+	core.NewItemEffect(50356, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{SpellID: 71586}
+
+		var shield *core.Shield
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolHoly,
+			ProcMask:    core.ProcMaskSpellHealing,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 2,
+				},
+			},
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				shield.Apply(sim, 6400)
+			},
+		})
+
+		shield = core.NewShield(core.Shield{
+			Spell: spell,
+			Aura: character.GetOrRegisterAura(core.Aura{
+				Label:    "Hardened Skin",
+				ActionID: actionID,
+				Duration: time.Second * 10,
+			}),
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeSurvival,
+			Spell: spell,
+		})
+	})
 }

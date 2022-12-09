@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 6422.67457
-  tps: 4730.59118
+  dps: 6419.71013
+  tps: 4728.97776
   hps: 14.69475
  }
 }

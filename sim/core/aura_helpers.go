@@ -105,6 +105,12 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 	}
 	if config.Callback.Matches(CallbackOnCastComplete) {
 		aura.OnCastComplete = func(aura *Aura, sim *Simulation, spell *Spell) {
+			if config.SpellFlags != SpellFlagNone && !spell.Flags.Matches(config.SpellFlags) {
+				return
+			}
+			if config.ProcMask != ProcMaskUnknown && !spell.ProcMask.Matches(config.ProcMask) {
+				return
+			}
 			if icd.Duration != 0 && !icd.IsReady(sim) {
 				return
 			}

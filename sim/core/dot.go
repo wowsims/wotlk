@@ -205,3 +205,15 @@ func NewDot(config Dot) *Dot {
 
 	return dot
 }
+
+// Creates HoTs for all allied units.
+func NewHotArray(caster *Unit, config Dot, auraConfig Aura) []*Dot {
+	hots := make([]*Dot, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if !caster.IsOpponent(target) {
+			config.Aura = target.RegisterAura(auraConfig)
+			hots[target.UnitIndex] = NewDot(config)
+		}
+	}
+	return hots
+}

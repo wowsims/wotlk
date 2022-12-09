@@ -349,8 +349,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 5839.16079
-  tps: 5940.65264
+  dps: 5839.02539
+  tps: 5940.51724
   dtps: 9.92959
   hps: 11.51045
  }

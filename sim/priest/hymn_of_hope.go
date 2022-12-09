@@ -17,6 +17,7 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 
 	hymnOfHopeSpell := priest.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagHelpful,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

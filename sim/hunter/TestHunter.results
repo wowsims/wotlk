@@ -311,8 +311,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 6949.72362
-  tps: 5952.82363
+  dps: 6950.37011
+  tps: 5953.47511
   hps: 11.22172
  }
 }

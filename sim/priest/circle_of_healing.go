@@ -21,6 +21,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		ActionID:     core.ActionID{SpellID: 48089},
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     core.ProcMaskSpellHealing,
+		Flags:        core.SpellFlagHelpful,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
