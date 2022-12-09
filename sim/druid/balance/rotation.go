@@ -89,6 +89,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 		// Eclipse
 		if solarIsActive || lunarIsActive {
+
+			if moonkin.HasActiveAura("Elune's Wrath") {
+				return moonkin.Starfire
+			}
 			if maximizeIsUptime && shouldRefreshIs {
 				return moonkin.InsectSwarm
 			}
@@ -111,6 +115,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					return moonkin.Wrath
 				}
 			}
+		}
+		if moonkin.HasActiveAura("Elune's Wrath") && moonkin.GetAura("Elune's Wrath").Duration < lunarICD {
+			return moonkin.Starfire
 		}
 		if moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
 			return moonkin.Moonfire
