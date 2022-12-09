@@ -121,6 +121,9 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 49807, Phase: 4},
 	{Id: 49810, Phase: 4},
 	{Id: 49809, Phase: 4},
+
+	// Drape of Icy Intent
+	{Id: 45461, Phase: 2},
 }
 
 // Keep these sorted by item ID.
