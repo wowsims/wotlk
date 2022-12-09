@@ -44,18 +44,6 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 	druid.SetCurrentPowerBar(core.ManaBar)
 }
 
-func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
-
-	if !druid.GCD.IsReady(sim) {
-		panic("Trying to powershift during gcd")
-	}
-
-	druid.CatFormAura.Deactivate(sim)
-	druid.TryUseCooldowns(sim)
-
-	return druid.CatForm.Cast(sim, nil)
-}
-
 // Handles things that function for *both* cat/bear
 func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
 	s := druid.GetFormShiftStats(enter_form)
@@ -180,6 +168,9 @@ func (druid *Druid) registerCatFormSpell() {
 	enabledStats := bonuses.S
 	disabledStats := druid.GetCatFormBonuses(false).S
 
+	catCritMult := druid.MeleeCritMultiplier(Cat)
+	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+
 	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Cat Form",
 		ActionID: actionID,
@@ -195,14 +186,14 @@ func (druid *Druid) registerCatFormSpell() {
 				SwingSpeed:                 1.0,
 				NormalizedSwingSpeed:       1.0,
 				SwingDuration:              time.Second,
-				CritMultiplier:             druid.MeleeCritMultiplier(Cat),
+				CritMultiplier:             catCritMult,
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 			druid.AutoAttacks.ReplaceMHSwing = nil
 			druid.AutoAttacks.EnableAutoSwing(sim)
 
 			druid.SetCurrentPowerBar(core.EnergyBar)
-			druid.manageCooldownsEnabled(sim)
+			druid.manageCooldownsEnabled()
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
@@ -226,11 +217,11 @@ func (druid *Druid) registerCatFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
 			druid.AutoAttacks.ReplaceMHSwing = nil
 			druid.AutoAttacks.EnableAutoSwing(sim)
 
-			druid.manageCooldownsEnabled(sim)
+			druid.manageCooldownsEnabled()
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 
@@ -286,20 +277,6 @@ func (druid *Druid) registerCatFormSpell() {
 	})
 }
 
-func (druid *Druid) PowerShiftBear(sim *core.Simulation) {
-
-	if !druid.GCD.IsReady(sim) {
-		panic("Trying to powershift during gcd")
-	}
-
-	druid.BearFormAura.Deactivate(sim)
-	druid.TryUseCooldowns(sim)
-
-	if druid.GCD.IsReady(sim) {
-		druid.BearForm.Cast(sim, nil)
-	}
-}
-
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	baseCost := druid.BaseMana * 0.35
@@ -320,6 +297,9 @@ func (druid *Druid) registerBearFormSpell() {
 
 	potpdtm := 0.04 * float64(druid.Talents.ProtectorOfThePack)
 
+	bearCritMult := druid.MeleeCritMultiplier(Bear)
+	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+
 	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
 		Label:    "Bear Form",
 		ActionID: actionID,
@@ -336,7 +316,7 @@ func (druid *Druid) registerBearFormSpell() {
 				SwingSpeed:                 2.5,
 				NormalizedSwingSpeed:       2.5,
 				SwingDuration:              time.Millisecond * 2500,
-				CritMultiplier:             druid.MeleeCritMultiplier(Bear),
+				CritMultiplier:             bearCritMult,
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
@@ -357,13 +337,13 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= 1.0 - potpdtm
 
-			druid.manageCooldownsEnabled(sim)
+			druid.manageCooldownsEnabled()
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
 			druid.AutoAttacks.ReplaceMHSwing = nil
 			druid.AutoAttacks.EnableAutoSwing(sim)
 
@@ -377,7 +357,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier /= 1.0 - potpdtm
 
-			druid.manageCooldownsEnabled(sim)
+			druid.manageCooldownsEnabled()
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.UpdateManaRegenRates()
 			druid.EnrageAura.Deactivate(sim)
@@ -419,7 +399,7 @@ func (druid *Druid) registerBearFormSpell() {
 	})
 }
 
-func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
+func (druid *Druid) manageCooldownsEnabled() {
 	// Disable cooldowns not usable in form and/or delay others
 	if druid.StartingForm.Matches(Cat | Bear) {
 		for _, mcd := range druid.disabledMCDs {
