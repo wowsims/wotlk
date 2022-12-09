@@ -30,7 +30,13 @@ td, th {
 			background: lighten($body-bg, 5);
 		}
 	
+		.sim-sidebar, .sim-content {
+			min-height: 100vh;
+		}
+
 		.sim-sidebar {
+			flex:1;
+
 			.sim-title {
 				height: $sim-header-height;
 				border-bottom: 1px solid $border-color;
@@ -44,6 +50,7 @@ td, th {
 		.sim-content {
 			padding-left: $gap-width * 2;
 			padding-right: $gap-width * 2;
+			flex: 4;
 	
 			.sim-header {
 				height: $sim-header-height;
