@@ -2,13 +2,13 @@
 
 @import "../components/sim_title_dropdown";
 
-#simSidebar {
+.sim-sidebar {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   background: $body-bg;
 
-  #simSidebarContent {
+  .sim-sidebar-content {
     padding-top: $gap-width;
     padding-left: $gap-width;
     padding-right: $gap-width;
@@ -53,8 +53,8 @@
 }
 
 @include media-breakpoint-down(xxl) {
-  #simSidebar {
-    #simSidebarContent {
+  .sim-sidebar {
+    .sim-sidebar-content {
       padding-left: $gap-width-sm * 2;
       padding-right: $gap-width-sm * 2;
 
@@ -66,8 +66,8 @@
 }
 
 @include media-breakpoint-down(lg) {
-  #simSidebar {
-    #simSidebarContent {
+  .sim-sidebar {
+    .sim-sidebar-content {
       padding-top: $gap-width-sm * 2;
       padding-bottom: $gap-width-sm;
     }

@@ -1,4 +1,4 @@
-#simContent {
+.sim-content {
   min-width: calc(275px + 1vw);
   display: flex;
   flex-flow: column;
@@ -6,7 +6,7 @@
 	background-position: center center;
   color: var(--main-text-color);
 
-  #simMain {
+  .sim-main {
     height: 80%;
     display: flex;
     flex-grow: 1;
@@ -20,8 +20,8 @@
 }
 
 @include media-breakpoint-down(lg) {
-  #simContent {
-    #simMain {
+  .sim-content {
+    .sim-main {
       .tab-pane {
         padding-top: $gap-width-sm * 2;
         padding-bottom: $gap-width-sm * 2;
