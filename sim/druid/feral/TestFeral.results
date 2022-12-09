@@ -43,6 +43,20 @@ character_stats_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-Althor'sAbacus-50359"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Althor'sAbacus-50366"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-AshtongueTalismanofEquilibrium-32486"
  value: {
   dps: 6772.11963
@@ -61,6 +75,20 @@ dps_results: {
  value: {
   dps: 6735.88338
   tps: 5079.74526
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-BaubleofTrueBlood-50354"
+ value: {
+  dps: 6686.63517
+  tps: 84137.37315
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-BaubleofTrueBlood-50726"
+ value: {
+  dps: 6686.63517
+  tps: 84137.37315
  }
 }
 dps_results: {
@@ -92,6 +120,28 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-CorpseTongueCoin-50349"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-CorpseTongueCoin-50352"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-CorrodedSkeletonKey-50356"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+  hps: 64
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
   dps: 6936.5241
@@ -106,17 +156,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeral-AllItems-DarkmoonCard:Greatness-44253"
- value: {
-  dps: 7017.52731
-  tps: 5301.09286
- }
-}
-dps_results: {
- key: "TestFeral-AllItems-DarkmoonCard:Greatness-44254"
+ key: "TestFeral-AllItems-DarkmoonCard:Greatness-44255"
  value: {
   dps: 6769.95582
-  tps: 5100.47929
+  tps: 5099.93414
  }
 }
 dps_results: {
@@ -127,10 +170,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-Death'sChoice-47464"
+ value: {
+  dps: 7045.88573
+  tps: 5304.84602
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 6906.37126
   tps: 5212.62659
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Deathbringer'sWill-50362"
+ value: {
+  dps: 6838.37006
+  tps: 5152.04128
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Deathbringer'sWill-50363"
+ value: {
+  dps: 7075.38805
+  tps: 5325.62574
  }
 }
 dps_results: {
@@ -145,6 +209,20 @@ dps_results: {
  value: {
   dps: 7018.49493
   tps: 5317.23435
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-DislodgedForeignObject-50348"
+ value: {
+  dps: 6514.46533
+  tps: 4900.35296
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-DislodgedForeignObject-50353"
+ value: {
+  dps: 6679.90106
+  tps: 5036.3865
  }
 }
 dps_results: {
@@ -190,6 +268,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-EphemeralSnowflake-50260"
+ value: {
+  dps: 6556.72853
+  tps: 4946.24512
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-EssenceofGossamer-37220"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-EternalEarthsiegeDiamond"
  value: {
   dps: 6983.76946
@@ -208,6 +300,20 @@ dps_results: {
  value: {
   dps: 7010.19445
   tps: 5299.47809
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Figurine-SapphireOwl-42413"
+ value: {
+  dps: 6769.95582
+  tps: 5100.22197
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-ForethoughtTalisman-40258"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
  }
 }
 dps_results: {
@@ -257,6 +363,27 @@ dps_results: {
  value: {
   dps: 4939.4638
   tps: 3721.32307
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-GlowingTwilightScale-54573"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-GlowingTwilightScale-54589"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-GnomishLightningGenerator-41121"
+ value: {
+  dps: 6940.53703
+  tps: 5242.27386
  }
 }
 dps_results: {
@@ -394,6 +521,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-NevermeltingIceCrystal-50259"
+ value: {
+  dps: 6853.68209
+  tps: 5136.91391
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-NightsongBattlegear"
  value: {
   dps: 6110.54877
@@ -426,6 +560,20 @@ dps_results: {
  value: {
   dps: 6994.37113
   tps: 5294.75544
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-PetrifiedTwilightScale-54571"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-PetrifiedTwilightScale-54591"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
  }
 }
 dps_results: {
@@ -513,6 +661,34 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-SliverofPureIce-50339"
+ value: {
+  dps: 6769.95582
+  tps: 5100.50818
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 6769.95582
+  tps: 5100.50818
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-SouloftheDead-40382"
+ value: {
+  dps: 7012.48301
+  tps: 5301.04537
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-SparkofHope-45703"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-SparkofLife-37657"
  value: {
   dps: 6590.70245
@@ -552,6 +728,27 @@ dps_results: {
  value: {
   dps: 6906.20292
   tps: 5226.806
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-TalismanofTrollDivinity-37734"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-TearsoftheVanquished-47215"
+ value: {
+  dps: 6769.95582
+  tps: 5099.96895
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-TheGeneral'sHeart-45507"
+ value: {
+  dps: 6769.95582
+  tps: 5100.47929
  }
 }
 dps_results: {
@@ -604,6 +801,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-TomeofArcanePhenomena-36972"
+ value: {
+  dps: 6816.08175
+  tps: 5144.69083
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 6983.76946
@@ -622,6 +826,13 @@ dps_results: {
  value: {
   dps: 5532.13394
   tps: 4169.83321
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Val'anyr,HammerofAncientKings-46017"
+ value: {
+  dps: 5744.04944
+  tps: 4341.33225
  }
 }
 dps_results: {

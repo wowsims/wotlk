@@ -50,6 +50,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-Althor'sAbacus-50359"
+ value: {
+  dps: 3536.68542
+  tps: 2996.65277
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Althor'sAbacus-50366"
+ value: {
+  dps: 3554.10567
+  tps: 3010.98435
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-AshtongueTalismanofAcumen-32490"
  value: {
   dps: 3435.46557
@@ -68,6 +82,20 @@ dps_results: {
  value: {
   dps: 3394.94799
   tps: 2880.04582
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-BaubleofTrueBlood-50354"
+ value: {
+  dps: 3395.07323
+  tps: 9194.6632
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-BaubleofTrueBlood-50726"
+ value: {
+  dps: 3395.07323
+  tps: 9194.6632
  }
 }
 dps_results: {
@@ -99,6 +127,28 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-CorpseTongueCoin-50349"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-CorpseTongueCoin-50352"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-CorrodedSkeletonKey-50356"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+  hps: 66.56
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRaiment"
  value: {
   dps: 3583.98863
@@ -127,24 +177,17 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Greatness-42987"
+ key: "TestSmite-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 3208.72588
-  tps: 2718.94743
+  dps: 3475.23927
+  tps: 2948.12546
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Greatness-44253"
+ key: "TestSmite-AllItems-Death'sChoice-47464"
  value: {
-  dps: 3208.72588
-  tps: 2718.94743
- }
-}
-dps_results: {
- key: "TestSmite-AllItems-DarkmoonCard:Greatness-44254"
- value: {
-  dps: 3348.15991
-  tps: 2834.80926
+  dps: 3394.94799
+  tps: 2880.04582
  }
 }
 dps_results: {
@@ -152,6 +195,20 @@ dps_results: {
  value: {
   dps: 3404.87107
   tps: 2889.45714
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Deathbringer'sWill-50362"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Deathbringer'sWill-50363"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
  }
 }
 dps_results: {
@@ -166,6 +223,20 @@ dps_results: {
  value: {
   dps: 3499.32315
   tps: 2966.61163
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-DislodgedForeignObject-50348"
+ value: {
+  dps: 3549.85726
+  tps: 3008.55375
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-DislodgedForeignObject-50353"
+ value: {
+  dps: 3530.59396
+  tps: 2994.81486
  }
 }
 dps_results: {
@@ -197,6 +268,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-EphemeralSnowflake-50260"
+ value: {
+  dps: 3393.83945
+  tps: 2879.37311
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-EssenceofGossamer-37220"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-EternalEarthsiegeDiamond"
  value: {
   dps: 3491.92193
@@ -215,6 +300,20 @@ dps_results: {
  value: {
   dps: 3518.16007
   tps: 2983.17278
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Figurine-SapphireOwl-42413"
+ value: {
+  dps: 3467.14388
+  tps: 2935.04865
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-ForethoughtTalisman-40258"
+ value: {
+  dps: 3482.84103
+  tps: 2952.35516
  }
 }
 dps_results: {
@@ -274,6 +373,27 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-GlowingTwilightScale-54573"
+ value: {
+  dps: 3545.39554
+  tps: 3003.81856
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-GlowingTwilightScale-54589"
+ value: {
+  dps: 3565.19128
+  tps: 3020.10445
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-GnomishLightningGenerator-41121"
+ value: {
+  dps: 3449.83294
+  tps: 2933.10936
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 3500.62445
@@ -330,6 +450,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-NevermeltingIceCrystal-50259"
+ value: {
+  dps: 3491.29629
+  tps: 2958.61391
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 3394.94799
@@ -348,6 +475,20 @@ dps_results: {
  value: {
   dps: 3491.92193
   tps: 2959.73419
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-PetrifiedTwilightScale-54571"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-PetrifiedTwilightScale-54591"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
  }
 }
 dps_results: {
@@ -449,6 +590,34 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-SliverofPureIce-50339"
+ value: {
+  dps: 3627.68999
+  tps: 3078.72704
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 3648.73891
+  tps: 3096.05076
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SouloftheDead-40382"
+ value: {
+  dps: 3526.14488
+  tps: 2993.41899
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-SparkofHope-45703"
+ value: {
+  dps: 3519.51928
+  tps: 2982.27288
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-SparkofLife-37657"
  value: {
   dps: 3421.63068
@@ -481,6 +650,27 @@ dps_results: {
  value: {
   dps: 3491.92193
   tps: 2959.73419
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-TalismanofTrollDivinity-37734"
+ value: {
+  dps: 3490.49766
+  tps: 2958.9572
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-TearsoftheVanquished-47215"
+ value: {
+  dps: 3522.6259
+  tps: 2988.47336
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-TheGeneral'sHeart-45507"
+ value: {
+  dps: 3394.94799
+  tps: 2880.04582
  }
 }
 dps_results: {
@@ -519,6 +709,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-TomeofArcanePhenomena-36972"
+ value: {
+  dps: 3451.9263
+  tps: 2927.4626
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 3507.58632
@@ -530,6 +727,13 @@ dps_results: {
  value: {
   dps: 3511.50241
   tps: 2975.84397
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Val'anyr,HammerofAncientKings-46017"
+ value: {
+  dps: 3601.01403
+  tps: 3050.41973
  }
 }
 dps_results: {

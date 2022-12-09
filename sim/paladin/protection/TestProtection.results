@@ -57,6 +57,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-Althor'sAbacus-50359"
+ value: {
+  dps: 3197.503
+  tps: 7712.92797
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Althor'sAbacus-50366"
+ value: {
+  dps: 3200.07422
+  tps: 7719.54629
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-AshtongueTalismanofZeal-32489"
  value: {
   dps: 3205.758
@@ -75,6 +89,20 @@ dps_results: {
  value: {
   dps: 3303.80299
   tps: 7908.3366
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-BaubleofTrueBlood-50354"
+ value: {
+  dps: 3176.62314
+  tps: 22886.19299
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-BaubleofTrueBlood-50726"
+ value: {
+  dps: 3176.62314
+  tps: 22886.19299
  }
 }
 dps_results: {
@@ -127,6 +155,28 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-CorpseTongueCoin-50349"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-CorpseTongueCoin-50352"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-CorrodedSkeletonKey-50356"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+  hps: 64
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
   dps: 3222.50384
@@ -141,24 +191,10 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestProtection-AllItems-DarkmoonCard:Greatness-42987"
+ key: "TestProtection-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 3404.81828
-  tps: 8197.7097
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-DarkmoonCard:Greatness-44253"
- value: {
-  dps: 3339.32078
-  tps: 8038.13085
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-DarkmoonCard:Greatness-44254"
- value: {
-  dps: 3298.55073
-  tps: 7946.54929
+  dps: 3339.45241
+  tps: 8062.98047
  }
 }
 dps_results: {
@@ -169,10 +205,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-Death'sChoice-47464"
+ value: {
+  dps: 3491.73455
+  tps: 8397.54637
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 3210.86332
   tps: 7737.2778
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Deathbringer'sWill-50362"
+ value: {
+  dps: 3315.38494
+  tps: 7947.57003
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Deathbringer'sWill-50363"
+ value: {
+  dps: 3356.76362
+  tps: 8047.52341
  }
 }
 dps_results: {
@@ -187,6 +244,20 @@ dps_results: {
  value: {
   dps: 3178.37586
   tps: 7660.47165
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-DislodgedForeignObject-50348"
+ value: {
+  dps: 3246.60517
+  tps: 7799.64675
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-DislodgedForeignObject-50353"
+ value: {
+  dps: 3247.50644
+  tps: 7807.68643
  }
 }
 dps_results: {
@@ -218,6 +289,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-EphemeralSnowflake-50260"
+ value: {
+  dps: 3216.36831
+  tps: 7734.1785
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-EternalEarthsiegeDiamond"
  value: {
   dps: 3176.58264
@@ -236,6 +314,20 @@ dps_results: {
  value: {
   dps: 3232.6039
   tps: 7789.8927
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Figurine-SapphireOwl-42413"
+ value: {
+  dps: 3215.11944
+  tps: 7764.38211
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-ForethoughtTalisman-40258"
+ value: {
+  dps: 3189.5556
+  tps: 7692.47137
  }
 }
 dps_results: {
@@ -285,6 +377,27 @@ dps_results: {
  value: {
   dps: 3419.7778
   tps: 8179.01555
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-GlowingTwilightScale-54573"
+ value: {
+  dps: 3198.78861
+  tps: 7716.23713
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-GlowingTwilightScale-54589"
+ value: {
+  dps: 3201.71045
+  tps: 7723.75794
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-GnomishLightningGenerator-41121"
+ value: {
+  dps: 3257.45691
+  tps: 7811.78949
  }
 }
 dps_results: {
@@ -429,6 +542,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-NevermeltingIceCrystal-50259"
+ value: {
+  dps: 3241.60799
+  tps: 7809.47213
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 3176.58264
@@ -447,6 +567,20 @@ dps_results: {
  value: {
   dps: 3180.06592
   tps: 7663.91828
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-PetrifiedTwilightScale-54571"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-PetrifiedTwilightScale-54591"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
  }
 }
 dps_results: {
@@ -555,6 +689,34 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-SliverofPureIce-50339"
+ value: {
+  dps: 3236.37427
+  tps: 7818.68878
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 3237.81974
+  tps: 7823.74548
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-SouloftheDead-40382"
+ value: {
+  dps: 3217.89505
+  tps: 7751.84186
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-SparkofHope-45703"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
   dps: 3264.84365
@@ -594,6 +756,27 @@ dps_results: {
  value: {
   dps: 3171.49578
   tps: 7644.02032
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-TalismanofTrollDivinity-37734"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-TearsoftheVanquished-47215"
+ value: {
+  dps: 3215.11944
+  tps: 7768.69296
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-TheGeneral'sHeart-45507"
+ value: {
+  dps: 3176.58264
+  tps: 7659.07897
  }
 }
 dps_results: {
@@ -639,6 +822,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-AllItems-TomeofArcanePhenomena-36972"
+ value: {
+  dps: 3212.80078
+  tps: 7732.77236
+ }
+}
+dps_results: {
  key: "TestProtection-AllItems-TomeoftheLightbringer-32368"
  value: {
   dps: 3154.30159
@@ -678,6 +868,13 @@ dps_results: {
  value: {
   dps: 2707.70959
   tps: 6501.80068
+ }
+}
+dps_results: {
+ key: "TestProtection-AllItems-Val'anyr,HammerofAncientKings-46017"
+ value: {
+  dps: 3119.22694
+  tps: 7537.00856
  }
 }
 dps_results: {

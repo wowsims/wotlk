@@ -114,8 +114,8 @@ func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 
 // Helpers for making common types of active item effects.
 
-func NewSimpleStatItemActiveEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration, sharedCDFunc func(*Character) Cooldown) {
-	NewItemEffect(itemID, MakeTemporaryStatsOnUseCDRegistration(
+func NewSimpleStatItemActiveEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration, sharedCDFunc func(*Character) Cooldown, otherEffects ApplyEffect) {
+	registerCD := MakeTemporaryStatsOnUseCDRegistration(
 		"ItemActive-"+strconv.Itoa(int(itemID)),
 		bonus,
 		duration,
@@ -129,23 +129,35 @@ func NewSimpleStatItemActiveEffect(itemID int32, bonus stats.Stats, duration tim
 			}
 		},
 		sharedCDFunc,
-	))
+	)
+
+	if otherEffects == nil {
+		NewItemEffect(itemID, registerCD)
+	} else {
+		NewItemEffect(itemID, func(agent Agent) {
+			registerCD(agent)
+			otherEffects(agent)
+		})
+	}
 }
 
 // No shared CD
 func NewSimpleStatItemEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
 	NewSimpleStatItemActiveEffect(itemID, bonus, duration, cooldown, func(character *Character) Cooldown {
 		return Cooldown{}
-	})
+	}, nil)
 }
 
-func NewSimpleStatOffensiveTrinketEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
+func NewSimpleStatOffensiveTrinketEffectWithOtherEffects(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration, otherEffects ApplyEffect) {
 	NewSimpleStatItemActiveEffect(itemID, bonus, duration, cooldown, func(character *Character) Cooldown {
 		return Cooldown{
 			Timer:    character.GetOffensiveTrinketCD(),
 			Duration: duration,
 		}
-	})
+	}, otherEffects)
+}
+func NewSimpleStatOffensiveTrinketEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
+	NewSimpleStatOffensiveTrinketEffectWithOtherEffects(itemID, bonus, duration, cooldown, nil)
 }
 
 func NewSimpleStatDefensiveTrinketEffect(itemID int32, bonus stats.Stats, duration time.Duration, cooldown time.Duration) {
@@ -154,5 +166,5 @@ func NewSimpleStatDefensiveTrinketEffect(itemID int32, bonus stats.Stats, durati
 			Timer:    character.GetDefensiveTrinketCD(),
 			Duration: duration,
 		}
-	})
+	}, nil)
 }

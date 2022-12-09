@@ -35,7 +35,7 @@ func (priest *Priest) registerBindingHealSpell() {
 		ThreatMultiplier: 0.5 * (1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve]),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			healFromSP := spellCoeff * spell.HealingPower()
+			healFromSP := spellCoeff * spell.HealingPower(target)
 
 			selfHealing := sim.Roll(1959, 2516) + healFromSP
 			spell.CalcAndDealHealing(sim, &priest.Unit, selfHealing, spell.OutcomeHealingCrit)

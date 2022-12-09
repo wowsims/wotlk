@@ -44,7 +44,7 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			healFromSP := 0.4029 * spell.HealingPower()
+			healFromSP := 0.4029 * spell.HealingPower(target)
 			for _, aoeTarget := range targets {
 				baseHealing := sim.Roll(958, 1058) + healFromSP
 				spell.CalcAndDealHealing(sim, aoeTarget, baseHealing, spell.OutcomeHealingCrit)

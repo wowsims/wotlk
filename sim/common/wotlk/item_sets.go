@@ -16,7 +16,8 @@ var ItemSetPurifiedShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 222})
-			applyShardOfTheGods(agent.GetCharacter(), false)
+			applyShardOfTheGodsDamageProc(agent.GetCharacter(), false)
+			applyShardOfTheGodsHealingProc(agent.GetCharacter(), false)
 		},
 	},
 })
@@ -26,12 +27,13 @@ var ItemSetShinyShardOfTheGods = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			agent.GetCharacter().AddStats(stats.Stats{stats.SpellPower: 250})
-			applyShardOfTheGods(agent.GetCharacter(), true)
+			applyShardOfTheGodsDamageProc(agent.GetCharacter(), true)
+			applyShardOfTheGodsHealingProc(agent.GetCharacter(), true)
 		},
 	},
 })
 
-func applyShardOfTheGods(character *core.Character, isHeroic bool) {
+func applyShardOfTheGodsDamageProc(character *core.Character, isHeroic bool) {
 	name := "Searing Flames"
 	actionID := core.ActionID{SpellID: 69729}
 	tickAmount := 477.0
@@ -77,6 +79,45 @@ func applyShardOfTheGods(character *core.Character, isHeroic bool) {
 		ICD:        time.Second * 50,
 		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			dot.Apply(sim)
+		},
+	})
+}
+
+func applyShardOfTheGodsHealingProc(character *core.Character, isHeroic bool) {
+	name := "Cauterizing Heal"
+	actionID := core.ActionID{SpellID: 69733}
+	minHeal := 2269.0
+	maxHeal := 2773.0
+	if isHeroic {
+		name += " H"
+		actionID = core.ActionID{SpellID: 69734}
+		minHeal = 2530.0
+		maxHeal = 3092.0
+	}
+
+	spell := character.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		CritMultiplier:   character.DefaultHealingCritMultiplier(),
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseHealing := sim.Roll(minHeal, maxHeal)
+			spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
+		},
+	})
+
+	core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		Name:       name + " Trigger",
+		Callback:   core.CallbackOnHealDealt,
+		ProcChance: 0.25,
+		ICD:        time.Second * 50,
+		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			spell.Cast(sim, result.Target)
 		},
 	})
 }

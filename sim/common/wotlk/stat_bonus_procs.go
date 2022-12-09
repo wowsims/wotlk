@@ -644,26 +644,6 @@ func init() {
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})
-	// TODO: Provides a hot on each heal cast. Add later when we do healing sim
-	// newProcStatBonusEffect(ProcStatBonusEffect{
-	// 	Name:       "Glowing Twilight Scale",
-	// 	ID:         54573,
-	// 	Duration:   time.Second * 15,
-	// 	Callback: core.CallbackOnSpellHitDealt,
-	// 	ProcMask:   core.ProcMaskHealingDone,
-	// 	ProcChance: 0.10,
-	// 	ICD:        time.Second * 50,
-	// })
-	// TODO: adds dodge when hit taken which drops health under 35%
-	// newProcStatBonusEffect(ProcStatBonusEffect{
-	// 	Name:       "Petrified Twilight Scale",
-	// 	ID:         54571,
-	// 	Bonus:      stats.Stats{stats.Dodge: 733},
-	// 	Duration:   time.Second * 10,
-	// 	Callback: core.CallbackOnSpellHitTaken,
-	// 	// TODO: when health < 35%
-	// 	ICD:        time.Second * 45,
-	// })
 
 	core.AddEffectsToTest = true
 }

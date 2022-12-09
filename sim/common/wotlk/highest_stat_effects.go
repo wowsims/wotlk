@@ -71,10 +71,11 @@ func init() {
 			})
 		})
 	}
+	core.AddEffectsToTest = false
 	newDMCGreatnessEffect(42987)
 	newDMCGreatnessEffect(44253)
 	newDMCGreatnessEffect(44254)
-	core.AddEffectsToTest = false
+	core.AddEffectsToTest = true
 	newDMCGreatnessEffect(44255)
 
 	newDeathsChoiceEffect := func(itemID int32, name string, amount float64) {
@@ -104,9 +105,10 @@ func init() {
 			})
 		})
 	}
-	newDeathsChoiceEffect(47115, "Deaths Verdict", 450)
 	core.AddEffectsToTest = false
+	newDeathsChoiceEffect(47115, "Deaths Verdict", 450)
 	newDeathsChoiceEffect(47131, "Deaths Verdict H", 510)
 	newDeathsChoiceEffect(47303, "Deaths Choice", 450)
+	core.AddEffectsToTest = true
 	newDeathsChoiceEffect(47464, "Deaths Choice H", 510)
 }

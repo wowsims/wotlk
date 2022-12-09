@@ -163,7 +163,7 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 			})
 
 			var curAmount float64
-			hots := core.NewHotArray(
+			hots := core.NewAllyHotArray(
 				&priest.Unit,
 				core.Dot{
 					Spell:         spell,

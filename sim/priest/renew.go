@@ -31,7 +31,7 @@ func (priest *Priest) registerRenewSpell() {
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseHealing := 280 + spellCoeff*spell.HealingPower()
+				baseHealing := 280 + spellCoeff*spell.HealingPower(target)
 				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 			},
 		})
@@ -66,14 +66,14 @@ func (priest *Priest) registerRenewSpell() {
 		},
 	})
 
-	priest.RenewHots = core.NewHotArray(
+	priest.RenewHots = core.NewAllyHotArray(
 		&priest.Unit,
 		core.Dot{
 			Spell:         priest.Renew,
 			NumberOfTicks: priest.renewTicks(),
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = 280 + spellCoeff*dot.Spell.HealingPower()
+				dot.SnapshotBaseDamage = 280 + spellCoeff*dot.Spell.HealingPower(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

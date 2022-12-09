@@ -43,7 +43,6 @@ func init() {
 	newHasteActive(45466, 457, time.Second*20, time.Minute*2) // Scale of Fates
 	newHasteActive(46088, 375, time.Second*20, time.Minute*2) // Platinum Disks of Swiftness
 	newHasteActive(48722, 512, time.Second*20, time.Minute*2) // Shard of the Crystal Heart
-	newHasteActive(50260, 464, time.Second*20, time.Minute*2) // Ephemeral Snowflake
 
 	newAttackPowerActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatOffensiveTrinketEffect(itemID, stats.Stats{stats.AttackPower: bonus, stats.RangedAttackPower: bonus}, duration, cooldown)

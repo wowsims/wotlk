@@ -141,8 +141,8 @@ func (spell *Spell) MagicCritCheck(sim *Simulation, target *Unit) bool {
 	return sim.RandomFloat("Magical Crit Roll") < critChance
 }
 
-func (spell *Spell) HealingPower() float64 {
-	return spell.SpellPower()
+func (spell *Spell) HealingPower(target *Unit) float64 {
+	return spell.SpellPower() + target.PseudoStats.BonusHealingTaken
 }
 func (spell *Spell) healingCritRating() float64 {
 	return spell.Unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
@@ -301,7 +301,7 @@ func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHeali
 		spell.Unit.Log(
 			sim,
 			"%s %s [DEBUG] HealingPower: %0.01f, BaseHealing:%0.01f, AfterCasterMods:%0.01f, AfterTargetMods:%0.01f, AfterOutcome:%0.01f",
-			target.LogLabel(), spell.ActionID, spell.HealingPower(), baseHealing, afterCasterMods, afterTargetMods, afterOutcome)
+			target.LogLabel(), spell.ActionID, spell.HealingPower(target), baseHealing, afterCasterMods, afterTargetMods, afterOutcome)
 	}
 
 	result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
