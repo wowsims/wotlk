@@ -15,6 +15,7 @@ func (priest *Priest) registerBindingHealSpell() {
 		ActionID:     core.ActionID{SpellID: 48120},
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     core.ProcMaskSpellHealing,
+		Flags:        core.SpellFlagHelpful,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

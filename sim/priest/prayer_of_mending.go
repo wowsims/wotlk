@@ -58,6 +58,7 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     core.ProcMaskSpellHealing,
+		Flags:        core.SpellFlagHelpful,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

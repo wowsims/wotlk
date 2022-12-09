@@ -156,34 +156,31 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 				ActionID:    core.ActionID{SpellID: 70770},
 				SpellSchool: core.SpellSchoolHoly,
 				ProcMask:    core.ProcMaskEmpty,
-				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagHelpful,
 
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 			})
 
-			hots := make([]*core.Dot, len(priest.Env.AllUnits))
 			var curAmount float64
-			for _, unit := range priest.Env.AllUnits {
-				if !priest.IsOpponent(unit) {
-					hots[unit.UnitIndex] = core.NewDot(core.Dot{
-						Spell: spell,
-						Aura: unit.RegisterAura(core.Aura{
-							Label:    "CrimsonAcolyteRaiment2pc" + strconv.Itoa(int(priest.Index)),
-							ActionID: spell.ActionID,
-						}),
-						NumberOfTicks: 3,
-						TickLength:    time.Second * 3,
-						OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-							dot.SnapshotBaseDamage = curAmount * 0.33
-							dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
-						},
-						OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-							dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
-						},
-					})
-				}
-			}
+			hots := core.NewHotArray(
+				&priest.Unit,
+				core.Dot{
+					Spell:         spell,
+					NumberOfTicks: 3,
+					TickLength:    time.Second * 3,
+					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+						dot.SnapshotBaseDamage = curAmount * 0.33
+						dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+					},
+					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+						dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+					},
+				},
+				core.Aura{
+					Label:    "CrimsonAcolyteRaiment2pc" + strconv.Itoa(int(priest.Index)),
+					ActionID: spell.ActionID,
+				})
 
 			priest.RegisterAura(core.Aura{
 				Label:    "Crimson Acolytes Raiment 2pc",

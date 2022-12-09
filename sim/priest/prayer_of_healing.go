@@ -18,6 +18,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		ActionID:     core.ActionID{SpellID: 48072},
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     core.ProcMaskSpellHealing,
+		Flags:        core.SpellFlagHelpful,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -56,39 +57,32 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 	})
 
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
-		glyphHots := make([]*core.Dot, len(priest.Env.AllUnits))
-		for _, unit := range priest.Env.AllUnits {
-			if !priest.IsOpponent(unit) {
-				glyphHots[unit.UnitIndex] = priest.makePrayerOfHealingGlyphHot(unit)
-			}
-		}
+		actionID := core.ActionID{ItemID: 42409}
+		glyphHots = core.NewHotArray(
+			&priest.Unit,
+			core.Dot{
+				Spell: priest.GetOrRegisterSpell(core.SpellConfig{
+					ActionID:    actionID,
+					SpellSchool: core.SpellSchoolHoly,
+					ProcMask:    core.ProcMaskSpellHealing,
+					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+					DamageMultiplier: priest.PrayerOfHealing.DamageMultiplier * 0.2 / 2,
+					ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+				}),
+				NumberOfTicks: 2,
+				TickLength:    time.Second * 3,
+				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+					dot.SnapshotBaseDamage = sim.Roll(2109, 2228) + 0.526*dot.Spell.HealingPower()
+					dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+				},
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+				},
+			},
+			core.Aura{
+				Label:    "PoH Glyph" + strconv.Itoa(int(priest.Index)),
+				ActionID: actionID,
+			})
 	}
-}
-
-func (priest *Priest) makePrayerOfHealingGlyphHot(target *core.Unit) *core.Dot {
-	spell := priest.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{ItemID: 42409},
-		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskSpellHealing,
-
-		DamageMultiplier: priest.PrayerOfHealing.DamageMultiplier * 0.2 / 2,
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
-	})
-
-	return core.NewDot(core.Dot{
-		Spell: spell,
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "PoH Glyph" + strconv.Itoa(int(priest.Index)),
-			ActionID: spell.ActionID,
-		}),
-		NumberOfTicks: 2,
-		TickLength:    time.Second * 3,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = sim.Roll(2109, 2228) + 0.526*dot.Spell.HealingPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
-		},
-	})
 }

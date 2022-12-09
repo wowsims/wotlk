@@ -13,7 +13,7 @@ func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 	target := shield.Aura.Unit
 	attackTable := caster.AttackTables[target.UnitIndex]
 
-	shieldAmount *= caster.PseudoStats.HealingDealtMultiplier
+	shieldAmount *= shield.Spell.DamageMultiplier * caster.PseudoStats.HealingDealtMultiplier
 	shieldAmount *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 
 	shield.Aura.Deactivate(sim)

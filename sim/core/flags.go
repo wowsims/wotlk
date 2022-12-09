@@ -185,6 +185,7 @@ const (
 	SpellFlagBinary                                         // Does not do partial resists and could need a different hit roll.
 	SpellFlagChanneled                                      // Spell is channeled
 	SpellFlagDisease                                        // Spell is categorized as disease
+	SpellFlagHelpful                                        // For healing spells / buffs.
 	SpellFlagMeleeMetrics                                   // Marks a spell as a melee ability for metrics.
 	SpellFlagNoOnCastComplete                               // Disables OnCastComplete and AfterCast callbacks.
 	SpellFlagNoMetrics                                      // Disables metrics for a spell.

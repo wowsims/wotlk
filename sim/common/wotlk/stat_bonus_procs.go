@@ -182,6 +182,15 @@ func init() {
 		ICD:        time.Second * 50,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "The Egg of Mortal Essence",
+		ID:         40685,
+		Bonus:      stats.Stats{stats.MeleeHaste: 505, stats.SpellHaste: 505},
+		Duration:   time.Second * 10,
+		Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+		ProcChance: 0.10,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Sonic Booster",
 		ID:         40767,
 		Bonus:      stats.Stats{stats.AttackPower: 430, stats.RangedAttackPower: 430},
@@ -433,6 +442,15 @@ func init() {
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskSpellDamage,
 		Harmful:    true,
+		ProcChance: 0.10,
+		ICD:        time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:       "Ancient Pickled Egg",
+		ID:         49078,
+		Bonus:      stats.Stats{stats.MeleeHaste: 505, stats.SpellHaste: 505},
+		Duration:   time.Second * 10,
+		Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
 	})
