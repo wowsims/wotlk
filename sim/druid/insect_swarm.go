@@ -68,7 +68,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 				druid.Starfire.CastTimeMultiplier += 1
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell == druid.Starfire {
+				if spell == druid.Starfire && (druid.Starfire.CurCast.CastTime < (10*time.Second - aura.RemainingDuration(sim))) {
 					aura.Deactivate(sim)
 				}
 			},
