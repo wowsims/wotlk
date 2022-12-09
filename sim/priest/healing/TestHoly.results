@@ -237,9 +237,9 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 105.0593
+  dps: 105.20322
   tps: 49.31353
-  hps: 4640.07775
+  hps: 4644.67143
  }
 }
 dps_results: {

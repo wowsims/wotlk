@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -61,7 +62,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 			SwingSpeed:                 1.0,
 			NormalizedSwingSpeed:       1.0,
 			SwingDuration:              time.Second,
-			CritMultiplier:             cat.MeleeCritMultiplier(),
+			CritMultiplier:             cat.MeleeCritMultiplier(druid.Cat),
 			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 		},
 		AutoSwingMelee: true,
@@ -100,6 +101,20 @@ func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+}
+
+func (cat *FeralDruid) ApplyFormBonuses(enable bool) stats.Stats {
+	bonuses := cat.GetCatFormBonuses(enable)
+
+	for _, d := range bonuses.Deps {
+		cat.AddStatDependency(d.Src, d.Dst, d.Amount)
+	}
+
+	for _, stat := range bonuses.Mul {
+		cat.MultiplyStat(stat.S, stat.Amount)
+	}
+
+	return bonuses.S.Add(cat.GetFormShiftStats(enable))
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

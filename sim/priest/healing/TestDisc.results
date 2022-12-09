@@ -281,9 +281,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 99.69045
+  dps: 99.83437
   tps: 80.31273
-  hps: 6258.0637
+  hps: 6264.08855
  }
 }
 dps_results: {

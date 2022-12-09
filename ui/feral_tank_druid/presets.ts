@@ -5,14 +5,18 @@ import { Food } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Conjured } from '../core/proto/common.js';
+import { Explosive } from '../core/proto/common.js';
 import { RaidTarget } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
 	FeralTankDruid_Rotation_Swipe as Swipe,
-	FeralTankDruid_Options as DruidOptions
+	FeralTankDruid_Options as DruidOptions,
+	DruidMajorGlyph,
+	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -26,7 +30,15 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '-503032132322105301251-05503301',
+		talentsString: '-503232132322010353120300313511-20350001',
+		glyphs: Glyphs.create({
+			major1: DruidMajorGlyph.GlyphOfMaul,
+			major2: DruidMajorGlyph.GlyphOfSurvivalInstincts,
+			major3: DruidMajorGlyph.GlyphOfFrenziedRegeneration,
+			minor1: DruidMinorGlyph.GlyphOfChallengingRoar,
+			minor2: DruidMinorGlyph.GlyphOfThorns,
+			minor3: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+		}),
 	}),
 };
 
@@ -46,109 +58,108 @@ export const DefaultOptions = DruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	battleElixir: BattleElixir.ElixirOfMajorAgility,
+	battleElixir: BattleElixir.GurusElixir,
 	guardianElixir: GuardianElixir.GiftOfArthas,
-	food: Food.FoodGrilledMudfish,
-	defaultPotion: Potions.IronshieldPotion,
-	defaultConjured: Conjured.ConjuredFlameCap,
+	food: Food.FoodBlackenedDragonfin,
+	prepopPotion: Potions.IndestructiblePotion,
+	defaultPotion: Potions.IndestructiblePotion,
+	defaultConjured: Conjured.ConjuredHealthstone,
+	thermalSapper: true,
+	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const P1_PRESET = {
-	name: 'TBC P5 Preset',
+	name: 'P1 Boss Tanking',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 34404,
-			"enchant": 3004,
+			"id": 40329,
+			"enchant": 67839,
 			"gems": [
-				32212,
-				25896
+				41339,
+				40008
 			]
 		},
 		{
-			"id": 34178
+			"id": 40387
 		},
 		{
-			"id": 34392,
-			"enchant": 2991,
+			"id": 40494,
+			"enchant": 44957,
 			"gems": [
-				32200,
-				32200
+				40008
 			]
 		},
 		{
-			"id": 34190,
-			"enchant": 368
+			"id": 40252,
+			"enchant": 3294
 		},
 		{
-			"id": 34211,
-			"enchant": 2661,
+			"id": 40471,
+			"enchant": 3832,
 			"gems": [
-				32200,
-				32200,
-				32200
+				42702,
+				40088
 			]
 		},
 		{
-			"id": 34444,
-			"enchant": 2649,
+			"id": 40186,
+			"enchant": 3850,
 			"gems": [
-				32200,
+				40008,
 				0
 			]
 		},
 		{
-			"id": 34408,
-			"enchant": 2613,
+			"id": 40472,
+			"enchant": 63770,
 			"gems": [
-				32200,
-				32200,
+				40008,
 				0
 			]
 		},
 		{
-			"id": 35156,
+			"id": 43591,
 			"gems": [
-				0
+				40008,
+				40008,
+				40008
 			]
 		},
 		{
-			"id": 34385,
-			"enchant": 3013,
+			"id": 44011,
+			"enchant": 38373,
 			"gems": [
-				32200,
-				32200,
-				32200
+				40008,
+				40008
 			]
 		},
 		{
-			"id": 34573,
-			"enchant": 2940,
+			"id": 40243,
+			"enchant": 55016,
 			"gems": [
-				32200
+				40008
 			]
 		},
 		{
-			"id": 34213,
-			"enchant": 2931
+			"id": 40370
 		},
 		{
-			"id": 34361,
-			"enchant": 2931
+			"id": 37784
 		},
 		{
-			"id": 32501
+			"id": 44253
 		},
 		{
-			"id": 32658
+			"id": 37220
 		},
 		{
-			"id": 30883,
-			"enchant": 2670
+			"id": 40280,
+			"enchant": 2673
 		},
 		{},
 		{
-			"id": 32387
+			"id": 38365
 		}
 	]}`),
 };

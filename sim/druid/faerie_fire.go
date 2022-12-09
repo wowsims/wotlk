@@ -47,18 +47,21 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  66 * 2,
+		DamageMultiplier: 1,
+		CritMultiplier:   druid.BalanceCritMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0.0
+			outcome := spell.OutcomeMagicHit
 			if druid.InForm(Bear) {
 				baseDamage = 1 + 0.15*spell.MeleeAttackPower()
+				outcome = spell.OutcomeMagicHitAndCrit
 			}
 
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcome)
 			if result.Landed() {
 				druid.FaerieFireAura.Activate(sim)
 			}
-			spell.DealDamage(sim, result)
 		},
 	})
 }

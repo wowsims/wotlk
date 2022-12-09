@@ -549,8 +549,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-SparkofLife-37657"
  value: {
-  dps: 7635.55231
-  tps: 4784.72498
+  dps: 7635.66947
+  tps: 4784.94757
   hps: 277.01241
  }
 }
@@ -701,9 +701,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8142.8681
-  tps: 5085.62796
-  hps: 271.95064
+  dps: 8143.2237
+  tps: 5085.83314
+  hps: 271.98547
  }
 }
 dps_results: {

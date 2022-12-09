@@ -81,6 +81,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyOmenOfClarity()
 	druid.applyEclipse()
 	druid.applyImprovedLotp()
+	druid.applyPredatoryInstincts()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -498,6 +499,30 @@ func (druid *Druid) applyImprovedLotp() {
 			}
 			icd.Use(sim)
 			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
+		},
+	})
+}
+
+func (druid *Druid) applyPredatoryInstincts() {
+	if druid.Talents.PredatoryInstincts == 0 {
+		return
+	}
+
+	onGainMod := druid.MeleeCritMultiplier(Cat)
+	onExpireMod := druid.MeleeCritMultiplier(Humanoid)
+
+	druid.PredatoryInstinctsAura = druid.RegisterAura(core.Aura{
+		Label:    "Predatory Instincts",
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.LacerateDot.Spell.CritMultiplier = onGainMod
+			druid.RipDot.Spell.CritMultiplier = onGainMod
+			druid.RakeDot.Spell.CritMultiplier = onGainMod
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.LacerateDot.Spell.CritMultiplier = onExpireMod
+			druid.RipDot.Spell.CritMultiplier = onExpireMod
+			druid.RakeDot.Spell.CritMultiplier = onExpireMod
 		},
 	})
 }

@@ -18,7 +18,6 @@
 		display: flex;
 		flex-wrap: nowrap;
 		align-items: flex-end;
-		font-size: $content-font-size;
 		font-weight: bold;
 	}
 
@@ -29,12 +28,14 @@
 	.import-export {
 		.import-link, .export-link {
 			padding: $nav-link-padding-y $nav-link-padding-x;
+			font-size: $nav-link-font-size;
 			transition: $nav-link-transition;
 		}
 	}
 
 	.sim-toolbar {
 		margin-left: auto;
+		font-size: $content-font-size;
 
 		.sim-toolbar-item, .sim-toolbar-socials {
 			margin-left: map.get($spacers, 3);

@@ -213,8 +213,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3514.23716
-  tps: 2979.95185
+  dps: 3518.16007
+  tps: 2983.17278
  }
 }
 dps_results: {
@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-GarbofFaith"
  value: {
-  dps: 3191.51254
-  tps: 2718.31569
+  dps: 3192.01284
+  tps: 2718.82244
  }
 }
 dps_results: {
@@ -423,8 +423,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-SanctificationRegalia"
  value: {
-  dps: 3367.68399
-  tps: 2861.01624
+  dps: 3368.38771
+  tps: 2861.7264
  }
 }
 dps_results: {
@@ -459,7 +459,7 @@ dps_results: {
  key: "TestSmite-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
   dps: 3432.32043
-  tps: 2911.57838
+  tps: 2911.58482
  }
 }
 dps_results: {
@@ -494,14 +494,14 @@ dps_results: {
  key: "TestSmite-AllItems-TinyAbominationinaJar-50351"
  value: {
   dps: 3432.32043
-  tps: 2911.57838
+  tps: 2911.58482
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-TinyAbominationinaJar-50706"
  value: {
   dps: 3432.32043
-  tps: 2911.57838
+  tps: 2911.58482
  }
 }
 dps_results: {
@@ -557,14 +557,14 @@ dps_results: {
  key: "TestSmite-AllItems-Zabra'sRegalia"
  value: {
   dps: 3491.60997
-  tps: 2964.53737
+  tps: 2964.54381
  }
 }
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 3563.69328
-  tps: 3020.40823
+  dps: 3563.81102
+  tps: 3020.50931
  }
 }
 dps_results: {

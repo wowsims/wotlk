@@ -51,6 +51,7 @@ export class CharacterStats extends Component {
 			table.appendChild(row);
 
 			const valueElem = row.getElementsByClassName('character-stats-table-value')[0] as HTMLTableCellElement;
+			valueElem.appendChild(this.bonusStatsLink(stat));
 			this.valueElems.push(valueElem);
 		});
 
@@ -74,23 +75,25 @@ export class CharacterStats extends Component {
 		const consumesStats = new Stats(playerStats.consumesStats);
 		const debuffStats = this.getDebuffStats();
 		const bonusStats = player.getBonusStats();
-		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats);
+		const formStats = new Stats(playerStats.formStats);
 
 		const baseDelta = baseStats.subtract(bonusStats);
 		const gearDelta = gearStats.subtract(baseStats);
 		const talentsDelta = talentsStats.subtract(gearStats).add(statMods.talents);
 		const buffsDelta = buffsStats.subtract(talentsStats);
+		const formDelta = formStats.subtract(buffsStats);
 		const consumesDelta = consumesStats.subtract(buffsStats);
+
+		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats).add(formDelta);
 
 		this.stats.forEach((stat, idx) => {
 			let fragment = document.createElement('fragment');
 			fragment.innerHTML = `
-				<a href="javascript:void(0)" role="button" data-bs-toggle="tooltip" data-bs-html="true">${this.statDisplayString(finalStats, stat)}</a>
+				<a href="javascript:void(0)" class="stat-value-link" role="button" data-bs-toggle="tooltip" data-bs-html="true">${this.statDisplayString(finalStats, stat)}</a>
 			`
 			let valueElem = fragment.children[0] as HTMLElement;
-			this.valueElems[idx].innerHTML = '';
-			this.valueElems[idx].appendChild(valueElem);
-			this.valueElems[idx].appendChild(this.bonusStatsLink(stat));
+			this.valueElems[idx].querySelector('.stat-value-link')?.remove()
+			this.valueElems[idx].prepend(valueElem);
 
 			let bonusStatValue = player.getBonusStats().getStat(stat);
 			
@@ -122,6 +125,12 @@ export class CharacterStats extends Component {
 					<span>Buffs:</span>
 					<span>${this.statDisplayString(buffsDelta, stat)}</span>
 				</div>
+				${formDelta.getStat(stat) == 0 ? '' : `
+				<div class="character-stats-tooltip-row">
+					<span>Form:</span>
+					<span>${this.statDisplayString(formDelta, stat)}</span>
+				</div>
+				`}
 				<div class="character-stats-tooltip-row">
 					<span>Consumes:</span>
 					<span>${this.statDisplayString(consumesDelta, stat)}</span>
@@ -210,7 +219,13 @@ export class CharacterStats extends Component {
 				class="add-bonus-stats text-white ms-2"
 				role="button"
 				data-bs-toggle="popover"
-				data-bs-content="<div></div>"
+				data-bs-content="
+					<div class='input-root number-picker-root'>
+						<label class='form-label'>Bonus Health</label>
+						<input type='text' class='form-control number-picker-input' value=${this.player.getBonusStats().getStat(stat)}>
+					</div>
+				"
+				data-bs-placement="right"
 				data-bs-html="true"
 			>
 				<i class="fas fa-plus-minus"></i>
@@ -218,10 +233,15 @@ export class CharacterStats extends Component {
 		`;
 
 		let link = fragment.children[0] as HTMLElement;
-		let popover = Popover.getOrCreateInstance(link, {customClass: 'bonus-stats-popover'});
+		let popover = Popover.getOrCreateInstance(link, {
+			customClass: 'bonus-stats-popover',
+			fallbackPlacement: ['left'],
+			sanitize: false,
+		});
 
 		link.addEventListener('shown.bs.popover', (event) => {
 			let popoverBody = document.querySelector('.popover.bonus-stats-popover .popover-body') as HTMLElement;
+			popoverBody.innerHTML = '';
 			let picker = new NumberPicker(popoverBody, this.player, {
 				label: `Bonus ${statName}`,
 				changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,

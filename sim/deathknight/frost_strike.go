@@ -11,6 +11,7 @@ var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
 
+	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolFrost,
@@ -45,6 +46,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
+				rs.OnResult(sim, result)
 				dk.LastOutcome = result.Outcome
 				dk.threatOfThassarianProc(sim, result, dk.FrostStrikeOhHit)
 			}
@@ -53,7 +55,6 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 		},
 	}
 
-	rs := &RuneSpell{}
 	if isMH {
 		conf.ResourceType = stats.RunicPower
 		conf.BaseCost = float64(core.NewRuneCost(
@@ -65,10 +66,11 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 				Cost: conf.BaseCost,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 			IgnoreHaste: true,
 		}
+		rs.Refundable = true
 	}
 
 	if isMH {

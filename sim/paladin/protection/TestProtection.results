@@ -234,8 +234,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3232.01739
-  tps: 7788.38303
+  dps: 3232.6039
+  tps: 7789.8927
  }
 }
 dps_results: {
@@ -697,8 +697,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 3569.59903
-  tps: 8562.53659
+  dps: 3569.68253
+  tps: 8562.74659
   dtps: 14.89639
  }
 }
@@ -957,8 +957,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3744.74188
-  tps: 8982.51874
+  dps: 3744.77991
+  tps: 8982.61663
   dtps: 11.47593
  }
 }

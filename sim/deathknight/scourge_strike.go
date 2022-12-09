@@ -59,7 +59,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 			IgnoreHaste: true,
 		},
