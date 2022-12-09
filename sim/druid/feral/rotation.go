@@ -99,9 +99,9 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 	}
 
 	if toCat {
-		return cat.PowerShiftCat(sim)
+		return cat.CatForm.Cast(sim, nil)
 	} else {
-		cat.PowerShiftBear(sim)
+		cat.BearForm.Cast(sim, nil)
 		// Bundle Enrage if available
 		if cat.Enrage.IsReady(sim) {
 			cat.Enrage.Cast(sim, nil)
