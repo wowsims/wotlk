@@ -463,7 +463,6 @@ export class RaidSimResultsManager {
 
 	private static buildResultsLine(args: ResultsLineArgs): HTMLElement {
 		let resultsFragment = document.createElement('fragment');
-
 		resultsFragment.innerHTML = `
 			<div class="results-metric ${args.classes}">
 				<span class="topline-result-avg">${args.average.toFixed(2)}</span>
