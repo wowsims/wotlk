@@ -1563,6 +1563,13 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 
 		return 0;
 	},
+	[Spec.SpecFeralDruid]: (gem, _) => {
+		// Unknown actual EP, but this is the only effect that matters
+		if (gem.id == Gems.RELENTLESS_EARTHSIEGE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
+    		return 80;
+		}
+		return 0;
+	}
 };
 
 export function getMetaGemEffectEP(spec: Spec, gem: Gem, playerStats: Stats) {

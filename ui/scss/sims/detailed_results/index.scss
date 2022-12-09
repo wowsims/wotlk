@@ -44,11 +44,14 @@ body.new-tab {
 	padding-right: 10px
 }
 
+.dr-root > .dr-toolbar {
+	border-bottom: 1px solid $border-color;
+}
+
 .dr-root > .tab-content {
-	border: 1px solid white;
-	background: var(--bg-dark-transparent);
-	flex-grow: 1;
 	height: 100%;
+	padding-top: 1rem;
+	flex-grow: 1;
 	overflow: auto;
 }
 
@@ -105,7 +108,7 @@ body.new-tab {
 }
 
 .metrics-table-header-cell {
-	padding: 3px 1px;
+	padding: .25rem;
 	cursor: pointer;
 }
 
@@ -118,7 +121,7 @@ body.new-tab {
 }
 
 .metrics-table-body td {
-	padding: 2px 1px;
+	padding: .25rem;
 }
 
 .metrics-table-header-cell:first-child, .metrics-table-body td:first-child {

@@ -1,7 +1,7 @@
 @use "sass:map";
 @use "sass:math";
 
-#simHeader {
+.sim-header {
 	padding-top: $gap-width;
 	display: flex;
 	align-items: stretch;
@@ -89,26 +89,7 @@
 }
 
 @include media-breakpoint-down(lg) {
-	#simHeader {
+	.sim-header {
 		padding-top: $gap-width-sm;
 	}	
 }
-
-// TODO: Replace with Bootstrap media query once on to node module
-// @media only screen and (max-width: 992px) {
-// 	#simHeader {
-// 		overflow-x: scroll;
-
-// 		.sim-tabs {
-// 			flex-wrap: nowrap;
-
-// 			.sim-link {
-// 				white-space: nowrap;
-// 			}
-// 		}
-// 	}
-
-// 	.known-issues {
-// 		white-space: nowrap;
-// 	}
-// }

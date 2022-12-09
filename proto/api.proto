@@ -280,6 +280,7 @@ message PlayerStats {
 	repeated double base_stats = 6;
 	repeated double gear_stats = 1;
 	repeated double talents_stats = 7;
+	repeated double form_stats = 10;
 	repeated double buffs_stats = 8;
 	repeated double consumes_stats = 9;
 	repeated double final_stats = 2;

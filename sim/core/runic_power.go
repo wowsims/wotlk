@@ -365,7 +365,10 @@ func (rp *RunicPowerBar) BloodRuneBothReadyAt() time.Duration {
 
 }
 
-func (rp *RunicPowerBar) RuneReadyAt(slot int8) time.Duration {
+func (rp *RunicPowerBar) RuneReadyAt(sim *Simulation, slot int8) time.Duration {
+	if rp.runeStates&isSpents[slot] != isSpents[slot] {
+		return sim.CurrentTime
+	}
 	return rp.runeMeta[slot].regenAt
 }
 

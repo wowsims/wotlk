@@ -7,19 +7,15 @@ td, th {
 }
 
 .sim-ui {
-	height: 100%;
 	overflow: auto;
 
 	.sim-root {
 		height: 100%;
 		display: flex;
 
-		#simBgImage {
+		.sim-bg {
 			position: fixed;
-			top: 0;
-			bottom: 0;
-			left: 20%;
-			right: 0;
+			inset: 0 0 0 0;
 			background-image:
 				linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
 				var(--theme-background-image);
@@ -29,15 +25,13 @@ td, th {
 			z-index: -1;
 		}
 	
-		#noticesBanner {
+		.notices-banner {
 			width: 100%;
 			background: lighten($body-bg, 5);
 		}
 	
-		#simSidebar {
-			width: 20%;
-	
-			#simTitle {
+		.sim-sidebar {
+			.sim-title {
 				height: $sim-header-height;
 				border-bottom: 1px solid $border-color;
 	
@@ -47,12 +41,11 @@ td, th {
 			}
 		}
 	
-		#simContent {
-			width: 80%;
+		.sim-content {
 			padding-left: $gap-width * 2;
 			padding-right: $gap-width * 2;
 	
-			#simHeader {
+			.sim-header {
 				height: $sim-header-height;
 				border-bottom: 1px solid $border-color;
 			}
@@ -90,16 +83,16 @@ td, th {
 			flex-direction: column;
 			flex-wrap: nowrap;
 
-			#simBgImage {
+			.sim-bg {
 				left: 0;
 			}
 
-			#simSidebar, #simContent {
+			.sim-sidebar, .sim-content {
 				width: 100%;
 			}
 
-			#simSidebar {
-				#simTitle {
+			.sim-sidebar {
+				.sim-title {
 					height: $sim-header-height;
 		
 					.sim-title-dropdown-root {
@@ -107,17 +100,17 @@ td, th {
 					}
 				}
 
-				#simSidebarContent {
+				.sim-sidebarContent {
 					padding-left: $gap-width-sm;
 					padding-right: $gap-width-sm;
 				}
 			}
 
-			#simContent {
+			.sim-content {
 				padding-left: $gap-width-sm;
 				padding-right: $gap-width-sm;
 
-				#simHeader {
+				.sim-header {
 					height: $sim-header-height;
 				}
 			}
@@ -127,7 +120,7 @@ td, th {
 
 @include media-breakpoint-down(sm) {
   .sim-ui {
-		#simContent {
+		.sim-content {
 			padding-left: $gap-width-sm;
 			padding-right: $gap-width-sm;
 		}

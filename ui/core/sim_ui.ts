@@ -57,10 +57,11 @@ export abstract class SimUI extends Component {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
 		this.rootElem.innerHTML = simHTML;
-		this.simContentContainer = this.rootElem.querySelector('#simContent') as HTMLElement;
+		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;
 		this.simHeader = new SimHeader(this.simContentContainer, this);
-		this.simMain = simMain;
-		this.simContentContainer.appendChild(simMain);
+		this.simMain = document.createElement('main');
+		this.simMain.classList.add('sim-main', 'tab-content');
+		this.simContentContainer.appendChild(this.simMain);
 		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 
 		if (!this.isWithinRaidSim) {
@@ -116,7 +117,7 @@ export abstract class SimUI extends Component {
 		this.addNoticeBanner();
 		this.addKnownIssues(config);
 
-		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
+		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
 		new SimTitleDropdown(titleElem, config.spec);
 
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
@@ -138,7 +139,7 @@ export abstract class SimUI extends Component {
 		});
 
 		this.iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
-		this.simTabContentsContainer = this.rootElem.querySelector('#simMain.tab-content') as HTMLElement;
+		this.simTabContentsContainer = this.rootElem.querySelector('.sim-main.tab-content') as HTMLElement;
 
 		if (!this.isWithinRaidSim) {
 			window.addEventListener('message', async event => {
@@ -178,7 +179,7 @@ export abstract class SimUI extends Component {
 	}
 
 	private addNoticeBanner() {
-		const noticesElem = document.querySelector('#noticesBanner') as HTMLElement;
+		const noticesElem = document.querySelector('.notices-banner') as HTMLElement;
 
 		if (!noticeText) {
 			noticesElem.remove();
@@ -289,23 +290,18 @@ export abstract class SimUI extends Component {
 
 const simHTML = `
 <div class="sim-root">
-	<div id="simBgImage"></div>
-	<div id="noticesBanner" class="alert border-bottom mb-0 text-center">${noticeText}</div>
-  <aside id="simSidebar">
-    <div id="simTitle"></div>
-		<div id="simSidebarContent">
+	<div class="sim-bg"></div>
+	<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>
+  <aside class="sim-sidebar">
+    <div class="sim-title"></div>
+		<div class="sim-sidebar-content">
 			<div class="sim-sidebar-actions within-raid-sim-hide"></div>
 			<div class="sim-sidebar-results within-raid-sim-hide"></div>
 			<div class="sim-sidebar-footer"></div>
 		</div>
   </aside>
-  <div id="simContent" class="container-fluid">
+  <div class="sim-content container-fluid">
 	</div>
   </section>
 </div>
 `;
-
-// TODO: Build SimMain component instead
-let simMainFragment = document.createElement('fragment');
-simMainFragment.innerHTML = `<main id="simMain" class="tab-content"></main>`;
-const simMain = simMainFragment.children[0] as HTMLElement;

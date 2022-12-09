@@ -137,6 +137,10 @@ func (character *Character) addUniversalStatDependencies() {
 // Empty implementation so its optional for Agents.
 func (character *Character) ApplyGearBonuses() {}
 
+func (character *Character) ApplyFormBonuses(enable bool) stats.Stats {
+	return stats.Stats{}
+}
+
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
@@ -156,6 +160,10 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
 	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+
+	character.AddStats(agent.ApplyFormBonuses(true))
+	playerStats.FormStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	character.AddStats(agent.ApplyFormBonuses(false))
 
 	applyConsumeEffects(agent)
 	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
