@@ -30,6 +30,7 @@ type ProcHandler func(sim *Simulation, spell *Spell, result *SpellResult)
 type ProcTrigger struct {
 	Name       string
 	ActionID   ActionID
+	Duration   time.Duration
 	Callback   AuraCallback
 	ProcMask   ProcMask
 	SpellFlags SpellFlag
@@ -130,10 +131,13 @@ func MakeProcTriggerAura(unit *Unit, config ProcTrigger) *Aura {
 	aura := Aura{
 		Label:    config.Name,
 		ActionID: config.ActionID,
-		Duration: NeverExpires,
-		OnReset: func(aura *Aura, sim *Simulation) {
+		Duration: config.Duration,
+	}
+	if config.Duration == 0 {
+		aura.Duration = NeverExpires
+		aura.OnReset = func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
-		},
+		}
 	}
 
 	ApplyProcTriggerCallback(unit, &aura, config)

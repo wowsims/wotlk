@@ -139,6 +139,7 @@ var ItemAllowList = map[int32]struct{}{
 	19808: {}, // Rockhide Strongfish
 	20837: {}, // Sunstrider Axe
 	20966: {}, // Jade Pendant of Blasting
+	21625: {}, // Scarab Brooch
 	24114: {}, // Braided Eternium Chain
 	28572: {}, // Blade of the Unrequited
 	28830: {}, // Dragonspine Trophy

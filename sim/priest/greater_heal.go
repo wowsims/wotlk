@@ -37,7 +37,7 @@ func (priest *Priest) registerGreaterHealSpell() {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseHealing := sim.Roll(3980, 4621) + spellCoeff*spell.HealingPower()
+			baseHealing := sim.Roll(3980, 4621) + spellCoeff*spell.HealingPower(target)
 			spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 		},
 	})

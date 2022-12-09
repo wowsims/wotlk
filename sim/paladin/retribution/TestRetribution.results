@@ -59,6 +59,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-Althor'sAbacus-50359"
+ value: {
+  dps: 5764.39563
+  tps: 5865.89698
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Althor'sAbacus-50366"
+ value: {
+  dps: 5770.63649
+  tps: 5872.13784
+  dtps: 9.92959
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-AshtongueTalismanofZeal-32489"
  value: {
   dps: 5749.96696
@@ -80,6 +96,22 @@ dps_results: {
   dps: 5903.29525
   tps: 6004.8413
   dtps: 10.03858
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-BaubleofTrueBlood-50354"
+ value: {
+  dps: 5715.24606
+  tps: 12079.9628
+  dtps: 9.63782
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-BaubleofTrueBlood-50726"
+ value: {
+  dps: 5715.24606
+  tps: 12079.9628
+  dtps: 9.63782
  }
 }
 dps_results: {
@@ -139,6 +171,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-CorpseTongueCoin-50349"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-CorpseTongueCoin-50352"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-CorrodedSkeletonKey-50356"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+  hps: 64
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
   dps: 5780.43695
@@ -155,18 +212,18 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-DarkmoonCard:Greatness-44253"
+ key: "TestRetribution-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 5769.62167
-  tps: 5871.14133
+  dps: 5711.29784
+  tps: 5811.69444
   dtps: 9.92959
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-DarkmoonCard:Greatness-44254"
+ key: "TestRetribution-AllItems-Death'sChoice-47464"
  value: {
-  dps: 5713.61771
-  tps: 5815.11906
+  dps: 6238.77684
+  tps: 6340.27819
   dtps: 9.92959
  }
 }
@@ -175,6 +232,22 @@ dps_results: {
  value: {
   dps: 5756.82841
   tps: 5858.34605
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Deathbringer'sWill-50362"
+ value: {
+  dps: 6007.57114
+  tps: 6109.23074
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Deathbringer'sWill-50363"
+ value: {
+  dps: 6063.68934
+  tps: 6165.31586
   dtps: 9.92959
  }
 }
@@ -191,6 +264,22 @@ dps_results: {
  value: {
   dps: 5827.93522
   tps: 5929.43657
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-DislodgedForeignObject-50348"
+ value: {
+  dps: 5848.19983
+  tps: 5949.57694
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-DislodgedForeignObject-50353"
+ value: {
+  dps: 5854.81005
+  tps: 5956.42002
   dtps: 9.92959
  }
 }
@@ -227,6 +316,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-EphemeralSnowflake-50260"
+ value: {
+  dps: 5800.5862
+  tps: 5903.45842
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-EssenceofGossamer-37220"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-EternalEarthsiegeDiamond"
  value: {
   dps: 5809.98445
@@ -247,6 +352,22 @@ dps_results: {
  value: {
   dps: 5809.07335
   tps: 5910.59301
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Figurine-SapphireOwl-42413"
+ value: {
+  dps: 5711.12498
+  tps: 5812.08546
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-ForethoughtTalisman-40258"
+ value: {
+  dps: 5745.10569
+  tps: 5846.60704
   dtps: 9.92959
  }
 }
@@ -295,6 +416,30 @@ dps_results: {
  value: {
   dps: 5664.19003
   tps: 5762.10512
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-GlowingTwilightScale-54573"
+ value: {
+  dps: 5767.51606
+  tps: 5869.01741
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-GlowingTwilightScale-54589"
+ value: {
+  dps: 5774.60795
+  tps: 5876.1093
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-GnomishLightningGenerator-41121"
+ value: {
+  dps: 5805.25204
+  tps: 5906.75965
   dtps: 9.92959
  }
 }
@@ -468,6 +613,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-NevermeltingIceCrystal-50259"
+ value: {
+  dps: 5837.7346
+  tps: 5939.18543
+  dtps: 10.29273
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 5713.61771
@@ -488,6 +641,22 @@ dps_results: {
  value: {
   dps: 5839.16079
   tps: 5940.65264
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-PetrifiedTwilightScale-54571"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-PetrifiedTwilightScale-54591"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
   dtps: 9.92959
  }
 }
@@ -596,6 +765,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-Shadowmourne-49623"
+ value: {
+  dps: 6896.40697
+  tps: 6998.00491
+  dtps: 9.92959
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-ShinyShardoftheGods"
  value: {
   dps: 5713.61771
@@ -609,6 +786,38 @@ dps_results: {
   dps: 5713.61771
   tps: 5815.11906
   dtps: 6.55074
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-SliverofPureIce-50339"
+ value: {
+  dps: 5758.43844
+  tps: 5859.93979
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 5764.11195
+  tps: 5865.6133
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-SouloftheDead-40382"
+ value: {
+  dps: 5773.50858
+  tps: 5875.58695
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-SparkofHope-45703"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
  }
 }
 dps_results: {
@@ -656,6 +865,30 @@ dps_results: {
  value: {
   dps: 5823.87795
   tps: 5925.3698
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-TalismanofTrollDivinity-37734"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-TearsoftheVanquished-47215"
+ value: {
+  dps: 5711.29784
+  tps: 5811.7604
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-TheGeneral'sHeart-45507"
+ value: {
+  dps: 5713.61771
+  tps: 5815.11906
   dtps: 9.92959
  }
 }
@@ -708,6 +941,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-TomeofArcanePhenomena-36972"
+ value: {
+  dps: 5761.76215
+  tps: 5864.07456
+  dtps: 9.92959
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-TomeoftheLightbringer-32368"
  value: {
   dps: 5849.02894
@@ -753,6 +994,14 @@ dps_results: {
   dps: 4716.95976
   tps: 4816.02746
   dtps: 9.23882
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Val'anyr,HammerofAncientKings-46017"
+ value: {
+  dps: 4605.48324
+  tps: 4703.98029
+  dtps: 9.92959
  }
 }
 dps_results: {

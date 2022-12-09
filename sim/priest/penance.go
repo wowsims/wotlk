@@ -114,7 +114,7 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 				baseDamage := 375 + 0.2290*dot.Spell.SpellPower()
 				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			} else {
-				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower()
+				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower(target)
 				dot.Spell.CalcAndDealPeriodicHealing(sim, target, baseHealing, dot.Spell.OutcomeHealingCrit)
 			}
 		},

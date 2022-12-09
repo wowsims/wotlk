@@ -4,7 +4,7 @@ package core
 type Shield struct {
 	Spell *Spell
 
-	// Embed Aura so we can use Ishieldctive/Refresh/etc directly.
+	// Embed Aura so we can use IsActive/Refresh/etc directly.
 	*Aura
 }
 
@@ -48,4 +48,16 @@ func NewShield(config Shield) *Shield {
 	}
 
 	return shield
+}
+
+// Creates Shields for all allied units.
+func NewAllyShieldArray(caster *Unit, config Shield, auraConfig Aura) []*Shield {
+	shields := make([]*Shield, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if !caster.IsOpponent(target) {
+			config.Aura = target.GetOrRegisterAura(auraConfig)
+			shields[target.UnitIndex] = NewShield(config)
+		}
+	}
+	return shields
 }

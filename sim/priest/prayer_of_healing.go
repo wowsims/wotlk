@@ -44,10 +44,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			targetAgent := target.Env.Raid.GetPlayerFromUnitIndex(target.UnitIndex)
 			party := targetAgent.GetCharacter().Party
 
-			healFromSP := 0.526 * spell.HealingPower()
 			for _, partyAgent := range party.PlayersAndPets {
 				partyTarget := partyAgent.GetCharacter()
-				baseHealing := sim.Roll(2109, 2228) + healFromSP
+				baseHealing := sim.Roll(2109, 2228) + 0.526*spell.HealingPower(&partyTarget.Unit)
 				spell.CalcAndDealHealing(sim, &partyTarget.Unit, baseHealing, spell.OutcomeHealingCrit)
 				if glyphHots != nil {
 					glyphHots[partyTarget.UnitIndex].Activate(sim)
@@ -58,7 +57,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing) {
 		actionID := core.ActionID{ItemID: 42409}
-		glyphHots = core.NewHotArray(
+		glyphHots = core.NewAllyHotArray(
 			&priest.Unit,
 			core.Dot{
 				Spell: priest.GetOrRegisterSpell(core.SpellConfig{
@@ -73,7 +72,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 				NumberOfTicks: 2,
 				TickLength:    time.Second * 3,
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-					dot.SnapshotBaseDamage = sim.Roll(2109, 2228) + 0.526*dot.Spell.HealingPower()
+					dot.SnapshotBaseDamage = sim.Roll(2109, 2228) + 0.526*dot.Spell.HealingPower(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

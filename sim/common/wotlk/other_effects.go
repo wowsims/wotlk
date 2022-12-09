@@ -1,6 +1,7 @@
 package wotlk
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -10,17 +11,6 @@ import (
 )
 
 func init() {
-	// TODO
-	// Althor's Abacus
-	// Bauble of True Blood
-	// Glowing Twilight Scale
-	// The General's Heart
-	// Ephemeral Snowflake
-	// Purified Shard 2pc bonus
-	// Talisman of Troll Divinity
-	// Val'anyr
-	// Scarab Brooch
-
 	core.NewItemEffect(37220, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 37220}
@@ -47,6 +37,88 @@ func init() {
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
+		})
+	})
+	core.NewItemEffect(45507, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 45507}
+
+		procAura := character.RegisterAura(core.Aura{
+			Label:    "The General's Heart",
+			ActionID: actionID,
+			Duration: time.Second * 10,
+		})
+
+		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if procAura.IsActive() {
+				result.Damage = core.MaxFloat(0, result.Damage-205)
+			}
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "The General's Heart Trigger",
+			Callback:   core.CallbackOnSpellHitTaken,
+			ProcMask:   core.ProcMaskMelee,
+			Harmful:    true,
+			ProcChance: 0.05,
+			ICD:        time.Second * 50,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				procAura.Activate(sim)
+			},
+		})
+	})
+
+	core.NewItemEffect(37734, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 37734}
+
+		procAuras := make([]*core.Aura, len(character.Env.AllUnits))
+		for _, target := range character.Env.AllUnits {
+			if !character.IsOpponent(target) {
+				procAuras[target.UnitIndex] = target.GetOrRegisterAura(core.Aura{
+					Label:     "Touched by a Troll",
+					ActionID:  core.ActionID{SpellID: 60518},
+					Duration:  time.Second * 10,
+					MaxStacks: 5,
+					OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
+						aura.Unit.PseudoStats.BonusHealingTaken += 58 * float64(newStacks-oldStacks)
+					},
+				})
+			}
+		}
+
+		activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:     "Talisman of Troll Divinity",
+			ActionID: actionID,
+			Duration: time.Second * 20,
+			Callback: core.CallbackOnHealDealt,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				aura := procAuras[result.Target.UnitIndex]
+				aura.Activate(sim)
+			},
+		})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 2,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				activeAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
 		})
 	})
 
@@ -127,7 +199,7 @@ func init() {
 	core.NewItemEffect(40258, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 40258}
-		hots := core.NewHotArray(
+		hots := core.NewAllyHotArray(
 			&character.Unit,
 			core.Dot{
 				Spell: character.GetOrRegisterSpell(core.SpellConfig{
@@ -237,6 +309,53 @@ func init() {
 				spell.DefaultCast.Cost = spell.BaseCost * defaultCastRatio
 			}
 		}
+	})
+
+	core.NewItemEffect(46017, func(agent core.Agent) { // Val'anyr
+		character := agent.GetCharacter()
+
+		shieldID := core.ActionID{SpellID: 64413}
+		shields := core.NewAllyShieldArray(
+			&character.Unit,
+			core.Shield{
+				Spell: character.GetOrRegisterSpell(core.SpellConfig{
+					ActionID:    shieldID,
+					SpellSchool: core.SpellSchoolNature,
+					ProcMask:    core.ProcMaskSpellHealing,
+					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+					DamageMultiplier: 1,
+					ThreatMultiplier: 1,
+				}),
+			},
+			core.Aura{
+				Label:    "Power Word Shield",
+				ActionID: shieldID,
+				Duration: time.Second * 30,
+			})
+
+		activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:     "Blessing of Ancient Kings",
+			ActionID: core.ActionID{SpellID: 64411},
+			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+			Duration: time.Second * 15,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				// TODO: Shield needs to stack with itself up to 20k.
+				shield := shields[result.Target.UnitIndex]
+				shield.Apply(sim, result.Damage*0.15)
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Val'anyr, Hammer of Ancient Kings Trigger",
+			Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+			Harmful:    true, // Better name for this would be, 'nonzero'
+			ProcChance: 0.1,
+			ICD:        time.Second * 45,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				activeAura.Activate(sim)
+			},
+		})
 	})
 
 	core.NewItemEffect(50259, func(agent core.Agent) {
@@ -457,6 +576,21 @@ func init() {
 		})
 	})
 
+	core.NewSimpleStatOffensiveTrinketEffectWithOtherEffects(50260, stats.Stats{stats.MeleeHaste: 464, stats.SpellHaste: 464}, time.Second*20, time.Minute*2, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 50260}
+		manaMetrics := character.NewManaMetrics(actionID)
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:     "Ephemeral Snowflake",
+			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+			ICD:      time.Millisecond * 250,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				character.AddMana(sim, 11, manaMetrics, false)
+			},
+		})
+	})
+
 	core.NewItemEffect(50356, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 71586}
@@ -495,6 +629,203 @@ func init() {
 		character.AddMajorCooldown(core.MajorCooldown{
 			Type:  core.CooldownTypeSurvival,
 			Spell: spell,
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Bauble of True Blood"
+		itemID := int32(50354)
+		if isHeroic {
+			name += " H"
+			itemID = 50726
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			actionID := core.ActionID{ItemID: itemID}
+
+			spell := character.RegisterSpell(core.SpellConfig{
+				ActionID:    actionID,
+				SpellSchool: core.SpellSchoolHoly,
+				ProcMask:    core.ProcMaskSpellHealing,
+				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				CritMultiplier:   character.DefaultHealingCritMultiplier(),
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					baseHealing := sim.Roll(7400, 8600)
+					spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
+				},
+			})
+
+			character.AddMajorCooldown(core.MajorCooldown{
+				Type:  core.CooldownTypeDPS,
+				Spell: spell,
+			})
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Althor's Abacus"
+		itemID := int32(50359)
+		minHeal := 5550.0
+		maxHeal := 6450.0
+		if isHeroic {
+			name += " H"
+			itemID = 50366
+			minHeal = 6280.0
+			maxHeal = 7298.0
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			actionID := core.ActionID{ItemID: itemID}
+
+			spell := character.RegisterSpell(core.SpellConfig{
+				ActionID:    actionID,
+				SpellSchool: core.SpellSchoolPhysical,
+				ProcMask:    core.ProcMaskSpellHealing,
+				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				CritMultiplier:   character.DefaultHealingCritMultiplier(),
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					baseHealing := sim.Roll(minHeal, maxHeal)
+					spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
+				},
+			})
+
+			eligibleUnits := character.Env.Raid.AllUnits
+
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:       "Althor's Abacus Trigger",
+				Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+				ProcChance: 0.3,
+				ICD:        time.Second * 45,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					randIndex := int(math.Floor(sim.RandomFloat("Althor's Abacus") * float64(len(eligibleUnits))))
+					healTarget := eligibleUnits[randIndex]
+					spell.Cast(sim, healTarget)
+				},
+			})
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Glowing Twilight Scale"
+		itemID := int32(54573)
+		healingPerTick := 356.0
+		if isHeroic {
+			name += " H"
+			itemID = 54589
+			healingPerTick = 402.0
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			actionID := core.ActionID{ItemID: itemID}
+
+			hots := core.NewAllyHotArray(
+				&character.Unit,
+				core.Dot{
+					Spell: character.GetOrRegisterSpell(core.SpellConfig{
+						ActionID:    actionID,
+						SpellSchool: core.SpellSchoolHoly,
+						ProcMask:    core.ProcMaskSpellHealing,
+						Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+						DamageMultiplier: 1,
+						ThreatMultiplier: 1,
+					}),
+					NumberOfTicks: 6,
+					TickLength:    time.Second * 1,
+					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+						dot.SnapshotBaseDamage = healingPerTick
+						dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+					},
+					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+						dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+					},
+				},
+				core.Aura{
+					Label:    "Glowing Twilight Scale" + strconv.Itoa(int(character.Index)),
+					ActionID: actionID,
+				})
+
+			activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:     name + " Trigger",
+				ActionID: actionID,
+				Callback: core.CallbackOnHealDealt,
+				Duration: time.Second * 15,
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					hot := hots[result.Target.UnitIndex]
+					hot.Apply(sim)
+				},
+			})
+
+			spell := character.RegisterSpell(core.SpellConfig{
+				ActionID:    actionID,
+				SpellSchool: core.SpellSchoolPhysical,
+				ProcMask:    core.ProcMaskEmpty,
+				Flags:       core.SpellFlagNoOnCastComplete,
+
+				Cast: core.CastConfig{
+					CD: core.Cooldown{
+						Timer:    character.NewTimer(),
+						Duration: time.Minute * 2,
+					},
+				},
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					activeAura.Activate(sim)
+				},
+			})
+
+			character.AddMajorCooldown(core.MajorCooldown{
+				Type:  core.CooldownTypeDPS,
+				Spell: spell,
+			})
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Petrified Twilight Scale"
+		itemID := int32(54571)
+		amount := 733.0
+		if isHeroic {
+			name += " H"
+			itemID = 54591
+			amount = 828.0
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			actionID := core.ActionID{ItemID: itemID}
+
+			procAura := character.NewTemporaryStatsAura(name+" Proc", actionID, stats.Stats{stats.Dodge: amount}, time.Second*10)
+
+			// Handle ICD ourselves since we use a custom check.
+			icd := core.Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: time.Second * 45,
+			}
+
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:     name + " Trigger",
+				Callback: core.CallbackOnSpellHitTaken,
+				ProcMask: core.ProcMaskMelee,
+				Harmful:  true,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					if icd.IsReady(sim) && character.CurrentHealthPercent() < 0.35 {
+						icd.Use(sim)
+						procAura.Activate(sim)
+					}
+				},
+			})
 		})
 	})
 }

@@ -56,7 +56,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 				panic("Cannot cast PWS on target with Weakened Soul!")
 			}
 
-			shieldAmount := 2230.0 + coeff*spell.HealingPower()
+			shieldAmount := 2230.0 + coeff*spell.HealingPower(target)
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
 
@@ -69,11 +69,20 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		},
 	})
 
-	priest.PWSShields = make([]*core.Shield, len(priest.Env.AllUnits))
+	priest.PWSShields = core.NewAllyShieldArray(
+		&priest.Unit,
+		core.Shield{
+			Spell: priest.PowerWordShield,
+		},
+		core.Aura{
+			Label:    "Power Word Shield",
+			ActionID: priest.PowerWordShield.ActionID,
+			Duration: time.Second * 30,
+		})
+
 	priest.WeakenedSouls = make([]*core.Aura, len(priest.Env.AllUnits))
 	for _, unit := range priest.Env.AllUnits {
 		if !priest.IsOpponent(unit) {
-			priest.PWSShields[unit.UnitIndex] = priest.makePWSShield(unit)
 			priest.WeakenedSouls[unit.UnitIndex] = priest.makeWeakenedSoul(unit)
 		}
 	}
@@ -89,7 +98,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseHealing := 2230 + coeff*spell.HealingPower()
+				baseHealing := 2230 + coeff*spell.HealingPower(target)
 				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeAlwaysHit)
 			},
 		})
