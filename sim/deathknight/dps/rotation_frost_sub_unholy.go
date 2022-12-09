@@ -87,6 +87,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	/*
+		We need two deaths (or at least, have the first on up) before we UA + BT + Oblit, since if only the 2nd
+		death rune is up, UA then Blood Tap will convert and refresh the first and the second will have a 10s CD from UA
+	*/
 	if dk.CurrentDeathRunes() == 2 {
 		s.Advance()
 		return sim.CurrentTime
