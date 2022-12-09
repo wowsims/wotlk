@@ -465,7 +465,7 @@ export class RaidSimResultsManager {
 		let resultsFragment = document.createElement('fragment');
 
 		resultsFragment.innerHTML = `
-			<div class="results-metric ${args.classes}>
+			<div class="results-metric ${args.classes}">
 				<span class="topline-result-avg">${args.average.toFixed(2)}</span>
 				${args.stdev ? `
 					<span class="topline-result-stdev">
