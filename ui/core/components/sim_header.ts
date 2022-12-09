@@ -32,7 +32,7 @@ export class SimHeader extends Component {
   private warnings: Array<SimWarning> = [];
 
   constructor(parentElem: HTMLElement, simUI: SimUI) {
-    super(parentElem, 'sim-header', headerRoot);
+    super(parentElem, 'sim-header');
 
     this.simUI = simUI;
 
@@ -282,34 +282,37 @@ export class SimHeader extends Component {
 			classes: "patreon-link link-alt"
 		})
 	}
-}
 
-let headerFragment = document.createElement('fragment');
-headerFragment.innerHTML = `
-  <header id="simHeader">
-    <ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-    <div class="import-export">
-			<fragment class="importFragment">
-				<div class="dropdown sim-dropdown-menu">
-					<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-						<i class="fa fa-download"></i>
-						Import
-					</a>
-					<ul class="dropdown-menu"></ul>
+	protected customRootElement(): HTMLElement {
+		let headerFragment = document.createElement('fragment');
+		headerFragment.innerHTML = `
+			<header class="sim-header">
+				<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
+				<div class="import-export">
+					<fragment class="importFragment">
+						<div class="dropdown sim-dropdown-menu">
+							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+								<i class="fa fa-download"></i>
+								Import
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
+					</fragment>
+					<fragment class="exportFragment">
+						<div class="dropdown sim-dropdown-menu">
+							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
+								<i class="fa fa-right-from-bracket"></i>
+								Export
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
+					</fragment>
 				</div>
-			</fragment>
-			<fragment class="exportFragment">
-				<div class="dropdown sim-dropdown-menu">
-					<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-						<i class="fa fa-right-from-bracket"></i>
-						Export
-					</a>
-					<ul class="dropdown-menu"></ul>
+				<div class="sim-toolbar">
 				</div>
-			</fragment>
-		</div>
-    <div class="sim-toolbar">
-		</div>
-  </header>
-`;
-let headerRoot = headerFragment.children[0] as HTMLElement;
+			</header>
+		`;
+
+		return headerFragment.children[0] as HTMLElement;
+	}
+}

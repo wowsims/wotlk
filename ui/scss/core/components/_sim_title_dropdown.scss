@@ -1,4 +1,4 @@
-#simTitle {
+.sim-title {
   .sim-title-dropdown-root {
     .sim-link-dropdown {
       height: 100%;
@@ -37,7 +37,7 @@
 }
 
 @include media-breakpoint-down(xxl) {
-  #simTitle {
+  .sim-title {
     .sim-link {
       .sim-link-content {
         padding-left: $gap-width-sm * 2;
@@ -48,7 +48,7 @@
 }
 
 @include media-breakpoint-down(lg) {
-  #simTitle {
+  .sim-title {
     .sim-link {
       .sim-link-content {
         padding-left: $gap-width-sm;
