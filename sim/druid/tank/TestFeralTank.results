@@ -824,8 +824,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 1042.46381
-  tps: 1405.77993
+  dps: 1003.53328
+  tps: 1350.65995
  }
 }
 dps_results: {

@@ -831,8 +831,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 5744.04944
-  tps: 4341.33225
+  dps: 5823.52308
+  tps: 4407.96136
  }
 }
 dps_results: {
@@ -888,7 +888,7 @@ dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 4405.60437
-  tps: 3262.87977
+  tps: 3262.90829
  }
 }
 dps_results: {

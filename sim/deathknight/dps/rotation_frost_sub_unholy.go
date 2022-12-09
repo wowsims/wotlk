@@ -86,9 +86,30 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.
 	return core.TernaryDuration(casted, -1, sim.CurrentTime)
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	/*
+		We need two deaths (or at least, have the first on up) before we UA + BT + Oblit, since if only the 2nd
+		death rune is up, UA then Blood Tap will convert and refresh the first and the second will have a 10s CD from UA
+	*/
+	if dk.CurrentDeathRunes() == 2 {
+		s.Advance()
+		return sim.CurrentTime
+	}
+
+	timeUntilDeaths := core.MinDuration(dk.DeathRuneRegenAt(0), dk.DeathRuneRegenAt(1))
+	spell := dk.RegularPrioPickSpell(sim, target, timeUntilDeaths)
+
+	if spell != nil {
+		spell.Cast(sim, target)
+	}
+
+	return -1
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor.CanCast(sim) && dk.BloodTap.CanCast(sim) {
 		s.Clear().
+			NewAction(dk.RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths).
 			NewAction(dk.RotationActionCallback_UA_Frost).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).

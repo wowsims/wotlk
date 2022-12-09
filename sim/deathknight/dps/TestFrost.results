@@ -831,8 +831,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7422.98962
-  tps: 4382.38066
+  dps: 7389.09314
+  tps: 4362.04277
  }
 }
 dps_results: {

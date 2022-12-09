@@ -925,9 +925,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7864.36687
-  tps: 4900.38189
-  hps: 276.04649
+  dps: 7841.19983
+  tps: 4880.05152
+  hps: 276.69286
  }
 }
 dps_results: {

@@ -732,8 +732,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 3601.01403
-  tps: 3050.41973
+  dps: 3646.37817
+  tps: 3088.50397
  }
 }
 dps_results: {

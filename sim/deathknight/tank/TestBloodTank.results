@@ -831,8 +831,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 1224.24407
-  tps: 4129.35461
+  dps: 1213.17416
+  tps: 4106.40117
  }
 }
 dps_results: {

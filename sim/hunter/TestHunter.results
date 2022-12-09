@@ -768,8 +768,8 @@ dps_results: {
 dps_results: {
  key: "TestHunter-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 6829.66754
-  tps: 5848.9991
+  dps: 6832.45926
+  tps: 5851.49034
  }
 }
 dps_results: {

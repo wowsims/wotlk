@@ -909,8 +909,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 4598.51631
-  tps: 2729.09591
+  dps: 4644.55046
+  tps: 2755.76231
  }
 }
 dps_results: {

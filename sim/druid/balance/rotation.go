@@ -33,7 +33,16 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	}
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
+	lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 
+	if moonkin.HasActiveAura("Elune's Wrath") && moonkin.GetAura("Elune's Wrath").RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
+		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+			moonkin.useTrinkets(stats.SpellHaste, sim, target)
+		}
+		return moonkin.Starfire
+	}
 	if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
@@ -65,7 +74,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 	if moonkin.Talents.Eclipse > 0 {
 
-		lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
