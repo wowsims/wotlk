@@ -30,6 +30,10 @@
 			padding: $nav-link-padding-y $nav-link-padding-x;
 			font-size: $nav-link-font-size;
 			transition: $nav-link-transition;
+
+			&.show {
+				color: white;
+			}
 		}
 	}
 
