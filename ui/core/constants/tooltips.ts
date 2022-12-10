@@ -4,3 +4,5 @@ export const COOLDOWNS_SECTION = 'Specify cooldown timings, in seconds. Cooldown
 export const BLESSINGS_SECTION = 'Specify Paladin Blessings for each role, in order of priority. Blessings in the 1st column will be used if there is at least 1 Paladin in the raid, 2nd column if at least 2, etc.';
 
 export const BASIC_BIS_DISCLAIMER = '<p>Preset gear lists are intended as rough approximations of BIS, and will often not be the absolute highest-DPS setup for you. Your optimal gear setup will depend on many factors; that\'s why we have a sim!</p><p>Items may also be omitted from the presets if they are highly contested and clearly better utilized on other classes, to encourage equitable gearing for the raid as a whole.</p>';
+
+export const HEALING_SIM_DISCLAIMER = 'This tool is currently more similar to a spreadsheet than a true sim; all results should be taken with an EXTREMELY large grain of salt.\n\nOptions for specifying incoming damage profiles in order to have proper reactive rotations have not yet been added.';
