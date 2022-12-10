@@ -396,8 +396,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheCorruptor-45509"
  value: {
-  dps: 1041.07458
-  tps: 1403.19032
+  dps: 1036.50284
+  tps: 1404.76729
  }
 }
 dps_results: {
