@@ -132,9 +132,7 @@ binary_dist: $(OUT_DIR)/.dirstamp
 	mkdir -p binary_dist
 	cp -r $(OUT_DIR) binary_dist/
 	rm binary_dist/wotlk/lib.wasm
-	rm -rf binary_dist/wotlk/assets/database
-	mkdir -p binary_dist/wotlk/assets/database
-	cp $(OUT_DIR)/assets/database/* ./binary_dist/wotlk/assets/database
+	rm -rf binary_dist/wotlk/assets/db_inputs
 
 # Builds the web server with the compiled client.
 .PHONY: wowsimwotlk
