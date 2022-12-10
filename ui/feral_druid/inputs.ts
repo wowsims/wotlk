@@ -96,6 +96,11 @@ export const FeralDruidRotationConfig = {
 			label: 'Bite during rotation',
 			labelTooltip: 'Use bite during rotation rather than just at end',
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'useRake',
+			label: 'Use Rake',
+			labelTooltip: 'Use rake during rotation',
+		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
 		//	fieldName: 'biteModeType',
