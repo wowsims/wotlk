@@ -127,7 +127,7 @@ binary_dist/dist.go: sim/web/dist.go.tmpl
 	touch binary_dist/wotlk/embedded
 	cp sim/web/dist.go.tmpl binary_dist/dist.go
 
-binary_dist: $(OUT_DIR)
+binary_dist: $(OUT_DIR)/.dirstamp
 	rm -rf binary_dist
 	mkdir -p binary_dist
 	cp -r $(OUT_DIR) binary_dist/
