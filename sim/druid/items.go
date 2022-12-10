@@ -432,14 +432,20 @@ func init() {
 	core.NewItemEffect(45509, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		actionID := core.ActionID{ItemID: 45509}
-		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", actionID, stats.Stats{stats.Agility: 153}, time.Second*12)
+		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", actionID, stats.Stats{stats.Agility: 162}, time.Second*12)
 
-		// This proc chance might be wrong, going off of wowhead notes
-		procChance := 0.85
+		// This proc chance may need confirmation, going off of 'Idol of Terror' values currently
+		procChanceBear := 0.50
+		procChanceCat := 0.85
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Corruptor",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
+				procChance := 0.0
+				if spell == druid.MangleBear {
+					procChance = procChanceBear
+				} else if spell == druid.MangleCat {
+					procChance = procChanceCat
+				} else {
 					return
 				}
 
