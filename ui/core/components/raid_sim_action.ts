@@ -104,6 +104,9 @@ export class RaidSimResultsManager {
 						<div class="results-sim-dps damage-metrics">
 							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
 						</div>
+						<div class="results-sim-hps healing-metrics">
+							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
+						</div>
 						<div class="">
 							presimulations running
 						</div>
@@ -114,6 +117,9 @@ export class RaidSimResultsManager {
 				<div class="results-sim">
 						<div class="results-sim-dps damage-metrics">
 							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
+						</div>
+						<div class="results-sim-hps healing-metrics">
+							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
 						</div>
 						<div class="">
 							${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
@@ -173,8 +179,7 @@ export class RaidSimResultsManager {
 		};
 		setResultTooltip('results-sim-dps', 'Damage Per Second');
 		setResultTooltip('results-sim-tto', 'Time To OOM');
-		// HPS is misleading to the user, so intentionally don't show it as a 'primary' metric.
-		//setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
+		setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
 		setResultTooltip('results-sim-tps', 'Threat Per Second');
 		setResultTooltip('results-sim-dtps', 'Damage Taken Per Second');
 		setResultTooltip('results-sim-cod', `
@@ -251,7 +256,7 @@ export class RaidSimResultsManager {
 		}
 
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
-		//this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
+		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tto']} .results-reference-diff`, res => res.getPlayers()[0]!.tto, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tps']} .results-reference-diff`, res => res.getPlayers()[0]!.tps, 2);
@@ -397,11 +402,11 @@ export class RaidSimResultsManager {
 				stdev: playerMetrics.tto.stdev,
 				classes: this.getResultsLineClasses('tto'),
 			}).outerHTML;
-			//content += this.buildResultsLine({
-			//	average: playerMetrics.hps.avg,
-			//	stdev: playerMetrics.hps.stdev,
-			//	classes: this.getResultsLineClasses('hps'),
-			//}).outerHTML;
+			content += this.buildResultsLine({
+				average: playerMetrics.hps.avg,
+				stdev: playerMetrics.hps.stdev,
+				classes: this.getResultsLineClasses('hps'),
+			}).outerHTML;
 		} else {
 			const dpsMetrics = simResult.raidMetrics.dps;
 			content += this.buildResultsLine({
