@@ -58,7 +58,6 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			},
 		},
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
 			core.TernaryFloat64(isHeal, 0, .05*float64(priest.Talents.SearingLight)) +
 			.01*float64(priest.Talents.TwinDisciplines),

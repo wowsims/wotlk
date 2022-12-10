@@ -178,7 +178,8 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 		}
 	}
 
-	for i := 0; i < int(raidConfig.TargetDummies); i++ {
+	numDummies := MinInt(24, int(raidConfig.TargetDummies))
+	for i := 0; i < numDummies; i++ {
 		party, partyIndex := raid.GetFirstEmptyRaidIndex()
 		dummy := NewTargetDummy(i, party, partyIndex)
 		party.Players = append(party.Players, dummy)
