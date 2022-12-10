@@ -18,19 +18,16 @@
       margin-right: map.get($spacers, 2);
     }
 
-    .sim-link-label {
+    .sim-link-label, .launch-status-label {
+      font-size: .75rem;
+      font-weight: normal;
+      white-space: nowrap;
+    }
+
+    .sim-link-title {
+      font-size: 1.25rem;
       font-weight: bold;
       white-space: nowrap;
-
-      &:first-child {
-        font-size: .75rem;
-        font-weight: normal;
-      }
-
-      &:last-child {
-        font-size: 1.25rem;
-        font-weight: bold;
-      }
     }
   }
 }
