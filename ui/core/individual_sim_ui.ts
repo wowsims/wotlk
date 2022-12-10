@@ -288,7 +288,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (!this.isWithinRaidSim) {
 			// This needs to go before all the UI components so that gear loading is the
 			// first callback invoked from waitForInit().
-			this.sim.waitForInit().then(() => this.loadSettings());
+			this.sim.waitForInit().then(() => {
+				this.loadSettings();
+
+				if (isHealingSpec(this.player.spec)) {
+					alert(Tooltips.HEALING_SIM_DISCLAIMER);
+				}
+			});
 		}
 
 		this.addSidebarComponents();
