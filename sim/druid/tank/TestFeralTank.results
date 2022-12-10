@@ -394,6 +394,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-Heartpierce-49982"
+ value: {
+  dps: 1059.49947
+  tps: 1432.48058
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-Heartpierce-50641"
+ value: {
+  dps: 1064.52829
+  tps: 1435.8874
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheCorruptor-45509"
  value: {
   dps: 1036.50284

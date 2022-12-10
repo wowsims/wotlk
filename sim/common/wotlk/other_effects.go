@@ -576,6 +576,73 @@ func init() {
 		})
 	})
 
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Heartpierce"
+		itemID := int32(49982)
+		numTicks := 5
+		if isHeroic {
+			name += " H"
+			itemID = 50641
+			numTicks = 6
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			actionID := core.ActionID{ItemID: itemID}
+
+			var resourceMetricsMana *core.ResourceMetrics
+			var resourceMetricsRage *core.ResourceMetrics
+			var resourceMetricsEnergy *core.ResourceMetrics
+			if character.HasManaBar() {
+				resourceMetricsMana = character.NewManaMetrics(actionID)
+			}
+			if character.HasRageBar() {
+				resourceMetricsRage = character.NewRageMetrics(actionID)
+			}
+			if character.HasEnergyBar() {
+				resourceMetricsEnergy = character.NewEnergyMetrics(actionID)
+			}
+
+			var pa *core.PendingAction
+			procAura := character.GetOrRegisterAura(core.Aura{
+				Label:    name,
+				ActionID: actionID,
+				Duration: time.Second * 2 * time.Duration(numTicks),
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					pa = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+						NumTicks: numTicks,
+						Period:   time.Second * 2,
+						OnAction: func(sim *core.Simulation) {
+							cpb := character.GetCurrentPowerBar()
+							if cpb == core.ManaBar {
+								character.AddMana(sim, 120, resourceMetricsMana, false)
+							} else if cpb == core.RageBar {
+								character.AddRage(sim, 2, resourceMetricsRage)
+							} else if cpb == core.EnergyBar {
+								character.AddEnergy(sim, 4, resourceMetricsEnergy)
+							}
+						},
+					})
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					pa.Cancel(sim)
+				},
+			})
+
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:     name + " Trigger",
+				Callback: core.CallbackOnSpellHitDealt,
+				ProcMask: core.ProcMaskMelee,
+				PPM:      1,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					// Deactivate first, to cancel old PA.
+					procAura.Deactivate(sim)
+					procAura.Activate(sim)
+				},
+			})
+		})
+	})
+
 	core.NewSimpleStatOffensiveTrinketEffectWithOtherEffects(50260, stats.Stats{stats.MeleeHaste: 464, stats.SpellHaste: 464}, time.Second*20, time.Minute*2, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 50260}

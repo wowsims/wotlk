@@ -479,6 +479,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDisc-AllItems-Heartpierce-49982"
+ value: {
+  dps: 99.2875
+  tps: 80.31273
+  hps: 6207.15726
+ }
+}
+dps_results: {
+ key: "TestDisc-AllItems-Heartpierce-50641"
+ value: {
+  dps: 99.2875
+  tps: 80.31273
+  hps: 6207.15726
+ }
+}
+dps_results: {
  key: "TestDisc-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 101.84913

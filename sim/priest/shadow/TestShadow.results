@@ -394,6 +394,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestShadow-AllItems-Heartpierce-49982"
+ value: {
+  dps: 5422.95081
+  tps: 4180.7059
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-Heartpierce-50641"
+ value: {
+  dps: 5422.95081
+  tps: 4180.7059
+ }
+}
+dps_results: {
  key: "TestShadow-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 5326.56276
