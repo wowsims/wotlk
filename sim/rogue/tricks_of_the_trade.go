@@ -16,9 +16,13 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
 
 	if rogue.Options.TricksOfTheTradeTarget != nil {
-		target := rogue.Env.Raid.GetPlayerFromRaidTarget(rogue.Options.TricksOfTheTradeTarget).GetCharacter()
-		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, actionID.Tag, hasGlyph)
-	} else {
+		targetAgent := rogue.Env.Raid.GetPlayerFromRaidTarget(rogue.Options.TricksOfTheTradeTarget)
+		if targetAgent != nil {
+			target := targetAgent.GetCharacter()
+			rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, actionID.Tag, hasGlyph)
+		}
+	}
+	if rogue.TricksOfTheTradeAura == nil {
 		target := rogue.GetCharacter()
 		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, actionID.Tag, hasGlyph)
 		rogue.TricksOfTheTradeAura.OnGain = func(aura *core.Aura, sim *core.Simulation) {}
