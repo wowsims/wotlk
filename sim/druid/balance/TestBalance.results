@@ -394,6 +394,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-Heartpierce-49982"
+ value: {
+  dps: 7486.71008
+  tps: 7325.2126
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-Heartpierce-50641"
+ value: {
+  dps: 7486.71008
+  tps: 7325.2126
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdoloftheCorruptor-45509"
  value: {
   dps: 7382.67367

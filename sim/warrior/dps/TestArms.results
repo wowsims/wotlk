@@ -394,6 +394,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-Heartpierce-49982"
+ value: {
+  dps: 8027.50389
+  tps: 6568.11319
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-Heartpierce-50641"
+ value: {
+  dps: 8027.50389
+  tps: 6568.11319
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 7534.99709

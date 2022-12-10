@@ -435,6 +435,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-Heartpierce-49982"
+ value: {
+  dps: 104.65635
+  tps: 49.26353
+  hps: 4907.82414
+ }
+}
+dps_results: {
+ key: "TestHoly-AllItems-Heartpierce-50641"
+ value: {
+  dps: 104.65635
+  tps: 49.26353
+  hps: 4907.82414
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 107.21798

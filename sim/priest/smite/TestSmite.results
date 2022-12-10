@@ -394,6 +394,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-Heartpierce-49982"
+ value: {
+  dps: 3555.67497
+  tps: 3012.98186
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Heartpierce-50641"
+ value: {
+  dps: 3555.67497
+  tps: 3012.98186
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 3518.85971

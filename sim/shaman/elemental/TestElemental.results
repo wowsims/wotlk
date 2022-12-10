@@ -480,6 +480,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-Heartpierce-49982"
+ value: {
+  dps: 4476.662
+  tps: 2658.08741
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-Heartpierce-50641"
+ value: {
+  dps: 4476.662
+  tps: 2658.08741
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 4361.69982
