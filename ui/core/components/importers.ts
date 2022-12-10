@@ -8,6 +8,7 @@ import { Spec } from '../proto/common.js';
 import { IndividualSimSettings } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player.js';
+import { Database } from '../proto_utils/database.js';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names.js';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory.js';
 import { GlyphConfig } from '../talents/glyphs_picker.js';
@@ -75,11 +76,13 @@ export abstract class Importer extends Popup {
 
 	abstract onImport(data: string): void
 
-	protected finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>) {
+	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
 			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
 		}
+
+		await Database.loadLeftoversIfNecessary(equipmentSpec);
 
 		const gear = simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
@@ -135,8 +138,11 @@ export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 		`;
 	}
 
-	onImport(data: string) {
+	async onImport(data: string) {
 		const proto = IndividualSimSettings.fromJsonString(data);
+		if (proto.player?.equipment) {
+			await Database.loadLeftoversIfNecessary(proto.player.equipment);
+		}
 		if (this.simUI.isWithinRaidSim) {
 			if (proto.player) {
 				this.simUI.player.fromProto(TypedEvent.nextEventID(), proto.player);

@@ -24,6 +24,8 @@ import { Gear } from './gear.js';
 
 const dbUrlJson = '/wotlk/assets/database/db.json';
 const dbUrlBin = '/wotlk/assets/database/db.bin';
+const leftoversUrlJson = '/wotlk/assets/database/leftover_db.json';
+const leftoversUrlBin = '/wotlk/assets/database/leftover_db.bin';
 // When changing this value, don't forget to change the html <link> for preloading!
 const READ_JSON = false;
 
@@ -44,6 +46,33 @@ export class Database {
 		return Database.loadPromise;
 	}
 
+	static getLeftovers(): Promise<UIDatabase> {
+		if (READ_JSON) {
+			return fetch(leftoversUrlJson)
+				.then(response => response.json())
+				.then(json => UIDatabase.fromJson(json));
+		} else {
+			return fetch(leftoversUrlBin)
+				.then(response => response.arrayBuffer())
+				.then(buffer => UIDatabase.fromBinary(new Uint8Array(buffer)));
+		}
+	}
+
+	// Checks if any items in the equipment are missing from the current DB. If so, loads the leftover DB.
+	static async loadLeftoversIfNecessary(equipment: EquipmentSpec): Promise<void> {
+		const db = await Database.get();
+		if (db.loadedLeftovers) {
+			return;
+		}
+
+		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items[item.id]);
+		if (shouldLoadLeftovers) {
+			const leftoverDb = await Database.getLeftovers();
+			db.loadProto(leftoverDb);
+			db.loadedLeftovers = true;
+		}
+	}
+
 	private readonly items: Record<number, Item> = {};
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly gems: Record<number, Gem> = {};
@@ -51,8 +80,16 @@ export class Database {
 	private readonly presetTargets: Record<string, PresetTarget> = {};
 	private readonly itemIcons: Record<number, Promise<IconData>>;
 	private readonly spellIcons: Record<number, Promise<IconData>>;
+	private loadedLeftovers: boolean = false;
 
 	private constructor(db: UIDatabase) {
+		this.itemIcons = {};
+		this.spellIcons = {};
+		this.loadProto(db);
+	}
+
+	// Add all data from the db proto into this database.
+	private loadProto(db: UIDatabase) {
 		db.items.forEach(item => this.items[item.id] = item);
 		db.enchants.forEach(enchant => {
 			const slots = getEligibleEnchantSlots(enchant);
@@ -68,8 +105,6 @@ export class Database {
 		db.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
 
-		this.itemIcons = {};
-		this.spellIcons = {};
 		db.items.forEach(item => this.itemIcons[item.id] = new Promise((resolve, _) => resolve(IconData.create({
 			id: item.id,
 			name: item.name,
