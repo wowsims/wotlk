@@ -10,6 +10,9 @@
 	.results-sim-dps .topline-result-avg:after {
 		content: " DPS";
 	}
+	.results-sim-dpasp .topline-result-avg:after {
+		content: "DPASP"
+	}
 	.results-sim-tto .topline-result-avg:after {
 		content: " TTO";
 	}
