@@ -84,7 +84,7 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
+		ProcMask:     core.ProcMaskEmpty,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
