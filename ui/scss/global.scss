@@ -16,7 +16,7 @@ html {
 body {
   height: 100%;
   // Prevent browser scrollbars from adjusting page contents
-  margin-right: calc(-1 * (100vw - 100%))
+  margin-right: calc(-1 * (100vw - 100%));
   overflow-x: hidden;
   opacity: 0;
   transition: opacity .25s linear;
