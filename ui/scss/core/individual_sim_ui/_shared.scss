@@ -196,7 +196,6 @@
 
 .talents-tab-content {
 	display: flex;
-	justify-content: center;
 	flex-wrap: wrap;
 }
 
@@ -204,24 +203,4 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-}
-
-.saved-talents-manager {
-  text-align: center;
-
-  .content-block-body {
-    align-items: center;
-
-    .saved-data-container {
-      justify-content: center;
-    }
-
-    .saved-data-create-container {
-      align-items: flex-start;
-  
-      .saved-data-save-input, .saved-data-save-button {
-        width: 12rem;
-      }
-    }
-  }
 }

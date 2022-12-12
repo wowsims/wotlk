@@ -423,14 +423,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	private addTalentsTab() {
 		this.addTab('Talents', 'talents-tab', `
 			<div class="player-pet-toggle"></div>
-			<div class="talents-content">
-				<div class="talents-tab-content">
+			<div class="talents-content tab-pane-content-container">
+				<div class="talents-tab-content tab-panel-left">
 					<div class="talents-picker"></div>
 					<div class="glyphs-picker">
 						<span>Glyphs</span>
 					</div>
 				</div>
-				<div class="saved-talents-manager"></div>
+				<div class="saved-talents-manager tab-panel-right"></div>
 			</div>
 			<div class="talents-content">
 				<div class="talents-tab-content">
@@ -442,8 +442,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const talentsPicker = newTalentsPicker(this.rootElem.getElementsByClassName('talents-picker')[0] as HTMLElement, this.player);
 		const glyphsPicker = newGlyphsPicker(this.rootElem.getElementsByClassName('glyphs-picker')[0] as HTMLElement, this.player);
 
+		this.rootElem.querySelector('#talents-tab-tab')?.classList.add('sim-tab');
+
 		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this.player, {
 			label: 'Talents',
+			header: {title: 'Saved Talents'},
 			storageKey: this.getSavedTalentsStorageKey(),
 			getData: (player: Player<any>) => SavedTalents.create({
 				talentsString: player.getTalentsString(),
