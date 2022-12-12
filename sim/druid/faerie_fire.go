@@ -27,7 +27,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		}
 	}
 
-	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
+	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -75,5 +75,5 @@ func (druid *Druid) ShouldFaerieFire(sim *core.Simulation) bool {
 		return false
 	}
 
-	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.MinorArmorReductionAuraTag, druid.FaerieFireAura.Priority, time.Second*3)
+	return druid.FaerieFireAura.ShouldRefreshExclusiveEffects(sim, time.Second*3)
 }

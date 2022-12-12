@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1669.21062
   final_stats: 385.33968
   final_stats: 394.85424
-  final_stats: 280
+  final_stats: 0
   final_stats: 125
   final_stats: 255
   final_stats: 990.62917
@@ -887,22 +887,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4302.13915
-  tps: 3790.46995
+  dps: 3948.91044
+  tps: 3463.13602
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4302.13915
-  tps: 3222.06955
+  dps: 3948.91044
+  tps: 2963.66423
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4405.60437
-  tps: 3262.90829
+  dps: 4452.29019
+  tps: 3303.34738
  }
 }
 dps_results: {

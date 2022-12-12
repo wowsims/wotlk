@@ -9,46 +9,21 @@ import (
 )
 
 func (dk *Deathknight) ApplyUnholyTalents() {
-	// Anticipation
 	dk.PseudoStats.BaseDodge += 0.01 * float64(dk.Talents.Anticipation)
-
-	// Virulence
 	dk.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(dk.Talents.Virulence))
 
-	// Ravenous Dead
 	if dk.Talents.RavenousDead > 0 {
-		strengthCoeff := 0.01 * float64(dk.Talents.RavenousDead)
-		dk.MultiplyStat(stats.Strength, 1.0+strengthCoeff)
+		dk.MultiplyStat(stats.Strength, 1.0+0.01*float64(dk.Talents.RavenousDead))
 	}
 
-	// Necrosis
 	dk.applyNecrosis()
-
-	// Blood-Caked Blade
 	dk.applyBloodCakedBlade()
-
-	// Unholy Blight
 	dk.applyUnholyBlight()
-
-	// Impurity
 	dk.applyImpurity()
-
-	// Desolation
 	dk.applyDesolation()
-
-	// Wandering Plague
 	dk.applyWanderingPlague()
-
-	// Crypt Fever
-	dk.applyCryptFever()
-	// Ebon Plaguebringer
-	dk.applyEbonPlaguebringer()
-
-	// Rage of Rivendare
-	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
-	if dk.Talents.RageOfRivendare > 0 {
-		dk.applyRageOfRivendare()
-	}
+	dk.applyEbonPlaguebringerOrCryptFever()
+	dk.applyRageOfRivendare()
 }
 
 func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
@@ -56,6 +31,12 @@ func (dk *Deathknight) viciousStrikesCritChanceBonus() float64 {
 }
 
 func (dk *Deathknight) applyRageOfRivendare() {
+	if dk.Talents.RageOfRivendare == 0 {
+		return
+	}
+
+	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
+
 	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
 		return core.TernaryFloat64(dk.BloodPlagueDisease[target.Index].IsActive(), bonus, 1.0)
@@ -198,24 +179,9 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 	})
 }
 
-func (dk *Deathknight) applyCryptFever() {
+func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
+	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, dk.Env.GetNumTargets())
 	if dk.Talents.CryptFever == 0 {
-		return
-	}
-
-	dk.CryptFeverAura = make([]*core.Aura, dk.Env.GetNumTargets())
-	for _, encounterTarget := range dk.Env.Encounter.Targets {
-		target := &encounterTarget.Unit
-
-		cfAura := core.CryptFeverAura(target, int(dk.Index))
-		cfAura.Duration = time.Second * (15 + 3*time.Duration(dk.Talents.Epidemic))
-
-		dk.CryptFeverAura[target.Index] = cfAura
-	}
-}
-
-func (dk *Deathknight) applyEbonPlaguebringer() {
-	if dk.Talents.EbonPlaguebringer == 0 {
 		return
 	}
 
@@ -223,14 +189,10 @@ func (dk *Deathknight) applyEbonPlaguebringer() {
 	dk.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	dk.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
-	dk.EbonPlagueAura = make([]*core.Aura, dk.Env.GetNumTargets())
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-
-		epAura := core.EbonPlaguebringerAura(target, int(dk.Index))
-		epAura.Duration = time.Second * (15 + 3*time.Duration(dk.Talents.Epidemic))
-
-		dk.EbonPlagueAura[target.Index] = epAura
+		epAura := core.EbonPlaguebringerOrCryptFeverAura(dk.GetCharacter(), target, dk.Talents.Epidemic, dk.Talents.CryptFever, dk.Talents.EbonPlaguebringer)
+		dk.EbonPlagueOrCryptFeverAura[target.Index] = epAura
 	}
 }
 

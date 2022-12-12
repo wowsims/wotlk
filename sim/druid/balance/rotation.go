@@ -25,11 +25,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	target := moonkin.CurrentTarget
 
 	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim) {
-		if moonkin.Talents.ImprovedFaerieFire > 0 {
-			if aura := target.GetActiveAuraWithTag(core.MinorSpellHitDebuffAuraTag); aura == nil {
-				return moonkin.FaerieFire
-			}
-		}
+		return moonkin.FaerieFire
 	}
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming

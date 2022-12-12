@@ -427,20 +427,15 @@ func init() {
 	// TODO: Verify all of this
 	newRuneOfTheFallenCrusaderAura := func(character *core.Character, auraLabel string, actionID core.ActionID) *core.Aura {
 		return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, stats.Stats{}, time.Second*15, func(aura *core.Aura) {
-			oldOnGain := aura.OnGain
-			oldOnExpire := aura.OnExpire
-
 			statDep := character.NewDynamicMultiplyStat(stats.Strength, 1.15)
 
-			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-				oldOnGain(aura, sim)
+			aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.EnableDynamicStatDep(sim, statDep)
-			}
+			})
 
-			aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-				oldOnExpire(aura, sim)
+			aura.ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
 				aura.Unit.DisableDynamicStatDep(sim, statDep)
-			}
+			})
 		})
 	}
 

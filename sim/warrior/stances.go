@@ -15,6 +15,8 @@ const (
 	BerserkerStance
 )
 
+const stanceEffectCategory = "Stance"
+
 func (warrior *Warrior) StanceMatches(other Stance) bool {
 	return (warrior.Stance & other) != 0
 }
@@ -57,8 +59,6 @@ func (warrior *Warrior) registerBattleStanceAura() {
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Battle Stance",
-		Tag:      "Stance",
-		Priority: 1,
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -70,6 +70,7 @@ func (warrior *Warrior) registerBattleStanceAura() {
 			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, -armorPenBonus)
 		},
 	})
+	warrior.BattleStanceAura.NewExclusiveEffect(stanceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (warrior *Warrior) registerDefensiveStanceAura() {
@@ -107,8 +108,6 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 
 	warrior.DefensiveStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Defensive Stance",
-		Tag:      "Stance",
-		Priority: 1,
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -146,6 +145,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 			}
 		},
 	})
+	warrior.DefensiveStanceAura.NewExclusiveEffect(stanceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (warrior *Warrior) registerBerserkerStanceAura() {
@@ -160,8 +160,6 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 
 	warrior.BerserkerStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Berserker Stance",
-		Tag:      "Stance",
-		Priority: 1,
 		ActionID: core.ActionID{SpellID: 2458},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -179,6 +177,7 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 			}
 		},
 	})
+	warrior.BerserkerStanceAura.NewExclusiveEffect(stanceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (warrior *Warrior) registerStances() {

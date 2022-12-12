@@ -14,10 +14,7 @@ func (mage *Mage) registerScorchSpell() {
 	hasImpScorch := mage.Talents.ImprovedScorch > 0
 	procChance := float64(mage.Talents.ImprovedScorch) / 3.0
 	if hasImpScorch {
-		mage.ScorchAura = mage.CurrentTarget.GetAura(core.ImprovedScorchAuraLabel)
-		if mage.ScorchAura == nil {
-			mage.ScorchAura = core.ImprovedScorchAura(mage.CurrentTarget)
-		}
+		mage.ScorchAura = core.ImprovedScorchAura(mage.CurrentTarget)
 	}
 
 	mage.Scorch = mage.RegisterSpell(core.SpellConfig{

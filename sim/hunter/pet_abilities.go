@@ -258,6 +258,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 }
 
 func (hp *HunterPet) newAcidSpit() PetAbility {
+	acidSpitAura := core.AcidSpitAura(hp.CurrentTarget)
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    AcidSpit,
 		Cost:    20,
@@ -268,6 +269,14 @@ func (hp *HunterPet) newAcidSpit() PetAbility {
 		MinDmg:  124,
 		MaxDmg:  176,
 		APRatio: 0.049,
+		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
+				acidSpitAura.Activate(sim)
+				if acidSpitAura.IsActive() {
+					acidSpitAura.AddStack(sim)
+				}
+			}
+		},
 	})
 }
 

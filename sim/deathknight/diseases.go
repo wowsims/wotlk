@@ -27,9 +27,7 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 	if dk.BloodPlagueDisease[target.Index].IsActive() {
 		count++
 	}
-	if dk.Talents.CryptFever > 0 && dk.CryptFeverAura[target.Index].IsActive() {
-		count++
-	} else if dk.Talents.EbonPlaguebringer > 0 && dk.EbonPlagueAura[target.Index].IsActive() {
+	if dk.EbonPlagueOrCryptFeverAura[target.Index].IsActive() {
 		count++
 	}
 	return float64(count)
@@ -51,27 +49,6 @@ func (dk *Deathknight) dkDiseaseMultiplier(multiplier float64) float64 {
 func (dk *Deathknight) registerDiseaseDots() {
 	dk.registerFrostFever()
 	dk.registerBloodPlague()
-	dk.registerDiseaseGhostCasts()
-}
-
-// This is used by the first applications of any of the DK disease
-// to simulate the extra proc chances that are present on classic when
-// applying a diseases for the first time on a mob
-func (dk *Deathknight) registerDiseaseGhostCasts() {
-	dk.DiseaseGhostSpell = dk.Character.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 52789},
-		SpellSchool: core.SpellSchoolMagic,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagNoLogs | core.SpellFlagNoMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
-
-		DamageMultiplier: 1,
-		ThreatMultiplier: 0,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Just deal 0 damage as the "Harmful Spell" is implemented on spell damage
-			spell.CalcAndDealDamage(sim, target, 0, spell.OutcomeAlwaysHit)
-		},
-	})
 }
 
 func (dk *Deathknight) registerFrostFever() {
@@ -104,22 +81,25 @@ func (dk *Deathknight) registerFrostFever() {
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-		aura := core.Aura{
-			Label:    "FrostFever-" + strconv.Itoa(int(dk.Index)),
-			ActionID: actionID,
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				if !isRefreshing[aura.Unit.Index] {
-					flagTs[aura.Unit.Index] = false
-				}
-			},
-		}
-		if dk.Talents.IcyTalons > 0 {
-			aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-				dk.IcyTalonsAura.Activate(sim)
-			}
-		}
 		dk.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
-			Aura:          target.RegisterAura(aura),
+			Spell: dk.FrostFeverSpell.Spell,
+			Aura: target.RegisterAura(core.Aura{
+				Label:    "FrostFever-" + strconv.Itoa(int(dk.Index)),
+				ActionID: actionID,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					if dk.IcyTalonsAura != nil {
+						dk.IcyTalonsAura.Activate(sim)
+					}
+					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
+						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					}
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					if !isRefreshing[aura.Unit.Index] {
+						flagTs[aura.Unit.Index] = false
+					}
+				},
+			}),
 			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
@@ -138,8 +118,6 @@ func (dk *Deathknight) registerFrostFever() {
 				dk.doWanderingPlague(sim, dot.Spell, result)
 			},
 		})
-
-		dk.FrostFeverDisease[target.Index].Spell = dk.FrostFeverSpell.Spell
 	}
 }
 
@@ -176,11 +154,16 @@ func (dk *Deathknight) registerBloodPlague() {
 
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
-
 		dk.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
+			Spell: dk.BloodPlagueSpell.Spell,
 			Aura: target.RegisterAura(core.Aura{
 				Label:    "BloodPlague-" + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
+						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					}
+				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 					if !isRefreshing[aura.Unit.Index] {
 						flagRor[aura.Unit.Index] = false
@@ -212,8 +195,6 @@ func (dk *Deathknight) registerBloodPlague() {
 				dk.doWanderingPlague(sim, dot.Spell, result)
 			},
 		})
-
-		dk.BloodPlagueDisease[target.Index].Spell = dk.BloodPlagueSpell.Spell
 	}
 }
 func (dk *Deathknight) registerDrwDiseaseDots() {

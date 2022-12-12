@@ -238,22 +238,15 @@ func init() {
 			return
 		}
 
-		const slowMultiplier = 0.85
 		var debuffs []*core.Aura
 		for _, target := range character.Env.Encounter.Targets {
-			debuffs = append(debuffs, target.GetOrRegisterAura(core.Aura{
+			aura := target.GetOrRegisterAura(core.Aura{
 				Label:    "Deathfrost",
-				Tag:      core.AtkSpeedReductionAuraTag,
 				ActionID: actionID,
 				Duration: time.Second * 8,
-				Priority: 1 / slowMultiplier,
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.MultiplyAttackSpeed(sim, slowMultiplier)
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.MultiplyAttackSpeed(sim, 1/slowMultiplier)
-				},
-			}))
+			})
+			core.AtkSpeedReductionEffect(aura, 1.15)
+			debuffs = append(debuffs, aura)
 		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{

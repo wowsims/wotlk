@@ -72,9 +72,7 @@ type Aura struct {
 	stacks    int32
 	MaxStacks int32
 
-	// If nonzero, activation of this aura will deactivate other auras with the
-	// same Tag and equal or lower Priority.
-	Priority float64
+	ExclusiveEffects []*ExclusiveEffect
 
 	// Lifecycle callbacks.
 	OnInit          OnInit
@@ -223,6 +221,32 @@ func (aura *Aura) ExpiresAt() time.Duration {
 	return aura.expires
 }
 
+// Adds a handler to be called OnGain, in addition to any current handlers.
+func (aura *Aura) ApplyOnGain(newOnGain OnGain) {
+	oldOnGain := aura.OnGain
+	if oldOnGain == nil {
+		aura.OnGain = newOnGain
+	} else {
+		aura.OnGain = func(aura *Aura, sim *Simulation) {
+			oldOnGain(aura, sim)
+			newOnGain(aura, sim)
+		}
+	}
+}
+
+// Adds a handler to be called OnExpire, in addition to any current handlers.
+func (aura *Aura) ApplyOnExpire(newOnExpire OnExpire) {
+	oldOnExpire := aura.OnExpire
+	if oldOnExpire == nil {
+		aura.OnExpire = newOnExpire
+	} else {
+		aura.OnExpire = func(aura *Aura, sim *Simulation) {
+			oldOnExpire(aura, sim)
+			newOnExpire(aura, sim)
+		}
+	}
+}
+
 type AuraFactory func(*Simulation) *Aura
 
 // Callback for doing something on reset.
@@ -234,6 +258,8 @@ type ResetEffect func(*Simulation)
 type auraTracker struct {
 	// Effects to invoke on every sim reset.
 	resetEffects []ResetEffect
+
+	*ExclusiveEffectManager
 
 	// All registered auras, both active and inactive.
 	auras []*Aura
@@ -262,6 +288,7 @@ type auraTracker struct {
 func newAuraTracker() auraTracker {
 	return auraTracker{
 		resetEffects:               []ResetEffect{},
+		ExclusiveEffectManager:     &ExclusiveEffectManager{},
 		activeAuras:                make([]*Aura, 0, 16),
 		onCastCompleteAuras:        make([]*Aura, 0, 16),
 		afterCastAuras:             make([]*Aura, 0, 16),
@@ -301,9 +328,6 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	}
 	if aura.Label == "" {
 		panic("Aura label is required!")
-	}
-	if aura.Priority != 0 && aura.Tag == "" {
-		panic("Aura.Priority requires Aura.Tag also be set")
 	}
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
@@ -400,19 +424,6 @@ func (at *auraTracker) HasActiveAuraWithTagExcludingAura(tag string, excludeAura
 	return false
 }
 
-// Returns if an aura should be refreshed at a specific priority, i.e. the aura
-// is about to expire AND the replacement aura has at least as high priority.
-//
-// This is used to decide whether to refresh effects with multiple strengths,
-// like Thunder Clap/Deathfrost or Faerie Fire ranks.
-func (at *auraTracker) ShouldRefreshAuraWithTagAtPriority(sim *Simulation, tag string, priority float64, refreshWindow time.Duration) bool {
-	activeAura := at.GetActiveAuraWithTag(tag)
-
-	return activeAura == nil ||
-		priority > activeAura.Priority ||
-		(priority == activeAura.Priority && activeAura.RemainingDuration(sim) <= refreshWindow)
-}
-
 // Registers a callback to this Character which will be invoked on
 // every Sim reset.
 func (at *auraTracker) RegisterResetEffect(resetEffect ResetEffect) {
@@ -504,24 +515,18 @@ func (aura *Aura) Activate(sim *Simulation) {
 		panic("Aura with 0 duration")
 	}
 
+	// Activate exclusive effects.
 	// If there is already an active aura stronger than this one, then this one
-	// is blocked.
-	if aura.Tag != "" {
-		for _, otherAura := range aura.Unit.GetAurasWithTag(aura.Tag) {
-			if otherAura.Priority > aura.Priority && otherAura.active {
-				return
+	// will be blocked.
+	for i, ee := range aura.ExclusiveEffects {
+		if !ee.Activate(sim) {
+			// Go back and deactivate the effects.
+			if i > 0 {
+				for j := 0; j < i; j++ {
+					aura.ExclusiveEffects[j].Deactivate(sim)
+				}
 			}
-		}
-	}
-
-	// Remove weaker versions of the same aura.
-	if aura.Priority != 0 {
-		for _, otherAura := range aura.Unit.GetAurasWithTag(aura.Tag) {
-			if otherAura.Priority <= aura.Priority && otherAura != aura {
-				// TODO:  if the priorities are equal:
-				// does remaining duration vs new aura duration matter when deciding to override?
-				otherAura.Deactivate(sim)
-			}
+			return
 		}
 	}
 
@@ -685,6 +690,11 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 
 	if aura.stacks != 0 {
 		aura.SetStacks(sim, 0)
+	}
+
+	// Deactivate exclusive effects.
+	for _, ee := range aura.ExclusiveEffects {
+		ee.Deactivate(sim)
 	}
 	if aura.OnExpire != nil {
 		aura.OnExpire(aura, sim)

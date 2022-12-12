@@ -62,20 +62,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			if result.Landed() {
 				dk.FrostFeverExtended[target.Index] = 0
 				dk.FrostFeverSpell.Cast(sim, target)
-				if dk.Talents.CryptFever > 0 {
-					if !dk.CryptFeverAura[target.Index].IsActive() {
-						// On new application do a ghost spell cast
-						dk.DiseaseGhostSpell.Cast(sim, target)
-					}
-					dk.CryptFeverAura[target.Index].Activate(sim)
-				}
-				if dk.Talents.EbonPlaguebringer > 0 {
-					if !dk.EbonPlagueAura[target.Index].IsActive() {
-						// On new application do a ghost spell cast
-						dk.DiseaseGhostSpell.Cast(sim, target)
-					}
-					dk.EbonPlagueAura[target.Index].Activate(sim)
-				}
 
 				if sigilOfTheUnfalteringKnight != nil {
 					sigilOfTheUnfalteringKnight.Activate(sim)

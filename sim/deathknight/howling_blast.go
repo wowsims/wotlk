@@ -74,12 +74,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 				if hasGlyph {
 					dk.FrostFeverSpell.Cast(sim, aoeUnit)
-					if dk.Talents.CryptFever > 0 {
-						dk.CryptFeverAura[aoeUnit.Index].Activate(sim)
-					}
-					if dk.Talents.EbonPlaguebringer > 0 {
-						dk.EbonPlagueAura[aoeUnit.Index].Activate(sim)
-					}
 				}
 
 				spell.DealDamage(sim, result)

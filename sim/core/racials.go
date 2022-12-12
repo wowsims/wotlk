@@ -79,18 +79,12 @@ func applyRaceEffects(agent Agent) {
 
 		statDep := character.NewDynamicMultiplyStat(stats.Armor, 1.1)
 		stoneFormAura := character.NewTemporaryStatsAuraWrapped("Stoneform", actionID, stats.Stats{}, time.Second*8, func(aura *Aura) {
-			oldOnGain := aura.OnGain
-			oldOnExpire := aura.OnExpire
-
-			aura.OnGain = func(aura *Aura, sim *Simulation) {
-				oldOnGain(aura, sim)
+			aura.ApplyOnGain(func(aura *Aura, sim *Simulation) {
 				aura.Unit.EnableDynamicStatDep(sim, statDep)
-			}
-
-			aura.OnExpire = func(aura *Aura, sim *Simulation) {
-				oldOnExpire(aura, sim)
+			})
+			aura.ApplyOnExpire(func(aura *Aura, sim *Simulation) {
 				aura.Unit.DisableDynamicStatDep(sim, statDep)
-			}
+			})
 		})
 
 		spell := character.RegisterSpell(SpellConfig{

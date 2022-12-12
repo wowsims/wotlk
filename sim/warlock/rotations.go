@@ -389,10 +389,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Data
 	// ------------------------------------------
 	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
-		dpspCurrent := core.DemonicPactAura(warlock.GetCharacter(), 0).Priority
+		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
 		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
 
-		if (currentTimeJump > 0) {
+		if currentTimeJump > 0 {
 			warlock.DPSPAggregate += dpspCurrent * currentTimeJump
 			warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
 		}
@@ -633,7 +633,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.Log(sim, "[Info] Potential Corruption rollover power [%.2f]", PotentialCorruptionRolloverPower)
 		}
 		if warlock.Talents.DemonicPact > 0 {
-			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate / sim.CurrentTime.Seconds())
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate/sim.CurrentTime.Seconds())
 		}
 	}
 

@@ -42,6 +42,7 @@ type Rogue struct {
 	priorityItems      []roguePriorityItem
 	rotationItems      []rogueRotationItem
 	assassinationPrios []assassinationPrio
+	bleedCategory      *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -49,8 +50,6 @@ type Rogue struct {
 	allMCDsDisabled bool
 
 	maxEnergy float64
-
-	initialArmorDebuffAura *core.Aura
 
 	BuilderPoints    int32
 	Builder          *core.Spell
@@ -192,7 +191,6 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 		mcd.Disable()
 	}
 	rogue.allMCDsDisabled = true
-	rogue.initialArmorDebuffAura = rogue.CurrentTarget.GetActiveAuraWithTag(core.MajorArmorReductionTag)
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
 	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
 		rogue.OverkillAura.Activate(sim)

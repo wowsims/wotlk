@@ -15,7 +15,6 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 	}
 	baseCost := 0.1 * warlock.BaseMana
 	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget)
-	warlock.CurseOfElementsAura.Duration = time.Minute * 5
 
 	warlock.CurseOfElements = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47865},
@@ -36,11 +35,10 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		FlatThreatBonus:  0, // TODO
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfElementsAura.Activate(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 }
@@ -72,11 +70,10 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		FlatThreatBonus:  0, // TODO
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfWeaknessAura.Activate(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 }
@@ -110,11 +107,10 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		FlatThreatBonus:  0, // TODO
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfTonguesAura.Activate(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 }
@@ -150,12 +146,11 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		FlatThreatBonus:  0, // TODO : curses flat threat on application
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfDoomDot.Cancel(sim)
 				warlock.CurseOfAgonyDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 	warlock.CurseOfAgonyDot = core.NewDot(core.Dot{
@@ -205,12 +200,11 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		FlatThreatBonus:  0, // TODO
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfAgonyDot.Cancel(sim)
 				warlock.CurseOfDoomDot.Apply(sim)
 			}
-			spell.DealOutcome(sim, result)
 		},
 	})
 

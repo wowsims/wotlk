@@ -43,15 +43,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 63.1
+   value: 62.9
   }
   casts: {
    key: "spell_id:48665"
-   value: 63.1
+   value: 62.9
   }
   casts: {
    key: "spell_id:48666"
-   value: 63.1
+   value: 62.9
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -123,11 +123,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 171.5
+   value: 175.3
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 308.3
+   value: 312.7
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -135,7 +135,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 313.3
+   value: 317.7
   }
   casts: {
    key: "spell_id:57975"
@@ -163,11 +163,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 15.7
+   value: 17.5
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 14.5
+   value: 16.7
   }
   casts: {
    key: "spell_id:58426"
@@ -199,23 +199,23 @@ casts_results: {
   }
   casts: {
    key: "spell_id:8647 tag:1"
-   value: 1.8
+   value: 1.2
   }
   casts: {
    key: "spell_id:8647 tag:2"
-   value: 0.6
+   value: 0.4
   }
   casts: {
    key: "spell_id:8647 tag:3"
-   value: 4
+   value: 2.5
   }
   casts: {
    key: "spell_id:8647 tag:4"
-   value: 3.6
+   value: 2
   }
   casts: {
    key: "spell_id:8647 tag:5"
-   value: 3.9
+   value: 2.2
   }
  }
 }
@@ -1148,15 +1148,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:48664"
-   value: 62.8
+   value: 62.9
   }
   casts: {
    key: "spell_id:48665"
-   value: 62.8
+   value: 62.9
   }
   casts: {
    key: "spell_id:48666"
-   value: 62.8
+   value: 62.9
   }
   casts: {
    key: "spell_id:48668 tag:1"
@@ -1208,7 +1208,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:51662"
-   value: 5.1
+   value: 5
   }
   casts: {
    key: "spell_id:51723"
@@ -1228,11 +1228,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57968"
-   value: 182.2
+   value: 180.6
   }
   casts: {
    key: "spell_id:57968 tag:1"
-   value: 319.9
+   value: 319.4
   }
   casts: {
    key: "spell_id:57968 tag:2"
@@ -1240,7 +1240,7 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57973"
-   value: 324.9
+   value: 324.4
   }
   casts: {
    key: "spell_id:57975"
@@ -1268,11 +1268,11 @@ casts_results: {
   }
   casts: {
    key: "spell_id:57993 tag:4"
-   value: 20.7
+   value: 20
   }
   casts: {
    key: "spell_id:57993 tag:5"
-   value: 19.9
+   value: 19.7
   }
   casts: {
    key: "spell_id:58426"
@@ -1312,15 +1312,15 @@ casts_results: {
   }
   casts: {
    key: "spell_id:8647 tag:3"
-   value: 0
+   value: 0.4
   }
   casts: {
    key: "spell_id:8647 tag:4"
-   value: 0
+   value: 0.5
   }
   casts: {
    key: "spell_id:8647 tag:5"
-   value: 0
+   value: 0.1
   }
  }
 }

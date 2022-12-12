@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1453.65
   final_stats: 613.184
   final_stats: 276.1
-  final_stats: 280
+  final_stats: 0
   final_stats: 109
   final_stats: 232
   final_stats: 1188.45766
@@ -845,22 +845,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9704.08828
-  tps: 10658.88699
+  dps: 9639.71581
+  tps: 10598.65908
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3526.44231
-  tps: 3170.18743
+  dps: 3535.30913
+  tps: 3182.32622
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4201.76042
-  tps: 3755.43573
+  dps: 4122.06115
+  tps: 3689.21817
  }
 }
 dps_results: {
@@ -887,22 +887,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3038.38591
-  tps: 3702.63928
+  dps: 3033.03863
+  tps: 3716.79296
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3038.38591
-  tps: 2205.09737
+  dps: 3033.03863
+  tps: 2217.27338
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-BM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3657.36217
-  tps: 2641.96717
+  dps: 3599.3406
+  tps: 2629.98977
  }
 }
 dps_results: {
@@ -929,64 +929,64 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-Marksman-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3515.88962
-  tps: 4637.36799
+  dps: 3469.99273
+  tps: 4576.59802
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-Marksman-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3515.88962
-  tps: 3180.86257
+  dps: 3469.99273
+  tps: 3135.64483
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-Marksman-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4382.89078
-  tps: 3927.7037
+  dps: 4160.29827
+  tps: 3733.92575
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6983.01902
-  tps: 7084.52688
+  dps: 6979.18948
+  tps: 7080.69734
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6983.01902
-  tps: 5902.94003
+  dps: 6979.18948
+  tps: 5899.11049
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7797.38524
-  tps: 6537.03779
+  dps: 7793.89951
+  tps: 6533.55206
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3501.70743
-  tps: 4550.65468
+  dps: 3484.19894
+  tps: 4541.45683
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3501.70743
-  tps: 3148.8653
+  dps: 3484.19894
+  tps: 3134.45297
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Dwarf-P1-SV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4148.77105
-  tps: 3695.65692
+  dps: 4115.75133
+  tps: 3677.80629
  }
 }
 dps_results: {
@@ -1013,22 +1013,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9765.16432
-  tps: 10701.81412
+  dps: 9672.61593
+  tps: 10614.12971
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3540.4408
-  tps: 3161.85365
+  dps: 3553.89798
+  tps: 3178.45215
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4242.2237
-  tps: 3769.54513
+  dps: 4158.93621
+  tps: 3700.33687
  }
 }
 dps_results: {
@@ -1055,22 +1055,22 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-BM-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3085.49264
-  tps: 3699.2552
+  dps: 3053.96533
+  tps: 3690.54801
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-BM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3085.49264
-  tps: 2198.95549
+  dps: 3053.96533
+  tps: 2193.18678
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-BM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3668.23844
-  tps: 2598.10967
+  dps: 3666.60407
+  tps: 2638.71086
  }
 }
 dps_results: {
@@ -1097,64 +1097,64 @@ dps_results: {
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-Marksman-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3539.23181
-  tps: 4636.59707
+  dps: 3498.79899
+  tps: 4587.02836
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-Marksman-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3539.23181
-  tps: 3179.65231
+  dps: 3498.79899
+  tps: 3141.45509
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-Marksman-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4412.11594
-  tps: 3929.52635
+  dps: 4202.04384
+  tps: 3749.44389
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7034.50965
-  tps: 7070.90049
+  dps: 7030.67362
+  tps: 7067.06446
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7034.50965
-  tps: 5893.91632
+  dps: 7030.67362
+  tps: 5890.08029
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7887.03362
-  tps: 6552.41572
+  dps: 7883.53895
+  tps: 6548.92105
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3503.9629
-  tps: 4531.73919
+  dps: 3500.42909
+  tps: 4536.86802
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3503.9629
-  tps: 3128.31761
+  dps: 3500.42909
+  tps: 3128.19354
  }
 }
 dps_results: {
  key: "TestHunter-Settings-Orc-P1-SV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4179.8221
-  tps: 3699.62401
+  dps: 4144.60901
+  tps: 3680.25019
  }
 }
 dps_results: {

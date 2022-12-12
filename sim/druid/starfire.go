@@ -53,6 +53,9 @@ func (druid *Druid) registerStarfireSpell() {
 			baseDamage := sim.Roll(1038, 1222) + ((spell.SpellPower() + idolSpellPower) * spellCoeff) + (spell.SpellPower() * bonusCoeff)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
+				if druid.EarthAndMoonAura != nil {
+					druid.EarthAndMoonAura.Activate(sim)
+				}
 				if hasGlyph && druid.MoonfireDot.IsActive() && druid.MoonfireDot.NumberOfTicks < maxMoonfireTicks {
 					druid.MoonfireDot.NumberOfTicks += 1
 					druid.MoonfireDot.UpdateExpires(druid.MoonfireDot.ExpiresAt() + time.Second*3)

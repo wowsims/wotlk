@@ -39,19 +39,13 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 		},
 		core.NeverExpires,
 		func(aura *core.Aura) {
-			hunter.applySharedAspectConfig(true, aura)
-
 			if hunter.Talents.AspectMastery {
-				oldOnGain := aura.OnGain
-				aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-					oldOnGain(aura, sim)
+				aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
 					aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.95
-				}
-				oldOnExpire := aura.OnExpire
-				aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-					oldOnExpire(aura, sim)
+				})
+				aura.ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
 					aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.95
-				}
+				})
 			}
 
 			aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -64,6 +58,7 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 				}
 			}
 		})
+	hunter.applySharedAspectConfig(true, hunter.AspectOfTheDragonhawkAura)
 
 	hunter.AspectOfTheDragonhawk = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -124,8 +119,8 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 			}
 		},
 	}
-	hunter.applySharedAspectConfig(false, &auraConfig)
 	hunter.AspectOfTheViperAura = hunter.RegisterAura(auraConfig)
+	hunter.applySharedAspectConfig(false, hunter.AspectOfTheViperAura)
 
 	hunter.AspectOfTheViper = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -144,19 +139,10 @@ func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {
 		}
 	}
 
-	aura.Tag = "Aspect"
-	aura.Priority = 1
 	aura.Duration = core.NeverExpires
+	aura.NewExclusiveEffect("Aspect", true, core.ExclusiveEffect{})
 
-	oldOnGain := aura.OnGain
-	if oldOnGain == nil {
-		aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-			hunter.currentAspect = aura
-		}
-	} else {
-		aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-			oldOnGain(aura, sim)
-			hunter.currentAspect = aura
-		}
-	}
+	aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
+		hunter.currentAspect = aura
+	})
 }

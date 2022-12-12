@@ -154,8 +154,6 @@ type Deathknight struct {
 
 	// Used only to proc stuff as its free GCD
 	MindFreezeSpell *core.Spell
-	// Used by Crypt Fever & Ebon Plague ghost procs
-	DiseaseGhostSpell *core.Spell
 
 	// Diseases
 	FrostFeverSpell     *RuneSpell
@@ -199,9 +197,8 @@ type Deathknight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	FrostFeverDebuffAura []*core.Aura
-	CryptFeverAura       []*core.Aura
-	EbonPlagueAura       []*core.Aura
+	FrostFeverDebuffAura       []*core.Aura
+	EbonPlagueOrCryptFeverAura []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
 }

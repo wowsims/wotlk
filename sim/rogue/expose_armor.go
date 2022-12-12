@@ -8,13 +8,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var ExposeArmorActionID = core.ActionID{SpellID: 8647}
-
 func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 	baseCost := 25.0 - float64(rogue.Talents.ImprovedExposeArmor)*5
 	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
+	actionID := core.ActionID{SpellID: 8647}
+
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     ExposeArmorActionID.WithTag(comboPoints),
+		ActionID:     actionID.WithTag(comboPoints),
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
@@ -49,22 +49,6 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 
 func (rogue *Rogue) registerExposeArmorSpell() {
 	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
-	onExpire := rogue.ExposeArmorAura.OnExpire
-	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
-		rogue.ExposeArmorAura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-			onExpire(aura, sim)
-			if rogue.initialArmorDebuffAura != nil {
-				rogue.initialArmorDebuffAura.Activate(sim)
-				if rogue.initialArmorDebuffAura.ActionID.SameActionIgnoreTag(core.SunderArmorActionID) {
-					core.StartPeriodicAction(sim, core.SunderArmorPeriodicActionOptions(rogue.initialArmorDebuffAura))
-				} else if rogue.initialArmorDebuffAura.ActionID.SameActionIgnoreTag(ExposeArmorActionID) {
-					core.StartPeriodicAction(sim, core.ExposeArmorPeriodicActonOptions(rogue.initialArmorDebuffAura))
-				} else if rogue.initialArmorDebuffAura.ActionID.SameActionIgnoreTag(core.AcidSpitActionID) {
-					core.StartPeriodicAction(sim, core.AcidSpitPeriodicActionOptions(rogue.initialArmorDebuffAura))
-				}
-			}
-		}
-	}
 	durationBonus := core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor), time.Second*12, 0)
 	rogue.exposeArmorDurations = [6]time.Duration{
 		0,
