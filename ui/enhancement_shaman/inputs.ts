@@ -36,7 +36,7 @@ export const Bloodlust = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecE
 export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanShield>({
 	fieldName: 'shield',
 	values: [
-		{ color: 'grey', value: ShamanShield.NoShield },
+		{ value: ShamanShield.NoShield, tooltip: 'No Shield' },
 		{ actionId: ActionId.fromSpellId(57960), value: ShamanShield.WaterShield },
 		{ actionId: ActionId.fromSpellId(49281), value: ShamanShield.LightningShield },
 	],
@@ -45,7 +45,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
 	fieldName: 'imbueMh',
 	values: [
-		{ color: 'grey', value: ShamanImbue.NoImbue },
+		{ value: ShamanImbue.NoImbue, tooltip: 'No Main Hand Enchant' },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
 		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
 		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},
@@ -56,7 +56,7 @@ export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanImbue>({
 	fieldName: 'imbueOh',
 	values: [
-		{ color: 'grey', value: ShamanImbue.NoImbue },
+		{ value: ShamanImbue.NoImbue, tooltip: 'No Off Hand Enchant' },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
 		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
 		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},

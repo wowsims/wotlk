@@ -42,26 +42,34 @@ $brand-color: #e0a335;
   $primary: $brand-color;
 }
 
-$success: #7cfc00;
+$success: #1eff00;
+$quality-uncommon: $success;
+$quality-rare: #0070dd;
+$quality-epic: #a335ee;
 
 $custom-colors: (
   "brand": $brand-color,
   "primary": $primary,
+  "quality-epic": $quality-epic,
+  "quality-rare": $quality-rare,
+  "quality-uncommon": $quality-uncommon,
   "success": $success,
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 // Custom variables
+$block-spacer: .75rem;
 $content-font-size: .75rem;
 
 // Global Bootstrap variable overrides
-$enable-negative-margins: true;
-
 $body-bg: #15171e;
 $body-color: white;
 
 $border-color: dimgrey;
+
+$enable-negative-margins: true;
+$enable-rounded: false;
 
 $link-color: #a5b1d6;
 $link-decoration: none;
@@ -69,30 +77,41 @@ $link-hover-color: white;
 $link-transition: color .15s ease-in-out;
 
 // Component variable overrides
-$alert-border-radius: 0;
-
-$btn-border-radius: 0;
-$btn-border-radius-sm: 0;
-$btn-border-radius-lg: 0;
 $btn-hover-bg-shade-amount: 30%;
 $btn-font-size: .875rem;
 $btn-padding-y: .5rem;
 
 $dropdown-bg: $body-bg;
-$dropdown-border-radius: 0;
 $dropdown-border-width: 0;
 $dropdown-color: white;
-$dropdown-inner-border-radius: 0;
 $dropdown-link-active-bg: $dropdown-bg;
 $dropdown-link-hover-bg: darken($dropdown-bg, 3);
 $dropdown-padding-y: 0;
+
+$form-check-input-bg: $link-color;
+$form-check-input-border: 1px solid lighten($body-bg, 15);
+$form-check-input-width: 2rem;
+$form-check-input-focus-border: lighten($body-bg, 20);
+$form-check-input-focus-box-shadow: 0 0 .25rem $primary;
+
+$form-check-input-checked-color: color-contrast($primary);
+$form-check-input-checked-bg-color: $primary;
+$form-check-input-checked-border-color: lighten($body-bg, 20);
 
 $form-label-margin-bottom: .25rem;
 $form-label-font-size: $content-font-size;
 $form-label-font-weight: normal;
 
+$form-select-bg: lighten($body-bg, 12);
+$form-select-border-color: lighten($body-bg, 15);
+$form-select-color: white;
+$form-select-disabled-bg: lighten($body-bg, 20);
+$form-select-focus-border-color: lighten($body-bg, 20);
+$form-select-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$form-select-font-size: $content-font-size;
+$form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+
 $input-bg: lighten($body-bg, 12);
-$input-border-radius: 0;
 $input-border-color: lighten($body-bg, 15);
 $input-color: white;
 $input-disabled-bg: lighten($body-bg, 20);
@@ -101,6 +120,10 @@ $input-focus-border-color: lighten($body-bg, 20);
 $input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
 $input-focus-color: white;
 $input-font-size: $content-font-size;
+
+$modal-content-bg: $body-bg;
+$modal-content-border-color: $link-color;
+$modal-header-border-color: $border-color;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;

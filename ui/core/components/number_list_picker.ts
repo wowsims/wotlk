@@ -20,7 +20,7 @@ export class NumberListPicker<ModObject> extends Input<ModObject, Array<number>>
 		this.inputElem = document.createElement('input');
 		this.inputElem.type = 'text';
 		this.inputElem.placeholder = config.placeholder || '';
-		this.inputElem.classList.add('number-list-picker-input');
+		this.inputElem.classList.add('number-list-picker-input', 'form-control');
 		this.rootElem.appendChild(this.inputElem);
 
 		this.init();

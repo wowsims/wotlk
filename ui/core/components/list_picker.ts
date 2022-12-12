@@ -1,9 +1,8 @@
+import { Tooltip } from 'bootstrap';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { arrayEquals, swap } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
-
-declare var tippy: any;
 
 export interface ListPickerConfig<ModObject, ItemType, ItemPicker> extends InputConfig<ModObject, Array<ItemType>> {
 	title?: string,
@@ -33,18 +32,19 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		this.itemPickerPairs = [];
 
 		this.rootElem.innerHTML = `
-			${this.config.title ? `<span class="list-picker-title">${this.config.title}</span>` : ''}
+			${config.title ? `
+				<label
+					class="list-picker-title form-label"
+					${this.config.titleTooltip ? 'data-bs-toggle="tooltip"' : ''}
+					${this.config.titleTooltip ? `data-bs-title="${this.config.titleTooltip}"` : ''}
+				>${config.title}</label>` : ''
+			}
 			<div class="list-picker-items"></div>
-			<button class="list-picker-new-button sim-button">NEW ${config.itemLabel.toUpperCase()}</button>
+			<button class="list-picker-new-button btn btn-primary">New ${config.itemLabel}</button>
 		`;
 
-		if (this.config.title && this.config.titleTooltip) {
-			const title = this.rootElem.getElementsByClassName('list-picker-title')[0] as HTMLElement;
-			tippy(title, {
-				'content': this.config.titleTooltip,
-				'allowHTML': true,
-			});
-		}
+		if (this.config.titleTooltip)
+			Tooltip.getOrCreateInstance(this.rootElem.querySelector('.list-picker-title') as HTMLElement);
 
 		this.itemsDiv = this.rootElem.getElementsByClassName('list-picker-items')[0] as HTMLElement;
 
@@ -104,15 +104,26 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		itemContainer.innerHTML = `
 			${this.config.inlineMenuBar ? itemHTML : ''}
 			<div class="list-picker-item-header">
-				<span class="list-picker-item-up fa fa-angle-up"></span>
-				<span class="list-picker-item-down fa fa-angle-down"></span>
-				<span class="list-picker-item-copy fa fa-copy"></span>
-				<span class="list-picker-item-delete fa fa-times"></span>
+				${this.config.itemLabel && !this.config.inlineMenuBar ? `<h6 class="list-picker-item-title">${this.config.itemLabel}</h6>` : ''}
+				<a href="javascript:void(0)" class="list-picker-item-action list-picker-item-up" role="button" data-bs-toggle="tooltip" data-bs-title="Move Up">
+					<i class="fa fa-angle-up fa-xl"></i>
+				</a>
+				<a href="javascript:void(0)" class="list-picker-item-action list-picker-item-down" role="button" data-bs-toggle="tooltip" data-bs-title="Move Down">
+					<i class="fa fa-angle-down fa-xl"></i>
+				</a>
+				<a href="javascript:void(0)" class="list-picker-item-action list-picker-item-copy" role="button" data-bs-toggle="tooltip" data-bs-title="Copy to New ${this.config.itemLabel}">
+					<i class="fa fa-copy fa-xl"></i>
+				</a>
+				<a href="javascript:void(0)" class="list-picker-item-action list-picker-item-delete link-danger" role="button" data-bs-toggle="tooltip" data-bs-title="Delete ${this.config.itemLabel}">
+					<i class="fa fa-times fa-xl"></i>
+				</a>
 			</div>
 			${!this.config.inlineMenuBar ? itemHTML : ''}
 		`;
 
 		const upButton = itemContainer.getElementsByClassName('list-picker-item-up')[0] as HTMLElement;
+		const upButtonTooltip = Tooltip.getOrCreateInstance(upButton);
+
 		upButton.addEventListener('click', event => {
 			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
 			if (index == -1) {
@@ -126,13 +137,12 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 			const newList = this.config.getValue(this.modObject);
 			swap(newList, index, index - 1);
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-		});
-		tippy(upButton, {
-			'content': `Move Up`,
-			'allowHTML': true,
+			upButtonTooltip.hide();
 		});
 
 		const downButton = itemContainer.getElementsByClassName('list-picker-item-down')[0] as HTMLElement;
+		const downButtonTooltip = Tooltip.getOrCreateInstance(downButton);
+
 		downButton.addEventListener('click', event => {
 			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
 			if (index == -1) {
@@ -146,13 +156,12 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 			const newList = this.config.getValue(this.modObject);
 			swap(newList, index, index + 1);
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-		});
-		tippy(downButton, {
-			'content': `Move Down`,
-			'allowHTML': true,
+			downButtonTooltip.hide();
 		});
 
 		const copyButton = itemContainer.getElementsByClassName('list-picker-item-copy')[0] as HTMLElement;
+		const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton);
+
 		copyButton.addEventListener('click', event => {
 			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
 			if (index == -1) {
@@ -163,13 +172,12 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 			const copiedItem = this.config.copyItem(item);
 			const newList = this.config.getValue(this.modObject).concat([copiedItem]);
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-		});
-		tippy(copyButton, {
-			'content': `Copy to New ${this.config.itemLabel}`,
-			'allowHTML': true,
+			copyButtonTooltip.hide();
 		});
 
 		const deleteButton = itemContainer.getElementsByClassName('list-picker-item-delete')[0] as HTMLElement;
+		const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton);
+
 		deleteButton.addEventListener('click', event => {
 			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
 			if (index == -1) {
@@ -180,10 +188,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 			const newList = this.config.getValue(this.modObject);
 			newList.splice(index, 1);
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-		});
-		tippy(deleteButton, {
-			'content': `Delete`,
-			'allowHTML': true,
+			deleteButtonTooltip.hide();
 		});
 
 		const itemElem = itemContainer.getElementsByClassName('list-picker-item')[0] as HTMLElement;

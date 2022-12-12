@@ -23,11 +23,27 @@ import { Target } from '../target.js';
 import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
-import { IconPickerConfig } from './icon_picker.js';
+import { IconPicker, IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
 import * as InputHelpers from './input_helpers.js';
+import { Tooltip } from 'bootstrap';
+
+// Component Functions
+
+export type IconInputConfig<ModObject, T> = (
+	InputHelpers.TypedIconPickerConfig<ModObject, T> |
+	InputHelpers.TypedIconEnumPickerConfig<ModObject, T>
+);
+
+export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputConfig: IconInputConfig<Player<Spec>, any>) => {
+	if (inputConfig.type == 'icon') {
+		return new IconPicker<Player<Spec>, any>(parent, player, inputConfig);
+	} else if (inputConfig.type == 'iconEnum') {
+		return new IconEnumPicker<Player<Spec>, any>(parent, player, inputConfig);
+	}
+};
 
 // Raid Buffs
 
@@ -52,7 +68,7 @@ export const ArmorBuff = InputHelpers.makeMultiIconInput([
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48161), ActionId.fromSpellId(14767), 'powerWordFortitude'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37094), 'scrollOfStamina'),
-], 'Stam');
+], 'Stamina');
 
 export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(58643), ActionId.fromSpellId(52456), 'strengthOfEarthTotem'),
@@ -71,7 +87,7 @@ export const SpiritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48073), 'divineSpirit'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(57567), ActionId.fromSpellId(54038), 'felIntelligence'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(37098), 'scrollOfSpirit'),
-], 'Spi');
+], 'Spirit');
 
 export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(48934), ActionId.fromSpellId(20045), 'blessingOfMight'),
@@ -82,7 +98,7 @@ export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53138), 'abominationsMight'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(30809), 'unleashedRage'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(19506), 'trueshotAura'),
-], 'AP %');
+], 'Atk Pwr %');
 
 export const DamagePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(31869), 'sanctifiedRetribution'),
@@ -127,7 +143,7 @@ export const ReplenishmentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(53292), 'huntingParty'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(54118), 'improvedSoulLeech'),
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(44561), 'enduringWinter'),
-], 'Repl', 2);
+], 'Replen', 2);
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(24907), ActionId.fromSpellId(48396), 'moonkinAura'),
@@ -140,7 +156,7 @@ export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 5000, 'demonicPact', 500),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
-], 'SP');
+], 'Spell Power');
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
 
@@ -167,21 +183,21 @@ export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(7386), 'sunderArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(8647), 'exposeArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(55754), 'acidSpit'),
-], 'Major Ar');
+], 'Major ArP');
 
 export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(56631), 'sting'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(53598), 'sporeCloud'),
-], 'Minor Ar');
+], 'Minor ArP');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(26016), 'vindication'),
 	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
-], 'AP');
+], 'Atk Pwr');
 
 export const BleedDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle'),
@@ -200,7 +216,7 @@ export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(55095), ActionId.fromSpellId(51456), 'frostFever'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(53696), 'judgementsOfTheJust'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(48485), 'infectedWounds'),
-], 'Atk Spd');
+], 'Atk Speed');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput(ActionId.fromSpellId(65855), 'insectSwarm'),
@@ -359,158 +375,185 @@ function makeMultistateMultiplierIndividualBuffInput(id: ActionId, numStates: nu
 // Custom buffs that don't fit into any of the helper functions above.
 //////////////////////////////////////////////////////////////////////
 
-function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
-	return makeConsumeInputFactory(consumesFieldName, [
-		{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
-		{ actionId: ActionId.fromItemId(41166), value: Potions.RunicHealingInjector },
-		{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
-		{ actionId: ActionId.fromItemId(42545), value: Potions.RunicManaInjector },
-		{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
-		{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
-		{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
+function makePotionInputFactory(consumesFieldName: keyof Consumes): (options: Array<Potions>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, Potions> {
+	return makeConsumeInputFactory({
+		consumesFieldName: consumesFieldName,
+		allOptions: [
+			{ actionId: ActionId.fromItemId(33447), value: Potions.RunicHealingPotion },
+			{ actionId: ActionId.fromItemId(41166), value: Potions.RunicHealingInjector },
+			{ actionId: ActionId.fromItemId(33448), value: Potions.RunicManaPotion },
+			{ actionId: ActionId.fromItemId(42545), value: Potions.RunicManaInjector },
+			{ actionId: ActionId.fromItemId(40093), value: Potions.IndestructiblePotion },
+			{ actionId: ActionId.fromItemId(40211), value: Potions.PotionOfSpeed },
+			{ actionId: ActionId.fromItemId(40212), value: Potions.PotionOfWildMagic },
 
-		{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
-		{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
-		{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
-		{ actionId: ActionId.fromItemId(22832), value: Potions.SuperManaPotion },
-		{ actionId: ActionId.fromItemId(31677), value: Potions.FelManaPotion },
-		{ actionId: ActionId.fromItemId(22828), value: Potions.InsaneStrengthPotion },
-		{ actionId: ActionId.fromItemId(22849), value: Potions.IronshieldPotion },
-		{ actionId: ActionId.fromItemId(22837), value: Potions.HeroicPotion },
-	] as Array<IconEnumValueConfig<Player<any>, Potions>>);
+			{ actionId: ActionId.fromItemId(22839), value: Potions.DestructionPotion },
+			{ actionId: ActionId.fromItemId(22838), value: Potions.HastePotion },
+			{ actionId: ActionId.fromItemId(13442), value: Potions.MightyRagePotion },
+			{ actionId: ActionId.fromItemId(22832), value: Potions.SuperManaPotion },
+			{ actionId: ActionId.fromItemId(31677), value: Potions.FelManaPotion },
+			{ actionId: ActionId.fromItemId(22828), value: Potions.InsaneStrengthPotion },
+			{ actionId: ActionId.fromItemId(22849), value: Potions.IronshieldPotion },
+			{ actionId: ActionId.fromItemId(22837), value: Potions.HeroicPotion },
+		] as Array<IconEnumValueConfig<Player<any>, Potions>>,
+	});
 }
 export const makePotionsInput = makePotionInputFactory('defaultPotion');
 export const makePrepopPotionsInput = makePotionInputFactory('prepopPotion');
 
-export const makeConjuredInput = makeConsumeInputFactory('defaultConjured', [
-	{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
-	{ actionId: ActionId.fromItemId(22788), value: Conjured.ConjuredFlameCap },
-	{ actionId: ActionId.fromItemId(22105), value: Conjured.ConjuredHealthstone },
-	{ actionId: ActionId.fromItemId(7676), value: Conjured.ConjuredRogueThistleTea },
-] as Array<IconEnumValueConfig<Player<any>, Conjured>>);
+export const makeConjuredInput = makeConsumeInputFactory({
+	consumesFieldName: 'defaultConjured',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(12662), value: Conjured.ConjuredDarkRune },
+		{ actionId: ActionId.fromItemId(22788), value: Conjured.ConjuredFlameCap },
+		{ actionId: ActionId.fromItemId(22105), value: Conjured.ConjuredHealthstone },
+		{ actionId: ActionId.fromItemId(7676), value: Conjured.ConjuredRogueThistleTea },
+	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
+});
 
-export const makeFlasksInput = makeConsumeInputFactory('flask', [
-	{ actionId: ActionId.fromItemId(46376), value: Flask.FlaskOfTheFrostWyrm },
-	{ actionId: ActionId.fromItemId(46377), value: Flask.FlaskOfEndlessRage },
-	{ actionId: ActionId.fromItemId(46378), value: Flask.FlaskOfPureMojo },
-	{ actionId: ActionId.fromItemId(46379), value: Flask.FlaskOfStoneblood },
-	{ actionId: ActionId.fromItemId(40079), value: Flask.LesserFlaskOfToughness },
-	{ actionId: ActionId.fromItemId(44939), value: Flask.LesserFlaskOfResistance },
-	{ actionId: ActionId.fromItemId(22861), value: Flask.FlaskOfBlindingLight },
-	{ actionId: ActionId.fromItemId(22853), value: Flask.FlaskOfMightyRestoration },
-	{ actionId: ActionId.fromItemId(22866), value: Flask.FlaskOfPureDeath },
-	{ actionId: ActionId.fromItemId(22854), value: Flask.FlaskOfRelentlessAssault },
-	{ actionId: ActionId.fromItemId(13512), value: Flask.FlaskOfSupremePower },
-	{ actionId: ActionId.fromItemId(22851), value: Flask.FlaskOfFortification },
-	{ actionId: ActionId.fromItemId(33208), value: Flask.FlaskOfChromaticWonder },
-] as Array<IconEnumValueConfig<Player<any>, Flask>>, (eventID: EventID, player: Player<any>, newValue: Flask) => {
-	if (newValue) {
-		const newConsumes = player.getConsumes();
-		newConsumes.battleElixir = BattleElixir.BattleElixirUnknown;
-		newConsumes.guardianElixir = GuardianElixir.GuardianElixirUnknown;
-		player.setConsumes(eventID, newConsumes);
+export const makeFlasksInput = makeConsumeInputFactory({
+	consumesFieldName: 'flask',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(46376), value: Flask.FlaskOfTheFrostWyrm },
+		{ actionId: ActionId.fromItemId(46377), value: Flask.FlaskOfEndlessRage },
+		{ actionId: ActionId.fromItemId(46378), value: Flask.FlaskOfPureMojo },
+		{ actionId: ActionId.fromItemId(46379), value: Flask.FlaskOfStoneblood },
+		{ actionId: ActionId.fromItemId(40079), value: Flask.LesserFlaskOfToughness },
+		{ actionId: ActionId.fromItemId(44939), value: Flask.LesserFlaskOfResistance },
+		{ actionId: ActionId.fromItemId(22861), value: Flask.FlaskOfBlindingLight },
+		{ actionId: ActionId.fromItemId(22853), value: Flask.FlaskOfMightyRestoration },
+		{ actionId: ActionId.fromItemId(22866), value: Flask.FlaskOfPureDeath },
+		{ actionId: ActionId.fromItemId(22854), value: Flask.FlaskOfRelentlessAssault },
+		{ actionId: ActionId.fromItemId(13512), value: Flask.FlaskOfSupremePower },
+		{ actionId: ActionId.fromItemId(22851), value: Flask.FlaskOfFortification },
+		{ actionId: ActionId.fromItemId(33208), value: Flask.FlaskOfChromaticWonder },
+	] as Array<IconEnumValueConfig<Player<any>, Flask>>,
+	onSet: (eventID: EventID, player: Player<any>, newValue: Flask) => {
+		if (newValue) {
+			const newConsumes = player.getConsumes();
+			newConsumes.battleElixir = BattleElixir.BattleElixirUnknown;
+			newConsumes.guardianElixir = GuardianElixir.GuardianElixirUnknown;
+			player.setConsumes(eventID, newConsumes);
+		}
 	}
 });
 
-export const makeBattleElixirsInput = makeConsumeInputFactory('battleElixir', [
-	{ actionId: ActionId.fromItemId(44325), value: BattleElixir.ElixirOfAccuracy },
-	{ actionId: ActionId.fromItemId(44330), value: BattleElixir.ElixirOfArmorPiercing },
-	{ actionId: ActionId.fromItemId(44327), value: BattleElixir.ElixirOfDeadlyStrikes },
-	{ actionId: ActionId.fromItemId(44329), value: BattleElixir.ElixirOfExpertise },
-	{ actionId: ActionId.fromItemId(44331), value: BattleElixir.ElixirOfLightningSpeed },
-	{ actionId: ActionId.fromItemId(39666), value: BattleElixir.ElixirOfMightyAgility },
-	{ actionId: ActionId.fromItemId(40073), value: BattleElixir.ElixirOfMightyStrength },
-	{ actionId: ActionId.fromItemId(40076), value: BattleElixir.GurusElixir },
-	{ actionId: ActionId.fromItemId(40070), value: BattleElixir.SpellpowerElixir },
-	{ actionId: ActionId.fromItemId(40068), value: BattleElixir.WrathElixir },
-	{ actionId: ActionId.fromItemId(28103), value: BattleElixir.AdeptsElixir },
-	{ actionId: ActionId.fromItemId(9224), value: BattleElixir.ElixirOfDemonslaying },
-	{ actionId: ActionId.fromItemId(22831), value: BattleElixir.ElixirOfMajorAgility },
-	{ actionId: ActionId.fromItemId(22833), value: BattleElixir.ElixirOfMajorFirePower },
-	{ actionId: ActionId.fromItemId(22827), value: BattleElixir.ElixirOfMajorFrostPower },
-	{ actionId: ActionId.fromItemId(22835), value: BattleElixir.ElixirOfMajorShadowPower },
-	{ actionId: ActionId.fromItemId(22824), value: BattleElixir.ElixirOfMajorStrength },
-	{ actionId: ActionId.fromItemId(28104), value: BattleElixir.ElixirOfMastery },
-	{ actionId: ActionId.fromItemId(13452), value: BattleElixir.ElixirOfTheMongoose },
-	{ actionId: ActionId.fromItemId(31679), value: BattleElixir.FelStrengthElixir },
-	{ actionId: ActionId.fromItemId(13454), value: BattleElixir.GreaterArcaneElixir },
-] as Array<IconEnumValueConfig<Player<any>, BattleElixir>>, (eventID: EventID, player: Player<any>, newValue: BattleElixir) => {
-	if (newValue) {
-		const newConsumes = player.getConsumes();
-		newConsumes.flask = Flask.FlaskUnknown;
-		player.setConsumes(eventID, newConsumes);
+export const makeBattleElixirsInput = makeConsumeInputFactory({
+	consumesFieldName: 'battleElixir',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(44325), value: BattleElixir.ElixirOfAccuracy },
+		{ actionId: ActionId.fromItemId(44330), value: BattleElixir.ElixirOfArmorPiercing },
+		{ actionId: ActionId.fromItemId(44327), value: BattleElixir.ElixirOfDeadlyStrikes },
+		{ actionId: ActionId.fromItemId(44329), value: BattleElixir.ElixirOfExpertise },
+		{ actionId: ActionId.fromItemId(44331), value: BattleElixir.ElixirOfLightningSpeed },
+		{ actionId: ActionId.fromItemId(39666), value: BattleElixir.ElixirOfMightyAgility },
+		{ actionId: ActionId.fromItemId(40073), value: BattleElixir.ElixirOfMightyStrength },
+		{ actionId: ActionId.fromItemId(40076), value: BattleElixir.GurusElixir },
+		{ actionId: ActionId.fromItemId(40070), value: BattleElixir.SpellpowerElixir },
+		{ actionId: ActionId.fromItemId(40068), value: BattleElixir.WrathElixir },
+		{ actionId: ActionId.fromItemId(28103), value: BattleElixir.AdeptsElixir },
+		{ actionId: ActionId.fromItemId(9224), value: BattleElixir.ElixirOfDemonslaying },
+		{ actionId: ActionId.fromItemId(22831), value: BattleElixir.ElixirOfMajorAgility },
+		{ actionId: ActionId.fromItemId(22833), value: BattleElixir.ElixirOfMajorFirePower },
+		{ actionId: ActionId.fromItemId(22827), value: BattleElixir.ElixirOfMajorFrostPower },
+		{ actionId: ActionId.fromItemId(22835), value: BattleElixir.ElixirOfMajorShadowPower },
+		{ actionId: ActionId.fromItemId(22824), value: BattleElixir.ElixirOfMajorStrength },
+		{ actionId: ActionId.fromItemId(28104), value: BattleElixir.ElixirOfMastery },
+		{ actionId: ActionId.fromItemId(13452), value: BattleElixir.ElixirOfTheMongoose },
+		{ actionId: ActionId.fromItemId(31679), value: BattleElixir.FelStrengthElixir },
+		{ actionId: ActionId.fromItemId(13454), value: BattleElixir.GreaterArcaneElixir },
+	] as Array<IconEnumValueConfig<Player<any>, BattleElixir>>,
+	onSet: (eventID: EventID, player: Player<any>, newValue: BattleElixir) => {
+		if (newValue) {
+			const newConsumes = player.getConsumes();
+			newConsumes.flask = Flask.FlaskUnknown;
+			player.setConsumes(eventID, newConsumes);
+		}
 	}
 });
 
-export const makeGuardianElixirsInput = makeConsumeInputFactory('guardianElixir', [
-	{ actionId: ActionId.fromItemId(44328), value: GuardianElixir.ElixirOfMightyDefense },
-	{ actionId: ActionId.fromItemId(40078), value: GuardianElixir.ElixirOfMightyFortitude },
-	{ actionId: ActionId.fromItemId(40109), value: GuardianElixir.ElixirOfMightyMageblood },
-	{ actionId: ActionId.fromItemId(44332), value: GuardianElixir.ElixirOfMightyThoughts },
-	{ actionId: ActionId.fromItemId(40097), value: GuardianElixir.ElixirOfProtection },
-	{ actionId: ActionId.fromItemId(40072), value: GuardianElixir.ElixirOfSpirit },
-	{ actionId: ActionId.fromItemId(9088), value: GuardianElixir.GiftOfArthas },
-	{ actionId: ActionId.fromItemId(32067), value: GuardianElixir.ElixirOfDraenicWisdom },
-	{ actionId: ActionId.fromItemId(32068), value: GuardianElixir.ElixirOfIronskin },
-	{ actionId: ActionId.fromItemId(22834), value: GuardianElixir.ElixirOfMajorDefense },
-	{ actionId: ActionId.fromItemId(32062), value: GuardianElixir.ElixirOfMajorFortitude },
-	{ actionId: ActionId.fromItemId(22840), value: GuardianElixir.ElixirOfMajorMageblood },
-] as Array<IconEnumValueConfig<Player<any>, GuardianElixir>>, (eventID: EventID, player: Player<any>, newValue: GuardianElixir) => {
-	if (newValue) {
-		const newConsumes = player.getConsumes();
-		newConsumes.flask = Flask.FlaskUnknown;
-		player.setConsumes(eventID, newConsumes);
+export const makeGuardianElixirsInput = makeConsumeInputFactory({
+	consumesFieldName: 'guardianElixir',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(44328), value: GuardianElixir.ElixirOfMightyDefense },
+		{ actionId: ActionId.fromItemId(40078), value: GuardianElixir.ElixirOfMightyFortitude },
+		{ actionId: ActionId.fromItemId(40109), value: GuardianElixir.ElixirOfMightyMageblood },
+		{ actionId: ActionId.fromItemId(44332), value: GuardianElixir.ElixirOfMightyThoughts },
+		{ actionId: ActionId.fromItemId(40097), value: GuardianElixir.ElixirOfProtection },
+		{ actionId: ActionId.fromItemId(40072), value: GuardianElixir.ElixirOfSpirit },
+		{ actionId: ActionId.fromItemId(9088), value: GuardianElixir.GiftOfArthas },
+		{ actionId: ActionId.fromItemId(32067), value: GuardianElixir.ElixirOfDraenicWisdom },
+		{ actionId: ActionId.fromItemId(32068), value: GuardianElixir.ElixirOfIronskin },
+		{ actionId: ActionId.fromItemId(22834), value: GuardianElixir.ElixirOfMajorDefense },
+		{ actionId: ActionId.fromItemId(32062), value: GuardianElixir.ElixirOfMajorFortitude },
+		{ actionId: ActionId.fromItemId(22840), value: GuardianElixir.ElixirOfMajorMageblood },
+	] as Array<IconEnumValueConfig<Player<any>, GuardianElixir>>,
+	onSet: (eventID: EventID, player: Player<any>, newValue: GuardianElixir) => {
+		if (newValue) {
+			const newConsumes = player.getConsumes();
+			newConsumes.flask = Flask.FlaskUnknown;
+			player.setConsumes(eventID, newConsumes);
+		}
 	}
 });
 
-export const makeFoodInput = makeConsumeInputFactory('food', [
-	{ actionId: ActionId.fromItemId(43015), value: Food.FoodFishFeast },
-	{ actionId: ActionId.fromItemId(34753), value: Food.FoodGreatFeast },
-	{ actionId: ActionId.fromItemId(42999), value: Food.FoodBlackenedDragonfin },
-	{ actionId: ActionId.fromItemId(42995), value: Food.FoodHeartyRhino },
-	{ actionId: ActionId.fromItemId(34754), value: Food.FoodMegaMammothMeal },
-	{ actionId: ActionId.fromItemId(34756), value: Food.FoodSpicedWormBurger },
-	{ actionId: ActionId.fromItemId(42994), value: Food.FoodRhinoliciousWormsteak },
-	{ actionId: ActionId.fromItemId(34769), value: Food.FoodImperialMantaSteak },
-	{ actionId: ActionId.fromItemId(42996), value: Food.FoodSnapperExtreme },
-	{ actionId: ActionId.fromItemId(34758), value: Food.FoodMightyRhinoDogs },
-	{ actionId: ActionId.fromItemId(34767), value: Food.FoodFirecrackerSalmon },
-	{ actionId: ActionId.fromItemId(42998), value: Food.FoodCuttlesteak },
-	{ actionId: ActionId.fromItemId(43000), value: Food.FoodDragonfinFilet },
+export const makeFoodInput = makeConsumeInputFactory({
+	consumesFieldName: 'food',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(43015), value: Food.FoodFishFeast },
+		{ actionId: ActionId.fromItemId(34753), value: Food.FoodGreatFeast },
+		{ actionId: ActionId.fromItemId(42999), value: Food.FoodBlackenedDragonfin },
+		{ actionId: ActionId.fromItemId(42995), value: Food.FoodHeartyRhino },
+		{ actionId: ActionId.fromItemId(34754), value: Food.FoodMegaMammothMeal },
+		{ actionId: ActionId.fromItemId(34756), value: Food.FoodSpicedWormBurger },
+		{ actionId: ActionId.fromItemId(42994), value: Food.FoodRhinoliciousWormsteak },
+		{ actionId: ActionId.fromItemId(34769), value: Food.FoodImperialMantaSteak },
+		{ actionId: ActionId.fromItemId(42996), value: Food.FoodSnapperExtreme },
+		{ actionId: ActionId.fromItemId(34758), value: Food.FoodMightyRhinoDogs },
+		{ actionId: ActionId.fromItemId(34767), value: Food.FoodFirecrackerSalmon },
+		{ actionId: ActionId.fromItemId(42998), value: Food.FoodCuttlesteak },
+		{ actionId: ActionId.fromItemId(43000), value: Food.FoodDragonfinFilet },
 
-	{ actionId: ActionId.fromItemId(27657), value: Food.FoodBlackenedBasilisk },
-	{ actionId: ActionId.fromItemId(27664), value: Food.FoodGrilledMudfish },
-	{ actionId: ActionId.fromItemId(27655), value: Food.FoodRavagerDog },
-	{ actionId: ActionId.fromItemId(27658), value: Food.FoodRoastedClefthoof },
-	{ actionId: ActionId.fromItemId(33872), value: Food.FoodSpicyHotTalbuk },
-	{ actionId: ActionId.fromItemId(33825), value: Food.FoodSkullfishSoup },
-	{ actionId: ActionId.fromItemId(33052), value: Food.FoodFishermansFeast },
-] as Array<IconEnumValueConfig<Player<any>, Food>>);
+		{ actionId: ActionId.fromItemId(27657), value: Food.FoodBlackenedBasilisk },
+		{ actionId: ActionId.fromItemId(27664), value: Food.FoodGrilledMudfish },
+		{ actionId: ActionId.fromItemId(27655), value: Food.FoodRavagerDog },
+		{ actionId: ActionId.fromItemId(27658), value: Food.FoodRoastedClefthoof },
+		{ actionId: ActionId.fromItemId(33872), value: Food.FoodSpicyHotTalbuk },
+		{ actionId: ActionId.fromItemId(33825), value: Food.FoodSkullfishSoup },
+		{ actionId: ActionId.fromItemId(33052), value: Food.FoodFishermansFeast },
+	] as Array<IconEnumValueConfig<Player<any>, Food>>
+});
 
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
 	{ actionId: ActionId.fromItemId(41119), value: Explosive.ExplosiveSaroniteBomb },
 	{ actionId: ActionId.fromItemId(40771), value: Explosive.ExplosiveCobaltFragBomb },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
-function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): (options: Array<T>) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
-	return (options: Array<T>) => {
+export interface ConsumeInputFactoryArgs<T extends number> {
+	consumesFieldName: keyof Consumes,
+	allOptions: Array<IconEnumValueConfig<Player<any>, T>>,
+	onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void
+}
+function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs<T>): (options: Array<T>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
+	return (options: Array<T>, tooltip?: string) => {
 		return {
 			type: 'iconEnum',
+			tooltip: tooltip,
 			numColumns: options.length > 5 ? 2 : 1,
 			values: [
-				{ color: 'grey', value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
-			].concat(options.map(option => allOptions.find(allOption => allOption.value == option)!)),
+				{ value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>,
+			].concat(options.map(option => args.allOptions.find(allOption => allOption.value == option)!)),
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
 			changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-			getValue: (player: Player<any>) => player.getConsumes()[consumesFieldName] as T,
+			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const newConsumes = player.getConsumes();
-				(newConsumes[consumesFieldName] as number) = newValue;
+				(newConsumes[args.consumesFieldName] as number) = newValue;
 				TypedEvent.freezeAllAndDo(() => {
 					player.setConsumes(eventID, newConsumes);
-					if (onSet) {
-						onSet(eventID, player, newValue as T);
+					if (args.onSet) {
+						args.onSet(eventID, player, newValue as T);
 					}
 				});
 			},
@@ -519,6 +562,10 @@ function makeConsumeInputFactory<T extends number>(consumesFieldName: keyof Cons
 }
 
 function makeConsumeInput<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
-	const factory = makeConsumeInputFactory(consumesFieldName, allOptions, onSet);
+	const factory = makeConsumeInputFactory({
+		consumesFieldName: consumesFieldName,
+		allOptions: allOptions,
+		onSet: onSet
+	});
 	return factory(allOptions.map(option => option.value));
 }

@@ -1,59 +1,101 @@
+@use "sass:map";
+
 @import "./enum_picker";
 @import "./list_picker";
 @import "./number_picker";
 
 .encounter-picker-root {
-	text-align: center;
-}
-
-.encounter-picker-root .input-root {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.advanced-button {
-}
-
-.encounter-header {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-around;
-	border-bottom: 1px solid white;
-	margin: 2px;
+
+	.advanced-button {
+		min-width: calc(50% - .5rem);
+	}
 }
 
-.encounter-header .input-root {
-	margin: 5px 5px;
-	white-space: nowrap;
+.advanced-encounter-picker-modal {
+	.encounter-picker {
+		width: 33.33%;
+	}
+
+	.encounter-header {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+
+		.picker-group {
+			&:first-child {
+				width: 66%;
+			}
+
+			&:last-child {
+				width: 100%;
+			}
+		}
+	}
+
+	.target-picker-root {
+		display: flex;
+
+		.target-picker-section {
+			width: 33.33%;
+
+			&:not(:last-child) {
+				margin-right: map.get($spacers, 3);
+			}
+
+			&.target-picker-section2 {
+				padding-top: 1.2rem;
+			}
+		}
+	}
 }
 
-.encounter-targets {
-	max-height: 80vh;
-	overflow-y: auto;
+.hide-threat-metrics {
+	.advanced-encounter-picker-modal {
+		// Use visibility to maintain thirds nicely for the modal layout
+		.target-picker-section3.threat-metrics {
+			display: block !important;
+			visibility: hidden;
+
+			.input-root {
+				display: none;
+			}
+		}
+	}
 }
 
-.targets-picker {
-	text-align: center;
+@include media-breakpoint-down(xxl) {
+	.encounter-picker-root {
+		.advanced-button {
+			width: 100%;
+		}
+	}
 }
 
-.target-picker-root {
-	display: flex;
-}
+@include media-breakpoint-down(xl) {
+	.hide-threat-metrics {
+		.advanced-encounter-picker-modal {
+			// Hide this section instead on < smaller screens
+			.target-picker-section3.threat-metrics {
+				display: none !important;
+			}
+		}
+	}
 
-.target-picker-section {
-	margin: 2px 5px;
-}
+	.advanced-encounter-picker-modal {
+		.encounter-header {
+			.picker-group {
+				width: 100% !important;
+			}
+		}
 
-.target-picker-section .input-root {
-	display: flex;
-	justify-content: space-between;
-  align-items: center;
-}
-.target-picker-section .input-label-div {
-	white-space: nowrap;
-}
-
-.npc-picker .enum-picker-selector {
-	max-width: max(15vw, 200px);
+		.target-picker-root {
+			.target-picker-section {
+				width: 100%;
+	
+				margin-right: 0;
+			}
+		}
+	}
 }

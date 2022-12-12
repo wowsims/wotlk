@@ -10,7 +10,7 @@ import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { Target } from '../core/target.js';
 import { EnumPicker } from '../core/components/enum_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
+import { CustomRotationPickerConfig } from '../core/components/individual_sim_ui/custom_rotation_picker.js';
 import { CustomRotation } from '../core/proto/common.js';
 
 import {

@@ -1,7 +1,6 @@
 import { BooleanPicker } from '../core/components/boolean_picker.js';
 import { EnumPicker } from '../core/components/enum_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
 import { IconPickerConfig } from '../core/components/icon_picker.js';
 import { CustomRotation } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
@@ -32,7 +31,7 @@ export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHun
 	fieldName: 'ammo',
 	numColumns: 2,
 	values: [
-		{ color: 'grey', value: Ammo.AmmoNone },
+		{ value: Ammo.AmmoNone, tooltip: 'No Ammo' },
 		{ actionId: ActionId.fromItemId(52021), value: Ammo.IcebladeArrow },
 		{ actionId: ActionId.fromItemId(41165), value: Ammo.SaroniteRazorheads },
 		{ actionId: ActionId.fromItemId(41586), value: Ammo.TerrorshaftArrow },

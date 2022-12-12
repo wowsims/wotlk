@@ -1,0 +1,42 @@
+@use "sass:map";
+
+.consumes-picker-root {
+  .consumes-row {
+    .consumes-row-inputs {
+      display: flex;
+      align-items: center;
+
+      &> * {
+        margin-bottom: 0;
+
+        &:not(:last-child) {
+          margin-right: map.get($spacers, 1);
+        }
+      }
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@include media-breakpoint-between(sm, xl) {
+  .consumes-picker-root {
+    display: flex;
+    flex-wrap: wrap;
+
+    &> * {
+      // Use 49% instead of 50% because of the margin-right
+      flex-basis: 49%;
+
+      &:nth-child(2n - 1) {
+        margin-right: $block-spacer !important;
+      }
+
+      &:nth-last-child(2) {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+}

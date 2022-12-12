@@ -3,7 +3,6 @@ import { Player } from '../core/player.js';
 import { EventID } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
 import { CustomRotation } from '../core/proto/common.js';
 
 import {
@@ -21,7 +20,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',
 	values: [
-		{ color: 'grey', value: PaladinAura.NoPaladinAura },
+		{ value: PaladinAura.NoPaladinAura, tooltip: 'No Aura' },
 		{ actionId: ActionId.fromSpellId(54043), value: PaladinAura.RetributionAura },
 	],
 });

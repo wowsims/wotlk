@@ -21,7 +21,7 @@ export const Bloodlust = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecE
 export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecElementalShaman, ShamanShield>({
 	fieldName: 'shield',
 	values: [
-		{ color: 'grey', value: ShamanShield.NoShield },
+		{ value: ShamanShield.NoShield, tooltip: 'No Shield' },
 		{ actionId: ActionId.fromSpellId(57960), value: ShamanShield.WaterShield },
 		{ actionId: ActionId.fromSpellId(49281), value: ShamanShield.LightningShield },
 	],
