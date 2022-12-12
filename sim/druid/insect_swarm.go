@@ -55,9 +55,8 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 	impISMultiplier := 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
 
-	var t8_4pcAura *core.Aura
 	if druid.HasSetBonus(ItemSetNightsongGarb, 4) {
-		t8_4pcAura = druid.RegisterAura(core.Aura{
+		druid.MoonkinT84PCAura = druid.RegisterAura(core.Aura{
 			Label:    "Elune's Wrath",
 			ActionID: core.ActionID{SpellID: 64823},
 			Duration: time.Second * 10,
@@ -97,8 +96,8 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 
-			if t8_4pcAura != nil && sim.RandomFloat("Elune's Wrath proc") < 0.08 {
-				t8_4pcAura.Activate(sim)
+			if druid.MoonkinT84PCAura != nil && sim.RandomFloat("Elune's Wrath proc") < 0.08 {
+				druid.MoonkinT84PCAura.Activate(sim)
 			}
 		},
 	})
