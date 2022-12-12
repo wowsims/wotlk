@@ -31,51 +31,56 @@ export type ReferenceData = {
 };
 
 export interface ResultMetrics {
-	cod: string,
-	dps: string,
-	dtps: string,
-	dur: string,
-	hps: string,
-	tps: string,
-	tto: string,
+	cod:   string,
+	dps:   string,
+	dpasp: string,
+	dtps:  string,
+	dur:   string,
+	hps:   string,
+	tps:   string,
+	tto:   string,
 }
 
 export interface ResultMetricCategories {
-	damage: string,
+	damage:  string,
+	demo: string,
 	healing: string,
-	threat: string,
+	threat:  string,
 }
 
 export interface ResultsLineArgs {
 	average: Number,
 	stdev?: Number,
-	classes?: string,
+	classes?: string
 }
 
 export class RaidSimResultsManager {
 	static resultMetricCategories: {[ResultMetrics: string]: keyof ResultMetricCategories} = {
-		dps: 'damage',
-		tps: 'threat',
-		dtps: 'threat',
-		cod: 'threat',
-		tto: 'healing',
-		hps: 'healing',
+		dps:   'damage',
+		dpasp: 'demo',
+		tps:   'threat',
+		dtps:  'threat',
+		cod:   'threat',
+		tto:   'healing',
+		hps:   'healing',
 	}
 
 	static resultMetricClasses: {[ResultMetrics: string]: string} = {
-		cod: 'results-sim-cod',
-		dps: 'results-sim-dps',
-		dtps: 'results-sim-dtps',
-		dur: 'results-sim-dur',
-		hps: 'results-sim-hps',
-		tps: 'results-sim-tps',
-		tto: 'results-sim-tto',
+		cod:    'results-sim-cod',
+		dps:    'results-sim-dps',
+		dpasp:  'results-sim-dpasp',
+		dtps:   'results-sim-dtps',
+		dur:    'results-sim-dur',
+		hps:    'results-sim-hps',
+		tps:    'results-sim-tps',
+		tto:    'results-sim-tto',
 	}
 
 	static metricsClasses: {[ResultMetricCategories: string]: string} = {
-		damage: 'damage-metrics',
+		damage:  'damage-metrics',
+		demo: 'demo-metrics',
 		healing: 'healing-metrics',
-		threat: 'threat-metrics',
+		threat:  'threat-metrics',
 	}
 
 	readonly currentChangeEmitter: TypedEvent<void> = new TypedEvent<void>();
@@ -178,6 +183,7 @@ export class RaidSimResultsManager {
 			}
 		};
 		setResultTooltip('results-sim-dps', 'Damage Per Second');
+		setResultTooltip('results-sim-dpasp', 'Demonic Pact Average Spell Power');
 		setResultTooltip('results-sim-tto', 'Time To OOM');
 		setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
 		setResultTooltip('results-sim-tps', 'Threat Per Second');
@@ -190,6 +196,7 @@ export class RaidSimResultsManager {
 
 		if (!this.simUI.isIndividualSim()) {
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-diff-separator')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dpasp-diff')).forEach(e => e.remove());
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')).forEach(e => e.remove());
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')).forEach(e => e.remove());
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-cod-diff')).forEach(e => e.remove());
@@ -258,6 +265,7 @@ export class RaidSimResultsManager {
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dpasp']} .results-reference-diff`, res => res.getPlayers()[0]!.dpasp, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tto']} .results-reference-diff`, res => res.getPlayers()[0]!.tto, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tps']} .results-reference-diff`, res => res.getPlayers()[0]!.tps, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dtps']} .results-reference-diff`, res => res.getPlayers()[0]!.dtps, 2, true);
@@ -352,6 +360,7 @@ export class RaidSimResultsManager {
 			const playerMetrics = players[0];
 			if (playerMetrics.getTargetIndex(filter) == null) {
 				const dpsMetrics = playerMetrics.dps;
+				const dpaspMetrics = playerMetrics.dpasp;
 				const tpsMetrics = playerMetrics.tps;
 				const dtpsMetrics = playerMetrics.dtps;
 				content += this.buildResultsLine({
@@ -359,6 +368,18 @@ export class RaidSimResultsManager {
 					stdev: dpsMetrics.stdev,
 					classes: this.getResultsLineClasses('dps'),
 				}).outerHTML;
+
+				// Hide dpasp if it's zero.
+				let dpaspContent = this.buildResultsLine({
+					average: dpaspMetrics.avg,
+					stdev: dpaspMetrics.stdev,
+					classes: this.getResultsLineClasses('dpasp'),
+				});
+				if (dpaspMetrics.avg == 0) {
+					dpaspContent.classList.add('hide');
+				}
+				content += dpaspContent.outerHTML;
+
 				content += this.buildResultsLine({
 					average: tpsMetrics.avg,
 					stdev: tpsMetrics.stdev,

@@ -1,5 +1,11 @@
 import { Component } from './component.js';
-import { getLaunchedSimsForClass, raidSimLaunched } from '../launched_sims.js';
+import {
+  getLaunchedSimsForClass,
+  LaunchStatus,
+  raidSimLaunched,
+  raidSimStatus,
+  simLaunchStatuses
+} from '../launched_sims.js';
 import { Class, Spec } from '../proto/common.js';
 import {
   classNames,
@@ -89,30 +95,30 @@ export class SimTitleDropdown extends Component {
       this.dropdownMenu.appendChild(raidListItem);
     }
 
-    naturalClassOrder.forEach( klass => {
+    naturalClassOrder.forEach( classIndex => {
       let listItem = document.createElement('li');
-      let sims = getLaunchedSimsForClass(klass);
+      let sims = getLaunchedSimsForClass(classIndex);
 
       if (sims.length == 1) {
         // The class only has one listed sim so make a direct link to the sim
-        listItem.appendChild(this.buildClassLink(klass));
+        listItem.appendChild(this.buildClassLink(classIndex));
         this.dropdownMenu.appendChild(listItem);
       } else if (sims.length > 1) {
         // Add the class to the dropdown with an additional spec dropdown
-        listItem.appendChild(this.buildClassDropdown(klass));
+        listItem.appendChild(this.buildClassDropdown(classIndex));
         this.dropdownMenu.appendChild(listItem);
       }
     });
   }
 
-  private buildClassDropdown(klass: Class) {
-    let sims = getLaunchedSimsForClass(klass);
+  private buildClassDropdown(classIndex: Class) {
+    let sims = getLaunchedSimsForClass(classIndex);
     let dropdownFragment = document.createElement('fragment');
     let dropdownMenu = document.createElement('ul');
     dropdownMenu.classList.add('dropdown-menu');
 
     // Generate the class link to act as a dropdown toggle for the spec dropdown
-    let classLink = this.buildClassLink(klass);
+    let classLink = this.buildClassLink(classIndex);
 
     // Generate links for a class's specs
     sims.forEach( (specIndex) => {
@@ -157,7 +163,8 @@ export class SimTitleDropdown extends Component {
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
             <span class="sim-link-label text-white">WoWSims - WOTLK</span>
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${this.launchStatusLabel(data)}
           </div>
         </div>
       </a>
@@ -178,7 +185,8 @@ export class SimTitleDropdown extends Component {
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${this.launchStatusLabel({type: 'Raid'})}
           </div>
         </div>
       </a>
@@ -187,12 +195,12 @@ export class SimTitleDropdown extends Component {
     return fragment.children[0] as HTMLElement;
   }
 
-  private buildClassLink(klass: Class): HTMLElement {
-    let specIndexes = getLaunchedSimsForClass(klass);
+  private buildClassLink(classIndex: Class): HTMLElement {
+    let specIndexes = getLaunchedSimsForClass(classIndex);
     let href        = specIndexes.length > 1 ? 'javascript:void(0)' : getSpecSiteUrl(specIndexes[0]);
-    let textKlass   = this.getContextualKlass({type: 'Class', index: klass});
-    let iconPath    = this.getSimIconPath({type: 'Class', index: klass});
-    let label       = classNames[klass];
+    let textKlass   = this.getContextualKlass({type: 'Class', index: classIndex});
+    let iconPath    = this.getSimIconPath({type: 'Class', index: classIndex});
+    let label       = classNames[classIndex];
 
     let fragment = document.createElement('fragment');
     fragment.innerHTML = `
@@ -200,7 +208,8 @@ export class SimTitleDropdown extends Component {
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${specIndexes.length == 1 ? this.launchStatusLabel({type: 'Spec', index: specIndexes[0]}) : ''}
           </div>
         </div>
       </a>
@@ -223,13 +232,28 @@ export class SimTitleDropdown extends Component {
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
             <span class="sim-link-label">${className}</span>
-            <span class="sim-link-label">${specLabel}</span>
+            <span class="sim-link-title">${specLabel}</span>
+            ${this.launchStatusLabel({type: 'Spec', index: specIndex})}
           </div>
         </div>
       </a>
     `;
 
     return fragment.children[0] as HTMLElement;
+  }
+
+  private launchStatusLabel(data: SpecOptions | RaidOptions): string {
+    if (
+      (data.type == 'Raid' && raidSimStatus == LaunchStatus.Launched) ||
+      (data.type == 'Spec' && simLaunchStatuses[data.index] == LaunchStatus.Launched)
+    ) return "";
+
+    let label = data.type == 'Raid' ? LaunchStatus[raidSimStatus] : LaunchStatus[simLaunchStatuses[data.index]];
+    let elem = document.createElement('span');
+    elem.classList.add('launch-status-label', 'text-brand');
+    elem.textContent = label;
+
+    return elem.outerHTML;
   }
 
   private getSimIconPath(data: ClassOptions | SpecOptions | RaidOptions): string {

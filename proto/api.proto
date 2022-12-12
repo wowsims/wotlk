@@ -210,6 +210,7 @@ message UnitMetrics {
 	int32 unit_index = 13;
 
 	DistributionMetrics dps = 1;
+	DistributionMetrics dpasp = 16;
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
 	DistributionMetrics hps = 14;

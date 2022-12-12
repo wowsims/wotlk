@@ -31,20 +31,23 @@ $class-colors: (
 
 $theme-colors: map-merge($theme-colors, $class-colors);
 
+$brand-color: #e0a335;
+
 // Theme variable overrides
 @if variable-exists(theme) {
   $primary: map.get($class-colors, $theme);
 }
 
 @if not variable-exists(theme) {
-  $primary: #e0a335;
+  $primary: $brand-color;
 }
 
 $success: #7cfc00;
 
 $custom-colors: (
+  "brand": $brand-color,
   "primary": $primary,
-  "success": $success
+  "success": $success,
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
