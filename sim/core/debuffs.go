@@ -135,6 +135,9 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	if debuffs.Vindication {
 		MakePermanent(VindicationAura(target))
 	}
+	if debuffs.DemoralizingScreech {
+		MakePermanent(DemoralizingScreechAura(target))
+	}
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
@@ -156,10 +159,6 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	}
 	if debuffs.ScorpidSting {
 		MakePermanent(ScorpidStingAura(target))
-	}
-
-	if debuffs.Screech {
-		MakePermanent(ScreechAura(target))
 	}
 
 	if debuffs.TotemOfWrath {
@@ -717,20 +716,20 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 func DemoralizingRoarAura(target *Unit, points int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingRoar-" + strconv.Itoa(int(points)),
-		ActionID: ActionID{SpellID: 26998},
+		ActionID: ActionID{SpellID: 48560},
 		Duration: time.Second * 30,
 	})
-	apReductionEffect(aura, 248*(1+0.08*float64(points)))
+	apReductionEffect(aura, 411*(1+0.08*float64(points)))
 	return aura
 }
 
 func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingShout-" + strconv.Itoa(int(impDemoShoutPts)),
-		ActionID: ActionID{SpellID: 25203},
+		ActionID: ActionID{SpellID: 47437},
 		Duration: time.Duration(float64(time.Second*30) * (1 + 0.1*float64(boomingVoicePts))),
 	})
-	apReductionEffect(aura, 300*(1+0.08*float64(impDemoShoutPts)))
+	apReductionEffect(aura, 411*(1+0.08*float64(impDemoShoutPts)))
 	return aura
 }
 
@@ -744,13 +743,13 @@ func VindicationAura(target *Unit) *Aura {
 	return aura
 }
 
-func ScreechAura(target *Unit) *Aura {
+func DemoralizingScreechAura(target *Unit) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
-		Label:    "Screech",
-		ActionID: ActionID{SpellID: 27051},
+		Label:    "DemoralizingScreech",
+		ActionID: ActionID{SpellID: 55487},
 		Duration: time.Second * 4,
 	})
-	apReductionEffect(aura, 210)
+	apReductionEffect(aura, 576)
 	return aura
 }
 
