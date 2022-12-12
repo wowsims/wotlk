@@ -283,7 +283,7 @@ func (hp *HunterPet) newAcidSpit() PetAbility {
 func (hp *HunterPet) newDemoralizingScreech() PetAbility {
 	var debuffs []*core.Aura
 	for _, target := range hp.Env.Encounter.Targets {
-		debuffs = append(debuffs, core.ScreechAura(&target.Unit))
+		debuffs = append(debuffs, core.DemoralizingScreechAura(&target.Unit))
 	}
 
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
