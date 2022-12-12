@@ -29,9 +29,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	}
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
-	lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
+	lunarUptime := core.TernaryDuration(moonkin.LunarEclipseProcAura == nil, 0, moonkin.LunarEclipseProcAura.RemainingDuration(sim))
 
-	if moonkin.HasActiveAura("Elune's Wrath") && moonkin.GetAura("Elune's Wrath").RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
+	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
 		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)

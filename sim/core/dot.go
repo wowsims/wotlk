@@ -160,7 +160,7 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 		CleanUp: func(sim *Simulation) {
 			// In certain cases, the last tick and the dot aura expiration can happen in
 			// different orders, so we might need to apply the last tick.
-			if dot.tickAction.NextActionAt == sim.CurrentTime {
+			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime {
 				if dot.lastTickTime != sim.CurrentTime {
 					dot.TickCount++
 					dot.TickOnce(sim)
