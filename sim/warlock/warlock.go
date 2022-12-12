@@ -55,6 +55,7 @@ type Warlock struct {
 	EradicationAura            *core.Aura
 	DemonicEmpowerment         *core.Spell
 	DemonicEmpowermentAura     *core.Aura
+	DemonicPactAura            *core.Aura
 	Metamorphosis              *core.Spell
 	MetamorphosisAura          *core.Aura
 	ImmolationAura             *core.Spell

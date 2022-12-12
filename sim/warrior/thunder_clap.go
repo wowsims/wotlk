@@ -15,11 +15,10 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		[]float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap] -
 		core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0)
 
-	tcAuras := make([]*core.Aura, warrior.Env.GetNumTargets())
+	warrior.ThunderClapAuras = make([]*core.Aura, warrior.Env.GetNumTargets())
 	for _, target := range warrior.Env.Encounter.Targets {
-		tcAuras[target.Index] = core.ThunderClapAura(&target.Unit, warrior.Talents.ImprovedThunderClap)
+		warrior.ThunderClapAuras[target.Index] = core.ThunderClapAura(&target.Unit, warrior.Talents.ImprovedThunderClap)
 	}
-	warrior.ThunderClapAura = tcAuras[warrior.CurrentTarget.Index]
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47502},
@@ -54,7 +53,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				result := spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeRangedHitAndCrit)
 				if result.Landed() {
-					tcAuras[aoeTarget.Index].Activate(sim)
+					warrior.ThunderClapAuras[aoeTarget.Index].Activate(sim)
 				}
 			}
 		},
@@ -80,5 +79,5 @@ func (warrior *Warrior) ShouldThunderClap(sim *core.Simulation, filler bool, mai
 	}
 
 	return maintainOnly &&
-		warrior.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.AtkSpeedReductionAuraTag, warrior.ThunderClapAura.Priority, time.Second*2)
+		warrior.ThunderClapAuras[warrior.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, time.Second*2)
 }

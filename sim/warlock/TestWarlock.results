@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1472.35
   final_stats: 1155
   final_stats: 767.8
-  final_stats: 2832.34
+  final_stats: 2552.34
   final_stats: 109
   final_stats: 368.696
   final_stats: 865.61556
@@ -374,22 +374,22 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7321.18968
-  tps: 9398.54966
+  dps: 7243.76567
+  tps: 9315.55108
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3905.44562
-  tps: 3621.65476
+  dps: 3856.05599
+  tps: 3573.4355
  }
 }
 dps_results: {
  key: "TestWarlock-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4061.05518
-  tps: 3675.25085
+  dps: 3983.64255
+  tps: 3603.98855
  }
 }
 dps_results: {

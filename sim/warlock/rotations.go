@@ -388,10 +388,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Data
 	// ------------------------------------------
-	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
+	if warlock.DemonicPactAura != nil && sim.CurrentTime != 0 {
 		// We are integrating the Demonic Pact SP bonus over the course of the simulation to get the average
 		warlock.DPSPAverage *= float64(warlock.PreviousTime)
-		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime-warlock.PreviousTime)
+		warlock.DPSPAverage += warlock.DemonicPactAura.ExclusiveEffects[0].Priority * float64(sim.CurrentTime-warlock.PreviousTime)
 		warlock.DPSPAverage /= float64(sim.CurrentTime)
 		warlock.PreviousTime = sim.CurrentTime
 	}

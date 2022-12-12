@@ -234,15 +234,11 @@ func (mcdm *majorCooldownManager) finalize() {
 	mcdm.majorCooldowns = make([]*MajorCooldown, len(mcdm.initialMajorCooldowns))
 }
 
-// Adds a delay to the first usage of all CDs so that armor debuffs have time
+// Adds a delay to the first usage of all CDs so that debuffs have time
 // to be applied. MCDs that have a user-specified timing are not delayed.
 //
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
-	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
-		return
-	}
-
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
@@ -257,10 +253,6 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 // MCDs that have a user-specified timing are not delayed.
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
-	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
-		return
-	}
-
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]

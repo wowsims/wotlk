@@ -175,6 +175,13 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	})
 }
 
+func (druid *Druid) applyEarthAndMoon() {
+	if druid.Talents.EarthAndMoon == 0 {
+		return
+	}
+	druid.EarthAndMoonAura = core.EarthAndMoonAura(druid.CurrentTarget, druid.Talents.EarthAndMoon)
+}
+
 func (druid *Druid) applyPrimalFury() {
 	if druid.Talents.PrimalFury == 0 {
 		return
@@ -219,26 +226,18 @@ func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
 
 	bonusCrit := 5.0 * float64(druid.Talents.RendAndTear) * core.CritRatingPerCritChance
 
-	oldOnGain := aura.OnGain
-	oldOnExpire := aura.OnExpire
-	aura.OnGain = func(aura *core.Aura, sim *core.Simulation) {
-		if oldOnGain != nil {
-			oldOnGain(aura, sim)
-		}
+	aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
 		if druid.BleedsActive == 0 {
 			druid.FerociousBite.BonusCritRating += bonusCrit
 		}
 		druid.BleedsActive++
-	}
-	aura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {
-		if oldOnExpire != nil {
-			oldOnExpire(aura, sim)
-		}
+	})
+	aura.ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
 		druid.BleedsActive--
 		if druid.BleedsActive == 0 {
 			druid.FerociousBite.BonusCritRating -= bonusCrit
 		}
-	}
+	})
 
 	return aura
 }

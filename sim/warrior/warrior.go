@@ -96,13 +96,11 @@ type Warrior struct {
 	SwordAndBoardAura *core.Aura
 	ShieldBlockAura   *core.Aura
 
-	DemoralizingShoutAura *core.Aura
-	BloodFrenzyAuras      []*core.Aura
-	TraumaAuras           []*core.Aura
-	ExposeArmorAura       *core.Aura // Warriors don't cast this but they need to check it.
-	AcidSpitAura          *core.Aura // Warriors don't cast this but they need to check it.
-	SunderArmorAura       *core.Aura
-	ThunderClapAura       *core.Aura
+	DemoralizingShoutAuras []*core.Aura
+	BloodFrenzyAuras       []*core.Aura
+	TraumaAuras            []*core.Aura
+	SunderArmorAura        *core.Aura
+	ThunderClapAuras       []*core.Aura
 }
 
 func (warrior *Warrior) GetCharacter() *core.Character {

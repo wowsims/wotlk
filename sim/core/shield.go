@@ -17,7 +17,6 @@ func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 	shieldAmount *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 
 	shield.Aura.Deactivate(sim)
-	shield.Aura.Priority = shieldAmount
 	shield.Aura.Activate(sim)
 
 	threat := 0.0 // TODO
@@ -33,19 +32,6 @@ func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 func NewShield(config Shield) *Shield {
 	shield := &Shield{}
 	*shield = config
-
-	oldOnGain := shield.Aura.OnGain
-	oldOnExpire := shield.Aura.OnExpire
-	shield.Aura.OnGain = func(aura *Aura, sim *Simulation) {
-		if oldOnGain != nil {
-			oldOnGain(aura, sim)
-		}
-	}
-	shield.Aura.OnExpire = func(aura *Aura, sim *Simulation) {
-		if oldOnExpire != nil {
-			oldOnExpire(aura, sim)
-		}
-	}
 
 	return shield
 }

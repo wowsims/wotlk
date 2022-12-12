@@ -87,7 +87,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 			spell.DealDamage(sim, result)
 
 			if result.Landed() {
-				if !warrior.ExposeArmorAura.IsActive() {
+				if warrior.CanApplySunderAura() {
 					warrior.SunderArmorDevastate.Cast(sim, target)
 				}
 			} else {

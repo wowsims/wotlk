@@ -393,7 +393,7 @@ func (priest *Priest) applyMisery() {
 		return
 	}
 
-	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
+	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Priest Shadow Effects",
