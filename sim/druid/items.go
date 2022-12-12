@@ -375,7 +375,7 @@ func init() {
 			BonusPerStack: stats.Stats{stats.SpellCrit: 44},
 		})
 
-		core.MakePermanent(druid.GetOrRegisterAura(core.Aura{
+		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label:    "Idol of the Lunar Eclipse",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
