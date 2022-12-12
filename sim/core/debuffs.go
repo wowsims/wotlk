@@ -522,9 +522,12 @@ func MiseryAura(target *Unit, points int32) *Aura {
 	return aura
 }
 
+var FaerieFireAuraTag = "Faerie Fire"
+
 func FaerieFireAura(target *Unit, points int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Faerie Fire" + strconv.Itoa(int(points)),
+		Tag:      FaerieFireAuraTag,
 		ActionID: ActionID{SpellID: 770},
 		Duration: time.Minute * 5,
 	})
