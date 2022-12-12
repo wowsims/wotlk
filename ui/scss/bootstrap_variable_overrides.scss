@@ -89,7 +89,7 @@ $dropdown-link-hover-bg: darken($dropdown-bg, 3);
 $dropdown-padding-y: 0;
 
 $form-check-input-bg: $link-color;
-$form-check-input-border: 1px solid lighten($body-bg, 15);
+$form-check-input-border: 1px solid lighten($body-bg, 20);
 $form-check-input-width: 2rem;
 $form-check-input-focus-border: lighten($body-bg, 20);
 $form-check-input-focus-box-shadow: 0 0 .25rem $primary;
@@ -103,23 +103,25 @@ $form-label-font-size: $content-font-size;
 $form-label-font-weight: normal;
 
 $form-select-bg: lighten($body-bg, 12);
-$form-select-border-color: lighten($body-bg, 15);
+$form-select-border-color: lighten($body-bg, 20);
 $form-select-color: white;
 $form-select-disabled-bg: lighten($body-bg, 20);
 $form-select-focus-border-color: lighten($body-bg, 20);
 $form-select-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
-$form-select-font-size: $content-font-size;
+$form-select-font-size: $btn-font-size;
 $form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+$form-select-padding-y: $btn-padding-y;
 
 $input-bg: lighten($body-bg, 12);
-$input-border-color: lighten($body-bg, 15);
+$input-border-color: lighten($body-bg, 20);
 $input-color: white;
 $input-disabled-bg: lighten($body-bg, 20);
 $input-focus-bg: lighten($body-bg, 12);
 $input-focus-border-color: lighten($body-bg, 20);
 $input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
 $input-focus-color: white;
-$input-font-size: $content-font-size;
+$input-font-size: $btn-font-size;
+$input-padding-y: $btn-padding-y;
 
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;

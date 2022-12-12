@@ -143,6 +143,42 @@ $sim-transitions: .2s ease-in;
   display: inline-block;
 }
 
+.dropdown-root {
+	position: relative;
+	display: inline-block !important;
+	white-space: nowrap;
+}
+
+.dropdown-root:hover .dropdown-panel {
+	display: grid !important;
+}
+
+.dropdown-button {
+	cursor: pointer;
+	background-color: gray;
+}
+
+.dropdown-panel {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	box-shadow: 2px 4px 20px 5px #000;
+}
+
+.dropdown-option-container {
+	background-color: gray;
+}
+
+.dropdown-option {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+*:not(.dropdown-button) > * > .dropdown-option:not(:hover) {
+	opacity: 0.7;
+}
+
 .positive {
 	color: lawngreen !important;
 }
