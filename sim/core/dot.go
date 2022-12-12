@@ -144,14 +144,15 @@ func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 // Forces an instant tick. Does not reset the tick timer or aura duration,
 // the tick is simply an extra tick.
 func (dot *Dot) TickOnce(sim *Simulation) {
+	dot.lastTickTime = sim.CurrentTime
 	dot.OnTick(sim, dot.Unit, dot)
 }
 
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	return PeriodicActionOptions{
+		//Priority: ActionPriorityDOT,
 		OnAction: func(sim *Simulation) {
 			if dot.lastTickTime != sim.CurrentTime {
-				dot.lastTickTime = sim.CurrentTime
 				dot.TickCount++
 				dot.TickOnce(sim)
 			}
@@ -161,7 +162,6 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 			// different orders, so we might need to apply the last tick.
 			if dot.tickAction.NextActionAt == sim.CurrentTime {
 				if dot.lastTickTime != sim.CurrentTime {
-					dot.lastTickTime = sim.CurrentTime
 					dot.TickCount++
 					dot.TickOnce(sim)
 				}
