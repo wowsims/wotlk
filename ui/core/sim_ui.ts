@@ -13,6 +13,7 @@ import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
 import { Tooltip } from 'bootstrap';
+import { SimTab } from './components/sim_tab.js';
 
 declare var tippy: any;
 declare var pako: any;
@@ -42,14 +43,13 @@ export abstract class SimUI extends Component {
 	readonly changeEmitter;
 
 	readonly resultsViewer: ResultsViewer
+	readonly simHeader: SimHeader;
 
-	protected readonly simHeader: SimHeader;
-
-	protected readonly simContentContainer: HTMLElement;
-	protected readonly simMain: HTMLElement;
-	protected readonly simActionsContainer: HTMLElement;
-	protected readonly iterationsPicker: HTMLElement;
-	protected readonly simTabContentsContainer: HTMLElement;
+	readonly simContentContainer: HTMLElement;
+	readonly simMain: HTMLElement;
+	readonly simActionsContainer: HTMLElement;
+	readonly iterationsPicker: HTMLElement;
+	readonly simTabContentsContainer: HTMLElement;
 
 	private warningsTippy: any;
 
@@ -75,41 +75,37 @@ export abstract class SimUI extends Component {
 		this.sim.crashEmitter.on((eventID: EventID, error: SimError) => this.handleCrash(error));
 
 		const updateShowDamageMetrics = () => {
-			if (this.sim.getShowDamageMetrics()) {
+			if (this.sim.getShowDamageMetrics())
 				this.rootElem.classList.remove('hide-damage-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-damage-metrics');
-			}
 		};
 		updateShowDamageMetrics();
 		this.sim.showDamageMetricsChangeEmitter.on(updateShowDamageMetrics);
 
 		const updateShowThreatMetrics = () => {
-			if (this.sim.getShowThreatMetrics()) {
+			if (this.sim.getShowThreatMetrics())
 				this.rootElem.classList.remove('hide-threat-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-threat-metrics');
-			}
 		};
 		updateShowThreatMetrics();
 		this.sim.showThreatMetricsChangeEmitter.on(updateShowThreatMetrics);
 
 		const updateShowHealingMetrics = () => {
-			if (this.sim.getShowHealingMetrics()) {
+			if (this.sim.getShowHealingMetrics())
 				this.rootElem.classList.remove('hide-healing-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-healing-metrics');
-			}
 		};
 		updateShowHealingMetrics();
 		this.sim.showHealingMetricsChangeEmitter.on(updateShowHealingMetrics);
 
 		const updateShowExperimental = () => {
-			if (this.sim.getShowExperimental()) {
+			if (this.sim.getShowExperimental())
 				this.rootElem.classList.remove('hide-experimental');
-			} else {
+			else
 				this.rootElem.classList.add('hide-experimental');
-			}
 		};
 		updateShowExperimental();
 		this.sim.showExperimentalChangeEmitter.on(updateShowExperimental);
@@ -172,6 +168,10 @@ export abstract class SimUI extends Component {
 			>${innerHTML}</div>
 		`;
 		this.simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
+	}
+
+	addSimTab(tab: SimTab) {
+		this.simHeader.addSimTabLink(tab);
 	}
 
 	addWarning(warning: SimWarning) {

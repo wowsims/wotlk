@@ -1,0 +1,20 @@
+.custom-rotation-picker-root {
+	.input-root.custom-spells-picker {
+		flex-wrap: wrap;
+		align-items: flex-start !important;
+
+		.list-picker-title {
+			width: unset;
+			padding: 0;
+			border: 0;
+		}
+
+		.list-picker-items {
+			width: unset;
+		}
+
+		.list-picker-new-button {
+			width: 100%;
+		}
+	}
+}

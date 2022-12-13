@@ -10,6 +10,7 @@ import { Component } from './component.js';
 export interface InputConfig<ModObject, T> {
 	label?: string,
 	labelTooltip?: string,
+	inline?: boolean,
 	extraCssClasses?: Array<string>,
 
 	defaultValue?: T,
@@ -43,13 +44,10 @@ export abstract class Input<ModObject, T> extends Component {
 		this.inputConfig = config;
 		this.modObject = modObject;
 		this.rootElem.classList.add(cssClass);
-		if (config.extraCssClasses) {
-			this.rootElem.classList.add(...config.extraCssClasses);
-		}
 
-		if (config.label) {
-			this.rootElem.appendChild(this.buildLabel(config));
-		}
+		if (config.inline) this.rootElem.classList.add('input-inline');
+		if (config.extraCssClasses) this.rootElem.classList.add(...config.extraCssClasses);
+		if (config.label) this.rootElem.appendChild(this.buildLabel(config));
 
 		config.changedEvent(this.modObject).on(eventID => {
 			this.setInputValue(config.getValue(this.modObject));
@@ -121,5 +119,11 @@ export abstract class Input<ModObject, T> extends Component {
 	// Sets the underlying value directly.
 	setValue(eventID: EventID, newValue: T) {
 		this.inputConfig.setValue(eventID, this.modObject, newValue);
+	}
+
+	static newGroupContainer(): HTMLElement {
+		let group = document.createElement('div');
+		group.classList.add('picker-group');
+		return group;
 	}
 }

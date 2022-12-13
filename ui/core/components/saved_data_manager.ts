@@ -1,13 +1,13 @@
-import { Spec } from '../proto/common.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { ContentBlock, ContentBlockTitleConfig } from './content_block';
+import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
 
 import { Component } from '../components/component.js';
 import { Tooltip } from 'bootstrap';
+import { json } from 'stream/consumers';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
-	title?: ContentBlockTitleConfig;
+	header?: ContentBlockHeaderConfig;
 	presetsOnly?: boolean;
 	storageKey: string;
 	changeEmitters: Array<TypedEvent<any>>,
@@ -55,11 +55,9 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.presets = [];
 		this.frozen = false;
 
-		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', {
-			title: config.title
-		});
+		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', {header: config.header});
 
-		contentBlock.bodyElement.innerHTML = `<div class="saved-data-container"></div>`;
+		contentBlock.bodyElement.innerHTML = `<div class="saved-data-container hide"></div>`;
 		this.savedDataDiv = contentBlock.bodyElement.querySelector('.saved-data-container') as HTMLElement;
 
 		if (!config.presetsOnly) {
@@ -69,11 +67,12 @@ export class SavedDataManager<ModObject, T> extends Component {
 	}
 
 	addSavedData(config: SavedDataConfig<ModObject, T>) {
+		this.savedDataDiv.classList.remove('hide');
+
 		const newData = this.makeSavedData(config);
-
 		const dataArr = config.isPreset ? this.presets : this.userData;
-
 		const oldIdx = dataArr.findIndex(data => data.name == config.name);
+	
 		if (oldIdx == -1) {
 			if (config.isPreset || this.presets.length == 0) {
 				this.savedDataDiv.appendChild(newData.elem);
@@ -167,6 +166,9 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.userData.forEach(savedData => {
 			userData[savedData.name] = this.config.toJson(savedData.data);
 		});
+
+		if (this.userData.length == 0)
+			this.savedDataDiv.classList.add('hide');
 
 		window.localStorage.setItem(this.config.storageKey, JSON.stringify(userData));
 	}

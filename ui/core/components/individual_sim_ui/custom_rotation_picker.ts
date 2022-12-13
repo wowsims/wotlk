@@ -1,14 +1,14 @@
-import { Spec } from '../proto/common.js';
-import { CustomRotation, CustomSpell } from '../proto/common.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { Player } from '../player.js';
-import { BooleanPicker } from '../components/boolean_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../components/icon_enum_picker.js';
-import { ListPicker, ListPickerConfig } from '../components/list_picker.js';
-import { NumberPicker } from '../components/number_picker.js';
-import { getEnumValues } from '../utils.js';
+import { Spec } from '../../proto/common.js';
+import { CustomRotation, CustomSpell } from '../../proto/common.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { Player } from '../../player.js';
+import { BooleanPicker } from '../boolean_picker.js';
+import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../icon_enum_picker.js';
+import { ListPicker, ListPickerConfig } from '../list_picker.js';
+import { NumberPicker } from '../number_picker.js';
+import { getEnumValues } from '../../utils.js';
 
-import { Component } from './component.js';
+import { Component } from '../component.js';
 
 export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 	getValue: (player: Player<SpecType>) => CustomRotation,
@@ -26,9 +26,7 @@ export class CustomRotationPicker<SpecType extends Spec, T> extends Component {
 		super(parent, 'custom-rotation-picker-root');
 
 		new ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>(this.rootElem, modPlayer, {
-			extraCssClasses: [
-				'custom-spells-picker',
-			],
+			extraCssClasses: ['custom-spells-picker'],
 			title: 'Spell Priority',
 			titleTooltip: 'Spells at the top of the list are prioritized first. Safely ignores untalented options.',
 			itemLabel: 'Spell',

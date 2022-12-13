@@ -229,6 +229,7 @@ export class RaidSimUI extends SimUI {
 		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
 
 		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
+		otherOptionsSectionElem.classList.add('hide');
 		//new BooleanPicker(otherOptionsSectionElem, this.sim.raid, {
 		//	label: 'Stagger Stormstrikes',
 		//	labelTooltip: 'When there are multiple Enhancement Shaman in the raid, causes them to coordinate their Stormstrike casts for optimal SS charge usage.',

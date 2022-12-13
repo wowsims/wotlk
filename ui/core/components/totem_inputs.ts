@@ -17,22 +17,27 @@ import { Sim } from '../sim.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import * as InputHelpers from '../components/input_helpers.js';
-import { SimUI } from '../sim_ui.js';
 import { SpecRotation } from '../proto_utils/utils.js';
+import { ContentBlock } from './content_block.js';
+import { Input } from './input.js';
 
 export type DpsShaman = Spec.SpecEnhancementShaman | Spec.SpecElementalShaman;
 
-export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTMLElement): string {
-	parentElem.innerHTML = `
-		<div class="totem-dropdowns-container"></div>
-		<div class="totem-inputs-container"></div>
-		<div class="fire-elemental-inputs-container"></div>
-	`;
-	const totemDropdownsContainer = parentElem.getElementsByClassName('totem-dropdowns-container')[0] as HTMLElement;
-	const totemInputsContainer = parentElem.getElementsByClassName('totem-inputs-container')[0] as HTMLElement;
-	const fireElementalInputsContainer = parentElem.getElementsByClassName("fire-elemental-inputs-container")[0] as HTMLElement
+export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<DpsShaman>): ContentBlock {
+	let contentBlock = new ContentBlock(parentElem, 'totems-settings', {
+		header: {title: 'Totems'}
+	});
 
-	const earthTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	let totemDropdownGroup = Input.newGroupContainer();
+	totemDropdownGroup.classList.add('totem-dropdowns-container', 'icon-group');
+
+	let fireElementalContainer = document.createElement('div');
+	fireElementalContainer.classList.add('fire-elemental-inputs-container');
+
+	contentBlock.bodyElement.appendChild(totemDropdownGroup);
+	contentBlock.bodyElement.appendChild(fireElementalContainer);
+	
+	const earthTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'earth-totem-picker',
 		],
@@ -55,7 +60,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const airTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const airTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'air-totem-picker',
 		],
@@ -78,7 +83,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const fireTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const fireTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'fire-totem-picker',
 		],
@@ -103,7 +108,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const waterTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const waterTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'water-totem-picker',
 		],
@@ -136,7 +141,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		changeEmitter: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
 	}, ActionId.fromSpellId(2894), "useFireElemental");
 
-	new IconPicker(fireElementalInputsContainer, simUI.player, fireElementalBooleanIconInput);
+	new IconPicker(fireElementalContainer, simUI.player, fireElementalBooleanIconInput);
 
-	return 'Totems';
+	return contentBlock;
 }

@@ -2,11 +2,12 @@ import { Component } from './component.js';
 
 export class CloseButton extends Component {
 	constructor(parent: HTMLElement, onClick: () => void) {
-		super(parent, 'close-button');
+		super(parent, 'close-button', document.createElement('a'));
+		this.rootElem.setAttribute('href', 'javascript:void(0)');
+		this.rootElem.setAttribute('role', 'button');
+		this.rootElem.addEventListener('click', () => onClick());
 		this.rootElem.innerHTML = `
-			<span aria-hidden="true" class="fa fa-times"></span>
+			<span>Close</span><i class="fas fa-times fa-xl ms-1"></i>
 		`;
-
-		this.rootElem.addEventListener('click', event => onClick());
 	}
 }
