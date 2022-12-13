@@ -1,15 +1,16 @@
 @use "sass:map";
 
 .saved-data-manager-root {
+  margin-bottom: $block-spacer * 2;
+
   .saved-data-container {
-    margin-bottom: map.get($spacers, 3);
     display: flex;
     flex-wrap: wrap;
 
     .saved-data-set-chip {
       padding: 0;
-      margin-bottom: map.get($spacers, 2);
-      margin-right: map.get($spacers, 2);
+      margin-bottom: $block-spacer;
+      margin-right: $block-spacer;
       border: 1px solid $primary;
       display: flex;
       font-size: $content-font-size;
@@ -53,7 +54,7 @@
     }
 
     .saved-data-save-input {
-      margin-bottom: .75rem;
+      margin-bottom: $block-spacer;
     }
   }
 }

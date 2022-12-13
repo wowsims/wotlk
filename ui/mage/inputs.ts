@@ -29,7 +29,7 @@ import * as Presets from './presets.js';
 export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, ArmorType>({
 	fieldName: 'armor',
 	values: [
-		{ color: 'grey', value: ArmorType.NoArmor },
+		{ value: ArmorType.NoArmor, tooltip: 'No Armor' },
 		{ actionId: ActionId.fromSpellId(43024), value: ArmorType.MageArmor },
 		{ actionId: ActionId.fromSpellId(43046), value: ArmorType.MoltenArmor },
 	],

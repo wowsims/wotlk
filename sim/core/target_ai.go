@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type TargetAI interface {
@@ -63,8 +62,6 @@ func (target *Target) initialize(config *proto.Target) {
 // Empty Agent interface functions.
 func (target *Target) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
 func (target *Target) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
-func (target *Target) ApplyGearBonuses()                          {}
-func (target *Target) ApplyFormBonuses(enable bool) stats.Stats   { return stats.Stats{} }
 func (target *Target) ApplyTalents()                              {}
 func (target *Target) GetCharacter() *Character                   { return nil }
 func (target *Target) Initialize()                                {}

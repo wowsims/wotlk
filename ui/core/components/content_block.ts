@@ -1,21 +1,23 @@
+import { Tooltip } from 'bootstrap';
 import { title } from 'process';
 import { Component } from './component.js';
 
-export interface ContentBlockTitleConfig {
-  text: string,
+export interface ContentBlockHeaderConfig {
+  title: string,
   classes?: Array<string>,
-  tag?: string,
+  titleTag?: string,
+  tooltip?: string,
 }
 
 export interface ContentBlockConfig {
 	bodyClasses?: Array<string>,
   classes?: Array<string>,
   rootElem?: HTMLElement,
-  title?: ContentBlockTitleConfig,
+  header?: ContentBlockHeaderConfig,
 }
 
 export class ContentBlock extends Component {
-  readonly titleElement: HTMLElement|null;
+  readonly headerElement: HTMLElement|null;
   readonly bodyElement: HTMLElement;
 
   readonly config: ContentBlockConfig;
@@ -29,25 +31,32 @@ export class ContentBlock extends Component {
 			this.rootElem.classList.add(...config.classes);
     }
 
-    this.titleElement = this.buildHeader();
+    this.headerElement = this.buildHeader();
     this.bodyElement = this.buildBody();
 	}
 
   private buildHeader(): HTMLElement|null {
-    if (this.config.title && Object.keys(this.config.title).length) {
-      let titleTag = this.config.title.tag || 'h6';
+    if (this.config.header && Object.keys(this.config.header).length) {
+      let titleTag = this.config.header.titleTag || 'h6';
       let headerFragment = document.createElement('fragment');
       headerFragment.innerHTML = `
         <div class="content-block-header">
-          <${titleTag} class="content-block-title">${this.config.title.text}</${titleTag}>
+          <${titleTag}
+            class="content-block-title"
+            ${this.config.header.tooltip ? 'data-bs-toggle="tooltip"' : ''}
+            ${this.config.header.tooltip ? `data-bs-title="${this.config.header.tooltip}"` : ''}
+          >${this.config.header.title}</${titleTag}>
         </div>
       `;
 
       let header = headerFragment.children[0] as HTMLElement;
       
-      if (this.config.title.classes) {
-        header.classList.add(...this.config.title.classes);
+      if (this.config.header.classes) {
+        header.classList.add(...this.config.header.classes);
       }
+
+      if (this.config.header.tooltip)
+        Tooltip.getOrCreateInstance(header.querySelector('.content-block-title') as HTMLElement);
 
       this.rootElem.appendChild(header);
 

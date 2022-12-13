@@ -37,14 +37,15 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 	private currentValue: number;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconPickerConfig<ModObject, ValueType>) {
-		super(parent, 'icon-input-root', modObj, config);
+		super(parent, 'icon-picker-root', modObj, config);
+		this.rootElem.classList.add('icon-picker');
 		this.config = config;
 		this.currentValue = 0;
 
 		this.rootAnchor = document.createElement('a');
-		this.rootAnchor.classList.add('icon-input');
+		this.rootAnchor.classList.add('icon-picker-button');
 		this.rootAnchor.target = '_blank';
-		this.rootElem.appendChild(this.rootAnchor);
+		this.rootElem.prepend(this.rootAnchor);
 
 		const useImprovedIcons = Boolean(this.config.improvedId);
 		if (useImprovedIcons) {
@@ -63,12 +64,12 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		levelContainer.innerHTML = `
       <a class="icon-input-improved icon-input-improved1"></a>
       <a class="icon-input-improved icon-input-improved2"></a>
-      <span class="icon-input-counter"></span>
+      <span class="icon-picker-label ${this.config.states > 2 ? '' : 'hide'}"></span>
     `;
 
 		this.improvedAnchor = this.rootAnchor.getElementsByClassName('icon-input-improved1')[0] as HTMLAnchorElement;
 		this.improvedAnchor2 = this.rootAnchor.getElementsByClassName('icon-input-improved2')[0] as HTMLAnchorElement;
-		this.counterElem = this.rootAnchor.getElementsByClassName('icon-input-counter')[0] as HTMLElement;
+		this.counterElem = this.rootAnchor.getElementsByClassName('icon-picker-label')[0] as HTMLElement;
 
 		this.config.id.fillAndSet(this.rootAnchor, true, true);
 

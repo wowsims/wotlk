@@ -1,0 +1,49 @@
+@use "sass:map";
+
+.sim-tab {
+  .tab-pane-content-container {
+    display: flex;
+
+    .tab-panel-left {
+      margin-right: $gap-width * 2;
+      display: flex;
+      flex: 3;
+
+      .tab-panel-col {
+        flex: 1;
+
+        &:not(:last-child) {
+          margin-right: 2 * map.get($spacers, 3);
+        }
+      }
+    }
+
+    .tab-panel-right {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  .sim-tab {
+    .tab-pane-content-container {
+      flex-direction: column;
+
+      .tab-panel-left {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .sim-tab {
+    .tab-pane-content-container {
+      .tab-panel-left {
+        flex-direction: column;
+      }
+    }
+  }
+}

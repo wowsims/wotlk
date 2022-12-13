@@ -1,0 +1,124 @@
+@use "sass:map";
+
+@import "./custom_rotation_picker";
+@import "./consumes_picker";
+@import "./cooldowns_picker";
+
+.settings-tab {
+  .tab-pane-content-container {
+    .tab-panel-left {
+      flex: 4;
+
+      .tab-panel-col {
+        flex: 2;
+
+        &:last-child {
+          flex: 3;
+        }
+      }
+    }
+  }
+
+  .content-block {
+    .content-block-body {
+      &> .input-root:last-child {
+        margin-bottom: 0;
+      }
+
+      &> .picker-group:last-child {
+        &> .input-root {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .icon-group {
+    display: grid;
+
+    &> * {
+      margin-bottom: $block-spacer !important;
+      margin-right: 0 !important;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .rotation-settings {
+    .input-root {
+      label {
+        max-width: 60%;
+        padding-right: .5rem;
+      }
+
+      input:not(.form-check-input), select {
+        min-width: 40%;
+        width: 40%;
+      }
+    }
+  }
+
+  .cooldown-settings {
+    .cooldown-timings-picker {
+      min-width: 40%;
+      width: 40%;
+    }
+  }
+
+  .buffs-settings,
+  .debuffs-settings {
+    .content-block-body {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      &> .icon-picker {
+        margin-bottom: map.get($spacers, 1) !important;
+
+        &:not(:nth-child(3n)) {
+          margin-right: map.get($spacers, 2);
+        }
+
+        .form-label {
+          white-space: normal;
+        }
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  .settings-tab {
+    .tab-pane-content-container {
+      flex-direction: column;
+
+      .tab-panel-left {
+        margin-right: 0 !important;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  .settings-tab {
+    .tab-pane-content-container {
+      .tab-panel-left {
+        flex-wrap: wrap;
+
+        .tab-panel-col {
+          flex-basis: 100%;
+          margin-right: 0 !important;
+        }
+      }
+    }
+
+    .content-block {
+      .content-block-body {
+        &> .picker-group {
+          &> .input-root:not(:last-child) {
+            margin-bottom: $block-spacer;
+          }
+        }
+      }
+    }
+  }
+}

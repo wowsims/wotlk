@@ -16,7 +16,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecShadowPriest, Armor>({
 	fieldName: 'armor',
 	values: [
-		{ color: 'grey', value: Armor.NoArmor },
+		{ value: Armor.NoArmor, tooltip: 'No Inner Fire' },
 		{ actionId: ActionId.fromSpellId(48168), value: Armor.InnerFire },
 	],
 });

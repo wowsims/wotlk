@@ -1,25 +1,26 @@
-import { MobType } from '../proto/common.js';
-import { SpellSchool } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
+import {
+	MobType,
+	SpellSchool,
+	Stat
+ } from '../proto/common.js';
 import { Encounter } from '../encounter.js';
 import { Raid } from '../raid.js';
 import { Target } from '../target.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
-import { EnumPicker, EnumPickerConfig } from '../components/enum_picker.js';
-import { ListPicker, ListPickerConfig } from '../components/list_picker.js';
+import { EnumPicker } from '../components/enum_picker.js';
+import { ListPicker } from '../components/list_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
-import { Stats } from '../proto_utils/stats.js';
 import { isHealingSpec, isTankSpec } from '../proto_utils/utils.js';
 import { statNames } from '../proto_utils/names.js';
-import { getEnumValues } from '../utils.js';
 
 import { Component } from './component.js';
-import { Popup } from './popup.js';
 
 import * as Mechanics from '../constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
+import { Input } from './input.js';
+import { BaseModal } from './base_modal.js';
 
 export interface EncounterPickerConfig {
 	showExecuteProportion: boolean,
@@ -120,53 +121,29 @@ export class EncounterPicker extends Component {
 			}
 
 			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('sim-button', 'advanced-button', 'damage-metrics');
-			advancedButton.textContent = 'ADVANCED';
-			advancedButton.addEventListener('click', () => new AdvancedEncounterPicker(this.rootElem, modEncounter, simUI));
+			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
+			advancedButton.textContent = 'Advanced';
+			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(this.rootElem, modEncounter, simUI));
 			this.rootElem.appendChild(advancedButton);
 		});
 	}
 }
 
-class AdvancedEncounterPicker extends Popup {
+class AdvancedEncounterModal extends BaseModal {
 	private readonly encounter: Encounter;
 
 	constructor(parent: HTMLElement, encounter: Encounter, simUI: SimUI) {
-		super(parent);
+		super(simUI.rootElem, 'advanced-encounter-picker-modal');
+
 		this.encounter = encounter;
 
-		this.rootElem.classList.add('advanced-encounter-picker');
-		this.rootElem.innerHTML = `
-			<div class="encounter-type"></div>
+		this.addHeader();
+		this.body.innerHTML = `
 			<div class="encounter-header">
 			</div>
 			<div class="encounter-targets">
 			</div>
 		`;
-
-		this.addCloseButton();
-
-		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
-
-		const encounterTypeContainer = this.rootElem.getElementsByClassName('encounter-type')[0] as HTMLElement;
-		new EnumPicker<Encounter>(encounterTypeContainer, this.encounter, {
-			label: 'ENCOUNTER',
-			values: [
-				{ name: 'Custom', value: -1 },
-			].concat(presetEncounters.map((pe, i) => {
-				return {
-					name: pe.path,
-					value: i,
-				};
-			})),
-			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => presetEncounters.findIndex(pe => encounter.matchesPreset(pe)),
-			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				if (newValue != -1) {
-					encounter.applyPreset(eventID, presetEncounters[newValue]);
-				}
-			},
-		});
 
 		const header = this.rootElem.getElementsByClassName('encounter-header')[0] as HTMLElement;
 		const targetsElem = this.rootElem.getElementsByClassName('encounter-targets')[0] as HTMLElement;
@@ -184,9 +161,7 @@ class AdvancedEncounterPicker extends Popup {
 			});
 		}
 		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, this.encounter, {
-			extraCssClasses: [
-				'targets-picker',
-			],
+			extraCssClasses: ['targets-picker', 'mb-0'],
 			itemLabel: 'Target',
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
 			getValue: (encounter: Encounter) => encounter.getTargets(),
@@ -197,6 +172,32 @@ class AdvancedEncounterPicker extends Popup {
 			copyItem: (oldItem: Target) => oldItem.clone(TypedEvent.nextEventID()),
 			newItemPicker: (parent: HTMLElement, target: Target) => new TargetPicker(parent, target),
 		});
+	}
+
+	private addHeader() {
+		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
+
+		new EnumPicker<Encounter>(this.header, this.encounter, {
+			label: 'Encounter',
+			extraCssClasses: ['encounter-picker', 'mb-0'],
+			values: [
+				{ name: 'Custom', value: -1 },
+			].concat(presetEncounters.map((pe, i) => {
+				return {
+					name: pe.path,
+					value: i,
+				};
+			})),
+			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+			getValue: (encounter: Encounter) => presetEncounters.findIndex(pe => encounter.matchesPreset(pe)),
+			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+				if (newValue != -1) {
+					encounter.applyPreset(eventID, presetEncounters[newValue]);
+				}
+			},
+		});
+
+		this.addCloseButton();
 	}
 }
 
@@ -302,6 +303,7 @@ class TargetPicker extends Component {
 		ALL_TARGET_STATS.forEach(statData => {
 			const stat = statData.stat;
 			new NumberPicker(section2, modTarget, {
+				inline: true,
 				extraCssClasses: statData.extraCssClasses,
 				label: statNames[stat],
 				labelTooltip: statData.tooltip,
@@ -335,6 +337,7 @@ class TargetPicker extends Component {
 		new BooleanPicker(section3, modTarget, {
 			label: 'Dual Wield',
 			labelTooltip: 'Uses 2 separate weapons to attack.',
+			inline: true,
 			changedEvent: (target: Target) => target.propChangeEmitter,
 			getValue: (target: Target) => target.getDualWield(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
@@ -344,6 +347,7 @@ class TargetPicker extends Component {
 		new BooleanPicker(section3, modTarget, {
 			label: 'DW Miss Penalty',
 			labelTooltip: 'Enables the Dual Wield Miss Penalty (+19% chance to miss) if dual wielding. Bosses in Hyjal/BT/SWP usually have this disabled to stop tanks from avoidance stacking.',
+			inline: true,
 			changedEvent: (target: Target) => target.changeEmitter,
 			getValue: (target: Target) => target.getDualWieldPenalty(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
@@ -354,6 +358,7 @@ class TargetPicker extends Component {
 		new BooleanPicker(section3, modTarget, {
 			label: 'Parry Haste',
 			labelTooltip: 'Whether this enemy will gain parry haste when parrying attacks.',
+			inline: true,
 			changedEvent: (target: Target) => target.propChangeEmitter,
 			getValue: (target: Target) => target.getParryHaste(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
@@ -381,6 +386,7 @@ class TargetPicker extends Component {
 		new BooleanPicker(section3, modTarget, {
 			label: 'Chill of the Throne',
 			labelTooltip: 'Reduces the chance for this enemy\'s attacks to be dodged by 20%. Active in Icecrown Citadel.',
+			inline: true,
 			changedEvent: (target: Target) => target.changeEmitter,
 			getValue: (target: Target) => target.getSuppressDodge(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
@@ -391,6 +397,7 @@ class TargetPicker extends Component {
 		new BooleanPicker(section3, modTarget, {
 			label: 'Tightened Damage Range',
 			labelTooltip: 'Reduces the damage range of this enemy\'s auto-attacks. Observed behavior for Patchwerk.',
+			inline: true,
 			changedEvent: (target: Target) => target.changeEmitter,
 			getValue: (target: Target) => target.getTightEnemyDamage(),
 			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
@@ -402,7 +409,10 @@ class TargetPicker extends Component {
 }
 
 function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, showExecuteProportion: boolean) {
-	new NumberPicker(rootElem, encounter, {
+	let durationGroup = Input.newGroupContainer();
+	rootElem.appendChild(durationGroup);
+
+	new NumberPicker(durationGroup, encounter, {
 		label: 'Duration',
 		labelTooltip: 'The fight length for each sim iteration, in seconds.',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -412,7 +422,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		},
 		enableWhen: (obj) => { return !encounter.getUseHealth() },
 	});
-	new NumberPicker(rootElem, encounter, {
+	new NumberPicker(durationGroup, encounter, {
 		label: 'Duration +/-',
 		labelTooltip: 'Adds a random amount of time, in seconds, between [value, -1 * value] to each sim iteration. For example, setting Duration to 180 and Duration +/- to 10 will result in random durations between 170s and 190s.',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -424,7 +434,10 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 	});
 
 	if (showExecuteProportion) {
-		new NumberPicker(rootElem, encounter, {
+		let executeGroup = Input.newGroupContainer();
+		rootElem.appendChild(executeGroup);
+
+		new NumberPicker(executeGroup, encounter, {
 			label: 'Execute Duration 20 (%)',
 			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -434,7 +447,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			},
 			enableWhen: (obj) => { return !encounter.getUseHealth() },
 		});
-		new NumberPicker(rootElem, encounter, {
+		new NumberPicker(executeGroup, encounter, {
 			label: 'Execute Duration 25 (%)',
 			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock\'s Drain Soul.',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -444,7 +457,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			},
 			enableWhen: (obj) => { return !encounter.getUseHealth() },
 		});
-		new NumberPicker(rootElem, encounter, {
+		new NumberPicker(executeGroup, encounter, {
 			label: 'Execute Duration 35 (%)',
 			labelTooltip: 'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 			changedEvent: (encounter: Encounter) => encounter.changeEmitter,

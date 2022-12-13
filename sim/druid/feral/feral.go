@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -37,7 +36,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat := &FeralDruid{
 		Druid:   druid.New(character, druid.Cat, selfBuffs, feralOptions.Talents),
-		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
+		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
 	}
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
@@ -101,20 +100,6 @@ func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralSpells(0)
 	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
-}
-
-func (cat *FeralDruid) ApplyFormBonuses(enable bool) stats.Stats {
-	bonuses := cat.GetCatFormBonuses(enable)
-
-	for _, d := range bonuses.Deps {
-		cat.AddStatDependency(d.Src, d.Dst, d.Amount)
-	}
-
-	for _, stat := range bonuses.Mul {
-		cat.MultiplyStat(stat.S, stat.Amount)
-	}
-
-	return bonuses.S.Add(cat.GetFormShiftStats(enable))
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

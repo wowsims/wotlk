@@ -21,6 +21,10 @@ type PostFinalizeEffect func()
 type Environment struct {
 	State EnvironmentState
 
+	// Whether stats are currently being measured. Used to disable some validation
+	// checks which are otherwise helpful.
+	MeasuringStats bool
+
 	Raid      *Raid
 	Encounter Encounter
 	AllUnits  []*Unit

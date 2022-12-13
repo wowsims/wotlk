@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Agent can be thought of as the 'Player', i.e. the thing controlling the Character.
@@ -25,17 +24,9 @@ type Agent interface {
 	// Updates the input Buffs to include party-wide buffs provided by this Agent.
 	AddPartyBuffs(partyBuffs *proto.PartyBuffs)
 
-	// Applies any bonuses that should be considered part of gear. This makes sure
-	// the bonus is applied at the appropriate time to be accounted in player stats.
-	ApplyGearBonuses()
-
 	// All talent stats / auras should be added within this callback. This makes sure
 	// talents are applied at the right time so we can calculate groups of stats.
 	ApplyTalents()
-
-	// Any 'form' bonuses or dynamic buffs. This will be called twice, once to enable, then to disable
-	// Care should be taken here to avoid 'double dipping' on stats
-	ApplyFormBonuses(enable bool) stats.Stats
 
 	// Returns this Agent to its initial state. Called before each Sim iteration
 	// and once after the final iteration.
