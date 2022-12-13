@@ -403,8 +403,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	excessE := curEnergy - floatingEnergy
 	timeToNextAction := time.Duration(0)
 
-	var nextCastEnd time.Duration
-
 	if !cat.CatFormAura.IsActive() && rotation.FlowerWeave {
 		// If the previous GotW cast was unsuccessful and we still have
 		// leeway available, then try again. Otherwise, shift back into Cat
@@ -549,7 +547,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		// since we will be forced to shift into Dire Bear Form immediately
 		// after pooling in order to save the Lacerate. Instead, it is
 		// preferable to just Shred and bearweave early.
-		nextCastEnd = sim.CurrentTime + timeToNextAction + cat.latency + time.Second*2
+		nextCastEnd := sim.CurrentTime + timeToNextAction + cat.latency + time.Second*2
 		ignorePooling := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && (cat.LacerateDot.ExpiresAt().Seconds()-1.5-latencySecs <= nextCastEnd.Seconds())
 
 		if ignorePooling {
@@ -575,8 +573,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// If Lacerateweaving, then also schedule an action just before Lacerate
 	// expires to ensure we can save it in time.
 	lacRefreshTime := cat.LacerateDot.ExpiresAt() - (time.Duration(1.5*float64(time.Second) - float64(3*cat.latency*time.Second)))
-	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && cat.LacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (lacRefreshTime <= nextCastEnd) && (lacRefreshTime > sim.CurrentTime) {
-		nextAction = core.MinDuration(nextAction, time.Duration(lacRefreshTime))
+	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && cat.LacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (sim.CurrentTime < lacRefreshTime) {
+		nextAction = core.MinDuration(nextAction, lacRefreshTime)
 	}
 	nextAction += cat.latency
 
