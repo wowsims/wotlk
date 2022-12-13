@@ -250,6 +250,7 @@ export class SimHeader extends Component {
 			parent: this.simToolbar,
 			icon: "fas fa-cog fa-lg",
 			tooltip: "Show Sim Options",
+			classes: 'sim-options',
 			onclick: () => new SettingsMenu(this.rootElem, this.simUI)
 		})
 	}

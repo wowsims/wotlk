@@ -32,8 +32,8 @@ export abstract class Exporter extends Popup {
 				<textarea class="exporter-textarea form-control" readonly></textarea>
 			</div>
 			<div class="actions-row">
-				<button class="exporter-button sim-button clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button sim-button download-button">DOWNLOAD</button>
+				<button class="exporter-button btn btn-primary clipboard-button">COPY TO CLIPBOARD</button>
+				<button class="exporter-button btn btn-primary download-button">DOWNLOAD</button>
 			</div>
 		`;
 
