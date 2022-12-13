@@ -197,7 +197,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 			// Expertise is non-linear, so adjust in increments that match the stepwise reduction.
 			statMod = ExpertisePerQuarterPercentReduction
 		} else if stat == stats.Armor {
-			statMod = 200
+			statMod = defaultStatMod * 10
 		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod
@@ -280,17 +280,18 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 			continue
 		}
 
-		calcEpResults := func(weightResults *StatWeightValues) {
-			weightResults.EpValues[stat] = weightResults.Weights[stat] / weightResults.Weights[referenceStat]
-			weightResults.EpValuesStdev[stat] = weightResults.WeightsStdev[stat] / math.Abs(weightResults.Weights[referenceStat])
+		calcEpResults := func(weightResults *StatWeightValues, refStat stats.Stat) {
+			if weightResults.Weights[refStat] == 0 {
+				return
+			}
+			weightResults.EpValues[stat] = weightResults.Weights[stat] / weightResults.Weights[refStat]
+			weightResults.EpValuesStdev[stat] = weightResults.WeightsStdev[stat] / math.Abs(weightResults.Weights[refStat])
 		}
 
-		calcEpResults(&result.Dps)
-		calcEpResults(&result.Hps)
-		calcEpResults(&result.Tps)
-		if result.Dtps.Weights[DTPSReferenceStat] != 0 {
-			calcEpResults(&result.Dtps)
-		}
+		calcEpResults(&result.Dps, referenceStat)
+		calcEpResults(&result.Hps, referenceStat)
+		calcEpResults(&result.Tps, referenceStat)
+		calcEpResults(&result.Dtps, DTPSReferenceStat)
 	}
 
 	return result
