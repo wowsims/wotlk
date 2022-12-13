@@ -10,6 +10,23 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+type CharacterBuildPhase uint8
+
+func (cbp CharacterBuildPhase) Matches(other CharacterBuildPhase) bool {
+	return (cbp & other) != 0
+}
+
+const (
+	CharacterBuildPhaseNone CharacterBuildPhase = 0
+	CharacterBuildPhaseBase CharacterBuildPhase = 1 << iota
+	CharacterBuildPhaseGear
+	CharacterBuildPhaseTalents
+	CharacterBuildPhaseBuffs
+	CharacterBuildPhaseConsumes
+)
+
+const CharacterBuildPhaseAll = CharacterBuildPhaseBase | CharacterBuildPhaseGear | CharacterBuildPhaseTalents | CharacterBuildPhaseBuffs | CharacterBuildPhaseConsumes
+
 // Character is a data structure to hold all the shared values that all
 // class logic shares.
 // All players have stats, equipment, auras, etc
@@ -134,9 +151,6 @@ func (character *Character) addUniversalStatDependencies() {
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
-// Empty implementation so its optional for Agents.
-func (character *Character) ApplyGearBonuses() {}
-
 func (character *Character) ApplyFormBonuses(enable bool) stats.Stats {
 	return stats.Stats{}
 }
@@ -147,32 +161,53 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
-	agent.ApplyGearBonuses()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
 	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	agent.ApplyTalents()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseTalents)
 	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
+	character.applyBuildPhaseAuras(CharacterBuildPhaseBuffs)
 	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
-	character.AddStats(agent.ApplyFormBonuses(true))
-	playerStats.FormStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
-	character.AddStats(agent.ApplyFormBonuses(false))
-
 	applyConsumeEffects(agent)
+	character.applyBuildPhaseAuras(CharacterBuildPhaseConsumes)
 	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 	}
 
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	return playerStats
+}
+func (character *Character) applyBuildPhaseAuras(phase CharacterBuildPhase) {
+	sim := Simulation{}
+	character.Env.MeasuringStats = true
+	for _, aura := range character.auras {
+		if aura.BuildPhase.Matches(phase) {
+			aura.Activate(&sim)
+		}
+	}
+	character.Env.MeasuringStats = false
+}
+func (character *Character) clearBuildPhaseAuras(phase CharacterBuildPhase) {
+	sim := Simulation{}
+	character.Env.MeasuringStats = true
+	for _, aura := range character.auras {
+		if aura.BuildPhase.Matches(phase) {
+			aura.Deactivate(&sim)
+		}
+	}
+	character.Env.MeasuringStats = false
 }
 
 // Apply effects from all equipped core.
@@ -344,7 +379,9 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	character.majorCooldownManager.finalize()
 
 	if playerStats != nil {
+		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.FinalStats = character.GetStats().ToFloatArray()
+		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.Sets = character.GetActiveSetBonusNames()
 		playerStats.Cooldowns = character.GetMajorCooldownIDs()
 	}

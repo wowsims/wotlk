@@ -6,7 +6,6 @@ import (
 
 	//"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // These tests are currently broken, seems like target PseudoStats are somehow not being set.
@@ -116,12 +115,6 @@ func (fa *FakeAgent) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 }
 func (fa *FakeAgent) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
-}
-func (fa *FakeAgent) ApplyGearBonuses() {
-
-}
-func (fa *FakeAgent) ApplyFormBonuses(enable bool) stats.Stats {
-	return stats.Stats{}
 }
 func (fa *FakeAgent) ApplyTalents() {
 

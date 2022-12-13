@@ -81,10 +81,9 @@ export class CharacterStats extends Component {
 		const gearDelta = gearStats.subtract(baseStats);
 		const talentsDelta = talentsStats.subtract(gearStats).add(statMods.talents);
 		const buffsDelta = buffsStats.subtract(talentsStats);
-		const formDelta = formStats.subtract(buffsStats);
 		const consumesDelta = consumesStats.subtract(buffsStats);
 
-		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats).add(formDelta);
+		const finalStats = new Stats(playerStats.finalStats).add(statMods.talents).add(debuffStats);
 
 		this.stats.forEach((stat, idx) => {
 			let fragment = document.createElement('fragment');

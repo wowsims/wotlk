@@ -314,6 +314,10 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
 	}
+
+	// Will be un-cancelled in Reset(), this is just to prevent any swing logic
+	// from being triggered during initialization.
+	unit.AutoAttacks.autoSwingCancelled = true
 }
 
 func (aa *AutoAttacks) IsEnabled() bool {
