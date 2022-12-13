@@ -3,7 +3,7 @@ character_stats_results: {
  value: {
   final_stats: 648.1794
   final_stats: 1403.3976
-  final_stats: 2295.1646
+  final_stats: 1669.21062
   final_stats: 385.33968
   final_stats: 394.85424
   final_stats: 280
@@ -12,16 +12,16 @@ character_stats_results: {
   final_stats: 990.62917
   final_stats: 318
   final_stats: 0
-  final_stats: 10964.38433
+  final_stats: 10445.87724
   final_stats: 255
-  final_stats: 2211.60753
+  final_stats: 2395.24753
   final_stats: 318
   final_stats: 172
   final_stats: 194.975
   final_stats: 8996.0952
   final_stats: 0
   final_stats: 0
-  final_stats: 27630.3092
+  final_stats: 9178.2952
   final_stats: 3084.4
   final_stats: 0
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 1346.5594
   final_stats: 0
   final_stats: 0
-  final_stats: 30188.24603
+  final_stats: 23928.7062
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -770,7 +770,7 @@ dps_results: {
  key: "TestFeral-AllItems-ThunderheartHarness"
  value: {
   dps: 5675.72738
-  tps: 4281.08493
+  tps: 4294.78658
  }
 }
 dps_results: {
