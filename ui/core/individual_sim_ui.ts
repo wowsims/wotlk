@@ -546,7 +546,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const tankSpec = isTankSpec(this.player.spec);
 			const healingSpec = isHealingSpec(this.player.spec);
 
-			//Special case for Totem of Wraith keeps buff and debuff sync'd
+			//Special case for Totem of Wrath keeps buff and debuff sync'd
 			const towEnabled =  this.individualConfig.defaults.raidBuffs.totemOfWrath || this.individualConfig.defaults.debuffs.totemOfWrath
 			this.individualConfig.defaults.raidBuffs.totemOfWrath = towEnabled;
 			this.individualConfig.defaults.debuffs.totemOfWrath = towEnabled;
