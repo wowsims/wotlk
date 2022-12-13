@@ -112,7 +112,7 @@ export const BalanceDruidRotationConfig = {
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'playerLatency',
 			label: 'Player latency',
-			labelTooltip: 'Time before the player reacts to an eclipse proc',
+			labelTooltip: 'Time before the player reacts to an eclipse proc, in milliseconds.',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 	],

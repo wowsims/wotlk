@@ -139,7 +139,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 		},
 	})
 
-	nsAura = druid.GetOrRegisterAura(core.Aura{
+	nsAura = druid.RegisterAura(core.Aura{
 		Label:    "Natures Swiftness",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
@@ -385,7 +385,7 @@ func (druid *Druid) applyEclipse() {
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
 	solarProcMultiplier := 1.4 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
 	druid.SolarICD.Duration = time.Millisecond * 30000
-	druid.SolarEclipseProcAura = druid.GetOrRegisterAura(core.Aura{
+	druid.SolarEclipseProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Solar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
@@ -397,7 +397,7 @@ func (druid *Druid) applyEclipse() {
 		},
 	})
 
-	druid.GetOrRegisterAura(core.Aura{
+	druid.RegisterAura(core.Aura{
 		Label:    "Eclipse (Solar)",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -427,7 +427,7 @@ func (druid *Druid) applyEclipse() {
 	lunarProcChance := 0.2 * float64(druid.Talents.Eclipse)
 	lunarBonusCrit := (40 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 7, 0)) * core.CritRatingPerCritChance
 	druid.LunarICD.Duration = time.Millisecond * 30000
-	druid.LunarEclipseProcAura = druid.GetOrRegisterAura(core.Aura{
+	druid.LunarEclipseProcAura = druid.RegisterAura(core.Aura{
 		Label:    "Lunar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},

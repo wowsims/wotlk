@@ -37,7 +37,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat := &FeralDruid{
 		Druid:   druid.New(character, druid.Cat, selfBuffs, feralOptions.Talents),
-		latency: time.Duration(feralOptions.Options.LatencyMs) * time.Millisecond,
+		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
 	}
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
