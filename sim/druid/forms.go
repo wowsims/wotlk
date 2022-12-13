@@ -11,7 +11,7 @@ import (
 type DruidForm uint8
 
 const (
-	Humanoid = 1 << iota
+	Humanoid DruidForm = 1 << iota
 	Bear
 	Cat
 	Moonkin
@@ -88,9 +88,9 @@ func (druid *Druid) registerCatFormSpell() {
 		Label:      "Cat Form",
 		ActionID:   actionID,
 		Duration:   core.NeverExpires,
-		BuildPhase: core.CharacterBuildPhaseBase,
+		BuildPhase: core.Ternary(druid.StartingForm.Matches(Cat), core.CharacterBuildPhaseBase, core.CharacterBuildPhaseNone),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.form != Humanoid {
+			if !druid.Env.MeasuringStats && druid.form != Humanoid {
 				druid.ClearForm(sim)
 			}
 			druid.form = Cat
@@ -244,9 +244,9 @@ func (druid *Druid) registerBearFormSpell() {
 		Label:      "Bear Form",
 		ActionID:   actionID,
 		Duration:   core.NeverExpires,
-		BuildPhase: core.CharacterBuildPhaseBase,
+		BuildPhase: core.Ternary(druid.StartingForm.Matches(Bear), core.CharacterBuildPhaseBase, core.CharacterBuildPhaseNone),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.form != Humanoid {
+			if !druid.Env.MeasuringStats && druid.form != Humanoid {
 				druid.ClearForm(sim)
 			}
 			druid.form = Bear

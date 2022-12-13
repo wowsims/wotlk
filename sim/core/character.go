@@ -151,10 +151,6 @@ func (character *Character) addUniversalStatDependencies() {
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
-func (character *Character) ApplyFormBonuses(enable bool) stats.Stats {
-	return stats.Stats{}
-}
-
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
