@@ -24,6 +24,7 @@ type DistributionMetrics struct {
 	maxSeed    int64
 	minSeed    int64
 	hist       map[int32]int32 // rounded DPS to count
+	allValues  []float64
 }
 
 func (distMetrics *DistributionMetrics) reset() {
@@ -31,8 +32,14 @@ func (distMetrics *DistributionMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (distMetrics *DistributionMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
+func (distMetrics *DistributionMetrics) doneIteration(sim *Simulation) {
+	seed := sim.rand.GetSeed()
+	encounterDurationSeconds := sim.Duration.Seconds()
+
 	dps := distMetrics.Total / encounterDurationSeconds
+	if sim.Options.SaveAllValues {
+		distMetrics.allValues = append(distMetrics.allValues, dps)
+	}
 
 	distMetrics.sum += dps
 	distMetrics.sumSquared += dps * dps
@@ -53,13 +60,14 @@ func (distMetrics *DistributionMetrics) ToProto(numIterations int32) *proto.Dist
 	dpsAvg := distMetrics.sum / float64(numIterations)
 
 	return &proto.DistributionMetrics{
-		Avg:     dpsAvg,
-		Stdev:   math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
-		Max:     distMetrics.max,
-		Min:     distMetrics.min,
-		MaxSeed: distMetrics.maxSeed,
-		MinSeed: distMetrics.minSeed,
-		Hist:    distMetrics.hist,
+		Avg:       dpsAvg,
+		Stdev:     math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
+		Max:       distMetrics.max,
+		Min:       distMetrics.min,
+		MaxSeed:   distMetrics.maxSeed,
+		MinSeed:   distMetrics.minSeed,
+		Hist:      distMetrics.hist,
+		AllValues: distMetrics.allValues,
 	}
 }
 
@@ -361,8 +369,9 @@ func (unitMetrics *UnitMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterDurationSeconds float64) {
+func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	if unit.HasManaBar() {
+		encounterDurationSeconds := sim.Duration.Seconds()
 		timeToOOM := unitMetrics.FirstOOMTimestamp
 		if !unitMetrics.WentOOM {
 			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
@@ -382,12 +391,12 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 		unitMetrics.tto.Total *= encounterDurationSeconds
 	}
 
-	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.dpasp.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.hps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.tto.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.dps.doneIteration(sim)
+	unitMetrics.dpasp.doneIteration(sim)
+	unitMetrics.threat.doneIteration(sim)
+	unitMetrics.dtps.doneIteration(sim)
+	unitMetrics.hps.doneIteration(sim)
+	unitMetrics.tto.doneIteration(sim)
 
 	unitMetrics.oomTimeSum += unitMetrics.OOMTime.Seconds()
 	if unitMetrics.Died {

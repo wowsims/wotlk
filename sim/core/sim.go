@@ -366,10 +366,10 @@ func (sim *Simulation) runOnce() {
 	sim.Encounter.doneIteration(sim)
 
 	for _, unit := range sim.Raid.AllUnits {
-		unit.Metrics.doneIteration(unit, sim.rand.GetSeed(), sim.Duration.Seconds())
+		unit.Metrics.doneIteration(unit, sim)
 	}
 	for _, target := range sim.Encounter.Targets {
-		target.Metrics.doneIteration(&target.Unit, sim.rand.GetSeed(), sim.Duration.Seconds())
+		target.Metrics.doneIteration(&target.Unit, sim)
 	}
 }
 
