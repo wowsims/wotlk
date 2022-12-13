@@ -79,6 +79,24 @@ export const FeralDruidRotationConfig = {
 				{ name: 'Lacerate', value: BearweaveType.Lacerate },
 			],
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'snekWeave',
+			label: 'Snek Weave',
+			labelTooltip: 'Reset swing timer using albino snek, when going from bear to cat',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType != BearweaveType.None,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'flowerWeave',
+			label: 'Flower Weave',
+			labelTooltip: 'Fish for clearcasting during rotation with gotw',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'raidTargets',
+			label: 'GotW Raid Targets',
+			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None && player.getRotation().flowerWeave == true,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'hotUptime',
 			label: 'Revitalize Hot Uptime',
@@ -116,24 +134,6 @@ export const FeralDruidRotationConfig = {
 			label: 'Bite Time',
 			labelTooltip: 'Min seconds on Rip/Roar to bite',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'snekWeave',
-			label: 'Snek Weave',
-			labelTooltip: 'Reset swing timer using albino snek, when going from bear to cat',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType != BearweaveType.None,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'flowerWeave',
-			label: 'Flower Weave',
-			labelTooltip: 'Fish for clearcasting during rotation with gotw',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'raidTargets',
-			label: 'GotW Raid Targets',
-			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None && player.getRotation().flowerWeave == true,
 		}),
 	],
 };
