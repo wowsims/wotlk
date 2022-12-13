@@ -108,6 +108,7 @@ enum Stat {
 	StatFrostResistance = 31;
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
+	StatBonusArmor = 34;
 }
 
 enum ItemType {

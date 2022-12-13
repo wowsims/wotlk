@@ -131,6 +131,30 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
+func (druid *Druid) IsScalableArmorSlot(itemType proto.ItemType) bool {
+	switch itemType {
+	case
+		proto.ItemType_ItemTypeNeck,
+		proto.ItemType_ItemTypeFinger,
+		proto.ItemType_ItemTypeTrinket,
+		proto.ItemType_ItemTypeWeapon:
+		return false
+	}
+	return true
+}
+
+func (druid *Druid) ScaleBaseArmor(multiplier float64) float64 {
+	addedArmor := 0.0
+
+	for _, item := range druid.Equip {
+		if druid.IsScalableArmorSlot(item.Type) {
+			addedArmor += multiplier * (item.Stats[stats.Armor] - item.Stats[stats.BonusArmor])
+		}
+	}
+
+	return addedArmor
+}
+
 func (druid *Druid) BalanceCritMultiplier() float64 {
 	return druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))
 }
