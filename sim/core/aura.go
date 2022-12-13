@@ -94,6 +94,10 @@ type Aura struct {
 	OnPeriodicHealDealt   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the caster.
 	OnPeriodicHealTaken   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the target.
 
+	// If non-default, stat bonuses fron the OnGain callback of this aura will be
+	// included in Character Stats in the UI.
+	BuildPhase CharacterBuildPhase
+
 	// Metrics for this aura.
 	metrics AuraMetrics
 

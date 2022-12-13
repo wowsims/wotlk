@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -90,20 +89,6 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
 	bear.RegisterFeralSpells(float64(bear.Rotation.MaulRageThreshold))
-}
-
-func (bear *FeralTankDruid) ApplyFormBonuses(enable bool) stats.Stats {
-	bonuses := bear.GetBearFormBonuses(enable)
-
-	for _, d := range bonuses.Deps {
-		bear.AddStatDependency(d.Src, d.Dst, d.Amount)
-	}
-
-	for _, stat := range bonuses.Mul {
-		bear.MultiplyStat(stat.S, stat.Amount)
-	}
-
-	return bonuses.S.Add(bear.GetFormShiftStats(enable))
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {

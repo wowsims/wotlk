@@ -1106,9 +1106,10 @@ func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
 
 func TotemOfWrathAura(character *Character) *Aura {
 	aura := character.GetOrRegisterAura(Aura{
-		Label:    "Totem of Wrath",
-		ActionID: ActionID{SpellID: 57722},
-		Duration: NeverExpires,
+		Label:      "Totem of Wrath",
+		ActionID:   ActionID{SpellID: 57722},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
@@ -1119,9 +1120,10 @@ func TotemOfWrathAura(character *Character) *Aura {
 
 func FlametongueTotemAura(character *Character) *Aura {
 	aura := character.GetOrRegisterAura(Aura{
-		Label:    "Flametongue Totem",
-		ActionID: ActionID{SpellID: 58656},
-		Duration: NeverExpires,
+		Label:      "Flametongue Totem",
+		ActionID:   ActionID{SpellID: 58656},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
@@ -1132,9 +1134,10 @@ func FlametongueTotemAura(character *Character) *Aura {
 
 func DemonicPactAura(character *Character) *Aura {
 	aura := character.GetOrRegisterAura(Aura{
-		Label:    "Demonic Pact",
-		ActionID: ActionID{SpellID: 47240},
-		Duration: time.Second * 45,
+		Label:      "Demonic Pact",
+		ActionID:   ActionID{SpellID: 47240},
+		Duration:   time.Second * 45,
+		BuildPhase: CharacterBuildPhaseBuffs,
 	})
 	spellPowerBonusEffect(aura, 0)
 	return aura
