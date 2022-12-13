@@ -63,88 +63,6 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 	return s
 }
 
-type FormStatDep struct {
-	Src    stats.Stat
-	Dst    stats.Stat
-	Amount float64
-}
-
-type FormRawStat struct {
-	S      stats.Stat
-	Amount float64
-}
-
-type FormBonuses struct {
-	S    stats.Stats
-	Deps []*FormStatDep
-	Mul  []*FormRawStat
-}
-
-func (druid *Druid) GetCatFormBonuses(enable bool) FormBonuses {
-	f := FormBonuses{}
-	pos := core.TernaryFloat64(enable, 1.0, -1.0)
-
-	f.S[stats.AttackPower] += pos * float64(druid.Level) * 2
-	f.S[stats.MeleeCrit] += pos * 2 * float64(druid.Talents.MasterShapeshifter) * core.CritRatingPerCritChance
-
-	// Ap dep
-	f.Deps = append(f.Deps, &FormStatDep{
-		Src:    stats.Agility,
-		Dst:    stats.AttackPower,
-		Amount: pos,
-	})
-
-	hotw := 1.0 + 0.02*float64(druid.Talents.HeartOfTheWild)
-	f.Mul = append(f.Mul, &FormRawStat{
-		S:      stats.AttackPower,
-		Amount: core.Ternary(pos > 0, hotw, 1/hotw),
-	})
-
-	return f
-}
-
-func (druid *Druid) GetBearFormBonuses(enable bool) FormBonuses {
-	f := FormBonuses{}
-	pos := core.TernaryFloat64(enable, 1.0, -1.0)
-	f.S[stats.AttackPower] = pos * 3 * float64(core.CharacterLevel)
-
-	// Armor calculation: Dire Bear Form, Thick Hide, and Survival of the Fittest
-	// scale multiplicatively with each other. But part of the Thick Hide
-	// contribution was already calculated in ApplyTalents(), so we need to subtract
-	// that part out from the overall scaling factor given to ScaleBaseArmor().
-	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
-	thickHideMulti := 1.0
-
-	if druid.Talents.ThickHide > 0 {
-		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
-	}
-
-	totalBearMulti := 4.7 * sotfMulti * thickHideMulti
-	f.S[stats.Armor] = pos * druid.ScaleBaseArmor(totalBearMulti-thickHideMulti)
-
-	// Stam dep
-	f.Mul = append(f.Mul, &FormRawStat{
-		S:      stats.Stamina,
-		Amount: core.Ternary(pos > 0, 1.25, 1/1.25),
-	})
-
-	// Hotw
-	hotw := 1.0 + 0.02*float64(druid.Talents.HeartOfTheWild)
-	f.Mul = append(f.Mul, &FormRawStat{
-		S:      stats.Stamina,
-		Amount: core.Ternary(pos > 0, hotw, 1/hotw),
-	})
-
-	// Potp
-	potp := 1.0 + 0.02*float64(druid.Talents.ProtectorOfThePack)
-	f.Mul = append(f.Mul, &FormRawStat{
-		S:      stats.AttackPower,
-		Amount: core.Ternary(pos > 0, potp, 1/potp),
-	})
-
-	return f
-}
-
 func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
 	baseCost := druid.BaseMana * 0.35
@@ -280,12 +198,28 @@ func (druid *Druid) registerCatFormSpell() {
 	})
 }
 
+func (druid *Druid) calcArmorBonus() float64 {
+	// Armor calculation: Dire Bear Form, Thick Hide, and Survival of the Fittest
+	// scale multiplicatively with each other. But part of the Thick Hide
+	// contribution was already calculated in ApplyTalents(), so we need to subtract
+	// that part out from the overall scaling factor given to ScaleBaseArmor().
+	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
+	thickHideMulti := 1.0
+
+	if druid.Talents.ThickHide > 0 {
+		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
+	}
+
+	totalBearMulti := 4.7 * sotfMulti * thickHideMulti
+	return druid.ScaleBaseArmor(totalBearMulti - thickHideMulti)
+}
+
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	baseCost := druid.BaseMana * 0.35
 
 	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
-		stats.Armor:       3.7 * druid.Equip.Stats()[stats.Armor],
+		stats.Armor:       druid.calcArmorBonus(),
 		stats.AttackPower: 3 * float64(core.CharacterLevel),
 	})
 
