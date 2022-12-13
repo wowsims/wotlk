@@ -259,16 +259,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 				}
 			}
 
-			sum := 0.0
-			sumSq := 0.0
-			for i := 0; i < len(sample); i++ {
-				sum += sample[i]
-				sumSq += sample[i] * sample[i]
-			}
-			iters := float64(len(sample))
-			avg := sum / iters
-			weightResults.Weights[stat] = avg
-			weightResults.WeightsStdev[stat] = math.Abs(math.Sqrt((sumSq / iters)) - (avg * avg))
+			weightResults.Weights[stat], weightResults.WeightsStdev[stat] = calcMeanAndStdev(sample)
 		}
 
 		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
