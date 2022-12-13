@@ -32,7 +32,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Armor>({
 	fieldName: 'armor',
 	values: [
-		{ color: 'grey', value: Armor.NoArmor },
+		{ value: Armor.NoArmor, tooltip: 'No Armor' },
 		{ actionId: ActionId.fromSpellId(47893), value: Armor.FelArmor },
 		{ actionId: ActionId.fromSpellId(47889), value: Armor.DemonArmor },
 	],
@@ -41,7 +41,7 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWar
 export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, WeaponImbue>({
 	fieldName: 'weaponImbue',
 	values: [
-		{ color: 'grey', value: WeaponImbue.NoWeaponImbue },
+		{ value: WeaponImbue.NoWeaponImbue, tooltip: 'No Weapon Stone' },
 		{ actionId: ActionId.fromItemId(41174), value: WeaponImbue.GrandFirestone },
 		{ actionId: ActionId.fromItemId(41196), value: WeaponImbue.GrandSpellstone },
 	],
@@ -50,7 +50,7 @@ export const WeaponImbueInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.S
 export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlock, Summon>({
 	fieldName: 'summon',
 	values: [
-		{ color: 'grey', value: Summon.NoSummon },
+		{ value: Summon.NoSummon, tooltip: 'No Pet' },
 		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
@@ -83,7 +83,7 @@ export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SecondaryDot>({
 	fieldName: 'secondaryDot',
 	values: [
-		{ color: 'grey', value: SecondaryDot.NoSecondaryDot },
+		{ value: SecondaryDot.NoSecondaryDot },
 		{ actionId: ActionId.fromSpellId(47811), value: SecondaryDot.Immolate },
 		{
 			actionId: ActionId.fromSpellId(47843), value: SecondaryDot.UnstableAffliction,
@@ -102,7 +102,7 @@ export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SpecSpell>({
 	fieldName: 'specSpell',
 	values: [
-		{ color: 'grey', value: SpecSpell.NoSpecSpell },
+		{ value: SpecSpell.NoSpecSpell },
 		{
 			actionId: ActionId.fromSpellId(59164), value: SpecSpell.Haunt,
 			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().haunt,
@@ -113,6 +113,7 @@ export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWa
 		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
+	showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().haunt || player.getTalents().chaosBolt,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 		const newRotation = player.getRotation();
 		newRotation.specSpell = newValue;
@@ -148,7 +149,7 @@ export const WarlockRotationConfig = {
 		{
 			type: 'enum' as const,
 
-			label: 'SIM PRESETS',
+			label: 'Sim presets',
 			labelTooltip: 'Quick switch between sim spec presets. Will UPDATE TALENTS and SPELLS to defaults.',
 			values: [
 				{ name: 'Affliction', value: RotationType.Affliction },

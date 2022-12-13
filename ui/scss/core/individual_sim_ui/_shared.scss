@@ -57,128 +57,128 @@
   }
 }
 
-.settings-tab {
-	overflow-y: auto;
-}
-.settings-inputs {
-  position: relative;
-}
-.settings-section-container {
-  position: absolute;
-}
+// .settings-tab {
+// 	overflow-y: auto;
+// }
+// .settings-inputs {
+//   position: relative;
+// }
+// .settings-section-container {
+//   position: absolute;
+// }
 
-.settings-section {
-  border: 2px solid var(--main-text-color);
-  padding: 4px;
-  margin: 5px;
-	display: grid;
-	transform: none !important;
-}
+// .settings-section {
+//   border: 2px solid var(--main-text-color);
+//   padding: 4px;
+//   margin: 5px;
+// 	display: grid;
+// 	transform: none !important;
+// }
 
-.settings-section>legend {
-  padding: 0 10px;
-	margin: 0 3px;
-  font-weight: 900;
-	color: var(--main-text-color);
-  font-size: 18px;
-	white-space: nowrap;
-	border: none;
-	width: auto;
-}
+// .settings-section>legend {
+//   padding: 0 10px;
+// 	margin: 0 3px;
+//   font-weight: 900;
+// 	color: var(--main-text-color);
+//   font-size: 18px;
+// 	white-space: nowrap;
+// 	border: none;
+// 	width: auto;
+// }
 
-.settings-section .icon-enum-picker-root {
-	margin: 1px;
-}
+// .settings-section .icon-enum-picker-root {
+// 	margin: 1px;
+// }
 
-.settings-section .icon-enum-picker-root a {
-	height: 46px;
-	width: 46px;
-}
+// .settings-section .icon-enum-picker-root a {
+// 	height: 46px;
+// 	width: 46px;
+// }
 
-.settings-bottom-bar {
-  margin: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-}
+// .settings-bottom-bar {
+//   margin: 20px;
+//   display: flex;
+//   justify-content: space-around;
+//   align-items: flex-end;
+// }
 
-.race-section {
-  text-align: center;
-}
-.race-section > legend {
-  text-align: left;
-}
+// .race-section {
+//   text-align: center;
+// }
+// .race-section > legend {
+//   text-align: left;
+// }
 
-.race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
+// .race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
+// 	display: flex;
+// 	justify-content: space-between;
+// 	align-items: center;
+// }
 
-.settings-section-iconrow {
-	display: flex;
-	grid-template-columns: repeat(5, 1fr);
-	justify-content: space-evenly;
-	flex-wrap: wrap;
-	align-items: center;
-}
-.settings-section-iconrow>div {
-	margin: auto !important;
-}
+// .settings-section-iconrow {
+// 	display: flex;
+// 	grid-template-columns: repeat(5, 1fr);
+// 	justify-content: space-evenly;
+// 	flex-wrap: wrap;
+// 	align-items: center;
+// }
+// .settings-section-iconrow>div {
+// 	margin: auto !important;
+// }
 
-.buffs-section>div {
-  display: grid;
-}
-.buffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
+// .buffs-section>div {
+//   display: grid;
+// }
+// .buffs-section {
+//   grid-template-columns: repeat(3, 1fr);
+// }
 
-.consumes-section>div {
-  display: grid;
-}
+// .consumes-section>div {
+//   display: grid;
+// }
 
-.consumes-row {
-	display: flex;
-	align-items: center;
-}
-.consumes-row > span {
-	margin: 5px;
-}
-.consumes-row-inputs {
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
-	flex-grow: 1;
-}
-.consumes-row-inputs > * {
-	margin: 2px;
-}
+// .consumes-row {
+// 	display: flex;
+// 	align-items: center;
+// }
+// .consumes-row > span {
+// 	margin: 5px;
+// }
+// .consumes-row-inputs {
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: space-around;
+// 	flex-grow: 1;
+// }
+// .consumes-row-inputs > * {
+// 	margin: 2px;
+// }
 
-.debuffs-section>div {
-  display: grid;
-}
-.debuffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
+// .debuffs-section>div {
+//   display: grid;
+// }
+// .debuffs-section {
+//   grid-template-columns: repeat(3, 1fr);
+// }
 
-.cooldowns-section-container {
-	z-index: 1000;
-}
+// .cooldowns-section-container {
+// 	z-index: 1000;
+// }
 
-.saved-encounter-manager {
-  display: inline-block;
-  text-align: left;
-}
+// .saved-encounter-manager {
+//   display: inline-block;
+//   text-align: left;
+// }
 
-.saved-rotation-manager {
-  display: inline-block;
-  text-align: center;
-}
+// .saved-rotation-manager {
+//   display: inline-block;
+//   text-align: center;
+// }
 
-.saved-settings-manager {
-  display: inline-block;
-  text-align: right;
-}
+// .saved-settings-manager {
+//   display: inline-block;
+//   text-align: right;
+// }
 
 .player-pet-toggle {
 	display: none;
@@ -196,7 +196,6 @@
 
 .talents-tab-content {
 	display: flex;
-	justify-content: center;
 	flex-wrap: wrap;
 }
 
@@ -204,24 +203,4 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-}
-
-.saved-talents-manager {
-  text-align: center;
-
-  .content-block-body {
-    align-items: center;
-
-    .saved-data-container {
-      justify-content: center;
-    }
-
-    .saved-data-create-container {
-      align-items: flex-start;
-  
-      .saved-data-save-input, .saved-data-save-button {
-        width: 12rem;
-      }
-    }
-  }
 }

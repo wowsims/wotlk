@@ -1,49 +1,67 @@
+@use "sass:map";
 
 .list-picker-root {
-}
-
-.list-picker-items {
-}
-
-.list-picker-item-container {
-	border: 1px solid var(--theme-color-primary);
-	margin: 5px;
-}
-.list-picker-item-container.inline {
-	display: flex;
-}
-
-.list-picker-item-header {
-	display: flex;
+	flex-direction: column;
 	align-items: center;
-	justify-content: right;
-	margin-top: 1px;
-}
-.list-picker-item-header > span {
-	margin: 3px 15px;
-	cursor: pointer;
-	font-size: 16px;
-}
 
-.list-picker-item-header span:hover {
-	text-shadow:
-		0 0 3px red,
-		0 0 3px red,
-		0 0 3px red;
-}
+	.list-picker-title {
+		width: 100%;
+		padding-bottom: $block-spacer;
+		border-bottom: 1px solid $border-color;
+		margin-bottom: $block-spacer;
+	}
 
-.list-picker-item-up {
-	color: cyan;
-}
-.list-picker-item-down {
-	color: magenta;
-}
-.list-picker-item-copy {
-	color: yellow;
-}
-.list-picker-item-delete {
-	color: red;
-}
+	.list-picker-items {
+		width: 100%;
 
-.list-picker-item {
+		.list-picker-item-container {
+			margin-bottom: map.get($spacers, 3);
+
+			&.inline {
+				border: 0;
+				display: flex;
+
+				.list-picker-item-header {
+					padding: 0;
+					border: 0;
+					margin: 0;
+					flex: 0;
+				}
+			}
+
+			&:not(.inline) {
+				padding: map.get($spacers, 3) map.get($spacers, 3) 0 map.get($spacers, 3);
+				border: 1px solid $primary;
+
+				.list-picker-item-header {
+					.list-picker-item-action:first-of-type {
+						margin-left: auto;
+					}
+				}
+			}
+
+			.list-picker-item-header {
+				padding-bottom: $block-spacer;
+				border-bottom: 1px solid $border-color;
+				margin-bottom: $block-spacer;
+				display: flex;
+				align-items: center;
+				flex: 1;
+		
+				.list-picker-item-title {
+					margin-bottom: 0;
+				}
+		
+				.list-picker-item-action {
+					margin-left: map.get($spacers, 3);
+				}
+			}
+		}
+	}
+
+	.list-picker-new-button {
+		margin-left: auto;
+		margin-right: auto;
+		width: 33.33%;
+	}
 }

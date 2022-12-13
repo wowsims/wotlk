@@ -18,7 +18,7 @@ export const MainHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	fieldName: 'mhImbue',
 	numColumns: 1,
 	values: [
-		{ color: 'grey', value: Poison.NoPoison },
+		{ value: Poison.NoPoison, tooltip: 'No Main Hand Poison' },
 		{ actionId: ActionId.fromItemId(43233), value: Poison.DeadlyPoison },
 		{ actionId: ActionId.fromItemId(43231), value: Poison.InstantPoison },
 		{ actionId: ActionId.fromItemId(43235), value: Poison.WoundPoison },
@@ -29,7 +29,7 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 	fieldName: 'ohImbue',
 	numColumns: 1,
 	values: [
-		{ color: 'grey', value: Poison.NoPoison },
+		{ value: Poison.NoPoison, tooltip: 'No Off Hand Poison' },
 		{ actionId: ActionId.fromItemId(43233), value: Poison.DeadlyPoison },
 		{ actionId: ActionId.fromItemId(43231), value: Poison.InstantPoison },
 		{ actionId: ActionId.fromItemId(43235), value: Poison.WoundPoison },

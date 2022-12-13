@@ -84,7 +84,7 @@ func (druid *Druid) registerCatFormSpell() {
 	catCritMult := druid.MeleeCritMultiplier(Cat)
 	regCritMult := druid.MeleeCritMultiplier(Humanoid)
 
-	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
+	druid.CatFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Cat Form",
 		ActionID:   actionID,
 		Duration:   core.NeverExpires,
@@ -224,7 +224,7 @@ func (druid *Druid) registerBearFormSpell() {
 	bearCritMult := druid.MeleeCritMultiplier(Bear)
 	regCritMult := druid.MeleeCritMultiplier(Humanoid)
 
-	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
+	druid.BearFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Bear Form",
 		ActionID:   actionID,
 		Duration:   core.NeverExpires,

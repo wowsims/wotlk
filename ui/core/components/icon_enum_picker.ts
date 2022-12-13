@@ -1,3 +1,4 @@
+import { Tooltip } from 'bootstrap';
 import { ActionId } from '../proto_utils/action_id.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
@@ -7,33 +8,30 @@ import { Input, InputConfig } from './input.js';
 declare var tippy: any;
 
 export interface IconEnumValueConfig<ModObject, T> {
+	value: T,
 	// One of these should be set. If actionId is set, shows the icon for that id. If
 	// color is set, shows that color.
 	actionId?: ActionId,
 	color?: string,
-
-	value: T,
-
-	// Hover tooltip.
-	tooltip?: string,
 	// Text to be displayed on the icon.
 	text?: string,
+	// Hover tooltip.
+	tooltip?: string,
 
 	showWhen?: (obj: ModObject) => boolean,
 }
 
 export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
 	numColumns: number,
-
 	values: Array<IconEnumValueConfig<ModObject, T>>;
-
-	// Function for comparing two values.
-	equals: (a: T, b: T) => boolean,
-
 	// Value that will be considered inactive.
 	zeroValue: T,
-
+	// Function for comparing two values.
+	// Tooltip that will be shown whne hovering over the icon-picker-button
+	tooltip?: string,
+	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
+	showWhen?: (obj: ModObject) => boolean,
 }
 
 // Icon-based UI for picking enum values.
@@ -48,53 +46,58 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconEnumPickerConfig<ModObject, T>) {
 		super(parent, 'icon-enum-picker-root', modObj, config);
+		this.rootElem.classList.add('icon-picker', 'dropdown');
 		this.config = config;
 		this.currentValue = this.config.zeroValue;
-		this.rootElem.classList.add('dropdown-root');
+
+		if (config.showWhen) {
+			config.changedEvent(this.modObject).on(eventID => {
+				const show = config.showWhen && config.showWhen(this.modObject);
+				if (!show)
+					this.rootElem.classList.add('hide');
+			});
+		}
+
+		if (config.tooltip) {
+			this.rootElem.setAttribute('data-bs-toggle', 'tooltip');
+			this.rootElem.setAttribute('data-bs-title', config.tooltip);
+			Tooltip.getOrCreateInstance(this.rootElem);
+		}
 
 		this.rootElem.innerHTML = `
-			<a class="dropdown-button icon-enum-picker-button">
-				<div class='icon-enum-text'></div>
+			<a
+				href="javascript:void(0)"
+				class="icon-picker-button"
+				role="button"
+				data-bs-toggle="dropdown"
+				data-bs-placement="bottom"
+				aria-expanded="false"
+			>
+				<span class='icon-picker-label'></span>
 			</a>
-			<div class="dropdown-panel icon-enum-picker-dropdown"></div>
+			<ul class="dropdown-menu"></ul>
     `;
 
-		this.buttonElem = this.rootElem.getElementsByClassName('icon-enum-picker-button')[0] as HTMLAnchorElement;
-		const dropdownElem = this.rootElem.getElementsByClassName('icon-enum-picker-dropdown')[0] as HTMLElement;
-		this.buttonText	= this.rootElem.getElementsByClassName('icon-enum-text')[0] as HTMLElement;
+		this.buttonElem = this.rootElem.querySelector('.icon-picker-button') as HTMLAnchorElement;
+		this.buttonText	= this.buttonElem.querySelector('.icon-picker-label') as HTMLElement;
+		const dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		this.buttonElem.addEventListener('click', event => {
-			event.preventDefault();
-		});
-		this.buttonElem.addEventListener('touchstart', event => {
-			if (dropdownElem.style.display == "block") {
-				dropdownElem.style.display = "none";
-			} else {
-				dropdownElem.style.display = "block";
-			}
-			event.preventDefault();
-		});
-		this.buttonElem.addEventListener('touchend', event => {
-			event.preventDefault();
-		});
-
-		dropdownElem.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
 
 		config.values.forEach((valueConfig, i) => {
-			const optionContainer = document.createElement('div');
-			optionContainer.classList.add('dropdown-option-container');
-			dropdownElem.appendChild(optionContainer);
+			const listItem = document.createElement('li');
+			dropdownMenu.appendChild(listItem);
 
 			const option = document.createElement('a');
-			option.classList.add('dropdown-option', 'icon-enum-picker-option');
-			optionContainer.appendChild(option);
+			option.classList.add('icon-dropdown-option', 'dropdown-option');
+			listItem.appendChild(option);
 			this.setImage(option, valueConfig);
 
 			if (valueConfig.text != undefined){
 				const optionText = document.createElement('div');
-				optionText.classList.add("icon-enum-text")
-				optionText.textContent = valueConfig.text
-				option.append(optionText)
+				optionText.classList.add("icon-picker-label");
+				optionText.textContent = valueConfig.text;
+				option.append(optionText);
 			}
 
 			if (valueConfig.tooltip) {
@@ -108,9 +111,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				config.changedEvent(this.modObject).on(eventID => {
 					const show = valueConfig.showWhen && valueConfig.showWhen(this.modObject);
 					if (show) {
-						optionContainer.classList.remove('hide');
+						listItem.classList.remove('hide');
 					} else {
-						optionContainer.classList.add('hide');
+						listItem.classList.add('hide');
 					}
 				});
 			}
@@ -132,7 +135,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				event.preventDefault();
 				this.currentValue = valueConfig.value;
 				this.inputChanged(TypedEvent.nextEventID());
-				dropdownElem.style.display = "none";
+				dropdownMenu.style.display = "none";
 			});
 		});
 
@@ -164,9 +167,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.currentValue = newValue;
 
 		if (!this.config.equals(this.currentValue, this.config.zeroValue)) {
-			this.rootElem.classList.add('active');
+			this.buttonElem.classList.add('active');
 		} else {
-			this.rootElem.classList.remove('active');
+			this.buttonElem.classList.remove('active');
 		}
 
 		this.buttonText.textContent = ''

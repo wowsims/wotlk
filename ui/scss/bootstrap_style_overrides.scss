@@ -21,11 +21,40 @@
   display: flex;
 }
 
+.form-check {
+  padding: 0;
+
+  &.form-check-reverse {
+    text-align: left;
+
+    .form-check-input {
+      margin: 0;
+    }
+  }
+
+  .form-check-input {
+    width: $form-check-input-width !important;
+    height: $form-check-input-width !important;
+  }
+}
+
 .link-danger {
   color: $link-danger-color !important;
 
   &:hover, &:focus, &.active {
     color: darken($link-danger-color, 3) !important;
+  }
+}
+
+.modal {
+  .modal-dialog {
+    .modal-header {
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: $modal-header-padding-x;
+      margin-right: $modal-header-padding-x;
+      align-items: flex-start;
+    }
   }
 }
 

@@ -557,7 +557,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 				cat.Shred.Cast(sim, cat.CurrentTarget)
 				return
 			}
-			timeToNextAction = time.Duration(((cat.CurrentShredCost() - curEnergy) / 10.0) * float64(time.Second))
+			timeToNextAction = time.Duration((cat.CurrentShredCost() - curEnergy) * float64(core.EnergyTickDuration))
 		}
 	}
 
@@ -574,13 +574,14 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	// If Lacerateweaving, then also schedule an action just before Lacerate
 	// expires to ensure we can save it in time.
-	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && cat.LacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (cat.LacerateDot.ExpiresAt().Seconds()-1.5-3*latencySecs <= nextCastEnd.Seconds()) {
-		nextAction = core.MinDuration(nextAction, time.Duration((cat.LacerateDot.ExpiresAt().Seconds()-1.5-3*latencySecs)*float64(time.Second)))
+	lacRefreshTime := cat.LacerateDot.ExpiresAt() - (time.Duration(1.5*float64(time.Second) - float64(3*cat.latency*time.Second)))
+	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && cat.LacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (lacRefreshTime <= nextCastEnd) && (lacRefreshTime > sim.CurrentTime) {
+		nextAction = core.MinDuration(nextAction, time.Duration(lacRefreshTime))
 	}
 	nextAction += cat.latency
 
 	if nextAction <= sim.CurrentTime {
-		cat.DoNothing()
+		panic("nextaction in the past")
 	} else {
 		cat.WaitUntil(sim, nextAction)
 	}

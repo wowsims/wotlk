@@ -22,7 +22,7 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 	readonly trees: Array<TalentTreePicker<TalentsProto>>;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: TalentsPickerConfig<ModObject, TalentsProto>) {
-		super(parent, 'talents-picker-root', modObject, config);
+		super(parent, 'talents-picker-root', modObject, {...config, inline: true});
 		this.pointsPerRow = config.pointsPerRow;
 		this.maxPoints = config.maxPoints;
 		this.numRows = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.rowIdx).flat()).flat()) + 1;
