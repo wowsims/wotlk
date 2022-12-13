@@ -266,7 +266,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
-			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness)
+			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 			druid.AddStatsDynamic(sim, statBonus)
 			druid.EnableDynamicStatDep(sim, stamDep)
 			if potpDep != nil {
@@ -294,7 +294,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier /= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
-			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
+			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
 			druid.DisableDynamicStatDep(sim, stamDep)
 			if potpDep != nil {
