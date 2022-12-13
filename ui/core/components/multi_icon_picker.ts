@@ -34,13 +34,11 @@ export class MultiIconPicker<ModObject> extends Component {
 		this.currentValue = null;
 
 		this.rootElem.innerHTML = `
-			<div class="dropdown">
+			<div class="dropend">
 				<a
 					class="icon-picker-button"
 					role="button"
 					data-bs-toggle="dropdown"
-					data-bs-placement="bottom"
-					data-bs-offset="20,-20"
 					aria-expanded="false"
 				></a>
 				<ul class="dropdown-menu"></ul>

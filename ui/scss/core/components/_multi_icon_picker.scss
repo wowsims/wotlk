@@ -6,10 +6,12 @@
   display: flex;
   align-items: center;
 
-  .dropdown {
-    .multi-icon-picker-label {
-      margin-bottom: 0;
-    }
+  .multi-icon-picker-label {
+    margin-bottom: 0;
+  }
+
+  .dropdown-menu {
+    grid-auto-flow: column;
 
     .icon-dropdown-option {
       .input-root {
