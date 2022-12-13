@@ -16,10 +16,9 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
 	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
 
-	if druid.InForm(Bear) {
-		druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.5/3)*float64(druid.Talents.ThickHide))
-	} else {
-		druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.1/3)*float64(druid.Talents.ThickHide))
+	if druid.Talents.ThickHide > 0 {
+		thickHideMulti := 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
+		druid.AddStat(stats.Armor, druid.ScaleBaseArmor(thickHideMulti))
 	}
 
 	if druid.Talents.LunarGuidance > 0 {
@@ -49,9 +48,6 @@ func (druid *Druid) ApplyTalents() {
 		druid.MultiplyStat(stats.Intellect, 1.0+bonus)
 		druid.MultiplyStat(stats.Spirit, 1.0+bonus)
 		druid.PseudoStats.ReducedCritTakenChance += 0.02 * float64(druid.Talents.SurvivalOfTheFittest)
-		if druid.InForm(Bear) {
-			druid.AddStat(stats.Armor, druid.Equip.Stats()[stats.Armor]*(0.33/3)*float64(druid.Talents.SurvivalOfTheFittest))
-		}
 	}
 
 	if druid.Talents.ImprovedMarkOfTheWild > 0 {

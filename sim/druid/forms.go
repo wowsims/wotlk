@@ -121,9 +121,21 @@ func (druid *Druid) GetCatFormBonuses(enable bool) FormBonuses {
 func (druid *Druid) GetBearFormBonuses(enable bool) FormBonuses {
 	f := FormBonuses{}
 	pos := core.TernaryFloat64(enable, 1.0, -1.0)
-
-	f.S[stats.Armor] = pos * druid.Equip.Stats()[stats.Armor] * 3.7
 	f.S[stats.AttackPower] = pos * 3 * float64(core.CharacterLevel)
+
+	// Armor calculation: Dire Bear Form, Thick Hide, and Survival of the Fittest
+	// scale multiplicatively with each other. But part of the Thick Hide
+	// contribution was already calculated in ApplyTalents(), so we need to subtract
+	// that part out from the overall scaling factor given to ScaleBaseArmor().
+	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
+	thickHideMulti := 1.0
+
+	if druid.Talents.ThickHide > 0 {
+		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
+	}
+
+	totalBearMulti := 4.7 * sotfMulti * thickHideMulti
+	f.S[stats.Armor] = pos * druid.ScaleBaseArmor(totalBearMulti-thickHideMulti)
 
 	// Stam dep
 	f.Mul = append(f.Mul, &FormRawStat{

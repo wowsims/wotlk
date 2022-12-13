@@ -166,6 +166,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostResistance]: 'frostResistance',
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
+		[Stat.StatBonusArmor]: 'armorBonus',
 	}
 }
 
@@ -239,5 +240,6 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostResistance]: 'FrostResistance',
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
+		[Stat.StatBonusArmor]: 'Armor2',
 	}
 }

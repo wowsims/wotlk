@@ -51,6 +51,7 @@ const (
 	FrostResistance
 	NatureResistance
 	ShadowResistance
+	BonusArmor
 	RunicPower
 	BloodRune
 	FrostRune
@@ -133,6 +134,8 @@ func (s Stat) StatName() string {
 		return "Rage"
 	case Armor:
 		return "Armor"
+	case BonusArmor:
+		return "BonusArmor"
 	case RangedAttackPower:
 		return "RangedAttackPower"
 	case Defense:
