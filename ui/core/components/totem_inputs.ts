@@ -60,25 +60,24 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Dp
 		},
 	});
 
-	const airTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
+	const waterTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
-			'air-totem-picker',
+			'water-totem-picker',
 		],
 		numColumns: 1,
 		values: [
-			{ color: '#baffc9', value: AirTotem.NoAirTotem },
-			{ actionId: ActionId.fromSpellId(8512), value: AirTotem.WindfuryTotem },
-			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
+			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
+			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
 		],
-		equals: (a: AirTotem, b: AirTotem) => a == b,
-		zeroValue: AirTotem.NoAirTotem,
+		equals: (a: WaterTotem, b: WaterTotem) => a == b,
+		zeroValue: WaterTotem.NoWaterTotem,
 		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.air || AirTotem.NoAirTotem,
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.water || WaterTotem.NoWaterTotem,
 		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: number) => {
 			const newRotation = player.getRotation();
 			if (!newRotation.totems)
 				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.air = newValue;
+			newRotation.totems!.water = newValue;
 			player.setRotation(eventID, newRotation);
 		},
 	});
@@ -108,24 +107,25 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Dp
 		},
 	});
 
-	const waterTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
+	const airTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
-			'water-totem-picker',
+			'air-totem-picker',
 		],
 		numColumns: 1,
 		values: [
-			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
-			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
+			{ color: '#baffc9', value: AirTotem.NoAirTotem },
+			{ actionId: ActionId.fromSpellId(8512), value: AirTotem.WindfuryTotem },
+			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
 		],
-		equals: (a: WaterTotem, b: WaterTotem) => a == b,
-		zeroValue: WaterTotem.NoWaterTotem,
+		equals: (a: AirTotem, b: AirTotem) => a == b,
+		zeroValue: AirTotem.NoAirTotem,
 		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.water || WaterTotem.NoWaterTotem,
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.air || AirTotem.NoAirTotem,
 		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: number) => {
 			const newRotation = player.getRotation();
 			if (!newRotation.totems)
 				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.water = newValue;
+			newRotation.totems!.air = newValue;
 			player.setRotation(eventID, newRotation);
 		},
 	});
