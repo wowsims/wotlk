@@ -8,8 +8,8 @@ export class BaseModal extends Component {
 
 	readonly modal: Modal;
 
-	constructor(rootElem: HTMLElement, cssClass: string) {
-		super(rootElem, 'modal');
+	constructor(cssClass: string) {
+		super(document.body, 'modal');
 
 		this.rootElem.classList.add('fade');
 		this.rootElem.innerHTML = `
@@ -31,6 +31,10 @@ export class BaseModal extends Component {
 
 		this.modal = new Modal(this.rootElem);
 		this.open();
+		
+		this.rootElem.addEventListener('hidden.bs.modal', (event) => {
+			this.rootElem.remove();
+		})
 	}
 
 	protected addCloseButton() {

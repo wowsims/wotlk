@@ -133,7 +133,7 @@ class AdvancedEncounterModal extends BaseModal {
 	private readonly encounter: Encounter;
 
 	constructor(parent: HTMLElement, encounter: Encounter, simUI: SimUI) {
-		super(simUI.rootElem, 'advanced-encounter-picker-modal');
+		super('advanced-encounter-picker-modal');
 
 		this.encounter = encounter;
 

@@ -144,14 +144,17 @@ export class ConsumesPicker extends Component {
 			{ item: BattleElixir.SpellpowerElixir, stats: [Stat.StatSpellPower] },
 			{ item: BattleElixir.WrathElixir, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		]);
+
+    const battleElixirsContainer = this.rootElem.querySelector('.consumes-battle-elixirs') as HTMLElement;
 		if (battleElixirOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-battle-elixirs') as HTMLElement;
 			new IconEnumPicker(
-        elem,
+        battleElixirsContainer,
         this.simUI.player,
         IconInputs.makeBattleElixirsInput(battleElixirOptions, 'Battle Elixir')
       );
-		}
+		} else {
+      battleElixirsContainer.remove();
+    }
 
 		const guardianElixirOptions = this.simUI.splitRelevantOptions([
 			{ item: GuardianElixir.ElixirOfMightyDefense, stats: [Stat.StatDefense] },
@@ -162,14 +165,19 @@ export class ConsumesPicker extends Component {
 			{ item: GuardianElixir.ElixirOfSpirit, stats: [Stat.StatSpirit] },
 			{ item: GuardianElixir.GiftOfArthas, stats: [Stat.StatStamina] },
 		]);
+
+    const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 		if (guardianElixirOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
+      console.log('guardian');
+			const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 			new IconEnumPicker(
-        elem,
+        guardianElixirsContainer,
         this.simUI.player,
         IconInputs.makeGuardianElixirsInput(guardianElixirOptions, 'Guardian Elixir')
       );
-		}
+		} else {
+      guardianElixirsContainer.remove();
+    }
   }
 
   private buildFoodPicker() {
