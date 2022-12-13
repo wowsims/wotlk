@@ -98,14 +98,14 @@ func (encounter *Encounter) doneIteration(sim *Simulation) {
 	}
 }
 
-func (encounter *Encounter) GetMetricsProto(numIterations int32) *proto.EncounterMetrics {
+func (encounter *Encounter) GetMetricsProto() *proto.EncounterMetrics {
 	metrics := &proto.EncounterMetrics{
 		Targets: make([]*proto.UnitMetrics, len(encounter.Targets)),
 	}
 
 	i := 0
 	for _, target := range encounter.Targets {
-		metrics.Targets[i] = target.GetMetricsProto(numIterations)
+		metrics.Targets[i] = target.GetMetricsProto()
 		i++
 	}
 
@@ -198,11 +198,11 @@ func (target *Target) NextTarget() *Target {
 	return target.Env.GetTarget(nextIndex)
 }
 
-func (target *Target) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
-	metrics := target.Metrics.ToProto(numIterations)
+func (target *Target) GetMetricsProto() *proto.UnitMetrics {
+	metrics := target.Metrics.ToProto()
 	metrics.Name = target.Label
 	metrics.UnitIndex = target.UnitIndex
-	metrics.Auras = target.auraTracker.GetMetricsProto(numIterations)
+	metrics.Auras = target.auraTracker.GetMetricsProto()
 	return metrics
 }
 

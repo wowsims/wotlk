@@ -238,33 +238,28 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
 		if stat == stats.SpellHit {
 			if baseStats[stat] >= spellHitCap {
-				resultsLow[stat] = resultsHigh[stat]
+				resultsLow[stat] = nil
 			}
 		} else if stat == stats.MeleeHit {
 			if baseStats[stat] >= melee2HHitCap {
-				resultsLow[stat] = resultsHigh[stat]
+				resultsLow[stat] = nil
 			}
 		}
 
 		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
-			deltaLow := (modLowMetrics.Avg - baselineMetrics.Avg) / statModsLow[stat]
-			deltaHigh := (modHighMetrics.Avg - baselineMetrics.Avg) / statModsHigh[stat]
-			weightResults.Weights[stat] = (deltaLow + deltaHigh) / 2
-
-			sum := 0.0
-			sumSq := 0.0
-			for i := 0; i < int(simOptions.Iterations); i++ {
-				diffLow := (modLowMetrics.AllValues[i] - baselineMetrics.AllValues[i]) / statModsLow[stat]
-				sum += diffLow
-				sumSq += diffLow * diffLow
-
-				diffHigh := (modHighMetrics.AllValues[i] - baselineMetrics.AllValues[i]) / statModsHigh[stat]
-				sum += diffHigh
-				sumSq += diffHigh * diffHigh
+			var sample []float64
+			if resultsLow != nil {
+				for i := 0; i < int(simOptions.Iterations); i++ {
+					sample = append(sample, (modLowMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsLow[stat])
+				}
 			}
-			iters := float64(simOptions.Iterations * 2)
-			avg := sum / iters
-			weightResults.WeightsStdev[stat] = math.Sqrt((sumSq / iters)) - (avg * avg)
+			if resultsHigh != nil {
+				for i := 0; i < int(simOptions.Iterations); i++ {
+					sample = append(sample, (modHighMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsHigh[stat])
+				}
+			}
+
+			weightResults.Weights[stat], weightResults.WeightsStdev[stat] = calcMeanAndStdev(sample)
 		}
 
 		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)

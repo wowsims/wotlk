@@ -285,7 +285,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	for i := int32(1); i < sim.Options.Iterations; i++ {
 		// fmt.Printf("Iteration: %d\n", i)
 		if sim.ProgressReport != nil && time.Since(st) > time.Millisecond*100 {
-			metrics := sim.Raid.GetMetrics(i)
+			metrics := sim.Raid.GetMetrics()
 			sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: i, Dps: metrics.Dps.Avg, Hps: metrics.Hps.Avg})
 			runtime.Gosched() // ensure that reporting threads are given time to report, mostly only important in wasm (only 1 thread)
 			st = time.Now()
@@ -302,8 +302,8 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		totalDuration += iterDuration
 	}
 	result := &proto.RaidSimResult{
-		RaidMetrics:      sim.Raid.GetMetrics(sim.Options.Iterations),
-		EncounterMetrics: sim.Encounter.GetMetricsProto(sim.Options.Iterations),
+		RaidMetrics:      sim.Raid.GetMetrics(),
+		EncounterMetrics: sim.Encounter.GetMetricsProto(),
 
 		Logs:                   logsBuffer.String(),
 		FirstIterationDuration: firstIterationDuration.Seconds(),

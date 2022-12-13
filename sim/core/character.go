@@ -525,15 +525,15 @@ func (character *Character) doneIteration(sim *Simulation) {
 	character.Unit.doneIteration(sim)
 }
 
-func (character *Character) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
-	metrics := character.Metrics.ToProto(numIterations)
+func (character *Character) GetMetricsProto() *proto.UnitMetrics {
+	metrics := character.Metrics.ToProto()
 	metrics.Name = character.Name
 	metrics.UnitIndex = character.UnitIndex
-	metrics.Auras = character.auraTracker.GetMetricsProto(numIterations)
+	metrics.Auras = character.auraTracker.GetMetricsProto()
 
 	metrics.Pets = []*proto.UnitMetrics{}
 	for _, petAgent := range character.Pets {
-		metrics.Pets = append(metrics.Pets, petAgent.GetPet().GetMetricsProto(numIterations))
+		metrics.Pets = append(metrics.Pets, petAgent.GetPet().GetMetricsProto())
 	}
 
 	return metrics

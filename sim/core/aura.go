@@ -909,12 +909,12 @@ func (at *auraTracker) OnPeriodicHealTaken(sim *Simulation, spell *Spell, result
 	}
 }
 
-func (at *auraTracker) GetMetricsProto(numIterations int32) []*proto.AuraMetrics {
+func (at *auraTracker) GetMetricsProto() []*proto.AuraMetrics {
 	metrics := make([]*proto.AuraMetrics, 0, len(at.auras))
 
 	for _, aura := range at.auras {
 		if !aura.metrics.ID.IsEmptyAction() {
-			metrics = append(metrics, aura.metrics.ToProto(numIterations))
+			metrics = append(metrics, aura.metrics.ToProto())
 		}
 	}
 

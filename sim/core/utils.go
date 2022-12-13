@@ -2,6 +2,7 @@ package core
 
 import (
 	"hash/fnv"
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -222,4 +223,21 @@ func FilterMap[K comparable, V any](src map[K]V, f func(K, V) bool) map[K]V {
 		}
 	}
 	return dst
+}
+
+func calcMeanAndStdev(sample []float64) (float64, float64) {
+	n := len(sample)
+	sum := 0.0
+	sumSq := 0.0
+	for i := 0; i < n; i++ {
+		sum += sample[i]
+		sumSq += sample[i] * sample[i]
+	}
+
+	return calcMeanAndStdevFromSums(n, sum, sumSq)
+}
+func calcMeanAndStdevFromSums(n int, sum float64, sumSq float64) (float64, float64) {
+	mean := sum / float64(n)
+	stdev := math.Abs(math.Sqrt(sumSq/float64(n) - mean*mean))
+	return mean, stdev
 }

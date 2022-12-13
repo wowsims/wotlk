@@ -90,10 +90,10 @@ func (party *Party) doneIteration(sim *Simulation) {
 	party.hpsMetrics.doneIteration(sim)
 }
 
-func (party *Party) GetMetrics(numIterations int32) *proto.PartyMetrics {
+func (party *Party) GetMetrics() *proto.PartyMetrics {
 	metrics := &proto.PartyMetrics{
-		Dps: party.dpsMetrics.ToProto(numIterations),
-		Hps: party.hpsMetrics.ToProto(numIterations),
+		Dps: party.dpsMetrics.ToProto(),
+		Hps: party.hpsMetrics.ToProto(),
 	}
 
 	playerIdx := 0
@@ -101,7 +101,7 @@ func (party *Party) GetMetrics(numIterations int32) *proto.PartyMetrics {
 	for playerIdx < len(party.Players) {
 		player := party.Players[playerIdx]
 		if player.GetCharacter().PartyIndex == i {
-			metrics.Players = append(metrics.Players, player.GetCharacter().GetMetricsProto(numIterations))
+			metrics.Players = append(metrics.Players, player.GetCharacter().GetMetricsProto())
 			playerIdx++
 		} else {
 			metrics.Players = append(metrics.Players, &proto.UnitMetrics{})
@@ -410,13 +410,13 @@ func (raid *Raid) doneIteration(sim *Simulation) {
 	raid.hpsMetrics.doneIteration(sim)
 }
 
-func (raid *Raid) GetMetrics(numIterations int32) *proto.RaidMetrics {
+func (raid *Raid) GetMetrics() *proto.RaidMetrics {
 	metrics := &proto.RaidMetrics{
-		Dps: raid.dpsMetrics.ToProto(numIterations),
-		Hps: raid.hpsMetrics.ToProto(numIterations),
+		Dps: raid.dpsMetrics.ToProto(),
+		Hps: raid.hpsMetrics.ToProto(),
 	}
 	for _, party := range raid.Parties {
-		metrics.Parties = append(metrics.Parties, party.GetMetrics(numIterations))
+		metrics.Parties = append(metrics.Parties, party.GetMetrics())
 	}
 	return metrics
 }
