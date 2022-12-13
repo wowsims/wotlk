@@ -376,11 +376,7 @@ func init() {
 		})
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
-			Label:    "Idol of the Lunar Eclipse",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
+			Label: "Idol of the Lunar Eclipse",
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
@@ -389,15 +385,26 @@ func init() {
 	})
 
 	core.NewItemEffect(32387, func(agent core.Agent) {
-		// Idol of the Raven Goddess
-		// This should maybe be an Aura, but this way it changes stats on sheet
 		druid := agent.(DruidAgent).GetDruid()
-
-		if druid.InForm(Bear | Cat) {
-			druid.AddStat(stats.MeleeCrit, 40.0)
-		} else if druid.InForm(Moonkin) {
-			druid.AddStat(stats.SpellCrit, 40.0)
-		}
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label:      "Idol of the Raven Goddess",
+			BuildPhase: core.CharacterBuildPhaseGear,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				// For now this assume we'll never leave main form
+				if druid.StartingForm.Matches(Bear | Cat) {
+					druid.AddStatDynamic(sim, stats.MeleeCrit, 40.0)
+				} else if druid.StartingForm.Matches(Moonkin) {
+					druid.AddStatDynamic(sim, stats.SpellCrit, 40.0)
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				if druid.StartingForm.Matches(Bear | Cat) {
+					druid.AddStatDynamic(sim, stats.MeleeCrit, -40.0)
+				} else if druid.StartingForm.Matches(Moonkin) {
+					druid.AddStatDynamic(sim, stats.SpellCrit, -40.0)
+				}
+			},
+		}))
 	})
 
 	//core.NewItemEffect(37573, func(agent core.Agent) {
