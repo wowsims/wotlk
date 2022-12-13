@@ -36,24 +36,16 @@ export class SettingsMenu extends Popup {
 			</div>
 			<div class="menu-content">
 				<div class="settings-menu-content-left">
-					<button class="restore-defaults-button sim-button">RESTORE DEFAULTS</button>
-					<div class="menu-section">
-						<div class="fixed-rng-seed">
-						</div>
-						<div class="last-used-rng-seed-container">
-							<span>Last used RNG seed:</span><span class="last-used-rng-seed">0</span>
-						</div>
-						<div class="show-threat-metrics-picker">
-						</div>
-						<div class="show-experimental-picker">
-						</div>
+					<button class="restore-defaults-button btn btn-primary">Restore Defaults</button>
+					<div class="fixed-rng-seed"></div>
+					<div class="last-used-rng-seed-container form-text">
+						<small>Last used RNG seed:</small><small class="last-used-rng-seed">0</small>
 					</div>
+					<div class="show-threat-metrics-picker"></div>
+					<div class="show-experimental-picker"></div>
 				</div>
 				<div class="settings-menu-content-right">
-					<div class="menu-section settings-menu-ep-weights within-raid-sim-hide">
-						<div class="language-picker">
-						</div>
-					</div>
+					<div class="language-picker within-raid-sim-hide"></div>
 				</div>
 			</div>
 		`;
@@ -87,6 +79,7 @@ export class SettingsMenu extends Popup {
 		new BooleanPicker(showThreatMetrics, this.simUI.sim, {
 			label: 'Show Threat/Tank Options',
 			labelTooltip: 'Shows all options and metrics relevant to tanks, like TPS/DTPS.',
+			inline: true,
 			changedEvent: (sim: Sim) => sim.showThreatMetricsChangeEmitter,
 			getValue: (sim: Sim) => sim.getShowThreatMetrics(),
 			setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
@@ -98,6 +91,7 @@ export class SettingsMenu extends Popup {
 		new BooleanPicker(showExperimental, this.simUI.sim, {
 			label: 'Show Experimental',
 			labelTooltip: 'Shows experimental options, if there are any active experiments.',
+			inline: true,
 			changedEvent: (sim: Sim) => sim.showExperimentalChangeEmitter,
 			getValue: (sim: Sim) => sim.getShowExperimental(),
 			setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {

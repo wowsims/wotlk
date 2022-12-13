@@ -27,8 +27,12 @@
 	margin: 10px;
 }
 
-.show-all-stats-container .boolean-picker-input {
-	width: auto;
+.show-all-stats-container .boolean-picker-root {
+	margin-bottom: 0 !important;
+
+	label {
+		margin-right: $block-spacer;
+	}
 }
 
 .ep-weights-table {
@@ -39,16 +43,6 @@
 .results-ep-table {
   margin: auto;
 	color: white;
-}
-
-.results-ep-table tr {
-	background-color: #111218;
-}
-.results-ep-table tr.odd {
-  background: #222;
-}
-.results-ep-table tr:hover {
-  background: #333;
 }
 
 .ep-weights-table:not(.show-all-stats) .non-ep-stat {

@@ -108,9 +108,8 @@ $form-select-color: white;
 $form-select-disabled-bg: lighten($body-bg, 20);
 $form-select-focus-border-color: lighten($body-bg, 20);
 $form-select-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
-$form-select-font-size: $btn-font-size;
+$form-select-font-size: $content-font-size;
 $form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
-$form-select-padding-y: $btn-padding-y;
 
 $input-bg: lighten($body-bg, 12);
 $input-border-color: lighten($body-bg, 20);
@@ -120,8 +119,7 @@ $input-focus-bg: lighten($body-bg, 12);
 $input-focus-border-color: lighten($body-bg, 20);
 $input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
 $input-focus-color: white;
-$input-font-size: $btn-font-size;
-$input-padding-y: $btn-padding-y;
+$input-font-size: $content-font-size;
 
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;

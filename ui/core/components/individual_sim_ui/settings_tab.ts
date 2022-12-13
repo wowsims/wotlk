@@ -216,6 +216,10 @@ export class SettingsTab extends SimTab {
 			});
 
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
+
+			contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
+				elem.classList.add('input-inline');
+			})
 		}
 	}
 

@@ -41,11 +41,11 @@ export abstract class Importer extends Popup {
 			<div class="actions-row">
 		`;
 		if (this.includeFile) {
-			htmlVal += `<label for="${uploadInputId}" class="importer-button sim-button upload-button">UPLOAD FROM FILE</label>
+			htmlVal += `<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button">UPLOAD FROM FILE</label>
 				<input type="file" id="${uploadInputId}" class="importer-upload-input" hidden>
 			`
 		}
-		htmlVal += `<button class="importer-button sim-button import-button">IMPORT</button>
+		htmlVal += `<button class="importer-button btn btn-primary import-button">IMPORT</button>
 			</div>
 		`;
 

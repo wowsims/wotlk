@@ -15,6 +15,8 @@ html {
 
 body {
   height: 100%;
+  // Bootstrap adds padding-right when Modals open for some reason, causing popping
+  padding-right: 0 !important;
   // Prevent browser scrollbars from adjusting page contents
   margin-right: calc(-1 * (100vw - 100%));
   overflow-x: hidden;
