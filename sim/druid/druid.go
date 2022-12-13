@@ -70,11 +70,13 @@ type Druid struct {
 	BerserkAura            *core.Aura
 	CatFormAura            *core.Aura
 	ClearcastingAura       *core.Aura
-	DemoralizingRoarAura   *core.Aura
+	DemoralizingRoarAuras  []*core.Aura
+	EarthAndMoonAura       *core.Aura
 	EnrageAura             *core.Aura
 	FaerieFireAura         *core.Aura
 	MangleAura             *core.Aura
 	MaulQueueAura          *core.Aura
+	MoonkinT84PCAura       *core.Aura
 	NaturesGraceProcAura   *core.Aura
 	PredatoryInstinctsAura *core.Aura
 	TigersFuryAura         *core.Aura

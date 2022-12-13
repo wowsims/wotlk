@@ -1,9 +1,10 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
@@ -25,17 +26,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	target := moonkin.CurrentTarget
 
 	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim) {
-		if moonkin.Talents.ImprovedFaerieFire > 0 {
-			if aura := target.GetActiveAuraWithTag(core.MinorSpellHitDebuffAuraTag); aura == nil {
-				return moonkin.FaerieFire
-			}
-		}
+		return moonkin.FaerieFire
 	}
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
-	lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
+	lunarUptime := core.TernaryDuration(moonkin.LunarEclipseProcAura == nil, 0, moonkin.LunarEclipseProcAura.RemainingDuration(sim))
 
-	if moonkin.HasActiveAura("Elune's Wrath") && moonkin.GetAura("Elune's Wrath").RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
+	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
 		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
@@ -60,7 +57,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
 	// Player "brain" latency
-	playerLatency := time.Duration(rotation.PlayerLatency)
+	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
 	fishingForLunar := lunarICD <= solarICD

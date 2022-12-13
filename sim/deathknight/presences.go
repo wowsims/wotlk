@@ -16,6 +16,8 @@ const (
 	UnsetPresence
 )
 
+const presenceEffectCategory = "Presence"
+
 func (dk *Deathknight) PresenceMatches(other Presence) bool {
 	return (dk.Presence & other) != 0
 }
@@ -79,8 +81,6 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 	aura := core.Aura{
 		Label:    "Blood Presence",
-		Tag:      "Presence",
-		Priority: 1,
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -111,6 +111,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	}
 
 	dk.BloodPresenceAura = dk.GetOrRegisterAura(aura)
+	dk.BloodPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
@@ -141,8 +142,6 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.6)
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Frost Presence",
-		Tag:      "Presence",
-		Priority: 1,
 		ActionID: core.ActionID{SpellID: 48263},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -162,6 +161,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 			dk.IcyTouch.ThreatMultiplier /= 7
 		},
 	})
+	dk.FrostPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
@@ -193,8 +193,6 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
-		Tag:      "Presence",
-		Priority: 1,
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -214,6 +212,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 			dk.MultiplyMeleeSpeed(sim, 1/1.15)
 		},
 	})
+	dk.UnholyPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
 }
 
 func (dk *Deathknight) GetModifiedGCD() time.Duration {

@@ -72,6 +72,7 @@ func NewDistributionMetrics() DistributionMetrics {
 
 type UnitMetrics struct {
 	dps    DistributionMetrics
+	dpasp  DistributionMetrics
 	threat DistributionMetrics
 	dtps   DistributionMetrics
 	hps    DistributionMetrics
@@ -184,6 +185,7 @@ func (tam *TargetedActionMetrics) ToProto() *proto.TargetedActionMetrics {
 func NewUnitMetrics() UnitMetrics {
 	return UnitMetrics{
 		dps:     NewDistributionMetrics(),
+		dpasp:   NewDistributionMetrics(),
 		threat:  NewDistributionMetrics(),
 		dtps:    NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
@@ -339,8 +341,14 @@ func (unitMetrics *UnitMetrics) MarkOOM(sim *Simulation) {
 	}
 }
 
+func (unitMetrics *UnitMetrics) UpdateDpasp(dpspSeconds float64) {
+	// We store the total of seconds * spell power due to how DistributionMetrics work internally.
+	unitMetrics.dpasp.Total += dpspSeconds
+}
+
 func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.dps.reset()
+	unitMetrics.dpasp.reset()
 	unitMetrics.threat.reset()
 	unitMetrics.dtps.reset()
 	unitMetrics.hps.reset()
@@ -375,6 +383,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 	}
 
 	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.dpasp.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
 	unitMetrics.hps.doneIteration(seed, encounterDurationSeconds)
@@ -389,6 +398,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 func (unitMetrics *UnitMetrics) ToProto(numIterations int32) *proto.UnitMetrics {
 	protoMetrics := &proto.UnitMetrics{
 		Dps:           unitMetrics.dps.ToProto(numIterations),
+		Dpasp:         unitMetrics.dpasp.ToProto(numIterations),
 		Threat:        unitMetrics.threat.ToProto(numIterations),
 		Dtps:          unitMetrics.dtps.ToProto(numIterations),
 		Hps:           unitMetrics.hps.ToProto(numIterations),

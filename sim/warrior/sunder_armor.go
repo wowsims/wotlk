@@ -8,17 +8,13 @@ import (
 
 // TODO: GlyphOfSunderArmor will require refactoring this a bit
 
-var SunderArmorActionID = core.ActionID{SpellID: 47467}
-
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
 	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
 	refundAmount := cost * 0.8
-	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget, 0)
-	warrior.ExposeArmorAura = core.ExposeArmorAura(warrior.CurrentTarget, false)
-	warrior.AcidSpitAura = core.AcidSpitAura(warrior.CurrentTarget, 0)
+	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget)
 
 	config := core.SpellConfig{
-		ActionID:    SunderArmorActionID,
+		ActionID:    core.ActionID{SpellID: 47467},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -77,7 +73,8 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 }
 
 func (warrior *Warrior) CanSunderArmor(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.SunderArmor.DefaultCast.Cost &&
-		!warrior.ExposeArmorAura.IsActive() &&
-		!warrior.AcidSpitAura.IsActive()
+	return warrior.CurrentRage() >= warrior.SunderArmor.DefaultCast.Cost && warrior.CanApplySunderAura()
+}
+func (warrior *Warrior) CanApplySunderAura() bool {
+	return warrior.SunderArmorAura.IsActive() || !warrior.SunderArmorAura.ExclusiveEffects[0].Category.AnyActive()
 }

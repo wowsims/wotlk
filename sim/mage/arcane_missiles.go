@@ -90,6 +90,13 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 						mage.MissileBarrageAura.Deactivate(sim)
 					}
 				}
+
+				// TODO: This check is necessary to ensure the final tick occurs before
+				// Arcane Blast stacks are dropped. To fix this, ticks need to reliably
+				// occur before aura expirations.
+				if mage.ArcaneMissilesDot.TickCount < mage.ArcaneMissilesDot.NumberOfTicks {
+					mage.ArcaneMissilesDot.TickOnce(sim)
+				}
 				mage.ArcaneBlastAura.Deactivate(sim)
 			},
 		}),

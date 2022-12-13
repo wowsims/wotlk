@@ -197,6 +197,7 @@ export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
 	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 	makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(55487), 'demoralizingScreech'),
 ], 'Atk Pwr');
 
 export const BleedDebuff = InputHelpers.makeMultiIconInput([

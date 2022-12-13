@@ -64,11 +64,6 @@ func (dk *Deathknight) ApplyFrostTalents() {
 	// Deathchill
 	dk.applyDeathchill()
 
-	// Improved Icy Talons
-	if dk.Talents.ImprovedIcyTalons {
-		dk.PseudoStats.MeleeSpeedMultiplier *= 1.05
-	}
-
 	// Merciless Combat
 	dk.applyMercilessCombat()
 
@@ -279,6 +274,11 @@ func (dk *Deathknight) applyDeathchill() {
 func (dk *Deathknight) applyIcyTalons() {
 	if dk.Talents.IcyTalons == 0 {
 		return
+	}
+
+	// Improved Icy Talons
+	if dk.Talents.ImprovedIcyTalons {
+		dk.PseudoStats.MeleeSpeedMultiplier *= 1.05
 	}
 
 	icyTalonsCoeff := 1.0 + 0.04*float64(dk.Talents.IcyTalons)

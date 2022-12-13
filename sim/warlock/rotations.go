@@ -389,12 +389,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Data
 	// ------------------------------------------
 	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
-		// We are integrating the Demonic Pact SP bonus over the course of the simulation to get the average
-		warlock.DPSPAverage *= float64(warlock.PreviousTime)
-		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime-warlock.PreviousTime)
-		warlock.DPSPAverage /= float64(sim.CurrentTime)
-		warlock.PreviousTime = sim.CurrentTime
+		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
+
+		if currentTimeJump > 0 {
+			warlock.DPSPAggregate += dpspCurrent * currentTimeJump
+			warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
+		}
 	}
+	warlock.PreviousTime = sim.CurrentTime
 
 	// ------------------------------------------
 	// AoE (Seed)
@@ -630,7 +633,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.Log(sim, "[Info] Potential Corruption rollover power [%.2f]", PotentialCorruptionRolloverPower)
 		}
 		if warlock.Talents.DemonicPact > 0 {
-			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAverage)
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate/sim.CurrentTime.Seconds())
 		}
 	}
 

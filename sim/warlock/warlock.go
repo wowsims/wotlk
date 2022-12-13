@@ -55,6 +55,7 @@ type Warlock struct {
 	EradicationAura            *core.Aura
 	DemonicEmpowerment         *core.Spell
 	DemonicEmpowermentAura     *core.Aura
+	DemonicPactAura            *core.Aura
 	Metamorphosis              *core.Spell
 	MetamorphosisAura          *core.Aura
 	ImmolationAura             *core.Spell
@@ -71,9 +72,10 @@ type Warlock struct {
 	// Rotation related memory
 	CorruptionRolloverPower float64
 	DrainSoulRolloverPower  float64
-	DPSPAverage             float64
-	PreviousTime            time.Duration
-	SpellsRotation          []SpellRotation
+	// The sum total of demonic pact spell power * seconds.
+	DPSPAggregate  float64
+	PreviousTime   time.Duration
+	SpellsRotation []SpellRotation
 
 	petStmBonusSP float64
 
