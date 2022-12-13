@@ -238,33 +238,37 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
 		if stat == stats.SpellHit {
 			if baseStats[stat] >= spellHitCap {
-				resultsLow[stat] = resultsHigh[stat]
+				resultsLow[stat] = nil
 			}
 		} else if stat == stats.MeleeHit {
 			if baseStats[stat] >= melee2HHitCap {
-				resultsLow[stat] = resultsHigh[stat]
+				resultsLow[stat] = nil
 			}
 		}
 
 		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
-			deltaLow := (modLowMetrics.Avg - baselineMetrics.Avg) / statModsLow[stat]
-			deltaHigh := (modHighMetrics.Avg - baselineMetrics.Avg) / statModsHigh[stat]
-			weightResults.Weights[stat] = (deltaLow + deltaHigh) / 2
+			var sample []float64
+			if resultsLow != nil {
+				for i := 0; i < int(simOptions.Iterations); i++ {
+					sample = append(sample, (modLowMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsLow[stat])
+				}
+			}
+			if resultsHigh != nil {
+				for i := 0; i < int(simOptions.Iterations); i++ {
+					sample = append(sample, (modHighMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsHigh[stat])
+				}
+			}
 
 			sum := 0.0
 			sumSq := 0.0
-			for i := 0; i < int(simOptions.Iterations); i++ {
-				diffLow := (modLowMetrics.AllValues[i] - baselineMetrics.AllValues[i]) / statModsLow[stat]
-				sum += diffLow
-				sumSq += diffLow * diffLow
-
-				diffHigh := (modHighMetrics.AllValues[i] - baselineMetrics.AllValues[i]) / statModsHigh[stat]
-				sum += diffHigh
-				sumSq += diffHigh * diffHigh
+			for i := 0; i < len(sample); i++ {
+				sum += sample[i]
+				sumSq += sample[i] * sample[i]
 			}
-			iters := float64(simOptions.Iterations * 2)
+			iters := float64(len(sample))
 			avg := sum / iters
-			weightResults.WeightsStdev[stat] = math.Sqrt((sumSq / iters)) - (avg * avg)
+			weightResults.Weights[stat] = avg
+			weightResults.WeightsStdev[stat] = math.Abs(math.Sqrt((sumSq / iters)) - (avg * avg))
 		}
 
 		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
