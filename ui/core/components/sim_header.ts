@@ -303,7 +303,7 @@ export class SimHeader extends Component {
 				<div class="import-export">
 					<fragment class="importFragment">
 						<div class="dropdown sim-dropdown-menu">
-							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
 								<i class="fa fa-download"></i>
 								Import
 							</a>
@@ -312,7 +312,7 @@ export class SimHeader extends Component {
 					</fragment>
 					<fragment class="exportFragment">
 						<div class="dropdown sim-dropdown-menu">
-							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
 								<i class="fa fa-right-from-bracket"></i>
 								Export
 							</a>
