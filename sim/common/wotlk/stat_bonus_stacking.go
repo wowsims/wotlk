@@ -29,8 +29,9 @@ type StackingStatBonusEffect struct {
 	Bonus      stats.Stats
 	Duration   time.Duration
 	MaxStacks  int32
-	Callback   Callback
+	Callback   core.AuraCallback
 	ProcMask   core.ProcMask
+	SpellFlags core.SpellFlag
 	Outcome    core.HitOutcome
 	Harmful    bool
 	ProcChance float64
@@ -50,10 +51,11 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 			BonusPerStack: config.Bonus,
 		})
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
+			SpellFlags: config.SpellFlags,
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
@@ -72,8 +74,9 @@ type StackingStatBonusCD struct {
 	Duration    time.Duration
 	MaxStacks   int32
 	CD          time.Duration
-	Callback    Callback
+	Callback    core.AuraCallback
 	ProcMask    core.ProcMask
+	SpellFlags  core.SpellFlag
 	Outcome     core.HitOutcome
 	Harmful     bool
 	ProcChance  float64
@@ -94,10 +97,11 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 			BonusPerStack: config.Bonus,
 		})
 
-		applyProcTriggerCallback(&character.Unit, buffAura, ProcTrigger{
+		core.ApplyProcTriggerCallback(&character.Unit, buffAura, core.ProcTrigger{
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
+			SpellFlags: config.SpellFlags,
 			Outcome:    config.Outcome,
 			Harmful:    config.Harmful,
 			ProcChance: config.ProcChance,
@@ -159,9 +163,9 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
 		})
 
-		MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Death Knight's Anguish",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.1,
@@ -178,7 +182,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.Spirit: 18},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Fury of the Five Fights",
@@ -186,7 +190,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 20,
 		Bonus:     stats.Stats{stats.AttackPower: 16, stats.RangedAttackPower: 16},
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMeleeOrRanged,
 		Harmful:   true,
 	})
@@ -196,7 +200,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -205,7 +209,7 @@ func init() {
 		Duration:   time.Second * 12,
 		MaxStacks:  3,
 		Bonus:      stats.Stats{stats.MeleeCrit: 35, stats.SpellCrit: 35},
-		Callback:   OnSpellHitDealt | OnSpellHitTaken,
+		Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnSpellHitTaken,
 		Harmful:    true,
 		ProcChance: 0.5,
 	})
@@ -214,8 +218,8 @@ func init() {
 		ID:        45308,
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
-		Bonus:     stats.Stats{stats.SpellPower: 25},
-		Callback:  OnCastComplete,
+		Bonus:     stats.Stats{stats.SpellPower: 26},
+		Callback:  core.CallbackOnCastComplete,
 	})
 
 	core.AddEffectsToTest = false
@@ -226,7 +230,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MP5: 16},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Solance of the Defeated H",
@@ -234,7 +238,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MP5: 18},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Solance of the Fallen",
@@ -242,7 +246,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MP5: 16},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Solance of the Fallen H",
@@ -250,7 +254,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MP5: 18},
-		Callback:  OnCastComplete,
+		Callback:  core.CallbackOnCastComplete,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Muradin's Spyglass",
@@ -258,7 +262,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 18},
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Harmful:   true,
 	})
@@ -268,7 +272,7 @@ func init() {
 		Duration:   time.Second * 10,
 		MaxStacks:  10,
 		Bonus:      stats.Stats{stats.Stamina: 24},
-		Callback:   OnSpellHitTaken,
+		Callback:   core.CallbackOnSpellHitTaken,
 		ProcMask:   core.ProcMaskMelee,
 		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.6,
@@ -279,7 +283,7 @@ func init() {
 		Duration:   time.Second * 10,
 		MaxStacks:  10,
 		Bonus:      stats.Stats{stats.Stamina: 27},
-		Callback:   OnSpellHitTaken,
+		Callback:   core.CallbackOnSpellHitTaken,
 		ProcMask:   core.ProcMaskMelee,
 		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.6,
@@ -290,7 +294,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Harmful:   true,
 	})
@@ -300,7 +304,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 20,
 		Bonus:     stats.Stats{stats.AttackPower: 17, stats.RangedAttackPower: 17},
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMeleeOrRanged,
 		Harmful:   true,
 	})
@@ -314,7 +318,7 @@ func init() {
 		MaxStacks:   20,
 		Bonus:       stats.Stats{stats.MP5: 60},
 		CD:          time.Minute * 2,
-		Callback:    OnCastComplete,
+		Callback:    core.CallbackOnCastComplete,
 		IsDefensive: true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
@@ -324,7 +328,7 @@ func init() {
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.AttackPower: 215, stats.RangedAttackPower: 215},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMelee,
 		Outcome:   core.OutcomeLanded,
 	})
@@ -335,7 +339,7 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
@@ -347,9 +351,19 @@ func init() {
 		MaxStacks:   5,
 		Bonus:       stats.Stats{stats.Armor: 1265},
 		CD:          time.Minute * 2,
-		Callback:    OnSpellHitTaken,
+		Callback:    core.CallbackOnSpellHitTaken,
 		Outcome:     core.OutcomeLanded,
 		IsDefensive: true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Light",
+		ID:         47728,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 66},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Fetish of Volatile Power",
@@ -358,10 +372,20 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Stone",
+		ID:         47880,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 66},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Vengeance of the Forsaken",
@@ -370,7 +394,7 @@ func init() {
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.AttackPower: 215, stats.RangedAttackPower: 215},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMelee,
 		Outcome:   core.OutcomeLanded,
 	})
@@ -381,7 +405,7 @@ func init() {
 		MaxStacks:   5,
 		Bonus:       stats.Stats{stats.Armor: 1265},
 		CD:          time.Minute * 2,
-		Callback:    OnSpellHitTaken,
+		Callback:    core.CallbackOnSpellHitTaken,
 		Outcome:     core.OutcomeLanded,
 		IsDefensive: true,
 	})
@@ -392,10 +416,20 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Light H",
+		ID:         47947,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 74},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Victor's Call H",
@@ -404,7 +438,7 @@ func init() {
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.AttackPower: 250, stats.RangedAttackPower: 250},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMelee,
 		Outcome:   core.OutcomeLanded,
 	})
@@ -415,7 +449,7 @@ func init() {
 		MaxStacks:   5,
 		Bonus:       stats.Stats{stats.Armor: 1422},
 		CD:          time.Minute * 2,
-		Callback:    OnSpellHitTaken,
+		Callback:    core.CallbackOnSpellHitTaken,
 		Outcome:     core.OutcomeLanded,
 		IsDefensive: true,
 	})
@@ -426,10 +460,20 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskSpellDamage,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
+	})
+	newStackingStatBonusCD(StackingStatBonusCD{
+		Name:       "Binding Stone H",
+		ID:         48019,
+		Duration:   time.Second * 20,
+		MaxStacks:  8,
+		Bonus:      stats.Stats{stats.SpellPower: 74},
+		CD:         time.Minute * 2,
+		Callback:   core.CallbackOnCastComplete,
+		SpellFlags: core.SpellFlagHelpful,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Vengeance of the Forsaken H",
@@ -438,7 +482,7 @@ func init() {
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.AttackPower: 250, stats.RangedAttackPower: 250},
 		CD:        time.Minute * 2,
-		Callback:  OnSpellHitDealt,
+		Callback:  core.CallbackOnSpellHitDealt,
 		ProcMask:  core.ProcMaskMelee,
 		Outcome:   core.OutcomeLanded,
 	})
@@ -449,7 +493,7 @@ func init() {
 		MaxStacks:   5,
 		Bonus:       stats.Stats{stats.Armor: 1422},
 		CD:          time.Minute * 2,
-		Callback:    OnSpellHitTaken,
+		Callback:    core.CallbackOnSpellHitTaken,
 		Outcome:     core.OutcomeLanded,
 		IsDefensive: true,
 	})

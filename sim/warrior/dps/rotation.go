@@ -27,7 +27,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	if war.thunderClapNext {
 		if war.CanThunderClap(sim) {
 			if war.ThunderClap.Cast(sim, war.CurrentTarget) {
-				if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
+				if war.ThunderClapAuras[war.CurrentTarget.Index].RemainingDuration(sim) > DebuffRefreshWindow {
 					war.thunderClapNext = false
 
 					// Switching back to berserker immediately is unrealistic because the player needs
@@ -217,7 +217,7 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 		// Need to check again because we might have lost rage from switching stances.
 		if war.CanThunderClap(sim) {
 			war.ThunderClap.Cast(sim, war.CurrentTarget)
-			if war.ThunderClapAura.RemainingDuration(sim) > DebuffRefreshWindow {
+			if war.ThunderClapAuras[war.CurrentTarget.Index].RemainingDuration(sim) > DebuffRefreshWindow {
 				war.thunderClapNext = false
 			}
 		}

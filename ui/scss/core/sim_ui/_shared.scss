@@ -2,86 +2,69 @@
 
 $sim-header-height: 72px;
 
-html {
-	overflow: hidden;
-}
-
-body {
-  margin: 0;
-}
-
 td, th {
   padding: auto;
 }
 
 .sim-ui {
-	height: 100%;
+	overflow: auto;
 
 	.sim-root {
 		height: 100%;
 		display: flex;
-		flex-wrap: wrap;
-		overflow-y: auto;
-	}
 
-	#noticesBanner {
-		width: 100%;
-		background: lighten($body-bg, 5);
-	}
+		.sim-bg {
+			position: fixed;
+			// These allow the background to fill the page and not be adjusted by browser scrollbars
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background-image:
+				linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+				var(--theme-background-image);
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			z-index: -1;
+		}
+	
+		.notices-banner {
+			width: 100%;
+			background: lighten($body-bg, 5);
+		}
+	
+		.sim-sidebar, .sim-content {
+			min-height: 100vh;
+		}
 
-	#simTitle, #simHeader {
-		height: $sim-header-height;
-		border-bottom: 1px solid $border-color;
+		.sim-sidebar {
+			flex:1;
 
-		.sim-title-dropdown-root {
-			height: $sim-header-height - 1px;
+			.sim-title {
+				height: $sim-header-height;
+				border-bottom: 1px solid $border-color;
+	
+				.sim-title-dropdown-root {
+					height: $sim-header-height - 1px;
+				}
+			}
+		}
+	
+		.sim-content {
+			padding-left: $gap-width * 2;
+			padding-right: $gap-width * 2;
+			flex: 4;
+	
+			.sim-header {
+				height: $sim-header-height;
+				border-bottom: 1px solid $border-color;
+			}
 		}
 	}
-
-	#simContent {
-		padding-left: $gap-width * 2;
-  	padding-right: $gap-width * 2;
-	}
 }
 
-.iterations-picker {
-  text-align: center;
-}
-
-.iterations-picker .input-label {
-  color: var(--sidebar-text-color);
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.sim-sidebar-results {
-  flex-grow: 1;
-}
-
-.sim-sidebar-results {
-  height: 100%;
-  position: relative;
-}
-
-.sim-sidebar-results > div {
-  @include vertical-horizontal-center;
-  width: 100%;
-	text-align: center;
-}
-
-.results-pending .loader {
-  margin: auto;
-}
-
-.iterations-label {
-	color: var(--sidebar-text-color);
-}
-
-.results-sim {
-	color: var(--sidebar-text-color);
-	text-shadow: 0 0 10px var(--sidebar-highlight-color);
-}
-
+// TODO: Move these to an organized partial
 .hide-damage-metrics .damage-metrics {
 	display: none !important;
 }
@@ -101,29 +84,55 @@ td, th {
 .hide-in-front-of-target .in-front-of-target {
 	display: none !important;
 }
+// END TODO
 
 @include media-breakpoint-down(lg) {
 	$sim-header-height: 65px;
 
 	.sim-ui {
-		#simTitle, #simHeader {
-			height: $sim-header-height;
-	
-			.sim-title-dropdown-root {
-				height: $sim-header-height - 1px;
-			}
-		}
+		.sim-root {
+			flex-direction: column;
+			flex-wrap: nowrap;
 
-		#simContent {
-			padding-left: $gap-width;
-    	padding-right: $gap-width;
+			.sim-bg {
+				left: 0;
+			}
+
+			.sim-sidebar, .sim-content {
+				width: 100%;
+				min-height: unset;
+			}
+
+			.sim-sidebar {
+				.sim-title {
+					height: $sim-header-height;
+		
+					.sim-title-dropdown-root {
+						height: $sim-header-height - 1px;
+					}
+				}
+
+				.sim-sidebarContent {
+					padding-left: $gap-width-sm;
+					padding-right: $gap-width-sm;
+				}
+			}
+
+			.sim-content {
+				padding-left: $gap-width-sm;
+				padding-right: $gap-width-sm;
+
+				.sim-header {
+					height: $sim-header-height;
+				}
+			}
 		}
 	}
 }
 
 @include media-breakpoint-down(sm) {
   .sim-ui {
-		#simContent {
+		.sim-content {
 			padding-left: $gap-width-sm;
 			padding-right: $gap-width-sm;
 		}

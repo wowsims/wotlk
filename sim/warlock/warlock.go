@@ -51,30 +51,43 @@ type Warlock struct {
 	Seeds               []*core.Spell
 	SeedDots            []*core.Dot
 
-	NightfallProcAura      *core.Aura
-	EradicationAura        *core.Aura
-	DemonicEmpowerment     *core.Spell
-	DemonicEmpowermentAura *core.Aura
-	Metamorphosis          *core.Spell
-	MetamorphosisAura      *core.Aura
-	ImmolationAura         *core.Spell
-	ImmolationAuraDot      *core.Dot
-	HauntDebuffAura        *core.Aura
-	MoltenCoreAura         *core.Aura
-	DecimationAura         *core.Aura
-	PyroclasmAura          *core.Aura
-	BackdraftAura          *core.Aura
-	EmpoweredImpAura       *core.Aura
-	GlyphOfLifeTapAura     *core.Aura
+	NightfallProcAura          *core.Aura
+	EradicationAura            *core.Aura
+	DemonicEmpowerment         *core.Spell
+	DemonicEmpowermentAura     *core.Aura
+	DemonicPactAura            *core.Aura
+	Metamorphosis              *core.Spell
+	MetamorphosisAura          *core.Aura
+	ImmolationAura             *core.Spell
+	ImmolationAuraDot          *core.Dot
+	HauntDebuffAura            *core.Aura
+	MoltenCoreAura             *core.Aura
+	DecimationAura             *core.Aura
+	PyroclasmAura              *core.Aura
+	BackdraftAura              *core.Aura
+	EmpoweredImpAura           *core.Aura
+	GlyphOfLifeTapAura         *core.Aura
+	FakeSpiritsoftheDamnedAura *core.Aura
 
 	// Rotation related memory
 	CorruptionRolloverPower float64
 	DrainSoulRolloverPower  float64
-	DPSPAverage             float64
-	PreviousTime            time.Duration
-	SpellsRotation          []SpellRotation
+	// The sum total of demonic pact spell power * seconds.
+	DPSPAggregate  float64
+	PreviousTime   time.Duration
+	SpellsRotation []SpellRotation
 
 	petStmBonusSP float64
+
+	// set bonus cache
+	T7TwoSetBonus   bool
+	T7FourSetBonus  bool
+	T8TwoSetBonus   bool
+	T8FourSetBonus  bool
+	T9TwoSetBonus   bool
+	T9FourSetBonus  bool
+	T10TwoSetBonus  bool
+	T10FourSetBonus bool
 }
 
 type SpellRotation struct {
@@ -101,6 +114,9 @@ func (warlock *Warlock) GrandFirestoneBonus() float64 {
 }
 
 func (warlock *Warlock) Initialize() {
+
+	warlock.registerFakeSpiritsoftheDamnedAura()
+	warlock.registerSetBonuses()
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
 	warlock.registerImmolateSpell()

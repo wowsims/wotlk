@@ -3,7 +3,6 @@ import { Player } from '../core/player.js';
 import { EventID } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { CustomRotationPickerConfig } from '../core/components/custom_rotation_picker.js';
 import { CustomRotation } from '../core/proto/common.js';
 
 import {
@@ -21,7 +20,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',
 	values: [
-		{ color: 'grey', value: PaladinAura.NoPaladinAura },
+		{ value: PaladinAura.NoPaladinAura, tooltip: 'No Aura' },
 		{ actionId: ActionId.fromSpellId(54043), value: PaladinAura.RetributionAura },
 	],
 });
@@ -105,6 +104,20 @@ export const RetributionPaladinSoVTargets = InputHelpers.makeRotationNumberInput
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getSpecOptions().seal == PaladinSeal.Vengeance,
 	changeEmitter: (player: Player<Spec.SpecRetributionPaladin>) => player.changeEmitter,
 })
+
+export const RetributionPaladinRotationAvoidClippingConsecration = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'avoidClippingConsecration',
+	label: 'Avoid Clipping Consecration',
+	labelTooltip: 'Avoid clipping consecration at the end of a fight.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
+
+export const RetributionPaladinRotationHoldLastAvengingWrathUntilExecution = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'holdLastAvengingWrathUntilExecution',
+	label: 'Hold Avenging Wrath Until Execution',
+	labelTooltip: 'Hold last Avenging Wrath usage until the execution phase. This currently does not work if specific Avenging Wrath CD usage times are specified.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
 
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
 	fieldName: 'customRotation',

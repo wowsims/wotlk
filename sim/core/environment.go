@@ -21,6 +21,10 @@ type PostFinalizeEffect func()
 type Environment struct {
 	State EnvironmentState
 
+	// Whether stats are currently being measured. Used to disable some validation
+	// checks which are otherwise helpful.
+	MeasuringStats bool
+
 	Raid      *Raid
 	Encounter Encounter
 	AllUnits  []*Unit
@@ -66,7 +70,7 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 
 	// Apply extra debuffs from raid.
 	if raidProto.Debuffs != nil && len(env.Encounter.Targets) > 0 {
-		applyDebuffEffects(&env.Encounter.Targets[0].Unit, raidProto.Debuffs)
+		applyDebuffEffects(&env.Encounter.Targets[0].Unit, raidProto.Debuffs, raidProto)
 	}
 
 	// Assign target or target using Tanks field.

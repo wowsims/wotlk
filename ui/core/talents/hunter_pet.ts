@@ -18,7 +18,7 @@ export function makePetTypeInputConfig(includeLabel: boolean): InputHelpers.Type
 		numColumns: 5,
 		//label: includeLabel ? 'Pet' : '',
 		values: [
-			{ color: 'grey', value: PetType.PetNone },
+			{ value: PetType.PetNone, tooltip: 'No Pet' },
 			{ actionId: ActionId.fromPetName('Bat'), tooltip: 'Bat', value: PetType.Bat },
 			{ actionId: ActionId.fromPetName('Bear'), tooltip: 'Bear', value: PetType.Bear },
 			{ actionId: ActionId.fromPetName('Bird of Prey'), tooltip: 'Bird of Prey', value: PetType.BirdOfPrey },

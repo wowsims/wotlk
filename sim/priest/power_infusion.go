@@ -24,6 +24,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 
 	piSpell := priest.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagHelpful,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

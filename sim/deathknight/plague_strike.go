@@ -50,20 +50,6 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 				if result.Landed() {
 					dk.BloodPlagueExtended[target.Index] = 0
 					dk.BloodPlagueSpell.Cast(sim, target)
-					if dk.Talents.CryptFever > 0 {
-						if !dk.CryptFeverAura[target.Index].IsActive() {
-							// On new application do a ghost spell cast
-							dk.DiseaseGhostSpell.Cast(sim, target)
-						}
-						dk.CryptFeverAura[target.Index].Activate(sim)
-					}
-					if dk.Talents.EbonPlaguebringer > 0 {
-						if !dk.EbonPlagueAura[target.Index].IsActive() {
-							// On new application do a ghost spell cast
-							dk.DiseaseGhostSpell.Cast(sim, target)
-						}
-						dk.EbonPlagueAura[target.Index].Activate(sim)
-					}
 				}
 			}
 
@@ -80,7 +66,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 			IgnoreHaste: true,
 		}

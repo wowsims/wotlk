@@ -59,9 +59,9 @@ func init() {
 					return character.NewTemporaryStatsAura("DMC Greatness "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       "DMC Greatness",
-				Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
+				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt | core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
@@ -71,10 +71,11 @@ func init() {
 			})
 		})
 	}
+	core.AddEffectsToTest = false
 	newDMCGreatnessEffect(42987)
 	newDMCGreatnessEffect(44253)
 	newDMCGreatnessEffect(44254)
-	core.AddEffectsToTest = false
+	core.AddEffectsToTest = true
 	newDMCGreatnessEffect(44255)
 
 	newDeathsChoiceEffect := func(itemID int32, name string, amount float64) {
@@ -92,9 +93,9 @@ func init() {
 					return character.NewTemporaryStatsAura(name+" "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
-			MakeProcTriggerAura(&character.Unit, ProcTrigger{
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
-				Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
+				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
@@ -104,9 +105,10 @@ func init() {
 			})
 		})
 	}
-	newDeathsChoiceEffect(47115, "Deaths Verdict", 450)
 	core.AddEffectsToTest = false
+	newDeathsChoiceEffect(47115, "Deaths Verdict", 450)
 	newDeathsChoiceEffect(47131, "Deaths Verdict H", 510)
 	newDeathsChoiceEffect(47303, "Deaths Choice", 450)
+	core.AddEffectsToTest = true
 	newDeathsChoiceEffect(47464, "Deaths Choice H", 510)
 }

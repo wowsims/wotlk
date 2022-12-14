@@ -62,7 +62,6 @@ func (target *Target) initialize(config *proto.Target) {
 // Empty Agent interface functions.
 func (target *Target) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
 func (target *Target) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
-func (target *Target) ApplyGearBonuses()                          {}
 func (target *Target) ApplyTalents()                              {}
 func (target *Target) GetCharacter() *Character                   { return nil }
 func (target *Target) Initialize()                                {}

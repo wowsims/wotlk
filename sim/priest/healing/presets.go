@@ -92,8 +92,9 @@ var PlayerOptionsDisc = &proto.Player_HealingPriest{
 	HealingPriest: &proto.HealingPriest{
 		Talents: DiscTalents,
 		Options: &proto.HealingPriest_Options{
-			UseInnerFire:   true,
-			UseShadowfiend: true,
+			UseInnerFire:      true,
+			UseShadowfiend:    true,
+			RapturesPerMinute: 5,
 		},
 		Rotation: &proto.HealingPriest_Rotation{},
 	},

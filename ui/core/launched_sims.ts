@@ -1,5 +1,5 @@
 import { Class, Spec } from './proto/common';
-import { classSpecMap } from './proto_utils/class_spec_utils';
+import { specToClass } from './proto_utils/utils';
 
 // This file is for anything related to launching a new sim. DO NOT touch this
 // file until your sim is ready to launch!
@@ -12,6 +12,7 @@ export enum LaunchStatus {
 }
 
 export const raidSimLaunched = false;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
@@ -25,7 +26,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecRogue]: LaunchStatus.Alpha,
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecHealingPriest]: LaunchStatus.Alpha,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
 	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,
@@ -46,10 +47,10 @@ export function getLaunchedSims(): Array<Spec> {
 		.filter(spec => simLaunchStatuses[spec] > LaunchStatus.Unlaunched);
 }
 
-export function getLaunchedSimsForClass(classIndex: Class): Array<Spec> {
-	let specs = classSpecMap.get(classIndex) as Array<Spec>;
-
-	return specs.filter( (specIndex) => isSimLaunched(specIndex));
+export function getLaunchedSimsForClass(klass: Class): Array<Spec> {
+	return Object.keys(specToClass)
+		.map(specStr => parseInt(specStr) as Spec)
+		.filter(spec => specToClass[spec] == klass && isSimLaunched(spec));
 }
 
 export function isSimLaunched(specIndex: Spec): boolean {

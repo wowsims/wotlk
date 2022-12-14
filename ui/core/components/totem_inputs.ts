@@ -17,22 +17,27 @@ import { Sim } from '../sim.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import * as InputHelpers from '../components/input_helpers.js';
-import { SimUI } from '../sim_ui.js';
 import { SpecRotation } from '../proto_utils/utils.js';
+import { ContentBlock } from './content_block.js';
+import { Input } from './input.js';
 
 export type DpsShaman = Spec.SpecEnhancementShaman | Spec.SpecElementalShaman;
 
-export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTMLElement): string {
-	parentElem.innerHTML = `
-		<div class="totem-dropdowns-container"></div>
-		<div class="totem-inputs-container"></div>
-		<div class="fire-elemental-inputs-container"></div>
-	`;
-	const totemDropdownsContainer = parentElem.getElementsByClassName('totem-dropdowns-container')[0] as HTMLElement;
-	const totemInputsContainer = parentElem.getElementsByClassName('totem-inputs-container')[0] as HTMLElement;
-	const fireElementalInputsContainer = parentElem.getElementsByClassName("fire-elemental-inputs-container")[0] as HTMLElement
+export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<DpsShaman>): ContentBlock {
+	let contentBlock = new ContentBlock(parentElem, 'totems-settings', {
+		header: {title: 'Totems'}
+	});
 
-	const earthTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	let totemDropdownGroup = Input.newGroupContainer();
+	totemDropdownGroup.classList.add('totem-dropdowns-container', 'icon-group');
+
+	let fireElementalContainer = document.createElement('div');
+	fireElementalContainer.classList.add('fire-elemental-inputs-container');
+
+	contentBlock.bodyElement.appendChild(totemDropdownGroup);
+	contentBlock.bodyElement.appendChild(fireElementalContainer);
+	
+	const earthTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'earth-totem-picker',
 		],
@@ -55,30 +60,29 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const airTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const waterTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
-			'air-totem-picker',
+			'water-totem-picker',
 		],
 		numColumns: 1,
 		values: [
-			{ color: '#baffc9', value: AirTotem.NoAirTotem },
-			{ actionId: ActionId.fromSpellId(8512), value: AirTotem.WindfuryTotem },
-			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
+			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
+			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
 		],
-		equals: (a: AirTotem, b: AirTotem) => a == b,
-		zeroValue: AirTotem.NoAirTotem,
+		equals: (a: WaterTotem, b: WaterTotem) => a == b,
+		zeroValue: WaterTotem.NoWaterTotem,
 		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.air || AirTotem.NoAirTotem,
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.water || WaterTotem.NoWaterTotem,
 		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: number) => {
 			const newRotation = player.getRotation();
 			if (!newRotation.totems)
 				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.air = newValue;
+			newRotation.totems!.water = newValue;
 			player.setRotation(eventID, newRotation);
 		},
 	});
 
-	const fireTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const fireTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'fire-totem-picker',
 		],
@@ -103,24 +107,25 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		},
 	});
 
-	const waterTotemPicker = new IconEnumPicker(totemDropdownsContainer, simUI.player, {
+	const airTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
-			'water-totem-picker',
+			'air-totem-picker',
 		],
 		numColumns: 1,
 		values: [
-			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
-			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
+			{ color: '#baffc9', value: AirTotem.NoAirTotem },
+			{ actionId: ActionId.fromSpellId(8512), value: AirTotem.WindfuryTotem },
+			{ actionId: ActionId.fromSpellId(3738), value: AirTotem.WrathOfAirTotem },
 		],
-		equals: (a: WaterTotem, b: WaterTotem) => a == b,
-		zeroValue: WaterTotem.NoWaterTotem,
+		equals: (a: AirTotem, b: AirTotem) => a == b,
+		zeroValue: AirTotem.NoAirTotem,
 		changedEvent: (player: Player<DpsShaman>) => player.rotationChangeEmitter,
-		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.water || WaterTotem.NoWaterTotem,
+		getValue: (player: Player<DpsShaman>) => player.getRotation().totems?.air || AirTotem.NoAirTotem,
 		setValue: (eventID: EventID, player: Player<DpsShaman>, newValue: number) => {
 			const newRotation = player.getRotation();
 			if (!newRotation.totems)
 				newRotation.totems = ShamanTotems.create();
-			newRotation.totems!.water = newValue;
+			newRotation.totems!.air = newValue;
 			player.setRotation(eventID, newRotation);
 		},
 	});
@@ -136,7 +141,7 @@ export function TotemsSection(simUI: IndividualSimUI<DpsShaman>, parentElem: HTM
 		changeEmitter: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
 	}, ActionId.fromSpellId(2894), "useFireElemental");
 
-	new IconPicker(fireElementalInputsContainer, simUI.player, fireElementalBooleanIconInput);
+	new IconPicker(fireElementalContainer, simUI.player, fireElementalBooleanIconInput);
 
-	return 'Totems';
+	return contentBlock;
 }

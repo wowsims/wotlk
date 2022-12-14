@@ -25,7 +25,7 @@ import { Popup } from './popup.js';
 declare var tippy: any;
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epReferenceStat: Stat) {
-	simUI.addAction('STAT WEIGHTS', 'ep-weights-action', () => {
+	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epReferenceStat);
 	});
 }
@@ -52,21 +52,20 @@ class EpWeightsMenu extends Popup {
 		this.rootElem.innerHTML = `
 			<div class="ep-weights-header">
 				<div class="ep-weights-actions">
-					<button class="sim-button calc-weights">CALCULATE</button>
+					<button class="btn btn-primary calc-weights">CALCULATE</button>
 				</div>
-				<div class="ep-weights-results">
-				</div>
+				<div class="ep-weights-results"></div>
 			</div>
 			<div class="stats-controls-row">
 				<div class="ep-weights-options">
-					<select class="ep-type-select">
+					<select class="ep-type-select form-select">
 						<option value="ep">EP</option>
 						<option value="weight">Weights</option>
 					</select>
 				</div>
 				<div class="show-all-stats-container">
 				</div>
-				<button class="sim-button optimize-gems">OPTIMIZE GEMS</button>
+				<button class="btn btn-primary optimize-gems">OPTIMIZE GEMS</button>
 			</div>
 			<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items. Use <span class="fa fa-copy" style="color: var(--theme-color-primary);"></span> icon above the EPs to use newly calculated EPs. </p>
 			<div class="ep-weights-table">
@@ -157,6 +156,7 @@ class EpWeightsMenu extends Popup {
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
 			label: 'Show All Stats',
+			inline: true,
 			changedEvent: () => new TypedEvent(),
 			getValue: () => this.tableContainer.classList.contains('show-all-stats'),
 			setValue: (eventID: EventID, menu: EpWeightsMenu, newValue: boolean) => {
@@ -219,6 +219,8 @@ class EpWeightsMenu extends Popup {
 			<td>${getClassStatName(stat, this.simUI.player.getClass())}</td>
 			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-weight"><span>${result.hps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-ep"><span>${result.hps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
@@ -255,6 +257,12 @@ class EpWeightsMenu extends Popup {
 	private getPrevSimResult(): StatWeightsResult {
 		return this.simUI.prevEpSimResult || StatWeightsResult.create({
 			dps: {
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
+			},
+			hps: {
 				weights: new Stats().asArray(),
 				weightsStdev: new Stats().asArray(),
 				epValues: new Stats().asArray(),

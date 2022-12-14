@@ -12,6 +12,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
 	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
+	initialMultiplier := 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -41,15 +42,18 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := (1376/8 + 0.1849*spell.SpellPower()) *
-				(8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague))
+			var result *core.SpellResult
+			if initialMultiplier == 0 {
+				result = spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			} else {
+				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * initialMultiplier
+				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			}
 
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
 			}
-			spell.DealDamage(sim, result)
 		},
 	})
 

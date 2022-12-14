@@ -10,12 +10,8 @@ import (
 
 func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
-
 	cost := 40.0 - float64(druid.Talents.Ferocity)
-
 	mangleAura := core.MangleAura(druid.CurrentTarget)
-
-	t9bonus := core.TernaryInt32(druid.HasT9FeralSetBonus(2), 1, 0)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -30,12 +26,11 @@ func (druid *Druid) registerRakeSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -64,22 +59,26 @@ func (druid *Druid) registerRakeSpell() {
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
-		NumberOfTicks: 3 + t9bonus,
+		NumberOfTicks: 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0),
 		TickLength:    time.Second * 3,
-
+		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+			dot.SnapshotBaseDamage = 358 + 0.06*dot.Spell.MeleeAttackPower()
+			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			baseDmg := 358 + 0.06*dot.Spell.MeleeAttackPower()
 			if dotCanCrit {
-				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTickPhysicalCrit)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 			} else {
-				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
 			}
 		},
 	})
 }
 
 func (druid *Druid) CanRake() bool {
-	return druid.InForm(Cat) && ((druid.CurrentEnergy() >= druid.CurrentRakeCost()) || druid.ClearcastingAura.IsActive())
+	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentRakeCost()
 }
 
 func (druid *Druid) CurrentRakeCost() float64 {

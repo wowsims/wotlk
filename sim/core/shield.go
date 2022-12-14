@@ -4,7 +4,7 @@ package core
 type Shield struct {
 	Spell *Spell
 
-	// Embed Aura so we can use Ishieldctive/Refresh/etc directly.
+	// Embed Aura so we can use IsActive/Refresh/etc directly.
 	*Aura
 }
 
@@ -13,11 +13,10 @@ func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 	target := shield.Aura.Unit
 	attackTable := caster.AttackTables[target.UnitIndex]
 
-	shieldAmount *= caster.PseudoStats.HealingDealtMultiplier
+	shieldAmount *= shield.Spell.DamageMultiplier * caster.PseudoStats.HealingDealtMultiplier
 	shieldAmount *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
 
 	shield.Aura.Deactivate(sim)
-	shield.Aura.Priority = shieldAmount
 	shield.Aura.Activate(sim)
 
 	threat := 0.0 // TODO
@@ -34,18 +33,17 @@ func NewShield(config Shield) *Shield {
 	shield := &Shield{}
 	*shield = config
 
-	oldOnGain := shield.Aura.OnGain
-	oldOnExpire := shield.Aura.OnExpire
-	shield.Aura.OnGain = func(aura *Aura, sim *Simulation) {
-		if oldOnGain != nil {
-			oldOnGain(aura, sim)
-		}
-	}
-	shield.Aura.OnExpire = func(aura *Aura, sim *Simulation) {
-		if oldOnExpire != nil {
-			oldOnExpire(aura, sim)
-		}
-	}
-
 	return shield
+}
+
+// Creates Shields for all allied units.
+func NewAllyShieldArray(caster *Unit, config Shield, auraConfig Aura) []*Shield {
+	shields := make([]*Shield, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if !caster.IsOpponent(target) {
+			config.Aura = target.GetOrRegisterAura(auraConfig)
+			shields[target.UnitIndex] = NewShield(config)
+		}
+	}
+	return shields
 }

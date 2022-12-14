@@ -20,9 +20,11 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	spellCoeff := 1/3.5 + 0.03*float64(mage.Talents.ArcaneEmpowerment)
 
 	bonusCrit := 0.0
-	if mage.MageTier.t9_4 {
+	if mage.HasSetBonus(ItemSetKhadgarsRegalia, 4) {
 		bonusCrit += 5 * core.CritRatingPerCritChance
 	}
+
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 
 	// bonusCrit := float64(mage.Talents.ArcanePotency) * 10 * core.CritRatingPerCritChance
 
@@ -43,11 +45,11 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.MissileBarrageAura.IsActive() {
-					if mage.MageTier.t10_2 {
-						bloodmageHasteAura.Activate(sim)
-					}
 					mage.PseudoStats.NoCost = true
 					cast.ChannelTime /= 2
+					if t10ProcAura != nil {
+						t10ProcAura.Activate(sim)
+					}
 				}
 			},
 		},
@@ -74,6 +76,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	})
 
 	target := mage.CurrentTarget
+	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
 	mage.ArcaneMissilesDot = core.NewDot(core.Dot{
 		Spell: mage.ArcaneMissiles,
 		Aura: target.RegisterAura(core.Aura{
@@ -83,9 +86,16 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 				if mage.isMissilesBarrage {
 					mage.MultiplyCastSpeed(.5)
 					mage.isMissilesBarrage = false
-					if !mage.MageTier.t8_4 || sim.RandomFloat("MageT84PC") > .1 {
+					if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 						mage.MissileBarrageAura.Deactivate(sim)
 					}
+				}
+
+				// TODO: This check is necessary to ensure the final tick occurs before
+				// Arcane Blast stacks are dropped. To fix this, ticks need to reliably
+				// occur before aura expirations.
+				if mage.ArcaneMissilesDot.TickCount < mage.ArcaneMissilesDot.NumberOfTicks {
+					mage.ArcaneMissilesDot.TickOnce(sim)
 				}
 				mage.ArcaneBlastAura.Deactivate(sim)
 			},

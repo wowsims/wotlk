@@ -70,7 +70,6 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (2500 - time.Duration(250*wp.owner.Talents.DemonicPower)),
 			},
-			IgnoreHaste: true,
 		},
 
 		BonusCritRating: wp.owner.masterDemonologistFireCrit(),

@@ -41,7 +41,7 @@ func NewWowheadSpellTooltipManager(filePath string) *WowheadTooltipManager {
 	}
 }
 
-type Stats [34]float64
+type Stats [35]float64
 
 type ItemResponse interface {
 	GetName() string
@@ -205,12 +205,14 @@ var fireResistanceRegex = regexp.MustCompile(`\+([0-9]+) Fire Resistance`)
 var frostResistanceRegex = regexp.MustCompile(`\+([0-9]+) Frost Resistance`)
 var natureResistanceRegex = regexp.MustCompile(`\+([0-9]+) Nature Resistance`)
 var shadowResistanceRegex = regexp.MustCompile(`\+([0-9]+) Shadow Resistance`)
+var bonusArmorRegex = regexp.MustCompile(`Has ([0-9]+) bonus armor`)
 
 func (item WowheadItemResponse) GetStats() Stats {
 	sp := float64(item.GetIntValue(spellPowerRegex)) + float64(item.GetIntValue(spellPowerRegex2))
 	baseAP := float64(item.GetIntValue(attackPowerRegex)) + float64(item.GetIntValue(attackPowerRegex2))
 	return Stats{
 		proto.Stat_StatArmor:             float64(item.GetIntValue(armorRegex)),
+		proto.Stat_StatBonusArmor:        float64(item.GetIntValue(bonusArmorRegex)),
 		proto.Stat_StatStrength:          float64(item.GetIntValue(strengthRegex)),
 		proto.Stat_StatAgility:           float64(item.GetIntValue(agilityRegex)),
 		proto.Stat_StatStamina:           float64(item.GetIntValue(staminaRegex)),

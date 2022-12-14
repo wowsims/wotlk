@@ -1,9 +1,10 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
@@ -25,15 +26,20 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	target := moonkin.CurrentTarget
 
 	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim) {
-		if moonkin.Talents.ImprovedFaerieFire > 0 {
-			if aura := target.GetActiveAuraWithTag(core.MinorSpellHitDebuffAuraTag); aura == nil {
-				return moonkin.FaerieFire
-			}
-		}
+		return moonkin.FaerieFire
 	}
 
 	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
+	lunarUptime := core.TernaryDuration(moonkin.LunarEclipseProcAura == nil, 0, moonkin.LunarEclipseProcAura.RemainingDuration(sim))
 
+	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
+		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+			moonkin.useTrinkets(stats.SpellHaste, sim, target)
+		}
+		return moonkin.Starfire
+	}
 	if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
@@ -51,7 +57,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
 	// Player "brain" latency
-	playerLatency := time.Duration(rotation.PlayerLatency)
+	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
 	fishingForLunar := lunarICD <= solarICD
@@ -65,7 +71,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 	if moonkin.Talents.Eclipse > 0 {
 
-		lunarUptime := moonkin.LunarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()

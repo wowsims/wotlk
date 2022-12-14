@@ -37,6 +37,7 @@ type Paladin struct {
 	SealOfVengeance       *core.Spell
 	SealOfRighteousness   *core.Spell
 	SealOfCommand         *core.Spell
+	AvengingWrath         *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -51,6 +52,7 @@ type Paladin struct {
 	SealOfVengeanceAura     *core.Aura
 	SealOfCommandAura       *core.Aura
 	SealOfRighteousnessAura *core.Aura
+	AvengingWrathAura       *core.Aura
 
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
@@ -62,6 +64,9 @@ type Paladin struct {
 	HasTuralyonsOrLiadrinsBattlegear2Pc bool
 
 	DemonAndUndeadTargetCount int32
+
+	AvoidClippingConsecration           bool
+	HoldLastAvengingWrathUntilExecution bool
 }
 
 // Implemented by each Paladin spec.
@@ -192,50 +197,50 @@ func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladi
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
-		stats.Stamina:     141,
-		stats.Intellect:   102,
+		stats.Stamina:     143,
+		stats.Intellect:   101,
 		stats.Mana:        4394,
-		stats.Spirit:      104,
+		stats.Spirit:      103,
 		stats.Strength:    148,
 		stats.AttackPower: 240,
 		stats.Agility:     92,
-		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
-		stats.Stamina:     142,
-		stats.Intellect:   113,
+		stats.Stamina:     143,
+		stats.Intellect:   98,
 		stats.Mana:        4394,
 		stats.Spirit:      107,
 		stats.Strength:    152,
 		stats.AttackPower: 240,
 		stats.Agility:     87,
-		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
-		stats.Stamina:     160,
+		stats.Stamina:     143,
 		stats.Intellect:   98,
 		stats.Mana:        4394,
-		stats.Spirit:      113,
-		stats.Strength:    173,
+		stats.Spirit:      105,
+		stats.Strength:    151,
 		stats.AttackPower: 240,
 		stats.Agility:     90,
-		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
-		stats.Stamina:     146,
+		stats.Stamina:     144,
 		stats.Intellect:   97,
 		stats.Mana:        4394,
 		stats.Spirit:      104,
-		stats.Strength:    175,
+		stats.Strength:    156,
 		stats.AttackPower: 240,
 		stats.Agility:     86,
-		stats.MeleeCrit:   3.27 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.27 * core.CritRatingPerCritChance,
+		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
+		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
 	}
 }

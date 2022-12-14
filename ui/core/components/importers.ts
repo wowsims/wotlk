@@ -8,6 +8,7 @@ import { Spec } from '../proto/common.js';
 import { IndividualSimSettings } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player.js';
+import { Database } from '../proto_utils/database.js';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names.js';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory.js';
 import { GlyphConfig } from '../talents/glyphs_picker.js';
@@ -17,44 +18,6 @@ import { Popup } from './popup.js';
 
 declare var $: any;
 declare var tippy: any;
-
-export function newIndividualImporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const importFragment = document.createElement('fragment');
-	importFragment.innerHTML = `
-		<div class="dropdown sim-dropdown-menu">
-			<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-				<i class="fa fa-download"></i>
-				Import
-			</a>
-			<ul class="dropdown-menu"></ul>
-		</div>
-	`;
-
-	const menuElem = importFragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemFragment = document.createElement('fragment');
-		itemFragment.innerHTML = `
-			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
-				<a
-					href="javascript:void(0)"
-					class="dropdown-item"
-					role="button"
-					onclick="${onClick}"
-				>${label}</a>
-			</li>
-		`;
-		const itemElem = itemFragment.children[0] as HTMLElement;
-		const linkElem = itemElem.children[0] as HTMLElement;
-		linkElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('JSON', () => new IndividualJsonImporter(menuElem, simUI), true);
-	addMenuItem('80U', () => new Individual80UImporter(menuElem, simUI), true);
-	addMenuItem('Addon', () => new IndividualAddonImporter(menuElem, simUI), true);
-
-	return importFragment.children[0] as HTMLElement;
-}
 
 export abstract class Importer extends Popup {
 	private readonly textElem: HTMLTextAreaElement;
@@ -78,11 +41,11 @@ export abstract class Importer extends Popup {
 			<div class="actions-row">
 		`;
 		if (this.includeFile) {
-			htmlVal += `<label for="${uploadInputId}" class="importer-button sim-button upload-button">UPLOAD FROM FILE</label>
+			htmlVal += `<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button">UPLOAD FROM FILE</label>
 				<input type="file" id="${uploadInputId}" class="importer-upload-input" hidden>
 			`
 		}
-		htmlVal += `<button class="importer-button sim-button import-button">IMPORT</button>
+		htmlVal += `<button class="importer-button btn btn-primary import-button">IMPORT</button>
 			</div>
 		`;
 
@@ -113,11 +76,13 @@ export abstract class Importer extends Popup {
 
 	abstract onImport(data: string): void
 
-	protected finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>) {
+	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
 			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
 		}
+
+		await Database.loadLeftoversIfNecessary(equipmentSpec);
 
 		const gear = simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
@@ -157,7 +122,7 @@ export abstract class Importer extends Popup {
 	}
 }
 
-class IndividualJsonImporter<SpecType extends Spec> extends Importer {
+export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, 'JSON Import', true);
@@ -173,8 +138,11 @@ class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 		`;
 	}
 
-	onImport(data: string) {
+	async onImport(data: string) {
 		const proto = IndividualSimSettings.fromJsonString(data);
+		if (proto.player?.equipment) {
+			await Database.loadLeftoversIfNecessary(proto.player.equipment);
+		}
 		if (this.simUI.isWithinRaidSim) {
 			if (proto.player) {
 				this.simUI.player.fromProto(TypedEvent.nextEventID(), proto.player);
@@ -186,7 +154,7 @@ class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
-class Individual80UImporter<SpecType extends Spec> extends Importer {
+export class Individual80UImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, '80 Upgrades Import', true);
@@ -244,7 +212,7 @@ class Individual80UImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
-class IndividualAddonImporter<SpecType extends Spec> extends Importer {
+export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
 		super(parent, 'Addon Import', true);

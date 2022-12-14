@@ -27,7 +27,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 				Cost: float64(baseCost),
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 		},
 

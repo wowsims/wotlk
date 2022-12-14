@@ -52,7 +52,10 @@ export const DefaultRotation = FeralDruidRotation.create({
 	powerbear: false,
 	maxRoarOffset: 14.0,
 	maintainFaerieFire: true,
-	hotUptime: 0.0
+	hotUptime: 0.0,
+	snekWeave: false,
+	flowerWeave: false,
+	raidTargets: 30,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
@@ -63,7 +66,7 @@ export const DefaultOptions = FeralDruidOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodFishFeast,
+	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
 });
 

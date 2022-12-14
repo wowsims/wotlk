@@ -1,94 +1,132 @@
+@use "sass:map";
+
+.results-pending .loader {
+    margin: auto;
+  }
+
 .results-sim {
-  text-align: center;
+	text-align: center;
+
+	.results-sim-dps .topline-result-avg:after {
+		content: " DPS";
+	}
+	.results-sim-dpasp .topline-result-avg:after {
+		content: "DPASP"
+	}
+	.results-sim-tto .topline-result-avg:after {
+		content: " TTO";
+	}
+	.results-sim-hps .topline-result-avg:after {
+		content: " HPS";
+	}
+	.results-sim-tps .topline-result-avg:after {
+		content: " TPS";
+	}
+	.results-sim-dtps .topline-result-avg:after {
+		content: " DTPS";
+	}
+
+	.results-sim-cod .topline-result-avg:after {
+		content: "% Chance of Death";
+	}
+
+	.results-sim-percent-oom .topline-result-avg:after {
+		content: " spent OOM";
+	}
+
+	[class^='results-sim-'], [class*=' results-sim-'] {
+		font-weight: bold;
+
+		.topline-result-avg {
+			font-size: 1.75rem;
+
+			&::after {
+				font-size: $content-font-size;
+				font-weight: normal;
+			}
+		}
+
+		.topline-result-stdev {
+			font-size: $content-font-size;
+			font-weight: normal;
+		}
+
+		.results-reference {
+			margin-bottom: map.get($spacers, 2);
+			font-weight: normal;
+
+			.results-reference-diff {
+				font-weight: bold;
+			}
+		}
+	}
+
+	.results-sim-reference {
+		margin-top: map.get($spacers, 2);
+		font-weight: normal;
+
+		&.has-reference {
+			.results-sim-set-reference {
+				display: none;
+			}
+		}
+
+		&:not(.has-reference) {
+			.results-sim-reference-bar {
+				display: none;
+			}
+		}
+	}
 }
 
-.results-sim-dps {
-  text-align: center;
-}
-.results-sim-tps {
-  text-align: center;
-}
 
-.topline-result-avg {
-  font-size: 18px;
-  font-weight: 700;
-}
-.hide-threat-metrics .topline-result-avg {
-	font-size: 30px;
-}
 
-.topline-result-avg:after {
-  font-size: 12px;
-}
-.hide-threat-metrics .topline-result-avg:after {
-  font-size: 18px;
-}
-.results-sim-dps .topline-result-avg:after {
-  content: " DPS";
-}
-.results-sim-tto .topline-result-avg:after {
-  content: " TTO";
-}
-.results-sim-hps .topline-result-avg:after {
-  content: " HPS";
-}
-.results-sim-tps .topline-result-avg:after {
-  content: " TPS";
-}
-.results-sim-dtps .topline-result-avg:after {
-  content: " DTPS";
-}
-.results-sim-chanceOfDeath .topline-result-avg:after {
-  content: "% Chance of Death";
-	font-size: 9px;
-}
-.hide-threat-metrics .results-sim-chanceOfDeath .topline-result-avg:after {
-	font-size: 12px;
-}
 
-.topline-result-stdev {
-  font-size: 12px;
-  font-weight: 700;
-}
-.hide-threat-metrics .topline-result-stdev {
-  font-size: 18px;
-}
-.topline-result-stdev:before {
-  content: " \00b1";
-  padding: 2px;
-}
 
-.topline-result-label {
-  font-size: 12px;
-  font-weight: 700;
-}
-.hide-threat-metrics .topline-result-label {
-  font-size: 18px;
-}
 
-.results-sim-reference.has-reference .results-sim-set-reference {
-	display: none;
-}
-.results-sim-reference:not(.has-reference) .results-sim-reference-bar {
-	display: none;
-}
+// .topline-result-avg {
+//   font-size: 18px;
+//   font-weight: 700;
+// }
+// .hide-threat-metrics .topline-result-avg {
+// 	font-size: 30px;
+// }
 
-.results-sim-set-reference {
-	cursor: pointer;
-	font-size: 24px;
-	color: var(--theme-color-primary);
-}
+// .topline-result-avg:after {
+//   font-size: 12px;
+// }
+// .hide-threat-metrics .topline-result-avg:after {
+//   font-size: 18px;
+// }
 
-.results-sim-reference-swap {
-	color: blue;
-	cursor: pointer;
-	user-select: none;
-	margin: 5px;
-}
+// .results-sim-chanceOfDeath .topline-result-avg:after {
+//   content: "% Chance of Death";
+// 	font-size: 9px;
+// }
+// .hide-threat-metrics .results-sim-chanceOfDeath .topline-result-avg:after {
+// 	font-size: 12px;
+// }
 
-.results-sim-reference-delete {
-	color: red;
-	cursor: pointer;
-	user-select: none;
-	margin: 5px;
-}
+// .hide-threat-metrics .topline-result-stdev {
+//   font-size: 18px;
+// }
+
+// .topline-result-label {
+//   font-size: 12px;
+//   font-weight: 700;
+// }
+// .hide-threat-metrics .topline-result-label {
+//   font-size: 18px;
+// }
+
+// .results-sim-reference-swap {
+// 	cursor: pointer;
+// 	user-select: none;
+// 	margin: 5px;
+// }
+
+// .results-sim-reference-delete {
+// 	cursor: pointer;
+// 	user-select: none;
+// 	margin: 5px;
+// }

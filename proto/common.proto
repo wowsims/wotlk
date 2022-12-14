@@ -108,6 +108,7 @@ enum Stat {
 	StatFrostResistance = 31;
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
+	StatBonusArmor = 34;
 }
 
 enum ItemType {
@@ -555,6 +556,7 @@ message Debuffs {
 	TristateEffect demoralizing_roar = 25;
 	TristateEffect demoralizing_shout = 26;
 	bool vindication = 36;
+	bool demoralizing_screech = 34;
 
 	TristateEffect thunder_clap = 27;
 	TristateEffect frost_fever = 28;
@@ -564,7 +566,6 @@ message Debuffs {
 	bool insect_swarm = 31;
 	bool scorpid_sting = 32;
 	bool shadow_embrace = 33;
-	bool screech = 34;
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;

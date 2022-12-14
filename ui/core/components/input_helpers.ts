@@ -11,7 +11,7 @@ import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 
-import { CustomRotationPickerConfig } from './custom_rotation_picker.js';
+import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
@@ -23,7 +23,6 @@ export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<Mod
 	return {
 		inputs: inputs,
 		numColumns: numColumns || 1,
-		emptyColor: 'grey',
 		label: label,
 	};
 }
@@ -34,6 +33,7 @@ interface BasePlayerConfig<SpecType extends Spec, T> {
 	setValue?: (eventID: EventID, player: Player<SpecType>, newVal: T) => void,
 	changeEmitter?: (player: Player<SpecType>) => TypedEvent<any>,
 	extraCssClasses?: Array<string>,
+	showWhen?: (player: Player<SpecType>) => boolean,
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -401,6 +401,7 @@ function makeWrappedEnumIconInput<SpecType extends Spec, ModObject, T>(config: W
 			return value as unknown as IconEnumValueConfig<Player<SpecType>, T>;
 		}),
 		equals: config.equals,
+		showWhen: (player: Player<SpecType>): boolean => !config.showWhen || config.showWhen(getModObject(player)) as any,
 		zeroValue: config.zeroValue,
 		changedEvent: (player: Player<SpecType>) => config.changedEvent(getModObject(player)),
 		getValue: (player: Player<SpecType>) => config.getValue(getModObject(player)),
@@ -419,6 +420,7 @@ export function makeSpecOptionsEnumIconInput<SpecType extends Spec, T>(config: P
 		numColumns: config.numColumns || 1,
 		values: config.values,
 		equals: (a: T, b: T) => a == b,
+		showWhen: config.showWhen,
 		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: config.getValue || ((player: Player<SpecType>) => player.getSpecOptions()[config.fieldName] as unknown as T),
@@ -436,6 +438,7 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 		numColumns: config.numColumns || 1,
 		values: config.values,
 		equals: (a: T, b: T) => a == b,
+		showWhen: config.showWhen,
 		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as T),

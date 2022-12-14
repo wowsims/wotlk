@@ -21,10 +21,6 @@ func (druid *Druid) registerLacerateSpell() {
 		initialDamage += 8
 	}
 
-	lbdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1.0)
-	dwdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1.0)
-	t9bonus := core.TernaryFloat64(druid.HasT9FeralSetBonus(2), 1.05, 1.0)
-
 	mangleAura := core.MangleAura(druid.CurrentTarget)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
@@ -40,12 +36,13 @@ func (druid *Druid) registerLacerateSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: lbdm * dwdm,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		DamageMultiplier: 1 *
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1),
+		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 0.5,
 		FlatThreatBonus:  267,
 
@@ -82,8 +79,10 @@ func (druid *Druid) registerLacerateSpell() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics,
 
-			DamageMultiplier: lbdm * t9bonus,
-			CritMultiplier:   druid.MeleeCritMultiplier(),
+			DamageMultiplier: 1 *
+				core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
+				core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1.05, 1),
+			CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 			ThreatMultiplier: 0.5,
 		}),
 		Aura: druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{

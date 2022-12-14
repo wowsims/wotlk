@@ -121,6 +121,9 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 49807, Phase: 4},
 	{Id: 49810, Phase: 4},
 	{Id: 49809, Phase: 4},
+
+	// Drape of Icy Intent
+	{Id: 45461, Phase: 2},
 }
 
 // Keep these sorted by item ID.
@@ -136,6 +139,7 @@ var ItemAllowList = map[int32]struct{}{
 	19808: {}, // Rockhide Strongfish
 	20837: {}, // Sunstrider Axe
 	20966: {}, // Jade Pendant of Blasting
+	21625: {}, // Scarab Brooch
 	24114: {}, // Braided Eternium Chain
 	28572: {}, // Blade of the Unrequited
 	28830: {}, // Dragonspine Trophy
@@ -146,6 +150,7 @@ var ItemAllowList = map[int32]struct{}{
 	30032: {}, // Red Belt of Battle
 	30627: {}, // Tsunami Talisman
 	30720: {}, // Serpent-Coil Braid
+	31193: {}, // Blade of Unquenched Thirst
 	32387: {}, // Idol of the Raven Goddess
 	32658: {}, // Badge of Tenacity
 	33135: {}, // Falling Star

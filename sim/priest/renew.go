@@ -12,14 +12,14 @@ import (
 func (priest *Priest) registerRenewSpell() {
 	actionID := core.ActionID{SpellID: 48068}
 	baseCost := 0.17 * priest.BaseMana
-	spellCoeff := priest.renewSpellCoefficient()
+	spellCoeff := (1.88 + .05*float64(priest.Talents.EmpoweredRenew)) / 5
 
 	if priest.Talents.EmpoweredRenew > 0 {
 		priest.EmpoweredRenew = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 63543},
 			SpellSchool: core.SpellSchoolHoly,
 			ProcMask:    core.ProcMaskSpellHealing,
-			Flags:       core.SpellFlagNoOnCastComplete,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
 			BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1 *
@@ -31,7 +31,7 @@ func (priest *Priest) registerRenewSpell() {
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseHealing := 280 + spellCoeff*spell.HealingPower()
+				baseHealing := 280 + spellCoeff*spell.HealingPower(target)
 				spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealingCrit)
 			},
 		})
@@ -41,6 +41,7 @@ func (priest *Priest) registerRenewSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
@@ -65,32 +66,24 @@ func (priest *Priest) registerRenewSpell() {
 		},
 	})
 
-	priest.RenewHots = make([]*core.Dot, len(priest.Env.AllUnits))
-	for _, unit := range priest.Env.AllUnits {
-		if !priest.IsOpponent(unit) {
-			priest.RenewHots[unit.UnitIndex] = priest.makeRenewHot(unit)
-		}
-	}
-}
-
-func (priest *Priest) makeRenewHot(target *core.Unit) *core.Dot {
-	healingCoeff := priest.renewSpellCoefficient()
-	return core.NewDot(core.Dot{
-		Spell: priest.Renew,
-		Aura: target.RegisterAura(core.Aura{
+	priest.RenewHots = core.NewAllyHotArray(
+		&priest.Unit,
+		core.Dot{
+			Spell:         priest.Renew,
+			NumberOfTicks: priest.renewTicks(),
+			TickLength:    time.Second * 3,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 280 + spellCoeff*dot.Spell.HealingPower(target)
+				dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+			},
+		},
+		core.Aura{
 			Label:    "Renew" + strconv.Itoa(int(priest.Index)),
 			ActionID: priest.Renew.ActionID,
-		}),
-		NumberOfTicks: priest.renewTicks(),
-		TickLength:    time.Second * 3,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 280 + healingCoeff*dot.Spell.HealingPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
-		},
-	})
+		})
 }
 
 func (priest *Priest) renewTicks() int32 {
@@ -102,8 +95,4 @@ func (priest *Priest) renewHealingMultiplier() float64 {
 		(1 + 0.01*float64(priest.Talents.TwinDisciplines)) *
 		(1 + 0.05*float64(priest.Talents.ImprovedRenew)) *
 		core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfRenew), 1.25, 1)
-}
-
-func (priest *Priest) renewSpellCoefficient() float64 {
-	return (1.88 + .05*float64(priest.Talents.EmpoweredRenew)) / 5
 }

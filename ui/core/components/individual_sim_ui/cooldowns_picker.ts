@@ -1,19 +1,18 @@
-import { Component } from '../components/component.js';
-import { IconEnumPicker, IconEnumValueConfig } from '../components/icon_enum_picker.js';
-import { Input, InputConfig } from '../components/input.js';
-import { NumberListPicker } from '../components/number_list_picker.js';
-import { Player } from '../player.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { ActionID as ActionIdProto } from '../proto/common.js';
-import { Cooldowns } from '../proto/common.js';
-import { Cooldown } from '../proto/common.js';
-import { ActionId } from '../proto_utils/action_id.js';
-import { Class } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { getEnumValues } from '../utils.js';
-import { wait } from '../utils.js';
-
-declare var tippy: any;
+import { Component } from '../component.js';
+import { IconEnumPicker, IconEnumValueConfig } from '../icon_enum_picker.js';
+import { Input, InputConfig } from '../input.js';
+import { NumberListPicker } from '../number_list_picker.js';
+import { Player } from '../../player.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { ActionID as ActionIdProto } from '../../proto/common.js';
+import { Cooldowns } from '../../proto/common.js';
+import { Cooldown } from '../../proto/common.js';
+import { ActionId } from '../../proto_utils/action_id.js';
+import { Class } from '../../proto/common.js';
+import { Spec } from '../../proto/common.js';
+import { getEnumValues } from '../../utils.js';
+import { wait } from '../../utils.js';
+import { Tooltip } from 'bootstrap';
 
 export class CooldownsPicker extends Component {
 	readonly player: Player<any>;
@@ -46,25 +45,38 @@ export class CooldownsPicker extends Component {
 			}
 			this.rootElem.appendChild(row);
 
-			const deleteButton = document.createElement('span');
-			deleteButton.classList.add('delete-cooldown', 'fa', 'fa-times');
-			deleteButton.addEventListener('click', event => {
-				const newCooldowns = this.player.getCooldowns();
-				newCooldowns.cooldowns.splice(i, 1);
-				this.player.setCooldowns(TypedEvent.nextEventID(), newCooldowns);
-			});
-			row.appendChild(deleteButton);
-
 			const actionPicker = this.makeActionPicker(row, i);
 
-			const label = document.createElement('span');
-			label.classList.add('cooldown-picker-label');
+			const label = document.createElement('label');
+			label.classList.add('cooldown-picker-label', 'form-label');
 			if (cooldown && cooldown.id) {
 				ActionId.fromProto(cooldown.id).fill(this.player.getRaidIndex()).then(filledId => label.textContent = filledId.name);
 			}
 			row.appendChild(label);
 
 			const timingsPicker = this.makeTimingsPicker(row, i);
+
+			let deleteButtonFragment = document.createElement('fragment');
+			deleteButtonFragment.innerHTML = `
+				<a
+					href="javascript:void(0)"
+					class="delete-cooldown link-danger"
+					role="button"
+					data-bs-toggle="tooltip"
+					data-bs-title="Delete Cooldown"
+				>
+					<i class="fa fa-times fa-xl"></i>
+				</a>
+			`
+			const deleteButton = deleteButtonFragment.children[0] as HTMLElement;
+			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton);
+			deleteButton.addEventListener('click', event => {
+				const newCooldowns = this.player.getCooldowns();
+				newCooldowns.cooldowns.splice(i, 1);
+				this.player.setCooldowns(TypedEvent.nextEventID(), newCooldowns);
+				deleteButtonTooltip.hide();
+			});
+			row.appendChild(deleteButton);
 
 			this.cooldownPickers.push(row);
 		}

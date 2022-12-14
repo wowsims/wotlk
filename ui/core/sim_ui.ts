@@ -13,6 +13,7 @@ import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
 import { Tooltip } from 'bootstrap';
+import { SimTab } from './components/sim_tab.js';
 
 declare var tippy: any;
 declare var pako: any;
@@ -42,14 +43,13 @@ export abstract class SimUI extends Component {
 	readonly changeEmitter;
 
 	readonly resultsViewer: ResultsViewer
+	readonly simHeader: SimHeader;
 
-	protected readonly simHeader: SimHeader;
-
-	protected readonly simContentContainer: HTMLElement;
-	protected readonly simMain: HTMLElement;
-	protected readonly simActionsContainer: HTMLElement;
-	protected readonly iterationsPicker: HTMLElement;
-	protected readonly simTabContentsContainer: HTMLElement;
+	readonly simContentContainer: HTMLElement;
+	readonly simMain: HTMLElement;
+	readonly simActionsContainer: HTMLElement;
+	readonly iterationsPicker: HTMLElement;
+	readonly simTabContentsContainer: HTMLElement;
 
 	private warningsTippy: any;
 
@@ -57,10 +57,11 @@ export abstract class SimUI extends Component {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
 		this.rootElem.innerHTML = simHTML;
-		this.simContentContainer = this.rootElem.querySelector('#simContent') as HTMLElement;
+		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;
 		this.simHeader = new SimHeader(this.simContentContainer, this);
-		this.simMain = simMain;
-		this.simContentContainer.appendChild(simMain);
+		this.simMain = document.createElement('main');
+		this.simMain.classList.add('sim-main', 'tab-content');
+		this.simContentContainer.appendChild(this.simMain);
 		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 
 		if (!this.isWithinRaidSim) {
@@ -74,41 +75,37 @@ export abstract class SimUI extends Component {
 		this.sim.crashEmitter.on((eventID: EventID, error: SimError) => this.handleCrash(error));
 
 		const updateShowDamageMetrics = () => {
-			if (this.sim.getShowDamageMetrics()) {
+			if (this.sim.getShowDamageMetrics())
 				this.rootElem.classList.remove('hide-damage-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-damage-metrics');
-			}
 		};
 		updateShowDamageMetrics();
 		this.sim.showDamageMetricsChangeEmitter.on(updateShowDamageMetrics);
 
 		const updateShowThreatMetrics = () => {
-			if (this.sim.getShowThreatMetrics()) {
+			if (this.sim.getShowThreatMetrics())
 				this.rootElem.classList.remove('hide-threat-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-threat-metrics');
-			}
 		};
 		updateShowThreatMetrics();
 		this.sim.showThreatMetricsChangeEmitter.on(updateShowThreatMetrics);
 
 		const updateShowHealingMetrics = () => {
-			if (this.sim.getShowHealingMetrics()) {
+			if (this.sim.getShowHealingMetrics())
 				this.rootElem.classList.remove('hide-healing-metrics');
-			} else {
+			else
 				this.rootElem.classList.add('hide-healing-metrics');
-			}
 		};
 		updateShowHealingMetrics();
 		this.sim.showHealingMetricsChangeEmitter.on(updateShowHealingMetrics);
 
 		const updateShowExperimental = () => {
-			if (this.sim.getShowExperimental()) {
+			if (this.sim.getShowExperimental())
 				this.rootElem.classList.remove('hide-experimental');
-			} else {
+			else
 				this.rootElem.classList.add('hide-experimental');
-			}
 		};
 		updateShowExperimental();
 		this.sim.showExperimentalChangeEmitter.on(updateShowExperimental);
@@ -116,7 +113,7 @@ export abstract class SimUI extends Component {
 		this.addNoticeBanner();
 		this.addKnownIssues(config);
 
-		const titleElem = this.rootElem.querySelector('#simTitle') as HTMLElement;
+		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
 		new SimTitleDropdown(titleElem, config.spec);
 
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
@@ -138,7 +135,7 @@ export abstract class SimUI extends Component {
 		});
 
 		this.iterationsPicker = this.rootElem.getElementsByClassName('iterations-picker')[0] as HTMLElement;
-		this.simTabContentsContainer = this.rootElem.querySelector('#simMain.tab-content') as HTMLElement;
+		this.simTabContentsContainer = this.rootElem.querySelector('.sim-main.tab-content') as HTMLElement;
 
 		if (!this.isWithinRaidSim) {
 			window.addEventListener('message', async event => {
@@ -151,7 +148,7 @@ export abstract class SimUI extends Component {
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
 		const button = document.createElement('button');
-		button.classList.add('sim-sidebar-actions-button', 'btn', 'btn-outline-primary', cssClass);
+		button.classList.add('btn', 'btn-primary', 'w-100', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
 		this.simActionsContainer.appendChild(button);
@@ -173,20 +170,16 @@ export abstract class SimUI extends Component {
 		this.simTabContentsContainer.appendChild(tabContentFragment.children[0] as HTMLElement);
 	}
 
+	addSimTab(tab: SimTab) {
+		this.simHeader.addSimTabLink(tab);
+	}
+
 	addWarning(warning: SimWarning) {
 		this.simHeader.addWarning(warning);
 	}
 
-	protected addImportLink(link: HTMLElement) {
-		this.simHeader.addImportLink(link);
-	}
-
-	protected addExportLink(link: HTMLElement) {
-		this.simHeader.addExportLink(link);
-	}
-
 	private addNoticeBanner() {
-		const noticesElem = document.querySelector('#noticesBanner') as HTMLElement;
+		const noticesElem = document.querySelector('.notices-banner') as HTMLElement;
 
 		if (!noticeText) {
 			noticesElem.remove();
@@ -297,22 +290,18 @@ export abstract class SimUI extends Component {
 
 const simHTML = `
 <div class="sim-root">
-	<div id="noticesBanner" class="alert border-bottom mb-0 text-center">${noticeText}</div>
-  <aside id="simSidebar">
-    <div id="simTitle"></div>
-		<div id="simSidebarContent">
+	<div class="sim-bg"></div>
+	<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>
+  <aside class="sim-sidebar">
+    <div class="sim-title"></div>
+		<div class="sim-sidebar-content">
 			<div class="sim-sidebar-actions within-raid-sim-hide"></div>
 			<div class="sim-sidebar-results within-raid-sim-hide"></div>
 			<div class="sim-sidebar-footer"></div>
 		</div>
   </aside>
-  <div id="simContent" class="container-fluid">
+  <div class="sim-content container-fluid">
 	</div>
   </section>
 </div>
 `;
-
-// TODO: Build SimMain component instead
-let simMainFragment = document.createElement('fragment');
-simMainFragment.innerHTML = `<main id="simMain" class="tab-content"></main>`;
-const simMain = simMainFragment.children[0] as HTMLElement;

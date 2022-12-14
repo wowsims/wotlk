@@ -59,6 +59,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotWrist,
 			ItemSlot.ItemSlotMainHand,
 			ItemSlot.ItemSlotOffHand,
+			ItemSlot.ItemSlotRanged,
 		].map(slot => new ItemPicker(leftSide, player, slot));
 
 		const rightItemPickers = [
@@ -70,7 +71,6 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotFinger2,
 			ItemSlot.ItemSlotTrinket1,
 			ItemSlot.ItemSlotTrinket2,
-			ItemSlot.ItemSlotRanged,
 		].map(slot => new ItemPicker(rightSide, player, slot));
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);
@@ -480,14 +480,13 @@ class SelectorModal extends Popup {
 				class="selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}"
 			>
 				<div class="selector-modal-tab-content-header">
-					<button class="selector-modal-remove-button sim-button">Remove</button>
-					<input class="selector-modal-search" type="text" placeholder="Search...">
-					<div class="selector-modal-filter-bar-filler"></div>
+					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
 					<div class="selector-modal-phase-selector"></div>
-					<button class="selector-modal-filters-button sim-button">Filters</button>
+					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
+					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
 					<span style="float:left">Item</span>

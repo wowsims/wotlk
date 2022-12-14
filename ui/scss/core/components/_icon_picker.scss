@@ -1,51 +1,61 @@
-$icon-active-border-color: lawngreen;
+.icon-picker {
+  width: unset !important;
+  margin-bottom: 0 !important;
+  flex-direction: row !important;
+  align-items: center !important;
 
-.icon-input {
-  @include wowhead-background-icon;
-  width: 50px;
-  height: 50px;
-  transition: $sim-transitions;
-  border: 2px solid $icon-active-border-color;
-  margin: 1px;
-}
+  .icon-picker-button,
+  .icon-dropdown-option {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: block;
+    background-size: cover;
 
-.icon-input:not(.active), .icon-input-improved:not(.active), .icon-input-counter:not(.active) {
-  filter: grayscale(100%);
-  border-color: dimgray;
-}
+    .icon-picker-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      background: rgba(0,0,0,.3);
+      color: $success;
+      font-size: .625rem;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+  }
 
-.icon-input-level-container {
-  @include vertical-bottom;
-  @include horizontal-right;
-  margin: 3px;
-	display: flex;
-}
+  .icon-picker-button {
+    border: 1px solid $border-color;
+    background-color: grey;
+    transition: border-color .25s ease-in-out;
 
-.icon-input-level-container * {
-  width: 20px;
-  height: 20px;
-}
+    &.active {
+      border-color: $success;
+    }
+  }
 
-.icon-input-improved {
-  @include wowhead-background-icon;
-  transition: .2s ease-in;
-  border: 1px solid $icon-active-border-color;
-}
-.icon-input:not(.use-improved-icons) .icon-input-improved {
-  display: none;
-}
-.icon-input:not(.use-improved-icons2) .icon-input-improved2 {
-  display: none;
-}
+  label {
+    margin-left: .5rem;
+  }
 
-.icon-input-counter {
-  font-weight: 900;
-  background-color: black;
-  color: $icon-active-border-color;
-  border: none;
-	width: auto;
-	padding: 0 2px;
-}
-.icon-input:not(.use-counter) .icon-input-counter {
-  display: none;
+  .dropdown-menu {
+    min-width: unset;
+    background: grey;
+
+    &.show {
+      display: grid;
+    }
+
+    .icon-dropdown-option {
+      padding: 0;
+      background-color: grey;
+      filter: opacity(.7);
+
+      &:hover {
+        filter: none;
+      }
+    }
+  }
 }

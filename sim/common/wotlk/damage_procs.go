@@ -8,7 +8,7 @@ import (
 
 type ProcDamageEffect struct {
 	ID      int32
-	Trigger ProcTrigger
+	Trigger core.ProcTrigger
 
 	School core.SpellSchool
 	MinDmg float64
@@ -39,7 +39,7 @@ func newProcDamageEffect(config ProcDamageEffect) {
 		triggerConfig.Handler = func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			damageSpell.Cast(sim, character.CurrentTarget)
 		}
-		MakeProcTriggerAura(&character.Unit, triggerConfig)
+		core.MakeProcTriggerAura(&character.Unit, triggerConfig)
 	})
 }
 
@@ -48,9 +48,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 37064,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "Vestige of Haldor",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.15,
@@ -63,9 +63,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 37264,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "Pendulum of Telluric Currents",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskSpellDamage,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.15,
@@ -78,9 +78,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 39889,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "Horn of Agent Fury",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.15,
@@ -95,9 +95,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 40371,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "Bandit's Insignia",
-			Callback:   OnSpellHitDealt,
+			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.15,
@@ -110,9 +110,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 40373,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "Extract of Necromantic Power",
-			Callback:   OnPeriodicDamageDealt,
+			Callback:   core.CallbackOnPeriodicDamageDealt,
 			Harmful:    true,
 			ProcChance: 0.10,
 			ICD:        time.Second * 15,
@@ -124,9 +124,9 @@ func init() {
 
 	newProcDamageEffect(ProcDamageEffect{
 		ID: 42990,
-		Trigger: ProcTrigger{
+		Trigger: core.ProcTrigger{
 			Name:       "DMC Death",
-			Callback:   OnSpellHitDealt | OnPeriodicDamageDealt,
+			Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 			Harmful:    true,
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,

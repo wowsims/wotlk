@@ -167,7 +167,7 @@ $combo-points-color: #ffa07a;
 }
 .rotation-row {
 	height: 28px;
-	margin: 2px 0;
+	margin: .25rem;
 }
 .rotation-labels {
 	display: inline-block;
@@ -234,6 +234,7 @@ $combo-points-color: #ffa07a;
 	position: absolute;
 	background-color: #e5cc80;
 	z-index: 1;
+	display: flex;
 }
 .rotation-timeline-travel-time {
 	position: absolute;

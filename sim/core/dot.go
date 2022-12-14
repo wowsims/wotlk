@@ -144,14 +144,15 @@ func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 // Forces an instant tick. Does not reset the tick timer or aura duration,
 // the tick is simply an extra tick.
 func (dot *Dot) TickOnce(sim *Simulation) {
+	dot.lastTickTime = sim.CurrentTime
 	dot.OnTick(sim, dot.Unit, dot)
 }
 
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	return PeriodicActionOptions{
+		//Priority: ActionPriorityDOT,
 		OnAction: func(sim *Simulation) {
 			if dot.lastTickTime != sim.CurrentTime {
-				dot.lastTickTime = sim.CurrentTime
 				dot.TickCount++
 				dot.TickOnce(sim)
 			}
@@ -159,9 +160,8 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 		CleanUp: func(sim *Simulation) {
 			// In certain cases, the last tick and the dot aura expiration can happen in
 			// different orders, so we might need to apply the last tick.
-			if dot.tickAction.NextActionAt == sim.CurrentTime {
+			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime {
 				if dot.lastTickTime != sim.CurrentTime {
-					dot.lastTickTime = sim.CurrentTime
 					dot.TickCount++
 					dot.TickOnce(sim)
 				}
@@ -177,9 +177,7 @@ func NewDot(config Dot) *Dot {
 	dot.tickPeriod = dot.TickLength
 	dot.Aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
 
-	oldOnGain := dot.Aura.OnGain
-	oldOnExpire := dot.Aura.OnExpire
-	dot.Aura.OnGain = func(aura *Aura, sim *Simulation) {
+	dot.Aura.ApplyOnGain(func(aura *Aura, sim *Simulation) {
 		dot.lastTickTime = -1 // reset last tick time.
 		dot.TakeSnapshot(sim, false)
 
@@ -187,21 +185,25 @@ func NewDot(config Dot) *Dot {
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)
-
-		if oldOnGain != nil {
-			oldOnGain(aura, sim)
-		}
-	}
-	dot.Aura.OnExpire = func(aura *Aura, sim *Simulation) {
+	})
+	dot.Aura.ApplyOnExpire(func(aura *Aura, sim *Simulation) {
 		if dot.tickAction != nil {
 			dot.tickAction.Cancel(sim)
 			dot.tickAction = nil
 		}
-
-		if oldOnExpire != nil {
-			oldOnExpire(aura, sim)
-		}
-	}
+	})
 
 	return dot
+}
+
+// Creates HoTs for all allied units.
+func NewAllyHotArray(caster *Unit, config Dot, auraConfig Aura) []*Dot {
+	hots := make([]*Dot, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if !caster.IsOpponent(target) {
+			config.Aura = target.GetOrRegisterAura(auraConfig)
+			hots[target.UnitIndex] = NewDot(config)
+		}
+	}
+	return hots
 }

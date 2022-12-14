@@ -1,9 +1,8 @@
+import { Tooltip } from 'bootstrap';
 import { Sim } from '../sim.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Component } from './component.js';
-
-declare var tippy: any;
 
 /**
  * Data for creating a new input UI element.
@@ -11,6 +10,7 @@ declare var tippy: any;
 export interface InputConfig<ModObject, T> {
 	label?: string,
 	labelTooltip?: string,
+	inline?: boolean,
 	extraCssClasses?: Array<string>,
 
 	defaultValue?: T,
@@ -44,35 +44,36 @@ export abstract class Input<ModObject, T> extends Component {
 		this.inputConfig = config;
 		this.modObject = modObject;
 		this.rootElem.classList.add(cssClass);
-		if (config.extraCssClasses) {
-			this.rootElem.classList.add(...config.extraCssClasses);
-		}
 
-		if (config.label) {
-			const labelDiv = document.createElement('div');
-			labelDiv.classList.add('input-label-div');
-			this.rootElem.appendChild(labelDiv);
-
-			const label = document.createElement('span');
-			label.classList.add('input-label');
-			label.textContent = config.label;
-			labelDiv.appendChild(label);
-
-			if (config.labelTooltip) {
-				const tooltip = document.createElement('span');
-				tooltip.classList.add('input-tooltip', 'fa', 'fa-info-circle');
-				tippy(tooltip, {
-					'content': config.labelTooltip,
-					'allowHTML': true,
-				});
-				labelDiv.appendChild(tooltip);
-			}
-		}
+		if (config.inline) this.rootElem.classList.add('input-inline');
+		if (config.extraCssClasses) this.rootElem.classList.add(...config.extraCssClasses);
+		if (config.label) this.rootElem.appendChild(this.buildLabel(config));
 
 		config.changedEvent(this.modObject).on(eventID => {
 			this.setInputValue(config.getValue(this.modObject));
 			this.update();
 		});
+	}
+
+	private buildLabel(config: InputConfig<ModObject, T>): HTMLElement {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+			<label
+				class="form-label"
+				${config.labelTooltip ? 'data-bs-toggle="tooltip"' : ''}
+				${config.labelTooltip ? `data-bs-title="${config.labelTooltip}"` : ''}
+				${config.labelTooltip ? 'data-bs-html="true"' : ''}
+			>
+			${config.label}
+			</label>
+		`
+
+		let label = fragment.children[0] as HTMLElement;
+
+		if (config.labelTooltip)
+			new Tooltip(label);
+		
+		return label;
 	}
 
 	private update() {
@@ -118,5 +119,11 @@ export abstract class Input<ModObject, T> extends Component {
 	// Sets the underlying value directly.
 	setValue(eventID: EventID, newValue: T) {
 		this.inputConfig.setValue(eventID, this.modObject, newValue);
+	}
+
+	static newGroupContainer(): HTMLElement {
+		let group = document.createElement('div');
+		group.classList.add('picker-group');
+		return group;
 	}
 }

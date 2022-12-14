@@ -22,7 +22,7 @@ export class EnumPicker<ModObject> extends Input<ModObject, number> {
 		super(parent, 'enum-picker-root', modObject, config);
 
 		this.selectElem = document.createElement('select');
-		this.selectElem.classList.add('enum-picker-selector');
+		this.selectElem.classList.add('enum-picker-selector', 'form-select');
 		this.rootElem.appendChild(this.selectElem);
 
 		config.values.forEach((value) => {

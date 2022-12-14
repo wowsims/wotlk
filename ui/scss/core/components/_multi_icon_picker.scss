@@ -1,20 +1,22 @@
-.multi-icon-picker-dropdown-root {
-  border: 2px solid dimgray;
-  transition: $sim-transitions;
-	margin: 2px;
-}
+@use "sass:map";
 
-.multi-icon-picker-dropdown-root.active {
-  border-color: lawngreen;
-}
-.multi-icon-picker-dropdown-root.disabled {
-  border-color: dimgray;
-}
+@import "./icon_picker";
 
-.multi-icon-picker-button {
-  background-size: cover;
-}
+.multi-icon-picker-root {
+  display: flex;
+  align-items: center;
 
-.multi-icon-picker-option {
-  background-size: cover;
+  .multi-icon-picker-label {
+    margin-bottom: 0;
+  }
+
+  .dropdown-menu {
+    grid-auto-flow: column;
+
+    .icon-dropdown-option {
+      .input-root {
+        margin: 0 !important;
+      }
+    }
+  }
 }

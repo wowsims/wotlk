@@ -29,6 +29,7 @@ type HealingPriest struct {
 
 	rotation       *proto.HealingPriest_Rotation
 	CustomRotation *common.CustomRotation
+	Options        *proto.HealingPriest_Options
 
 	// Spells to rotate through for cyclic rotation.
 	spellCycle     []*core.Spell
@@ -53,6 +54,7 @@ func NewHealingPriest(character core.Character, options *proto.Player) *HealingP
 	hpriest := &HealingPriest{
 		Priest:   basePriest,
 		rotation: healingOptions.Rotation,
+		Options:  healingOptions.Options,
 	}
 
 	hpriest.EnableResumeAfterManaWait(hpriest.tryUseGCD)
@@ -78,6 +80,7 @@ func (hpriest *HealingPriest) Initialize() {
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
 
+	hpriest.ApplyRapture(hpriest.Options.RapturesPerMinute)
 	hpriest.RegisterHymnOfHopeCD()
 
 	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {

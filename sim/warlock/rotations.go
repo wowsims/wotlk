@@ -344,6 +344,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			0,
 			0,
 		}
+
 		for i, cd := range warlock.procTrackers {
 			curAura := cd.aura
 			curExpire := cd.expiresAt.Seconds()
@@ -357,6 +358,8 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 				}
 			}
 		}
+
+		// Calculate DPS for each tick if one were to clip early
 
 		newDmg := (142 + 0.429*warlock.GetStat(stats.SpellPower)) * (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace)) * warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *
 			warlock.PseudoStats.DamageDealtMultiplier
@@ -386,12 +389,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Data
 	// ------------------------------------------
 	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
-		// We are integrating the Demonic Pact SP bonus over the course of the simulation to get the average
-		warlock.DPSPAverage *= float64(warlock.PreviousTime)
-		warlock.DPSPAverage += core.DemonicPactAura(warlock.GetCharacter(), 0).Priority * float64(sim.CurrentTime-warlock.PreviousTime)
-		warlock.DPSPAverage /= float64(sim.CurrentTime)
-		warlock.PreviousTime = sim.CurrentTime
+		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
+
+		if currentTimeJump > 0 {
+			warlock.DPSPAggregate += dpspCurrent * currentTimeJump
+			warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
+		}
 	}
+	warlock.PreviousTime = sim.CurrentTime
 
 	// ------------------------------------------
 	// AoE (Seed)
@@ -468,7 +474,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			}
 			// Pre-pull Life Tap
 			warlock.GlyphOfLifeTapAura.Activate(sim)
-
+			if warlock.T7FourSetBonus {
+				warlock.FakeSpiritsoftheDamnedAura.Activate(sim)
+			}
 			//These lines emulate you pre-casting a shadowbolt and having Life Tap on
 			//TODO: Illustration of Dragon Soul stacking to 10 with Life Funnel.
 		} else {
@@ -625,7 +633,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			warlock.Log(sim, "[Info] Potential Corruption rollover power [%.2f]", PotentialCorruptionRolloverPower)
 		}
 		if warlock.Talents.DemonicPact > 0 {
-			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAverage)
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate/sim.CurrentTime.Seconds())
 		}
 	}
 
@@ -653,17 +661,17 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			spell = filler
 		}
 
-		//if spell == warlock.UnstableAffliction {
-		//	if allCDs[0]-hauntcasttime < time.Millisecond*15 {
+		currentWait := warlock.Haunt.TimeToReady(sim)
+		if spell == warlock.CurseOfAgony && currentWait < 1 {
+			if warlock.CorruptionDot.RemainingDuration(sim)-hauntcasttime-allCDs[0] < 0 {
+				spell = warlock.Haunt
 
-		//spell = warlock.Haunt
-		//currentWait := allCDs[0]
-		//if currentWait > 0 {
-		//	warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
-		//	return
-		//}
-		//	}
-		//}
+				if currentWait > 0 {
+					warlock.WaitUntil(sim, sim.CurrentTime+currentWait)
+					return
+				}
+			}
+		}
 	}
 
 	if warlock.DrainSoulDot.IsActive() {

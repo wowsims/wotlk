@@ -28,7 +28,9 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	penanceDots := make([]*core.Dot, len(priest.Env.AllUnits))
 
 	var procMask core.ProcMask
+	flags := core.SpellFlagChanneled
 	if isHeal {
+		flags |= core.SpellFlagHelpful
 		procMask = core.ProcMaskSpellHealing
 	} else {
 		procMask = core.ProcMaskSpellDamage
@@ -38,7 +40,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolHoly,
 		ProcMask:     procMask,
-		Flags:        core.SpellFlagChanneled,
+		Flags:        flags,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -56,7 +58,6 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			},
 		},
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
 			core.TernaryFloat64(isHeal, 0, .05*float64(priest.Talents.SearingLight)) +
 			.01*float64(priest.Talents.TwinDisciplines),
@@ -112,7 +113,7 @@ func (priest *Priest) makePenanceDotOrHot(target *core.Unit, spell *core.Spell, 
 				baseDamage := 375 + 0.2290*dot.Spell.SpellPower()
 				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 			} else {
-				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower()
+				baseHealing := sim.Roll(1484, 1676) + 0.5362*dot.Spell.HealingPower(target)
 				dot.Spell.CalcAndDealPeriodicHealing(sim, target, baseHealing, dot.Spell.OutcomeHealingCrit)
 			}
 		},

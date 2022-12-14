@@ -205,24 +205,16 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
 	})
 
-	spBonus := 0.
-
 	if raidBuffs.FlametongueTotem {
-		spBonus = 144.
 		MakePermanent(FlametongueTotemAura(character))
 	}
 	if raidBuffs.TotemOfWrath {
-		spBonus = 280.
 		MakePermanent(TotemOfWrathAura(character))
 	}
-	if spBonus > 0 {
-		character.AddStats(stats.Stats{
-			stats.SpellPower: spBonus,
-		})
-	}
-	DPSPBonus := float64(raidBuffs.DemonicPact) / 10.
-	if DPSPBonus > 0 {
-		MakePermanent(DemonicPactAura(character, DPSPBonus))
+	if raidBuffs.DemonicPact > 0 {
+		dpAura := DemonicPactAura(character)
+		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact) / 10.0
+		MakePermanent(dpAura)
 	}
 
 	if raidBuffs.WrathOfAirTotem {
@@ -582,21 +574,14 @@ func registerBloodlustCD(agent Agent) {
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
-	const bonus = 1.3
-	const inverseBonus = 1 / bonus
 	actionID := ActionID{SpellID: 2825, Tag: actionTag}
-
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Bloodlust-" + actionID.String(),
 		Tag:      BloodlustAuraTag,
 		ActionID: actionID,
 		Duration: BloodlustDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if character.HasActiveAuraWithTag(PowerInfusionAuraTag) {
-				character.MultiplyCastSpeed(1 / 1.2)
-			}
-			character.MultiplyCastSpeed(bonus)
-			character.MultiplyAttackSpeed(sim, bonus)
+			character.MultiplyAttackSpeed(sim, 1.3)
 
 			if len(character.Pets) > 0 {
 				for _, petAgent := range character.Pets {
@@ -608,13 +593,11 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			if character.HasActiveAuraWithTag(PowerInfusionAuraTag) {
-				character.MultiplyCastSpeed(1.2)
-			}
-			character.MultiplyCastSpeed(inverseBonus)
-			character.MultiplyAttackSpeed(sim, inverseBonus)
+			character.MultiplyAttackSpeed(sim, 1.0/1.3)
 		},
 	})
+	multiplyCastSpeedEffect(aura, 1.3)
+	return aura
 }
 
 var PowerInfusionAuraTag = "PowerInfusion"
@@ -650,8 +633,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 
 func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 10060, Tag: actionTag}
-
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "PowerInfusion-" + actionID.String(),
 		Tag:      PowerInfusionAuraTag,
 		ActionID: actionID,
@@ -661,17 +643,25 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 				// TODO: Double-check this is how the calculation works.
 				character.PseudoStats.CostMultiplier *= 0.8
 			}
-			if !character.HasActiveAuraWithTag(BloodlustAuraTag) {
-				character.MultiplyCastSpeed(1.2)
-			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if character.HasManaBar() {
 				character.PseudoStats.CostMultiplier /= 0.8
 			}
-			if !character.HasActiveAuraWithTag(BloodlustAuraTag) {
-				character.MultiplyCastSpeed(1 / 1.2)
-			}
+		},
+	})
+	multiplyCastSpeedEffect(aura, 1.2)
+	return aura
+}
+
+func multiplyCastSpeedEffect(aura *Aura, multiplier float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("MultiplyCastSpeed", false, ExclusiveEffect{
+		Priority: multiplier,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.MultiplyCastSpeed(multiplier)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.MultiplyCastSpeed(1 / multiplier)
 		},
 	})
 }
@@ -1114,79 +1104,57 @@ func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
 	}
 }
 
-var spellPowerBuffTag = "SpellPowerBuff"
-
 func TotemOfWrathAura(character *Character) *Aura {
-	spellPowerBonus := 280.
-	return character.GetOrRegisterAura(Aura{
-		Label:    "Totem of Wrath",
-		Tag:      spellPowerBuffTag,
-		ActionID: ActionID{SpellID: 57722},
-		Priority: spellPowerBonus,
-		Duration: NeverExpires,
+	aura := character.GetOrRegisterAura(Aura{
+		Label:      "Totem of Wrath",
+		ActionID:   ActionID{SpellID: 57722},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
 	})
+	spellPowerBonusEffect(aura, 280)
+	return aura
 }
 
 func FlametongueTotemAura(character *Character) *Aura {
-	spellPowerBonus := 144.
-	return character.GetOrRegisterAura(Aura{
-		Label:    "Flametongue Totem",
-		Tag:      spellPowerBuffTag,
-		ActionID: ActionID{SpellID: 58656},
-		Priority: spellPowerBonus,
-		Duration: NeverExpires,
+	aura := character.GetOrRegisterAura(Aura{
+		Label:      "Flametongue Totem",
+		ActionID:   ActionID{SpellID: 58656},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
 	})
+	spellPowerBonusEffect(aura, 144)
+	return aura
 }
 
-func DemonicPactAura(character *Character, spellPowerBonus float64) *Aura {
+func DemonicPactAura(character *Character) *Aura {
+	aura := character.GetOrRegisterAura(Aura{
+		Label:      "Demonic Pact",
+		ActionID:   ActionID{SpellID: 47240},
+		Duration:   time.Second * 45,
+		BuildPhase: CharacterBuildPhaseBuffs,
+	})
+	spellPowerBonusEffect(aura, 0)
+	return aura
+}
 
-	return character.GetOrRegisterAura(Aura{
-		Label:     "Demonic Pact",
-		Tag:       "Demonic Pact",
-		ActionID:  ActionID{SpellID: 47240},
-		Duration:  time.Second * 45,
-		Priority:  spellPowerBonus,
-		MaxStacks: math.MaxInt32,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			minimumSPBonus := 0.
-			if character.HasActiveAura("Totem of Wrath") {
-				minimumSPBonus = 280
-			} else if character.HasActiveAura("Flametongue Totem") {
-				minimumSPBonus = 144
-			}
-			newSPbonus := aura.Priority - minimumSPBonus
-			if newSPbonus < 0 {
-				newSPbonus = 0
-			}
-
-			character.AddStatsDynamic(sim, stats.Stats{
-				stats.SpellPower: newSPbonus,
+func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("SpellPowerBonus", false, ExclusiveEffect{
+		Priority: spellPowerBonus,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower: ee.Priority,
 			})
-
-			aura.SetStacks(sim, int32(aura.Priority))
 		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			minimumSPBonus := 0.
-			if character.HasActiveAura("Totem of Wrath") {
-				minimumSPBonus = 280
-			} else if character.HasActiveAura("Flametongue Totem") {
-				minimumSPBonus = 144
-			}
-			newSPbonus := aura.Priority - minimumSPBonus
-			if newSPbonus < 0 {
-				newSPbonus = 0
-			}
-
-			character.AddStatsDynamic(sim, stats.Stats{
-				stats.SpellPower: -newSPbonus,
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.SpellPower: -ee.Priority,
 			})
 		},
 	})
-
 }

@@ -72,9 +72,7 @@ type Aura struct {
 	stacks    int32
 	MaxStacks int32
 
-	// If nonzero, activation of this aura will deactivate other auras with the
-	// same Tag and equal or lower Priority.
-	Priority float64
+	ExclusiveEffects []*ExclusiveEffect
 
 	// Lifecycle callbacks.
 	OnInit          OnInit
@@ -95,6 +93,10 @@ type Aura struct {
 	OnHealTaken           OnSpellHit       // Invoked when a heal hits and this unit is the target.
 	OnPeriodicHealDealt   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the caster.
 	OnPeriodicHealTaken   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the target.
+
+	// If non-default, stat bonuses fron the OnGain callback of this aura will be
+	// included in Character Stats in the UI.
+	BuildPhase CharacterBuildPhase
 
 	// Metrics for this aura.
 	metrics AuraMetrics
@@ -223,6 +225,32 @@ func (aura *Aura) ExpiresAt() time.Duration {
 	return aura.expires
 }
 
+// Adds a handler to be called OnGain, in addition to any current handlers.
+func (aura *Aura) ApplyOnGain(newOnGain OnGain) {
+	oldOnGain := aura.OnGain
+	if oldOnGain == nil {
+		aura.OnGain = newOnGain
+	} else {
+		aura.OnGain = func(aura *Aura, sim *Simulation) {
+			oldOnGain(aura, sim)
+			newOnGain(aura, sim)
+		}
+	}
+}
+
+// Adds a handler to be called OnExpire, in addition to any current handlers.
+func (aura *Aura) ApplyOnExpire(newOnExpire OnExpire) {
+	oldOnExpire := aura.OnExpire
+	if oldOnExpire == nil {
+		aura.OnExpire = newOnExpire
+	} else {
+		aura.OnExpire = func(aura *Aura, sim *Simulation) {
+			oldOnExpire(aura, sim)
+			newOnExpire(aura, sim)
+		}
+	}
+}
+
 type AuraFactory func(*Simulation) *Aura
 
 // Callback for doing something on reset.
@@ -234,6 +262,8 @@ type ResetEffect func(*Simulation)
 type auraTracker struct {
 	// Effects to invoke on every sim reset.
 	resetEffects []ResetEffect
+
+	*ExclusiveEffectManager
 
 	// All registered auras, both active and inactive.
 	auras []*Aura
@@ -262,6 +292,7 @@ type auraTracker struct {
 func newAuraTracker() auraTracker {
 	return auraTracker{
 		resetEffects:               []ResetEffect{},
+		ExclusiveEffectManager:     &ExclusiveEffectManager{},
 		activeAuras:                make([]*Aura, 0, 16),
 		onCastCompleteAuras:        make([]*Aura, 0, 16),
 		afterCastAuras:             make([]*Aura, 0, 16),
@@ -301,9 +332,6 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	}
 	if aura.Label == "" {
 		panic("Aura label is required!")
-	}
-	if aura.Priority != 0 && aura.Tag == "" {
-		panic("Aura.Priority requires Aura.Tag also be set")
 	}
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
@@ -400,19 +428,6 @@ func (at *auraTracker) HasActiveAuraWithTagExcludingAura(tag string, excludeAura
 	return false
 }
 
-// Returns if an aura should be refreshed at a specific priority, i.e. the aura
-// is about to expire AND the replacement aura has at least as high priority.
-//
-// This is used to decide whether to refresh effects with multiple strengths,
-// like Thunder Clap/Deathfrost or Faerie Fire ranks.
-func (at *auraTracker) ShouldRefreshAuraWithTagAtPriority(sim *Simulation, tag string, priority float64, refreshWindow time.Duration) bool {
-	activeAura := at.GetActiveAuraWithTag(tag)
-
-	return activeAura == nil ||
-		priority > activeAura.Priority ||
-		(priority == activeAura.Priority && activeAura.RemainingDuration(sim) <= refreshWindow)
-}
-
 // Registers a callback to this Character which will be invoked on
 // every Sim reset.
 func (at *auraTracker) RegisterResetEffect(resetEffect ResetEffect) {
@@ -504,24 +519,18 @@ func (aura *Aura) Activate(sim *Simulation) {
 		panic("Aura with 0 duration")
 	}
 
+	// Activate exclusive effects.
 	// If there is already an active aura stronger than this one, then this one
-	// is blocked.
-	if aura.Tag != "" {
-		for _, otherAura := range aura.Unit.GetAurasWithTag(aura.Tag) {
-			if otherAura.Priority > aura.Priority && otherAura.active {
-				return
+	// will be blocked.
+	for i, ee := range aura.ExclusiveEffects {
+		if !ee.Activate(sim) {
+			// Go back and deactivate the effects.
+			if i > 0 {
+				for j := 0; j < i; j++ {
+					aura.ExclusiveEffects[j].Deactivate(sim)
+				}
 			}
-		}
-	}
-
-	// Remove weaker versions of the same aura.
-	if aura.Priority != 0 {
-		for _, otherAura := range aura.Unit.GetAurasWithTag(aura.Tag) {
-			if otherAura.Priority <= aura.Priority && otherAura != aura {
-				// TODO:  if the priorities are equal:
-				// does remaining duration vs new aura duration matter when deciding to override?
-				otherAura.Deactivate(sim)
-			}
+			return
 		}
 	}
 
@@ -685,6 +694,11 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 
 	if aura.stacks != 0 {
 		aura.SetStacks(sim, 0)
+	}
+
+	// Deactivate exclusive effects.
+	for _, ee := range aura.ExclusiveEffects {
+		ee.Deactivate(sim)
 	}
 	if aura.OnExpire != nil {
 		aura.OnExpire(aura, sim)
@@ -895,127 +909,14 @@ func (at *auraTracker) OnPeriodicHealTaken(sim *Simulation, spell *Spell, result
 	}
 }
 
-func (at *auraTracker) GetMetricsProto(numIterations int32) []*proto.AuraMetrics {
+func (at *auraTracker) GetMetricsProto() []*proto.AuraMetrics {
 	metrics := make([]*proto.AuraMetrics, 0, len(at.auras))
 
 	for _, aura := range at.auras {
 		if !aura.metrics.ID.IsEmptyAction() {
-			metrics = append(metrics, aura.metrics.ToProto(numIterations))
+			metrics = append(metrics, aura.metrics.ToProto())
 		}
 	}
 
 	return metrics
-}
-
-// Returns the same Aura for chaining.
-func MakePermanent(aura *Aura) *Aura {
-	aura.Duration = NeverExpires
-	if aura.OnReset == nil {
-		aura.OnReset = func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		}
-	} else {
-		oldOnReset := aura.OnReset
-		aura.OnReset = func(aura *Aura, sim *Simulation) {
-			oldOnReset(aura, sim)
-			aura.Activate(sim)
-		}
-	}
-	return aura
-}
-
-func (character *Character) StatProcWithICD(auraLabel string, actionID ActionID,
-	tempStats stats.Stats, duration time.Duration, cooldown time.Duration,
-	applyProcAura func(sim *Simulation, spell *Spell, result *SpellResult) bool) {
-
-	icd := Cooldown{
-		Timer:    character.NewTimer(),
-		Duration: time.Second * cooldown,
-	}
-
-	procAura := character.NewTemporaryStatsAura(auraLabel, actionID, tempStats, duration)
-
-	character.RegisterAura(Aura{
-		Label:    auraLabel + "Permanent",
-		Duration: NeverExpires,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if !icd.IsReady(sim) {
-				return
-			}
-
-			if applyProcAura(sim, spell, result) {
-				icd.Use(sim)
-				procAura.Activate(sim)
-			}
-		},
-	})
-
-}
-
-// Helper for the common case of making an aura that adds stats.
-func (character *Character) NewTemporaryStatsAura(auraLabel string, actionID ActionID, tempStats stats.Stats, duration time.Duration) *Aura {
-	return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, tempStats, duration, nil)
-}
-
-// Alternative that allows modifying the Aura config.
-func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actionID ActionID, buffs stats.Stats, duration time.Duration, modConfig func(*Aura)) *Aura {
-	config := Aura{
-		Label:    auraLabel,
-		ActionID: actionID,
-		Duration: duration,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
-			}
-			character.AddStatsDynamic(sim, buffs)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			if sim.Log != nil {
-				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
-			}
-			character.AddStatsDynamic(sim, buffs.Multiply(-1))
-		},
-	}
-
-	if modConfig != nil {
-		modConfig(&config)
-	}
-
-	return character.GetOrRegisterAura(config)
-}
-
-func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) {
-	auraDuration := aura.Duration
-	ticksPerAura := float64(auraDuration) / float64(tickLength)
-	chancePerTick := TernaryFloat64(uptime == 1, 1, 1.0-math.Pow(1-uptime, 1/ticksPerAura))
-
-	aura.Unit.RegisterResetEffect(func(sim *Simulation) {
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period: tickLength,
-			OnAction: func(sim *Simulation) {
-				if sim.RandomFloat("FixedAura") < chancePerTick {
-					aura.Activate(sim)
-				}
-			},
-		})
-
-		// Also try once at the start.
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   1,
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				if sim.RandomFloat("FixedAura") < uptime {
-					// Use random duration to compensate for increased chance collapsed into single tick.
-					randomDur := tickLength + time.Duration(float64(auraDuration-tickLength)*sim.RandomFloat("FixedAuraDur"))
-
-					aura.Duration = randomDur
-					aura.Activate(sim)
-					aura.Duration = auraDuration
-				}
-			},
-		})
-	})
 }

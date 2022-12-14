@@ -210,6 +210,9 @@ message FeralDruid {
 	float max_roar_offset = 11;
 	BiteModeType bite_mode_type = 12;
 	float hot_uptime = 13;
+	bool snek_weave = 14;
+	bool flower_weave = 15;
+	int32 raid_targets = 16;
   }
   Rotation rotation = 1;
 
@@ -220,6 +223,7 @@ message FeralDruid {
     int32 latency_ms = 2;
     bool prepop_ooc = 3;
     bool assume_bleed_active = 4;
+    bool pre_pop_berserk = 5;
   }
   Options options = 3;
 }

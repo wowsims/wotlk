@@ -3,7 +3,9 @@
 .boolean-picker-root {
 }
 
-.boolean-picker-input {
-  margin: 5px !important;
-  width: 70px;
+@include media-breakpoint-down(xl) {
+  .input-root.boolean-picker-root {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }

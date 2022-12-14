@@ -179,6 +179,7 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatFrostResistance]: 'Frost Resistance',
 	[Stat.StatNatureResistance]: 'Nature Resistance',
 	[Stat.StatShadowResistance]: 'Shadow Resistance',
+	[Stat.StatBonusArmor]: 'Bonus Armor',
 };
 
 export function getClassStatName(stat: Stat, playerClass: Class): string {

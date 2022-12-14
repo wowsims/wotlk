@@ -3,6 +3,7 @@ import { SettingsMenu } from './settings_menu';
 import { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
 import { Tooltip } from 'bootstrap';
+import { SimTab } from './sim_tab';
 
 // Config for displaying a warning to the user whenever a condition is met.
 interface SimWarning {
@@ -32,7 +33,7 @@ export class SimHeader extends Component {
   private warnings: Array<SimWarning> = [];
 
   constructor(parentElem: HTMLElement, simUI: SimUI) {
-    super(parentElem, 'sim-header', headerRoot);
+    super(parentElem, 'sim-header');
 
     this.simUI = simUI;
 
@@ -41,6 +42,8 @@ export class SimHeader extends Component {
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;	
 
 		this.warningsLink = this.addWarningsLink();
+		this.updateWarnings();
+
 		this.knownIssuesLink = this.addKnownIssuesLink();
     this.addBugReportLink();
     this.addDownloadBinaryLink();
@@ -69,13 +72,41 @@ export class SimHeader extends Component {
 		this.simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
 	}
 
-  addImportLink(importElem: HTMLElement) {
-    this.importExportContainer.appendChild(importElem);
-  }
+	addSimTabLink(tab: SimTab) {
+		const isFirstTab = this.simTabsContainer.children.length == 0;
 
-  addExportLink(exportElem: HTMLElement) {
-    this.importExportContainer.appendChild(exportElem);
+		tab.navLink.setAttribute('aria-selected', isFirstTab.toString());
+
+		if (isFirstTab) tab.navLink.classList.add('active', 'show');
+		
+		this.simTabsContainer.appendChild(tab.navItem);
+	}
+
+	addImportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		this.addImportExportLink('importFragment', label, onClick, hideInRaidSim);
   }
+	addExportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		this.addImportExportLink('exportFragment', label, onClick, hideInRaidSim);
+  }
+	private addImportExportLink(fragmentId: string, label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
+		const fragment = this.rootElem.getElementsByClassName(fragmentId)[0] as HTMLElement;
+		const menuElem = fragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
+
+		const itemFragment = document.createElement('fragment');
+		itemFragment.innerHTML = `
+			<li class="${hideInRaidSim ? 'within-raid-sim-hide' : ''}">
+				<a
+					href="javascript:void(0)"
+					class="dropdown-item"
+					role="button"
+				>${label}</a>
+			</li>
+		`;
+		const itemElem = itemFragment.children[0] as HTMLElement;
+		const linkElem = itemElem.children[0] as HTMLElement;
+		linkElem.addEventListener('click', () => onClick(menuElem));
+		menuElem.appendChild(itemFragment);
+	}
 
 	private addToolbarLink(args: ToolbarLinkArgs): HTMLElement {
 		let fragment = document.createElement('fragment');
@@ -219,6 +250,7 @@ export class SimHeader extends Component {
 			parent: this.simToolbar,
 			icon: "fas fa-cog fa-lg",
 			tooltip: "Show Sim Options",
+			classes: 'sim-options',
 			onclick: () => new SettingsMenu(this.rootElem, this.simUI)
 		})
 	}
@@ -262,15 +294,37 @@ export class SimHeader extends Component {
 			classes: "patreon-link link-alt"
 		})
 	}
-}
 
-let headerFragment = document.createElement('fragment');
-headerFragment.innerHTML = `
-  <header id="simHeader">
-    <ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-    <div class="import-export"></div>
-    <div class="sim-toolbar">
-		</div>
-  </header>
-`;
-let headerRoot = headerFragment.children[0] as HTMLElement;
+	protected customRootElement(): HTMLElement {
+		let headerFragment = document.createElement('fragment');
+		headerFragment.innerHTML = `
+			<header class="sim-header">
+				<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
+				<div class="import-export">
+					<fragment class="importFragment">
+						<div class="dropdown sim-dropdown-menu">
+							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+								<i class="fa fa-download"></i>
+								Import
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
+					</fragment>
+					<fragment class="exportFragment">
+						<div class="dropdown sim-dropdown-menu">
+							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+								<i class="fa fa-right-from-bracket"></i>
+								Export
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
+					</fragment>
+				</div>
+				<div class="sim-toolbar">
+				</div>
+			</header>
+		`;
+
+		return headerFragment.children[0] as HTMLElement;
+	}
+}

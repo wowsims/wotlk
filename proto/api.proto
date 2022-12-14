@@ -95,6 +95,7 @@ message SimOptions {
 	bool debug = 3; // Enables debug logging.
 	bool debug_first_iteration = 6;
 	bool is_test = 5; // Only used internally.
+	bool save_all_values = 7; // Only used internally.
 }
 
 // The aggregated results from all uses of a particular action.
@@ -202,6 +203,7 @@ message DistributionMetrics {
 	double min     = 6;
 	int64 minSeed = 7;
 	map<int32, int32> hist = 4;
+	repeated double all_values = 8;
 }
 
 // All the results for a single Unit (player, target, or pet).
@@ -210,6 +212,7 @@ message UnitMetrics {
 	int32 unit_index = 13;
 
 	DistributionMetrics dps = 1;
+	DistributionMetrics dpasp = 16;
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
 	DistributionMetrics hps = 14;

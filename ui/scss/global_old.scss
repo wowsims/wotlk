@@ -149,6 +149,10 @@ $sim-transitions: .2s ease-in;
 	white-space: nowrap;
 }
 
+.dropdown-root:hover .dropdown-panel {
+	display: grid !important;
+}
+
 .dropdown-button {
 	cursor: pointer;
 	background-color: gray;
@@ -159,30 +163,6 @@ $sim-transitions: .2s ease-in;
 	position: absolute;
 	z-index: 1;
 	box-shadow: 2px 4px 20px 5px #000;
-}
-.multi-icon-picker-dropdown {
-	margin-left: 25px;
-	margin-top: -25px;
-	background-color: #000 !important;
-	border: 1px gray solid;
-	padding: 1px;
-}
-.multi-icon-dropdown-container {
-	margin: 2px;
-}
-.icon-enum-picker-dropdown {
-	background-color: #000;
-	border: 1px gray solid;
-	padding: 1px;
-}
-
-.dropdown-panel-column {
-	display: inline-flex;
-	flex-direction: column;
-}
-
-.dropdown-root:hover .dropdown-panel {
-	display: grid !important;
 }
 
 .dropdown-option-container {
@@ -228,40 +208,8 @@ $sim-transitions: .2s ease-in;
 	font-weight: bold;
 }
 
-.labeled-icon-section {
-}
-.labeled-icon-section>fieldset>.multi-icon-picker-root, .labeled-icon-section>fieldset>.icon-input-root {
-	display: flex !important;
-	align-items: center;
-	justify-content: end;
-	font-size: 10px;
-	margin: 2px;
-}
-.labeled-icon-section>fieldset>.multi-icon-picker-root>*, .labeled-icon-section>fieldset>.icon-input-root>* {
-	margin: 0 4px 0 0;
-}
-
-.labeled-icon-section .multi-icon-picker-button {
-	height: 45px;
-	width: 45px;
-	display: block;
-}
-.labeled-icon-section .icon-input {
-	// Needs border*2 extra size because <a> is weird
-	height: 49px;
-	width: 49px;
-	display: block;
-}
-
 a {
 	text-decoration: none;
-}
-
-input, select, .sim-input {
-	color: var(--main-text-color);
-	background-color: #1e2633;
-	border: 1px solid #373e58;
-	padding: 3px;
 }
 
 // Override Bootstrap styling to keep inline with fieldset border

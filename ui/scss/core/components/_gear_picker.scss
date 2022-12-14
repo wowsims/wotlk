@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @import "./filters_menu";
 @import "./popup";
 
@@ -15,20 +17,33 @@
 
 .item-picker-root {
   display: flex;
-  margin: 3px;
+  margin-bottom: map.get($spacers, 2);
 }
-.gear-picker-left .item-picker-root {
-  flex-direction: row;
-  text-align: left;
-}
-.gear-picker-right .item-picker-root {
-  flex-direction: row-reverse;
-  text-align: right;
-}
-@media only screen and (max-width: calc(800px + 1vw)) {
-  .gear-picker-right .item-picker-root {
-    text-align: left;
+
+.gear-picker-left {
+  .item-picker-root {
     flex-direction: row;
+    text-align: left;
+
+    &:nth-child(6) {
+      margin-bottom: map.get($spacers, 5);
+    }
+  }
+}
+
+.gear-picker-right {
+  .item-picker-root {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+}
+
+@media only screen and (max-width: calc(800px + 1vw)) {
+  .gear-picker-right {
+    .item-picker-root {
+      text-align: left;
+      flex-direction: row;
+    }
   }
 }
 
@@ -53,22 +68,22 @@
 }
 
 .item-picker-labels-container {
-  padding: 3px;
+  padding: .5rem;
 	text-shadow: 2px 2px 4px black;
   flex: 1;
 }
 
 .item-picker-name {
-  font-size: clamp(16px, 17px, 18px);
 	letter-spacing: normal;
 	color: white;
+  font-size: map.get($font-sizes, 6);
 }
 .item-picker-name:hover {
 	color: white;
 }
 
 .item-picker-enchant {
-  font-size: clamp(12px, 13px, 14px);;
+  font-size: $content-font-size;
   color: lawngreen;
 	letter-spacing: normal;
 }
@@ -82,9 +97,13 @@
     padding: 0;
   
     .selector-modal-tab-content-header {
-      margin: 5px 0;
+      margin: map.get($spacers, 3) 0;
       display: flex;
       align-items: center;
+
+      &> *:not(:last-child) {
+        margin-right: map.get($spacers, 2);
+      }
     }
   }
 }
@@ -104,20 +123,11 @@
 }
 
 .selector-modal-search {
-  border: 1px inset black;
-  border-radius: 4px;
-	margin: 5px;
-}
-
-.selector-modal-filter-bar-filler {
-	flex-grow: 1;
+	max-width: 15rem;
 }
 
 .selector-modal-boolean-option {
 	margin: 5px;
-}
-.selector-modal-boolean-option .input-label-div {
-	margin: 0;
 }
 .selector-modal-boolean-option .input-label {
 	font-weight: bold;
@@ -128,8 +138,15 @@
 }
 
 .selector-modal-phase-selector {
-	font-size: 18px;
-	font-weight: 700;
+  min-width: 7rem;
+
+  .phase-selector {
+    margin-bottom: 0;
+  }
+}
+
+.selector-modal-remove-button {
+  margin-left: auto;
 }
 
 .selector-modal-list {

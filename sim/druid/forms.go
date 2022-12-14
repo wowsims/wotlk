@@ -11,7 +11,7 @@ import (
 type DruidForm uint8
 
 const (
-	Humanoid = 1 << iota
+	Humanoid DruidForm = 1 << iota
 	Bear
 	Cat
 	Moonkin
@@ -37,48 +37,30 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 		druid.CatFormAura.Deactivate(sim)
 	} else if druid.InForm(Bear) {
 		druid.BearFormAura.Deactivate(sim)
+	} else if druid.InForm(Moonkin) {
+		panic("cant clear moonkin form")
 	}
 	druid.form = Humanoid
 	druid.SetCurrentPowerBar(core.ManaBar)
 }
 
-func (druid *Druid) PowerShiftCat(sim *core.Simulation) bool {
-
-	if !druid.GCD.IsReady(sim) {
-		panic("Trying to powershift during gcd")
+// Bonus stats for both cat and bear.
+func (druid *Druid) GetFormShiftStats() stats.Stats {
+	s := stats.Stats{
+		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(core.CharacterLevel),
+		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 2 * core.CritRatingPerCritChance,
 	}
 
-	druid.CatFormAura.Deactivate(sim)
-	druid.TryUseCooldowns(sim)
-
-	if druid.GCD.IsReady(sim) {
-		return druid.CatForm.Cast(sim, nil)
-	}
-
-	return true
-}
-
-// Handles things that function for *both* cat/bear
-func (druid *Druid) applyFeralShift(sim *core.Simulation, enter_form bool) {
-	pos := core.TernaryFloat64(enter_form, 1.0, -1.0)
-	fap := 0.0
-	weapAp := 0.0
 	if weapon := druid.GetMHWeapon(); weapon != nil {
 		dps := (weapon.WeaponDamageMax + weapon.WeaponDamageMin) / 2.0 / weapon.SwingSpeed
-		weapAp = weapon.Stats[stats.AttackPower]
-		fap = math.Floor((dps - 54.8) * 14)
-	}
-	druid.AddStatDynamic(sim, stats.AttackPower, pos*fap)
+		weapAp := weapon.Stats[stats.AttackPower] + weapon.Enchant.Stats[stats.AttackPower]
+		fap := math.Floor((dps - 54.8) * 14)
 
-	if druid.Talents.PredatoryStrikes > 0 {
-		druid.AddStatDynamic(sim, stats.AttackPower, pos*float64(druid.Talents.PredatoryStrikes)*0.5*float64(core.CharacterLevel))
-
-		if fap > 0 {
-			druid.AddStatDynamic(sim, stats.AttackPower, pos*(fap+weapAp)*((0.2/3)*float64(druid.Talents.PredatoryStrikes)))
-		}
+		s[stats.AttackPower] += fap
+		s[stats.AttackPower] += (fap + weapAp) * ((0.2 / 3) * float64(druid.Talents.PredatoryStrikes))
 	}
-	druid.AddStatDynamic(sim, stats.MeleeCrit, pos*float64(druid.Talents.SharpenedClaws)*2*core.CritRatingPerCritChance)
-	druid.PseudoStats.BaseDodge += pos * 0.02 * float64(druid.Talents.FeralSwiftness) // Unaffected by Diminishing Returns
+
+	return s
 }
 
 func (druid *Druid) registerCatFormSpell() {
@@ -87,36 +69,32 @@ func (druid *Druid) registerCatFormSpell() {
 
 	srm := druid.getSavageRoarMultiplier()
 
-	apDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
-	catHotw := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
+		stats.AttackPower: float64(druid.Level) * 2,
+		stats.MeleeCrit:   2 * float64(druid.Talents.MasterShapeshifter) * core.CritRatingPerCritChance,
+	})
 
-	druid.CatFormAura = druid.GetOrRegisterAura(core.Aura{
-		Label:    "Cat Form",
-		ActionID: actionID,
-		Duration: core.NeverExpires,
+	agiApDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
+
+	var hotwDep *stats.StatDependency
+	if druid.Talents.HeartOfTheWild > 0 {
+		hotwDep = druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+	}
+
+	catCritMult := druid.MeleeCritMultiplier(Cat)
+	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+
+	druid.CatFormAura = druid.RegisterAura(core.Aura{
+		Label:      "Cat Form",
+		ActionID:   actionID,
+		Duration:   core.NeverExpires,
+		BuildPhase: core.Ternary(druid.StartingForm.Matches(Cat), core.CharacterBuildPhaseBase, core.CharacterBuildPhaseNone),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.form != Humanoid {
+			if !druid.Env.MeasuringStats && druid.form != Humanoid {
 				druid.ClearForm(sim)
 			}
 			druid.form = Cat
 			druid.SetCurrentPowerBar(core.EnergyBar)
-			druid.manageCooldownsEnabled(sim)
-			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
-			druid.UpdateManaRegenRates()
-
-			druid.applyFeralShift(sim, true)
-			druid.AddStatDynamic(sim, stats.AttackPower, float64(druid.Level)*2)
-			druid.EnableDynamicStatDep(sim, apDep)
-			druid.EnableDynamicStatDep(sim, catHotw)
-			druid.AddStatDynamic(sim, stats.MeleeCrit, 2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
-
-			// These buffs stay up, but corresponding changes don't
-			if druid.SavageRoarAura.IsActive() {
-				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= srm
-			}
-			if druid.BerserkAura.IsActive() {
-				druid.PseudoStats.CostMultiplier /= 2.0
-			}
 
 			druid.AutoAttacks.MH = core.Weapon{
 				BaseDamageMin:              43,
@@ -124,33 +102,68 @@ func (druid *Druid) registerCatFormSpell() {
 				SwingSpeed:                 1.0,
 				NormalizedSwingSpeed:       1.0,
 				SwingDuration:              time.Second,
-				CritMultiplier:             druid.MeleeCritMultiplier(),
+				CritMultiplier:             catCritMult,
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
-			druid.AutoAttacks.ReplaceMHSwing = nil
-			druid.AutoAttacks.EnableAutoSwing(sim)
+
+			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
+			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness)
+			druid.AddStatsDynamic(sim, statBonus)
+			druid.EnableDynamicStatDep(sim, agiApDep)
+			if hotwDep != nil {
+				druid.EnableDynamicStatDep(sim, hotwDep)
+			}
+
+			if !druid.Env.MeasuringStats {
+				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.EnableAutoSwing(sim)
+				druid.manageCooldownsEnabled()
+				druid.UpdateManaRegenRates()
+
+				// These buffs stay up, but corresponding changes don't
+				if druid.SavageRoarAura.IsActive() {
+					druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= srm
+				}
+				if druid.BerserkAura.IsActive() {
+					druid.PseudoStats.CostMultiplier /= 2.0
+				}
+
+				if druid.PredatoryInstinctsAura != nil {
+					druid.PredatoryInstinctsAura.Activate(sim)
+				}
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.CancelAutoSwing(sim)
-			druid.manageCooldownsEnabled(sim)
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
+
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
-			druid.UpdateManaRegenRates()
-
-			druid.AddStatDynamic(sim, stats.MeleeCrit, -2*float64(druid.Talents.MasterShapeshifter)*core.CritRatingPerCritChance)
-			druid.DisableDynamicStatDep(sim, catHotw)
-			druid.DisableDynamicStatDep(sim, apDep)
-			druid.AddStatDynamic(sim, stats.AttackPower, -(float64(druid.Level) * 2))
-			druid.applyFeralShift(sim, false)
-
-			druid.TigersFuryAura.Deactivate(sim)
-
-			// These buffs stay up, but corresponding changes don't
-			if druid.SavageRoarAura.IsActive() {
-				druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= srm
+			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
+			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.DisableDynamicStatDep(sim, agiApDep)
+			if hotwDep != nil {
+				druid.DisableDynamicStatDep(sim, hotwDep)
 			}
-			if druid.BerserkAura.IsActive() {
-				druid.PseudoStats.CostMultiplier *= 2.0
+
+			if !druid.Env.MeasuringStats {
+				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.EnableAutoSwing(sim)
+				druid.manageCooldownsEnabled()
+				druid.UpdateManaRegenRates()
+
+				druid.TigersFuryAura.Deactivate(sim)
+
+				// These buffs stay up, but corresponding changes don't
+				if druid.SavageRoarAura.IsActive() {
+					druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= srm
+				}
+				if druid.BerserkAura.IsActive() {
+					druid.PseudoStats.CostMultiplier *= 2.0
+				}
+
+				if druid.PredatoryInstinctsAura != nil {
+					druid.PredatoryInstinctsAura.Deactivate(sim)
+				}
 			}
 		},
 	})
@@ -185,54 +198,59 @@ func (druid *Druid) registerCatFormSpell() {
 	})
 }
 
-func (druid *Druid) PowerShiftBear(sim *core.Simulation) {
+func (druid *Druid) calcArmorBonus() float64 {
+	// Armor calculation: Dire Bear Form, Thick Hide, and Survival of the Fittest
+	// scale multiplicatively with each other. But part of the Thick Hide
+	// contribution was already calculated in ApplyTalents(), so we need to subtract
+	// that part out from the overall scaling factor given to ScaleBaseArmor().
+	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
+	thickHideMulti := 1.0
 
-	if !druid.GCD.IsReady(sim) {
-		panic("Trying to powershift during gcd")
+	if druid.Talents.ThickHide > 0 {
+		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
 	}
 
-	druid.BearFormAura.Deactivate(sim)
-	druid.TryUseCooldowns(sim)
-
-	if druid.GCD.IsReady(sim) {
-		druid.BearForm.Cast(sim, nil)
-	}
+	totalBearMulti := 4.7 * sotfMulti * thickHideMulti
+	return druid.ScaleBaseArmor(totalBearMulti - thickHideMulti)
 }
 
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	baseCost := druid.BaseMana * 0.35
 
-	stamdep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
-	bearHotw := druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
+		stats.Armor:       druid.calcArmorBonus(),
+		stats.AttackPower: 3 * float64(core.CharacterLevel),
+	})
 
-	potpdtm := 0.04 * float64(druid.Talents.ProtectorOfThePack)
-	potpap := druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.ProtectorOfThePack))
+	stamDep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)
 
-	druid.BearFormAura = druid.GetOrRegisterAura(core.Aura{
-		Label:    "Bear Form",
-		ActionID: actionID,
-		Duration: core.NeverExpires,
+	var potpDep *stats.StatDependency
+	if druid.Talents.ProtectorOfThePack > 0 {
+		potpDep = druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.ProtectorOfThePack))
+	}
+
+	var hotwDep *stats.StatDependency
+	if druid.Talents.HeartOfTheWild > 0 {
+		hotwDep = druid.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
+	}
+
+	potpdtm := 1 - 0.04*float64(druid.Talents.ProtectorOfThePack)
+
+	bearCritMult := druid.MeleeCritMultiplier(Bear)
+	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+
+	druid.BearFormAura = druid.RegisterAura(core.Aura{
+		Label:      "Bear Form",
+		ActionID:   actionID,
+		Duration:   core.NeverExpires,
+		BuildPhase: core.Ternary(druid.StartingForm.Matches(Bear), core.CharacterBuildPhaseBase, core.CharacterBuildPhaseNone),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.form != Humanoid {
+			if !druid.Env.MeasuringStats && druid.form != Humanoid {
 				druid.ClearForm(sim)
 			}
 			druid.form = Bear
-
 			druid.SetCurrentPowerBar(core.RageBar)
-			druid.applyFeralShift(sim, true)
-			druid.AddStatDynamic(sim, stats.AttackPower, 3*float64(core.CharacterLevel))
-			druid.EnableDynamicStatDep(sim, stamdep)
-			druid.EnableDynamicStatDep(sim, bearHotw)
-			druid.EnableDynamicStatDep(sim, potpap)
-
-			druid.PseudoStats.ThreatMultiplier *= 1.3
-			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier *= 1.0 - potpdtm
-
-			druid.manageCooldownsEnabled(sim)
-			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
-			druid.UpdateManaRegenRates()
 
 			druid.AutoAttacks.MH = core.Weapon{
 				BaseDamageMin:              109,
@@ -240,34 +258,61 @@ func (druid *Druid) registerBearFormSpell() {
 				SwingSpeed:                 2.5,
 				NormalizedSwingSpeed:       2.5,
 				SwingDuration:              time.Millisecond * 2500,
-				CritMultiplier:             druid.MeleeCritMultiplier(),
+				CritMultiplier:             bearCritMult,
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
-			druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-				return druid.TryMaul(sim, mhSwingSpell)
+			druid.PseudoStats.ThreatMultiplier *= 1.3
+			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
+			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
+			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
+			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
+			druid.AddStatsDynamic(sim, statBonus)
+			druid.EnableDynamicStatDep(sim, stamDep)
+			if potpDep != nil {
+				druid.EnableDynamicStatDep(sim, potpDep)
 			}
-			druid.AutoAttacks.EnableAutoSwing(sim)
+			if hotwDep != nil {
+				druid.EnableDynamicStatDep(sim, hotwDep)
+			}
+
+			if !druid.Env.MeasuringStats {
+				druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+					return druid.TryMaul(sim, mhSwingSpell)
+				}
+				druid.AutoAttacks.EnableAutoSwing(sim)
+
+				druid.manageCooldownsEnabled()
+				druid.UpdateManaRegenRates()
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-
-			druid.DisableDynamicStatDep(sim, potpap)
-			druid.DisableDynamicStatDep(sim, bearHotw)
-			druid.DisableDynamicStatDep(sim, stamdep)
-			druid.AddStatDynamic(sim, stats.AttackPower, -3*float64(core.CharacterLevel))
-			druid.applyFeralShift(sim, false)
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
 
 			druid.PseudoStats.ThreatMultiplier /= 1.3
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
-			druid.PseudoStats.DamageTakenMultiplier /= 1.0 - potpdtm
-
-			druid.AutoAttacks.CancelAutoSwing(sim)
-			druid.manageCooldownsEnabled(sim)
+			druid.PseudoStats.DamageTakenMultiplier /= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
-			druid.UpdateManaRegenRates()
-			druid.EnrageAura.Deactivate(sim)
-			druid.MaulQueueAura.Deactivate(sim)
+			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
+			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.DisableDynamicStatDep(sim, stamDep)
+			if potpDep != nil {
+				druid.DisableDynamicStatDep(sim, potpDep)
+			}
+			if hotwDep != nil {
+				druid.DisableDynamicStatDep(sim, hotwDep)
+			}
+
+			if !druid.Env.MeasuringStats {
+				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.EnableAutoSwing(sim)
+
+				druid.manageCooldownsEnabled()
+				druid.UpdateManaRegenRates()
+				druid.EnrageAura.Deactivate(sim)
+				druid.MaulQueueAura.Deactivate(sim)
+			}
 		},
 	})
 
@@ -305,7 +350,7 @@ func (druid *Druid) registerBearFormSpell() {
 	})
 }
 
-func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
+func (druid *Druid) manageCooldownsEnabled() {
 	// Disable cooldowns not usable in form and/or delay others
 	if druid.StartingForm.Matches(Cat | Bear) {
 		for _, mcd := range druid.disabledMCDs {
@@ -323,4 +368,32 @@ func (druid *Druid) manageCooldownsEnabled(sim *core.Simulation) {
 			}
 		}
 	}
+}
+
+func (druid *Druid) applyMoonkinForm() {
+	if !druid.InForm(Moonkin) || !druid.Talents.MoonkinForm {
+		return
+	}
+
+	druid.MultiplyStat(stats.Intellect, 1+(0.02*float64(druid.Talents.Furor)))
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.MasterShapeshifter) * 0.02)
+	if druid.Talents.ImprovedMoonkinForm > 0 {
+		druid.AddStatDependency(stats.Spirit, stats.SpellPower, 0.1*float64(druid.Talents.ImprovedMoonkinForm))
+	}
+
+	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 24858})
+	druid.RegisterAura(core.Aura{
+		Label:    "Moonkin Form",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				if spell == druid.Moonfire || spell == druid.Starfire || spell == druid.Wrath {
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, false)
+				}
+			}
+		},
+	})
 }

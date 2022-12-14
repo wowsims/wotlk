@@ -10,11 +10,10 @@ import (
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	cost := 10.0 - float64(warrior.Talents.FocusedRage)
 
-	dsAuras := make([]*core.Aura, warrior.Env.GetNumTargets())
+	warrior.DemoralizingShoutAuras = make([]*core.Aura, warrior.Env.GetNumTargets())
 	for _, target := range warrior.Env.Encounter.Targets {
-		dsAuras[target.Index] = core.DemoralizingShoutAura(&target.Unit, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
+		warrior.DemoralizingShoutAuras[target.Index] = core.DemoralizingShoutAura(&target.Unit, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
 	}
-	warrior.DemoralizingShoutAura = dsAuras[warrior.CurrentTarget.Index]
 
 	warrior.DemoralizingShout = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 25203},
@@ -39,7 +38,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 			for _, aoeTarget := range sim.Encounter.Targets {
 				result := spell.CalcAndDealOutcome(sim, &aoeTarget.Unit, spell.OutcomeMagicHit)
 				if result.Landed() {
-					dsAuras[aoeTarget.Index].Activate(sim)
+					warrior.DemoralizingShoutAuras[aoeTarget.Index].Activate(sim)
 				}
 			}
 		},
@@ -60,5 +59,5 @@ func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, filler boo
 	}
 
 	return maintainOnly &&
-		warrior.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.APReductionAuraTag, warrior.DemoralizingShoutAura.Priority, time.Second*2)
+		warrior.DemoralizingShoutAuras[warrior.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, time.Second*2)
 }

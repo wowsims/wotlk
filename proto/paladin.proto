@@ -190,6 +190,10 @@ message RetributionPaladin {
 		RotationType type = 9;
 
 		bool use_divine_plea = 11;
+
+		bool avoid_clipping_consecration = 12;
+
+		bool hold_last_avenging_wrath_until_execution = 13;
 	}
 
 	Rotation rotation = 1;

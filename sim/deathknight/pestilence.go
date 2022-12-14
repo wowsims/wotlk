@@ -27,7 +27,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				GCD:  core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.getModifiedGCD()
+				cast.GCD = dk.GetModifiedGCD()
 			},
 		},
 
@@ -63,25 +63,14 @@ func (dk *Deathknight) registerPestilenceSpell() {
 							}
 						}
 					} else {
-						applyCryptEbon := false
 						// Apply diseases on every other target
 						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.FrostFeverExtended[aoeUnit.Index] = 0
 							dk.FrostFeverDisease[aoeUnit.Index].Apply(sim)
-							applyCryptEbon = true
 						}
 						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 							dk.BloodPlagueExtended[aoeUnit.Index] = 0
 							dk.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
-							applyCryptEbon = true
-						}
-						if applyCryptEbon {
-							if dk.Talents.CryptFever > 0 {
-								dk.CryptFeverAura[aoeUnit.Index].Activate(sim)
-							}
-							if dk.Talents.EbonPlaguebringer > 0 {
-								dk.EbonPlagueAura[aoeUnit.Index].Activate(sim)
-							}
 						}
 					}
 				}

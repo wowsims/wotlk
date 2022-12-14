@@ -22,12 +22,20 @@
 .left-gear-panel {
   min-width: calc(550px + 2vw);
   flex: 3;
-  padding-right: var(--bs-gap);
+  margin-right: $gap-width * 2;
 }
 
-@include media-breakpoint-down(lg) {
+@include media-breakpoint-down(xl) {
   .gear-tab-columns {
     flex-flow: column;
+  }
+
+  .left-gear-panel {
+    margin: 0;
+  }
+
+  .right-gear-panel {
+    margin-top: $gap-width;
   }
 }
 
@@ -38,173 +46,139 @@
 }
 
 .right-gear-panel {
-  text-align: center;
-  padding-left: var(--bs-gap);
-  border-left: 3px solid var(--main-text-color);
   position: relative;
   flex: 1.25;
   min-width: 250px;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
+
 @media only screen and (max-width: calc(1050px + 2vw)) {
   .right-gear-panel {
     min-width: 275px;
-    border-left: none;
   }
 }
 
-.bonus-stats-root {
-  justify-content: end;
-  text-align: right;
-	color: var(--main-text-color);
-  margin-bottom: 20px;
-}
+// .settings-tab {
+// 	overflow-y: auto;
+// }
+// .settings-inputs {
+//   position: relative;
+// }
+// .settings-section-container {
+//   position: absolute;
+// }
 
-.bonus-stats-root .number-picker-root {
-  justify-content: end;
-}
+// .settings-section {
+//   border: 2px solid var(--main-text-color);
+//   padding: 4px;
+//   margin: 5px;
+// 	display: grid;
+// 	transform: none !important;
+// }
 
-.saved-gear-manager {
-  text-align: right;
-}
+// .settings-section>legend {
+//   padding: 0 10px;
+// 	margin: 0 3px;
+//   font-weight: 900;
+// 	color: var(--main-text-color);
+//   font-size: 18px;
+// 	white-space: nowrap;
+// 	border: none;
+// 	width: auto;
+// }
 
-.saved-data-set-chip {
-	color: var(--main-text-color);
-	border-color: var(--theme-color-primary);
-}
-.saved-data-set-chip.active {
-	color: var(--main-text-color);
-	background-color: var(--theme-color-primary);
-}
+// .settings-section .icon-enum-picker-root {
+// 	margin: 1px;
+// }
 
-.saved-data-set-delete {
-	color: var(--main-text-color);
-}
+// .settings-section .icon-enum-picker-root a {
+// 	height: 46px;
+// 	width: 46px;
+// }
 
-.settings-tab {
-	overflow-y: auto;
-}
-.settings-inputs {
-  position: relative;
-}
-.settings-section-container {
-  position: absolute;
-}
+// .settings-bottom-bar {
+//   margin: 20px;
+//   display: flex;
+//   justify-content: space-around;
+//   align-items: flex-end;
+// }
 
-.settings-section {
-  border: 2px solid var(--main-text-color);
-  padding: 4px;
-  margin: 5px;
-  background: var(--bg-dark-transparent);
-	display: grid;
-	transform: none !important;
-}
+// .race-section {
+//   text-align: center;
+// }
+// .race-section > legend {
+//   text-align: left;
+// }
 
-.settings-section>legend {
-  padding: 0 10px;
-	margin: 0 3px;
-  font-weight: 900;
-	color: var(--main-text-color);
-  font-size: 18px;
-	white-space: nowrap;
-	border: none;
-	width: auto;
-}
+// .race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
+// 	display: flex;
+// 	justify-content: space-between;
+// 	align-items: center;
+// }
 
-.settings-section .icon-enum-picker-root {
-	margin: 1px;
-}
+// .settings-section-iconrow {
+// 	display: flex;
+// 	grid-template-columns: repeat(5, 1fr);
+// 	justify-content: space-evenly;
+// 	flex-wrap: wrap;
+// 	align-items: center;
+// }
+// .settings-section-iconrow>div {
+// 	margin: auto !important;
+// }
 
-.settings-section .icon-enum-picker-root a {
-	height: 46px;
-	width: 46px;
-}
+// .buffs-section>div {
+//   display: grid;
+// }
+// .buffs-section {
+//   grid-template-columns: repeat(3, 1fr);
+// }
 
-.settings-bottom-bar {
-  margin: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-}
+// .consumes-section>div {
+//   display: grid;
+// }
 
-.race-section {
-  text-align: center;
-}
-.race-section > legend {
-  text-align: left;
-}
+// .consumes-row {
+// 	display: flex;
+// 	align-items: center;
+// }
+// .consumes-row > span {
+// 	margin: 5px;
+// }
+// .consumes-row-inputs {
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: space-around;
+// 	flex-grow: 1;
+// }
+// .consumes-row-inputs > * {
+// 	margin: 2px;
+// }
 
-.race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
+// .debuffs-section>div {
+//   display: grid;
+// }
+// .debuffs-section {
+//   grid-template-columns: repeat(3, 1fr);
+// }
 
-.settings-section-iconrow {
-	display: flex;
-	grid-template-columns: repeat(5, 1fr);
-	justify-content: space-evenly;
-	flex-wrap: wrap;
-	align-items: center;
-}
-.settings-section-iconrow>div {
-	margin: auto !important;
-}
+// .cooldowns-section-container {
+// 	z-index: 1000;
+// }
 
-.buffs-section>div {
-  display: grid;
-}
-.buffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
+// .saved-encounter-manager {
+//   display: inline-block;
+//   text-align: left;
+// }
 
-.consumes-section>div {
-  display: grid;
-}
+// .saved-rotation-manager {
+//   display: inline-block;
+//   text-align: center;
+// }
 
-.consumes-row {
-	display: flex;
-	align-items: center;
-}
-.consumes-row > span {
-	margin: 5px;
-}
-.consumes-row-inputs {
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
-	flex-grow: 1;
-}
-.consumes-row-inputs > * {
-	margin: 2px;
-}
-
-.debuffs-section>div {
-  display: grid;
-}
-.debuffs-section {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.cooldowns-section-container {
-	z-index: 1000;
-}
-
-.saved-encounter-manager {
-  display: inline-block;
-  text-align: left;
-}
-
-.saved-rotation-manager {
-  display: inline-block;
-  text-align: center;
-}
-
-.saved-settings-manager {
-  display: inline-block;
-  text-align: right;
-}
+// .saved-settings-manager {
+//   display: inline-block;
+//   text-align: right;
+// }
 
 .player-pet-toggle {
 	display: none;
@@ -222,7 +196,6 @@
 
 .talents-tab-content {
 	display: flex;
-	justify-content: center;
 	flex-wrap: wrap;
 }
 
@@ -230,12 +203,4 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-}
-
-.saved-talents-manager {
-  text-align: center;
-}
-
-.saved-talents-manager .saved-data-container, .saved-talents-manager .saved-data-create-container {
-  display: inline-block;
 }

@@ -35,6 +35,14 @@ func TestDisc(t *testing.T) {
 				proto.RangedWeaponType_RangedWeaponTypeWand,
 			},
 		},
+
+		EPReferenceStat: proto.Stat_StatSpellPower,
+		StatsToWeigh: []proto.Stat{
+			proto.Stat_StatIntellect,
+			proto.Stat_StatSpellPower,
+			proto.Stat_StatSpellHaste,
+			proto.Stat_StatSpellCrit,
+		},
 	}))
 }
 

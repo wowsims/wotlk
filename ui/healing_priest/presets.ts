@@ -66,10 +66,10 @@ export const DefaultRotation = Rotation.create({
 	type: RotationType.Cycle,
 	customRotation: CustomRotation.create({
 		spells: [
-			CustomSpell.create({ spell: SpellOption.PowerWordShield, castsPerMinute: 8 }),
-			CustomSpell.create({ spell: SpellOption.Renew, castsPerMinute: 4 }),
-			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 8.57 }),
-			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 5.9 }),
+			CustomSpell.create({ spell: SpellOption.PowerWordShield, castsPerMinute: 18 }),
+			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
+			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
+			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
 		],
 	}),
 });
@@ -77,6 +77,7 @@ export const DefaultRotation = Rotation.create({
 export const DefaultOptions = Options.create({
 	useInnerFire: true,
 	useShadowfiend: true,
+	rapturesPerMinute: 5,
 
 	powerInfusionTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.

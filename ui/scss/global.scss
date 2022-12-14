@@ -1,6 +1,5 @@
 @use "sass:map";
 
-$content-font-size: .75rem;
 $gap-width: 1.5rem;
 $gap-width-sm: .5rem;
 $link-danger-color: #ef9eaa;
@@ -16,6 +15,11 @@ html {
 
 body {
   height: 100%;
+  // Bootstrap adds padding-right when Modals open for some reason, causing popping
+  padding-right: 0 !important;
+  // Prevent browser scrollbars from adjusting page contents
+  margin-right: calc(-1 * (100vw - 100%));
+  overflow-x: hidden;
   opacity: 0;
   transition: opacity .25s linear;
 

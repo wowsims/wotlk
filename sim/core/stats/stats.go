@@ -51,6 +51,7 @@ const (
 	FrostResistance
 	NatureResistance
 	ShadowResistance
+	BonusArmor
 	RunicPower
 	BloodRune
 	FrostRune
@@ -133,6 +134,8 @@ func (s Stat) StatName() string {
 		return "Rage"
 	case Armor:
 		return "Armor"
+	case BonusArmor:
+		return "BonusArmor"
 	case RangedAttackPower:
 		return "RangedAttackPower"
 	case Defense:
@@ -351,6 +354,7 @@ type PseudoStats struct {
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
+	BonusHealingTaken        float64 // Talisman of Troll Divinity
 
 	DamageTakenMultiplier       float64            // All damage
 	SchoolDamageTakenMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc.)

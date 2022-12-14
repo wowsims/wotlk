@@ -84,6 +84,13 @@ func (priest *Priest) applyDivineAegis() {
 	divineAegis := priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47515},
 		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+		DamageMultiplier: 1 *
+			(0.1 * float64(priest.Talents.DivineAegis)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
+		ThreatMultiplier: 1,
 	})
 
 	shields := make([]*core.Shield, len(priest.Env.AllUnits))
@@ -101,9 +108,6 @@ func (priest *Priest) applyDivineAegis() {
 		}
 	}
 
-	multiplier := 0.1 * float64(priest.Talents.DivineAegis) *
-		core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1)
-
 	priest.RegisterAura(core.Aura{
 		Label:    "Divine Aegis Talent",
 		Duration: core.NeverExpires,
@@ -113,7 +117,7 @@ func (priest *Priest) applyDivineAegis() {
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Outcome.Matches(core.OutcomeCrit) {
 				shield := shields[result.Target.UnitIndex]
-				shield.Apply(sim, result.Damage*multiplier)
+				shield.Apply(sim, result.Damage)
 			}
 		},
 	})
@@ -158,6 +162,29 @@ func (priest *Priest) applyGrace() {
 				}
 			}
 		},
+	})
+}
+
+// This one is called from healing priest sim initialization because it needs an input.
+func (priest *Priest) ApplyRapture(ppm float64) {
+	if priest.Talents.Rapture == 0 {
+		return
+	}
+
+	if ppm <= 0 {
+		return
+	}
+
+	raptureManaCoeff := []float64{0, .015, .020, .025}[priest.Talents.Rapture]
+	raptureMetrics := priest.NewManaMetrics(core.ActionID{SpellID: 47537})
+
+	priest.RegisterResetEffect(func(sim *core.Simulation) {
+		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			Period: time.Minute / time.Duration(ppm),
+			OnAction: func(sim *core.Simulation) {
+				priest.AddMana(sim, raptureManaCoeff*priest.MaxMana(), raptureMetrics, false)
+			},
+		})
 	})
 }
 
@@ -366,7 +393,7 @@ func (priest *Priest) applyMisery() {
 		return
 	}
 
-	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget)
+	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Priest Shadow Effects",

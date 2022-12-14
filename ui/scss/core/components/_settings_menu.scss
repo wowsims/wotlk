@@ -1,44 +1,43 @@
+@use "sass:map";
+
 @import "./popup";
 
 .settings-menu {
-}
+	.menu-title {
+		text-align: center;
+		margin: 20px;
+		font-size: 24px;
+	}
+	
+	.menu-content {
+		margin: 20px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+		overflow-y: auto;
+		max-height: 80vh;
 
-.menu-title {
-	text-align: center;
-	margin: 20px;
-	font-size: 24px;
-}
+		.settings-menu-content-left {
+			margin-right: 2 * map.get($spacers, 3);
+			flex: 1;
+		}
 
-.menu-content {
-	margin: 20px;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-evenly;
-	overflow-y: auto;
-	max-height: 80vh;
-}
+		.settings-menu-content-right {
+			flex: 1;
+		}
 
-.settings-menu-content-left {
-	text-align: left;
-	flex: 3;
-}
-.settings-menu-content-right {
-	text-align: right;
-	flex: 2;
-}
+		.restore-defaults-button {
+			margin-bottom: $block-spacer;
+		}
 
-.menu-section {
-	margin: 15px 0;
-}
+		.fixed-rng-seed {
+			.input-root {
+				margin-bottom: 0;
+			}
+		}
 
-.last-used-rng-seed-container {
-	margin: 8px;
-}
-.last-used-rng-seed {
-	margin: 5px;
-}
-
-.ep-weights-label {
-	font-weight: bold;
-	margin: 5px;
+		.last-used-rng-seed-container {
+			margin-bottom: $block-spacer;
+		}
+	}
 }

@@ -27,7 +27,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		}
 	}
 
-	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire > 0)
+	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -47,18 +47,21 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  66 * 2,
+		DamageMultiplier: 1,
+		CritMultiplier:   druid.BalanceCritMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0.0
+			outcome := spell.OutcomeMagicHit
 			if druid.InForm(Bear) {
 				baseDamage = 1 + 0.15*spell.MeleeAttackPower()
+				outcome = spell.OutcomeMagicHitAndCrit
 			}
 
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcome)
 			if result.Landed() {
 				druid.FaerieFireAura.Activate(sim)
 			}
-			spell.DealDamage(sim, result)
 		},
 	})
 }
@@ -72,5 +75,5 @@ func (druid *Druid) ShouldFaerieFire(sim *core.Simulation) bool {
 		return false
 	}
 
-	return druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.MinorArmorReductionAuraTag, druid.FaerieFireAura.Priority, time.Second*3)
+	return druid.FaerieFireAura.ShouldRefreshExclusiveEffects(sim, time.Second*3)
 }

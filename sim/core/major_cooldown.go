@@ -22,6 +22,7 @@ const (
 	CooldownTypeUnknown CooldownType = 0
 	CooldownTypeMana    CooldownType = 1 << iota
 	CooldownTypeDPS
+	CooldownTypeExplosive
 	CooldownTypeSurvival
 )
 
@@ -233,19 +234,15 @@ func (mcdm *majorCooldownManager) finalize() {
 	mcdm.majorCooldowns = make([]*MajorCooldown, len(mcdm.initialMajorCooldowns))
 }
 
-// Adds a delay to the first usage of all CDs so that armor debuffs have time
+// Adds a delay to the first usage of all CDs so that debuffs have time
 // to be applied. MCDs that have a user-specified timing are not delayed.
 //
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
-	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
-		return
-	}
-
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
-			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
+			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) && !mcd.Type.Matches(CooldownTypeExplosive) {
 				mcd.timings = append(mcd.timings, delay)
 			}
 		}
@@ -256,15 +253,15 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 // MCDs that have a user-specified timing are not delayed.
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
-	if !mcdm.character.CurrentTarget.HasAuraWithTag(MajorArmorReductionTag) {
-		return
-	}
-
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) {
+				oldShouldActivate := mcd.ShouldActivate
 				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
+					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
+						return false
+					}
 					return sim.CurrentTime >= delay
 				}
 			}

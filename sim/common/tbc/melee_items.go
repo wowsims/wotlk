@@ -217,6 +217,38 @@ func init() {
 		})
 	})
 
+	core.NewItemEffect(31193, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh, oh := character.GetWeaponHands(31193)
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+
+		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 31193},
+			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty,
+
+			DamageMultiplier: 1,
+			CritMultiplier:   character.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(48, 54) + spell.SpellPower()
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Blade of Unquenched Thirst Trigger",
+			Callback:   core.CallbackOnSpellHitDealt,
+			ProcMask:   procMask,
+			Outcome:    core.OutcomeLanded,
+			ProcChance: 0.02,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				procSpell.Cast(sim, result.Target)
+			},
+		})
+	})
+
 	core.NewItemEffect(32262, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh, oh := character.GetWeaponHands(32262)

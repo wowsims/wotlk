@@ -116,9 +116,6 @@ func (fa *FakeAgent) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 func (fa *FakeAgent) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 }
-func (fa *FakeAgent) ApplyGearBonuses() {
-
-}
 func (fa *FakeAgent) ApplyTalents() {
 
 }

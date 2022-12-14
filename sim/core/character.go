@@ -10,6 +10,23 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+type CharacterBuildPhase uint8
+
+func (cbp CharacterBuildPhase) Matches(other CharacterBuildPhase) bool {
+	return (cbp & other) != 0
+}
+
+const (
+	CharacterBuildPhaseNone CharacterBuildPhase = 0
+	CharacterBuildPhaseBase CharacterBuildPhase = 1 << iota
+	CharacterBuildPhaseGear
+	CharacterBuildPhaseTalents
+	CharacterBuildPhaseBuffs
+	CharacterBuildPhaseConsumes
+)
+
+const CharacterBuildPhaseAll = CharacterBuildPhaseBase | CharacterBuildPhaseGear | CharacterBuildPhaseTalents | CharacterBuildPhaseBuffs | CharacterBuildPhaseConsumes
+
 // Character is a data structure to hold all the shared values that all
 // class logic shares.
 // All players have stats, equipment, auras, etc
@@ -134,37 +151,59 @@ func (character *Character) addUniversalStatDependencies() {
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
-// Empty implementation so its optional for Agents.
-func (character *Character) ApplyGearBonuses() {}
-
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
-	agent.ApplyGearBonuses()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
 	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	agent.ApplyTalents()
+	character.applyBuildPhaseAuras(CharacterBuildPhaseTalents)
 	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
+	character.applyBuildPhaseAuras(CharacterBuildPhaseBuffs)
 	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	applyConsumeEffects(agent)
+	character.applyBuildPhaseAuras(CharacterBuildPhaseConsumes)
 	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 	}
 
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	return playerStats
+}
+func (character *Character) applyBuildPhaseAuras(phase CharacterBuildPhase) {
+	sim := Simulation{}
+	character.Env.MeasuringStats = true
+	for _, aura := range character.auras {
+		if aura.BuildPhase.Matches(phase) {
+			aura.Activate(&sim)
+		}
+	}
+	character.Env.MeasuringStats = false
+}
+func (character *Character) clearBuildPhaseAuras(phase CharacterBuildPhase) {
+	sim := Simulation{}
+	character.Env.MeasuringStats = true
+	for _, aura := range character.auras {
+		if aura.BuildPhase.Matches(phase) {
+			aura.Deactivate(&sim)
+		}
+	}
+	character.Env.MeasuringStats = false
 }
 
 // Apply effects from all equipped core.
@@ -336,7 +375,9 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	character.majorCooldownManager.finalize()
 
 	if playerStats != nil {
+		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.FinalStats = character.GetStats().ToFloatArray()
+		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.Sets = character.GetActiveSetBonusNames()
 		playerStats.Cooldowns = character.GetMajorCooldownIDs()
 	}
@@ -480,15 +521,15 @@ func (character *Character) doneIteration(sim *Simulation) {
 	character.Unit.doneIteration(sim)
 }
 
-func (character *Character) GetMetricsProto(numIterations int32) *proto.UnitMetrics {
-	metrics := character.Metrics.ToProto(numIterations)
+func (character *Character) GetMetricsProto() *proto.UnitMetrics {
+	metrics := character.Metrics.ToProto()
 	metrics.Name = character.Name
 	metrics.UnitIndex = character.UnitIndex
-	metrics.Auras = character.auraTracker.GetMetricsProto(numIterations)
+	metrics.Auras = character.auraTracker.GetMetricsProto()
 
 	metrics.Pets = []*proto.UnitMetrics{}
 	for _, petAgent := range character.Pets {
-		metrics.Pets = append(metrics.Pets, petAgent.GetPet().GetMetricsProto(numIterations))
+		metrics.Pets = append(metrics.Pets, petAgent.GetPet().GetMetricsProto())
 	}
 
 	return metrics

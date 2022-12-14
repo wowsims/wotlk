@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/druid"
 )
 
@@ -64,7 +63,7 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 			SwingSpeed:                 2.5,
 			NormalizedSwingSpeed:       2.5,
 			SwingDuration:              time.Millisecond * 2500,
-			CritMultiplier:             bear.MeleeCritMultiplier(),
+			CritMultiplier:             bear.MeleeCritMultiplier(druid.Bear),
 			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 		},
 		AutoSwingMelee: true,
@@ -90,10 +89,6 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
 	bear.RegisterFeralSpells(float64(bear.Rotation.MaulRageThreshold))
-}
-
-func (bear *FeralTankDruid) ApplyGearBonuses() {
-	bear.AddStat(stats.Armor, bear.Equip.Stats()[stats.Armor]*3.7)
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {

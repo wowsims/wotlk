@@ -33,13 +33,10 @@ func (druid *Druid) registerTyphoonSpell() {
 				Timer:    druid.NewTimer(),
 				Duration: time.Second * (20 - core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMonsoon), 3, 0)),
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				druid.applyNaturesSwiftness(cast)
-				druid.ApplyClearcasting(sim, spell, cast)
-			},
 		},
 
-		DamageMultiplier: 1 + druid.talentBonuses.galeWinds,
+		DamageMultiplier: 1 +
+			0.15*float64(druid.Talents.GaleWinds),
 		ThreatMultiplier: 1,
 		CritMultiplier:   1,
 

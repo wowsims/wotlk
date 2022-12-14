@@ -219,6 +219,9 @@ message HealingPriest {
 		bool use_inner_fire = 3;
 		bool use_shadowfiend = 1;
 		RaidTarget power_infusion_target = 2;
+
+		// Number of times for rapture to proc each minute, ie when a PWS is fully absorbed.
+		double raptures_per_minute = 4;
 	}
 	Options options = 3;
 }

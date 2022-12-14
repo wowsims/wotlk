@@ -1,16 +1,23 @@
 import { Component } from './component.js';
-import { getLaunchedSimsForClass, raidSimLaunched } from '../launched_sims.js';
+import {
+  getLaunchedSimsForClass,
+  LaunchStatus,
+  raidSimLaunched,
+  raidSimStatus,
+  simLaunchStatuses
+} from '../launched_sims.js';
 import { Class, Spec } from '../proto/common.js';
 import {
-  getSpecSiteUrl,
-  raidSimSiteUrl,
-  specNames,
   classNames,
-  specToClass,
+  getSpecSiteUrl,
+	naturalClassOrder,
+  raidSimSiteUrl,
   raidSimIcon,
-  raidSimLabel
+  raidSimLabel,
+  specNames,
+  specToClass,
+	titleIcons,
 } from '../proto_utils/utils.js';
-import { classList, getClassIcon, getSpecIcon } from '../proto_utils/class_spec_utils.js';
 
 interface ClassOptions {
   type: 'Class',
@@ -42,7 +49,7 @@ export class SimTitleDropdown extends Component {
     [Spec.SpecRogue]:              'Rogue',
     [Spec.SpecRetributionPaladin]: 'Retribution',
     [Spec.SpecProtectionPaladin]:  'Protection',
-    [Spec.SpecHealingPriest]:      'Priest',
+    [Spec.SpecHealingPriest]:      'Healing',
     [Spec.SpecShadowPriest]:       'Shadow',
     [Spec.SpecSmitePriest]:        'Smite',
     [Spec.SpecWarlock]:            'Warlock',
@@ -88,7 +95,7 @@ export class SimTitleDropdown extends Component {
       this.dropdownMenu.appendChild(raidListItem);
     }
 
-    classList.forEach( (classIndex) => {
+    naturalClassOrder.forEach( classIndex => {
       let listItem = document.createElement('li');
       let sims = getLaunchedSimsForClass(classIndex);
 
@@ -156,7 +163,8 @@ export class SimTitleDropdown extends Component {
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
             <span class="sim-link-label text-white">WoWSims - WOTLK</span>
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${this.launchStatusLabel(data)}
           </div>
         </div>
       </a>
@@ -177,7 +185,8 @@ export class SimTitleDropdown extends Component {
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${this.launchStatusLabel({type: 'Raid'})}
           </div>
         </div>
       </a>
@@ -199,7 +208,8 @@ export class SimTitleDropdown extends Component {
         <div class="sim-link-content">
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
-            <span class="sim-link-label">${label}</span>
+            <span class="sim-link-title">${label}</span>
+            ${specIndexes.length == 1 ? this.launchStatusLabel({type: 'Spec', index: specIndexes[0]}) : ''}
           </div>
         </div>
       </a>
@@ -222,7 +232,8 @@ export class SimTitleDropdown extends Component {
           <img src="${iconPath}" class="sim-link-icon">
           <div class="d-flex flex-column">
             <span class="sim-link-label">${className}</span>
-            <span class="sim-link-label">${specLabel}</span>
+            <span class="sim-link-title">${specLabel}</span>
+            ${this.launchStatusLabel({type: 'Spec', index: specIndex})}
           </div>
         </div>
       </a>
@@ -231,15 +242,31 @@ export class SimTitleDropdown extends Component {
     return fragment.children[0] as HTMLElement;
   }
 
+  private launchStatusLabel(data: SpecOptions | RaidOptions): string {
+    if (
+      (data.type == 'Raid' && raidSimStatus == LaunchStatus.Launched) ||
+      (data.type == 'Spec' && simLaunchStatuses[data.index] == LaunchStatus.Launched)
+    ) return "";
+
+    let label = data.type == 'Raid' ? LaunchStatus[raidSimStatus] : LaunchStatus[simLaunchStatuses[data.index]];
+    let elem = document.createElement('span');
+    elem.classList.add('launch-status-label', 'text-brand');
+    elem.textContent = label;
+
+    return elem.outerHTML;
+  }
+
   private getSimIconPath(data: ClassOptions | SpecOptions | RaidOptions): string {
     let iconPath: string;
 
-    if (data.type == 'Raid')
+    if (data.type == 'Raid') {
       iconPath = raidSimIcon;
-    else if (data.type == 'Class')
-      iconPath = getClassIcon(data.index);
-    else
-      iconPath = getSpecIcon(data.index);
+    } else if (data.type == 'Class') {
+			let className = classNames[data.index];
+			iconPath = `/wotlk/assets/img/${className.toLowerCase().replace(/\s/g, '_')}_icon.png`
+    } else {
+			iconPath = titleIcons[data.index];
+		}
 
     return iconPath;
   }

@@ -26,11 +26,12 @@ type assassinationPrio struct {
 }
 
 func (rogue *Rogue) targetHasBleed(sim *core.Simulation) bool {
-	return rogue.CurrentTarget.HasActiveAuraWithTag(core.BleedDamageAuraTag) || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
+	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
 }
 
 func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	rogue.assassinationPrios = make([]assassinationPrio, 0)
+	rogue.bleedCategory = rogue.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	// Garrote
 	if rogue.Rotation.OpenWithGarrote {

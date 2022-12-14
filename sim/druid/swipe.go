@@ -34,12 +34,11 @@ func (druid *Druid) registerSwipeBearSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
 		DamageMultiplier: lbdm * thdm * fidm,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -71,12 +70,11 @@ func (druid *Druid) registerSwipeCatSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
 		DamageMultiplier: fidm * weaponMulti,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -90,7 +88,7 @@ func (druid *Druid) registerSwipeCatSpell() {
 }
 
 func (druid *Druid) CanSwipeCat() bool {
-	return druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentSwipeCatCost() || druid.ClearcastingAura.IsActive())
+	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentSwipeCatCost()
 }
 
 func (druid *Druid) CurrentSwipeCatCost() float64 {

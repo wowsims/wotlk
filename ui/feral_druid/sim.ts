@@ -2,23 +2,12 @@ import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-
-import { FeralDruid, FeralDruid_Rotation as FeralDruidRotation, DruidTalents as DruidTalents, FeralDruid_Options as FeralDruidOptions } from '../core/proto/druid.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -33,7 +22,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			cssClass: 'feral-druid-sim-ui',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Stats display only humanoid form"
 			],
 			warnings: [
 			],
@@ -56,8 +44,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatHealth,
 				Stat.StatStrength,
 				Stat.StatAgility,
-				Stat.StatIntellect,
-				Stat.StatSpirit,
 				Stat.StatAttackPower,
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
@@ -65,7 +51,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatArmorPenetration,
 				Stat.StatExpertise,
 				Stat.StatMana,
-				Stat.StatMP5,
 			],
 
 			defaults: {
@@ -89,12 +74,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				// Default talents.
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
-				specOptions: FeralDruidOptions.create({
-					innervateTarget: RaidTarget.create({
-						targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-					}),
-					latencyMs: 100,
-				}),
+				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
@@ -144,6 +124,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				inputs: [
 					DruidInputs.LatencyMs,
 					DruidInputs.PrepopOoc,
+					DruidInputs.PrepopBerserk,
 					DruidInputs.AssumeBleedActive,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

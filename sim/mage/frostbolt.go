@@ -36,7 +36,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		},
 
 		BonusCritRating: 0 +
-			core.TernaryFloat64(mage.MageTier.t9_4, 5*core.CritRatingPerCritChance, 0),
+			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: mage.spellDamageMultiplier *
 			(1 + .01*float64(mage.Talents.ChilledToTheBone)) *
 			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), 1.05, 1),

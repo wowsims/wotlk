@@ -1,19 +1,56 @@
-.input-label-div {
-	display: inline-block;
-  margin: 5px;
+@use "sass:map";
+
+.input-root {
+  width: 100%;
+  margin-bottom: $block-spacer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  &.disabled {
+    filter: opacity(0.5);
+  }
+
+  &.input-inline {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    input, select {
+      width: 5rem;
+    }
+  }
+
+  &:not(.input-inline) {
+    .form-label {
+      white-space: nowrap;
+    }
+  }
 }
 
-.input-label, .input-tooltip {
-  margin: 3px;
+.picker-group {
+  display: flex;
+
+  .input-root {
+    flex: 1;
+
+    &:not(:last-child) {
+      margin-right: map.get($spacers, 3);
+    }
+  }
 }
 
-.input-root.disabled .input-label, .input-root.disabled .input-tooltip {
-	filter: opacity(0.5);
-}
-.input-root.disabled .dropdown-button, .input-root.disabled .dropdown-option {
-	filter: grayscale(1);
-}
+@include media-breakpoint-down(xl) {
+  .picker-group {
+    width: 100%;
+    flex-wrap: wrap;
 
-.input-root.hide {
-	display: none !important;
+    &> * {
+      flex-basis: 50%;
+
+      &:nth-child(2n) {
+        margin-right: 0 !important;
+      }
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import { Encounter as EncounterProto } from '../proto/common.js';
+import { DistributionMetrics as DistributionMetricsProto } from '../proto/api.js';
 import { Raid as RaidProto } from '../proto/api.js';
 import { RaidSimRequest, RaidSimResult, ProgressMetrics } from '../proto/api.js';
 import { SimRunData } from '../proto/ui.js';
@@ -6,11 +7,12 @@ import { ActionMetrics, SimResult, SimResultFilter } from '../proto_utils/sim_re
 import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
+import { Tooltip } from 'bootstrap';
 
 declare var tippy: any;
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
-	simUI.addAction('SIMULATE', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
+	simUI.addAction('Simulate', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {
 		resultsManager.setSimProgress(progress);
 	}));
 
@@ -28,7 +30,59 @@ export type ReferenceData = {
 	encounterProto: EncounterProto,
 };
 
+export interface ResultMetrics {
+	cod:   string,
+	dps:   string,
+	dpasp: string,
+	dtps:  string,
+	dur:   string,
+	hps:   string,
+	tps:   string,
+	tto:   string,
+}
+
+export interface ResultMetricCategories {
+	damage:  string,
+	demo: string,
+	healing: string,
+	threat:  string,
+}
+
+export interface ResultsLineArgs {
+	average: Number,
+	stdev?: Number,
+	classes?: string
+}
+
 export class RaidSimResultsManager {
+	static resultMetricCategories: {[ResultMetrics: string]: keyof ResultMetricCategories} = {
+		dps:   'damage',
+		dpasp: 'demo',
+		tps:   'threat',
+		dtps:  'threat',
+		cod:   'threat',
+		tto:   'healing',
+		hps:   'healing',
+	}
+
+	static resultMetricClasses: {[ResultMetrics: string]: string} = {
+		cod:    'results-sim-cod',
+		dps:    'results-sim-dps',
+		dpasp:  'results-sim-dpasp',
+		dtps:   'results-sim-dtps',
+		dur:    'results-sim-dur',
+		hps:    'results-sim-hps',
+		tps:    'results-sim-tps',
+		tto:    'results-sim-tto',
+	}
+
+	static metricsClasses: {[ResultMetricCategories: string]: string} = {
+		damage:  'damage-metrics',
+		demo: 'demo-metrics',
+		healing: 'healing-metrics',
+		threat:  'threat-metrics',
+	}
+
 	readonly currentChangeEmitter: TypedEvent<void> = new TypedEvent<void>();
 	readonly referenceChangeEmitter: TypedEvent<void> = new TypedEvent<void>();
 
@@ -97,43 +151,44 @@ export class RaidSimResultsManager {
       <div class="results-sim">
 				${RaidSimResultsManager.makeToplineResultsContent(simResult)}
 				<div class="results-sim-reference">
-					<span class="results-sim-set-reference fa fa-map-pin"></span>
+					<a
+						href="javascript:void(0)"
+						class="results-sim-set-reference"
+						role="button"
+						data-bs-toggle="tooltip"
+						data-bs-title="Use as reference"
+					>
+						<i class="fa fa-map-pin fa-lg text-primary me-2"></i>Save as Reference
+					</a>
 					<div class="results-sim-reference-bar">
-						<span class="results-sim-reference-dps-diff damage-metrics"></span>
-						<span class="results-sim-reference-diff-separator healing-metrics">/</span>
-						<span class="results-sim-reference-tto-diff healing-metrics"></span>
-						<span class="results-sim-reference-diff-separator healing-metrics">/</span>
-						<span class="results-sim-reference-hps-diff healing-metrics"></span>
-						<span class="results-sim-reference-diff-separator threat-metrics">/</span>
-						<span class="results-sim-reference-tps-diff threat-metrics"></span>
-						<span class="results-sim-reference-diff-separator threat-metrics">/</span>
-						<span class="results-sim-reference-dtps-diff threat-metrics"></span>
-						<span class="results-sim-reference-diff-separator threat-metrics">/</span>
-						<span class="results-sim-reference-chanceOfDeath-diff threat-metrics"></span>
-						<span class="results-sim-reference-text"> vs. reference</span>
-						<span class="results-sim-reference-swap fa fa-retweet"></span>
-						<span class="results-sim-reference-delete fa fa-times"></span>
+						<a href="javascript:void(0)" class="results-sim-reference-swap me-3" role="button">
+							<i class="fas fa-arrows-rotate me-1"></i>Swap
+						</a>
+						<a href="javascript:void(0)" class="results-sim-reference-delete" role="button">
+							<i class="fa fa-times fa-lg me-1"></i>Cancel
+						</a>
 					</div>
 				</div>
       </div>
     `);
 
-		const setResultTippy = (cssClass: string, tippyContent: string) => {
+		const setResultTooltip = (cssClass: string, tooltip: string) => {
 			const resultDivElem = this.simUI.resultsViewer.contentElem.getElementsByClassName(cssClass)[0] as HTMLElement | undefined;
 			if (resultDivElem) {
-				tippy(resultDivElem, {
-					'content': tippyContent,
-					'allowHTML': true,
-					placement: 'right',
-				});
+				resultDivElem.setAttribute('data-bs-toggle', 'tooltip');
+				resultDivElem.setAttribute('data-bs-title', tooltip);
+				resultDivElem.setAttribute('data-bs-html', 'true');
+				resultDivElem.setAttribute('data-bs-placement', 'right');
+				Tooltip.getOrCreateInstance(resultDivElem);
 			}
 		};
-		setResultTippy('results-sim-dps', 'Damage Per Second');
-		setResultTippy('results-sim-tto', 'Time To OOM');
-		setResultTippy('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
-		setResultTippy('results-sim-tps', 'Threat Per Second');
-		setResultTippy('results-sim-dtps', 'Damage Taken Per Second');
-		setResultTippy('results-sim-chanceOfDeath', `
+		setResultTooltip('results-sim-dps', 'Damage Per Second');
+		setResultTooltip('results-sim-dpasp', 'Demonic Pact Average Spell Power');
+		setResultTooltip('results-sim-tto', 'Time To OOM');
+		setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
+		setResultTooltip('results-sim-tps', 'Threat Per Second');
+		setResultTooltip('results-sim-dtps', 'Damage Taken Per Second');
+		setResultTooltip('results-sim-cod', `
 			<p>Chance of Death</p>
 			<p>The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the <b>Incoming HPS</b> and <b>Healing Cadence</b> options).</p>
 			<p>DTPS alone is not a good measure of tankiness because it is not affected by health and ignores damage spikes. Chance of Death attempts to capture overall tankiness.</p>
@@ -141,9 +196,10 @@ export class RaidSimResultsManager {
 
 		if (!this.simUI.isIndividualSim()) {
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-diff-separator')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dpasp-diff')).forEach(e => e.remove());
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')).forEach(e => e.remove());
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-chanceOfDeath-diff')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-cod-diff')).forEach(e => e.remove());
 		}
 
 		const simReferenceElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference')[0] as HTMLDivElement;
@@ -155,10 +211,7 @@ export class RaidSimResultsManager {
 			this.referenceChangeEmitter.emit(TypedEvent.nextEventID());
 			this.updateReference();
 		});
-		tippy(simReferenceSetButton, {
-			'content': 'Use as reference',
-			'allowHTML': true,
-		});
+		Tooltip.getOrCreateInstance(simReferenceSetButton);
 
 		const simReferenceSwapButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-swap')[0] as HTMLSpanElement;
 		simReferenceSwapButton.addEventListener('click', event => {
@@ -198,37 +251,66 @@ export class RaidSimResultsManager {
 	}
 
 	private updateReference() {
-		const simReferenceElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference')[0] as HTMLDivElement;
-
 		if (!this.referenceData || !this.currentData) {
-			simReferenceElem.classList.remove('has-reference');
+			// Remove references
+			this.simUI.resultsViewer.contentElem.querySelector('.results-sim-reference')?.classList.remove('has-reference');
+			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach((e) => e.classList.add('hide'));
 			return;
+		} else {
+			// Add references references
+			this.simUI.resultsViewer.contentElem.querySelector('.results-sim-reference')?.classList.add('has-reference');
+			this.simUI.resultsViewer.contentElem.querySelectorAll('.results-reference').forEach((e) => e.classList.remove('hide'));
 		}
-		simReferenceElem.classList.add('has-reference');
 
-		const simReferenceDpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dps-diff')[0] as HTMLSpanElement;
-		const currentDpsMetrics = this.currentData.simResult.raidMetrics.dps;
-		const referenceDpsMetrics = this.referenceData.simResult.raidMetrics.dps;
-		formatDeltaTextElem(simReferenceDpsDiffElem, referenceDpsMetrics.avg, currentDpsMetrics.avg, 2);
-
-		const simReferenceHpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-hps-diff')[0] as HTMLSpanElement;
-		const currentHpsMetrics = this.currentData.simResult.raidMetrics.hps;
-		const referenceHpsMetrics = this.referenceData.simResult.raidMetrics.hps;
-		formatDeltaTextElem(simReferenceHpsDiffElem, referenceHpsMetrics.avg, currentHpsMetrics.avg, 2);
-
+		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
+		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
-			const simReferenceTtoDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tto-diff')[0] as HTMLSpanElement;
-			const simReferenceTpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')[0] as HTMLSpanElement;
-			const simReferenceDtpsDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')[0] as HTMLSpanElement;
-			const simReferenceCodDiffElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-chanceOfDeath-diff')[0] as HTMLSpanElement;
-
-			const curPlayerMetrics = this.currentData.simResult.getPlayers()[0]!;
-			const refPlayerMetrics = this.referenceData.simResult.getPlayers()[0]!;
-			formatDeltaTextElem(simReferenceTtoDiffElem, refPlayerMetrics.tto.avg, curPlayerMetrics.tto.avg, 2);
-			formatDeltaTextElem(simReferenceTpsDiffElem, refPlayerMetrics.tps.avg, curPlayerMetrics.tps.avg, 2);
-			formatDeltaTextElem(simReferenceDtpsDiffElem, refPlayerMetrics.dtps.avg, curPlayerMetrics.dtps.avg, 2);
-			formatDeltaTextElem(simReferenceCodDiffElem, refPlayerMetrics.chanceOfDeath, curPlayerMetrics.chanceOfDeath, 1);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dpasp']} .results-reference-diff`, res => res.getPlayers()[0]!.dpasp, 2);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tto']} .results-reference-diff`, res => res.getPlayers()[0]!.tto, 2);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tps']} .results-reference-diff`, res => res.getPlayers()[0]!.tps, 2);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dtps']} .results-reference-diff`, res => res.getPlayers()[0]!.dtps, 2, true);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['cod']} .results-reference-diff`, res => res.getPlayers()[0]!.chanceOfDeath, 1, true);
 		}
+	}
+
+	private formatToplineResult(querySelector: string, getMetrics: (result: SimResult) => DistributionMetricsProto|number, precision: number, lowerIsBetter?: boolean) {
+		const elem = this.simUI.resultsViewer.contentElem.querySelector(querySelector) as HTMLSpanElement;
+		const cur = this.currentData!.simResult;
+		const ref = this.referenceData!.simResult;
+		const curMetricsTemp = getMetrics(cur);
+		const refMetricsTemp = getMetrics(ref);
+		if (typeof curMetricsTemp === 'number') {
+			const curMetrics = curMetricsTemp as number;
+			const refMetrics = refMetricsTemp as number;
+			formatDeltaTextElem(elem, refMetrics, curMetrics, precision, lowerIsBetter);
+		} else {
+			const curMetrics = curMetricsTemp as DistributionMetricsProto;
+			const refMetrics = refMetricsTemp as DistributionMetricsProto;
+			const isDiff = this.applyZTestTooltip(elem, ref.iterations, refMetrics.avg, refMetrics.stdev, cur.iterations, curMetrics.avg, curMetrics.stdev);
+			formatDeltaTextElem(elem, refMetrics.avg, curMetrics.avg, precision, lowerIsBetter, !isDiff);
+		}
+	}
+
+	private applyZTestTooltip(elem: HTMLElement, n1: number, avg1: number, stdev1: number, n2: number, avg2: number, stdev2: number): boolean {
+		const delta = avg1 - avg2;
+		const err1 = stdev1/Math.sqrt(n1);
+		const err2 = stdev2/Math.sqrt(n2);
+		const denom = Math.sqrt(Math.pow(err1, 2) + Math.pow(err2, 2));
+		const z = Math.abs(delta/denom);
+		const isDiff = z > 1.96;
+
+		let significance_str = '';
+		if (isDiff) { 
+			significance_str = `Difference is significantly different (Z = ${z.toFixed(3)}).`;
+		} else { 
+			significance_str = `Difference is not significantly different (Z = ${z.toFixed(3)}).`;
+		}
+		tippy(elem, {
+			'content': significance_str,
+			'allowHTML': true,
+		});
+
+		return isDiff;
 	}
 
 	getRunData(): SimRunData | null {
@@ -278,81 +360,123 @@ export class RaidSimResultsManager {
 			const playerMetrics = players[0];
 			if (playerMetrics.getTargetIndex(filter) == null) {
 				const dpsMetrics = playerMetrics.dps;
+				const dpaspMetrics = playerMetrics.dpasp;
 				const tpsMetrics = playerMetrics.tps;
 				const dtpsMetrics = playerMetrics.dtps;
-				content += `
-					<div class="results-sim-dps damage-metrics">
-						<span class="topline-result-avg">${dpsMetrics.avg.toFixed(2)}</span>
-						<span class="topline-result-stdev">${dpsMetrics.stdev.toFixed(2)}</span>
-					</div>
-					<div class="results-sim-tps threat-metrics">
-						<span class="topline-result-avg">${tpsMetrics.avg.toFixed(2)}</span>
-						<span class="topline-result-stdev">${tpsMetrics.stdev.toFixed(2)}</span>
-					</div>
-					<div class="results-sim-dtps threat-metrics">
-						<span class="topline-result-avg">${dtpsMetrics.avg.toFixed(2)}</span>
-						<span class="topline-result-stdev">${dtpsMetrics.stdev.toFixed(2)}</span>
-					</div>
-					<div class="results-sim-chanceOfDeath threat-metrics">
-						<span class="topline-result-avg">${playerMetrics.chanceOfDeath.toFixed(2)}</span>
-					</div>
-				`;
+				content += this.buildResultsLine({
+					average: dpsMetrics.avg,
+					stdev: dpsMetrics.stdev,
+					classes: this.getResultsLineClasses('dps'),
+				}).outerHTML;
+
+				// Hide dpasp if it's zero.
+				let dpaspContent = this.buildResultsLine({
+					average: dpaspMetrics.avg,
+					stdev: dpaspMetrics.stdev,
+					classes: this.getResultsLineClasses('dpasp'),
+				});
+				if (dpaspMetrics.avg == 0) {
+					dpaspContent.classList.add('hide');
+				}
+				content += dpaspContent.outerHTML;
+
+				content += this.buildResultsLine({
+					average: tpsMetrics.avg,
+					stdev: tpsMetrics.stdev,
+					classes: this.getResultsLineClasses('tps'),
+				}).outerHTML;
+				content += this.buildResultsLine({
+					average: dtpsMetrics.avg,
+					stdev: dtpsMetrics.stdev,
+					classes: this.getResultsLineClasses('dtps'),
+				}).outerHTML;
+				content += this.buildResultsLine({
+					average: playerMetrics.chanceOfDeath,
+					classes: this.getResultsLineClasses('cod'),
+				}).outerHTML;
 			} else {
 				const actions = simResult.getActionMetrics(filter);
 				if (actions.length > 0) {
 					const mergedActions = ActionMetrics.merge(actions);
-					content += `
-						<div class="results-sim-dps damage-metrics">
-							<span class="topline-result-avg">${mergedActions.dps.toFixed(2)}</span>
-						</div>
-						<div class="results-sim-tps threat-metrics">
-							<span class="topline-result-avg">${mergedActions.tps.toFixed(2)}</span>
-						</div>
-					`;
+					content += this.buildResultsLine({
+						average: mergedActions.dps,
+						classes: this.getResultsLineClasses('dps'),
+					}).outerHTML;
+					content += this.buildResultsLine({
+						average: mergedActions.tps,
+						classes: this.getResultsLineClasses('tps'),
+					}).outerHTML;
 				}
 
 				const targetActions = simResult.getTargets(filter)[0].actions.map(action => action.forTarget(filter));
 				if (targetActions.length > 0) {
 					const mergedTargetActions = ActionMetrics.merge(targetActions);
-					content += `
-						<div class="results-sim-dtps threat-metrics">
-							<span class="topline-result-avg">${mergedTargetActions.dps.toFixed(2)}</span>
-						</div>
-					`;
+					content += this.buildResultsLine({
+						average: mergedTargetActions.dps,
+						classes: this.getResultsLineClasses('dtps'),
+					}).outerHTML;
 				}
 			}
 
-			content += `
-				<div class="results-sim-tto healing-metrics">
-					<span class="topline-result-avg">${playerMetrics.tto.avg.toFixed(2)}s</span>
-					<span class="topline-result-stdev">${playerMetrics.tto.stdev.toFixed(2)}s</span>
-				</div>
-				<div class="results-sim-hps healing-metrics">
-					<span class="topline-result-avg">${playerMetrics.hps.avg.toFixed(2)}</span>
-					<span class="topline-result-stdev">${playerMetrics.hps.stdev.toFixed(2)}</span>
-				</div>
-			`;
+			content += this.buildResultsLine({
+				average: playerMetrics.tto.avg,
+				stdev: playerMetrics.tto.stdev,
+				classes: this.getResultsLineClasses('tto'),
+			}).outerHTML;
+			content += this.buildResultsLine({
+				average: playerMetrics.hps.avg,
+				stdev: playerMetrics.hps.stdev,
+				classes: this.getResultsLineClasses('hps'),
+			}).outerHTML;
 		} else {
 			const dpsMetrics = simResult.raidMetrics.dps;
-			content = `
-				<div class="results-sim-dps damage-metrics">
-					<span class="topline-result-avg">${dpsMetrics.avg.toFixed(2)}</span>
-					<span class="topline-result-stdev">${dpsMetrics.stdev.toFixed(2)}</span>
-				</div>
-			`;
-			const hpsMetrics = simResult.raidMetrics.hps;
-			content += `
-				<div class="results-sim-hps healing-metrics">
-					<span class="topline-result-avg">${hpsMetrics.avg.toFixed(2)}</span>
-					<span class="topline-result-stdev">${hpsMetrics.stdev.toFixed(2)}</span>
-				</div>
-			`;
+			content += this.buildResultsLine({
+				average: dpsMetrics.avg,
+				stdev: dpsMetrics.stdev,
+				classes:  this.getResultsLineClasses('dps'),
+			}).outerHTML;
+			//const hpsMetrics = simResult.raidMetrics.hps;
+			//content += this.buildResultsLine({
+			//	average: hpsMetrics.avg,
+			//	stdev: hpsMetrics.stdev,
+			//	classes: this.getResultsLineClasses('hps'),
+			//}).outerHTML;
 		}
 
 		if (simResult.request.encounter?.useHealth) {
-			content += `<div class="results-sim-dur"><span class="topline-result-avg">${simResult.result.avgIterationDuration.toFixed(2)}s</span></div>`;
+			content += this.buildResultsLine({
+				average: simResult.result.avgIterationDuration,
+				classes: this.getResultsLineClasses('dur'),
+			});
 		}
 
 		return content;
+	}
+
+	private static getResultsLineClasses(metric: keyof ResultMetrics): string {
+		let classes = [this.resultMetricClasses[metric]];
+		if (this.resultMetricCategories[metric])
+			classes.push(this.metricsClasses[this.resultMetricCategories[metric]]);
+
+		return classes.join(' ');
+	}
+
+	private static buildResultsLine(args: ResultsLineArgs): HTMLElement {
+		let resultsFragment = document.createElement('fragment');
+		resultsFragment.innerHTML = `
+			<div class="results-metric ${args.classes}">
+				<span class="topline-result-avg">${args.average.toFixed(2)}</span>
+				${args.stdev ? `
+					<span class="topline-result-stdev">
+						(<i class="fas fa-plus-minus fa-xs"></i>${args.stdev.toFixed()})
+					</span>` : ''
+				}
+				<div class="results-reference hide">
+					<span class="results-reference-diff"></span> vs reference
+				</div>
+			</div>
+		`;
+
+		return resultsFragment.children[0] as HTMLElement;
 	}
 }

@@ -17,13 +17,15 @@ type DistributionMetrics struct {
 	Total float64
 
 	// Aggregate values. These are updated after each iteration.
-	sum        float64
-	sumSquared float64
-	max        float64
-	min        float64
-	maxSeed    int64
-	minSeed    int64
-	hist       map[int32]int32 // rounded DPS to count
+	n       int
+	sum     float64
+	sumSq   float64
+	max     float64
+	min     float64
+	maxSeed int64
+	minSeed int64
+	hist    map[int32]int32 // rounded DPS to count
+	sample  []float64
 }
 
 func (distMetrics *DistributionMetrics) reset() {
@@ -31,11 +33,18 @@ func (distMetrics *DistributionMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (distMetrics *DistributionMetrics) doneIteration(seed int64, encounterDurationSeconds float64) {
-	dps := distMetrics.Total / encounterDurationSeconds
+func (distMetrics *DistributionMetrics) doneIteration(sim *Simulation) {
+	distMetrics.n++
+	seed := sim.rand.GetSeed()
+	encounterDurationSeconds := sim.Duration.Seconds()
 
+	dps := distMetrics.Total / encounterDurationSeconds
 	distMetrics.sum += dps
-	distMetrics.sumSquared += dps * dps
+	distMetrics.sumSq += dps * dps
+	if sim.Options.SaveAllValues {
+		distMetrics.sample = append(distMetrics.sample, dps)
+	}
+
 	if dps > distMetrics.max {
 		distMetrics.max = dps
 		distMetrics.maxSeed = seed
@@ -49,17 +58,18 @@ func (distMetrics *DistributionMetrics) doneIteration(seed int64, encounterDurat
 	distMetrics.hist[dpsRounded]++
 }
 
-func (distMetrics *DistributionMetrics) ToProto(numIterations int32) *proto.DistributionMetrics {
-	dpsAvg := distMetrics.sum / float64(numIterations)
+func (distMetrics *DistributionMetrics) ToProto() *proto.DistributionMetrics {
+	mean, stdev := calcMeanAndStdevFromSums(distMetrics.n, distMetrics.sum, distMetrics.sumSq)
 
 	return &proto.DistributionMetrics{
-		Avg:     dpsAvg,
-		Stdev:   math.Sqrt((distMetrics.sumSquared / float64(numIterations)) - (dpsAvg * dpsAvg)),
-		Max:     distMetrics.max,
-		Min:     distMetrics.min,
-		MaxSeed: distMetrics.maxSeed,
-		MinSeed: distMetrics.minSeed,
-		Hist:    distMetrics.hist,
+		Avg:       mean,
+		Stdev:     stdev,
+		Max:       distMetrics.max,
+		Min:       distMetrics.min,
+		MaxSeed:   distMetrics.maxSeed,
+		MinSeed:   distMetrics.minSeed,
+		Hist:      distMetrics.hist,
+		AllValues: distMetrics.sample,
 	}
 }
 
@@ -72,6 +82,7 @@ func NewDistributionMetrics() DistributionMetrics {
 
 type UnitMetrics struct {
 	dps    DistributionMetrics
+	dpasp  DistributionMetrics
 	threat DistributionMetrics
 	dtps   DistributionMetrics
 	hps    DistributionMetrics
@@ -184,6 +195,7 @@ func (tam *TargetedActionMetrics) ToProto() *proto.TargetedActionMetrics {
 func NewUnitMetrics() UnitMetrics {
 	return UnitMetrics{
 		dps:     NewDistributionMetrics(),
+		dpasp:   NewDistributionMetrics(),
 		threat:  NewDistributionMetrics(),
 		dtps:    NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
@@ -339,8 +351,14 @@ func (unitMetrics *UnitMetrics) MarkOOM(sim *Simulation) {
 	}
 }
 
+func (unitMetrics *UnitMetrics) UpdateDpasp(dpspSeconds float64) {
+	// We store the total of seconds * spell power due to how DistributionMetrics work internally.
+	unitMetrics.dpasp.Total += dpspSeconds
+}
+
 func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.dps.reset()
+	unitMetrics.dpasp.reset()
 	unitMetrics.threat.reset()
 	unitMetrics.dtps.reset()
 	unitMetrics.hps.reset()
@@ -353,14 +371,21 @@ func (unitMetrics *UnitMetrics) reset() {
 }
 
 // This should be called when a Sim iteration is complete.
-func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterDurationSeconds float64) {
+func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	if unit.HasManaBar() {
+		encounterDurationSeconds := sim.Duration.Seconds()
 		timeToOOM := unitMetrics.FirstOOMTimestamp
 		if !unitMetrics.WentOOM {
 			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
 			manaSpentPerSecond := (unitMetrics.ManaSpent - (unitMetrics.ManaGained - unitMetrics.BonusManaGained)) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
+			timeToOOM = MinDuration(timeToOOM, time.Minute*60)
+		}
+
+		if timeToOOM < 0 {
+			// This happens sometimes when staying at 100% mana throughout the sim duration.
+			timeToOOM = time.Minute * 60
 		}
 
 		unitMetrics.tto.Total = timeToOOM.Seconds()
@@ -368,11 +393,12 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 		unitMetrics.tto.Total *= encounterDurationSeconds
 	}
 
-	unitMetrics.dps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.threat.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.dtps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.hps.doneIteration(seed, encounterDurationSeconds)
-	unitMetrics.tto.doneIteration(seed, encounterDurationSeconds)
+	unitMetrics.dps.doneIteration(sim)
+	unitMetrics.dpasp.doneIteration(sim)
+	unitMetrics.threat.doneIteration(sim)
+	unitMetrics.dtps.doneIteration(sim)
+	unitMetrics.hps.doneIteration(sim)
+	unitMetrics.tto.doneIteration(sim)
 
 	unitMetrics.oomTimeSum += unitMetrics.OOMTime.Seconds()
 	if unitMetrics.Died {
@@ -380,15 +406,17 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, seed int64, encounterD
 	}
 }
 
-func (unitMetrics *UnitMetrics) ToProto(numIterations int32) *proto.UnitMetrics {
+func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
+	n := float64(unitMetrics.dps.n)
 	protoMetrics := &proto.UnitMetrics{
-		Dps:           unitMetrics.dps.ToProto(numIterations),
-		Threat:        unitMetrics.threat.ToProto(numIterations),
-		Dtps:          unitMetrics.dtps.ToProto(numIterations),
-		Hps:           unitMetrics.hps.ToProto(numIterations),
-		Tto:           unitMetrics.tto.ToProto(numIterations),
-		SecondsOomAvg: unitMetrics.oomTimeSum / float64(numIterations),
-		ChanceOfDeath: float64(unitMetrics.numItersDead) / float64(numIterations),
+		Dps:           unitMetrics.dps.ToProto(),
+		Dpasp:         unitMetrics.dpasp.ToProto(),
+		Threat:        unitMetrics.threat.ToProto(),
+		Dtps:          unitMetrics.dtps.ToProto(),
+		Hps:           unitMetrics.hps.ToProto(),
+		Tto:           unitMetrics.tto.ToProto(),
+		SecondsOomAvg: unitMetrics.oomTimeSum / n,
+		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
 	}
 
 	for actionID, action := range unitMetrics.actions {
@@ -411,10 +439,10 @@ type AuraMetrics struct {
 	Procs  int32
 
 	// Aggregate values. These are updated after each iteration.
-	uptimeSum        time.Duration
-	uptimeSumSquared time.Duration
-
-	procsSum int32
+	n           int
+	uptimeSum   float64
+	uptimeSumSq float64
+	procsSum    int32
 }
 
 func (auraMetrics *AuraMetrics) reset() {
@@ -424,21 +452,21 @@ func (auraMetrics *AuraMetrics) reset() {
 
 // This should be called when a Sim iteration is complete.
 func (auraMetrics *AuraMetrics) doneIteration() {
-	auraMetrics.uptimeSum += auraMetrics.Uptime
-	auraMetrics.uptimeSumSquared += auraMetrics.Uptime * auraMetrics.Uptime
+	auraMetrics.n++
+	auraMetrics.uptimeSum += auraMetrics.Uptime.Seconds()
+	auraMetrics.uptimeSumSq += math.Pow(auraMetrics.Uptime.Seconds(), 2)
 	auraMetrics.procsSum += auraMetrics.Procs
 }
 
-func (auraMetrics *AuraMetrics) ToProto(numIterations int32) *proto.AuraMetrics {
-	uptimeAvg := auraMetrics.uptimeSum.Seconds() / float64(numIterations)
-	procsAvg := float64(auraMetrics.procsSum) / float64(numIterations)
+func (auraMetrics *AuraMetrics) ToProto() *proto.AuraMetrics {
+	mean, stdev := calcMeanAndStdevFromSums(auraMetrics.n, auraMetrics.uptimeSum, auraMetrics.uptimeSumSq)
 
 	return &proto.AuraMetrics{
 		Id: auraMetrics.ID.ToProto(),
 
-		UptimeSecondsAvg:   uptimeAvg,
-		UptimeSecondsStdev: math.Sqrt((auraMetrics.uptimeSumSquared.Seconds() / float64(numIterations)) - (uptimeAvg * uptimeAvg)),
-		ProcsAvg:           procsAvg,
+		UptimeSecondsAvg:   mean,
+		UptimeSecondsStdev: stdev,
+		ProcsAvg:           float64(auraMetrics.procsSum) / float64(auraMetrics.n),
 	}
 }
 

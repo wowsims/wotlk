@@ -1,43 +1,10 @@
-.icon-enum-picker-root {
-  border: 2px solid dimgray;
-  transition: $sim-transitions;
-}
+@import "./icon_picker";
 
-.icon-enum-picker-root a {
-	height: 40px;
-	width: 40px;
-	display: block;
-}
+.input-root.icon-enum-picker-root {
+  width: unset;
+  margin-bottom: 0;
 
-.icon-enum-picker-root.active {
-  border-color: lawngreen;
-}
-.icon-enum-picker-root.disabled {
-  border-color: dimgray;
-}
-
-.icon-enum-picker-button {
-  background-size: cover;
-}
-
-.icon-enum-picker-option {
-  background-size: cover;
-  position: relative;
-}
-
-.icon-enum-text {
-  @include vertical-bottom;
-  @include horizontal-right;
-  margin: 3px;
-  overflow: hidden;
-  font-weight: 900;
-  font-size: x-small;
-  background-color: black;
-  color: lawngreen;
-  border: none;
-  width: auto;
-  max-width: 40px;
-  height: auto;
-	padding: 0 2px;
-  white-space: nowrap;
+  .icon-picker-button {
+    transition: none;
+  }
 }

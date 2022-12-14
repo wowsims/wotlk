@@ -33,7 +33,6 @@ func (druid *Druid) registerMangleBearSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -42,9 +41,9 @@ func (druid *Druid) registerMangleBearSpell() {
 		},
 
 		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15 * glyphBonus,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: (1.5 / 1.15) *
-			core.TernaryFloat64(druid.InForm(Bear) && druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 299/1.15 +
@@ -89,12 +88,11 @@ func (druid *Druid) registerMangleCatSpell() {
 				Cost: cost,
 				GCD:  time.Second,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
 		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0 * glyphBonus,
-		CritMultiplier:   druid.MeleeCritMultiplier(),
+		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -119,7 +117,7 @@ func (druid *Druid) CanMangleBear(sim *core.Simulation) bool {
 }
 
 func (druid *Druid) CanMangleCat() bool {
-	return druid.MangleCat != nil && druid.InForm(Cat) && (druid.CurrentEnergy() >= druid.CurrentMangleCatCost() || druid.ClearcastingAura.IsActive())
+	return druid.MangleCat != nil && druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentMangleCatCost()
 }
 
 func (druid *Druid) CurrentMangleCatCost() float64 {

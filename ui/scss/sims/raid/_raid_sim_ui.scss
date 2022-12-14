@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @import "./assignments_picker";
 @import "./blessings_picker";
 @import "./raid_picker";
@@ -6,6 +8,23 @@
 .raid-settings-tab {
 	overflow-y: auto;
 }
+
 .raid-settings-sections {
   position: relative;
+
+  .settings-section-container {
+    position: absolute;
+    margin-bottom: 2 * map.get($spacers, 3);
+    margin-right: 2 * map.get($spacers, 3);
+
+    .raid-encounter-section {
+      .encounter-picker-root {
+        flex-direction: column;
+
+        .picker-group {
+          flex-direction: column;
+        }
+      }
+    }
+  }
 }

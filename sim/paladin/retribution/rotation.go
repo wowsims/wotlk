@@ -62,6 +62,20 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 				continue
 			}
 
+			if spell == ret.HammerOfWrath && isExecutePhase && ret.HoldLastAvengingWrathUntilExecution {
+				if ret.AvengingWrath.IsReady(sim) {
+					success := ret.AvengingWrath.Cast(sim, target)
+					if !success {
+						ret.WaitForMana(sim, ret.AvengingWrath.CurCast.Cost)
+					}
+				}
+			}
+
+			if spell == ret.Consecration && !ret.checkConsecrationClipping(sim) {
+				// This is a skip, so we take the opposite of the clip check.
+				continue
+			}
+
 			if spell == ret.Exorcism && !ret.ArtOfWarInstantCast.IsActive() {
 				continue
 			}
@@ -153,6 +167,18 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	if ret.GCD.IsReady(sim) {
 		switch {
+		case isExecutePhase && ret.HammerOfWrath.IsReady(sim) && ret.HoldLastAvengingWrathUntilExecution:
+			if ret.AvengingWrath.IsReady(sim) {
+				success := ret.AvengingWrath.Cast(sim, target)
+				if !success {
+					ret.WaitForMana(sim, ret.AvengingWrath.CurCast.Cost)
+				}
+			}
+
+			success := ret.HammerOfWrath.Cast(sim, target)
+			if !success {
+				ret.WaitForMana(sim, ret.HammerOfWrath.CurCast.Cost)
+			}
 		case ret.SelectedJudgement.IsReady(sim):
 			success := ret.SelectedJudgement.Cast(sim, target)
 			if !success {
@@ -196,7 +222,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 			if !success {
 				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
-		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim):
+		case nextPrimaryAbilityDelta.Milliseconds() > int64(ret.ConsSlack) && ret.Consecration.IsReady(sim) && ret.checkConsecrationClipping(sim):
 			success := ret.Consecration.Cast(sim, target)
 			if !success {
 				ret.WaitForMana(sim, ret.Consecration.CurCast.Cost)
@@ -229,6 +255,15 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	}
 
 	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
+}
+
+func (ret *RetributionPaladin) checkConsecrationClipping(sim *core.Simulation) bool {
+	if ret.AvoidClippingConsecration {
+		return ((ret.ConsecrationDot.TickLength * 4) + sim.CurrentTime) <= sim.Duration
+	} else {
+		// If we're not configured to check, always return success.
+		return true
+	}
 }
 
 // Helper function for finding the next event

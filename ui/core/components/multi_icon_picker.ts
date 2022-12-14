@@ -11,7 +11,6 @@ export interface MultiIconPickerItemConfig<ModObject> extends IconPickerConfig<M
 
 export interface MultiIconPickerConfig<ModObject> {
 	inputs: Array<MultiIconPickerItemConfig<ModObject>>,
-	emptyColor: string,
 	numColumns: number,
 	label?: string,
 	categoryId?: ActionId,
@@ -30,55 +29,45 @@ export class MultiIconPicker<ModObject> extends Component {
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: MultiIconPickerConfig<ModObject>, simUI: SimUI) {
 		super(parent, 'multi-icon-picker-root');
+		this.rootElem.classList.add('icon-picker');
 		this.config = config;
 		this.currentValue = null;
 
 		this.rootElem.innerHTML = `
-			<span class="multi-icon-picker-label"></span>
-			<div class="dropdown-root multi-icon-picker-dropdown-root">
-				<a class="dropdown-button multi-icon-picker-button"></a>
-				<div class="dropdown-panel multi-icon-picker-dropdown"></div>
+			<div class="dropend">
+				<a
+					class="icon-picker-button"
+					role="button"
+					data-bs-toggle="dropdown"
+					aria-expanded="false"
+				></a>
+				<ul class="dropdown-menu"></ul>
 			</div>
+			<label class="multi-icon-picker-label form-label"></label>
     `;
-		this.dropdownRootElem = this.rootElem.getElementsByClassName('multi-icon-picker-dropdown-root')[0] as HTMLElement;
+		this.dropdownRootElem = this.rootElem.querySelector('.dropdown') as HTMLElement;
 
-		const labelElem = this.rootElem.getElementsByClassName('multi-icon-picker-label')[0] as HTMLElement;
+		const labelElem = this.rootElem.querySelector('.multi-icon-picker-label') as HTMLElement;
 		if (config.label) {
 			labelElem.textContent = config.label;
 		} else {
 			labelElem.remove();
 		}
 
-		this.buttonElem = this.rootElem.getElementsByClassName('multi-icon-picker-button')[0] as HTMLAnchorElement;
-		const dropdownElem = this.rootElem.getElementsByClassName('multi-icon-picker-dropdown')[0] as HTMLElement;
+		this.buttonElem = this.rootElem.querySelector('.icon-picker-button') as HTMLAnchorElement;
+		const dropdownElem = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		this.buttonElem.addEventListener('click', event => {
-			event.preventDefault();
-		});
-		this.buttonElem.addEventListener('touchstart', event => {
-			if (dropdownElem.style.display == "block") {
-				dropdownElem.style.display = "none";
-			} else {
-				dropdownElem.style.display = "block";
-			}
-			event.preventDefault();
-		});
-		this.buttonElem.addEventListener('touchend', event => {
-			event.preventDefault();
-		});
-
-		dropdownElem.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
+		this.buttonElem.addEventListener('hide.bs.dropdown', event => {
+			if (event.hasOwnProperty('clickEvent'))
+				event.preventDefault();	
+		})
 
 		this.pickers = config.inputs.map((pickerConfig, i) => {
-			const optionContainer = document.createElement('div');
-			optionContainer.classList.add('dropdown-option-container');
-			optionContainer.classList.add('multi-icon-dropdown-container');
+			const optionContainer = document.createElement('li');
+			optionContainer.classList.add('icon-dropdown-option', 'dropdown-option');
 			dropdownElem.appendChild(optionContainer);
 
-			const option = document.createElement('a');
-			option.classList.add('dropdown-option', 'multi-icon-picker-option');
-			optionContainer.appendChild(option);
-			return new IconPicker(option, modObj, pickerConfig);
+			return new IconPicker(optionContainer, modObj, pickerConfig);
 		});
 		simUI.sim.waitForInit().then(() => this.updateButtonImage());
 		simUI.changeEmitter.on(() => this.updateButtonImage());
@@ -88,20 +77,19 @@ export class MultiIconPicker<ModObject> extends Component {
 		this.currentValue = this.getMaxValue();
 
 		if (this.currentValue) {
-			this.dropdownRootElem.classList.add('active');
+			this.buttonElem.classList.add('active');
 			if (this.config.categoryId != null) {
 				this.config.categoryId.fillAndSet(this.buttonElem, false, true);
 			} else {
 				this.currentValue.fillAndSet(this.buttonElem, false, true);
 			}
 		} else {
-			this.dropdownRootElem.classList.remove('active');
+			this.buttonElem.classList.remove('active');
 			if (this.config.categoryId != null) {
 				this.config.categoryId.fillAndSet(this.buttonElem, false, true);
 			} else {
 				this.buttonElem.style.backgroundImage = '';
 			}
-			this.buttonElem.style.backgroundColor = this.config.emptyColor;
 			this.buttonElem.removeAttribute("href");
 		}
 	}

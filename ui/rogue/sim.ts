@@ -220,8 +220,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					OtherInputs.InFrontOfTarget,
 				],
 			},
-			additionalIconSections: {
-			},
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 				showExecuteProportion: false,

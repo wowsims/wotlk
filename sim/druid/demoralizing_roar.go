@@ -10,11 +10,10 @@ import (
 func (druid *Druid) registerDemoralizingRoarSpell() {
 	cost := 10.0
 
-	drAuras := make([]*core.Aura, druid.Env.GetNumTargets())
+	druid.DemoralizingRoarAuras = make([]*core.Aura, druid.Env.GetNumTargets())
 	for _, target := range druid.Env.Encounter.Targets {
-		drAuras[target.Index] = core.DemoralizingRoarAura(&target.Unit, druid.Talents.FeralAggression)
+		druid.DemoralizingRoarAuras[target.Index] = core.DemoralizingRoarAura(&target.Unit, druid.Talents.FeralAggression)
 	}
-	druid.DemoralizingRoarAura = drAuras[druid.CurrentTarget.Index]
 
 	druid.DemoralizingRoar = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48560},
@@ -28,7 +27,6 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 				Cost: cost,
 				GCD:  core.GCDDefault,
 			},
-			ModifyCast:  druid.ApplyClearcasting,
 			IgnoreHaste: true,
 		},
 
@@ -37,10 +35,9 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			for _, aoeTarget := range sim.Encounter.Targets {
-				result := spell.CalcDamage(sim, &aoeTarget.Unit, 0, spell.OutcomeMagicHit)
-				spell.DealDamage(sim, result)
+				result := spell.CalcAndDealOutcome(sim, &aoeTarget.Unit, spell.OutcomeMagicHit)
 				if result.Landed() {
-					drAuras[aoeTarget.Index].Activate(sim)
+					druid.DemoralizingRoarAuras[aoeTarget.Index].Activate(sim)
 				}
 			}
 		},
@@ -61,5 +58,5 @@ func (druid *Druid) ShouldDemoralizingRoar(sim *core.Simulation, filler bool, ma
 	}
 
 	return maintainOnly &&
-		druid.CurrentTarget.ShouldRefreshAuraWithTagAtPriority(sim, core.APReductionAuraTag, druid.DemoralizingRoarAura.Priority, time.Second*2)
+		druid.DemoralizingRoarAuras[druid.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, time.Second*2)
 }

@@ -91,6 +91,18 @@ export class SimResult {
 		this.units = this.players.concat(encounterMetrics.targets);
 	}
 
+	get iterations() {
+		return this.request.simOptions?.iterations || 1;
+	}
+
+	get duration() {
+		return this.result.avgIterationDuration || 1;
+	}
+
+	get firstIterationDuration() {
+		return this.result.firstIterationDuration || 1;
+	}
+
 	getPlayers(filter?: SimResultFilter): Array<UnitMetrics> {
 		if (filter?.player || filter?.player === 0) {
 			const player = this.getUnitWithIndex(filter.player);
@@ -266,6 +278,7 @@ export class UnitMetrics {
 	readonly iconUrl: string;
 	readonly classColor: string;
 	readonly dps: DistributionMetricsProto;
+	readonly dpasp: DistributionMetricsProto;
 	readonly hps: DistributionMetricsProto;
 	readonly tps: DistributionMetricsProto;
 	readonly dtps: DistributionMetricsProto;
@@ -315,6 +328,7 @@ export class UnitMetrics {
 			(this.isTarget ? defaultTargetIcon : '');
 		this.classColor = this.isTarget ? 'black' : classColors[specToClass[this.spec]];
 		this.dps = this.metrics.dps!;
+		this.dpasp = this.metrics.dpasp!;
 		this.hps = this.metrics.hps!;
 		this.tps = this.metrics.threat!;
 		this.dtps = this.metrics.dtps!;

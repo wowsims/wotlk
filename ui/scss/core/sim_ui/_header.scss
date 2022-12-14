@@ -1,6 +1,7 @@
 @use "sass:map";
+@use "sass:math";
 
-#simHeader {
+.sim-header {
 	padding-top: $gap-width;
 	display: flex;
 	align-items: stretch;
@@ -17,7 +18,6 @@
 		display: flex;
 		flex-wrap: nowrap;
 		align-items: flex-end;
-		font-size: $content-font-size;
 		font-weight: bold;
 	}
 
@@ -28,12 +28,18 @@
 	.import-export {
 		.import-link, .export-link {
 			padding: $nav-link-padding-y $nav-link-padding-x;
+			font-size: $nav-link-font-size;
 			transition: $nav-link-transition;
+
+			&.show {
+				color: white;
+			}
 		}
 	}
 
 	.sim-toolbar {
 		margin-left: auto;
+		font-size: $content-font-size;
 
 		.sim-toolbar-item, .sim-toolbar-socials {
 			margin-left: map.get($spacers, 3);
@@ -49,8 +55,8 @@
 			transition: $link-transition;
 
 			.warnings {
-				margin-top: $nav-link-padding-y / 2;
-				margin-bottom: $nav-link-padding-y / 2;
+				margin-top: math.div($nav-link-padding-y, 2);
+				margin-bottom: math.div($nav-link-padding-y, 2);
 				text-shadow:
 						0 0 10px $danger,
 						0 0 10px $danger,
@@ -63,13 +69,13 @@
 		}
 
 		.sim-toolbar-socials {
-			margin-top: $nav-link-padding-y / 2;
-			margin-bottom: $nav-link-padding-y / 2;
+			margin-top: math.div($nav-link-padding-y, 2);
+			margin-bottom: math.div($nav-link-padding-y, 2);
 			border-left: 1px solid $border-color;
 
 			a {
-				margin-top: $nav-link-padding-y / 2;
-				margin-bottom: $nav-link-padding-y / 2;
+				margin-top: math.div($nav-link-padding-y, 2);
+				margin-bottom: math.div($nav-link-padding-y, 2);
 			}
 		}
 	}
@@ -81,32 +87,13 @@
 
 		.dropdown-menu {
 			top: -2px;
-			border: 1px solid var(--theme-color-primary);
+			border: 1px solid $primary;
 		}
 	}
 }
 
 @include media-breakpoint-down(lg) {
-	#simHeader {
+	.sim-header {
 		padding-top: $gap-width-sm;
 	}	
 }
-
-// TODO: Replace with Bootstrap media query once on to node module
-// @media only screen and (max-width: 992px) {
-// 	#simHeader {
-// 		overflow-x: scroll;
-
-// 		.sim-tabs {
-// 			flex-wrap: nowrap;
-
-// 			.sim-link {
-// 				white-space: nowrap;
-// 			}
-// 		}
-// 	}
-
-// 	.known-issues {
-// 		white-space: nowrap;
-// 	}
-// }

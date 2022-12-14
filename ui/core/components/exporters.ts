@@ -19,45 +19,6 @@ declare var $: any;
 declare var tippy: any;
 declare var pako: any;
 
-export function newIndividualExporters<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>): HTMLElement {
-	const exportFragment = document.createElement('fragment');
-	exportFragment.innerHTML = `
-		<div class="dropdown sim-dropdown-menu">
-			<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false" >
-				<i class="fa fa-right-from-bracket"></i>
-				Export
-			</a>
-			<ul class="dropdown-menu"></ul>
-		</div>
-	`;
-
-	const menuElem = exportFragment.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-	const addMenuItem = (label: string, onClick: () => void, showInRaidSim: boolean) => {
-		const itemFragment = document.createElement('fragment');
-		itemFragment.innerHTML = `
-			<li class="${showInRaidSim ? '' : 'within-raid-sim-hide'}">
-				<a
-					href="javascript:void(0)"
-					class="dropdown-item"
-					role="button"
-					onclick="${onclick}"
-				>${label}</a>
-			</li>
-		`;
-		const itemElem = itemFragment.children[0] as HTMLElement;
-		const linkElem = itemElem.children[0] as HTMLElement;
-		linkElem.addEventListener('click', onClick);
-		menuElem.appendChild(itemElem);
-	};
-
-	addMenuItem('Link', () => new IndividualLinkExporter(menuElem, simUI), false);
-	addMenuItem('JSON', () => new IndividualJsonExporter(menuElem, simUI), true);
-	addMenuItem('80U EP', () => new Individual80UEPExporter(menuElem, simUI), false);
-	addMenuItem('Pawn EP', () => new IndividualPawnEPExporter(menuElem, simUI), false);
-
-	return exportFragment.children[0] as HTMLElement;
-}
-
 export abstract class Exporter extends Popup {
 	private readonly textElem: HTMLElement;
 
@@ -71,8 +32,8 @@ export abstract class Exporter extends Popup {
 				<textarea class="exporter-textarea form-control" readonly></textarea>
 			</div>
 			<div class="actions-row">
-				<button class="exporter-button sim-button clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button sim-button download-button">DOWNLOAD</button>
+				<button class="exporter-button btn btn-primary clipboard-button">COPY TO CLIPBOARD</button>
+				<button class="exporter-button btn btn-primary download-button">DOWNLOAD</button>
 			</div>
 		`;
 
@@ -108,7 +69,7 @@ export abstract class Exporter extends Popup {
 	abstract getData(): string;
 }
 
-class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
+export class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -122,7 +83,7 @@ class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
+export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -136,7 +97,7 @@ class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	}
 }
 
-class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
+export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -205,10 +166,11 @@ class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostResistance]: 'frostResistance',
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
+		[Stat.StatBonusArmor]: 'armorBonus',
 	}
 }
 
-class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
+export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
@@ -278,5 +240,6 @@ class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostResistance]: 'FrostResistance',
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
+		[Stat.StatBonusArmor]: 'Armor2',
 	}
 }
