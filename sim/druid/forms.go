@@ -106,6 +106,7 @@ func (druid *Druid) registerCatFormSpell() {
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
+			druid.PseudoStats.ThreatMultiplier *= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness)
 			druid.AddStatsDynamic(sim, statBonus)
@@ -137,6 +138,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.form = Humanoid
 			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
 
+			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
@@ -262,7 +264,7 @@ func (druid *Druid) registerBearFormSpell() {
 				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
 			}
 
-			druid.PseudoStats.ThreatMultiplier *= 1.3
+			druid.PseudoStats.ThreatMultiplier *= 29. / 14.
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
@@ -290,7 +292,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Humanoid
 			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
 
-			druid.PseudoStats.ThreatMultiplier /= 1.3
+			druid.PseudoStats.ThreatMultiplier /= 29. / 14.
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier /= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression

@@ -14,6 +14,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 	gcd := core.GCDDefault
 	ignoreHaste := false
 	cd := core.Cooldown{}
+	flatThreatBonus := 66. * 2.
 
 	if druid.InForm(Cat | Bear) {
 		actionID = core.ActionID{SpellID: 16857}
@@ -25,6 +26,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
 		}
+		flatThreatBonus = 632.
 	}
 
 	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
@@ -46,7 +48,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		},
 
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  66 * 2,
+		FlatThreatBonus:  flatThreatBonus,
 		DamageMultiplier: 1,
 		CritMultiplier:   druid.BalanceCritMultiplier(),
 
