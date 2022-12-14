@@ -118,8 +118,9 @@ enum Stat {
 //
 // It's also OK to include things here which aren't in the PseudoStats struct.
 enum PseudoStat {
-	PseudoStatsMainHandDps = 0;
-	PseudoStatsOffHandDps = 1;
+	PseudoStatMainHandDps = 0;
+	PseudoStatOffHandDps = 1;
+	PseudoStatRangedDps = 2;
 }
 
 message UnitStats {

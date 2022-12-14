@@ -127,16 +127,20 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.baseStats = BaseStats[BaseStatsKey{Race: character.Race, Class: character.Class}]
 
-	bonusStats := stats.Stats{}
+	character.AddStats(character.baseStats)
+	character.addUniversalStatDependencies()
+
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
-			copy(bonusStats[:], player.BonusStats.Stats)
+			character.AddStats(stats.FromFloatArray(player.BonusStats.Stats))
+		}
+		if player.BonusStats.PseudoStats != nil {
+			ps := player.BonusStats.PseudoStats
+			character.PseudoStats.BonusMHDps += ps[proto.PseudoStat_PseudoStatMainHandDps]
+			character.PseudoStats.BonusOHDps += ps[proto.PseudoStat_PseudoStatOffHandDps]
+			character.PseudoStats.BonusRangedDps += ps[proto.PseudoStat_PseudoStatRangedDps]
 		}
 	}
-
-	character.AddStats(character.baseStats)
-	character.AddStats(bonusStats)
-	character.addUniversalStatDependencies()
 
 	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeShield {
