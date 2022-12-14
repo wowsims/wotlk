@@ -427,20 +427,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTalentsTab() {
 		this.addTab('Talents', 'talents-tab', `
-			<div class="player-pet-toggle"></div>
 			<div class="talents-content tab-pane-content-container">
 				<div class="talents-tab-content tab-panel-left">
+					<div class="player-pet-toggle hide"></div>
 					<div class="talents-picker"></div>
 					<div class="glyphs-picker">
 						<span>Glyphs</span>
 					</div>
+					<div class="pet-talents-picker hide"></div>
 				</div>
 				<div class="saved-talents-manager tab-panel-right"></div>
-			</div>
-			<div class="talents-content">
-				<div class="talents-tab-content">
-					<div class="pet-talents-picker"></div>
-				</div>
 			</div>
 		`);
 
@@ -484,19 +480,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				const petTalentsPicker = new HunterPetTalentsPicker(this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this.player as Player<Spec.SpecHunter>);
 
 				let curShown = 0;
-				const toggledElems = Array.from(this.rootElem.getElementsByClassName('talents-content')) as Array<HTMLElement>;
 				const updateToggle = () => {
-					toggledElems[1 - curShown].style.display = 'none';
-					toggledElems[curShown].style.removeProperty('display');
-
-					if (curShown == 0) {
-						petTypeToggle.rootElem.style.display = 'none';
-					} else {
-						petTypeToggle.rootElem.style.removeProperty('display');
-					}
+					this.rootElem.querySelector('.talents-picker')?.classList.toggle('hide');
+					this.rootElem.querySelector('.glyphs-picker')?.classList.toggle('hide');
+					this.rootElem.querySelector('.pet-talents-picker')?.classList.toggle('hide');
 				}
 
 				const toggleContainer = this.rootElem.getElementsByClassName('player-pet-toggle')[0] as HTMLElement;
+				toggleContainer.classList.remove('hide');
 				const playerPetToggle = new EnumPicker(toggleContainer, this, {
 					values: [
 						{ name: 'Player', value: 0 },
@@ -510,9 +501,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					},
 				});
 				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
-				updateToggle();
-
-				toggleContainer.classList.add('active');
 			}
 		});
 	}

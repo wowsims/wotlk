@@ -8,6 +8,11 @@
 	display: flex;
 	flex-wrap: wrap;
 
+	.execute-group {
+		width: 100%;
+		flex-direction: column;
+	}
+
 	.advanced-button {
 		min-width: calc(50% - .5rem);
 	}
@@ -16,6 +21,10 @@
 .advanced-encounter-picker-modal {
 	.encounter-picker {
 		width: 33.33%;
+	}
+
+	.execute-group {
+		flex-direction: row;
 	}
 
 	.encounter-header {
