@@ -149,18 +149,14 @@ message IndividualSimSettings {
 	PartyBuffs party_buffs = 2;
 	Player player = 3;
 	Encounter encounter = 4;
-	int32 target_dummies = 9;
-	// Deprecate after 2 months (on 2023/02/13)
 	repeated double ep_weights = 6;
-	UnitStats ep_weights_stats = 10;
+	int32 target_dummies = 9;
 }
 
 // Local storage data for gear settings.
 message SavedGearSet {
 	EquipmentSpec gear = 1;
-	// Deprecate after 2 months (on 2023/02/13)
 	repeated double bonus_stats = 2;
-	UnitStats bonus_stats_stats = 3;
 }
 
 // Local storage data for other settings.

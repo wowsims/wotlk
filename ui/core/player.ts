@@ -16,7 +16,6 @@ import {
 	SimDatabase,
 	Spec,
 	Stat,
-	UnitStats,
 	WeaponType,
 } from './proto/common.js';
 import {
@@ -597,7 +596,7 @@ export class Player<SpecType extends Spec> {
 		}
 
 		const epFromStats = this.computeStatsEP(new Stats(gem.stats));
-		const epFromEffect = getMetaGemEffectEP(this.spec, gem, Stats.fromProto(this.currentStats.finalStats));
+		const epFromEffect = getMetaGemEffectEP(this.spec, gem, new Stats(this.currentStats.finalStats));
 		let bonusEP = 0;
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (gem.unique) {
@@ -806,7 +805,7 @@ export class Player<SpecType extends Spec> {
 				class: this.getClass(),
 				equipment: gear.asSpec(),
 				consumes: this.getConsumes(),
-				bonusStats: this.getBonusStats().toProto(),
+				bonusStats: this.getBonusStats().asArray(),
 				buffs: this.getBuffs(),
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
@@ -829,7 +828,7 @@ export class Player<SpecType extends Spec> {
 			this.setRace(eventID, proto.race);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
-			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
+			this.setBonusStats(eventID, new Stats(proto.bonusStats));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
 			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
@@ -868,6 +867,6 @@ export class Player<SpecType extends Spec> {
 		proto.cooldowns = Cooldowns.create({
 			hpPercentForDefensives: isTankSpec(spec) ? 0.35 : 0,
 		});
-		proto.bonusStats = new Stats().toProto();
+		proto.bonusStats = new Stats().asArray();
 	}
 }

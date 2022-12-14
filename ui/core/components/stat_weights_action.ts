@@ -2,7 +2,7 @@ import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetric
 import { ItemSlot } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
+import { Stat } from '../proto/common.js';
 import { Stats } from '../proto_utils/stats.js';
 import { Gear } from '../proto_utils/gear.js';
 import { getClassStatName, statOrder } from '../proto_utils/names.js';
@@ -127,7 +127,7 @@ class EpWeightsMenu extends Popup {
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
-		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
+		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => Array<number>) => {
 			tippy(button.previousSibling, {
 				'content': labelTooltip,
 				'allowHTML': true,
@@ -137,7 +137,7 @@ class EpWeightsMenu extends Popup {
 				'allowHTML': true,
 			});
 			button.addEventListener('click', event => {
-				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), new Stats(weightsFunc()));
 			});
 		};
 
@@ -151,7 +151,7 @@ class EpWeightsMenu extends Popup {
 		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
 		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${armorStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
-		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
+		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
@@ -215,18 +215,16 @@ class EpWeightsMenu extends Popup {
 
 	private makeTableRow(stat: Stat, iterations: number, result: StatWeightsResult): HTMLElement {
 		const row = document.createElement('tr');
-		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
-			return `
-				<td class="stdev-cell ${className} type-weight"><span>${statWeights.weights!.stats[stat].toFixed(2)}</span><span>${stDevToConf90(statWeights.weightsStdev!.stats[stat], iterations).toFixed(2)}</span></td>
-				<td class="stdev-cell ${className} type-ep"><span>${statWeights.epValues!.stats[stat].toFixed(2)}</span><span>${stDevToConf90(statWeights.epValuesStdev!.stats[stat], iterations).toFixed(2)}</span></td>
-			`;
-		};
 		row.innerHTML = `
 			<td>${getClassStatName(stat, this.simUI.player.getClass())}</td>
-			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
-			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
-			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
-			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
+			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-weight"><span>${result.hps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell healing-metrics type-ep"><span>${result.hps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
+			<td class="stdev-cell threat-metrics type-ep"><span>${result.dtps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
 			<td class="current-ep"></td>
 		`;
 
@@ -259,28 +257,28 @@ class EpWeightsMenu extends Popup {
 	private getPrevSimResult(): StatWeightsResult {
 		return this.simUI.prevEpSimResult || StatWeightsResult.create({
 			dps: {
-				weights: new Stats().toProto(),
-				weightsStdev: new Stats().toProto(),
-				epValues: new Stats().toProto(),
-				epValuesStdev: new Stats().toProto(),
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
 			},
 			hps: {
-				weights: new Stats().toProto(),
-				weightsStdev: new Stats().toProto(),
-				epValues: new Stats().toProto(),
-				epValuesStdev: new Stats().toProto(),
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
 			},
 			tps: {
-				weights: new Stats().toProto(),
-				weightsStdev: new Stats().toProto(),
-				epValues: new Stats().toProto(),
-				epValuesStdev: new Stats().toProto(),
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
 			},
 			dtps: {
-				weights: new Stats().toProto(),
-				weightsStdev: new Stats().toProto(),
-				epValues: new Stats().toProto(),
-				epValuesStdev: new Stats().toProto(),
+				weights: new Stats().asArray(),
+				weightsStdev: new Stats().asArray(),
+				epValues: new Stats().asArray(),
+				epValuesStdev: new Stats().asArray(),
 			},
 		});
 	}
