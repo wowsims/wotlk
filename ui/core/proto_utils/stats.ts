@@ -1,7 +1,8 @@
-import { Stat } from '../proto/common.js';
+import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
 import { getEnumValues } from '../utils.js';
 
 const STATS_LEN = getEnumValues(Stat).length;
+const PSEUDOSTATS_LEN = getEnumValues(PseudoStat).length;
 
 /**
  * Represents values for all character stats (stam, agi, spell power, hit raiting, etc).
@@ -10,26 +11,37 @@ const STATS_LEN = getEnumValues(Stat).length;
  */
 export class Stats {
 	private readonly stats: Array<number>;
+	private readonly pseudoStats: Array<number>;
 
-	constructor(stats?: Array<number>) {
-		this.stats = stats?.slice(0, STATS_LEN) || [];
+	constructor(stats?: Array<number>, pseudoStats?: Array<number>) {
+		this.stats = Stats.initStatsArray(STATS_LEN, stats);
+		this.pseudoStats = Stats.initStatsArray(PSEUDOSTATS_LEN, pseudoStats);
+	}
 
-		if (this.stats.length < STATS_LEN) {
-			this.stats = this.stats.concat(new Array(STATS_LEN - (stats?.length || 0)).fill(0));
+	private static initStatsArray(expectedLen: number, newStats?: Array<number>): Array<number> {
+		let stats = newStats?.slice(0, expectedLen) || [];
+
+		if (stats.length < expectedLen) {
+			stats = stats.concat(new Array(expectedLen - (newStats?.length || 0)).fill(0));
 		}
 
-		for (let i = 0; i < STATS_LEN; i++) {
-			if (this.stats[i] == null)
-				this.stats[i] = 0;
+		for (let i = 0; i < expectedLen; i++) {
+			if (stats[i] == null)
+				stats[i] = 0;
 		}
+		return stats;
 	}
 
 	equals(other: Stats): boolean {
-		return this.stats.every((newStat, statIdx) => newStat == other.getStat(statIdx));
+		return this.stats.every((newStat, statIdx) => newStat == other.getStat(statIdx)) &&
+				this.pseudoStats.every((newStat, statIdx) => newStat == other.getPseudoStat(statIdx))
 	}
 
 	getStat(stat: Stat): number {
 		return this.stats[stat];
+	}
+	getPseudoStat(stat: PseudoStat): number {
+		return this.pseudoStats[stat];
 	}
 
 	withStat(stat: Stat, value: number): Stats {
@@ -43,17 +55,24 @@ export class Stats {
 	}
 
 	add(other: Stats): Stats {
-		return new Stats(this.stats.map((value, stat) => value + other.stats[stat]));
+		return new Stats(
+			this.stats.map((value, stat) => value + other.stats[stat]),
+			this.pseudoStats.map((value, stat) => value + other.pseudoStats[stat]));
 	}
 
 	subtract(other: Stats): Stats {
-		return new Stats(this.stats.map((value, stat) => value - other.stats[stat]));
+		return new Stats(
+			this.stats.map((value, stat) => value - other.stats[stat]),
+			this.pseudoStats.map((value, stat) => value - other.pseudoStats[stat]));
 	}
 
 	computeEP(epWeights: Stats): number {
 		let total = 0;
 		this.stats.forEach((stat, idx) => {
 			total += stat * epWeights.stats[idx];
+		});
+		this.pseudoStats.forEach((stat, idx) => {
+			total += stat * epWeights.pseudoStats[idx];
 		});
 		return total;
 	}
@@ -63,11 +82,18 @@ export class Stats {
 	}
 
 	toJson(): Object {
-		return this.asArray();
+		return UnitStats.toJson(this.toProto()) as Object;
+	}
+
+	toProto(): UnitStats {
+		return UnitStats.create({
+			stats: this.stats.slice(),
+			pseudoStats: this.pseudoStats.slice(),
+		});
 	}
 
 	static fromJson(obj: any): Stats {
-		return new Stats(obj as Array<number>);
+		return Stats.fromProto(UnitStats.fromJson(obj));
 	}
 
 	static fromMap(statsMap: Partial<Record<Stat, number>>): Stats {
@@ -77,5 +103,13 @@ export class Stats {
 			statsArr[Number(statStr)] = value;
 		});
 		return new Stats(statsArr);
+	}
+
+	static fromProto(unitStats?: UnitStats): Stats {
+		if (unitStats) {
+			return new Stats(unitStats.stats, unitStats.pseudoStats);
+		} else {
+			return new Stats();
+		}
 	}
 }

@@ -24,7 +24,7 @@ message Player {
 
 	EquipmentSpec equipment = 3;
 	Consumes consumes = 4;
-	repeated double bonus_stats = 5;
+	UnitStats bonus_stats = 5;
 
 	IndividualBuffs buffs = 15;
 
@@ -279,12 +279,12 @@ message ComputeStatsRequest {
 }
 message PlayerStats {
 	// Stats
-	repeated double base_stats = 6;
-	repeated double gear_stats = 1;
-	repeated double talents_stats = 7;
-	repeated double buffs_stats = 8;
-	repeated double consumes_stats = 9;
-	repeated double final_stats = 2;
+	UnitStats base_stats = 6;
+	UnitStats gear_stats = 1;
+	UnitStats talents_stats = 7;
+	UnitStats buffs_stats = 8;
+	UnitStats consumes_stats = 9;
+	UnitStats final_stats = 2;
 
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
@@ -321,10 +321,10 @@ message StatWeightsResult {
 	StatWeightValues dtps = 3;
 }
 message StatWeightValues {
-	repeated double weights = 1;
-	repeated double weights_stdev = 2;
-	repeated double ep_values = 3;
-	repeated double ep_values_stdev = 4;
+	UnitStats weights = 1;
+	UnitStats weights_stdev = 2;
+	UnitStats ep_values = 3;
+	UnitStats ep_values_stdev = 4;
 }
 
 message AsyncAPIResult {

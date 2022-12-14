@@ -129,7 +129,9 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	bonusStats := stats.Stats{}
 	if player.BonusStats != nil {
-		copy(bonusStats[:], player.BonusStats)
+		if player.BonusStats.Stats != nil {
+			copy(bonusStats[:], player.BonusStats.Stats)
+		}
 	}
 
 	character.AddStats(character.baseStats)
@@ -155,34 +157,41 @@ func (character *Character) addUniversalStatDependencies() {
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
+	measureStats := func() *proto.UnitStats {
+		return &proto.UnitStats{
+			Stats:       character.SortAndApplyStatDependencies(character.stats).ToFloatArray(),
+			PseudoStats: character.GetPseudoStatsProto(),
+		}
+	}
+
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
-	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BaseStats = measureStats()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
-	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.GearStats = measureStats()
 
 	agent.ApplyTalents()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseTalents)
-	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.TalentsStats = measureStats()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBuffs)
-	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BuffsStats = measureStats()
 
 	applyConsumeEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseConsumes)
-	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.ConsumesStats = measureStats()
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 	}
 
-	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	return playerStats
 }
 func (character *Character) applyBuildPhaseAuras(phase CharacterBuildPhase) {
@@ -376,7 +385,10 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 
 	if playerStats != nil {
 		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.FinalStats = character.GetStats().ToFloatArray()
+		playerStats.FinalStats = &proto.UnitStats{
+			Stats:       character.GetStats().ToFloatArray(),
+			PseudoStats: character.GetPseudoStatsProto(),
+		}
 		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.Sets = character.GetActiveSetBonusNames()
 		playerStats.Cooldowns = character.GetMajorCooldownIDs()
@@ -519,6 +531,10 @@ func (character *Character) doneIteration(sim *Simulation) {
 	}
 
 	character.Unit.doneIteration(sim)
+}
+
+func (character *Character) GetPseudoStatsProto() []float64 {
+	return nil
 }
 
 func (character *Character) GetMetricsProto() *proto.UnitMetrics {
