@@ -13,7 +13,6 @@ import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Rotation_Swipe as Swipe,
 	FeralTankDruid_Options as DruidOptions,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
@@ -43,11 +42,9 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = DruidRotation.create({
-	maulRageThreshold: 50,
-	swipe: Swipe.SwipeWithEnoughAP,
-	swipeApThreshold: 2700,
+	maulRageThreshold: 60,
 	maintainDemoralizingRoar: true,
-	maintainFaerieFire: true,
+	lacerateTime: 5.0,
 });
 
 export const DefaultOptions = DruidOptions.create({

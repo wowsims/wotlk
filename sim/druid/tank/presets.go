@@ -34,10 +34,9 @@ var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 			StartingRage:    20,
 		},
 		Rotation: &proto.FeralTankDruid_Rotation{
-			MaulRageThreshold:        50,
+			MaulRageThreshold:        60,
 			MaintainDemoralizingRoar: true,
-			Swipe:                    proto.FeralTankDruid_Rotation_SwipeWithEnoughAP,
-			SwipeApThreshold:         2700,
+			LacerateTime:             5.0,
 		},
 	},
 }

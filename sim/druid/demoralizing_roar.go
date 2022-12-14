@@ -57,6 +57,12 @@ func (druid *Druid) ShouldDemoralizingRoar(sim *core.Simulation, filler bool, ma
 		return true
 	}
 
+	refreshWindow := time.Second * 2
+
+	if (druid.MangleBear != nil) && (!druid.MangleBear.IsReady(sim)) {
+		refreshWindow = druid.MangleBear.ReadyAt() - sim.CurrentTime
+	}
+
 	return maintainOnly &&
-		druid.DemoralizingRoarAuras[druid.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, time.Second*2)
+		druid.DemoralizingRoarAuras[druid.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, refreshWindow)
 }
