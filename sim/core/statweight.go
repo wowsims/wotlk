@@ -13,19 +13,31 @@ import (
 
 const DTPSReferenceStat = stats.Armor
 
+type UnitStats struct {
+	Stats       stats.Stats
+	PseudoStats []float64
+}
+
+func (us UnitStats) ToProto() *proto.UnitStats {
+	return &proto.UnitStats{
+		Stats:       us.Stats[:],
+		PseudoStats: us.PseudoStats,
+	}
+}
+
 type StatWeightValues struct {
-	Weights       stats.Stats
-	WeightsStdev  stats.Stats
-	EpValues      stats.Stats
-	EpValuesStdev stats.Stats
+	Weights       UnitStats
+	WeightsStdev  UnitStats
+	EpValues      UnitStats
+	EpValuesStdev UnitStats
 }
 
 func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
 	return &proto.StatWeightValues{
-		Weights:       swv.Weights[:],
-		WeightsStdev:  swv.WeightsStdev[:],
-		EpValues:      swv.EpValues[:],
-		EpValuesStdev: swv.EpValuesStdev[:],
+		Weights:       swv.Weights.ToProto(),
+		WeightsStdev:  swv.WeightsStdev.ToProto(),
+		EpValues:      swv.EpValues.ToProto(),
+		EpValuesStdev: swv.EpValuesStdev.ToProto(),
 	}
 }
 
@@ -47,7 +59,10 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 
 func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
 	if swr.Player.BonusStats == nil {
-		swr.Player.BonusStats = make([]float64, stats.Len)
+		swr.Player.BonusStats = &proto.UnitStats{}
+	}
+	if swr.Player.BonusStats.Stats == nil {
+		swr.Player.BonusStats.Stats = make([]float64, stats.Len)
 	}
 
 	raidProto := SinglePlayerRaidProto(swr.Player, swr.PartyBuffs, swr.RaidBuffs, swr.Debuffs)
@@ -101,7 +116,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		defer waitGroup.Done()
 
 		simRequest := googleProto.Clone(baseSimRequest).(*proto.RaidSimRequest)
-		simRequest.Raid.Parties[0].Players[0].BonusStats[stat] += value
+		simRequest.Raid.Parties[0].Players[0].BonusStats.Stats[stat] += value
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
 		go RunSim(simRequest, reporter) // RunRaidSim(simRequest)
@@ -162,38 +177,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 
 	for _, stat := range statsToWeigh {
 		statMod := defaultStatMod
-		if stat == stats.SpellHit {
-			statMod = spellHitStatMod
-			if baseStats[stat] < spellHitCap && baseStats[stat]+statMod > spellHitCap {
-				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - spellHitCap
-				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
-				} else {
-					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
-				}
-
-				continue
-			}
-		} else if stat == stats.MeleeHit {
-			statMod = meleeHitStatMod
-			if baseStats[stat] < melee2HHitCap && baseStats[stat]+statMod > melee2HHitCap {
-				// Check that newMod is atleast half of the previous mod, or we introduce a lot of deviation in the weight calc
-				newMod := baseStats[stat] - melee2HHitCap
-				if newMod > 0.5*statMod {
-					statModsHigh[stat] = newMod
-					statModsLow[stat] = -newMod
-				} else {
-					// Otherwise we go the opposite way of cap
-					statModsHigh[stat] = -statMod
-					statModsLow[stat] = -statMod
-				}
-				continue
-			}
-		} else if stat == stats.Expertise {
+		if stat == stats.Expertise {
 			// Expertise is non-linear, so adjust in increments that match the stepwise reduction.
 			statMod = ExpertisePerQuarterPercentReduction
 		} else if stat == stats.Armor {
@@ -237,12 +221,16 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 
 		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
 		if stat == stats.SpellHit {
-			if baseStats[stat] >= spellHitCap {
+			if baseStats.Stats[stat] >= spellHitCap {
 				resultsLow[stat] = nil
+			} else if baseStats.Stats[stat]+statModsHigh[stat] > spellHitCap {
+				resultsHigh[stat] = nil
 			}
 		} else if stat == stats.MeleeHit {
-			if baseStats[stat] >= melee2HHitCap {
+			if baseStats.Stats[stat] >= melee2HHitCap {
 				resultsLow[stat] = nil
+			} else if baseStats.Stats[stat]+statModsHigh[stat] > melee2HHitCap {
+				resultsHigh[stat] = nil
 			}
 		}
 
@@ -259,7 +247,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 				}
 			}
 
-			weightResults.Weights[stat], weightResults.WeightsStdev[stat] = calcMeanAndStdev(sample)
+			weightResults.Weights.Stats[stat], weightResults.WeightsStdev.Stats[stat] = calcMeanAndStdev(sample)
 		}
 
 		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
@@ -276,11 +264,11 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, statsToWeigh []stats.Stat, re
 		}
 
 		calcEpResults := func(weightResults *StatWeightValues, refStat stats.Stat) {
-			if weightResults.Weights[refStat] == 0 {
+			if weightResults.Weights.Stats[refStat] == 0 {
 				return
 			}
-			weightResults.EpValues[stat] = weightResults.Weights[stat] / weightResults.Weights[refStat]
-			weightResults.EpValuesStdev[stat] = weightResults.WeightsStdev[stat] / math.Abs(weightResults.Weights[refStat])
+			weightResults.EpValues.Stats[stat] = weightResults.Weights.Stats[stat] / weightResults.Weights.Stats[refStat]
+			weightResults.EpValuesStdev.Stats[stat] = weightResults.WeightsStdev.Stats[stat] / math.Abs(weightResults.Weights.Stats[refStat])
 		}
 
 		calcEpResults(&result.Dps, referenceStat)

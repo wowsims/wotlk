@@ -38,7 +38,7 @@ func (testSuite *IndividualTestSuite) TestCharacterStats(testName string, csr *p
 	testSuite.testNames = append(testSuite.testNames, testName)
 
 	result := ComputeStats(csr)
-	finalStats := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats)
+	finalStats := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats.Stats)
 
 	testSuite.testResults.CharacterStatsResults[testName] = &proto.CharacterStatsTestResult{
 		FinalStats: toFixedStats(finalStats[:], storagePrecision),
@@ -49,7 +49,7 @@ func (testSuite *IndividualTestSuite) TestStatWeights(testName string, swr *prot
 	testSuite.testNames = append(testSuite.testNames, testName)
 
 	result := StatWeights(swr)
-	weights := stats.FromFloatArray(result.Dps.Weights)
+	weights := stats.FromFloatArray(result.Dps.Weights.Stats)
 
 	testSuite.testResults.StatWeightsResults[testName] = &proto.StatWeightsTestResult{
 		Weights: toFixedStats(weights[:], storagePrecision),
