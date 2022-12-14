@@ -34,13 +34,13 @@
   }
 
   .icon-group {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
 
     &> * {
       margin-bottom: $block-spacer !important;
-      margin-right: 0 !important;
-      display: flex;
-      justify-content: center;
+      margin-right: $block-spacer !important;
+      flex: 0;
     }
   }
 
