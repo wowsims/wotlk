@@ -180,7 +180,7 @@ func CharacterStatsTest(label string, t *testing.T, raid *proto.Raid, expectedSt
 	}
 
 	result := ComputeStats(csr)
-	finalStats := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats)
+	finalStats := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats.Stats)
 
 	const tolerance = 0.5
 	if !finalStats.EqualsWithTolerance(expectedStats, tolerance) {
@@ -196,7 +196,7 @@ func StatWeightsTest(label string, t *testing.T, _swr *proto.StatWeightsRequest,
 	swr.SimOptions.Iterations = 5000
 
 	result := StatWeights(swr)
-	resultWeights := stats.FromFloatArray(result.Dps.Weights)
+	resultWeights := stats.FromFloatArray(result.Dps.Weights.Stats)
 
 	const tolerance = 0.05
 	if !resultWeights.EqualsWithTolerance(expectedStatWeights, tolerance) {
