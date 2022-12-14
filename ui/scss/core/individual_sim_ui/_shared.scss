@@ -180,20 +180,6 @@
 //   text-align: right;
 // }
 
-.player-pet-toggle {
-	display: none;
-
-  &.active {
-    display: flex;
-    justify-content: center;
-    margin-bottom: calc(var(--bs-gap) / 2);
-  }
-}
-
-.player-pet-toggle > * {
-	margin: 0 10px;
-}
-
 .talents-tab-content {
 	display: flex;
 	flex-wrap: wrap;
