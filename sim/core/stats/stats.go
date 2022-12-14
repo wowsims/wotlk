@@ -57,6 +57,8 @@ const (
 	FrostRune
 	UnholyRune
 	DeathRune
+	// DO NOT add new stats here without discussing it first; new stats come with
+	// a performance penalty.
 
 	Len
 )

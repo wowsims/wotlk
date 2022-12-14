@@ -109,6 +109,22 @@ enum Stat {
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
 	StatBonusArmor = 34;
+	// DO NOT add new stats here without discussing it first; new stats come with
+	// a performance penalty.
+}
+
+// Not all pseudostats are included here; just the ones we want to pass
+// between the UI and backend.
+//
+// It's also OK to include things here which aren't in the PseudoStats struct.
+enum PseudoStat {
+	PseudoStatsMainHandDps = 0;
+	PseudoStatsOffHandDps = 1;
+}
+
+message UnitStats {
+	repeated double stats = 1;
+	repeated double pseudo_stats = 2;
 }
 
 enum ItemType {

@@ -63,6 +63,7 @@ import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import { Stats } from './proto_utils/stats.js';
 import { Target } from './target.js';
 import { Target as TargetProto } from './proto/common.js';
+import { UnitStats } from './proto/common.js';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
 import { addStatWeightsAction } from './components/stat_weights_action.js';
 import { equalsOrBothNull, getEnumValues } from './utils.js';
@@ -382,13 +383,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			getData: (player: Player<any>) => {
 				return SavedGearSet.create({
 					gear: player.getGear().asSpec(),
-					bonusStats: player.getBonusStats().asArray(),
+					bonusStatsStats: player.getBonusStats().toProto(),
 				});
 			},
 			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-					player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats || []));
+					if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
+						player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
+					} else {
+						player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
+					}
 				});
 			},
 			changeEmitters: [this.player.changeEmitter],
@@ -407,7 +412,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					data: SavedGearSet.create({
 						// Convert to gear and back so order is always the same.
 						gear: this.sim.db.lookupEquipmentSpec(presetGear.gear).asSpec(),
-						bonusStats: new Stats().asArray(),
+						bonusStatsStats: new Stats().toProto(),
 					}),
 					enableWhen: presetGear.enableWhen,
 				});
@@ -611,7 +616,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			tanks: this.sim.raid.getTanks(),
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
-			epWeights: this.player.getEpWeights().asArray(),
+			epWeightsStats: this.player.getEpWeights().toProto(),
 			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
@@ -638,12 +643,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {
-				// Correction for removal of healing power and arcane/fire/etc power.
-				// TODO: Remove this after 2 months (2022/11/22).
-				if (settings.epWeights.length > 37) {
-					settings.epWeights.splice(6, 7);
-				}
 				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
+			} else if (settings.epWeightsStats) {
+				this.player.setEpWeights(eventID, Stats.fromProto(settings.epWeightsStats));
 			} else {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
 			}
@@ -656,15 +658,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
 			}
 
-			if (settings.encounter) {
-				// Correction for removal of healing power and arcane/fire/etc power.
-				// TODO: Remove this after 2 months (2022/11/22).
-				settings.encounter.targets.forEach(target => {
-					if (target.stats.length > 37) {
-						target.stats.splice(6, 7);
-					}
-				});
-			}
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 
 			if (settings.settings) {
