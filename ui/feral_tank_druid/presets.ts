@@ -42,9 +42,9 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = DruidRotation.create({
-	maulRageThreshold: 60,
+	maulRageThreshold: 25,
 	maintainDemoralizingRoar: true,
-	lacerateTime: 5.0,
+	lacerateTime: 8.0,
 });
 
 export const DefaultOptions = DruidOptions.create({

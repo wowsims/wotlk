@@ -60,7 +60,7 @@ func (druid *Druid) ShouldDemoralizingRoar(sim *core.Simulation, filler bool, ma
 	refreshWindow := time.Second * 2
 
 	if (druid.MangleBear != nil) && (!druid.MangleBear.IsReady(sim)) {
-		refreshWindow = druid.MangleBear.ReadyAt() - sim.CurrentTime
+		refreshWindow = druid.MangleBear.ReadyAt() - sim.CurrentTime + core.GCDDefault
 	}
 
 	return maintainOnly &&

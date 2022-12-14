@@ -37,7 +37,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  344,
+		FlatThreatBonus:  424,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			modifier := 1.0
