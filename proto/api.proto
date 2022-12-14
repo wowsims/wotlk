@@ -24,7 +24,7 @@ message Player {
 
 	EquipmentSpec equipment = 3;
 	Consumes consumes = 4;
-	UnitStats bonus_stats = 5;
+	UnitStats bonus_stats = 36;
 
 	IndividualBuffs buffs = 15;
 

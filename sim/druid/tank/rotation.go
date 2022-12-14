@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (bear *FeralTankDruid) OnGCDReady(sim *core.Simulation) {
@@ -20,25 +18,45 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 	if bear.GCD.IsReady(sim) {
 		if bear.shouldSaveLacerateStacks(sim) && bear.CanLacerate(sim) {
 			bear.Lacerate.Cast(sim, bear.CurrentTarget)
-		} else if bear.Rotation.MaintainFaerieFire && bear.ShouldFaerieFire(sim) {
-			bear.FaerieFire.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldDemoRoar(sim) {
 			bear.DemoralizingRoar.Cast(sim, bear.CurrentTarget)
-		} else if bear.Rotation.Swipe == proto.FeralTankDruid_Rotation_SwipeSpam {
-			if bear.CanSwipeBear() {
-				bear.SwipeBear.Cast(sim, bear.CurrentTarget)
+		} else if bear.Berserk.IsReady(sim) {
+			bear.Berserk.Cast(sim, nil)
+
+			// Bundle Enrage + Barkskin with Berserk
+			if bear.Enrage.IsReady(sim) {
+				bear.Enrage.Cast(sim, nil)
 			}
+
+			bear.UpdateMajorCooldowns()
 		} else if bear.CanMangleBear(sim) {
 			bear.MangleBear.Cast(sim, bear.CurrentTarget)
+		} else if bear.shouldFaerieFire(sim) {
+			bear.FaerieFire.Cast(sim, bear.CurrentTarget)
+		} else if bear.shouldLacerate(sim) {
+			bear.Lacerate.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldSwipe(sim) {
 			bear.SwipeBear.Cast(sim, bear.CurrentTarget)
-		} else if bear.CanLacerate(sim) {
-			bear.Lacerate.Cast(sim, bear.CurrentTarget)
 		}
 	}
 
-	if bear.GCD.IsReady(sim) && (bear.MangleBear != nil && !bear.MangleBear.IsReady(sim)) && bear.Rotation.Swipe != proto.FeralTankDruid_Rotation_SwipeSpam {
-		bear.WaitUntil(sim, bear.MangleBear.ReadyAt())
+	if bear.GCD.IsReady(sim) {
+		nextAction := bear.FaerieFire.ReadyAt()
+
+		if bear.MangleBear == nil {
+			bear.WaitUntil(sim, nextAction)
+		} else if !bear.MangleBear.IsReady(sim) {
+			nextAction = core.MaxDuration(nextAction, sim.CurrentTime)
+			nextMangle := bear.MangleBear.ReadyAt()
+
+			if nextMangle < nextAction+time.Second {
+				nextAction = nextMangle
+			}
+
+			if nextAction > sim.CurrentTime {
+				bear.WaitUntil(sim, nextAction)
+			}
+		}
 	}
 
 	bear.tryQueueMaul(sim)
@@ -51,13 +69,9 @@ func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool 
 }
 
 func (bear *FeralTankDruid) shouldSwipe(sim *core.Simulation) bool {
-	ap := bear.GetStat(stats.AttackPower) + bear.PseudoStats.MobTypeAttackPower
-
-	return bear.Rotation.Swipe == proto.FeralTankDruid_Rotation_SwipeWithEnoughAP &&
-		bear.CanSwipeBear() &&
-		bear.LacerateDot.GetStacks() == 5 &&
-		bear.LacerateDot.RemainingDuration(sim) > time.Millisecond*3000 &&
-		ap >= bear.Rotation.SwipeApThreshold
+	return bear.CanSwipeBear() &&
+		((bear.MangleBear == nil) || (bear.MangleBear.ReadyAt() >= sim.CurrentTime+core.GCDDefault)) &&
+		bear.CurrentRage()-bear.SwipeBear.DefaultCast.Cost >= bear.MaulRageThreshold
 }
 
 func (bear *FeralTankDruid) tryQueueMaul(sim *core.Simulation) {
@@ -68,4 +82,12 @@ func (bear *FeralTankDruid) tryQueueMaul(sim *core.Simulation) {
 
 func (bear *FeralTankDruid) shouldDemoRoar(sim *core.Simulation) bool {
 	return bear.ShouldDemoralizingRoar(sim, false, bear.Rotation.MaintainDemoralizingRoar)
+}
+
+func (bear *FeralTankDruid) shouldFaerieFire(sim *core.Simulation) bool {
+	return bear.FaerieFire.IsReady(sim) && ((bear.MangleBear == nil) || (bear.MangleBear.ReadyAt() >= sim.CurrentTime+time.Second))
+}
+
+func (bear *FeralTankDruid) shouldLacerate(sim *core.Simulation) bool {
+	return bear.CanLacerate(sim) && ((bear.MangleBear == nil) || (bear.MangleBear.ReadyAt() >= sim.CurrentTime+core.GCDDefault)) && ((bear.LacerateDot.GetStacks() < 5) || (bear.LacerateDot.RemainingDuration(sim) <= time.Duration(bear.Rotation.LacerateTime*float64(time.Second))))
 }
