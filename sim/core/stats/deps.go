@@ -175,7 +175,7 @@ func (sdm *StatDependencyManager) sortDeps() {
 				continue
 			}
 
-			// Combine all static deps into 1. Static deps have enabled == true right now.
+			// Combine all static deps into 1 for performance.
 			startAmount := 0.0
 			if srcStat == dstStat {
 				startAmount = 1
@@ -188,7 +188,7 @@ func (sdm *StatDependencyManager) sortDeps() {
 				}
 
 				if dep.dynamic {
-					// Dynamic deps (those with enabled == false) need to remain separate, so
+					// Dynamic deps need to remain separate, so
 					// they can be turned on/off.
 					deps = append(deps, dep)
 				} else {
