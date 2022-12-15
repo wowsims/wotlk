@@ -8,7 +8,7 @@ import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -49,6 +49,10 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -71,17 +75,20 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: Presets.P1_UNHOLY_DW_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.88,
-					[Stat.StatAgility]: 1.22,
+					[Stat.StatStrength]: 3.22,
+					[Stat.StatAgility]: 0.62,
 					[Stat.StatArmor]: 0.01,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatExpertise]: 2.26,
-					[Stat.StatMeleeHaste]: 1.23,
-					[Stat.StatMeleeHit]: 1.15,
-					[Stat.StatMeleeCrit]: 1.43,
-					[Stat.StatArmorPenetration]: 1.56,
-					[Stat.StatSpellHit]: 0.71,
-					[Stat.StatSpellCrit]: 0.07,
+					[Stat.StatExpertise]: 1.13,
+					[Stat.StatMeleeHaste]: 1.85,
+					[Stat.StatMeleeHit]: 1.92,
+					[Stat.StatMeleeCrit]: 0.76,
+					[Stat.StatArmorPenetration]: 0.77,
+					[Stat.StatSpellHit]: 0.80,
+					[Stat.StatSpellCrit]: 0.34,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 3.10,
+					[PseudoStat.PseudoStatOffHandDps]: 1.79,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

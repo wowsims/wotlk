@@ -4,7 +4,7 @@ import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -119,6 +119,10 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				Stat.StatArmorPenetration,
 				Stat.StatExpertise,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+			],
 			// Reference stat against which to calculate EP.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -142,16 +146,19 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				gear: Presets.PRERAID_PRESET_ASSASSINATION.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatAgility]: 1.87,
-					[Stat.StatStrength]: 1.12,
+					[Stat.StatAgility]: 1.86,
+					[Stat.StatStrength]: 1.14,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatSpellCrit] : 0.32,
+					[Stat.StatSpellCrit] : 0.28,
 					[Stat.StatSpellHit] : 0.08,
 					[Stat.StatMeleeHit]: 1.39,
 					[Stat.StatMeleeCrit]: 1.32,
 					[Stat.StatMeleeHaste]: 1.48,
 					[Stat.StatArmorPenetration]: 0.84,
-					[Stat.StatExpertise]: 0.83,
+					[Stat.StatExpertise]: 0.98,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 2.94,
+					[PseudoStat.PseudoStatOffHandDps]: 2.45,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

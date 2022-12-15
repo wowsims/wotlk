@@ -182,13 +182,22 @@ export class Stats {
 		return Stats.fromProto(UnitStats.fromJson(obj));
 	}
 
-	static fromMap(statsMap: Partial<Record<Stat, number>>): Stats {
+	static fromMap(statsMap: Partial<Record<Stat, number>>, pseudoStatsMap?: Partial<Record<PseudoStat, number>>): Stats {
 		const statsArr = new Array(STATS_LEN).fill(0);
 		Object.entries(statsMap).forEach(entry => {
 			const [statStr, value] = entry;
 			statsArr[Number(statStr)] = value;
 		});
-		return new Stats(statsArr);
+
+		const pseudoStatsArr = new Array(PSEUDOSTATS_LEN).fill(0);
+		if (pseudoStatsMap) {
+			Object.entries(pseudoStatsMap).forEach(entry => {
+				const [pseudoStatstr, value] = entry;
+				pseudoStatsArr[Number(pseudoStatstr)] = value;
+			});
+		}
+
+		return new Stats(statsArr, pseudoStatsArr);
 	}
 
 	static fromProto(unitStats?: UnitStats): Stats {

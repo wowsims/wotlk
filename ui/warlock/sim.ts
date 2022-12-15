@@ -72,12 +72,12 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.2,
-					[Stat.StatSpirit]: 0.42,
+					[Stat.StatIntellect]: 0.18,
+					[Stat.StatSpirit]: 0.54,
 					[Stat.StatSpellPower]: 1,
 					[Stat.StatSpellHit]: 0.93,
-					[Stat.StatSpellCrit]: 0.52,
-					[Stat.StatSpellHaste]: 0.77,
+					[Stat.StatSpellCrit]: 0.53,
+					[Stat.StatSpellHaste]: 0.81,
 					[Stat.StatStamina]: 0.01,
 				}),
 				// Default consumes settings.

@@ -8,7 +8,7 @@ import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -52,6 +52,10 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatResilience,
 				Stat.StatSpellHit,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -93,6 +97,9 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					[Stat.StatDodge]: 0.7,
 					[Stat.StatParry]: 0.58,
 					[Stat.StatDefense]: 0.8,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 3.10,
+					[PseudoStat.PseudoStatOffHandDps]: 0.0,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

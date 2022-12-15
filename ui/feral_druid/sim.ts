@@ -3,7 +3,7 @@ import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -37,6 +37,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				Stat.StatArmorPenetration,
 				Stat.StatExpertise,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -58,14 +61,16 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 2.379,
-					[Stat.StatAgility]: 2.15,
+					[Stat.StatStrength]: 2.40,
+					[Stat.StatAgility]: 2.39,
 					[Stat.StatAttackPower]: 1,
 					[Stat.StatMeleeHit]: 2.51,
-					[Stat.StatMeleeCrit]: 2,
-					[Stat.StatMeleeHaste]: 1.67,
-					[Stat.StatArmorPenetration]: 1.66,
-					[Stat.StatExpertise]: 2.28,
+					[Stat.StatMeleeCrit]: 2.23,
+					[Stat.StatMeleeHaste]: 1.83,
+					[Stat.StatArmorPenetration]: 2.08,
+					[Stat.StatExpertise]: 2.44,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 0.0,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

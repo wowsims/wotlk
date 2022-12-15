@@ -10,7 +10,7 @@ import { MobType } from '../core/proto/common.js';
 import { Race } from '../core/proto/common.js';
 import { RangedWeaponType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -109,6 +109,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				Stat.StatArmorPenetration,
 				Stat.StatMP5,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatRangedDps,
+			],
 			// Reference stat against which to calculate EP.
 			epReferenceStat: Stat.StatRangedAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -150,13 +153,15 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStamina]: 0.5,
-					[Stat.StatAgility]: 2.76,
-					[Stat.StatIntellect]: 1,
+					[Stat.StatAgility]: 2.65,
+					[Stat.StatIntellect]: 1.1,
 					[Stat.StatRangedAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 3,
-					[Stat.StatMeleeCrit]: 1.7,
-					[Stat.StatMeleeHaste]: 0.9,
-					[Stat.StatArmorPenetration]: 1.33,
+					[Stat.StatMeleeHit]: 2,
+					[Stat.StatMeleeCrit]: 1.5,
+					[Stat.StatMeleeHaste]: 1.39,
+					[Stat.StatArmorPenetration]: 1.32,
+				}, {
+					[PseudoStat.PseudoStatRangedDps]: 6.32,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

@@ -8,7 +8,7 @@ import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -51,6 +51,10 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				Stat.StatSpellHit,
 				Stat.StatSpellHaste,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -77,19 +81,22 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.517,
-					[Stat.StatAgility]: 1.561,
+					[Stat.StatIntellect]: 1.48,
+					[Stat.StatAgility]: 1.59,
 					[Stat.StatStrength]: 1.1,
-					[Stat.StatSpellPower]: 1.117,
+					[Stat.StatSpellPower]: 1.13,
 					[Stat.StatSpellHit]: 0, //default EP assumes cap
-					[Stat.StatSpellCrit]: 0.897,
-					[Stat.StatSpellHaste]: 0.19,
+					[Stat.StatSpellCrit]: 0.91,
+					[Stat.StatSpellHaste]: 0.37,
 					[Stat.StatAttackPower]: 1.0,
-					[Stat.StatMeleeHit]: 1.42,
-					[Stat.StatMeleeCrit]: 0.805, //double check how this works with spell crit
-					[Stat.StatMeleeHaste]: 1.37, //haste is complicated
-					[Stat.StatArmorPenetration]: 0.471,
+					[Stat.StatMeleeHit]: 1.38,
+					[Stat.StatMeleeCrit]: 0.81,
+					[Stat.StatMeleeHaste]: 1.61, //haste is complicated
+					[Stat.StatArmorPenetration]: 0.48,
 					[Stat.StatExpertise]: 0, //default EP assumes cap
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 5.21,
+					[PseudoStat.PseudoStatOffHandDps]: 2.21,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

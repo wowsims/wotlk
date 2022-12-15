@@ -3,7 +3,7 @@ import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -47,6 +47,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
+			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatSpellPower,
@@ -106,6 +109,8 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					[Stat.StatDodge]: 0.46,
 					[Stat.StatParry]: 0.61,
 					[Stat.StatDefense]: 0.54,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 3.33,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
