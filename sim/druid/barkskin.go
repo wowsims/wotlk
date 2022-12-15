@@ -7,6 +7,10 @@ import (
 )
 
 func (druid *Druid) registerBarkskinCD() {
+	if !druid.InForm(Bear) {
+		return
+	}
+
 	actionId := core.ActionID{SpellID: 22812}
 
 	setBonus := core.TernaryDuration(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 4), time.Second*3.0, 0.0)
