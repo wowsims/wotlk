@@ -18,10 +18,30 @@ type UnitStats struct {
 	PseudoStats []float64
 }
 
+func NewUnitStats() UnitStats {
+	return UnitStats{
+		PseudoStats: make([]float64, stats.PseudoStatsLen),
+	}
+}
+func (s *UnitStats) AddStat(stat stats.UnitStat, value float64) {
+	if stat.IsStat() {
+		s.Stats[stat.StatIdx()] += value
+	} else {
+		s.PseudoStats[stat.PseudoStatIdx()] += value
+	}
+}
+func (s *UnitStats) Get(stat stats.UnitStat) float64 {
+	if stat.IsStat() {
+		return s.Stats[stat.StatIdx()]
+	} else {
+		return s.PseudoStats[stat.PseudoStatIdx()]
+	}
+}
+
 func (us UnitStats) ToProto() *proto.UnitStats {
 	return &proto.UnitStats{
 		Stats:       us.Stats[:],
-		PseudoStats: us.PseudoStats,
+		PseudoStats: us.PseudoStats[:],
 	}
 }
 
@@ -30,6 +50,15 @@ type StatWeightValues struct {
 	WeightsStdev  UnitStats
 	EpValues      UnitStats
 	EpValuesStdev UnitStats
+}
+
+func NewStatWeightValues() StatWeightValues {
+	return StatWeightValues{
+		Weights:       NewUnitStats(),
+		WeightsStdev:  NewUnitStats(),
+		EpValues:      NewUnitStats(),
+		EpValuesStdev: NewUnitStats(),
+	}
 }
 
 func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
@@ -46,6 +75,15 @@ type StatWeightsResult struct {
 	Hps  StatWeightValues
 	Tps  StatWeightValues
 	Dtps StatWeightValues
+}
+
+func NewStatWeightsResult() StatWeightsResult {
+	return StatWeightsResult{
+		Dps:  NewStatWeightValues(),
+		Hps:  NewStatWeightValues(),
+		Tps:  NewStatWeightValues(),
+		Dtps: NewStatWeightValues(),
+	}
 }
 
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
@@ -88,10 +126,10 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 	// Reduce variance even more by using test-level RNG controls.
 	simOptions.IsTest = true
 
-	baseStatsResult := ComputeStats(&proto.ComputeStatsRequest{
-		Raid: raidProto,
-	})
-	baseStats := baseStatsResult.RaidStats.Parties[0].Players[0].FinalStats
+	//baseStatsResult := ComputeStats(&proto.ComputeStatsRequest{
+	//	Raid: raidProto,
+	//})
+	//baseStats := baseStatsResult.RaidStats.Parties[0].Players[0].FinalStats
 
 	baseSimRequest := &proto.RaidSimRequest{
 		Raid:       raidProto,
@@ -119,11 +157,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		defer waitGroup.Done()
 
 		simRequest := googleProto.Clone(baseSimRequest).(*proto.RaidSimRequest)
-		if stat.IsStat() {
-			simRequest.Raid.Parties[0].Players[0].BonusStats.Stats[stat.StatIdx()] += value
-		} else {
-			simRequest.Raid.Parties[0].Players[0].BonusStats.PseudoStats[stat.PseudoStatIdx()] += value
-		}
+		stat.AddToStatsProto(simRequest.Raid.Parties[0].Players[0].BonusStats, value)
 
 		reporter := make(chan *proto.ProgressMetrics, 10)
 		go RunSim(simRequest, reporter) // RunRaidSim(simRequest)
@@ -158,23 +192,13 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		}
 
 		if isLow {
-			resultsLow[stat.Idx()] = simResult
+			resultsLow[stat] = simResult
 		} else {
-			resultsHigh[stat.Idx()] = simResult
+			resultsHigh[stat] = simResult
 		}
 	}
 
-	// Melee hit cap is 8% in WoTLK
-	melee2HHitCap := 8 * MeleeHitRatingPerHitChance
-	// Spell hit cap is 17% in WoTLK
-	spellHitCap := 17 * SpellHitRatingPerHitChance
-	if swr.Debuffs != nil && (swr.Debuffs.Misery || swr.Debuffs.FaerieFire == proto.TristateEffect_TristateEffectImproved) {
-		spellHitCap -= 3 * SpellHitRatingPerHitChance
-	}
-
 	const defaultStatMod = 20.0
-	const meleeHitStatMod = defaultStatMod
-	const spellHitStatMod = defaultStatMod
 	statModsLow := make([]float64, stats.UnitStatsLen)
 	statModsHigh := make([]float64, stats.UnitStatsLen)
 
@@ -192,38 +216,38 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		} else if stat.EqualsStat(stats.Armor) {
 			statMod = defaultStatMod * 10
 		}
-		statModsHigh[stat.Idx()] = statMod
-		statModsLow[stat.Idx()] = -statMod
+		statModsHigh[stat] = statMod
+		statModsLow[stat] = -statMod
 	}
 	for _, s := range swr.PseudoStatsToWeigh {
 		stat := stats.UnitStatFromPseudoStat(s)
 		statMod := 3.0
-		statModsHigh[stat.Idx()] = statMod
-		statModsLow[stat.Idx()] = -statMod
+		statModsHigh[stat] = statMod
+		statModsLow[stat] = -statMod
 	}
 
 	// Start all the threads.
 	for i := range statModsLow {
 		stat := stats.UnitStatFromIdx(i)
-		if statModsLow[stat.Idx()] == 0 {
+		if statModsLow[stat] == 0 {
 			continue
 		}
 		waitGroup.Add(2)
 		atomic.AddInt32(&iterationsTotal, swr.SimOptions.Iterations*2)
 		atomic.AddInt32(&simsTotal, 2)
 
-		go doStat(stat, statModsLow[stat.Idx()], true)
-		go doStat(stat, statModsHigh[stat.Idx()], false)
+		go doStat(stat, statModsLow[stat], true)
+		go doStat(stat, statModsHigh[stat], false)
 	}
 
 	// Wait for thread results.
 	waitGroup.Wait()
 
 	// Compute weight results.
-	result := StatWeightsResult{}
+	result := NewStatWeightsResult()
 	for i := 0; i < stats.UnitStatsLen; i++ {
 		stat := stats.UnitStatFromIdx(i)
-		if resultsLow[stat.Idx()] == nil && resultsHigh[stat.Idx()] == nil {
+		if resultsLow[stat] == nil && resultsHigh[stat] == nil {
 			continue
 		}
 
@@ -231,24 +255,10 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		modPlayerLow := resultsLow[stat].RaidMetrics.Parties[0].Players[0]
 		modPlayerHigh := resultsHigh[stat].RaidMetrics.Parties[0].Players[0]
 
-		// Check for hard caps. Hard caps will have identical results because RNG is fixed.
+		// Check for hard caps. Hard caps will have results identical to the baseline because RNG is fixed.
+		// When we find a hard-capped stat, just skip it (will return 0).
 		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg {
 			continue
-		}
-
-		// For spell/melee hit, only use the direction facing away from the nearest soft/hard cap.
-		if stat.EqualsStat(stats.SpellHit) {
-			if baseStats.Stats[stat] >= spellHitCap {
-				resultsLow[stat] = nil
-			} else if baseStats.Stats[stat]+statModsHigh[stat] > spellHitCap {
-				resultsHigh[stat] = nil
-			}
-		} else if stat.EqualsStat(stats.MeleeHit) {
-			if baseStats.Stats[stat] >= melee2HHitCap {
-				resultsLow[stat] = nil
-			} else if baseStats.Stats[stat]+statModsHigh[stat] > melee2HHitCap {
-				resultsHigh[stat] = nil
-			}
 		}
 
 		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
@@ -264,7 +274,9 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 				}
 			}
 
-			weightResults.Weights.Stats[stat], weightResults.WeightsStdev.Stats[stat] = calcMeanAndStdev(sample)
+			mean, stdev := calcMeanAndStdev(sample)
+			weightResults.Weights.AddStat(stat, mean)
+			weightResults.WeightsStdev.AddStat(stat, stdev)
 		}
 
 		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
@@ -274,9 +286,9 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 	}
 
 	// Compute EP results.
-	for statIdx := range statModsLow {
-		stat := stats.Stat(statIdx)
-		if statModsLow[stat] == 0 || statModsHigh[stat] == 0 {
+	for i := range statModsLow {
+		stat := stats.UnitStatFromIdx(i)
+		if statModsLow[stat] == 0 {
 			continue
 		}
 
@@ -284,8 +296,10 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 			if weightResults.Weights.Stats[refStat] == 0 {
 				return
 			}
-			weightResults.EpValues.Stats[stat] = weightResults.Weights.Stats[stat] / weightResults.Weights.Stats[refStat]
-			weightResults.EpValuesStdev.Stats[stat] = weightResults.WeightsStdev.Stats[stat] / math.Abs(weightResults.Weights.Stats[refStat])
+			mean := weightResults.Weights.Get(stat) / weightResults.Weights.Stats[refStat]
+			stdev := weightResults.WeightsStdev.Get(stat) / math.Abs(weightResults.Weights.Stats[refStat])
+			weightResults.EpValues.AddStat(stat, mean)
+			weightResults.EpValuesStdev.AddStat(stat, stdev)
 		}
 
 		calcEpResults(&result.Dps, referenceStat)

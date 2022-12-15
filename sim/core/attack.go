@@ -29,7 +29,7 @@ type Weapon struct {
 
 func (w Weapon) WithBonusDPS(bonusDps float64) Weapon {
 	newWeapon := w
-	bonusSwingDamage := bonusDps / w.SwingSpeed
+	bonusSwingDamage := bonusDps * w.SwingSpeed
 	newWeapon.BaseDamageMin += bonusSwingDamage
 	newWeapon.BaseDamageMax += bonusSwingDamage
 	return newWeapon
