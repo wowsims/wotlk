@@ -27,6 +27,14 @@ type Weapon struct {
 	SpellSchool                SpellSchool
 }
 
+func (w Weapon) DPS() float64 {
+	if w.SwingSpeed == 0 {
+		return 0
+	} else {
+		return (w.BaseDamageMin + w.BaseDamageMax) / 2.0 / w.SwingSpeed
+	}
+}
+
 func (w Weapon) WithBonusDPS(bonusDps float64) Weapon {
 	newWeapon := w
 	bonusSwingDamage := bonusDps * w.SwingSpeed

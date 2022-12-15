@@ -186,11 +186,13 @@ export const pseudoStatOrder: Array<PseudoStat> = [
 	PseudoStat.PseudoStatMainHandDps,
 	PseudoStat.PseudoStatOffHandDps,
 	PseudoStat.PseudoStatRangedDps,
+	PseudoStat.PseudoStatBlockValueMultiplier,
 ];
 export const pseudoStatNames: Record<PseudoStat, string> = {
 	[PseudoStat.PseudoStatMainHandDps]: 'Main Hand DPS',
 	[PseudoStat.PseudoStatOffHandDps]: 'Off Hand DPS',
 	[PseudoStat.PseudoStatRangedDps]: 'Ranged DPS',
+	[PseudoStat.PseudoStatBlockValueMultiplier]: 'Block Value Multiplier',
 };
 
 export function getClassStatName(stat: Stat, playerClass: Class): string {

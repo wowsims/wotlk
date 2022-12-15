@@ -181,7 +181,6 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
-		[PseudoStat.PseudoStatOffHandDps]: '',
 		[PseudoStat.PseudoStatRangedDps]: 'rangedDps',
 	}
 }
@@ -270,7 +269,6 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',
-		[PseudoStat.PseudoStatOffHandDps]: '',
 		[PseudoStat.PseudoStatRangedDps]: 'RangedDps',
 	}
 }
