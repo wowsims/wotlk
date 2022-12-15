@@ -24,7 +24,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { ItemSwapSection } from './item_swap_picker.js';
+import { ItemSwapSection } from 'ui/core/components/item_swap_picker.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {

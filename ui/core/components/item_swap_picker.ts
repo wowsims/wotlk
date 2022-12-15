@@ -1,227 +1,146 @@
-import { EquippedItem } from '../core/proto_utils/equipped_item.js';
-import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../core/proto_utils/gems.js';
-import { setGemSocketCssClass } from '../core/proto_utils/gems.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Class, GemColor, ItemSpec, Spec, ItemSwap } from '../core/proto/common.js';
-import { HandType } from '../core/proto/common.js';
-import { WeaponType } from '../core/proto/common.js';
-import { ItemQuality } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { ItemType } from '../core/proto/common.js';
-import { Profession } from '../core/proto/common.js';
-import { getEnchantDescription, getUniqueEnchantString } from '../core/proto_utils/enchants.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { slotNames } from '../core/proto_utils/names.js';
-import { setItemQualityCssClass } from '../core/css_utils.js';
-import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { formatDeltaTextElem } from '../core/utils.js';
-import { getEnumValues } from '../core/utils.js';
+import { EquippedItem } from '../proto_utils/equipped_item.js';
+import { getEmptyGemSocketIconUrl } from '../proto_utils/gems.js';
+import { setGemSocketCssClass } from '../proto_utils/gems.js';
+import { Class, GemColor, Spec, ItemSwap, ItemSpec } from '../proto/common.js';
+import { ItemQuality } from '../proto/common.js';
+import { ItemSlot } from '../proto/common.js';
+import { getUniqueEnchantString } from '../proto_utils/enchants.js';
+import { ActionId } from '../proto_utils/action_id.js';
+import { setItemQualityCssClass } from '../css_utils.js';
+import { Player } from '../player.js';
+import { EventID, TypedEvent } from '../typed_event.js';
+import { formatDeltaTextElem } from '../utils.js';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
-} from '../core/proto/ui.js';
+} from '../proto/ui.js';
 
-import { Component } from '../core/components/component.js';
-import { FiltersMenu } from '../core/components/filters_menu.js';
-import { Popup } from '../core/components/popup.js';
-import { makePhaseSelector } from '../core/components/other_inputs.js';
-import { makeShow1hWeaponsSelector } from '../core/components/other_inputs.js';
-import { makeShow2hWeaponsSelector } from '../core/components/other_inputs.js';
-import { makeShowMatchingGemsSelector } from '../core/components/other_inputs.js';
-import { SpecOptions } from '../core/proto_utils/utils.js';
-import { EnhancementShaman } from '../core/proto/shaman.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Input, InputConfig } from './input.js';
+import { FiltersMenu } from './filters_menu.js';
+import { Popup } from './popup.js';
+import { makePhaseSelector } from './other_inputs.js';
+import { makeShow1hWeaponsSelector } from './other_inputs.js';
+import { makeShow2hWeaponsSelector } from './other_inputs.js';
+import { makeShowMatchingGemsSelector } from './other_inputs.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
+import { ContentBlock } from './content_block.js';
 
-declare var $: any;
 declare var tippy: any;
 declare var WowSim: any;
 
-export function ItemSwapSection(simUI: IndividualSimUI<Spec.SpecEnhancementShaman>, parentElem: HTMLElement): string {
-	parentElem.innerHTML = `
-		<div class="item-swap-inputs-container"></div>
-	`;
+export function ItemSwapSection(parentElem: HTMLElement, simUI: IndividualSimUI<Spec.SpecEnhancementShaman>): ContentBlock {
+	let contentBlock = new ContentBlock(parentElem, 'item-swap-settings', {
+		header: {title: 'Item Swap'}
+	});
 
-	const totemInputsContainer = parentElem.getElementsByClassName('item-swap-inputs-container')[0] as HTMLElement;
+	let itemSwapContianer = Input.newGroupContainer();
+	itemSwapContianer.classList.add('item-swap-inputs-container', 'icon-group');
+	contentBlock.bodyElement.appendChild(itemSwapContianer);
 
-	new ItemSwapPicker(totemInputsContainer, simUI.player, 14)
+	new IconItemSwapPicker(itemSwapContianer, simUI.player, ItemSlot.ItemSlotMainHand, {
+		// Returns the event indicating the mapped value has changed.
+		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
 
-	return "Item Swap"
+		// Get and set the mapped value.
+		getValue: (player: Player<Spec.SpecEnhancementShaman>) => {
+			return player.getSpecOptions().weaponSwap?.mhItem
+		},
+		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: ItemSpec | undefined) => {
+			const options = player.getSpecOptions()
+			options.weaponSwap!.mhItem = newValue;
+			player.setSpecOptions(eventID, options)
+		},
+	})
+
+	new IconItemSwapPicker(itemSwapContianer, simUI.player, ItemSlot.ItemSlotMainHand, {
+		// Returns the event indicating the mapped value has changed.
+		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
+
+		// Get and set the mapped value.
+		getValue: (player: Player<Spec.SpecEnhancementShaman>) => {
+			return player.getSpecOptions().weaponSwap?.mhItem
+		},
+		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: ItemSpec | undefined) => {
+			const options = player.getSpecOptions()
+			options.weaponSwap!.mhItem = newValue;
+			player.setSpecOptions(eventID, options)
+		},
+	})
+
+	return contentBlock
 }
 
-export class ItemSwapPicker extends Component {
-	readonly slot: ItemSlot;
-
-	private readonly player: Player<any>;
-	private readonly iconElem: HTMLAnchorElement;
-	private readonly nameElem: HTMLAnchorElement;
-	private readonly enchantElem: HTMLAnchorElement;
-	private readonly socketsContainerElem: HTMLElement;
+class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<Player<SpecType>, ValueType> {
+	private readonly config: InputConfig<Player<SpecType>, ValueType>;
+	private readonly iconAnchor: HTMLAnchorElement;
+	private readonly player: Player<SpecType>;
+	private readonly slot: number;
 
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
-
-	private _equippedItem: EquippedItem | null = null;
-
-	constructor(parent: HTMLElement, player: Player<Spec.SpecEnhancementShaman>, slot: ItemSlot) {
-		super(parent, 'item-picker-root');
-		this.slot = slot;
+	private currentValue: ItemSpec; 
+	
+	constructor(parent: HTMLElement, player: Player<SpecType>, slot: number,  config: InputConfig<Player<SpecType>, ValueType>) {
+		super(parent, 'icon-picker-root', player, config)
+		this.rootElem.classList.add('icon-picker');
 		this.player = player;
+		this.currentValue = config.defaultValue as unknown as ItemSpec;
+		this.config = config;
+		this.slot = slot;
 
-		this.rootElem.innerHTML = `
-      <a class="item-picker-icon">
-        <div class="item-picker-sockets-container">
-        </div>
-      </a>
-      <div class="item-picker-labels-container">
-        <a class="item-picker-name"></a><br>
-        <a class="item-picker-enchant"></a>
-      </div>
-    `;
+		this.iconAnchor = document.createElement('a');
+		this.iconAnchor.classList.add('icon-picker-button');
+		this.iconAnchor.target = '_blank';
+		this.rootElem.prepend(this.iconAnchor);
 
-		this.iconElem = this.rootElem.getElementsByClassName('item-picker-icon')[0] as HTMLAnchorElement;
-		this.nameElem = this.rootElem.getElementsByClassName('item-picker-name')[0] as HTMLAnchorElement;
-		this.enchantElem = this.rootElem.getElementsByClassName('item-picker-enchant')[0] as HTMLAnchorElement;
-		this.socketsContainerElem = this.rootElem.getElementsByClassName('item-picker-sockets-container')[0] as HTMLElement;
-
-		
 		player.sim.waitForInit().then(() => {
-			let weaponSwap = player.getSpecOptions().weaponSwap as unknown as ItemSwap
-			console.log("Another Test")
-			if (!weaponSwap){
-				weaponSwap = ItemSwap.create()
-				this.item = null
-			}else {
-				this.item = player.sim.db.lookupItemSpec(weaponSwap.mhItem!);
-			}
+			this._items = this.player.getItems(slot);
+			this._enchants = this.player.getEnchants(slot);
 
-			this._items = this.player.getItems(this.slot);
-			this._enchants = this.player.getEnchants(this.slot);
+			this.init();
 
 			const onClickStart = (event: Event) => {
 				event.preventDefault();
-				const root = parent.parentElement || parent
-				const selectorModal = new SelectorModal(root.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				let equippedItem = null
+				if (this.currentValue) {
+					console.log("Hello");
+					//console.log(this._items.filter(item => item.id = this.currentValue.id)[0])
+					//equippedItem = new EquippedItem(this._items.filter(item => item.id = this.currentValue.id)[0])
+				}
+				new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, equippedItem, this._items, this._enchants)
 			};
-			const onClickEnd = (event: Event) => {
-				event.preventDefault();
-			};
-			this.iconElem.addEventListener('click', onClickStart);
-			this.iconElem.addEventListener('touchstart', onClickStart);
-			this.iconElem.addEventListener('touchend', onClickEnd);
-			this.nameElem.addEventListener('click', onClickStart);
-			this.nameElem.addEventListener('touchstart', onClickStart);
-			this.nameElem.addEventListener('touchend', onClickEnd);
 
-			// Make enchant name open enchant tab.
-			this.enchantElem.addEventListener('click', (ev: Event) => {
-				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
-				selectorModal.openTab(1);
-			});
-			this.enchantElem.addEventListener('touchstart', (ev: Event) => {
-				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
-				selectorModal.openTab(1);
-			});
-			this.enchantElem.addEventListener('touchend', onClickEnd);
+			this.iconAnchor.addEventListener('click', onClickStart);
+			this.iconAnchor.addEventListener('touchstart', onClickStart);
 		});
-		player.gearChangeEmitter.on(() => {
-			this.item = player.getEquippedItem(slot);
-		});
-		player.professionChangeEmitter.on(() => {
-			if (this._equippedItem != null) {
-				this.player.setWowheadData(this._equippedItem, this.iconElem);
-			}
-		});
+	}
+	
+	getInputElem(): HTMLElement {
+		return this.iconAnchor;
+	}
+	getInputValue(): ValueType {
+		return this.currentValue as unknown as ValueType;
+	}
 
-		// Use hacky wowhead xhr override to 'preprocess' tooltips
-		WowSim.WhOnLoadHook = (a:any) => {
-			if (a.tooltip) {
-				// This fixes wowhead being able to parse 'pcs' aka set bonus highlighting in tooltip
-				// Their internal regex looks for 'href="/item=' but for wotlk we get 'href="/wotlk/item="'
-				a.tooltip = (<String>a.tooltip).replaceAll("href=\"/wotlk/item", "href=\"/item");
-			}
-			return a;
+	setInputValue(newValue: ValueType): void {
+		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
+		this.iconAnchor.removeAttribute('data-wowhead');
+		this.iconAnchor.href = "#"
+
+		this.currentValue = newValue as unknown as ItemSpec;
+		if (this.currentValue) {
+			ActionId.fromItemId(this.currentValue.id).fillAndSet(this.iconAnchor, true, true);
+			let item = this._items.filter(item => item.id = this.currentValue.id)[0];
+			console.log(item)
+			//this.player.setWowheadData(equippedItem, this.iconAnchor);
+			this.iconAnchor.classList.add("active")
+		} else {
+			this.iconAnchor.classList.remove("active")
 		}
 	}
 
-	set item(newItem: EquippedItem | null) {
-		// Clear everything first
-		this.nameElem.removeAttribute('data-wowhead');
-		this.nameElem.removeAttribute('href');
-		this.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
-		this.iconElem.removeAttribute('data-wowhead');
-		this.iconElem.removeAttribute('href');
-		this.enchantElem.removeAttribute('data-wowhead');
-
-		this.nameElem.textContent = slotNames[this.slot];
-		setItemQualityCssClass(this.nameElem, null);
-
-		this.enchantElem.innerHTML = '';
-		this.socketsContainerElem.innerHTML = '';
-
-		if (newItem != null) {
-			this.nameElem.textContent = newItem.item.name;
-			if (newItem.item.heroic) {
-				var heroic_span = document.createElement('span');
-				heroic_span.style.color = "green";
-				heroic_span.style.marginLeft = "3px";
-				heroic_span.innerText = "[H]";
-				this.nameElem.appendChild(heroic_span);
-			}
-
-			setItemQualityCssClass(this.nameElem, newItem.item.quality);
-
-			this.player.setWowheadData(newItem, this.iconElem);
-			this.player.setWowheadData(newItem, this.nameElem);
-			newItem.asActionId().fill().then(filledId => {
-				filledId.setBackgroundAndHref(this.iconElem);
-				filledId.setWowheadHref(this.nameElem);
-			});
-
-			if (newItem.enchant) {
-				getEnchantDescription(newItem.enchant).then(description => {
-					this.enchantElem.textContent = description;
-				});
-				// Make enchant text hover have a tooltip.
-				if (newItem.enchant.spellId) {
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
-				} else {
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
-				}
-			}
-
-			newItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				const gemIconElem = document.createElement('img');
-				gemIconElem.classList.add('item-picker-gem-icon');
-				setGemSocketCssClass(gemIconElem, socketColor);
-				if (newItem.gems[gemIdx] == null) {
-					gemIconElem.src = getEmptyGemSocketIconUrl(socketColor);
-				} else {
-					ActionId.fromItemId(newItem.gems[gemIdx]!.id).fill().then(filledId => {
-						gemIconElem.src = filledId.iconUrl;
-					});
-				}
-				this.socketsContainerElem.appendChild(gemIconElem);
-
-				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
-					const updateProfession = () => {
-						if (this.player.isBlacksmithing()) {
-							gemIconElem.style.removeProperty('display');
-						} else {
-							gemIconElem.style.display = 'none';
-						}
-					};
-					this.player.professionChangeEmitter.on(updateProfession);
-					updateProfession();
-				}
-			});
-		}
-		this._equippedItem = newItem;
-	}
 }
 
 class SelectorModal extends Popup {
@@ -229,7 +148,7 @@ class SelectorModal extends Popup {
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
-	constructor(parent: HTMLElement, player:  Player<Spec.SpecEnhancementShaman>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
+	constructor(parent: HTMLElement, player:  Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
 		super(parent);
 		this.player = player;
 
@@ -273,12 +192,10 @@ class SelectorModal extends Popup {
 					baseEP: this.player.computeItemEP(item),
 					ignoreEPFilter: false,
 					onEquip: (eventID, item: Item) => {
-						const equippedItem = this.player.getEquippedItem(slot);
-						if (equippedItem) {
-							this.player.equipItem(eventID, slot, equippedItem.withItem(item));
-						} else {
-							this.player.equipItem(eventID, slot, new EquippedItem(item));
-						}
+						const equippedItem = new EquippedItem(item)
+						const options = this.player.getSpecOptions()
+						options.weaponSwap!.mhItem = equippedItem.asSpec()
+						this.player.setSpecOptions(eventID, options)
 					},
 				};
 			}),
@@ -286,109 +203,11 @@ class SelectorModal extends Popup {
 			equippedItem => equippedItem?.item,
 			GemColor.GemColorUnknown,
 			eventID => {
-				this.player.equipItem(eventID, slot, null);
+					const options = this.player.getSpecOptions()
+					options.weaponSwap!.mhItem = undefined
+					this.player.setSpecOptions(eventID, options)
 			});
 
-		this.addTab(
-			'Enchants',
-			slot,
-			equippedItem,
-			eligibleEnchants.map(enchant => {
-				return {
-					item: enchant,
-					id: enchant.effectId,
-					actionId: enchant.spellId ? ActionId.fromSpellId(enchant.spellId) : ActionId.fromItemId(enchant.itemId),
-					name: enchant.name,
-					quality: enchant.quality,
-					phase: enchant.phase || 1,
-					baseEP: this.player.computeStatsEP(new Stats(enchant.stats)),
-					ignoreEPFilter: true,
-					heroic: false,
-					onEquip: (eventID, enchant: Enchant) => {
-						const equippedItem = this.player.getEquippedItem(slot);
-						if (equippedItem)
-							this.player.equipItem(eventID, slot, equippedItem.withEnchant(enchant));
-					},
-				};
-			}),
-			enchant => this.player.computeEnchantEP(enchant),
-			equippedItem => equippedItem?.enchant,
-			GemColor.GemColorUnknown,
-			eventID => {
-				const equippedItem = this.player.getEquippedItem(slot);
-				if (equippedItem)
-					this.player.equipItem(eventID, slot, equippedItem.withEnchant(null));
-			});
-
-		this.addGemTabs(slot, equippedItem);
-	}
-
-	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null) {
-		if (equippedItem == undefined) {
-			return;
-		}
-
-		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
-		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
-			this.addTab(
-				'Gem ' + (socketIdx + 1),
-				slot,
-				equippedItem,
-				this.player.getGems(socketColor).map((gem: Gem) => {
-					return {
-						item: gem,
-						id: gem.id,
-						actionId: ActionId.fromItemId(gem.id),
-						name: gem.name,
-						quality: gem.quality,
-						phase: gem.phase,
-						heroic: false,
-						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
-						ignoreEPFilter: true,
-						onEquip: (eventID, gem: Gem) => {
-							const equippedItem = this.player.getEquippedItem(slot);
-							if (equippedItem)
-								this.player.equipItem(eventID, slot, equippedItem.withGem(gem, socketIdx));
-						},
-					};
-				}),
-				gem => {
-					let gemEP = this.player.computeGemEP(gem);
-					if (gemMatchesSocket(gem, socketColor)) {
-						gemEP += socketBonusEP;
-					}
-					return gemEP;
-				},
-				equippedItem => equippedItem?.gems[socketIdx],
-				socketColor,
-				eventID => {
-					const equippedItem = this.player.getEquippedItem(slot);
-					if (equippedItem)
-						this.player.equipItem(eventID, slot, equippedItem.withGem(null, socketIdx));
-				},
-				tabAnchor => {
-					tabAnchor.classList.add('selector-modal-tab-gem-icon');
-					setGemSocketCssClass(tabAnchor, socketColor);
-
-					const updateGemIcon = () => {
-						const equippedItem = this.player.getEquippedItem(slot);
-						const gem = equippedItem?.gems[socketIdx];
-
-						if (gem) {
-							ActionId.fromItemId(gem.id).fill().then(filledId => {
-								tabAnchor.style.backgroundImage = `url('${filledId.iconUrl}')`;
-							});
-						} else {
-							const url = getEmptyGemSocketIconUrl(socketColor);
-							tabAnchor.style.backgroundImage = `url('${url}')`;
-						}
-					};
-
-					this.player.gearChangeEmitter.on(updateGemIcon);
-					this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateGemIcon));
-					updateGemIcon();
-				});
-		});
 	}
 
 	/**
@@ -561,10 +380,10 @@ class SelectorModal extends Popup {
 				itemData.onEquip(TypedEvent.nextEventID(), item);
 
 				// If the item changes, the gem slots might change, so remove and recreate the gem tabs
-				if (Item.is(item)) {
-					this.removeTabs('Gem');
-					this.addGemTabs(slot, this.player.getEquippedItem(slot));
-				}
+				// if (Item.is(item)) {
+				// 	this.removeTabs('Gem');
+				// 	this.addGemTabs(slot, this.player.getEquippedItem(slot));
+				// }
 			};
 			nameElem.addEventListener('click', onclick);
 			iconElem.addEventListener('click', onclick);
@@ -675,7 +494,11 @@ class SelectorModal extends Popup {
 		});
 
 		const updateSelected = () => {
-			const newEquippedItem = this.player.getEquippedItem(slot);
+			const wepSwap = this.player.getSpecOptions().weaponSwap
+			let newEquippedItem = null
+			if (wepSwap){
+				newEquippedItem = new EquippedItem(itemData.filter(i => i.id == wepSwap.mhItem?.id)[0].item as unknown as Item)
+			}
 			const newItem = equippedToItemFn(newEquippedItem);
 
 			const newItemId = newItem ? (label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item|Gem).id) : 0;
@@ -699,8 +522,8 @@ class SelectorModal extends Popup {
 				}
 			});
 		};
-		this.player.gearChangeEmitter.on(updateSelected);
-		this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateSelected));
+		this.player.specOptionsChangeEmitter.on(updateSelected);
+		this.addOnDisposeCallback(() => this.player.specOptionsChangeEmitter.off(updateSelected));
 		updateSelected();
 
 		const applyFilters = () => {
@@ -783,11 +606,11 @@ class SelectorModal extends Popup {
 
 		this.player.sim.phaseChangeEmitter.on(applyFilters);
 		this.player.sim.filtersChangeEmitter.on(applyFilters);
-		this.player.gearChangeEmitter.on(applyFilters);
+		this.player.specOptionsChangeEmitter.on(applyFilters);
 		this.addOnDisposeCallback(() => {
 			this.player.sim.phaseChangeEmitter.off(applyFilters);
 			this.player.sim.filtersChangeEmitter.off(applyFilters);
-			this.player.gearChangeEmitter.off(applyFilters);
+			this.player.specOptionsChangeEmitter.off(applyFilters);
 		});
 
 		applyFilters();

@@ -1,0 +1,5 @@
+.item-swap-settings {
+	.item-swap-inputs-container {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
