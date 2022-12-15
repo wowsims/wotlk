@@ -123,7 +123,7 @@ export const specNames: Record<Spec, string> = {
 	[Spec.SpecBalanceDruid]: 'Balance Druid',
 	[Spec.SpecElementalShaman]: 'Elemental Shaman',
 	[Spec.SpecEnhancementShaman]: 'Enhancement Shaman',
-	[Spec.SpecFeralDruid]: 'Feral Druid',
+	[Spec.SpecFeralDruid]: 'Feral DPS Druid',
 	[Spec.SpecFeralTankDruid]: 'Feral Tank Druid',
 	[Spec.SpecHunter]: 'Hunter',
 	[Spec.SpecMage]: 'Mage',
