@@ -19,6 +19,7 @@ const (
 	Firebolt
 )
 
+// TODO: this seems pointless
 // Returns whether the ability was successfully cast.
 func (wp *WarlockPet) TryCast(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
 	if wp.CurrentMana() < spell.DefaultCast.Cost {
@@ -72,7 +73,7 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 			},
 		},
 
-		BonusCritRating: wp.owner.masterDemonologistFireCrit(),
+		BonusCritRating: wp.owner.masterDemonologistFireCrit,
 		DamageMultiplier: (1 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
 			(1 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
 		CritMultiplier:   2,
@@ -147,7 +148,7 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 			},
 		},
 
-		BonusCritRating:  wp.owner.masterDemonologistShadowCrit(),
+		BonusCritRating:  wp.owner.masterDemonologistShadowCrit,
 		DamageMultiplier: 1,
 		CritMultiplier:   1.5,
 		ThreatMultiplier: 1,

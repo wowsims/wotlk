@@ -39,7 +39,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
+			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +

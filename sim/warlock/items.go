@@ -117,6 +117,7 @@ var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Gul'dan's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
+			// TODO: probably doesn't apply to infernal
 			warlock := agent.(WarlockAgent).GetWarlock()
 			pet := warlock.Pets[0].GetCharacter()
 			pet.AddStats(stats.Stats{

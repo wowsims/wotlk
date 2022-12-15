@@ -52,9 +52,7 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 	}
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-		warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(
-			petAura,
-		)
+		warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(petAura)
 	}
 
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
