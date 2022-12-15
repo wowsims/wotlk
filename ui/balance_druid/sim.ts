@@ -48,11 +48,11 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				gear: Presets.PRE_RAID_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.52,
-					[Stat.StatSpirit]: 0.3,
+					[Stat.StatIntellect]: 0.38,
+					[Stat.StatSpirit]: 0.34,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.61,
-					[Stat.StatSpellHaste]: 0.67,
+					[Stat.StatSpellCrit]: 0.69,
+					[Stat.StatSpellHaste]: 0.77,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.

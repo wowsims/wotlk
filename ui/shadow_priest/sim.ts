@@ -72,11 +72,12 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.05,
-					[Stat.StatSpirit]: 0.11,
+					[Stat.StatIntellect]: 0.11,
+					[Stat.StatSpirit]: 0.47,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.163,
-					[Stat.StatSpellHaste]: 1.0, // tricky because SP is tricky
+					[Stat.StatSpellHit]: 0.87,
+					[Stat.StatSpellCrit]: 0.74,
+					[Stat.StatSpellHaste]: 1.65,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.

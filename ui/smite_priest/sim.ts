@@ -72,13 +72,13 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 				gear: Presets.P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.38,
-					[Stat.StatSpirit]: 1.18,
+					[Stat.StatIntellect]: 0.38,
+					[Stat.StatSpirit]: 0.38,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatSpellHit]: 2.57,
-					[Stat.StatSpellCrit]: 0.44,
-					[Stat.StatSpellHaste]: 0.28, // tricky because SP is tricky
-					[Stat.StatMP5]: 2.05,
+					[Stat.StatSpellHit]: 1.65,
+					[Stat.StatSpellCrit]: 0.32,
+					[Stat.StatSpellHaste]: 0.78,
+					[Stat.StatMP5]: 0.35,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

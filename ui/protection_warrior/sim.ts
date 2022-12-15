@@ -9,7 +9,7 @@ import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { EquipmentSpec } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
@@ -54,6 +54,9 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatParry,
 				Stat.StatResilience,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -84,19 +87,21 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.05,
 					[Stat.StatStamina]: 1,
-					[Stat.StatStrength]: 0.33,
-					[Stat.StatAgility]: 0.6,
+					[Stat.StatStrength]: 3.5,
+					[Stat.StatAgility]: 2.2,
 					[Stat.StatAttackPower]: 0.06,
-					[Stat.StatExpertise]: 0.67,
-					[Stat.StatMeleeHit]: 0.67,
+					[Stat.StatExpertise]: 3.67,
+					[Stat.StatMeleeHit]: 2.67,
 					[Stat.StatMeleeCrit]: 0.28,
 					[Stat.StatMeleeHaste]: 0.21,
 					[Stat.StatArmorPenetration]: 0.19,
 					[Stat.StatBlock]: 0.35,
-					[Stat.StatBlockValue]: 0.59,
+					[Stat.StatBlockValue]: 2.59,
 					[Stat.StatDodge]: 0.7,
 					[Stat.StatParry]: 0.58,
 					[Stat.StatDefense]: 0.8,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 5.29,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

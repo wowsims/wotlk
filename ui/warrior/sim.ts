@@ -83,15 +83,18 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				gear: Presets.P1_FURY_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatStrength]: 3.23,
-					[Stat.StatAgility]: 3.00,
+					[Stat.StatStrength]: 2.72,
+					[Stat.StatAgility]: 1.82,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatExpertise]: 3.29,
-					[Stat.StatMeleeHit]: 0.48,
-					[Stat.StatMeleeCrit]: 3.62,
-					[Stat.StatMeleeHaste]: 2.92,
-					[Stat.StatArmorPenetration]: 3.19,
-					[Stat.StatArmor]: 0.08,
+					[Stat.StatExpertise]: 2.55,
+					[Stat.StatMeleeHit]: 0.79,
+					[Stat.StatMeleeCrit]: 2.12,
+					[Stat.StatMeleeHaste]: 1.72,
+					[Stat.StatArmorPenetration]: 2.17,
+					[Stat.StatArmor]: 0.03,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 6.29,
+					[PseudoStat.PseudoStatOffHandDps]: 3.58,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,

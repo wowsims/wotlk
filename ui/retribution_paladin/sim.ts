@@ -3,7 +3,7 @@ import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -43,6 +43,9 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				Stat.StatSpellCrit,
 				Stat.StatSpellHit,
 				Stat.StatSpellHaste,
+			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
@@ -85,19 +88,21 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.53,
-					[Stat.StatAgility]: 1.07,
-					[Stat.StatIntellect]: 0.05,
-					[Stat.StatSpellPower]: 0.36,
+					[Stat.StatAgility]: 1.13,
+					[Stat.StatIntellect]: 0.15,
+					[Stat.StatSpellPower]: 0.32,
 					[Stat.StatSpellHit]: 0.41,
-					[Stat.StatSpellCrit]: 0.1,
-					[Stat.StatSpellHaste]: 0.1,
-					[Stat.StatMP5]: 0.05,					
+					[Stat.StatSpellCrit]: 0.01,
+					[Stat.StatSpellHaste]: 0.12,
+					[Stat.StatMP5]: 0.05,
 					[Stat.StatAttackPower]: 1,
 					[Stat.StatMeleeHit]: 1.96,
-					[Stat.StatMeleeCrit]: 1.11,
+					[Stat.StatMeleeCrit]: 1.16,
 					[Stat.StatMeleeHaste]: 1.44,
 					[Stat.StatArmorPenetration]: 0.76,
 					[Stat.StatExpertise]: 1.80,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 7.33,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
