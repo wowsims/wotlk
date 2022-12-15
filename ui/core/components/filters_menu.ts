@@ -19,6 +19,7 @@ import { getEnumValues } from '../utils.js';
 import { BooleanPicker } from './boolean_picker.js';
 import { NumberPicker } from './number_picker.js';
 import { Popup } from './popup.js';
+import { Input } from './input.js';
 
 declare var tippy: any;
 
@@ -52,6 +53,7 @@ export class FiltersMenu extends Popup {
 				armorTypes.forEach(armorType => {
 					new BooleanPicker<Sim>(section, player.sim, {
 						label: armorTypeNames[armorType],
+						inline: true,
 						changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 						getValue: (sim: Sim) => sim.getFilters().armorTypes.includes(armorType),
 						setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
@@ -70,10 +72,13 @@ export class FiltersMenu extends Popup {
 			const weaponTypeSection = this.newSection('Weapon Type');
 			weaponTypeSection.classList.add('filters-menu-section-bool-list');
 			const weaponTypes = classToEligibleWeaponTypes[player.getClass()].map(ewt => ewt.weaponType);
+			const weaponTypesGroup = Input.newGroupContainer();
+			weaponTypeSection.appendChild(weaponTypesGroup);
 
 			weaponTypes.forEach(weaponType => {
-				new BooleanPicker<Sim>(weaponTypeSection, player.sim, {
+				new BooleanPicker<Sim>(weaponTypesGroup, player.sim, {
 					label: weaponTypeNames[weaponType],
+					inline: true,
 					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 					getValue: (sim: Sim) => sim.getFilters().weaponTypes.includes(weaponType),
 					setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
