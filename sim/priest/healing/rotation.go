@@ -89,6 +89,9 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 		},
 		int32(proto.HealingPriest_Rotation_CircleOfHealing): {
 			Spell: hpriest.CircleOfHealing,
+			Condition: func(sim *core.Simulation) bool {
+				return hpriest.CircleOfHealing.IsReady(sim)
+			},
 		},
 		int32(proto.HealingPriest_Rotation_PrayerOfHealing): {
 			Spell: hpriest.PrayerOfHealing,

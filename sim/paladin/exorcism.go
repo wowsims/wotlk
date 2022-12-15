@@ -37,7 +37,9 @@ func (paladin *Paladin) registerExorcismSpell() {
 					cast.CastTime = 0
 					return
 				}
-				paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime)
+				if paladin.CurrentMana() >= cast.Cost {
+					paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime)
+				}
 			},
 		},
 

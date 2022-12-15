@@ -3,7 +3,7 @@ import { Class } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Race } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
+import { Stat, PseudoStat } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 
@@ -180,6 +180,17 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatNatureResistance]: 'Nature Resistance',
 	[Stat.StatShadowResistance]: 'Shadow Resistance',
 	[Stat.StatBonusArmor]: 'Bonus Armor',
+};
+
+export const pseudoStatOrder: Array<PseudoStat> = [
+	PseudoStat.PseudoStatMainHandDps,
+	PseudoStat.PseudoStatOffHandDps,
+	PseudoStat.PseudoStatRangedDps,
+];
+export const pseudoStatNames: Record<PseudoStat, string> = {
+	[PseudoStat.PseudoStatMainHandDps]: 'Main Hand DPS',
+	[PseudoStat.PseudoStatOffHandDps]: 'Off Hand DPS',
+	[PseudoStat.PseudoStatRangedDps]: 'Ranged DPS',
 };
 
 export function getClassStatName(stat: Stat, playerClass: Class): string {

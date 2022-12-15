@@ -81,8 +81,16 @@ func (druid *Druid) registerCatFormSpell() {
 		hotwDep = druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 	}
 
-	catCritMult := druid.MeleeCritMultiplier(Cat)
-	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+	regWeapon := druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+	clawWeapon := core.Weapon{
+		BaseDamageMin:              43,
+		BaseDamageMax:              66,
+		SwingSpeed:                 1.0,
+		NormalizedSwingSpeed:       1.0,
+		SwingDuration:              time.Second,
+		CritMultiplier:             druid.MeleeCritMultiplier(Cat),
+		MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
+	}
 
 	druid.CatFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Cat Form",
@@ -96,15 +104,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.form = Cat
 			druid.SetCurrentPowerBar(core.EnergyBar)
 
-			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:              43,
-				BaseDamageMax:              66,
-				SwingSpeed:                 1.0,
-				NormalizedSwingSpeed:       1.0,
-				SwingDuration:              time.Second,
-				CritMultiplier:             catCritMult,
-				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
-			}
+			druid.AutoAttacks.MH = clawWeapon
 
 			druid.PseudoStats.ThreatMultiplier *= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
@@ -136,7 +136,7 @@ func (druid *Druid) registerCatFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
+			druid.AutoAttacks.MH = regWeapon
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
@@ -231,8 +231,16 @@ func (druid *Druid) registerBearFormSpell() {
 
 	potpdtm := 1 - 0.04*float64(druid.Talents.ProtectorOfThePack)
 
-	bearCritMult := druid.MeleeCritMultiplier(Bear)
-	regCritMult := druid.MeleeCritMultiplier(Humanoid)
+	regWeapon := druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+	clawWeapon := core.Weapon{
+		BaseDamageMin:              109,
+		BaseDamageMax:              165,
+		SwingSpeed:                 2.5,
+		NormalizedSwingSpeed:       2.5,
+		SwingDuration:              time.Millisecond * 2500,
+		CritMultiplier:             druid.MeleeCritMultiplier(Bear),
+		MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
+	}
 
 	druid.BearFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Bear Form",
@@ -246,16 +254,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Bear
 			druid.SetCurrentPowerBar(core.RageBar)
 
-			druid.AutoAttacks.MH = core.Weapon{
-				BaseDamageMin:              109,
-				BaseDamageMax:              165,
-				SwingSpeed:                 2.5,
-				NormalizedSwingSpeed:       2.5,
-				SwingDuration:              time.Millisecond * 2500,
-				CritMultiplier:             bearCritMult,
-				MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
-			}
-
+			druid.AutoAttacks.MH = clawWeapon
 			druid.PseudoStats.ThreatMultiplier *= 29. / 14.
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
@@ -282,7 +281,7 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = druid.WeaponFromMainHand(regCritMult)
+			druid.AutoAttacks.MH = regWeapon
 
 			druid.PseudoStats.ThreatMultiplier /= 29. / 14.
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)

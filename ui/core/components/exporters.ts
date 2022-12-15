@@ -3,10 +3,11 @@ import { EquipmentSpec } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { Race } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
+import { Stat, PseudoStat } from '../proto/common.js';
 import { IndividualSimSettings } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Player } from '../player.js';
+import { UnitStat } from '../proto_utils/stats.js';
 import { classNames, nameToClass, nameToRace } from '../proto_utils/names.js';
 import { specNames } from '../proto_utils/utils.js';
 import { talentSpellIdsToTalentString } from '../talents/factory.js';
@@ -109,14 +110,16 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	getData(): string {
 		const player = this.simUI.player;
 		const epValues = player.getEpWeights();
-		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
+		const allUnitStats = UnitStat.getAll();
 
 		const namesToWeights: Record<string, number> = {};
-		allStats
-		.filter(stat => epValues.getStat(stat) != 0)
+		allUnitStats
 		.forEach(stat => {
-			const statName = Individual80UEPExporter.linkNames[stat];
-			const weight = epValues.getStat(stat);
+			const statName = Individual80UEPExporter.getName(stat);
+			const weight = epValues.getUnitStat(stat);
+			if (weight == 0 || statName == '') {
+				return;
+			}
 
 			// Need to add together stats with the same name (e.g. hit/crit/haste).
 			if (namesToWeights[statName]) {
@@ -131,7 +134,15 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 				.map(statName => `&${statName}=${namesToWeights[statName].toFixed(3)}`).join('');
 	}
 
-	static linkNames: Record<Stat, string> = {
+	static getName(stat: UnitStat): string {
+		if (stat.isStat()) {
+			return Individual80UEPExporter.statNames[stat.getStat()];
+		} else {
+			return Individual80UEPExporter.pseudoStatNames[stat.getPseudoStat()] || '';
+		}
+	}
+
+	static statNames: Record<Stat, string> = {
 		[Stat.StatStrength]: 'strength',
 		[Stat.StatAgility]: 'agility',
 		[Stat.StatStamina]: 'stamina',
@@ -168,6 +179,11 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatShadowResistance]: 'shadowResistance',
 		[Stat.StatBonusArmor]: 'armorBonus',
 	}
+	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
+		[PseudoStat.PseudoStatMainHandDps]: 'dps',
+		[PseudoStat.PseudoStatOffHandDps]: '',
+		[PseudoStat.PseudoStatRangedDps]: 'rangedDps',
+	}
 }
 
 export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
@@ -182,14 +198,16 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	getData(): string {
 		const player = this.simUI.player;
 		const epValues = player.getEpWeights();
-		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
+		const allUnitStats = UnitStat.getAll();
 
 		const namesToWeights: Record<string, number> = {};
-		allStats
-		.filter(stat => epValues.getStat(stat) != 0)
+		allUnitStats
 		.forEach(stat => {
-			const statName = IndividualPawnEPExporter.statNames[stat];
-			const weight = epValues.getStat(stat);
+			const statName = IndividualPawnEPExporter.getName(stat);
+			const weight = epValues.getUnitStat(stat);
+			if (weight == 0 || statName == '') {
+				return;
+			}
 
 			// Need to add together stats with the same name (e.g. hit/crit/haste).
 			if (namesToWeights[statName]) {
@@ -203,6 +221,14 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 			Object.keys(namesToWeights)
 				.map(statName => `${statName}=${namesToWeights[statName].toFixed(3)}`).join(',') +
 			' )';
+	}
+
+	static getName(stat: UnitStat): string {
+		if (stat.isStat()) {
+			return IndividualPawnEPExporter.statNames[stat.getStat()];
+		} else {
+			return IndividualPawnEPExporter.pseudoStatNames[stat.getPseudoStat()] || '';
+		}
 	}
 
 	static statNames: Record<Stat, string> = {
@@ -241,5 +267,10 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
 		[Stat.StatBonusArmor]: 'Armor2',
+	}
+	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
+		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',
+		[PseudoStat.PseudoStatOffHandDps]: '',
+		[PseudoStat.PseudoStatRangedDps]: 'RangedDps',
 	}
 }

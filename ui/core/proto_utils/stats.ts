@@ -1,8 +1,75 @@
-import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
+import { Class, Stat, PseudoStat, UnitStats } from '../proto/common.js';
 import { getEnumValues } from '../utils.js';
+import { getClassStatName, pseudoStatNames } from './names.js';
 
 const STATS_LEN = getEnumValues(Stat).length;
 const PSEUDOSTATS_LEN = getEnumValues(PseudoStat).length;
+
+export class UnitStat {
+	private readonly stat: Stat|null;
+	private readonly pseudoStat: PseudoStat|null;
+
+	private constructor(stat: Stat|null, pseudoStat: PseudoStat|null) {
+		this.stat = stat;
+		this.pseudoStat = pseudoStat;
+	}
+
+	isStat(): boolean {
+		return this.stat != null;
+	}
+	isPseudoStat(): boolean {
+		return this.pseudoStat != null;
+	}
+
+	getStat(): Stat {
+		if (!this.isStat()) {
+			throw new Error('Not a stat!');
+		}
+		return this.stat!;
+	}
+	getPseudoStat(): PseudoStat {
+		if (!this.isPseudoStat()) {
+			throw new Error('Not a pseudo stat!');
+		}
+		return this.pseudoStat!;
+	}
+
+	equals(other: UnitStat): boolean {
+		return this.stat == other.stat && this.pseudoStat == other.pseudoStat;
+	}
+
+	getName(clazz: Class): string {
+		if (this.isStat()) {
+			return getClassStatName(this.stat!, clazz);
+		} else {
+			return pseudoStatNames[this.pseudoStat!];
+		}
+	}
+
+	getProtoValue(proto: UnitStats): number {
+		if (this.isStat()) {
+			return proto.stats[this.stat!];
+		} else {
+			return proto.pseudoStats[this.pseudoStat!];
+		}
+	}
+
+	static fromStat(stat: Stat): UnitStat {
+		return new UnitStat(stat, null);
+	}
+	static fromPseudoStat(pseudoStat: PseudoStat): UnitStat {
+		return new UnitStat(null, pseudoStat);
+	}
+
+	static getAll(): Array<UnitStat> {
+		const allStats = (getEnumValues(Stat) as Array<Stat>).filter(stat => ![Stat.StatEnergy, Stat.StatRage].includes(stat));
+		const allPseudoStats = getEnumValues(PseudoStat) as Array<PseudoStat>;
+		return [
+			allStats.map(stat => UnitStat.fromStat(stat)),
+			allPseudoStats.map(stat => UnitStat.fromPseudoStat(stat)),
+		].flat();
+	}
+}
 
 /**
  * Represents values for all character stats (stam, agi, spell power, hit raiting, etc).
@@ -43,11 +110,30 @@ export class Stats {
 	getPseudoStat(stat: PseudoStat): number {
 		return this.pseudoStats[stat];
 	}
+	getUnitStat(stat: UnitStat): number {
+		if (stat.isStat()) {
+			return this.stats[stat.getStat()];
+		} else {
+			return this.pseudoStats[stat.getPseudoStat()];
+		}
+	}
 
 	withStat(stat: Stat, value: number): Stats {
 		const newStats = this.stats.slice();
 		newStats[stat] = value;
-		return new Stats(newStats);
+		return new Stats(newStats, this.pseudoStats);
+	}
+	withPseudoStat(stat: PseudoStat, value: number): Stats {
+		const newStats = this.pseudoStats.slice();
+		newStats[stat] = value;
+		return new Stats(this.stats, newStats);
+	}
+	withUnitStat(stat: UnitStat, value: number): Stats {
+		if (stat.isStat()) {
+			return this.withStat(stat.getStat(), value);
+		} else {
+			return this.withPseudoStat(stat.getPseudoStat(), value);
+		}
 	}
 
 	addStat(stat: Stat, value: number): Stats {
@@ -96,13 +182,22 @@ export class Stats {
 		return Stats.fromProto(UnitStats.fromJson(obj));
 	}
 
-	static fromMap(statsMap: Partial<Record<Stat, number>>): Stats {
+	static fromMap(statsMap: Partial<Record<Stat, number>>, pseudoStatsMap?: Partial<Record<PseudoStat, number>>): Stats {
 		const statsArr = new Array(STATS_LEN).fill(0);
 		Object.entries(statsMap).forEach(entry => {
 			const [statStr, value] = entry;
 			statsArr[Number(statStr)] = value;
 		});
-		return new Stats(statsArr);
+
+		const pseudoStatsArr = new Array(PSEUDOSTATS_LEN).fill(0);
+		if (pseudoStatsMap) {
+			Object.entries(pseudoStatsMap).forEach(entry => {
+				const [pseudoStatstr, value] = entry;
+				pseudoStatsArr[Number(pseudoStatstr)] = value;
+			});
+		}
+
+		return new Stats(statsArr, pseudoStatsArr);
 	}
 
 	static fromProto(unitStats?: UnitStats): Stats {

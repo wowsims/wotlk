@@ -1,3 +1,10 @@
+.filters-menu {
+	.menu-title,
+	.menu-section:not(:last-child) {
+		margin-bottom: map.get($spacers, 3);
+	}
+}
+
 .filters-menu .menu-section {
 	width: 100%;
 	border: 1px solid white;
