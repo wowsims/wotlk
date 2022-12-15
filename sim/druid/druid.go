@@ -27,33 +27,36 @@ type Druid struct {
 	RaidBuffTargets   int
 	PrePopBerserk     bool
 
-	Berserk          *core.Spell
-	DemoralizingRoar *core.Spell
-	Enrage           *core.Spell
-	FaerieFire       *core.Spell
-	FerociousBite    *core.Spell
-	ForceOfNature    *core.Spell
-	Hurricane        *core.Spell
-	InsectSwarm      *core.Spell
-	GiftOfTheWild    *core.Spell
-	Lacerate         *core.Spell
-	MangleBear       *core.Spell
-	MangleCat        *core.Spell
-	Maul             *core.Spell
-	Moonfire         *core.Spell
-	Rebirth          *core.Spell
-	Rake             *core.Spell
-	Rip              *core.Spell
-	SavageRoar       *core.Spell
-	Shred            *core.Spell
-	Starfire         *core.Spell
-	Starfall         *core.Spell
-	StarfallSplash   *core.Spell
-	SwipeBear        *core.Spell
-	SwipeCat         *core.Spell
-	TigersFury       *core.Spell
-	Typhoon          *core.Spell
-	Wrath            *core.Spell
+	Barkskin             *core.Spell
+	Berserk              *core.Spell
+	DemoralizingRoar     *core.Spell
+	Enrage               *core.Spell
+	FaerieFire           *core.Spell
+	FerociousBite        *core.Spell
+	ForceOfNature        *core.Spell
+	FrenziedRegeneration *core.Spell
+	Hurricane            *core.Spell
+	InsectSwarm          *core.Spell
+	GiftOfTheWild        *core.Spell
+	Lacerate             *core.Spell
+	MangleBear           *core.Spell
+	MangleCat            *core.Spell
+	Maul                 *core.Spell
+	Moonfire             *core.Spell
+	Rebirth              *core.Spell
+	Rake                 *core.Spell
+	Rip                  *core.Spell
+	SavageRoar           *core.Spell
+	Shred                *core.Spell
+	Starfire             *core.Spell
+	Starfall             *core.Spell
+	StarfallSplash       *core.Spell
+	SurvivalInstincts    *core.Spell
+	SwipeBear            *core.Spell
+	SwipeCat             *core.Spell
+	TigersFury           *core.Spell
+	Typhoon              *core.Spell
+	Wrath                *core.Spell
 
 	CatForm  *core.Spell
 	BearForm *core.Spell
@@ -66,23 +69,27 @@ type Druid struct {
 	StarfallDot       *core.Dot
 	StarfallDotSplash *core.Dot
 
-	BearFormAura           *core.Aura
-	BerserkAura            *core.Aura
-	CatFormAura            *core.Aura
-	ClearcastingAura       *core.Aura
-	DemoralizingRoarAuras  []*core.Aura
-	EarthAndMoonAura       *core.Aura
-	EnrageAura             *core.Aura
-	FaerieFireAura         *core.Aura
-	MangleAura             *core.Aura
-	MaulQueueAura          *core.Aura
-	MoonkinT84PCAura       *core.Aura
-	NaturesGraceProcAura   *core.Aura
-	PredatoryInstinctsAura *core.Aura
-	TigersFuryAura         *core.Aura
-	SavageRoarAura         *core.Aura
-	SolarEclipseProcAura   *core.Aura
-	LunarEclipseProcAura   *core.Aura
+	BarkskinAura             *core.Aura
+	BearFormAura             *core.Aura
+	BerserkAura              *core.Aura
+	CatFormAura              *core.Aura
+	ClearcastingAura         *core.Aura
+	DemoralizingRoarAuras    []*core.Aura
+	EarthAndMoonAura         *core.Aura
+	EnrageAura               *core.Aura
+	FaerieFireAura           *core.Aura
+	FrenziedRegenerationAura *core.Aura
+	MangleAura               *core.Aura
+	MaulQueueAura            *core.Aura
+	MoonkinT84PCAura         *core.Aura
+	NaturesGraceProcAura     *core.Aura
+	PredatoryInstinctsAura   *core.Aura
+	SavageDefenseAura        *core.Aura
+	SurvivalInstinctsAura    *core.Aura
+	TigersFuryAura           *core.Aura
+	SavageRoarAura           *core.Aura
+	SolarEclipseProcAura     *core.Aura
+	LunarEclipseProcAura     *core.Aura
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 	SavageRoarDurationTable        [6]time.Duration
@@ -196,20 +203,24 @@ func (druid *Druid) RegisterBalanceSpells() {
 }
 
 func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
+	druid.registerBarkskinCD()
 	druid.registerBerserkCD()
 	druid.registerCatFormSpell()
 	druid.registerBearFormSpell()
 	druid.registerDemoralizingRoarSpell()
 	druid.registerEnrageSpell()
 	druid.registerFerociousBiteSpell()
+	druid.registerFrenziedRegenerationCD()
 	druid.registerMangleBearSpell()
 	druid.registerMangleCatSpell()
 	druid.registerMaulSpell(maulRageThreshold)
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()
+	druid.registerSavageDefensePassive()
 	druid.registerSavageRoarSpell()
 	druid.registerShredSpell()
+	druid.registerSurvivalInstinctsCD()
 	druid.registerSwipeBearSpell()
 	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()

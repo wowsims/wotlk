@@ -150,7 +150,7 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 		StartPeriodicAction(sim, PeriodicActionOptions{
 			Period: cadence,
 			OnAction: func(sim *Simulation) {
-				character.GainHealth(sim, healPerTick, healthMetrics)
+				character.GainHealth(sim, healPerTick*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 
 				// Might use this again in the future to track "absorb" metrics but currently disabled
 				//if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
