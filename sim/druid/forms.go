@@ -52,7 +52,7 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 	}
 
 	if weapon := druid.GetMHWeapon(); weapon != nil {
-		dps := (weapon.WeaponDamageMax + weapon.WeaponDamageMin) / 2.0 / weapon.SwingSpeed
+		dps := (weapon.WeaponDamageMax+weapon.WeaponDamageMin)/2.0/weapon.SwingSpeed + druid.PseudoStats.BonusMHDps
 		weapAp := weapon.Stats[stats.AttackPower] + weapon.Enchant.Stats[stats.AttackPower]
 		fap := math.Floor((dps - 54.8) * 14)
 
