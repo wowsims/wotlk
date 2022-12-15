@@ -121,6 +121,7 @@ enum PseudoStat {
 	PseudoStatMainHandDps = 0;
 	PseudoStatOffHandDps = 1;
 	PseudoStatRangedDps = 2;
+	PseudoStatBlockValueMultiplier = 3;
 }
 
 message UnitStats {

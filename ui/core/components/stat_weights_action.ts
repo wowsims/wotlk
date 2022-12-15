@@ -203,8 +203,7 @@ class EpWeightsMenu extends Popup {
 		this.tableBody.innerHTML = '';
 		this.tableBody.appendChild(this.tableHeader);
 
-		const allUnitStats = UnitStat.getAll();
-		allUnitStats.forEach(stat => {
+		EpWeightsMenu.epUnitStats.forEach(stat => {
 			const row = this.makeTableRow(stat, iterations, result);
 			if ((stat.isStat() && !this.epStats.includes(stat.getStat())) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {
 				row.classList.add('non-ep-stat');
@@ -538,6 +537,18 @@ class EpWeightsMenu extends Popup {
 			bestGemEP: bestGemEP,
 		};
 	}
+
+	private static epUnitStats: Array<UnitStat> = UnitStat.getAll().filter(stat => {
+		if (stat.isStat()) {
+			return true;
+		} else {
+			return [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+				PseudoStat.PseudoStatRangedDps,
+			].includes(stat.getPseudoStat());
+		}
+	});
 }
 
 interface BestGemsResult {

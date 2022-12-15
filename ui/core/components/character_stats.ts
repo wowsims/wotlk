@@ -1,4 +1,4 @@
-import { Stat, Class } from '..//proto/common.js';
+import { Stat, Class, PseudoStat } from '..//proto/common.js';
 import { TristateEffect } from '..//proto/common.js'
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';
@@ -87,13 +87,13 @@ export class CharacterStats extends Component {
 		this.stats.forEach((stat, idx) => {
 			let fragment = document.createElement('fragment');
 			fragment.innerHTML = `
-				<a href="javascript:void(0)" class="stat-value-link" role="button" data-bs-toggle="tooltip" data-bs-html="true">${this.statDisplayString(finalStats, stat)}</a>
+				<a href="javascript:void(0)" class="stat-value-link" role="button" data-bs-toggle="tooltip" data-bs-html="true">${this.statDisplayString(finalStats, finalStats, stat)}</a>
 			`
 			let valueElem = fragment.children[0] as HTMLElement;
 			this.valueElems[idx].querySelector('.stat-value-link')?.remove()
 			this.valueElems[idx].prepend(valueElem);
 
-			let bonusStatValue = player.getBonusStats().getStat(stat);
+			let bonusStatValue = bonusStats.getStat(stat);
 			
 			if (bonusStatValue == 0) {
 				valueElem.classList.remove('text-success', 'text-danger');
@@ -109,39 +109,39 @@ export class CharacterStats extends Component {
 			valueElem.setAttribute('data-bs-title', `
 				<div class="character-stats-tooltip-row">
 					<span>Base:</span>
-					<span>${this.statDisplayString(baseDelta, stat)}</span>
+					<span>${this.statDisplayString(baseStats, baseDelta, stat)}</span>
 				</div>
 				<div class="character-stats-tooltip-row">
 					<span>Gear:</span>
-					<span>${this.statDisplayString(gearDelta, stat)}</span>
+					<span>${this.statDisplayString(gearStats, gearDelta, stat)}</span>
 				</div>
 				<div class="character-stats-tooltip-row">
 					<span>Talents:</span>
-					<span>${this.statDisplayString(talentsDelta, stat)}</span>
+					<span>${this.statDisplayString(talentsStats, talentsDelta, stat)}</span>
 				</div>
 				<div class="character-stats-tooltip-row">
 					<span>Buffs:</span>
-					<span>${this.statDisplayString(buffsDelta, stat)}</span>
+					<span>${this.statDisplayString(buffsStats, buffsDelta, stat)}</span>
 				</div>
 				<div class="character-stats-tooltip-row">
 					<span>Consumes:</span>
-					<span>${this.statDisplayString(consumesDelta, stat)}</span>
+					<span>${this.statDisplayString(consumesStats, consumesDelta, stat)}</span>
 				</div>
 				${debuffStats.getStat(stat) == 0 ? '' : `
 				<div class="character-stats-tooltip-row">
 					<span>Debuffs:</span>
-					<span>${this.statDisplayString(debuffStats, stat)}</span>
+					<span>${this.statDisplayString(debuffStats, debuffStats, stat)}</span>
 				</div>
 				`}
 				${bonusStatValue == 0 ? '' : `
 				<div class="character-stats-tooltip-row">
 					<span>Bonus:</span>
-					<span>${this.statDisplayString(this.player.getBonusStats(), stat)}</span>
+					<span>${this.statDisplayString(bonusStats, bonusStats, stat)}</span>
 				</div>
 				`}
 				<div class="character-stats-tooltip-row">
 					<span>Total:</span>
-					<span>${this.statDisplayString(finalStats, stat)}</span>
+					<span>${this.statDisplayString(finalStats, finalStats, stat)}</span>
 				</div>
 			`);
 
@@ -149,8 +149,13 @@ export class CharacterStats extends Component {
 		});
 	}
 
-	private statDisplayString(stats: Stats, stat: Stat): string {
-		const rawValue = stats.getStat(stat);
+	private statDisplayString(stats: Stats, deltaStats: Stats, stat: Stat): string {
+		let rawValue = deltaStats.getStat(stat);
+
+		if (stat == Stat.StatBlockValue) {
+			rawValue *= stats.getPseudoStat(PseudoStat.PseudoStatBlockValueMultiplier) || 1;
+		}
+
 		let displayStr = String(Math.round(rawValue));
 
 		if (stat == Stat.StatMeleeHit) {
