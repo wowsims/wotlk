@@ -9,7 +9,7 @@ import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -46,6 +46,10 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
 				Stat.StatArmor,
+			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
 			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,

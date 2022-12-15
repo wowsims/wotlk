@@ -10,6 +10,7 @@ import {
 	IndividualBuffs,
 	ItemSlot,
 	Profession,
+	PseudoStat,
 	Race,
 	RaidTarget,
 	RangedWeaponType,
@@ -247,8 +248,8 @@ export class Player<SpecType extends Spec> {
 		this.enchantEPCache = new Map();
 	}
 
-	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
-		const result = await this.sim.statWeights(this, epStats, epReferenceStat, onProgress);
+	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
+		const result = await this.sim.statWeights(this, epStats, epPseudoStats, epReferenceStat, onProgress);
 		return result;
 	}
 
@@ -619,7 +620,7 @@ export class Player<SpecType extends Spec> {
 		return ep
 	}
 
-	computeItemEP(item: Item): number {
+	computeItemEP(item: Item, slot: ItemSlot): number {
 		if (item == null)
 			return 0;
 
@@ -628,25 +629,22 @@ export class Player<SpecType extends Spec> {
 		}
 
 		let itemStats = new Stats(item.stats);
-		if (item.weaponType != WeaponType.WeaponTypeUnknown) {
-			// Add weapon dps as attack power, so the EP is appropriate.
+		if (item.weaponSpeed > 0) {
 			const weaponDps = getWeaponDPS(item);
-			itemStats = itemStats.addStat(Stat.StatAttackPower, this.spec == Spec.SpecFeralDruid ? 0 : weaponDps * 14);
-		} else if (![RangedWeaponType.RangedWeaponTypeUnknown, RangedWeaponType.RangedWeaponTypeThrown].includes(item.rangedWeaponType)) {
-			const weaponDps = getWeaponDPS(item);
-			itemStats = itemStats.addStat(Stat.StatRangedAttackPower, weaponDps * 14);
+			if (slot == ItemSlot.ItemSlotMainHand) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatMainHandDps, weaponDps);
+			} else if (slot == ItemSlot.ItemSlotOffHand) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatOffHandDps, weaponDps);
+			} else if (slot == ItemSlot.ItemSlotRanged) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatRangedDps, weaponDps);
+			}
 		}
+
 		let ep = itemStats.computeEP(this.epWeights);
 
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (item.unique) {
 			ep -= 0.01;
-		}
-
-		const slot = getEligibleItemSlots(item)[0];
-		const enchants = this.sim.db.getEnchants(slot);
-		if (enchants.length > 0) {
-			ep += Math.max(...enchants.map(enchant => this.computeEnchantEP(enchant)));
 		}
 
 		// Compare whether its better to match sockets + get socket bonus, or just use best gems.

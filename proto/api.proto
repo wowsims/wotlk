@@ -312,6 +312,7 @@ message StatWeightsRequest {
 	repeated RaidTarget tanks = 8;
 
 	repeated Stat stats_to_weigh = 6;
+	repeated PseudoStat pseudo_stats_to_weigh = 10;
 	Stat ep_reference_stat = 7;
 }
 message StatWeightsResult {

@@ -288,7 +288,7 @@ class SelectorModal extends Popup {
 					quality: item.quality,
 					heroic: item.heroic,
 					phase: item.phase,
-					baseEP: this.player.computeItemEP(item),
+					baseEP: this.player.computeItemEP(item, slot),
 					ignoreEPFilter: false,
 					onEquip: (eventID, item: Item) => {
 						const equippedItem = this.player.getEquippedItem(slot);
@@ -300,7 +300,7 @@ class SelectorModal extends Popup {
 					},
 				};
 			}),
-			item => this.player.computeItemEP(item),
+			item => this.player.computeItemEP(item, slot),
 			equippedItem => equippedItem?.item,
 			GemColor.GemColorUnknown,
 			eventID => {

@@ -12,7 +12,7 @@ import { Profession } from './proto/common.js';
 import { Race } from './proto/common.js';
 import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
-import { Stat } from './proto/common.js';
+import { Stat, PseudoStat } from './proto/common.js';
 import { WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
@@ -278,7 +278,7 @@ export class Sim {
 		});
 	}
 
-	async statWeights(player: Player<any>, epStats: Array<Stat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
+	async statWeights(player: Player<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
 		} else if (this.encounter.getNumTargets() < 1) {
@@ -308,6 +308,7 @@ export class Sim {
 				tanks: tanks,
 
 				statsToWeigh: epStats,
+				pseudoStatsToWeigh: epPseudoStats,
 				epReferenceStat: epReferenceStat,
 			});
 			var result = await this.workerPool.statWeightsAsync(request, onProgress);

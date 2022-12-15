@@ -58,7 +58,7 @@ import { SimUI, SimWarning } from './sim_ui.js';
 import { Spec } from './proto/common.js';
 import { SpecOptions } from './proto_utils/utils.js';
 import { SpecRotation } from './proto_utils/utils.js';
-import { Stat } from './proto/common.js';
+import { Stat, PseudoStat } from './proto/common.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import { Stats } from './proto_utils/stats.js';
 import { Target } from './target.js';
@@ -125,6 +125,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	warnings?: Array<(simUI: IndividualSimUI<SpecType>) => SimWarning>,
 
 	epStats: Array<Stat>;
+	epPseudoStats?: Array<PseudoStat>;
 	epReferenceStat: Stat;
 	displayStats: Array<Stat>;
 	modifyDisplayStats?: (player: Player<SpecType>) => StatMods,
@@ -353,7 +354,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addSidebarComponents() {
 		this.raidSimResultsManager = addRaidSimAction(this);
-		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epReferenceStat);
+		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
 		const characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
