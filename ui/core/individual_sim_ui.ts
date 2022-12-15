@@ -540,6 +540,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const tankSpec = isTankSpec(this.player.spec);
 			const healingSpec = isHealingSpec(this.player.spec);
 
+			//Special case for Totem of Wrath keeps buff and debuff sync'd
+			const towEnabled =  this.individualConfig.defaults.raidBuffs.totemOfWrath || this.individualConfig.defaults.debuffs.totemOfWrath
+			this.individualConfig.defaults.raidBuffs.totemOfWrath = towEnabled;
+			this.individualConfig.defaults.debuffs.totemOfWrath = towEnabled;
+			
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
