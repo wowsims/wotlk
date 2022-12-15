@@ -12,9 +12,11 @@
     border: 1px solid $border-color;
     transition: border-color .25s ease-in-out;
     background-size: cover;
+    filter: grayscale(1);
 
     &.active {
       border-color: $success;
+      filter: none;
     }
   }
 
