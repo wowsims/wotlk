@@ -205,15 +205,7 @@ func (druid *Druid) calcArmorBonus() float64 {
 	// scale multiplicatively with each other. But part of the Thick Hide
 	// contribution was already calculated in ApplyTalents(), so we need to subtract
 	// that part out from the overall scaling factor given to ScaleBaseArmor().
-	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
-	thickHideMulti := 1.0
-
-	if druid.Talents.ThickHide > 0 {
-		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
-	}
-
-	totalBearMulti := 4.7 * sotfMulti * thickHideMulti
-	return druid.ScaleBaseArmor(totalBearMulti - thickHideMulti)
+	return druid.ScaleBaseArmor(druid.TotalBearArmorMultiplier() - druid.ThickHideMultiplier())
 }
 
 func (druid *Druid) registerBearFormSpell() {
