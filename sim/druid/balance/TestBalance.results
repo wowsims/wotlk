@@ -114,6 +114,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-BrutalGladiator'sIdolofResolve-35019"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 7438.34939
@@ -339,6 +346,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-FuriousGladiator'sIdolofResolve-42589"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 7099.65259
@@ -409,7 +423,21 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-IdolofMutilation-47668"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdoloftheCorruptor-45509"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-IdoloftheCryingMoon-50456"
  value: {
   dps: 7335.50276
   tps: 7173.58013
@@ -623,6 +651,13 @@ dps_results: {
  value: {
   dps: 7414.90568
   tps: 7251.86889
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-RelentlessGladiator'sIdolofResolve-42591"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
  }
 }
 dps_results: {
@@ -843,10 +878,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-VengefulGladiator'sIdolofResolve-33947"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-WingedTalisman-37844"
  value: {
   dps: 7249.83347
   tps: 7074.33568
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-WrathfulGladiator'sIdolofResolve-51429"
+ value: {
+  dps: 7335.50276
+  tps: 7173.58013
  }
 }
 dps_results: {

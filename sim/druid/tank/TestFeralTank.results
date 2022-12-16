@@ -60,8 +60,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-AshtongueTalismanofEquilibrium-32486"
  value: {
-  dps: 1261.31673
-  tps: 2905.8067
+  dps: 1265.11169
+  tps: 2917.68114
  }
 }
 dps_results: {
@@ -111,6 +111,13 @@ dps_results: {
  value: {
   dps: 1237.17897
   tps: 2799.81424
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-BrutalGladiator'sIdolofResolve-35019"
+ value: {
+  dps: 1224.57001
+  tps: 2829.29553
  }
 }
 dps_results: {
@@ -166,8 +173,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-DeadlyGladiator'sIdolofResolve-42588"
  value: {
-  dps: 1257.16649
-  tps: 2897.16438
+  dps: 1247.76918
+  tps: 2874.15773
  }
 }
 dps_results: {
@@ -339,6 +346,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-FuriousGladiator'sIdolofResolve-42589"
+ value: {
+  dps: 1258.96284
+  tps: 2894.50294
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 1291.44819
@@ -390,8 +404,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-HatefulGladiator'sIdolofResolve-42587"
  value: {
-  dps: 1245.93993
-  tps: 2867.88124
+  dps: 1236.23845
+  tps: 2848.3884
  }
 }
 dps_results: {
@@ -409,10 +423,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-IdolofMutilation-47668"
+ value: {
+  dps: 1224.57001
+  tps: 2829.29553
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheCorruptor-45509"
  value: {
-  dps: 1235.94714
-  tps: 2855.91114
+  dps: 1239.99794
+  tps: 2858.4665
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-IdoloftheCryingMoon-50456"
+ value: {
+  dps: 1252.39139
+  tps: 2892.4672
  }
 }
 dps_results: {
@@ -538,8 +566,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-NightsongBattlegear"
  value: {
-  dps: 1481.90344
-  tps: 3352.06455
+  dps: 1486.92757
+  tps: 3366.61732
  }
 }
 dps_results: {
@@ -627,6 +655,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-RelentlessGladiator'sIdolofResolve-42591"
+ value: {
+  dps: 1249.88466
+  tps: 2878.55172
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-RevitalizingSkyflareDiamond"
  value: {
   dps: 1237.17897
@@ -643,8 +678,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-SavageGladiator'sIdolofResolve-42574"
  value: {
-  dps: 1240.1838
-  tps: 2856.94089
+  dps: 1236.14035
+  tps: 2845.712
  }
 }
 dps_results: {
@@ -844,10 +879,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-VengefulGladiator'sIdolofResolve-33947"
+ value: {
+  dps: 1224.57001
+  tps: 2829.29553
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-WingedTalisman-37844"
  value: {
   dps: 1236.06115
   tps: 2855.38386
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-WrathfulGladiator'sIdolofResolve-51429"
+ value: {
+  dps: 1264.19249
+  tps: 2909.38102
  }
 }
 dps_results: {

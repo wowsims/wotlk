@@ -60,8 +60,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-AshtongueTalismanofEquilibrium-32486"
  value: {
-  dps: 7123.78692
-  tps: 7599.40477
+  dps: 7122.99527
+  tps: 7598.75623
  }
 }
 dps_results: {
@@ -111,6 +111,13 @@ dps_results: {
  value: {
   dps: 7226.58252
   tps: 7666.39359
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-BrutalGladiator'sIdolofResolve-35019"
+ value: {
+  dps: 7238.21731
+  tps: 7819.51414
  }
 }
 dps_results: {
@@ -166,8 +173,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DeadlyGladiator'sIdolofResolve-42588"
  value: {
-  dps: 7251.72511
-  tps: 7825.59006
+  dps: 7251.59879
+  tps: 7825.44223
  }
 }
 dps_results: {
@@ -339,6 +346,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-FuriousGladiator'sIdolofResolve-42589"
+ value: {
+  dps: 7252.79807
+  tps: 7828.35471
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 7273.49908
@@ -409,10 +423,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-IdolofMutilation-47668"
+ value: {
+  dps: 7460.13601
+  tps: 8051.23228
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-IdoloftheCorruptor-45509"
  value: {
-  dps: 7266.46342
-  tps: 7848.37006
+  dps: 7266.32441
+  tps: 7848.26378
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-IdoloftheCryingMoon-50456"
+ value: {
+  dps: 7470.97507
+  tps: 8041.93386
  }
 }
 dps_results: {
@@ -545,8 +573,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-NightsongBattlegear"
  value: {
-  dps: 6887.21236
-  tps: 7286.83336
+  dps: 6900.98486
+  tps: 7269.56863
  }
 }
 dps_results: {
@@ -631,6 +659,13 @@ dps_results: {
  value: {
   dps: 7392.63715
   tps: 7999.21873
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-RelentlessGladiator'sIdolofResolve-42591"
+ value: {
+  dps: 7259.3777
+  tps: 7851.73994
  }
 }
 dps_results: {
@@ -851,10 +886,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-VengefulGladiator'sIdolofResolve-33947"
+ value: {
+  dps: 7238.21731
+  tps: 7819.51414
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-WingedTalisman-37844"
  value: {
   dps: 7115.0788
   tps: 7602.01454
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-WrathfulGladiator'sIdolofResolve-51429"
+ value: {
+  dps: 7264.81216
+  tps: 7857.66361
  }
 }
 dps_results: {

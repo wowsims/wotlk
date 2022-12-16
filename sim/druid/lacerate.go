@@ -117,3 +117,7 @@ func (druid *Druid) registerLacerateSpell() {
 func (druid *Druid) CanLacerate(sim *core.Simulation) bool {
 	return druid.CurrentRage() >= druid.Lacerate.DefaultCast.Cost
 }
+
+func (druid *Druid) IsLacerateSpell(spell *core.Spell) bool {
+	return druid.Lacerate == spell || (druid.LacerateDot != nil && druid.LacerateDot.Spell == spell)
+}
