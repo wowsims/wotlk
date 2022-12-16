@@ -217,6 +217,11 @@ export class ActionId {
 			case 'Envenom':
 			case 'Eviscerate':
 			case 'Expose Armor':
+			case 'Shattering Throw':
+				if (this.tag === playerIndex) {
+					name += ` (self)`;
+				}
+				break;
 			case 'Rupture':
 			case 'Slice and Dice':
 				if (this.tag) name += ` (${this.tag} CP)`;
