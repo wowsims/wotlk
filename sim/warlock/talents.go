@@ -195,9 +195,8 @@ func (warlock *Warlock) setupDecimation() {
 		Label:    "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
+			if result.Landed() && (spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire) {
 				warlock.DecimationAura.Activate(sim)
-				warlock.DecimationAura.Refresh(sim)
 			}
 		},
 	})
