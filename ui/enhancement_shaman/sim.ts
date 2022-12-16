@@ -1,30 +1,18 @@
-import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-
-import { EnhancementShaman, EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions } from '../core/proto/shaman.js';
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { ItemSwapSection } from 'ui/core/components/item_swap_picker.js';
+import { ItemSwapSection } from '../core/components/item_swap_picker.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {

@@ -10,6 +10,8 @@ import {
 	Debuffs,
   CustomRotation,
   CustomSpell,
+  ItemSwap,
+  ItemSpec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -89,6 +91,9 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
+	weaponSwap: ItemSwap.create({
+		mhItem: ItemSpec.create({id: 45132}),
+	}),
 });
 
 export const DefaultConsumes = Consumes.create({

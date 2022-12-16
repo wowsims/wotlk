@@ -168,7 +168,6 @@ export class ConsumesPicker extends Component {
 
     const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 		if (guardianElixirOptions.length) {
-      console.log('guardian');
 			const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 			new IconEnumPicker(
         guardianElixirsContainer,
