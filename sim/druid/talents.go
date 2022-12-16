@@ -369,7 +369,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				}
 			}
 		},
-		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == druid.GiftOfTheWild {
 				// Based on ingame testing by druid discord, subject to change or incorrectness
 				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))

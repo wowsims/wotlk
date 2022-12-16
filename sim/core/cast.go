@@ -14,9 +14,6 @@ import (
 // Callback for when a cast is finished, i.e. when the in-game castbar reaches full.
 type OnCastComplete func(aura *Aura, sim *Simulation, spell *Spell)
 
-// Callback for when a cast is finished, but after calculations are done
-type AfterCast func(aura *Aura, sim *Simulation, spell *Spell)
-
 type Hardcast struct {
 	Expires    time.Duration
 	ActionID   ActionID
@@ -40,7 +37,6 @@ type CastConfig struct {
 
 	// Callbacks for providing additional custom behavior.
 	OnCastComplete func(*Simulation, *Spell)
-	AfterCast      func(*Simulation, *Spell)
 }
 
 type Cast struct {
@@ -279,7 +275,6 @@ func (spell *Spell) wrapCastFuncSharedCooldown(config CastConfig, onCastComplete
 func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc) CastFunc {
 	if !spell.Flags.Matches(SpellFlagNoOnCastComplete) {
 		configOnCastComplete := config.OnCastComplete
-		configAfterCast := config.AfterCast
 		oldOnCastComplete1 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			spell.Unit.OnCastComplete(sim, spell)
@@ -287,10 +282,6 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 				configOnCastComplete(sim, spell)
 			}
 			oldOnCastComplete1(sim, target)
-			spell.Unit.AfterCast(sim, spell)
-			if configAfterCast != nil {
-				configAfterCast(sim, spell)
-			}
 		}
 	}
 
