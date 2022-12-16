@@ -9442,8 +9442,9 @@
 ],
 "encounters":[
 {"path":"Naxxrammas/Patchwerk 25","targets":[{"path":"Naxxrammas/Patchwerk 25","target":{"id":16028,"name":"Patchwerk 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,16950147,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":38068,"swingSpeed":0.75,"tightEnemyDamage":true}}]},
-{"path":"Naxxrammas/Kel'Thuzad 25","targets":[{"path":"Naxxrammas/Kel'Thuzad 25","target":{"id":15990,"name":"Kel'Thuzad 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,640,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,19034924,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":28767,"swingSpeed":2.3}}]},
-{"path":"Naxxrammas/Thaddius 25","targets":[{"path":"Naxxrammas/Thaddius 25","target":{"id":15990,"name":"Thaddius 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,640,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,39520129,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":25315,"swingSpeed":1.25}}]},
-{"path":"Naxxrammas/Loatheb 25","targets":[{"path":"Naxxrammas/Loatheb 25","target":{"id":16011,"name":"Loatheb 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,640,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,26286324,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":6727,"swingSpeed":1.2}}]}
+{"path":"Naxxrammas/Kel'Thuzad 25","targets":[{"path":"Naxxrammas/Kel'Thuzad 25","target":{"id":15990,"name":"Kel'Thuzad 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,19034924,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":28767,"swingSpeed":2.3}}]},
+{"path":"Naxxrammas/Thaddius 25","targets":[{"path":"Naxxrammas/Thaddius 25","target":{"id":15990,"name":"Thaddius 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,39520129,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":25315,"swingSpeed":1.25}}]},
+{"path":"Naxxrammas/Loatheb 25","targets":[{"path":"Naxxrammas/Loatheb 25","target":{"id":16011,"name":"Loatheb 25","level":83,"mobType":"MobTypeUndead","stats":[0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,26286324,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":6727,"swingSpeed":1.2}}]},
+{"path":"Ulduar/Algalon 25","targets":[{"path":"Ulduar/Algalon 25","target":{"id":32871,"name":"Algalon 25","level":83,"mobType":"MobTypeElemental","stats":[0,0,0,0,0,0,0,0,0,0,0,574,0,0,0,0,0,0,0,0,10643,0,0,0,0,0,0,0,41834998,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":77000,"swingSpeed":1,"dualWield":true,"tightEnemyDamage":true}}]}
 ]
 }
