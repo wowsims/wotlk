@@ -132,8 +132,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
 	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
 
-	warrior.AutoAttacks.SyncType = 2
-
 	warrior.Shout = warrior.makeShoutSpell()
 
 	primaryTimer := warrior.NewTimer()
