@@ -28,22 +28,23 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
+			const bonusCrit = 10 * core.CritRatingPerCritChance
 			DemonicSoulAura := warlock.RegisterAura(core.Aura{
 				Label:    "Demonic Soul",
 				ActionID: core.ActionID{SpellID: 61595},
 				Duration: time.Second * 10,
-				AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					warlock.ShadowBolt.BonusCritRating += bonusCrit
+					warlock.Incinerate.BonusCritRating += bonusCrit
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					warlock.ShadowBolt.BonusCritRating -= bonusCrit
+					warlock.Incinerate.BonusCritRating -= bonusCrit
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
 					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
 						aura.Deactivate(sim)
 					}
-				},
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ShadowBolt.BonusCritRating += 10 * core.CritRatingPerCritChance
-					warlock.Incinerate.BonusCritRating += 10 * core.CritRatingPerCritChance
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ShadowBolt.BonusCritRating -= 10 * core.CritRatingPerCritChance
-					warlock.Incinerate.BonusCritRating -= 10 * core.CritRatingPerCritChance
 				},
 			})
 

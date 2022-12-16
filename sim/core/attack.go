@@ -298,13 +298,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ProcMask:    ProcMaskRangedAuto,
 		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
 
-		Cast: CastConfig{
-			IgnoreHaste: true,
-			AfterCast: func(sim *Simulation, spell *Spell) {
-				agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
-			},
-		},
-
 		DamageMultiplier: 1,
 		CritMultiplier:   options.Ranged.CritMultiplier,
 		ThreatMultiplier: 1,
@@ -313,6 +306,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
 		},
 	}
 

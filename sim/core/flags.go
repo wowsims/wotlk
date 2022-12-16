@@ -187,7 +187,7 @@ const (
 	SpellFlagDisease                                        // Spell is categorized as disease
 	SpellFlagHelpful                                        // For healing spells / buffs.
 	SpellFlagMeleeMetrics                                   // Marks a spell as a melee ability for metrics.
-	SpellFlagNoOnCastComplete                               // Disables OnCastComplete and AfterCast callbacks.
+	SpellFlagNoOnCastComplete                               // Disables the OnCastComplete callback.
 	SpellFlagNoMetrics                                      // Disables metrics for a spell.
 	SpellFlagNoLogs                                         // Disables logs for a spell.
 

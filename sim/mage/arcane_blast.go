@@ -52,13 +52,6 @@ func (mage *Mage) registerArcaneBlastSpell() {
 				//original base cost of the spell instead of as a cost multiplier, so add extra mana cost equal
 				//to the mana saved from having precision as a cost multiplier.
 			},
-			AfterCast: func(sim *core.Simulation, spell *core.Spell) {
-				if mage.ArcaneBlastAura.GetStacks() >= 4 {
-					mage.num4CostAB++
-				}
-				mage.ArcaneBlastAura.Activate(sim)
-				mage.ArcaneBlastAura.AddStack(sim)
-			},
 		},
 
 		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
@@ -72,6 +65,12 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1185, 1377) + spellCoeff*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+			if mage.ArcaneBlastAura.GetStacks() >= 4 {
+				mage.num4CostAB++
+			}
+			mage.ArcaneBlastAura.Activate(sim)
+			mage.ArcaneBlastAura.AddStack(sim)
 		},
 	})
 }

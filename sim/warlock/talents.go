@@ -383,11 +383,6 @@ func (warlock *Warlock) setupMoltenCore() {
 		ActionID:  core.ActionID{SpellID: 71165},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
-		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.Incinerate || spell == warlock.SoulFire {
-				aura.RemoveStack(sim)
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier *= moltenCoreDamageBonus
 			warlock.SoulFire.DamageMultiplier *= moltenCoreDamageBonus
@@ -397,6 +392,11 @@ func (warlock *Warlock) setupMoltenCore() {
 			warlock.Incinerate.DamageMultiplier /= moltenCoreDamageBonus
 			warlock.SoulFire.DamageMultiplier /= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating -= moltenCoreCritBonus
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire {
+				aura.RemoveStack(sim)
+			}
 		},
 	})
 
