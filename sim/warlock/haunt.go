@@ -51,7 +51,7 @@ func (warlock *Warlock) registerHauntSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit(),
+			warlock.masterDemonologistShadowCrit,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +
 			0.03*float64(warlock.Talents.ShadowMastery),

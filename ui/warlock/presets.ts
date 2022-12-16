@@ -86,6 +86,7 @@ export const AfflictionRotation = WarlockRotation.create({
 	specSpell: SpecSpell.Haunt,
 	curse: Curse.Agony,
 	corruption: true,
+	useInfernal: false,
 	detonateSeed: true,
 });
 
@@ -95,6 +96,7 @@ export const DemonologyRotation = WarlockRotation.create({
 	specSpell: SpecSpell.NoSpecSpell,
 	curse: Curse.Doom,
 	corruption: true,
+	useInfernal: false,
 	detonateSeed: true,
 });
 
@@ -104,6 +106,7 @@ export const DestructionRotation = WarlockRotation.create({
 	specSpell: SpecSpell.ChaosBolt,
 	curse: Curse.Doom,
 	corruption: false,
+	useInfernal: false,
 	detonateSeed: true,
 });
 

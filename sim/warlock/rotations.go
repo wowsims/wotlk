@@ -446,7 +446,9 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// Small CDs (Cast on CD)
 	// ------------------------------------------
 	if warlock.Talents.DemonicEmpowerment && warlock.DemonicEmpowerment.IsReady(sim) && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-		warlock.DemonicEmpowerment.Cast(sim, target)
+		if !warlock.Rotation.UseInfernal || warlock.Inferno.IsReady(sim) {
+			warlock.DemonicEmpowerment.Cast(sim, target)
+		}
 	}
 	if warlock.Talents.Metamorphosis && warlock.MetamorphosisAura.IsActive() &&
 		warlock.ImmolationAura.IsReady(sim) && warlock.ImmolationAura.Cast(sim, target) {

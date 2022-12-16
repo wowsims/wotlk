@@ -21,17 +21,13 @@ func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {
  * Returns stat weights and EP values, with standard deviations, for all stats.
  */
 func StatWeights(request *proto.StatWeightsRequest) *proto.StatWeightsResult {
-	statsToWeigh := stats.ProtoArrayToStatsList(request.StatsToWeigh)
-
-	result := CalcStatWeight(request, statsToWeigh, stats.Stat(request.EpReferenceStat), nil)
-
+	result := CalcStatWeight(request, stats.Stat(request.EpReferenceStat), nil)
 	return result.ToProto()
 }
 
 func StatWeightsAsync(request *proto.StatWeightsRequest, progress chan *proto.ProgressMetrics) {
-	statsToWeigh := stats.ProtoArrayToStatsList(request.StatsToWeigh)
 	go func() {
-		result := CalcStatWeight(request, statsToWeigh, stats.Stat(request.EpReferenceStat), progress)
+		result := CalcStatWeight(request, stats.Stat(request.EpReferenceStat), progress)
 		progress <- &proto.ProgressMetrics{
 			FinalWeightResult: result.ToProto(),
 		}

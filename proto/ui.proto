@@ -68,7 +68,8 @@ message UIEnchant {
 	string name = 4;     
 	string icon = 5;
 
-	ItemType type = 6; // Which type of item this enchant can be applied to.
+	ItemType type = 6;                  // Which type of item this enchant can be applied to.
+	repeated ItemType extra_types = 13; // Extra types for enchants that can go in multiple slots (like armor kits).
 	EnchantType enchant_type = 7;
 
 	repeated double stats = 8;
@@ -149,14 +150,18 @@ message IndividualSimSettings {
 	PartyBuffs party_buffs = 2;
 	Player player = 3;
 	Encounter encounter = 4;
-	repeated double ep_weights = 6;
 	int32 target_dummies = 9;
+	// Deprecate after 2 months (on 2023/02/13)
+	repeated double ep_weights = 6;
+	UnitStats ep_weights_stats = 10;
 }
 
 // Local storage data for gear settings.
 message SavedGearSet {
 	EquipmentSpec gear = 1;
+	// Deprecate after 2 months (on 2023/02/13)
 	repeated double bonus_stats = 2;
+	UnitStats bonus_stats_stats = 3;
 }
 
 // Local storage data for other settings.

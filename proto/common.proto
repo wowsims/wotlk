@@ -109,6 +109,24 @@ enum Stat {
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
 	StatBonusArmor = 34;
+	// DO NOT add new stats here without discussing it first; new stats come with
+	// a performance penalty.
+}
+
+// Not all pseudostats are included here; just the ones we want to pass
+// between the UI and backend.
+//
+// It's also OK to include things here which aren't in the PseudoStats struct.
+enum PseudoStat {
+	PseudoStatMainHandDps = 0;
+	PseudoStatOffHandDps = 1;
+	PseudoStatRangedDps = 2;
+	PseudoStatBlockValueMultiplier = 3;
+}
+
+message UnitStats {
+	repeated double stats = 1;
+	repeated double pseudo_stats = 2;
 }
 
 enum ItemType {
@@ -691,9 +709,7 @@ enum EnchantType {
 // Contains only the Enchant info needed by the sim.
 message SimEnchant {
 	int32 effect_id = 1;
-	string name = 2;     
-	ItemType type = 3;
-	repeated double stats = 4;
+	repeated double stats = 2;
 }
 
 // Contains only the Gem info needed by the sim.

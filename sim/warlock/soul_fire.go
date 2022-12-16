@@ -30,7 +30,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
+			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +
@@ -42,6 +42,9 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1323, 1657) + 1.15*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			if warlock.MoltenCoreAura.IsActive() {
+				warlock.MoltenCoreAura.RemoveStack(sim)
+			}
 		},
 	})
 }

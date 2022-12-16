@@ -12,8 +12,6 @@ import (
 type WarlockPet struct {
 	core.Pet
 
-	config PetConfig
-
 	owner *Warlock
 
 	primaryAbility   *core.Spell
@@ -39,22 +37,112 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		}
 	}
 
-	petConfig := PetConfigs[summonChoice]
+	var cfg struct {
+		Name          string
+		PowerModifier float64
+		Stats         stats.Stats
+		AutoAttacks   core.AutoAttackOptions
+	}
+
+	switch summonChoice {
+	// TODO: revisit base damage once blizzard fixes JamminL/wotlk-classic-bugs#328
+	case proto.Warlock_Options_Felguard:
+		cfg.Name = "Felguard"
+		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
+		cfg.Stats = stats.Stats{
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Stamina:   328,
+			stats.Intellect: 150,
+			stats.Spirit:    209,
+			stats.Mana:      1559,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
+		}
+		cfg.AutoAttacks = core.AutoAttackOptions{
+			MainHand: core.Weapon{
+				BaseDamageMin:  88.8,
+				BaseDamageMax:  133.3,
+				SwingSpeed:     2,
+				SwingDuration:  time.Second * 2,
+				CritMultiplier: 2,
+			},
+			AutoSwingMelee: true,
+		}
+	case proto.Warlock_Options_Imp:
+		cfg.Name = "Imp"
+		cfg.PowerModifier = 0.33 // GetUnitPowerModifier("pet")
+		cfg.Stats = stats.Stats{
+			stats.Strength:  297,
+			stats.Agility:   79,
+			stats.Stamina:   118,
+			stats.Intellect: 369,
+			stats.Spirit:    367,
+			stats.Mana:      1174,
+			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
+		}
+	case proto.Warlock_Options_Succubus:
+		cfg.Name = "Succubus"
+		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
+		cfg.Stats = stats.Stats{
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Stamina:   328,
+			stats.Intellect: 150,
+			stats.Spirit:    209,
+			stats.Mana:      1559,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
+		}
+		cfg.AutoAttacks = core.AutoAttackOptions{
+			MainHand: core.Weapon{
+				BaseDamageMin:  98,
+				BaseDamageMax:  147,
+				SwingSpeed:     2,
+				SwingDuration:  time.Second * 2,
+				CritMultiplier: 2,
+			},
+			AutoSwingMelee: true,
+		}
+	case proto.Warlock_Options_Felhunter:
+		cfg.Name = "Felhunter"
+		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
+		cfg.Stats = stats.Stats{
+			stats.Strength:  314,
+			stats.Agility:   90,
+			stats.Stamina:   328,
+			stats.Intellect: 150,
+			stats.Spirit:    209,
+			stats.Mana:      1559,
+			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
+			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
+		}
+		cfg.AutoAttacks = core.AutoAttackOptions{
+			MainHand: core.Weapon{
+				BaseDamageMin:  88.8,
+				BaseDamageMax:  133.3,
+				SwingSpeed:     2,
+				SwingDuration:  time.Second * 2,
+				CritMultiplier: 2,
+			},
+			AutoSwingMelee: true,
+		}
+	}
 
 	wp := &WarlockPet{
 		Pet: core.NewPet(
-			petConfig.Name,
+			cfg.Name,
 			&warlock.Character,
-			petConfig.Stats,
+			cfg.Stats,
 			warlock.makeStatInheritance(),
 			true,
 			false,
 		),
-		config: petConfig,
-		owner:  warlock,
+		owner: warlock,
 	}
 
-	wp.EnableManaBarWithModifier(petConfig.PowerModifier)
+	wp.EnableManaBarWithModifier(cfg.PowerModifier)
 	wp.EnableResumeAfterManaWait(wp.OnGCDReady)
 
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
@@ -79,47 +167,11 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 
-	if petConfig.Melee {
-		switch summonChoice {
-		// TODO: revisit base damage once blizzard fixes JamminL/wotlk-classic-bugs#328
-		case proto.Warlock_Options_Felguard:
-			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
-				MainHand: core.Weapon{
-					BaseDamageMin:  88.8,
-					BaseDamageMax:  133.3,
-					SwingSpeed:     2,
-					SwingDuration:  time.Second * 2,
-					CritMultiplier: 2,
-				},
-				AutoSwingMelee: true,
-			})
-		case proto.Warlock_Options_Succubus:
-			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
-				MainHand: core.Weapon{
-					BaseDamageMin:  98,
-					BaseDamageMax:  147,
-					SwingSpeed:     2,
-					SwingDuration:  time.Second * 2,
-					CritMultiplier: 2,
-				},
-				AutoSwingMelee: true,
-			})
-		case proto.Warlock_Options_Felhunter:
-			wp.EnableAutoAttacks(wp, core.AutoAttackOptions{
-				MainHand: core.Weapon{
-					BaseDamageMin:  88.8,
-					BaseDamageMax:  133.3,
-					SwingSpeed:     2,
-					SwingDuration:  time.Second * 2,
-					CritMultiplier: 2,
-				},
-				AutoSwingMelee: true,
-			})
-		}
+	if summonChoice != proto.Warlock_Options_Imp { // imps generally don't meele
+		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
-	// wp.AutoAttacks.MHEffect.DamageMultiplier *= petConfig.DamageMultiplier
-	switch summonChoice {
-	case proto.Warlock_Options_Felguard:
+
+	if summonChoice == proto.Warlock_Options_Felguard {
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			wp.MultiplyStat(stats.AttackPower, 1.2)
 		}
@@ -166,6 +218,53 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		wp.MultiplyStat(stats.Stamina, bonus)
 	}
 
+	if warlock.Talents.MasterDemonologist > 0 {
+		val := 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
+		md := core.Aura{
+			Label:    "Master Demonologist",
+			ActionID: core.ActionID{SpellID: 35706}, // many different spells associated with this talent
+			Duration: core.NeverExpires,
+			OnGain: func(aura *core.Aura, _ *core.Simulation) {
+				switch warlock.Options.Summon {
+				case proto.Warlock_Options_Imp:
+					aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= val
+				case proto.Warlock_Options_Succubus:
+					aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= val
+				case proto.Warlock_Options_Felguard:
+					aura.Unit.PseudoStats.DamageDealtMultiplier *= val
+				}
+			},
+			OnExpire: func(aura *core.Aura, _ *core.Simulation) {
+				switch warlock.Options.Summon {
+				case proto.Warlock_Options_Imp:
+					aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] /= val
+				case proto.Warlock_Options_Succubus:
+					aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= val
+				case proto.Warlock_Options_Felguard:
+					aura.Unit.PseudoStats.DamageDealtMultiplier /= val
+				}
+			},
+		}
+
+		mdLockAura := warlock.RegisterAura(md)
+		mdPetAura := wp.RegisterAura(md)
+
+		wp.OnPetEnable = func(sim *core.Simulation) {
+			val := float64(warlock.Talents.MasterDemonologist) * core.CritRatingPerCritChance
+			mdLockAura.Activate(sim)
+			mdPetAura.Activate(sim)
+			warlock.masterDemonologistFireCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, val, 0)
+			warlock.masterDemonologistShadowCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, val, 0)
+		}
+
+		wp.OnPetDisable = func(sim *core.Simulation) {
+			mdLockAura.Deactivate(sim)
+			mdPetAura.Deactivate(sim)
+			warlock.masterDemonologistFireCrit = 0.0
+			warlock.masterDemonologistShadowCrit = 0.0
+		}
+	}
+
 	core.ApplyPetConsumeEffects(&wp.Character, warlock.Consumes)
 
 	warlock.AddPet(wp)
@@ -178,33 +277,27 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 }
 
 func (wp *WarlockPet) Initialize() {
-	wp.primaryAbility = wp.NewPetAbility(wp.config.PrimaryAbility, true)
-	wp.secondaryAbility = wp.NewPetAbility(wp.config.SecondaryAbility, false)
+	switch wp.owner.Options.Summon {
+	case proto.Warlock_Options_Felguard:
+		wp.primaryAbility = wp.NewPetAbility(Cleave, true)
+		wp.secondaryAbility = wp.NewPetAbility(Intercept, false)
+	case proto.Warlock_Options_Succubus:
+		wp.primaryAbility = wp.NewPetAbility(LashOfPain, true)
+	case proto.Warlock_Options_Felhunter:
+		wp.primaryAbility = wp.NewPetAbility(ShadowBite, true)
+	case proto.Warlock_Options_Imp:
+		wp.primaryAbility = wp.NewPetAbility(Firebolt, true)
+	}
 }
 
 func (wp *WarlockPet) Reset(sim *core.Simulation) {
-
 }
 
 func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	target := wp.CurrentTarget
-	if wp.config.RandomSelection {
-		if sim.RandomFloat("Warlock Pet Ability") < 0.5 {
-			if !wp.TryCast(sim, target, wp.primaryAbility) {
-				wp.TryCast(sim, target, wp.secondaryAbility)
-			}
-		} else {
-			if !wp.TryCast(sim, target, wp.secondaryAbility) {
-				wp.TryCast(sim, target, wp.primaryAbility)
-			}
-		}
-		return
-	}
 
 	if !wp.TryCast(sim, target, wp.primaryAbility) {
-		if wp.secondaryAbility != nil {
-			wp.TryCast(sim, target, wp.secondaryAbility)
-		} else if !wp.primaryAbility.IsReady(sim) {
+		if !wp.primaryAbility.IsReady(sim) {
 			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		} else {
 			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
@@ -239,86 +332,4 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			// TODO: does the pet scale with the 1% hit from draenei?
 		}
 	}
-}
-
-type PetConfig struct {
-	Name string
-	// DamageMultiplier float64
-	Melee         bool
-	Stats         stats.Stats
-	PowerModifier float64
-
-	// Randomly select between abilities instead of using a prio.
-	RandomSelection bool
-
-	PrimaryAbility   PetAbilityType
-	SecondaryAbility PetAbilityType
-}
-
-var PetConfigs = map[proto.Warlock_Options_Summon]PetConfig{
-	proto.Warlock_Options_Felguard: {
-		Name:             "Felguard",
-		Melee:            true,
-		PrimaryAbility:   Cleave,
-		SecondaryAbility: Intercept,
-		PowerModifier:    0.77, // GetUnitPowerModifier("pet")
-		Stats: stats.Stats{
-			stats.Strength:  314,
-			stats.Agility:   90,
-			stats.Stamina:   328,
-			stats.Intellect: 150,
-			stats.Spirit:    209,
-			stats.Mana:      1559,
-			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
-			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
-		},
-	},
-	proto.Warlock_Options_Imp: {
-		Name:           "Imp",
-		PowerModifier:  0.33, // GetUnitPowerModifier("pet")
-		Melee:          false,
-		PrimaryAbility: Firebolt,
-		Stats: stats.Stats{
-			stats.Strength:  297,
-			stats.Agility:   79,
-			stats.Stamina:   118,
-			stats.Intellect: 369,
-			stats.Spirit:    367,
-			stats.Mana:      1174,
-			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
-			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
-		},
-	},
-	proto.Warlock_Options_Succubus: {
-		Name:           "Succubus",
-		PowerModifier:  0.77, // GetUnitPowerModifier("pet")
-		Melee:          true,
-		PrimaryAbility: LashOfPain,
-		Stats: stats.Stats{
-			stats.Strength:  314,
-			stats.Agility:   90,
-			stats.Stamina:   328,
-			stats.Intellect: 150,
-			stats.Spirit:    209,
-			stats.Mana:      1559,
-			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
-			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
-		},
-	},
-	proto.Warlock_Options_Felhunter: {
-		Name:           "Felhunter",
-		PowerModifier:  0.77, // GetUnitPowerModifier("pet")
-		Melee:          true,
-		PrimaryAbility: ShadowBite,
-		Stats: stats.Stats{
-			stats.Strength:  314,
-			stats.Agility:   90,
-			stats.Stamina:   328,
-			stats.Intellect: 150,
-			stats.Spirit:    209,
-			stats.Mana:      1559,
-			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
-			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
-		},
-	},
 }

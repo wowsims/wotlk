@@ -14,9 +14,6 @@ import (
 // Callback for when a cast is finished, i.e. when the in-game castbar reaches full.
 type OnCastComplete func(aura *Aura, sim *Simulation, spell *Spell)
 
-// Callback for when a cast is finished, but after calculations are done
-type AfterCast func(aura *Aura, sim *Simulation, spell *Spell)
-
 type Hardcast struct {
 	Expires    time.Duration
 	ActionID   ActionID
@@ -40,7 +37,6 @@ type CastConfig struct {
 
 	// Callbacks for providing additional custom behavior.
 	OnCastComplete func(*Simulation, *Spell)
-	AfterCast      func(*Simulation, *Spell)
 }
 
 type Cast struct {
@@ -60,6 +56,15 @@ type Cast struct {
 	// Additional GCD delay after the cast ends. Never affected by cast speed.
 	// This is typically used for latency.
 	AfterCastDelay time.Duration
+}
+
+func (cast Cast) EffectiveTime() time.Duration {
+	gcd := cast.GCD
+	if cast.GCD != 0 {
+		gcd = MaxDuration(GCDMin, gcd)
+	}
+	fullCastTime := cast.CastTime + cast.ChannelTime + cast.AfterCastDelay
+	return MaxDuration(gcd, fullCastTime)
 }
 
 var emptyCast Cast
@@ -217,17 +222,10 @@ func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) 
 			panic(fmt.Sprintf("Trying to cast %s but casting/channeling %v for %s, curTime = %s", spell.ActionID, hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime))
 		}
 
-		gcd := spell.CurCast.GCD
-		if spell.CurCast.GCD != 0 {
-			gcd = MaxDuration(GCDMin, gcd)
-		}
-
-		fullCastTime := spell.CurCast.CastTime + spell.CurCast.ChannelTime + spell.CurCast.AfterCastDelay
-
-		if fullCastTime != 0 || gcd != 0 {
-			gcdDelay := MaxDuration(gcd, fullCastTime)
-			spell.SpellMetrics[target.UnitIndex].TotalCastTime += gcdDelay
-			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+gcdDelay)
+		effectiveTime := spell.CurCast.EffectiveTime()
+		if effectiveTime != 0 {
+			spell.SpellMetrics[target.UnitIndex].TotalCastTime += effectiveTime
+			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+effectiveTime)
 		}
 
 		onCastComplete(sim, target)
@@ -279,7 +277,6 @@ func (spell *Spell) wrapCastFuncSharedCooldown(config CastConfig, onCastComplete
 func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc) CastFunc {
 	if !spell.Flags.Matches(SpellFlagNoOnCastComplete) {
 		configOnCastComplete := config.OnCastComplete
-		configAfterCast := config.AfterCast
 		oldOnCastComplete1 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			spell.Unit.OnCastComplete(sim, spell)
@@ -287,10 +284,6 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 				configOnCastComplete(sim, spell)
 			}
 			oldOnCastComplete1(sim, target)
-			spell.Unit.AfterCast(sim, spell)
-			if configAfterCast != nil {
-				configAfterCast(sim, spell)
-			}
 		}
 	}
 
@@ -309,12 +302,9 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		return func(sim *Simulation, target *Unit) {
 			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime, ActionID: spell.ActionID}
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-				// Hunter fake cast has no ID.
-				if !spell.ActionID.IsEmptyAction() {
-					spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s)",
-						spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime)
-					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
-				}
+				spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
+					spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
+				spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 			}
 			onCastComplete(sim, target)
 		}
@@ -326,12 +316,9 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		} else {
 			return func(sim *Simulation, target *Unit) {
 				if sim.Log != nil {
-					// Hunter fake cast has no ID.
-					if !spell.ActionID.IsEmptyAction() {
-						spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s)",
-							spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime)
-						spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
-					}
+					spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
+						spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
+					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 				}
 				onCastComplete(sim, target)
 			}
@@ -352,8 +339,8 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 
 		return func(sim *Simulation, target *Unit) {
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-				spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s)",
-					spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime)
+				spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
+					spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
 			}
 
 			// For instant-cast spells we can skip creating an aura.

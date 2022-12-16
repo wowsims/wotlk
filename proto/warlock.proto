@@ -178,6 +178,7 @@ message Warlock {
 		bool detonate_seed = 6;
 		SpecSpell spec_spell = 7;
 		Type type = 8;
+		bool use_infernal = 9;
 	}
 
 	Rotation rotation = 1;

@@ -17,9 +17,10 @@ import { emptyRaidTarget } from '../proto_utils/utils.js';
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: [
-			'show-1h-weapons-selector',
+			'show-1h-weapons-selector', 'mb-0'
 		],
 		label: '1H',
+		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().oneHandedWeapons,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
@@ -33,9 +34,10 @@ export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
 		extraCssClasses: [
-			'show-2h-weapons-selector',
+			'show-2h-weapons-selector', 'mb-0'
 		],
 		label: '2H',
+		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().twoHandedWeapons,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {

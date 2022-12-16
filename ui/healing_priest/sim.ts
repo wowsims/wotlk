@@ -69,10 +69,10 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				gear: Presets.DISC_P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 1.38,
-					[Stat.StatSpirit]: 1.18,
+					[Stat.StatIntellect]: 2.73,
+					[Stat.StatSpirit]: 1.63,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.44,
+					[Stat.StatSpellCrit]: 0.75,
 					[Stat.StatSpellHaste]: 0.28,
 					[Stat.StatMP5]: 2.05,
 				}),

@@ -435,6 +435,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 
 	if (showExecuteProportion) {
 		let executeGroup = Input.newGroupContainer();
+		executeGroup.classList.add('execute-group');
 		rootElem.appendChild(executeGroup);
 
 		new NumberPicker(executeGroup, encounter, {

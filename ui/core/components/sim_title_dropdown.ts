@@ -42,7 +42,7 @@ export class SimTitleDropdown extends Component {
     [Spec.SpecBalanceDruid]:       'Balance',
     [Spec.SpecElementalShaman]:    'Elemental',
     [Spec.SpecEnhancementShaman]:  'Enhancement',
-    [Spec.SpecFeralDruid]:         'Feral',
+    [Spec.SpecFeralDruid]:         'Feral DPS',
     [Spec.SpecFeralTankDruid]:     'Feral Tank',
     [Spec.SpecHunter]:             'Hunter',
     [Spec.SpecMage]:               'Mage',

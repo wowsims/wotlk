@@ -496,7 +496,7 @@ class SelectorModal extends Popup {
 					quality: item.quality,
 					heroic: item.heroic,
 					phase: item.phase,
-					baseEP: this.player.computeItemEP(item),
+					baseEP: this.player.computeItemEP(item, slot),
 					ignoreEPFilter: false,
 					onEquip: (eventID: number, item: Item) => {
 						eventData.onEquipItem(eventID, item);
@@ -507,7 +507,7 @@ class SelectorModal extends Popup {
 					},
 				};
 			}),
-			item => this.player.computeItemEP(item),
+			item => this.player.computeItemEP(item, slot),
 			eventData.getEquipedItem,
 			equippedItem => equippedItem?.item,
 			GemColor.GemColorUnknown,
@@ -679,11 +679,11 @@ class SelectorModal extends Popup {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
+					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
 					<div class="selector-modal-phase-selector"></div>
-					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">

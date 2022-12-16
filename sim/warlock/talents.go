@@ -47,22 +47,6 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.MultiplyStat(stats.Health, bonus)
 	}
 
-	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-		if warlock.Talents.MasterDemonologist > 0 {
-			switch warlock.Options.Summon {
-			case proto.Warlock_Options_Imp:
-				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-			case proto.Warlock_Options_Succubus:
-				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-			case proto.Warlock_Options_Felguard:
-				warlock.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-				warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.01*float64(warlock.Talents.MasterDemonologist)
-			}
-		}
-	}
-
 	// Demonic Tactics, applies even without pet out
 	if warlock.Talents.DemonicTactics > 0 {
 		warlock.AddStats(stats.Stats{
@@ -114,13 +98,6 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
 		warlock.registerGlyphOfLifeTapAura()
 	}
-}
-
-func (warlock *Warlock) masterDemonologistFireCrit() float64 {
-	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
-}
-func (warlock *Warlock) masterDemonologistShadowCrit() float64 {
-	return core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, float64(warlock.Talents.MasterDemonologist)*core.CritRatingPerCritChance, 0)
 }
 
 func (warlock *Warlock) applyDeathsEmbrace() {
@@ -383,11 +360,6 @@ func (warlock *Warlock) setupMoltenCore() {
 		ActionID:  core.ActionID{SpellID: 71165},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
-		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.Incinerate || spell == warlock.SoulFire {
-				aura.RemoveStack(sim)
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier *= moltenCoreDamageBonus
 			warlock.SoulFire.DamageMultiplier *= moltenCoreDamageBonus

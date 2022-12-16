@@ -29,8 +29,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		return moonkin.FaerieFire
 	}
 
-	shouldRebirth := sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming
-	lunarUptime := core.TernaryDuration(moonkin.LunarEclipseProcAura == nil, 0, moonkin.LunarEclipseProcAura.RemainingDuration(sim))
+	var lunarUptime time.Duration
+	if moonkin.LunarEclipseProcAura != nil {
+		lunarUptime = moonkin.LunarEclipseProcAura.RemainingDuration(sim)
+	}
 
 	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim).Seconds() < moonkin.SpellGCD().Seconds() {
 		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
@@ -39,8 +41,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 			moonkin.useTrinkets(stats.SpellHaste, sim, target)
 		}
 		return moonkin.Starfire
-	}
-	if rotation.UseBattleRes && shouldRebirth && moonkin.Rebirth.IsReady(sim) {
+	} else if rotation.UseBattleRes && sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)

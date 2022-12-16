@@ -21,6 +21,12 @@
   display: flex;
 }
 
+.dropdown-menu {
+  &[data-bs-popper] {
+    margin: 0 !important;
+  }
+}
+
 .form-check {
   padding: 0;
 

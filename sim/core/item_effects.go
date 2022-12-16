@@ -74,14 +74,7 @@ func NewItemEffect(id int32, itemEffect ApplyEffect) {
 
 func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 	if WITH_DB {
-		found := false
-		for _, enchantsByID := range EnchantsByItemByID {
-			if _, ok := enchantsByID[id]; ok {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if _, ok := EnchantsByEffectID[id]; !ok {
 			panic(fmt.Sprintf("No enchant with ID: %d", id))
 		}
 	}
@@ -95,14 +88,7 @@ func NewEnchantEffect(id int32, enchantEffect ApplyEffect) {
 
 func AddWeaponEffect(id int32, weaponEffect ApplyWeaponEffect) {
 	if WITH_DB {
-		found := false
-		for _, enchantsByID := range EnchantsByItemByID {
-			if _, ok := enchantsByID[id]; ok {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if _, ok := EnchantsByEffectID[id]; !ok {
 			panic(fmt.Sprintf("No enchant with ID: %d", id))
 		}
 	}

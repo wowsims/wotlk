@@ -58,11 +58,12 @@ import { SimUI, SimWarning } from './sim_ui.js';
 import { Spec } from './proto/common.js';
 import { SpecOptions } from './proto_utils/utils.js';
 import { SpecRotation } from './proto_utils/utils.js';
-import { Stat } from './proto/common.js';
+import { Stat, PseudoStat } from './proto/common.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import { Stats } from './proto_utils/stats.js';
 import { Target } from './target.js';
 import { Target as TargetProto } from './proto/common.js';
+import { UnitStats } from './proto/common.js';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
 import { addStatWeightsAction } from './components/stat_weights_action.js';
 import { equalsOrBothNull, getEnumValues } from './utils.js';
@@ -124,6 +125,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	warnings?: Array<(simUI: IndividualSimUI<SpecType>) => SimWarning>,
 
 	epStats: Array<Stat>;
+	epPseudoStats?: Array<PseudoStat>;
 	epReferenceStat: Stat;
 	displayStats: Array<Stat>;
 	modifyDisplayStats?: (player: Player<SpecType>) => StatMods,
@@ -352,7 +354,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addSidebarComponents() {
 		this.raidSimResultsManager = addRaidSimAction(this);
-		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epReferenceStat);
+		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
 		const characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
@@ -382,13 +384,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			getData: (player: Player<any>) => {
 				return SavedGearSet.create({
 					gear: player.getGear().asSpec(),
-					bonusStats: player.getBonusStats().asArray(),
+					bonusStatsStats: player.getBonusStats().toProto(),
 				});
 			},
 			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-					player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats || []));
+					if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
+						player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
+					} else {
+						player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
+					}
 				});
 			},
 			changeEmitters: [this.player.changeEmitter],
@@ -407,7 +413,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					data: SavedGearSet.create({
 						// Convert to gear and back so order is always the same.
 						gear: this.sim.db.lookupEquipmentSpec(presetGear.gear).asSpec(),
-						bonusStats: new Stats().asArray(),
+						bonusStatsStats: new Stats().toProto(),
 					}),
 					enableWhen: presetGear.enableWhen,
 				});
@@ -422,20 +428,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTalentsTab() {
 		this.addTab('Talents', 'talents-tab', `
-			<div class="player-pet-toggle"></div>
 			<div class="talents-content tab-pane-content-container">
 				<div class="talents-tab-content tab-panel-left">
+					<div class="player-pet-toggle hide"></div>
 					<div class="talents-picker"></div>
 					<div class="glyphs-picker">
 						<span>Glyphs</span>
 					</div>
+					<div class="pet-talents-picker hide"></div>
 				</div>
 				<div class="saved-talents-manager tab-panel-right"></div>
-			</div>
-			<div class="talents-content">
-				<div class="talents-tab-content">
-					<div class="pet-talents-picker"></div>
-				</div>
 			</div>
 		`);
 
@@ -479,19 +481,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				const petTalentsPicker = new HunterPetTalentsPicker(this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this.player as Player<Spec.SpecHunter>);
 
 				let curShown = 0;
-				const toggledElems = Array.from(this.rootElem.getElementsByClassName('talents-content')) as Array<HTMLElement>;
 				const updateToggle = () => {
-					toggledElems[1 - curShown].style.display = 'none';
-					toggledElems[curShown].style.removeProperty('display');
-
-					if (curShown == 0) {
-						petTypeToggle.rootElem.style.display = 'none';
-					} else {
-						petTypeToggle.rootElem.style.removeProperty('display');
-					}
+					this.rootElem.querySelector('.talents-picker')?.classList.toggle('hide');
+					this.rootElem.querySelector('.glyphs-picker')?.classList.toggle('hide');
+					this.rootElem.querySelector('.pet-talents-picker')?.classList.toggle('hide');
 				}
 
 				const toggleContainer = this.rootElem.getElementsByClassName('player-pet-toggle')[0] as HTMLElement;
+				toggleContainer.classList.remove('hide');
 				const playerPetToggle = new EnumPicker(toggleContainer, this, {
 					values: [
 						{ name: 'Player', value: 0 },
@@ -505,9 +502,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 					},
 				});
 				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
-				updateToggle();
-
-				toggleContainer.classList.add('active');
 			}
 		});
 	}
@@ -546,6 +540,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const tankSpec = isTankSpec(this.player.spec);
 			const healingSpec = isHealingSpec(this.player.spec);
 
+			//Special case for Totem of Wrath keeps buff and debuff sync'd
+			const towEnabled =  this.individualConfig.defaults.raidBuffs.totemOfWrath || this.individualConfig.defaults.debuffs.totemOfWrath
+			this.individualConfig.defaults.raidBuffs.totemOfWrath = towEnabled;
+			this.individualConfig.defaults.debuffs.totemOfWrath = towEnabled;
+			
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
@@ -611,7 +610,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			tanks: this.sim.raid.getTanks(),
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
-			epWeights: this.player.getEpWeights().asArray(),
+			epWeightsStats: this.player.getEpWeights().toProto(),
 			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
@@ -638,12 +637,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {
-				// Correction for removal of healing power and arcane/fire/etc power.
-				// TODO: Remove this after 2 months (2022/11/22).
-				if (settings.epWeights.length > 37) {
-					settings.epWeights.splice(6, 7);
-				}
 				this.player.setEpWeights(eventID, new Stats(settings.epWeights));
+			} else if (settings.epWeightsStats) {
+				this.player.setEpWeights(eventID, Stats.fromProto(settings.epWeightsStats));
 			} else {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
 			}
@@ -656,15 +652,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				party.setBuffs(eventID, settings.partyBuffs || PartyBuffs.create());
 			}
 
-			if (settings.encounter) {
-				// Correction for removal of healing power and arcane/fire/etc power.
-				// TODO: Remove this after 2 months (2022/11/22).
-				settings.encounter.targets.forEach(target => {
-					if (target.stats.length > 37) {
-						target.stats.splice(6, 7);
-					}
-				});
-			}
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 
 			if (settings.settings) {

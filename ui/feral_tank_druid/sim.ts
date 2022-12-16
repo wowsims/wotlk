@@ -10,7 +10,7 @@ import { MobType } from '../core/proto/common.js';
 import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -56,6 +56,9 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatDodge,
 				Stat.StatResilience,
 			],
+			epPseudoStats: [
+				PseudoStat.PseudoStatMainHandDps,
+			],
 			// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 			epReferenceStat: Stat.StatAttackPower,
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
@@ -95,6 +98,8 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					[Stat.StatDefense]: 1.8171,
 					[Stat.StatDodge]: 2.0196,
 					[Stat.StatHealth]: 0.4465,
+				}, {
+					[PseudoStat.PseudoStatMainHandDps]: 0.0,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -175,7 +180,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRESET,
+					Presets.P1_PRESET, Presets.P2_PRESET
 				],
 			},
 		});

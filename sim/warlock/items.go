@@ -28,22 +28,18 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
-			DemonicSoulAura := warlock.RegisterAura(core.Aura{
+			const bonusCrit = 10 * core.CritRatingPerCritChance
+			warlock.DemonicSoulAura = warlock.RegisterAura(core.Aura{
 				Label:    "Demonic Soul",
 				ActionID: core.ActionID{SpellID: 61595},
 				Duration: time.Second * 10,
-				AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
-						aura.Deactivate(sim)
-					}
-				},
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ShadowBolt.BonusCritRating += 10 * core.CritRatingPerCritChance
-					warlock.Incinerate.BonusCritRating += 10 * core.CritRatingPerCritChance
+					warlock.ShadowBolt.BonusCritRating += bonusCrit
+					warlock.Incinerate.BonusCritRating += bonusCrit
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ShadowBolt.BonusCritRating -= 10 * core.CritRatingPerCritChance
-					warlock.Incinerate.BonusCritRating -= 10 * core.CritRatingPerCritChance
+					warlock.ShadowBolt.BonusCritRating -= bonusCrit
+					warlock.Incinerate.BonusCritRating -= bonusCrit
 				},
 			})
 
@@ -57,8 +53,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == warlock.Corruption || spell == warlock.Immolate {
 						if sim.RandomFloat("2pT7") < 0.15 {
-							DemonicSoulAura.Activate(sim)
-							DemonicSoulAura.Refresh(sim)
+							warlock.DemonicSoulAura.Activate(sim)
 						}
 					}
 				},
@@ -117,6 +112,7 @@ var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
 	Name: "Gul'dan's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
+			// TODO: probably doesn't apply to infernal
 			warlock := agent.(WarlockAgent).GetWarlock()
 			pet := warlock.Pets[0].GetCharacter()
 			pet.AddStats(stats.Stats{

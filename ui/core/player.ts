@@ -10,12 +10,14 @@ import {
 	IndividualBuffs,
 	ItemSlot,
 	Profession,
+	PseudoStat,
 	Race,
 	RaidTarget,
 	RangedWeaponType,
 	SimDatabase,
 	Spec,
 	Stat,
+	UnitStats,
 	WeaponType,
 } from './proto/common.js';
 import {
@@ -246,8 +248,8 @@ export class Player<SpecType extends Spec> {
 		this.enchantEPCache = new Map();
 	}
 
-	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
-		const result = await this.sim.statWeights(this, epStats, epReferenceStat, onProgress);
+	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
+		const result = await this.sim.statWeights(this, epStats, epPseudoStats, epReferenceStat, onProgress);
 		return result;
 	}
 
@@ -596,7 +598,7 @@ export class Player<SpecType extends Spec> {
 		}
 
 		const epFromStats = this.computeStatsEP(new Stats(gem.stats));
-		const epFromEffect = getMetaGemEffectEP(this.spec, gem, new Stats(this.currentStats.finalStats));
+		const epFromEffect = getMetaGemEffectEP(this.spec, gem, Stats.fromProto(this.currentStats.finalStats));
 		let bonusEP = 0;
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (gem.unique) {
@@ -618,7 +620,7 @@ export class Player<SpecType extends Spec> {
 		return ep
 	}
 
-	computeItemEP(item: Item): number {
+	computeItemEP(item: Item, slot: ItemSlot): number {
 		if (item == null)
 			return 0;
 
@@ -627,25 +629,22 @@ export class Player<SpecType extends Spec> {
 		}
 
 		let itemStats = new Stats(item.stats);
-		if (item.weaponType != WeaponType.WeaponTypeUnknown) {
-			// Add weapon dps as attack power, so the EP is appropriate.
+		if (item.weaponSpeed > 0) {
 			const weaponDps = getWeaponDPS(item);
-			itemStats = itemStats.addStat(Stat.StatAttackPower, this.spec == Spec.SpecFeralDruid ? 0 : weaponDps * 14);
-		} else if (![RangedWeaponType.RangedWeaponTypeUnknown, RangedWeaponType.RangedWeaponTypeThrown].includes(item.rangedWeaponType)) {
-			const weaponDps = getWeaponDPS(item);
-			itemStats = itemStats.addStat(Stat.StatRangedAttackPower, weaponDps * 14);
+			if (slot == ItemSlot.ItemSlotMainHand) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatMainHandDps, weaponDps);
+			} else if (slot == ItemSlot.ItemSlotOffHand) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatOffHandDps, weaponDps);
+			} else if (slot == ItemSlot.ItemSlotRanged) {
+				itemStats = itemStats.withPseudoStat(PseudoStat.PseudoStatRangedDps, weaponDps);
+			}
 		}
+
 		let ep = itemStats.computeEP(this.epWeights);
 
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (item.unique) {
 			ep -= 0.01;
-		}
-
-		const slot = getEligibleItemSlots(item)[0];
-		const enchants = this.sim.db.getEnchants(slot);
-		if (enchants.length > 0) {
-			ep += Math.max(...enchants.map(enchant => this.computeEnchantEP(enchant)));
 		}
 
 		// Compare whether its better to match sockets + get socket bonus, or just use best gems.
@@ -805,7 +804,7 @@ export class Player<SpecType extends Spec> {
 				class: this.getClass(),
 				equipment: gear.asSpec(),
 				consumes: this.getConsumes(),
-				bonusStats: this.getBonusStats().asArray(),
+				bonusStats: this.getBonusStats().toProto(),
 				buffs: this.getBuffs(),
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
@@ -828,7 +827,7 @@ export class Player<SpecType extends Spec> {
 			this.setRace(eventID, proto.race);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
-			this.setBonusStats(eventID, new Stats(proto.bonusStats));
+			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
 			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
@@ -867,6 +866,6 @@ export class Player<SpecType extends Spec> {
 		proto.cooldowns = Cooldowns.create({
 			hpPercentForDefensives: isTankSpec(spec) ? 0.35 : 0,
 		});
-		proto.bonusStats = new Stats().asArray();
+		proto.bonusStats = new Stats().toProto();
 	}
 }

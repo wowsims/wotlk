@@ -127,14 +127,20 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.baseStats = BaseStats[BaseStatsKey{Race: character.Race, Class: character.Class}]
 
-	bonusStats := stats.Stats{}
-	if player.BonusStats != nil {
-		copy(bonusStats[:], player.BonusStats)
-	}
-
 	character.AddStats(character.baseStats)
-	character.AddStats(bonusStats)
 	character.addUniversalStatDependencies()
+
+	if player.BonusStats != nil {
+		if player.BonusStats.Stats != nil {
+			character.AddStats(stats.FromFloatArray(player.BonusStats.Stats))
+		}
+		if player.BonusStats.PseudoStats != nil {
+			ps := player.BonusStats.PseudoStats
+			character.PseudoStats.BonusMHDps += ps[proto.PseudoStat_PseudoStatMainHandDps]
+			character.PseudoStats.BonusOHDps += ps[proto.PseudoStat_PseudoStatOffHandDps]
+			character.PseudoStats.BonusRangedDps += ps[proto.PseudoStat_PseudoStatRangedDps]
+		}
+	}
 
 	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeShield {
@@ -155,34 +161,41 @@ func (character *Character) addUniversalStatDependencies() {
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
+	measureStats := func() *proto.UnitStats {
+		return &proto.UnitStats{
+			Stats:       character.SortAndApplyStatDependencies(character.stats).ToFloatArray(),
+			PseudoStats: character.GetPseudoStatsProto(),
+		}
+	}
+
 	applyRaceEffects(agent)
 	character.applyProfessionEffects()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
-	playerStats.BaseStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BaseStats = measureStats()
 
 	character.AddStats(character.Equip.Stats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
-	playerStats.GearStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.GearStats = measureStats()
 
 	agent.ApplyTalents()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseTalents)
-	playerStats.TalentsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.TalentsStats = measureStats()
 
 	applyBuffEffects(agent, raidBuffs, partyBuffs, individualBuffs)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBuffs)
-	playerStats.BuffsStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.BuffsStats = measureStats()
 
 	applyConsumeEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseConsumes)
-	playerStats.ConsumesStats = character.SortAndApplyStatDependencies(character.stats).ToFloatArray()
+	playerStats.ConsumesStats = measureStats()
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 
 	for _, petAgent := range character.Pets {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 	}
 
-	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	return playerStats
 }
 func (character *Character) applyBuildPhaseAuras(phase CharacterBuildPhase) {
@@ -376,7 +389,10 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 
 	if playerStats != nil {
 		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.FinalStats = character.GetStats().ToFloatArray()
+		playerStats.FinalStats = &proto.UnitStats{
+			Stats:       character.GetStats().ToFloatArray(),
+			PseudoStats: character.GetPseudoStatsProto(),
+		}
 		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 		playerStats.Sets = character.GetActiveSetBonusNames()
 		playerStats.Cooldowns = character.GetMajorCooldownIDs()
@@ -519,6 +535,15 @@ func (character *Character) doneIteration(sim *Simulation) {
 	}
 
 	character.Unit.doneIteration(sim)
+}
+
+func (character *Character) GetPseudoStatsProto() []float64 {
+	vals := make([]float64, stats.PseudoStatsLen)
+	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.WeaponFromMainHand(0).DPS()
+	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.WeaponFromOffHand(0).DPS()
+	vals[proto.PseudoStat_PseudoStatRangedDps] = character.WeaponFromRanged(0).DPS()
+	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
+	return vals
 }
 
 func (character *Character) GetMetricsProto() *proto.UnitMetrics {

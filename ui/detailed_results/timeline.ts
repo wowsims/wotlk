@@ -702,9 +702,10 @@ export class Timeline extends ResultComponent {
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
 			const travelTimeStr = castLog.travelTime == 0 ? '' : ` + ${castLog.travelTime.toFixed(2)}s travel time`;
+			const totalDamage = castLog.totalDamage();
 			tippy(castElem, {
 				content: `
-					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s)${travelTimeStr}</span>
+					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s, ${castLog.effectiveTime.toFixed(2)}s GCD Time)${travelTimeStr}</span>
 					<ul class="rotation-timeline-cast-damage-list">
 						${castLog.damageDealtLogs.map(ddl => `
 								<li>
@@ -713,6 +714,7 @@ export class Timeline extends ResultComponent {
 								</li>`)
 						.join('')}
 					</ul>
+					${totalDamage == 0 ? '' : `<span>Total: ${totalDamage.toFixed(2)} (${(totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)</span>`}
 				`,
 				allowHTML: true,
 				placement: 'bottom',

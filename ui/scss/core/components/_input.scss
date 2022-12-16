@@ -16,13 +16,17 @@
     justify-content: space-between;
     align-items: center;
 
+    label {
+      margin-right: map.get($spacers, 1);
+    }
+
     input, select {
       width: 5rem;
     }
   }
 
   &:not(.input-inline) {
-    .form-label {
+    label {
       white-space: nowrap;
     }
   }

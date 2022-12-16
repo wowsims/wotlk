@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerEnrageSpell() {
@@ -13,6 +14,7 @@ func (druid *Druid) registerEnrageSpell() {
 	instantRage := []float64{20, 24, 27, 30}[druid.Talents.Intensity]
 
 	dmgBonus := 0.05 * float64(druid.Talents.KingOfTheJungle)
+	armorLoss := druid.ScaleBaseArmor(0.16 * druid.TotalBearArmorMultiplier())
 
 	druid.EnrageAura = druid.RegisterAura(core.Aura{
 		Label:    "Enrage Aura",
@@ -20,9 +22,11 @@ func (druid *Druid) registerEnrageSpell() {
 		Duration: 10 * time.Second,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + dmgBonus
+			druid.AddStatDynamic(sim, stats.Armor, -armorLoss)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + dmgBonus
+			druid.AddStatDynamic(sim, stats.Armor, armorLoss)
 		},
 	})
 

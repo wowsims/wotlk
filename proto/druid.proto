@@ -233,16 +233,7 @@ message FeralTankDruid {
 		// Minimum rage to queue HS or Cleave.
 		int32 maul_rage_threshold = 1;
 		bool maintain_demoralizing_roar = 2;
-		bool maintain_faerie_fire = 3;
-
-		enum Swipe {
-			SwipeNone = 0;
-			SwipeWithEnoughAP = 1;
-			SwipeSpam = 2;
-		}
-		Swipe swipe = 4;
-
-		double swipe_ap_threshold = 5;
+		double lacerate_time = 3;
   }
   Rotation rotation = 1;
 

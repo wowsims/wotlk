@@ -27,6 +27,22 @@ type Weapon struct {
 	SpellSchool                SpellSchool
 }
 
+func (w Weapon) DPS() float64 {
+	if w.SwingSpeed == 0 {
+		return 0
+	} else {
+		return (w.BaseDamageMin + w.BaseDamageMax) / 2.0 / w.SwingSpeed
+	}
+}
+
+func (w Weapon) WithBonusDPS(bonusDps float64) Weapon {
+	newWeapon := w
+	bonusSwingDamage := bonusDps * w.SwingSpeed
+	newWeapon.BaseDamageMin += bonusSwingDamage
+	newWeapon.BaseDamageMax += bonusSwingDamage
+	return newWeapon
+}
+
 func newWeaponFromUnarmed(critMultiplier float64) Weapon {
 	// These numbers are probably wrong but nobody cares.
 	return Weapon{
@@ -64,16 +80,16 @@ func newWeaponFromItem(item Item, critMultiplier float64) Weapon {
 // Returns weapon stats using the main hand equipped weapon.
 func (character *Character) WeaponFromMainHand(critMultiplier float64) Weapon {
 	if weapon := character.GetMHWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier)
+		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusMHDps)
 	} else {
-		return newWeaponFromUnarmed(critMultiplier)
+		return newWeaponFromUnarmed(critMultiplier).WithBonusDPS(character.PseudoStats.BonusMHDps)
 	}
 }
 
 // Returns weapon stats using the off hand equipped weapon.
 func (character *Character) WeaponFromOffHand(critMultiplier float64) Weapon {
 	if weapon := character.GetOHWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier)
+		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusOHDps)
 	} else {
 		return Weapon{}
 	}
@@ -82,7 +98,7 @@ func (character *Character) WeaponFromOffHand(critMultiplier float64) Weapon {
 // Returns weapon stats using the ranged equipped weapon.
 func (character *Character) WeaponFromRanged(critMultiplier float64) Weapon {
 	if weapon := character.GetRangedWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier)
+		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusRangedDps)
 	} else {
 		return Weapon{}
 	}
@@ -282,13 +298,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 		ProcMask:    ProcMaskRangedAuto,
 		Flags:       SpellFlagMeleeMetrics | SpellFlagIncludeTargetBonusDamage,
 
-		Cast: CastConfig{
-			IgnoreHaste: true,
-			AfterCast: func(sim *Simulation, spell *Spell) {
-				agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
-			},
-		},
-
 		DamageMultiplier: 1,
 		CritMultiplier:   options.Ranged.CritMultiplier,
 		ThreatMultiplier: 1,
@@ -297,6 +306,7 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
+			agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
 		},
 	}
 

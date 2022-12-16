@@ -46,9 +46,6 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 	cat.PrePopBerserk = feralOptions.Options.PrePopBerserk
 	cat.setupRotation(feralOptions.Rotation)
 
-	// Passive Cat Form threat reduction
-	cat.PseudoStats.ThreatMultiplier *= 0.71
-
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
 	cat.EnableRageBar(core.RageBarOptions{RageMultiplier: 1, MHSwingSpeed: 2.5}, func(sim *core.Simulation) {})

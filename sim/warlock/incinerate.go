@@ -32,7 +32,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit() +
+			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
@@ -51,6 +51,13 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			}
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+			if warlock.DemonicSoulAura.IsActive() {
+				warlock.DemonicSoulAura.Deactivate(sim)
+			}
+			if warlock.MoltenCoreAura.IsActive() {
+				warlock.MoltenCoreAura.RemoveStack(sim)
+			}
 		},
 	})
 }

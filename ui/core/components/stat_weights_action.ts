@@ -2,10 +2,10 @@ import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetric
 import { ItemSlot } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
-import { Stats } from '../proto_utils/stats.js';
+import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
+import { Stats, UnitStat } from '../proto_utils/stats.js';
 import { Gear } from '../proto_utils/gear.js';
-import { getClassStatName, statOrder } from '../proto_utils/names.js';
+import { getClassStatName, statOrder, pseudoStatOrder, pseudoStatNames } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
@@ -24,9 +24,9 @@ import { Popup } from './popup.js';
 
 declare var tippy: any;
 
-export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epReferenceStat: Stat) {
+export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>|undefined, epReferenceStat: Stat) {
 	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
-		new EpWeightsMenu(simUI, epStats, epReferenceStat);
+		new EpWeightsMenu(simUI, epStats, epPseudoStats || [], epReferenceStat);
 	});
 }
 
@@ -39,13 +39,15 @@ class EpWeightsMenu extends Popup {
 
 	private statsType: string;
 	private epStats: Array<Stat>;
+	private epPseudoStats: Array<PseudoStat>;
 	private epReferenceStat: Stat;
 
-	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epReferenceStat: Stat) {
+	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
 		super(simUI.rootElem);
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
+		this.epPseudoStats = epPseudoStats;
 		this.epReferenceStat = epReferenceStat;
 
 		this.rootElem.classList.add('ep-weights-menu');
@@ -117,7 +119,7 @@ class EpWeightsMenu extends Popup {
 		calcButton.addEventListener('click', async event => {
 			this.resultsViewer.setPending();
 			const iterations = this.simUI.sim.getIterations();
-			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epReferenceStat, (progress: ProgressMetrics) => {
+			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epPseudoStats, this.epReferenceStat, (progress: ProgressMetrics) => {
 				this.setSimProgress(progress);
 			});
 			this.resultsViewer.hideAll();
@@ -127,7 +129,7 @@ class EpWeightsMenu extends Popup {
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
-		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => Array<number>) => {
+		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
 			tippy(button.previousSibling, {
 				'content': labelTooltip,
 				'allowHTML': true,
@@ -137,7 +139,7 @@ class EpWeightsMenu extends Popup {
 				'allowHTML': true,
 			});
 			button.addEventListener('click', event => {
-				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), new Stats(weightsFunc()));
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
 			});
 		};
 
@@ -151,7 +153,7 @@ class EpWeightsMenu extends Popup {
 		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
 		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${armorStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
-		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.asArray());
+		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
@@ -201,10 +203,9 @@ class EpWeightsMenu extends Popup {
 		this.tableBody.innerHTML = '';
 		this.tableBody.appendChild(this.tableHeader);
 
-		const allStats = statOrder.filter(stat => ![Stat.StatMana, Stat.StatEnergy, Stat.StatRage].includes(stat));
-		allStats.forEach(stat => {
+		EpWeightsMenu.epUnitStats.forEach(stat => {
 			const row = this.makeTableRow(stat, iterations, result);
-			if (!this.epStats.includes(stat)) {
+			if ((stat.isStat() && !this.epStats.includes(stat.getStat())) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {
 				row.classList.add('non-ep-stat');
 			}
 			this.tableBody.appendChild(row);
@@ -213,18 +214,20 @@ class EpWeightsMenu extends Popup {
 		this.applyAlternatingColors();
 	}
 
-	private makeTableRow(stat: Stat, iterations: number, result: StatWeightsResult): HTMLElement {
+	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult): HTMLElement {
 		const row = document.createElement('tr');
+		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
+			return `
+				<td class="stdev-cell ${className} type-weight"><span>${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span><span>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)}</span></td>
+				<td class="stdev-cell ${className} type-ep"><span>${stat.getProtoValue(statWeights.epValues!).toFixed(2)}</span><span>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)}</span></td>
+			`;
+		};
 		row.innerHTML = `
-			<td>${getClassStatName(stat, this.simUI.player.getClass())}</td>
-			<td class="stdev-cell damage-metrics type-weight"><span>${result.dps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell damage-metrics type-ep"><span>${result.dps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell healing-metrics type-weight"><span>${result.hps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell healing-metrics type-ep"><span>${result.hps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.hps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell threat-metrics type-weight"><span>${result.tps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell threat-metrics type-ep"><span>${result.tps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.tps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell threat-metrics type-weight"><span>${result.dtps!.weights[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.weightsStdev[stat], iterations).toFixed(2)}</span></td>
-			<td class="stdev-cell threat-metrics type-ep"><span>${result.dtps!.epValues[stat].toFixed(2)}</span><span>${stDevToConf90(result.dtps!.epValuesStdev[stat], iterations).toFixed(2)}</span></td>
+			<td>${stat.getName(this.simUI.player.getClass())}</td>
+			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
+			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
+			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
+			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
 			<td class="current-ep"></td>
 		`;
 
@@ -232,9 +235,9 @@ class EpWeightsMenu extends Popup {
 		new NumberPicker(currentEpCell, this.simUI.player, {
 			float: true,
 			changedEvent: (player: Player<any>) => player.epWeightsChangeEmitter,
-			getValue: (player: Player<any>) => player.getEpWeights().getStat(stat),
+			getValue: (player: Player<any>) => player.getEpWeights().getUnitStat(stat),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-				const epWeights = player.getEpWeights().withStat(stat, newValue);
+				const epWeights = player.getEpWeights().withUnitStat(stat, newValue);
 				player.setEpWeights(eventID, epWeights);
 			},
 		});
@@ -257,28 +260,28 @@ class EpWeightsMenu extends Popup {
 	private getPrevSimResult(): StatWeightsResult {
 		return this.simUI.prevEpSimResult || StatWeightsResult.create({
 			dps: {
-				weights: new Stats().asArray(),
-				weightsStdev: new Stats().asArray(),
-				epValues: new Stats().asArray(),
-				epValuesStdev: new Stats().asArray(),
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
 			},
 			hps: {
-				weights: new Stats().asArray(),
-				weightsStdev: new Stats().asArray(),
-				epValues: new Stats().asArray(),
-				epValuesStdev: new Stats().asArray(),
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
 			},
 			tps: {
-				weights: new Stats().asArray(),
-				weightsStdev: new Stats().asArray(),
-				epValues: new Stats().asArray(),
-				epValuesStdev: new Stats().asArray(),
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
 			},
 			dtps: {
-				weights: new Stats().asArray(),
-				weightsStdev: new Stats().asArray(),
-				epValues: new Stats().asArray(),
-				epValuesStdev: new Stats().asArray(),
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
 			},
 		});
 	}
@@ -534,6 +537,18 @@ class EpWeightsMenu extends Popup {
 			bestGemEP: bestGemEP,
 		};
 	}
+
+	private static epUnitStats: Array<UnitStat> = UnitStat.getAll().filter(stat => {
+		if (stat.isStat()) {
+			return true;
+		} else {
+			return [
+				PseudoStat.PseudoStatMainHandDps,
+				PseudoStat.PseudoStatOffHandDps,
+				PseudoStat.PseudoStatRangedDps,
+			].includes(stat.getPseudoStat());
+		}
+	});
 }
 
 interface BestGemsResult {

@@ -41,8 +41,6 @@ func init() {
 	for i, enchant := range db.Enchants {
 		simDB.Enchants[i] = &proto.SimEnchant{
 			EffectId: enchant.EffectId,
-			Name:     enchant.Name,
-			Type:     enchant.Type,
 			Stats:    enchant.Stats,
 		}
 	}

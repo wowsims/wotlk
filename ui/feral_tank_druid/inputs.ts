@@ -12,7 +12,6 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	FeralTankDruid,
 	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Rotation_Swipe as Swipe,
 	FeralTankDruid_Options as DruidOptions
 } from '../core/proto/druid.js';
 
@@ -29,33 +28,18 @@ export const FeralTankDruidRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralTankDruid>({
 			fieldName: 'maulRageThreshold',
-			label: 'Maul Threshold',
-			labelTooltip: 'Queue Maul when rage is above this value.',
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralTankDruid, Swipe>({
-			fieldName: 'swipe',
-			label: 'Swipe',
-			values: [
-				{ name: 'Never', value: Swipe.SwipeNone },
-				{ name: 'With Enough AP', value: Swipe.SwipeWithEnoughAP },
-				{ name: 'Spam', value: Swipe.SwipeSpam },
-			],
+			label: 'Maul Rage Threshold',
+			labelTooltip: 'Queue Maul when Rage is above this value.',
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralTankDruid>({
-			fieldName: 'swipeApThreshold',
-			label: 'Swipe AP Threshold',
-			labelTooltip: 'Use Swipe when Attack Power is larger than this amount.',
-			enableWhen: (player: Player<Spec.SpecFeralTankDruid>) => player.getRotation().swipe == Swipe.SwipeWithEnoughAP,
+			fieldName: 'lacerateTime',
+			label: 'Lacerate Refresh Leeway',
+			labelTooltip: 'Refresh Lacerate when remaining duration is less than this value (in seconds).',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralTankDruid>({
 			fieldName: 'maintainDemoralizingRoar',
 			label: 'Maintain Demo Roar',
 			labelTooltip: 'Keep Demoralizing Roar active on the primary target. If a stronger debuff is active, will not cast.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralTankDruid>({
-			fieldName: 'maintainFaerieFire',
-			label: 'Maintain Faerie Fire',
-			labelTooltip: 'Keep Faerie Fire active on the primary target. If a stronger debuff is active, will not cast.',
 		}),
 	],
 };

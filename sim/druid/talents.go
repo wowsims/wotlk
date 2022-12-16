@@ -8,6 +8,21 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (druid *Druid) ThickHideMultiplier() float64 {
+	thickHideMulti := 1.0
+
+	if druid.Talents.ThickHide > 0 {
+		thickHideMulti += 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
+	}
+
+	return thickHideMulti
+}
+
+func (druid *Druid) TotalBearArmorMultiplier() float64 {
+	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
+	return 4.7 * sotfMulti * druid.ThickHideMultiplier()
+}
+
 func (druid *Druid) ApplyTalents() {
 	druid.AddStat(stats.SpellHit, float64(druid.Talents.BalanceOfPower)*2*core.SpellHitRatingPerHitChance)
 	druid.AddStat(stats.SpellCrit, float64(druid.Talents.NaturalPerfection)*1*core.CritRatingPerCritChance)
@@ -15,11 +30,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
 	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
-
-	if druid.Talents.ThickHide > 0 {
-		thickHideMulti := 0.04 + 0.03*float64(druid.Talents.ThickHide-1)
-		druid.AddStat(stats.Armor, druid.ScaleBaseArmor(thickHideMulti))
-	}
+	druid.AddStat(stats.Armor, druid.ScaleBaseArmor(druid.ThickHideMultiplier()-1.0))
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
@@ -358,7 +369,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				}
 			}
 		},
-		AfterCast: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell == druid.GiftOfTheWild {
 				// Based on ingame testing by druid discord, subject to change or incorrectness
 				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))

@@ -13,7 +13,6 @@ import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Rotation_Swipe as Swipe,
 	FeralTankDruid_Options as DruidOptions,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
@@ -43,11 +42,9 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = DruidRotation.create({
-	maulRageThreshold: 50,
-	swipe: Swipe.SwipeWithEnoughAP,
-	swipeApThreshold: 2700,
+	maulRageThreshold: 25,
 	maintainDemoralizingRoar: true,
-	maintainFaerieFire: true,
+	lacerateTime: 8.0,
 });
 
 export const DefaultOptions = DruidOptions.create({
@@ -160,6 +157,122 @@ export const P1_PRESET = {
 		{},
 		{
 			"id": 38365
+		}
+	]}`),
+};
+
+export const P2_PRESET = {
+	name: 'P2 Boss Tanking',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 41678,
+			"enchant": 67839,
+			"gems": [
+				41339,
+				45880
+			]
+		},
+		{
+			"id": 45517,
+			"gems": [
+				40008
+			]
+		},
+		{
+			"id": 45245,
+			"enchant": 44957,
+			"gems": [
+				40008,
+				40008
+			]
+		},
+		{
+			"id": 45496,
+			"enchant": 3294,
+			"gems": [
+				42702
+			]
+		},
+		{
+			"id": 45473,
+			"enchant": 3832,
+			"gems": [
+				40008,
+				40008,
+				40008
+			]
+		},
+		{
+			"id": 45611,
+			"enchant": 3850,
+			"gems": [
+				40008,
+				0
+			]
+		},
+		{
+			"id": 46043,
+			"enchant": 63770,
+			"gems": [
+				40008,
+				40008,
+				0
+			]
+		},
+		{
+			"id": 46095,
+			"gems": [
+				40008,
+				40008,
+				40008
+			]
+		},
+		{
+			"id": 45536,
+			"enchant": 38373,
+			"gems": [
+				40008,
+				40008,
+				40008
+			]
+		},
+		{
+			"id": 45232,
+			"enchant": 55016,
+			"gems": [
+				40008
+			]
+		},
+		{
+			"id": 45471,
+			"gems": [
+				40091
+			]
+		},
+		{
+			"id": 45608,
+			"gems": [
+				40008
+			]
+		},
+		{
+			"id": 45158
+		},
+		{
+			"id": 46021
+		},
+		{
+			"id": 45533,
+			"enchant": 2673,
+			"gems": [
+				40008,
+				40008
+			]
+		},
+		{},
+		{
+			"id": 45509
 		}
 	]}`),
 };

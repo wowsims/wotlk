@@ -44,7 +44,7 @@ func (druid *Druid) registerLacerateSpell() {
 			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 1.05, 1),
 		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: 0.5,
-		FlatThreatBonus:  267,
+		FlatThreatBonus:  515.5,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := initialDamage + 0.01*spell.MeleeAttackPower()

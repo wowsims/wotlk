@@ -292,7 +292,7 @@ export class Target {
 			spellSchool: SpellSchool.SpellSchoolPhysical,
 			stats: Stats.fromMap({
 				[Stat.StatArmor]: 10643,
-				[Stat.StatAttackPower]: 640,
+				[Stat.StatAttackPower]: 574,
 			}).asArray(),
 		});
 	}
