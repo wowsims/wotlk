@@ -12,7 +12,7 @@ var WITH_DB = false
 
 var ItemsByID = map[int32]Item{}
 var GemsByID = map[int32]Gem{}
-var EnchantsByItemByID = map[proto.ItemType]map[int32]Enchant{}
+var EnchantsByEffectID = map[int32]Enchant{}
 
 func addToDatabase(newDB *proto.SimDatabase) {
 	for _, v := range newDB.Items {
@@ -24,13 +24,9 @@ func addToDatabase(newDB *proto.SimDatabase) {
 	}
 
 	for _, v := range newDB.Enchants {
-		if EnchantsByItemByID[v.Type] == nil {
-			EnchantsByItemByID[v.Type] = map[int32]Enchant{}
+		if _, ok := EnchantsByEffectID[v.EffectId]; !ok {
+			EnchantsByEffectID[v.EffectId] = EnchantFromProto(v)
 		}
-		if _, ok := EnchantsByItemByID[v.Type][v.EffectId]; ok {
-			continue
-		}
-		EnchantsByItemByID[v.Type][v.EffectId] = EnchantFromProto(v)
 	}
 
 	for _, v := range newDB.Gems {
@@ -98,16 +94,12 @@ func (item Item) ToItemSpecProto() *proto.ItemSpec {
 
 type Enchant struct {
 	EffectID int32 // Used by UI to apply effect to tooltip
-	Name     string
 	Stats    stats.Stats
-	ItemType proto.ItemType // Which slot the enchant goes on.
 }
 
 func EnchantFromProto(pData *proto.SimEnchant) Enchant {
 	return Enchant{
 		EffectID: pData.EffectId,
-		Name:     pData.Name,
-		ItemType: pData.Type,
 		Stats:    stats.FromFloatArray(pData.Stats),
 	}
 }
@@ -205,7 +197,7 @@ func NewItem(itemSpec ItemSpec) Item {
 	}
 
 	if itemSpec.Enchant != 0 {
-		if enchant, ok := EnchantsByItemByID[item.Type][itemSpec.Enchant]; ok {
+		if enchant, ok := EnchantsByEffectID[itemSpec.Enchant]; ok {
 			item.Enchant = enchant
 		} else {
 			panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))

@@ -68,7 +68,8 @@ message UIEnchant {
 	string name = 4;     
 	string icon = 5;
 
-	ItemType type = 6; // Which type of item this enchant can be applied to.
+	ItemType type = 6;                  // Which type of item this enchant can be applied to.
+	repeated ItemType extra_types = 13; // Extra types for enchants that can go in multiple slots (like armor kits).
 	EnchantType enchant_type = 7;
 
 	repeated double stats = 8;

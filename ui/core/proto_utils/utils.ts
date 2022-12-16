@@ -1676,16 +1676,18 @@ export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Ite
 // Note that this alone is not enough; some items have further restrictions,
 // e.g. some weapon enchants may only be applied to 2H weapons.
 export function getEligibleEnchantSlots(enchant: Enchant): Array<ItemSlot> {
-	if (itemTypeToSlotsMap[enchant.type]) {
-		return itemTypeToSlotsMap[enchant.type]!;
-	}
+	return [enchant.type].concat(enchant.extraTypes || []).map(type => {
+		if (itemTypeToSlotsMap[type]) {
+			return itemTypeToSlotsMap[type]!;
+		}
 
-	if (enchant.type == ItemType.ItemTypeWeapon) {
-		return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand];
-	}
+		if (type == ItemType.ItemTypeWeapon) {
+			return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand];
+		}
 
-	// Should never reach here
-	throw new Error('Could not find item slots for enchant: ' + Enchant.toJsonString(enchant));
+		// Should never reach here
+		throw new Error('Could not find item slots for enchant: ' + Enchant.toJsonString(enchant));
+	}).flat();
 };
 
 export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
