@@ -179,8 +179,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 6874.41111
-  tps: 6136.43369
+  dps: 6875.3448
+  tps: 6137.36738
  }
 }
 dps_results: {
@@ -305,8 +305,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlock-Average-Default"
  value: {
-  dps: 7049.92192
-  tps: 6312.77608
+  dps: 7049.4279
+  tps: 6312.28207
  }
 }
 dps_results: {

@@ -51,6 +51,10 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			}
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+			if warlock.DemonicSoulAura.IsActive() {
+				warlock.DemonicSoulAura.Deactivate(sim)
+			}
 		},
 	})
 }

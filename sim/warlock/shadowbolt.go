@@ -66,6 +66,9 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					}
 				}
 			})
+			if warlock.DemonicSoulAura.IsActive() {
+				warlock.DemonicSoulAura.Deactivate(sim)
+			}
 		},
 	})
 }

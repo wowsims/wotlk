@@ -29,7 +29,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 
 			const bonusCrit = 10 * core.CritRatingPerCritChance
-			DemonicSoulAura := warlock.RegisterAura(core.Aura{
+			warlock.DemonicSoulAura = warlock.RegisterAura(core.Aura{
 				Label:    "Demonic Soul",
 				ActionID: core.ActionID{SpellID: 61595},
 				Duration: time.Second * 10,
@@ -40,11 +40,6 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 					warlock.ShadowBolt.BonusCritRating -= bonusCrit
 					warlock.Incinerate.BonusCritRating -= bonusCrit
-				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
-					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
-						aura.Deactivate(sim)
-					}
 				},
 			})
 
@@ -58,8 +53,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == warlock.Corruption || spell == warlock.Immolate {
 						if sim.RandomFloat("2pT7") < 0.15 {
-							DemonicSoulAura.Activate(sim)
-							DemonicSoulAura.Refresh(sim)
+							warlock.DemonicSoulAura.Activate(sim)
 						}
 					}
 				},
