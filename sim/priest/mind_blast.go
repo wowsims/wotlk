@@ -9,13 +9,8 @@ import (
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana*0.17 - core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), (priest.BaseMana*0.17)*0.1, 0)
-
+	baseCost := priest.BaseMana * 0.17 * core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), 0.9, 1)
 	miserySpellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
-
-	normMod := (1 + 0.02*float64(priest.Talents.Darkness)) *
-		core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1)
-	swpMod := normMod * (1 + 0.02*float64(priest.Talents.TwistedFaith))
 
 	var replSrc core.ReplenishmentSource
 	if priest.Talents.VampiricTouch {
@@ -41,20 +36,16 @@ func (priest *Priest) registerMindBlastSpell() {
 			},
 		},
 
-		BonusHitRating:   0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
-		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
+		BonusHitRating:  0 + float64(priest.Talents.ShadowFocus)*1*core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 *
+			(1 + 0.02*float64(priest.Talents.Darkness)) *
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetAbsolution, 4), 1.1, 1),
 		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(997, 1053) + miserySpellCoeff*spell.SpellPower()
-
-			if priest.ShadowWordPainDot.IsActive() {
-				baseDamage *= swpMod
-			} else {
-				baseDamage *= normMod
-			}
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
@@ -68,9 +59,13 @@ func (priest *Priest) registerMindBlastSpell() {
 			}
 			spell.DealDamage(sim, result)
 
-			if priest.Talents.VampiricTouch && priest.VampiricTouchDot.IsActive() {
+			if priest.VampiricTouchDot != nil && priest.VampiricTouchDot.IsActive() {
 				priest.Env.Raid.ProcReplenishment(sim, replSrc)
 			}
+		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+			baseDamage := sim.Roll(997, 1053) + miserySpellCoeff*spell.SpellPower()
+			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},
 	})
 }

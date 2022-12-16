@@ -34,9 +34,9 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
-			float64(priest.Talents.Darkness)*0.02 +
-			float64(priest.Talents.TwinDisciplines)*0.01 +
-			float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
+			0.02*float64(priest.Talents.Darkness) +
+			0.01*float64(priest.Talents.TwinDisciplines) +
+			0.05*float64(priest.Talents.ImprovedDevouringPlague) +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
@@ -53,6 +53,16 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
+			}
+		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+			baseDamage := 1376/8 + 0.1849*spell.SpellPower()
+			//baseDamage *= initialMultiplier + float64(priest.DevouringPlagueDot.NumberOfTicks)
+
+			if priest.Talents.Shadowform {
+				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+			} else {
+				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
 	})

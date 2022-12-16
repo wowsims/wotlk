@@ -191,6 +191,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// MB dmg
 		mbDamage = (1025 + spriest.GetStat(stats.SpellPower)*(0.428*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
 			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02)*float64(spriest.Talents.ShadowPower)*0.2)
+		//newMbDamage := spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget)
+		//if newMbDamage != mbDamage {
+		//	panic(fmt.Sprintf("Old mb: %0.01f, new mb: %0.01f", mbDamage, newMbDamage))
+		//}
 		if !spriest.options.UseMindBlast {
 			mbDamage = 0
 		}
@@ -202,6 +206,12 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
 			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
 		dpDamage = dpInit + dpDot
+		//newDpTickDamage := spriest.DevouringPlague.ExpectedDamage(sim, spriest.CurrentTarget)
+		//newDpInitDamage := newDpTickDamage * (8.0 * float64(spriest.Talents.ImprovedDevouringPlague))
+		//newDpDamage *= newDpInitDamage + newDpTickDamage * num_DP_ticks
+		//if newDpDamage != dpDamage {
+		//	panic(fmt.Sprintf("Old dp: %0.01f, new dp: %0.01f", dpDamage, newDpDamage))
+		//}
 
 		// Determine number of DP ticks before BL. If there is at least 1 then it's worth using
 		numDPbeforeBL := math.Floor(deltaTimeBL / (dotTickSpeed * 1e-9))
@@ -233,6 +243,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// SWD dmg
 		swdDamage = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T7FourSetBonus, 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
 			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * swdmfglyphMod
+		//newSwdDamage := spriest.ShadowWordDeath.ExpectedDamage(sim, spriest.CurrentTarget)
+		//if newSwdDamage != swdDamage {
+		//	panic(fmt.Sprintf("Old swd: %0.01f, new swd: %0.01f", swdDamage, newSwdDamage))
+		//}
 		if !spriest.options.UseShadowWordDeath {
 			swdDamage = 0
 		}
@@ -240,11 +254,19 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// MF dmg 3 ticks
 		mfDamage = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
 			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0))*float64(spriest.Talents.ShadowPower)*0.2)
+		//newMfDamage := spriest.MindFlay[3].ExpectedDamage(sim, spriest.CurrentTarget)
+		//if newMfDamage != mfDamage {
+		//	panic(fmt.Sprintf("Old mf: %0.01f, new mf: %0.01f", mfDamage, newMfDamage))
+		//}
 
 		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
 		swpTickDamage := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
 			(1.0 + float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
 			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
+		//newSwpTickDamage := spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget)
+		//if newSwpTickDamage != swpTickDamage {
+		//	panic(fmt.Sprintf("Old swp: %0.01f, new swp: %0.01f", swpTickDamage, newSwpTickDamage))
+		//}
 
 		// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 		castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1

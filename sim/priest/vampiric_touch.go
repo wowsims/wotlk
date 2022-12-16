@@ -11,7 +11,6 @@ import (
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
 	baseCost := priest.BaseMana * 0.16
-	numTicks := 5 + core.TernaryInt32(priest.HasSetBonus(ItemSetZabras, 2), 2, 0)
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -44,7 +43,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
 			baseDamage := 850/5 + 0.4*spell.SpellPower()
-			baseDamage *= float64(numTicks)
+			baseDamage *= float64(priest.VampiricTouchDot.NumberOfTicks)
 
 			if priest.Talents.Shadowform {
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
@@ -63,7 +62,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			ActionID: actionID,
 		}),
 
-		NumberOfTicks:       numTicks,
+		NumberOfTicks:       5 + core.TernaryInt32(priest.HasSetBonus(ItemSetZabras, 2), 2, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: priest.Talents.Shadowform,
 
