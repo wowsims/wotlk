@@ -55,6 +55,9 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			if warlock.DemonicSoulAura.IsActive() {
 				warlock.DemonicSoulAura.Deactivate(sim)
 			}
+			if warlock.MoltenCoreAura.IsActive() {
+				warlock.MoltenCoreAura.RemoveStack(sim)
+			}
 		},
 	})
 }
