@@ -695,11 +695,13 @@ export class MajorCooldownUsedLog extends SimLog {
 export class CastBeganLog extends SimLog {
 	readonly manaCost: number;
 	readonly castTime: number;
+	readonly effectiveTime: number;
 
-	constructor(params: SimLogParams, manaCost: number, castTime: number) {
+	constructor(params: SimLogParams, manaCost: number, castTime: number, effectiveTime: number) {
 		super(params);
 		this.manaCost = manaCost;
 		this.castTime = castTime;
+		this.effectiveTime = effectiveTime;
 	}
 
 	toString(): string {
@@ -707,15 +709,19 @@ export class CastBeganLog extends SimLog {
 	}
 
 	static parse(params: SimLogParams): Promise<CastBeganLog> | null {
-		const match = params.raw.match(/Casting (.*) \(Cost = (\d+\.?\d*), Cast Time = (\d+\.?\d*)(m?s)\)/);
+		const match = params.raw.match(/Casting (.*) \(Cost = (\d+\.?\d*), Cast Time = (\d+\.?\d*)(m?s), Effective Time = (\d+\.?\d*)(m?s)\)/);
 		if (match) {
 			let castTime = parseFloat(match[3]);
 			if (match[4] == 'ms') {
 				castTime /= 1000;
 			}
+			let effectiveTime = parseFloat(match[5]);
+			if (match[6] == 'ms') {
+				effectiveTime /= 1000;
+			}
 			return ActionId.fromLogString(match[1]).fill(params.source?.index).then(castId => {
 				params.actionId = castId;
-				return new CastBeganLog(params, parseFloat(match[2]), castTime);
+				return new CastBeganLog(params, parseFloat(match[2]), castTime, effectiveTime);
 			});
 		} else {
 			return null;
@@ -747,6 +753,7 @@ export class CastCompletedLog extends SimLog {
 
 export class CastLog extends SimLog {
 	readonly castTime: number;
+	readonly effectiveTime: number;
 	readonly travelTime: number;
 
 	readonly castBeganLog: CastBeganLog;
@@ -766,6 +773,7 @@ export class CastLog extends SimLog {
 			threat: castCompletedLog?.threat || castBeganLog.threat,
 		});
 		this.castTime = castBeganLog.castTime;
+		this.effectiveTime = castBeganLog.effectiveTime;
 		this.castBeganLog = castBeganLog;
 		this.castCompletedLog = castCompletedLog;
 		this.damageDealtLogs = damageDealtLogs;
@@ -781,6 +789,10 @@ export class CastLog extends SimLog {
 
 	toString(): string {
 		return `${this.toStringPrefix()} Casting ${this.actionId!.name} (Cast time = ${this.castTime.toFixed(2)}s).`;
+	}
+
+	totalDamage(): number {
+		return sum(this.damageDealtLogs.map(ddl => ddl.amount));
 	}
 
 	static fromLogs(logs: Array<SimLog>): Array<CastLog> {
