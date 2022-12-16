@@ -11,7 +11,8 @@ import (
 func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
 	cost := 40.0 - float64(druid.Talents.Ferocity)
-	mangleAura := core.MangleAura(druid.CurrentTarget)
+
+	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -35,7 +36,7 @@ func (druid *Druid) registerRakeSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
-			if mangleAura.IsActive() {
+			if bleedCategory.AnyActive() {
 				baseDamage *= 1.3
 			}
 
