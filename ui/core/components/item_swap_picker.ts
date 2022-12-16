@@ -13,12 +13,12 @@ declare var tippy: any;
 declare var WowSim: any;
 
 export function ItemSwapSection(parentElem: HTMLElement, simUI: IndividualSimUI<Spec.SpecEnhancementShaman>): ContentBlock {
-	let contentBlock = new ContentBlock(parentElem, 'item-swap-settings', {
+	let contentBlock = new ContentBlock(parentElem, 'totems-settings', {
 		header: {title: 'Item Swap'}
 	});
 
 	let itemSwapContianer = Input.newGroupContainer();
-	itemSwapContianer.classList.add('item-swap-inputs-container', 'icon-group');
+	itemSwapContianer.classList.add('totem-dropdowns-container', 'icon-group');
 	contentBlock.bodyElement.appendChild(itemSwapContianer);
 
 	new IconItemSwapPicker(itemSwapContianer, simUI.player, ItemSlot.ItemSlotMainHand, {
@@ -36,20 +36,20 @@ export function ItemSwapSection(parentElem: HTMLElement, simUI: IndividualSimUI<
 		},
 	})
 
-	// new IconItemSwapPicker(itemSwapContianer, simUI.player, ItemSlot.ItemSlotOffHand, {
-	// 	// Returns the event indicating the mapped value has changed.
-	// 	changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
+	new IconItemSwapPicker(itemSwapContianer, simUI.player, ItemSlot.ItemSlotOffHand, {
+		// Returns the event indicating the mapped value has changed.
+		changedEvent: (player: Player<Spec.SpecEnhancementShaman>) => player.specOptionsChangeEmitter,
 
-	// 	// Get and set the mapped value.
-	// 	getValue: (player: Player<Spec.SpecEnhancementShaman>) => {
-	// 		return player.getSpecOptions().weaponSwap?.ohItem
-	// 	},
-	// 	setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: ItemSpec | undefined) => {
-	// 		const options = player.getSpecOptions()
-	// 		options.weaponSwap!.ohItem = newValue;
-	// 		player.setSpecOptions(eventID, options)
-	// 	},
-	// })
+		// Get and set the mapped value.
+		getValue: (player: Player<Spec.SpecEnhancementShaman>) => {
+			return player.getSpecOptions().weaponSwap?.ohItem
+		},
+		setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: ItemSpec | undefined) => {
+			const options = player.getSpecOptions()
+			options.weaponSwap!.ohItem = newValue;
+			player.setSpecOptions(eventID, options)
+		},
+	})
 
 	return contentBlock
 }
