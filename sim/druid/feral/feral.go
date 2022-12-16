@@ -80,6 +80,7 @@ type FeralDruid struct {
 	latency        time.Duration
 	maxRipTicks    int32
 	berserkUsed    bool
+	bleedAura      *core.Aura
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {

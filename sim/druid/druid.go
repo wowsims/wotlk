@@ -79,7 +79,6 @@ type Druid struct {
 	EnrageAura               *core.Aura
 	FaerieFireAura           *core.Aura
 	FrenziedRegenerationAura *core.Aura
-	MangleAura               *core.Aura
 	MaulQueueAura            *core.Aura
 	MoonkinT84PCAura         *core.Aura
 	NaturesGraceProcAura     *core.Aura
