@@ -62,7 +62,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 		4: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 
-			SpiritsoftheDamnedAura := warlock.RegisterAura(core.Aura{
+			warlock.SpiritsoftheDamnedAura = warlock.RegisterAura(core.Aura{
 				Label:    "Spirits of the Damned",
 				ActionID: core.ActionID{SpellID: 61082},
 				Duration: time.Second * 10,
@@ -82,10 +82,10 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.LifeTap {
-						if SpiritsoftheDamnedAura.IsActive() {
-							SpiritsoftheDamnedAura.Refresh(sim)
+						if warlock.SpiritsoftheDamnedAura.IsActive() {
+							warlock.SpiritsoftheDamnedAura.Refresh(sim)
 						} else {
-							SpiritsoftheDamnedAura.Activate(sim)
+							warlock.SpiritsoftheDamnedAura.Activate(sim)
 						}
 					}
 				},
