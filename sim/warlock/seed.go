@@ -31,7 +31,7 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit() +
+			warlock.masterDemonologistShadowCrit +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +

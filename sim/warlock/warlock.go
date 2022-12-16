@@ -69,6 +69,9 @@ type Warlock struct {
 	GlyphOfLifeTapAura         *core.Aura
 	FakeSpiritsoftheDamnedAura *core.Aura
 
+	Infernal *InfernalPet
+	Inferno  *core.Spell
+
 	// Rotation related memory
 	CorruptionRolloverPower float64
 	DrainSoulRolloverPower  float64
@@ -77,7 +80,9 @@ type Warlock struct {
 	PreviousTime   time.Duration
 	SpellsRotation []SpellRotation
 
-	petStmBonusSP float64
+	petStmBonusSP                float64
+	masterDemonologistFireCrit   float64
+	masterDemonologistShadowCrit float64
 
 	// set bonus cache
 	T7TwoSetBonus   bool
@@ -142,6 +147,7 @@ func (warlock *Warlock) Initialize() {
 	}
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
+	warlock.registerInfernoSpell()
 
 	warlock.defineRotation()
 }
@@ -190,6 +196,10 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 
 	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		warlock.Pet = warlock.NewWarlockPet()
+	}
+
+	if warlock.Rotation.UseInfernal {
+		warlock.Infernal = warlock.NewInfernal()
 	}
 
 	warlock.applyWeaponImbue()

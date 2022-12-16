@@ -291,6 +291,12 @@ export const WarlockRotationConfig = {
 				player.setRotation(eventID, newRotation);
 			},
 		},
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarlock>({
+			fieldName: 'useInfernal',
+			label: 'Summon Infernal',
+			labelTooltip: 'Casts Inferno 60s before the fight is over',
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarlock>({
 			fieldName: 'detonateSeed',
 			label: 'Detonate Seed on Cast',
