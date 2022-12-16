@@ -80,6 +80,7 @@ type FeralDruid struct {
 	latency        time.Duration
 	maxRipTicks    int32
 	berserkUsed    bool
+	bleedAura      *core.Aura
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -95,7 +96,7 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	cat.RegisterFeralSpells(0)
+	cat.RegisterFeralCatSpells()
 	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
