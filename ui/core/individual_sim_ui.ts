@@ -103,7 +103,8 @@ export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
 	InputHelpers.TypedEnumPickerConfig<ModObject> |
-	InputHelpers.TypedCustomRotationPickerConfig<any, any>
+	InputHelpers.TypedCustomRotationPickerConfig<any, any> |
+	InputHelpers.TypedItemSwapPickerConfig<any, any>
 );
 
 export interface InputSection {

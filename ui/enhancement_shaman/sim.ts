@@ -12,7 +12,6 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { ItemSwapSection } from '../core/components/item_swap_picker.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {
@@ -130,14 +129,15 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					//Not Ready to enable yet, only the UI portion is completed.
+					//ShamanInputs.EnhancmentItemSwapInputs,
 					ShamanInputs.SyncTypeInput,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
 			},
 			customSections: [
-				TotemsSection,
-				ItemSwapSection
+				TotemsSection
 			],
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.

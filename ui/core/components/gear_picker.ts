@@ -284,7 +284,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private readonly iconAnchor: HTMLAnchorElement;
 	private readonly socketsContainerElem: HTMLElement;
 	private readonly player: Player<SpecType>;
-	private readonly slot: number;
+	private readonly slot: ItemSlot;
 
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
@@ -293,7 +293,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private itemSpec: ItemSpec | undefined;
 	private equippedItem: EquippedItem | null = null;
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, slot: number, config: InputConfig<Player<SpecType>, ValueType>) {
+	constructor(parent: HTMLElement, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
 		super(parent, 'icon-picker-root', player, config)
 		this.rootElem.classList.add('icon-picker');
 		this.player = player;
@@ -402,10 +402,10 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		}
 
 		if (this.equippedItem) {
-			this.equippedItem.asActionId().fillAndSet(this.iconAnchor, true, true);
-
-			this.player.setWowheadData(this.equippedItem, this.iconAnchor);
 			this.iconAnchor.classList.add("active")
+
+			this.equippedItem.asActionId().fillAndSet(this.iconAnchor, true, true);
+			this.player.setWowheadData(this.equippedItem, this.iconAnchor);
 
 			this.equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
 				const gemIconElem = document.createElement('img');

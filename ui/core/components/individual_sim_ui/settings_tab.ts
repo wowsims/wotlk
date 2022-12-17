@@ -37,6 +37,7 @@ import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
+import { ItemSwapPicker } from "../item_swap";
 
 export class SettingsTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
@@ -420,6 +421,8 @@ export class SettingsTab extends SimTab {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI.player, inputConfig);
+			} else if (inputConfig.type == 'itemSwap'){
+				new ItemSwapPicker(sectionElem, this.simUI.player, inputConfig)
 			}
 		});
 	};
