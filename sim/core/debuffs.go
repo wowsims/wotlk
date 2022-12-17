@@ -880,7 +880,7 @@ func InsectSwarmAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 27013},
 		Duration: time.Second * 12,
 	})
-	increasedMissEffect(aura, 0.02)
+	increasedMissEffect(aura, 0.03)
 	return aura
 }
 
@@ -890,7 +890,7 @@ func ScorpidStingAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 3043},
 		Duration: time.Second * 20,
 	})
-	increasedMissEffect(aura, 0.05)
+	increasedMissEffect(aura, 0.03)
 	return aura
 }
 
