@@ -27,6 +27,8 @@ export interface IconPickerConfig<ModObject, ValueType> extends InputConfig<ModO
 // Icon-based UI for picking buffs / consumes / etc
 // ModObject is the object being modified (Sim, Player, or Target).
 export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType> {
+	active: Boolean;
+
 	private readonly config: IconPickerConfig<ModObject, ValueType>;
 
 	private readonly rootAnchor: HTMLAnchorElement;
@@ -39,6 +41,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconPickerConfig<ModObject, ValueType>) {
 		super(parent, 'icon-picker-root', modObj, config);
 		this.rootElem.classList.add('icon-picker');
+		this.active = false;
 		this.config = config;
 		this.currentValue = 0;
 
@@ -62,8 +65,8 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		levelContainer.classList.add('icon-input-level-container');
 		this.rootAnchor.appendChild(levelContainer);
 		levelContainer.innerHTML = `
-      <a class="icon-input-improved icon-input-improved1"></a>
-      <a class="icon-input-improved icon-input-improved2"></a>
+      <a class="icon-picker-button icon-input-improved icon-input-improved1"></a>
+      <a class="icon-picker-button icon-input-improved icon-input-improved2"></a>
       <span class="icon-picker-label ${this.config.states > 2 ? '' : 'hide'}"></span>
     `;
 
@@ -165,9 +168,11 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		this.currentValue = Number(newValue);
 
 		if (this.currentValue > 0) {
+			this.active = true;
 			this.rootAnchor.classList.add('active');
 			this.counterElem.classList.add('active');
 		} else {
+			this.active = false;
 			this.rootAnchor.classList.remove('active');
 			this.counterElem.classList.remove('active');
 		}
