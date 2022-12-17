@@ -33,7 +33,6 @@ import { IndividualSimSettings } from './proto/ui.js';
 import { Input } from './components/input.js';
 import { LogRunner } from './components/log_runner.js';
 import { MobType } from './proto/common.js';
-import { MultiIconPicker } from './components/multi_icon_picker.js';
 import { NumberPicker, NumberPickerConfig } from './components/number_picker.js';
 import { Party } from './party.js';
 import { PartyBuffs } from './proto/common.js';

@@ -1,6 +1,7 @@
 import { ActionId } from '../proto_utils/action_id.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SimUI } from '../sim_ui.js';
+import { isRightClick } from '../utils.js';
 
 import { Component } from './component.js';
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
@@ -25,6 +26,8 @@ export class MultiIconPicker<ModObject> extends Component {
 
 	private readonly dropdownRootElem: HTMLElement;
 	private readonly buttonElem: HTMLAnchorElement;
+	private readonly dropdownMenu: HTMLElement;
+
 	private readonly pickers: Array<IconPicker<ModObject, any>>;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: MultiIconPickerConfig<ModObject>, simUI: SimUI) {
@@ -55,22 +58,57 @@ export class MultiIconPicker<ModObject> extends Component {
 		}
 
 		this.buttonElem = this.rootElem.querySelector('.icon-picker-button') as HTMLAnchorElement;
-		const dropdownElem = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
+		this.dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
 		this.buttonElem.addEventListener('hide.bs.dropdown', event => {
 			if (event.hasOwnProperty('clickEvent'))
 				event.preventDefault();	
 		})
 
+		this.buttonElem.addEventListener('contextmenu', event => {
+			event.preventDefault();
+		});
+
+		this.buttonElem.addEventListener('mousedown', event => {
+			const rightClick = isRightClick(event);
+
+			if (rightClick) {
+				this.clearPicker();
+			}
+		});
+
+		this.buildBlankOption();
+
 		this.pickers = config.inputs.map((pickerConfig, i) => {
 			const optionContainer = document.createElement('li');
-			optionContainer.classList.add('icon-dropdown-option', 'dropdown-option');
-			dropdownElem.appendChild(optionContainer);
+			optionContainer.classList.add('icon-picker-option', 'dropdown-option');
+			this.dropdownMenu.appendChild(optionContainer);
 
 			return new IconPicker(optionContainer, modObj, pickerConfig);
 		});
 		simUI.sim.waitForInit().then(() => this.updateButtonImage());
 		simUI.changeEmitter.on(() => this.updateButtonImage());
+	}
+
+	private buildBlankOption() {
+		const listItem = document.createElement('li');
+		this.dropdownMenu.appendChild(listItem);
+
+		const option = document.createElement('a');
+		option.classList.add('icon-dropdown-option', 'dropdown-option');
+		listItem.appendChild(option);
+
+		option.addEventListener('click', () => this.clearPicker());
+	}
+
+	private clearPicker() {
+		TypedEvent.freezeAllAndDo(() => {
+			this.pickers.forEach((picker) => {
+				picker.setInputValue(null)
+				picker.inputChanged(TypedEvent.nextEventID());
+			});
+			this.updateButtonImage();
+		})
 	}
 
 	private updateButtonImage() {

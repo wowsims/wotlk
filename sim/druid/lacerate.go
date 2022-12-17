@@ -21,7 +21,7 @@ func (druid *Druid) registerLacerateSpell() {
 		initialDamage += 8
 	}
 
-	mangleAura := core.MangleAura(druid.CurrentTarget)
+	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -48,7 +48,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := initialDamage + 0.01*spell.MeleeAttackPower()
-			if mangleAura.IsActive() {
+			if bleedCategory.AnyActive() {
 				baseDamage *= 1.3
 			}
 
@@ -116,4 +116,8 @@ func (druid *Druid) registerLacerateSpell() {
 
 func (druid *Druid) CanLacerate(sim *core.Simulation) bool {
 	return druid.CurrentRage() >= druid.Lacerate.DefaultCast.Cost
+}
+
+func (druid *Druid) IsLacerateSpell(spell *core.Spell) bool {
+	return druid.Lacerate == spell || (druid.LacerateDot != nil && druid.LacerateDot.Spell == spell)
 }

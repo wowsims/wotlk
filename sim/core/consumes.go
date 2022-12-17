@@ -1139,7 +1139,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 				},
 			})
 	} else if conjuredType == proto.Conjured_ConjuredHealthstone {
-		actionID := ActionID{ItemID: 22105}
+		actionID := ActionID{ItemID: 36892}
 		healthMetrics := character.NewHealthMetrics(actionID)
 		return MajorCooldown{
 				Type: CooldownTypeSurvival,
@@ -1160,7 +1160,7 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 					},
 				},
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					character.GainHealth(sim, 2496, healthMetrics)
+					character.GainHealth(sim, 4280*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				},
 			})
 	} else {
