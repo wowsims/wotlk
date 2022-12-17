@@ -88,7 +88,7 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
-	bear.RegisterFeralSpells(float64(bear.Rotation.MaulRageThreshold))
+	bear.RegisterFeralTankSpells(float64(bear.Rotation.MaulRageThreshold))
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {

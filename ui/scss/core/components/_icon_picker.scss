@@ -71,11 +71,14 @@
 
     .icon-dropdown-option {
       padding: 0;
-      background-color: grey;
       filter: opacity(.7);
 
       &:hover {
         filter: none;
+      }
+
+      .icon-picker-button {
+        margin: -1px;
       }
     }
   }

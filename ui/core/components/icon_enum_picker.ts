@@ -85,12 +85,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
 
 		config.values.forEach((valueConfig, i) => {
-			const listItem = document.createElement('li');
-			dropdownMenu.appendChild(listItem);
+			const optionContainer = document.createElement('li');
+			optionContainer.classList.add('icon-dropdown-option', 'dropdown-option')
+			dropdownMenu.appendChild(optionContainer);
 
 			const option = document.createElement('a');
-			option.classList.add('icon-dropdown-option', 'dropdown-option');
-			listItem.appendChild(option);
+			option.classList.add('icon-picker-button');
+			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
 
 			if (valueConfig.text != undefined){
@@ -110,11 +111,10 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			if (valueConfig.showWhen) {
 				config.changedEvent(this.modObject).on(eventID => {
 					const show = valueConfig.showWhen && valueConfig.showWhen(this.modObject);
-					if (show) {
-						listItem.classList.remove('hide');
-					} else {
-						listItem.classList.add('hide');
-					}
+					if (show)
+						optionContainer.classList.remove('hide');
+					else
+						optionContainer.classList.add('hide');
 				});
 			}
 

@@ -60,7 +60,7 @@ func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
 		lacerateNext = !cat.LacerateDot.IsActive() || (cat.LacerateDot.GetStacks() < 5) || (cat.LacerateDot.RemainingDuration(sim) <= lacerateLeeway)
 		emergencyLeeway := gcdTimeToRdy + (3 * time.Second) + (2 * cat.latency)
 		emergencyLacerateNext = cat.LacerateDot.IsActive() && (cat.LacerateDot.RemainingDuration(sim) <= emergencyLeeway)
-		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.MangleAura.IsActive() || (cat.MangleAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3))
+		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.bleedAura.IsActive() || (cat.bleedAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3))
 	} else {
 		mangleNext = cat.MangleBear != nil && cat.MangleBear.TimeToReady(sim) < gcdTimeToRdy
 		lacerateNext = cat.LacerateDot.IsActive() && (cat.LacerateDot.GetStacks() < 5 || cat.LacerateDot.RemainingDuration(sim) < gcdTimeToRdy+(time.Second*4))
@@ -235,6 +235,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 
 	cat.missChance = cat.MissChance()
+	cat.bleedAura = cat.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory).GetActiveAura()
 
 	curEnergy := cat.CurrentEnergy()
 	curRage := cat.CurrentRage()
@@ -247,7 +248,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	ripNow := (curCp >= rotation.MinCombosForRip) && !cat.RipDot.IsActive() && (simTimeRemain >= endThresh) && !isClearcast
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (cat.RipDot.IsActive() && (simTimeRemain-cat.RipDot.RemainingDuration(sim) < endThresh)))
-	mangleNow := !ripNow && !cat.MangleAura.IsActive() && cat.MangleCat != nil
+	mangleNow := !ripNow && !cat.bleedAura.IsActive() && cat.MangleCat != nil
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && cat.RipDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
 	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast
@@ -292,9 +293,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.RakeDot.ExpiresAt()), cat.Rake.BaseCost*0.5, cat.Rake.BaseCost)
 		pendingActions = append(pendingActions, pendingAction{cat.RakeDot.ExpiresAt(), rakeCost})
 	}
-	if cat.MangleAura.IsActive() && (cat.MangleAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
-		mangleCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.MangleAura.ExpiresAt()), cat.MangleCat.BaseCost*0.5, cat.MangleCat.BaseCost)
-		pendingActions = append(pendingActions, pendingAction{cat.MangleAura.ExpiresAt(), mangleCost})
+	if cat.bleedAura.IsActive() && (cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
+		mangleCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.bleedAura.ExpiresAt()), cat.MangleCat.BaseCost*0.5, cat.MangleCat.BaseCost)
+		pendingActions = append(pendingActions, pendingAction{cat.bleedAura.ExpiresAt(), mangleCost})
 	}
 	if cat.SavageRoarAura.IsActive() {
 		roarCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.SavageRoarAura.ExpiresAt()), cat.SavageRoar.BaseCost*0.5, cat.SavageRoar.BaseCost)

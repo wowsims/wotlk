@@ -158,7 +158,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatMeleeHit]: 'hitRating',
 		[Stat.StatMeleeCrit]: 'critRating',
 		[Stat.StatMeleeHaste]: 'hasteRating',
-		[Stat.StatArmorPenetration]: 'armorPen',
+		[Stat.StatArmorPenetration]: 'armorPenRating',
 		[Stat.StatExpertise]: 'expertiseRating',
 		[Stat.StatMana]: 'mana',
 		[Stat.StatEnergy]: 'energy',
