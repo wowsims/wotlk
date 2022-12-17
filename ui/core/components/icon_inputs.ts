@@ -25,7 +25,6 @@ import { EventID, TypedEvent } from '../typed_event.js';
 
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
-import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
 import * as InputHelpers from './input_helpers.js';
 import { Tooltip } from 'bootstrap';
