@@ -52,7 +52,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	var cdDpso float64
 	var cdDps float64
 	var chosenMfs int
-	var num_DP_ticks float64
 	var wait1 time.Duration
 	var wait2 time.Duration
 	var wait time.Duration
@@ -124,10 +123,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		}
 	} else {
 		// Reduce number of DP/VT ticks based on remaining duration
-		num_DP_ticks = math.Floor(remain_fight / dotTickSpeed)
-		if num_DP_ticks > 8 {
-			num_DP_ticks = 8
-		}
+		num_DP_ticks := core.MinFloat(8, math.Floor(remain_fight/dotTickSpeed))
 
 		var blDuration time.Duration
 		aura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag)
@@ -201,12 +197,11 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 			currDotTickSpeed = spriest.DevouringPlagueDot.TickPeriod().Seconds()
 			dotTickSpeednew := 3 / spriest.CastSpeed
-			currDPS = (dpInitCurr + dpDotCurr*8 + cdDamage) / (currDotTickSpeed * 8)
-			overwriteDPS = (dpInitCurr + dpInitDamage + dpDotCurr*1 + dpTickDamage) / (dotTickSpeednew*8 + currDotTickSpeed*1)
+			currDPS = (dpInitCurr + dpDotCurr*num_DP_ticks + cdDamage) / (currDotTickSpeed * num_DP_ticks)
+			overwriteDPS = (dpInitCurr + dpInitDamage + dpDotCurr*1 + dpTickDamage) / (dotTickSpeednew*num_DP_ticks + currDotTickSpeed*1)
 
 			if blDuration < time.Second*3 && blDuration > time.Millisecond*100 {
-				dpRemainTicks := 8 - allCDs[dpIdx].Seconds()/currDotTickSpeed
-				overwriteDPS2 = dpInitCurr + dpRemainTicks*(dpDotCurr-dpDotCurr/spriest.CastSpeed)
+				overwriteDPS2 = dpInitCurr + num_DP_ticks*(dpDotCurr-dpDotCurr/spriest.CastSpeed)
 				currDPS2 = cdDamage
 
 				// if sim.Log != nil {
@@ -606,7 +601,6 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			spell = spriest.MindFlay[numTicks]
 		}
 	} else {
-
 		mbcd := spriest.MindBlast.TimeToReady(sim)
 		swdcd := spriest.ShadowWordDeath.TimeToReady(sim)
 		vtidx := spriest.VampiricTouchDot.RemainingDuration(sim) - vtCastTime
