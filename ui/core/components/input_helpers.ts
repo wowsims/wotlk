@@ -1,5 +1,5 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { CustomRotation } from '../proto/common.js';
+import { CustomRotation, ItemSpec, ItemSwap } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { TristateEffect } from '../proto/common.js';
 import { Party } from '../party.js';
@@ -10,8 +10,9 @@ import { Target } from '../target.js';
 import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-
+import { ItemSwapIconInputConfig, ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
+import { InputConfig } from './input.js'
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
@@ -479,6 +480,24 @@ export function makeCustomRotationInput<SpecType extends Spec, T>(config: Wrappe
 		showWhen: config.showWhen,
 		numColumns: config.numColumns,
 		showCastsPerMinute: config.showCastsPerMinute || false,
+		values: config.values,
+	}
+}
+
+
+export interface TypedItemSwapPickerConfig<SpecType extends Spec, T> extends ItemSwapPickerConfig<SpecType, T> {
+	type: 'itemSwap',
+}
+
+interface WrappedItemSwapInputConfig<SpecType extends Spec, T> {
+	fieldName: keyof SpecRotation<SpecType>,
+	values: Array<ItemSwapIconInputConfig<Player<SpecType>, T>>
+}
+
+export function MakeItemSwapInput<SpecType extends Spec, T>(config: WrappedItemSwapInputConfig<SpecType, T>): TypedItemSwapPickerConfig<SpecType, T> {
+	return {
+		type: 'itemSwap',
+		getValue: (player: Player<SpecType>) =>  (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create(),
 		values: config.values,
 	}
 }

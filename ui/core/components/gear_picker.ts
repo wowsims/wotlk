@@ -289,6 +289,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
+	
 	private itemSpec: ItemSpec | undefined;
 	private equippedItem: EquippedItem | null = null;
 

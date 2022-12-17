@@ -91,9 +91,9 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
-	weaponSwap: ItemSwap.create({
-		mhItem: ItemSpec.create({id: 45132}),
-	}),
+	// weaponSwap: ItemSwap.create({
+	// 	mhItem: ItemSpec.create({id: 45132}),
+	// }),
 });
 
 export const DefaultConsumes = Consumes.create({
