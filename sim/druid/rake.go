@@ -53,7 +53,7 @@ func (druid *Druid) registerRakeSpell() {
 			}
 		},
 
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
 			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(numTicks)
 			if bleedCategory.AnyActive() {

@@ -70,6 +70,8 @@ type Priest struct {
 
 	ProcPrayerOfMending core.ApplySpellResults
 
+	DpInitMultiplier float64
+
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
 	T7TwoSetBonus bool

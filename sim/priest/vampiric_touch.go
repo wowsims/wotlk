@@ -41,7 +41,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 850/5 + 0.4*spell.SpellPower()
 			baseDamage *= float64(priest.VampiricTouchDot.NumberOfTicks)
 

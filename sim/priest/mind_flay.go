@@ -75,7 +75,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 588.0/3 + miseryCoeff*spell.SpellPower()
 			baseDamage *= float64(numTicks)
 

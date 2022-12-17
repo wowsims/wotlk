@@ -12,7 +12,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
 	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
-	initialMultiplier := 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
+	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -43,10 +43,10 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			var result *core.SpellResult
-			if initialMultiplier == 0 {
+			if priest.DpInitMultiplier == 0 {
 				result = spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			} else {
-				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * initialMultiplier
+				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * priest.DpInitMultiplier
 				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 
@@ -55,14 +55,22 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 				priest.DevouringPlagueDot.Apply(sim)
 			}
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
-			baseDamage := 1376/8 + 0.1849*spell.SpellPower()
-			//baseDamage *= initialMultiplier + float64(priest.DevouringPlagueDot.NumberOfTicks)
-
-			if priest.Talents.Shadowform {
-				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				dot := priest.DevouringPlagueDot
+				baseDamage := dot.SnapshotBaseDamage
+				if priest.Talents.Shadowform {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, dot.OutcomeExpectedMagicSnapshotCrit)
+				} else {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				}
 			} else {
-				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				baseDamage := 1376/8 + 0.1849*spell.SpellPower()
+				if priest.Talents.Shadowform {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+				} else {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				}
 			}
 		},
 	})

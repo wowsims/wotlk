@@ -50,7 +50,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 1380/6 + 0.1833*spell.SpellPower()
 			//baseDamage *= float64(priest.ShadowWordPainDot.NumberOfTicks)
 

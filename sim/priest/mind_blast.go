@@ -63,7 +63,7 @@ func (priest *Priest) registerMindBlastSpell() {
 				priest.Env.Raid.ProcReplenishment(sim, replSrc)
 			}
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := sim.Roll(997, 1053) + miserySpellCoeff*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},
