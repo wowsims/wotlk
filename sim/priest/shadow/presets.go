@@ -6,21 +6,34 @@ import (
 )
 
 var StandardTalents = &proto.PriestTalents{
-	InnerFocus:             true,
-	Meditation:             3,
-	ShadowAffinity:         3,
-	ImprovedShadowWordPain: 2,
-	ShadowFocus:            3,
-	ImprovedMindBlast:      5,
-	MindFlay:               true,
-	ShadowWeaving:          5,
-	VampiricEmbrace:        true,
-	FocusedMind:            3,
-	Darkness:               5,
-	Shadowform:             true,
-	ShadowPower:            4,
-	Misery:                 5,
-	VampiricTouch:          true,
+	TwinDisciplines:            5,
+	ImprovedInnerFire:          3,
+	ImprovedPowerWordFortitude: 2,
+	Meditation:                 3,
+	InnerFocus:                 true,
+
+	SpiritTap:               3,
+	ImprovedSpiritTap:       2,
+	Darkness:                5,
+	ImprovedShadowWordPain:  2,
+	ShadowFocus:             3,
+	ImprovedMindBlast:       5,
+	MindFlay:                true,
+	VeiledShadows:           2,
+	ShadowReach:             2,
+	ShadowWeaving:           3,
+	VampiricEmbrace:         true,
+	FocusedMind:             3,
+	MindMelt:                2,
+	ImprovedDevouringPlague: 3,
+	Shadowform:              true,
+	ShadowPower:             5,
+	ImprovedShadowform:      1,
+	Misery:                  3,
+	VampiricTouch:           true,
+	PainAndSuffering:        3,
+	TwistedFaith:            5,
+	Dispersion:              true,
 }
 
 var DefaultGlyphs = &proto.Glyphs{
@@ -42,8 +55,10 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
-			Armor:          proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend: true,
+			Armor:              proto.ShadowPriest_Options_InnerFire,
+			UseShadowfiend:     true,
+			UseMindBlast:       true,
+			UseShadowWordDeath: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Basic,
@@ -55,8 +70,10 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
-			Armor:          proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend: true,
+			Armor:              proto.ShadowPriest_Options_InnerFire,
+			UseShadowfiend:     true,
+			UseMindBlast:       true,
+			UseShadowWordDeath: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Clipping,
@@ -69,8 +86,10 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
-			Armor:          proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend: true,
+			Armor:              proto.ShadowPriest_Options_InnerFire,
+			UseShadowfiend:     true,
+			UseMindBlast:       true,
+			UseShadowWordDeath: true,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Ideal,
