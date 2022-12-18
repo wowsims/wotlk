@@ -15,6 +15,7 @@ export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 	setValue: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
 
 	numColumns: number,
+	extraCssClasses?: string[];
 	showCastsPerMinute?: boolean,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 
@@ -24,6 +25,9 @@ export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 export class CustomRotationPicker<SpecType extends Spec, T> extends Component {
 	constructor(parent: HTMLElement, modPlayer: Player<SpecType>, config: CustomRotationPickerConfig<SpecType, T>) {
 		super(parent, 'custom-rotation-picker-root');
+
+		if (config.extraCssClasses)
+			this.rootElem.classList.add(...config.extraCssClasses);
 
 		new ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>(this.rootElem, modPlayer, {
 			extraCssClasses: ['custom-spells-picker'],
