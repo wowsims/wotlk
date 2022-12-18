@@ -1,0 +1,7 @@
+@use "sass:map";
+
+.item-swap-picker-root {
+  .input-root:not(:last-child) {
+    margin-right: map.get($spacers, 1);
+  }
+}

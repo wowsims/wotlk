@@ -6,10 +6,4 @@
 	.fire-elemental-inputs-container {
 		display: flex;
 	}
-
-	.icon-picker-button {
-		&:not(.active) {
-			filter: none;
-		}
-	}
 }

@@ -16,7 +16,7 @@ import {
 	EnhancementShaman_Rotation_RotationType as RotationType,
 	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
 } from '../core/proto/shaman.js';
-import { CustomSpell, Spec } from '../core/proto/common.js';
+import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { Sim } from '../core/sim.js';
@@ -74,6 +74,15 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 		{ name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
 	],
 });
+
+export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecEnhancementShaman, ItemSwap>({
+	fieldName: 'itemSwap',
+	values: [
+		{itemSlot: ItemSlot.ItemSlotMainHand},
+		{itemSlot: ItemSlot.ItemSlotOffHand},
+		{itemSlot: ItemSlot.ItemSlotRanged},
+	]
+})
 
 export const EnhancementShamanRotationConfig = {
 	inputs:
@@ -258,3 +267,5 @@ export const EnhancementShamanRotationConfig = {
 			}),
 		],
 };
+
+

@@ -19,6 +19,11 @@
       margin-bottom: 0;
     }
   }
+
+  .elixir-space {
+    width: 40px;
+    text-align: center;;
+  }
 }
 
 @include media-breakpoint-between(sm, xl) {

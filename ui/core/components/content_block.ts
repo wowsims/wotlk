@@ -45,6 +45,7 @@ export class ContentBlock extends Component {
             class="content-block-title"
             ${this.config.header.tooltip ? 'data-bs-toggle="tooltip"' : ''}
             ${this.config.header.tooltip ? `data-bs-title="${this.config.header.tooltip}"` : ''}
+            ${this.config.header.tooltip ? 'data-bs-html="true"' : ''}
           >${this.config.header.title}</${titleTag}>
         </div>
       `;

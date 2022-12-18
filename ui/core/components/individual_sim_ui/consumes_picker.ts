@@ -106,7 +106,7 @@ export class ConsumesPicker extends Component {
         <label class="form-label">Elixirs</label>
         <div class="consumes-row-inputs">
           <div class="consumes-flasks"></div>
-          <span class="px-2">or</span>
+          <span class="elixir-space">or</span>
           <div class="consumes-battle-elixirs"></div>
           <div class="consumes-guardian-elixirs"></div>
         </div>

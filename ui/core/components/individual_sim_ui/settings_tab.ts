@@ -37,6 +37,7 @@ import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
+import { ItemSwapPicker } from "../item_swap";
 
 export class SettingsTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
@@ -188,7 +189,8 @@ export class SettingsTab extends SimTab {
 
 	private buildCustomSettingsSections() {
 		(this.simUI.individualConfig.customSections || []).forEach(customSection => {
-			customSection(this.column2, this.simUI);
+			let section = customSection(this.column2, this.simUI);
+			section.rootElem.classList.add('custom-section');
 		});
 	}
 
@@ -202,7 +204,7 @@ export class SettingsTab extends SimTab {
 
 	private buildCooldownSettings() {
 		const contentBlock = new ContentBlock(this.column2, 'cooldown-settings', {
-			header: {title: 'Cooldowns'}
+			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
 		});
 
 		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
@@ -424,6 +426,8 @@ export class SettingsTab extends SimTab {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI.player, inputConfig);
+			} else if (inputConfig.type == 'itemSwap'){
+				new ItemSwapPicker(sectionElem, this.simUI.player, inputConfig)
 			}
 		});
 	};

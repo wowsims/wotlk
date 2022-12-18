@@ -1,3 +1,5 @@
+@use "sass:map";
+
 .icon-picker {
   width: unset !important;
   margin-bottom: 0 !important;
@@ -81,5 +83,11 @@
         margin: -1px;
       }
     }
+  }
+}
+
+.picker-group.icon-group {
+  &> :not(:last-child) {
+    margin-right: map.get($spacers, 1);
   }
 }
