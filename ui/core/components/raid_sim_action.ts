@@ -158,7 +158,7 @@ export class RaidSimResultsManager {
 						data-bs-toggle="tooltip"
 						data-bs-title="Use as reference"
 					>
-						<i class="fa fa-map-pin fa-lg text-primary me-2"></i>Save as Reference
+						<i class="fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2"></i>Save as Reference
 					</a>
 					<div class="results-sim-reference-bar">
 						<a href="javascript:void(0)" class="results-sim-reference-swap me-3" role="button">

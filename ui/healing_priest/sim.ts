@@ -34,6 +34,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHealingPriest>) {
 		super(parentElem, player, {
 			cssClass: 'healing-priest-sim-ui',
+			cssScheme: 'priest',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				'Talents that apply to, "friendly targets at or below 50% health" are not implemented.',

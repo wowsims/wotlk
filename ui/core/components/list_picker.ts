@@ -1,4 +1,5 @@
 import { Tooltip } from 'bootstrap';
+import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { arrayEquals, swap } from '../utils.js';
 
@@ -26,7 +27,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 
 	private itemPickerPairs: Array<ItemPickerPair<ItemType, ItemPicker>>;
 
-	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
+	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
 		super(parent, 'list-picker-root', modObject, config);
 		this.config = config;
 		this.itemPickerPairs = [];
@@ -40,7 +41,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 				>${config.title}</label>` : ''
 			}
 			<div class="list-picker-items"></div>
-			<button class="list-picker-new-button btn btn-primary">New ${config.itemLabel}</button>
+			<button class="list-picker-new-button btn btn-${simUI.cssScheme}">New ${config.itemLabel}</button>
 		`;
 
 		if (this.config.titleTooltip)

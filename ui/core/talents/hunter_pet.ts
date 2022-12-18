@@ -11,6 +11,7 @@ import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker
 import { protoToTalentString, talentStringToProto } from './factory.js';
 
 import * as InputHelpers from '../components/input_helpers.js';
+import { SimUI } from '../sim_ui.js';
 
 export function makePetTypeInputConfig(includeLabel: boolean): InputHelpers.TypedIconEnumPickerConfig<Player<Spec.SpecHunter>, PetType> {
 	return InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHunter, PetType>({
@@ -101,6 +102,7 @@ const categoryOrder = [PetCategory.Cunning, PetCategory.Ferocity, PetCategory.Te
 const categoryClasses = ['cunning', 'ferocity', 'tenacity'];
 
 export class HunterPetTalentsPicker extends Component {
+	private readonly simUI: SimUI;
 	private readonly player: Player<Spec.SpecHunter>;
 	private curCategory: PetCategory | null;
 	private curTalents: HunterPetTalents;
@@ -108,8 +110,9 @@ export class HunterPetTalentsPicker extends Component {
 	// Not saved to storage, just holds last-used values for this session.
 	private savedSets: Array<HunterPetTalents>;
 
-	constructor(parent: HTMLElement, player: Player<Spec.SpecHunter>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<Spec.SpecHunter>) {
 		super(parent, 'hunter-pet-talents-picker');
+		this.simUI = simUI;
 		this.player = player;
 
 		this.rootElem.innerHTML = `
@@ -147,7 +150,7 @@ export class HunterPetTalentsPicker extends Component {
 				maxPoints: 16,
 			});
 
-			const savedTalentsManager = new SavedDataManager<Player<Spec.SpecHunter>, string>(pickerContainer, this.player, {
+			const savedTalentsManager = new SavedDataManager<Player<Spec.SpecHunter>, string>(pickerContainer, this.simUI, this.player, {
 				presetsOnly: true,
 				label: 'Pet Talents',
 				storageKey: '__NEVER_USED__',

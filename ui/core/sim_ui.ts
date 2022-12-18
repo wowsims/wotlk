@@ -28,6 +28,8 @@ export interface SimWarning {
 }
 
 export interface SimUIConfig {
+	// Additional css class to add to the root element.
+	cssScheme: string;
 	// The spec, if an individual sim, or null if the raid sim.
 	spec: Spec | null,
 	launchStatus: LaunchStatus,
@@ -37,6 +39,7 @@ export interface SimUIConfig {
 // Shared UI for all individual sims and the raid sim.
 export abstract class SimUI extends Component {
 	readonly sim: Sim;
+	readonly cssScheme: string;
 	readonly isWithinRaidSim: boolean;
 
 	// Emits when anything from the sim, raid, or encounter changes.
@@ -56,6 +59,7 @@ export abstract class SimUI extends Component {
 	constructor(parentElem: HTMLElement, sim: Sim, config: SimUIConfig) {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
+		this.cssScheme = config.cssScheme;
 		this.rootElem.innerHTML = simHTML;
 		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;
 		this.simHeader = new SimHeader(this.simContentContainer, this);
@@ -148,7 +152,7 @@ export abstract class SimUI extends Component {
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
 		const button = document.createElement('button');
-		button.classList.add('btn', 'btn-primary', 'w-100', cssClass);
+		button.classList.add('btn', `btn-${this.cssScheme}`, 'w-100', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
 		this.simActionsContainer.appendChild(button);

@@ -23,6 +23,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecProtectionPaladin>) {
 		super(parentElem, player, {
 			cssClass: 'protection-paladin-sim-ui',
+			cssScheme: 'paladin',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],
