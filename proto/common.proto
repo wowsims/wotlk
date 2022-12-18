@@ -494,6 +494,8 @@ message IndividualBuffs {
 	int32 revitalize_rejuvination = 13;
 	int32 revitalize_wild_growth = 21;
 	int32 tricks_of_the_trades = 19;
+	int32 divine_guardians = 23;
+	int32 pain_suppressions = 24;
 
 	// Technically a debuff, but only used by individual sims.
 	int32 shattering_throws = 20;
