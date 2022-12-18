@@ -404,6 +404,8 @@ class SelectorModal extends Popup {
 		super(parent);
 		this.player = player;
 
+		window.scrollTo({top: 0});
+
 		this.rootElem.classList.add('selector-modal');
 		this.rootElem.innerHTML = `
 			<ul class="nav nav-tabs selector-modal-tabs">
