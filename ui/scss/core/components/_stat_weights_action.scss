@@ -1,3 +1,5 @@
+@use "sass:map";
+
 .ep-weights-header {
 	display: flex;
 }
@@ -50,15 +52,7 @@
 }
 
 .results-ep-table .col-action {
-	color: var(--theme-color-primary);
-	margin: 0 3px;
-	cursor: pointer;
-}
-.results-ep-table .col-action:hover {
-	text-shadow:
-		0 0 3px white,
-		0 0 3px white,
-		0 0 3px white;
+	margin-left: map.get($spacers, 1);
 }
 
 .results-ep-table td, .results-ep-table th {

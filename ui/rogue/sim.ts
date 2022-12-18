@@ -30,6 +30,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
 		super(parentElem, player, {
 			cssClass: 'rogue-sim-ui',
+			cssScheme: 'rogue',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				'Rotations are not fully optimized, especially for non-standard setups.',

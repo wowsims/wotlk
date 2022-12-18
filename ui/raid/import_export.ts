@@ -1,18 +1,18 @@
-import { Exporter } from '../core/components/exporters.js';
-import { Importer } from '../core/components/importers.js';
-import { MAX_PARTY_SIZE } from '../core/party.js';
-import { BuffBot, RaidSimSettings } from '../core/proto/ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api.js';
-import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '../core/proto/common.js';
-import { nameToClass } from '../core/proto_utils/names.js';
-import { makeDefaultBlessings, specTypeFunctions, withSpecProto, isTankSpec, playerToSpec } from '../core/proto_utils/utils.js';
-import { MAX_NUM_PARTIES } from '../core/raid.js';
-import { Player } from '../core/player.js';
-import { Target } from '../core/target.js';
+import { Exporter } from '../core/components/exporters';
+import { Importer } from '../core/components/importers';
+import { MAX_PARTY_SIZE } from '../core/party';
+import { BuffBot, RaidSimSettings } from '../core/proto/ui';
+import { TypedEvent } from '../core/typed_event';
+import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api';
+import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '../core/proto/common';
+import { nameToClass } from '../core/proto_utils/names';
+import { makeDefaultBlessings, specTypeFunctions, withSpecProto, isTankSpec, playerToSpec } from '../core/proto_utils/utils';
+import { MAX_NUM_PARTIES } from '../core/raid';
+import { Player } from '../core/player';
+import { Target } from '../core/target';
 
-import { playerPresets, PresetSpecSettings } from './presets.js';
-import { RaidSimUI } from './raid_sim_ui.js';
+import { playerPresets, PresetSpecSettings } from './presets';
+import { RaidSimUI } from './raid_sim_ui';
 
 declare var $: any;
 declare var tippy: any;
@@ -20,7 +20,7 @@ declare var tippy: any;
 export class RaidJsonImporter extends Importer {
 	private readonly simUI: RaidSimUI;
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
-		super(parent, 'JSON Import', true);
+		super(parent, simUI, 'JSON Import', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
@@ -44,7 +44,7 @@ export class RaidJsonExporter extends Exporter {
 	private readonly simUI: RaidSimUI;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
-		super(parent, 'JSON Export', true);
+		super(parent, simUI, 'JSON Export', true);
 		this.simUI = simUI;
 		this.init();
 	}
@@ -60,7 +60,7 @@ export class RaidWCLImporter extends Importer {
 
 	private readonly simUI: RaidSimUI;
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
-		super(parent, 'WCL Import', false);
+		super(parent, simUI, 'WCL Import', false);
 		this.simUI = simUI;
 		this.descriptionElem.innerHTML = `
 			<p>

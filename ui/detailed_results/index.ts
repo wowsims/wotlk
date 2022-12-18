@@ -22,12 +22,14 @@ declare var Chart: any;
 
 Database.get();
 
+let cssScheme;
+
 const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('cssScheme')) {
+	cssScheme = urlParams.get('cssScheme');
+}
 if (urlParams.has('mainTextColor')) {
 	document.body.style.setProperty('--main-text-color', urlParams.get('mainTextColor')!);
-}
-if (urlParams.has('themeColorPrimary')) {
-	document.body.style.setProperty('--theme-color-primary', urlParams.get('themeColorPrimary')!);
 }
 if (urlParams.has('themeColorBackground')) {
 	document.body.style.setProperty('--theme-color-background', urlParams.get('themeColorBackground')!);
@@ -270,6 +272,7 @@ const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: document.body.getEl
 
 const timeline = new Timeline({
 	parent: document.body.getElementsByClassName('timeline')[0] as HTMLElement,
+	cssScheme: cssScheme,
 	resultsEmitter: resultsEmitter,
 	colorSettings: colorSettings,
 });

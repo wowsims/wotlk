@@ -6,6 +6,7 @@ import { IconItemSwapPicker } from './gear_picker.js'
 import { Input } from './input.js'
 import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
+import { SimUI } from '../sim_ui.js';
 
 export interface ItemSwapPickerConfig<SpecType extends Spec, T> {
 	getValue: (player: Player<SpecType>) => ItemSwap,
@@ -20,8 +21,7 @@ export interface ItemSwapIconInputConfig<ModObject, T> {
 }
 
 export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
-
-	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
+	constructor(parentElem: HTMLElement, simUI: SimUI, player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
 		super(parentElem, 'item-swap-picker-root');
 
 		this.rootElem.classList.add('input-root', 'input-inline')
@@ -31,9 +31,9 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		label.textContent = "Item Swap"
 		this.rootElem.appendChild(label);
 
-		let itemSwapContianer = Input.newGroupContainer();
-		itemSwapContianer.classList.add('icon-group');
-		this.rootElem.appendChild(itemSwapContianer);
+		let itemSwapContainer = Input.newGroupContainer();
+		itemSwapContainer.classList.add('icon-group');
+		this.rootElem.appendChild(itemSwapContainer);
 
 		const gear = new ItemSwapGear();
 		config.values.forEach(value => {
@@ -41,7 +41,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 			if (!fieldName)
 				return
 
-			new IconItemSwapPicker(itemSwapContianer, player, value.itemSlot, gear, {
+			new IconItemSwapPicker(itemSwapContainer, simUI, player, value.itemSlot, gear, {
 				changedEvent: (player: Player<SpecType>) => player.specOptionsChangeEmitter,
 				getValue: (player: Player<SpecType>) => {
 					const itemSwap = config.getValue(player) as unknown as ItemSwap

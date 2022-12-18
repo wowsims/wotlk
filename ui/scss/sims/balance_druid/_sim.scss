@@ -2,20 +2,9 @@ $theme: 'druid';
 
 // Set color variables which control the site theme.
 .balance-druid-sim-ui {
-	--theme-color-primary: #e0a335;
 	--theme-color-background: #1d1510;
 	--theme-color-background-raw: 29, 21, 16;
 	--theme-background-image: url('/wotlk/assets/img/balance_druid_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.balance-druid-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(1, 1fr);
-}
-
-// Balance has a lot of EP stats, so make the text smaller so it fits vertically.
-.balance-druid-sim-ui .character-stats-table-row {
-  font-size: 14px;
 }

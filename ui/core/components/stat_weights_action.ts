@@ -54,7 +54,7 @@ class EpWeightsMenu extends Popup {
 		this.rootElem.innerHTML = `
 			<div class="ep-weights-header">
 				<div class="ep-weights-actions">
-					<button class="btn btn-primary calc-weights">CALCULATE</button>
+					<button class="btn btn-${this.simUI.cssScheme} calc-weights">CALCULATE</button>
 				</div>
 				<div class="ep-weights-results"></div>
 			</div>
@@ -67,23 +67,68 @@ class EpWeightsMenu extends Popup {
 				</div>
 				<div class="show-all-stats-container">
 				</div>
-				<button class="btn btn-primary optimize-gems">OPTIMIZE GEMS</button>
+				<button class="btn btn-${this.simUI.cssScheme} optimize-gems">OPTIMIZE GEMS</button>
 			</div>
-			<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items. Use <span class="fa fa-copy" style="color: var(--theme-color-primary);"></span> icon above the EPs to use newly calculated EPs. </p>
+			<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items. Use <span class="fa fa-copy text-${this.simUI.cssScheme}"></span> icon above the EPs to use newly calculated EPs. </p>
 			<div class="ep-weights-table">
 				<table class="results-ep-table">
 					<tbody id="ep-tbody">
 						<tr>
 							<th>Stat</th>
-							<th class="damage-metrics type-weight"><span>DPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="damage-metrics type-ep"><span>DPS EP</span><span class="col-action fa fa-copy"></span></th>
-							<th class="healing-metrics type-weight"><span>HPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="healing-metrics type-ep"><span>HPS EP</span><span class="col-action fa fa-copy"></span></th>
-							<th class="threat-metrics type-weight"><span>TPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="threat-metrics type-ep"><span>TPS EP</span><span class="col-action fa fa-copy"></span></th>
-							<th class="threat-metrics type-weight"><span>DTPS Weight</span><span class="col-action fa fa-copy"></span></th>
-							<th class="threat-metrics type-ep"><span>DTPS EP</span><span class="col-action fa fa-copy"></span></th>
-							<th><span>Current EP</span><span class="col-action fa fa-recycle"></span></th>
+							<th class="damage-metrics type-weight">
+								<span>DPS Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="damage-metrics type-ep">
+								<span>DPS EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="healing-metrics type-weight">
+								<span>HPS Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="healing-metrics type-ep">
+								<span>HPS EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-weight">
+								<span>TPS Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep">
+								<span>TPS EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-weight">
+								<span>DTPS Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep">
+								<span>DTPS EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th>
+								<span>Current EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-recycl</i>
+								e"ap
+							an></th>
 						</tr>
 					</tbody>
 				</table>

@@ -2,15 +2,9 @@ $theme: 'mage';
 
 // Set color variables which control the site theme.
 .mage-sim-ui {
-	--theme-color-primary: #10abb5;
 	--theme-color-background: #101a20;
 	--theme-color-background-raw: 16, 26, 32;
 	--theme-background-image: url('/wotlk/assets/img/mage_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.mage-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(2, 1fr);
 }
