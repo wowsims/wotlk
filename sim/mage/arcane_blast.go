@@ -46,11 +46,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.Cost = ArcaneBlastBaseManaCost*totalDiscount*
-					(1+1.75*float64(mage.ArcaneBlastAura.GetStacks())) +
-					.01*float64(mage.Talents.Precision)*ArcaneBlastBaseManaCost
-				//This is really hacky. In essence for only arcane blast we need precision to apply to the
-				//original base cost of the spell instead of as a cost multiplier, so add extra mana cost equal
-				//to the mana saved from having precision as a cost multiplier.
+					(1+1.75*float64(mage.ArcaneBlastAura.GetStacks()))
 			},
 		},
 
