@@ -136,21 +136,6 @@ func (warlock *Warlock) registerGlyphOfLifeTapAura() {
 	})
 }
 
-func (warlock *Warlock) registerFakeSpiritsoftheDamnedAura() {
-
-	warlock.FakeSpiritsoftheDamnedAura = warlock.RegisterAura(core.Aura{
-		Label:    "Initial Spirits of the Damned",
-		ActionID: core.ActionID{SpellID: 61082},
-		Duration: time.Second * 10,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.AddStatDynamic(sim, stats.Spirit, 300)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.AddStatDynamic(sim, stats.Spirit, -300)
-		},
-	})
-}
-
 func (warlock *Warlock) setupEmpoweredImp() {
 	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
 		Label:    "Empowered Imp Proc Aura",
@@ -195,9 +180,8 @@ func (warlock *Warlock) setupDecimation() {
 		Label:    "Decimation Talent Hidden Aura",
 		Duration: core.NeverExpires,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire {
+			if result.Landed() && (spell == warlock.ShadowBolt || spell == warlock.Incinerate || spell == warlock.SoulFire) {
 				warlock.DecimationAura.Activate(sim)
-				warlock.DecimationAura.Refresh(sim)
 			}
 		},
 	})

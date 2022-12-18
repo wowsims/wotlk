@@ -45,13 +45,10 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 			}
 			MetamorphosisNumber := (float64(sim.Duration) + float64(warlock.MetamorphosisAura.Duration)) / float64(warlock.Metamorphosis.CD.Duration)
 			if MetamorphosisNumber < 1 {
-				if character.HasActiveAuraWithTag(core.BloodlustAuraTag) || sim.IsExecutePhase35() {
-					return true
-				}
-			} else if warlock.Metamorphosis.CD.IsReady(sim) {
-				return true
+				return character.HasActiveAuraWithTag(core.BloodlustAuraTag) || sim.IsExecutePhase35()
 			}
-			return false
+
+			return true
 		},
 	})
 }
@@ -70,12 +67,8 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		TickLength:          time.Second * 1,
 		AffectedByCastSpeed: true,
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			baseDmg := 251 + 20*11.5 + 0.143*dot.Spell.SpellPower()
-			// TODO: obey the AoE cap
-			//baseDmg *= sim.Encounter.AOECapMultiplier()
+			baseDmg := (251 + 20*11.5 + 0.143*dot.Spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
-				// TODO: spell is flagged as "Treat As Periodic" but doesn't proc timbal's, so not
-				// calling CalcAndDealDamage should be correct?
 				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
 			}
 		},

@@ -51,24 +51,24 @@ type Warlock struct {
 	Seeds               []*core.Spell
 	SeedDots            []*core.Dot
 
-	NightfallProcAura          *core.Aura
-	EradicationAura            *core.Aura
-	DemonicEmpowerment         *core.Spell
-	DemonicEmpowermentAura     *core.Aura
-	DemonicPactAura            *core.Aura
-	DemonicSoulAura            *core.Aura
-	Metamorphosis              *core.Spell
-	MetamorphosisAura          *core.Aura
-	ImmolationAura             *core.Spell
-	ImmolationAuraDot          *core.Dot
-	HauntDebuffAura            *core.Aura
-	MoltenCoreAura             *core.Aura
-	DecimationAura             *core.Aura
-	PyroclasmAura              *core.Aura
-	BackdraftAura              *core.Aura
-	EmpoweredImpAura           *core.Aura
-	GlyphOfLifeTapAura         *core.Aura
-	FakeSpiritsoftheDamnedAura *core.Aura
+	NightfallProcAura      *core.Aura
+	EradicationAura        *core.Aura
+	DemonicEmpowerment     *core.Spell
+	DemonicEmpowermentAura *core.Aura
+	DemonicPactAura        *core.Aura
+	DemonicSoulAura        *core.Aura
+	Metamorphosis          *core.Spell
+	MetamorphosisAura      *core.Aura
+	ImmolationAura         *core.Spell
+	ImmolationAuraDot      *core.Dot
+	HauntDebuffAura        *core.Aura
+	MoltenCoreAura         *core.Aura
+	DecimationAura         *core.Aura
+	PyroclasmAura          *core.Aura
+	BackdraftAura          *core.Aura
+	EmpoweredImpAura       *core.Aura
+	GlyphOfLifeTapAura     *core.Aura
+	SpiritsoftheDamnedAura *core.Aura
 
 	Infernal *InfernalPet
 	Inferno  *core.Spell
@@ -121,7 +121,6 @@ func (warlock *Warlock) GrandFirestoneBonus() float64 {
 
 func (warlock *Warlock) Initialize() {
 
-	warlock.registerFakeSpiritsoftheDamnedAura()
 	warlock.registerSetBonuses()
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()

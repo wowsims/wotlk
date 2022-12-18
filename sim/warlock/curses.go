@@ -32,7 +32,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		},
 
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:  0, // TODO
+		FlatThreatBonus:  156,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
@@ -67,7 +67,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		},
 
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:  0, // TODO
+		FlatThreatBonus:  142,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
@@ -104,7 +104,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		},
 
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:  0, // TODO
+		FlatThreatBonus:  100,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
@@ -143,7 +143,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			0.01*float64(warlock.Talents.Contagion) +
 			0.05*float64(warlock.Talents.ImprovedCurseOfAgony),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:  0, // TODO : curses flat threat on application
+		FlatThreatBonus:  0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
@@ -197,7 +197,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		DamageMultiplierAdditive: 1 +
 			0.03*float64(warlock.Talents.ShadowMastery),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
-		FlatThreatBonus:  0, // TODO
+		FlatThreatBonus:  160,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
