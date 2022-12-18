@@ -130,7 +130,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			otherInputs: {
 				inputs: [
 					//Not Ready to enable yet, No backend support.
-					ShamanInputs.EnhancmentItemSwapInputs,
+					//ShamanInputs.EnhancmentItemSwapInputs,
 					ShamanInputs.SyncTypeInput,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
