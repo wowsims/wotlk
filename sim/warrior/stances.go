@@ -58,9 +58,10 @@ func (warrior *Warrior) registerBattleStanceAura() {
 	armorPenBonus := core.ArmorPenPerPercentArmor * (10 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 6, 0))
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
-		Label:    "Battle Stance",
-		ActionID: actionID,
-		Duration: core.NeverExpires,
+		Label:      "Battle Stance",
+		ActionID:   actionID,
+		Duration:   core.NeverExpires,
+		BuildPhase: core.CharacterBuildPhaseBase,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, armorPenBonus)
@@ -159,9 +160,10 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 	}
 
 	warrior.BerserkerStanceAura = warrior.GetOrRegisterAura(core.Aura{
-		Label:    "Berserker Stance",
-		ActionID: core.ActionID{SpellID: 2458},
-		Duration: core.NeverExpires,
+		Label:      "Berserker Stance",
+		ActionID:   core.ActionID{SpellID: 2458},
+		Duration:   core.NeverExpires,
+		BuildPhase: core.CharacterBuildPhaseBase,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, critBonus)
