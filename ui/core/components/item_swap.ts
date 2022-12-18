@@ -30,8 +30,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		label.textContent = "Item Swap"
 		this.rootElem.appendChild(label);
 
-		let itemSwapContianer = Input.newGroupContainer();
-		itemSwapContianer.classList.add('icon-group');
+		let itemSwapContianer =  Input.newGroupContainer();
 		this.rootElem.appendChild(itemSwapContianer);
 
 		const gear = new ItemSwapGear();
