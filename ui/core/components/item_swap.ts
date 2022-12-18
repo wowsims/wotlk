@@ -11,6 +11,7 @@ export interface ItemSwapPickerConfig<SpecType extends Spec, T> {
 	getValue: (player: Player<SpecType>) => ItemSwap,
 	setValue: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => void,
 	values: Array<ItemSwapIconInputConfig<Player<SpecType>, T>>;
+	extraCssClasses?: string[];
 	showWhen?: (player: Player<SpecType>) => boolean,
 }
 
