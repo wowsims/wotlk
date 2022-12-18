@@ -175,7 +175,7 @@ class EpWeightsMenu extends Popup {
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
 		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
-			tippy(button.previousSibling, {
+			tippy(button.previousElementSibling, {
 				'content': labelTooltip,
 				'allowHTML': true,
 			});
