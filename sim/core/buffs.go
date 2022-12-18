@@ -265,6 +265,8 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
+	registerDivineGuardianCD(agent, individualBuffs.DivineGuardians)
+	registerPainSuppressionCD(agent, individualBuffs.PainSuppressions)
 
 	character.AddStats(stats.Stats{
 		stats.SpellCrit: 28 * float64(partyBuffs.AtieshMage),
@@ -756,6 +758,100 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
+		},
+	})
+}
+
+var DivineGuardianAuraTag = "DivineGuardian"
+
+const DivineGuardianDuration = time.Second * 6
+const DivineGuardianCD = time.Minute * 2
+
+func registerDivineGuardianCD(agent Agent, numDivineGuardians int32) {
+	if numDivineGuardians == 0 {
+		return
+	}
+
+	dgAura := DivineGuardianAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 53530, Tag: -1},
+			AuraTag:          DivineGuardianAuraTag,
+			CooldownPriority: CooldownPriorityLow,
+			AuraDuration:     DivineGuardianDuration,
+			AuraCD:           DivineGuardianCD,
+			Type:             CooldownTypeSurvival,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { dgAura.Activate(sim) },
+		},
+		numDivineGuardians)
+}
+
+func DivineGuardianAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 53530, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "DivineGuardian-" + actionID.String(),
+		Tag:      DivineGuardianAuraTag,
+		ActionID: actionID,
+		Duration: DivineGuardianDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier *= 0.8
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier /= 0.8
+		},
+	})
+}
+
+var PainSuppressionAuraTag = "PainSuppression"
+
+const PainSuppressionDuration = time.Second * 8
+const PainSuppressionCD = time.Minute * 3
+
+func registerPainSuppressionCD(agent Agent, numPainSuppressions int32) {
+	if numPainSuppressions == 0 {
+		return
+	}
+
+	psAura := PainSuppressionAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 33206, Tag: -1},
+			AuraTag:          PainSuppressionAuraTag,
+			CooldownPriority: CooldownPriorityDefault,
+			AuraDuration:     PainSuppressionDuration,
+			AuraCD:           PainSuppressionCD,
+			Type:             CooldownTypeSurvival,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) { psAura.Activate(sim) },
+		},
+		numPainSuppressions)
+}
+
+func PainSuppressionAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 33206, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "PainSuppression-" + actionID.String(),
+		Tag:      PainSuppressionAuraTag,
+		ActionID: actionID,
+		Duration: PainSuppressionDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier *= 0.6
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier /= 0.6
 		},
 	})
 }

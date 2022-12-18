@@ -159,6 +159,11 @@ export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
 
+export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
+	makeMultistateIndividualBuffInput(ActionId.fromSpellId(53530), 11, 'divineGuardians'),
+	makeMultistateIndividualBuffInput(ActionId.fromSpellId(33206), 11, 'painSuppressions'),
+], 'Defensive CDs');
+
 // Misc Buffs
 export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');
 export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(48170), 'shadowProtection');
