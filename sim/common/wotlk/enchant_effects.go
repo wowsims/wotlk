@@ -593,4 +593,41 @@ func init() {
 			},
 		})
 	})
+
+	core.NewEnchantEffect(3870, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		healthMetrics := character.NewHealthMetrics(core.ActionID{SpellID: 64569})
+
+		bloodReserveAura := character.GetOrRegisterAura(core.Aura{
+			Label:     "Blood Reserve",
+			ActionID:  core.ActionID{SpellID: 64568},
+			Duration:  time.Second * 20,
+			MaxStacks: 5,
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if character.CurrentHealth()/character.MaxHealth() < 0.35 {
+					amountHealed := float64(aura.GetStacks()) * (360. + sim.RandomFloat("Blood Reserve")*80.)
+					character.GainHealth(sim, amountHealed*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
+					aura.Deactivate(sim)
+				}
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Blood Draining",
+			Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
+			ProcMask:   core.ProcMaskMelee,
+			Harmful:    true,
+			ProcChance: 0.5,
+			ICD:        time.Second * 10,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				if bloodReserveAura.IsActive() {
+					bloodReserveAura.Refresh(sim)
+					bloodReserveAura.AddStack(sim)
+				} else {
+					bloodReserveAura.Activate(sim)
+					bloodReserveAura.SetStacks(sim, 1)
+				}
+			},
+		})
+	})
 }

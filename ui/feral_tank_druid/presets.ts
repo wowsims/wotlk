@@ -264,7 +264,7 @@ export const P2_PRESET = {
 		},
 		{
 			"id": 45533,
-			"enchant": 2673,
+			"enchant": 3870,
 			"gems": [
 				40008,
 				40008
