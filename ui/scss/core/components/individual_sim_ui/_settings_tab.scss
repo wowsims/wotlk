@@ -33,18 +33,23 @@
     }
   }
 
-  .icon-group {
-    display: flex;
-    flex-wrap: wrap;
+  .rotation-settings,
+  .player-settings,
+  .custom-section {
+    .icon-group {
+      display: flex;
+      flex-wrap: wrap;
 
-    &> * {
-      margin-bottom: $block-spacer !important;
-      margin-right: $block-spacer !important;
-      flex: 0;
+      &> * {
+        margin-bottom: $block-spacer !important;
+        margin-right: $block-spacer !important;
+        flex: 0;
+      }
     }
   }
 
-  .rotation-settings {
+  .rotation-settings,
+  .other-settings {
     .input-root {
       label {
         max-width: 60%;
