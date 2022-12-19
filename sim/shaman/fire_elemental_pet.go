@@ -132,7 +132,7 @@ func (fireElemental *FireElemental) TryCast(sim *core.Simulation, target *core.U
 		return false
 	}
 	// all spell casts reset the elemental's swing timer
-	fireElemental.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+spell.CurCast.CastTime)
+	fireElemental.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+spell.CurCast.CastTime, false)
 	return true
 }
 

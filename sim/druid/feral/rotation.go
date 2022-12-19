@@ -222,7 +222,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 		// Reset swing timer from snek (or idol/weapon swap) when going into cat
 		if cat.InForm(druid.Cat) && cat.Rotation.SnekWeave {
-			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 		}
 		return
 	}
