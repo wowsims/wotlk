@@ -3,7 +3,7 @@ package core
 import (
 	"math"
 	"time"
-
+	
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -85,8 +85,13 @@ type UnitMetrics struct {
 	dpasp  DistributionMetrics
 	threat DistributionMetrics
 	dtps   DistributionMetrics
+	tmi    DistributionMetrics
 	hps    DistributionMetrics
 	tto    DistributionMetrics
+	
+	tmiList   []tmiListItem
+	isTanking bool
+	tmiBin    int32
 
 	CharacterIterationMetrics
 
@@ -117,6 +122,11 @@ type ActionMetrics struct {
 
 	// Metrics for this action, for each possible target.
 	Targets []TargetedActionMetrics
+}
+
+type tmiListItem struct {
+	Timestamp      time.Duration
+	WeightedDamage float64
 }
 
 func (actionMetrics *ActionMetrics) ToProto(actionID ActionID) *proto.ActionMetrics {
@@ -198,6 +208,7 @@ func NewUnitMetrics() UnitMetrics {
 		dpasp:   NewDistributionMetrics(),
 		threat:  NewDistributionMetrics(),
 		dtps:    NewDistributionMetrics(),
+		tmi:     NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
 		tto:     NewDistributionMetrics(),
 		actions: make(map[ActionID]*ActionMetrics),
@@ -361,6 +372,8 @@ func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.dpasp.reset()
 	unitMetrics.threat.reset()
 	unitMetrics.dtps.reset()
+	unitMetrics.tmi.reset()
+	unitMetrics.tmiList = nil
 	unitMetrics.hps.reset()
 	unitMetrics.tto.reset()
 	unitMetrics.CharacterIterationMetrics = CharacterIterationMetrics{}
@@ -393,10 +406,18 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		unitMetrics.tto.Total *= encounterDurationSeconds
 	}
 
+	if unitMetrics.isTanking {
+		unitMetrics.tmi.Total = unitMetrics.calculateTMI(unit, sim);
+		
+		// Hack because of the way DistributionMetrics does its calculations.
+		unitMetrics.tmi.Total *= sim.Duration.Seconds()
+	}
+
 	unitMetrics.dps.doneIteration(sim)
 	unitMetrics.dpasp.doneIteration(sim)
 	unitMetrics.threat.doneIteration(sim)
 	unitMetrics.dtps.doneIteration(sim)
+	unitMetrics.tmi.doneIteration(sim)
 	unitMetrics.hps.doneIteration(sim)
 	unitMetrics.tto.doneIteration(sim)
 
@@ -406,6 +427,79 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	}
 }
 
+func (unitMetrics *UnitMetrics) calculateTMI(unit *Unit, sim *Simulation) float64 {
+	
+	if unit.Metrics.tmiList == nil || unitMetrics.tmiBin == 0 {
+		return 0
+	}
+	
+	bin := int(unitMetrics.tmiBin) // Seconds width for bin, default = 6
+	firstEvent := 0 // Marks event at start of current bin
+	ev := 0         // Marks event at end of current bin
+	lastEvent := len(unit.Metrics.tmiList)
+	var buckets []float64 = nil
+
+	// Traverse event array via marching time bins
+	for tStep:=0; float64(tStep) < float64(sim.Duration.Seconds()) - float64(bin); tStep++ {
+		
+		// Increment event counter until we exceed the bin start
+		for ; firstEvent < lastEvent && unit.Metrics.tmiList[firstEvent].Timestamp.Seconds() < float64(tStep) ; firstEvent++ {
+		}
+		
+		// Increment event counter until we exceed the bin end
+		for ; ev < lastEvent && unit.Metrics.tmiList[ev].Timestamp.Seconds() < float64(tStep+bin) ; ev++ {
+		}
+
+		if ev - firstEvent > 0 {
+			sum := float64(0);
+			
+			// Add up everything in the bin
+			for j:=firstEvent; j < ev; j++ {				
+				sum += unit.Metrics.tmiList[j].WeightedDamage
+			}
+			
+			//if sim.Log != nil {
+			//	unit.Log(sim, "Bucket from %ds to %ds with events %d to %d totaled %f", tStep, tStep+bin, firstEvent, ev-1, sum)
+			//}
+			buckets = append(buckets, sum)
+		} else { // an entire window with zero damage midfight still needs to be included
+			if firstEvent < lastEvent {
+				buckets = append(buckets, 0)
+			}
+		}
+
+	}
+	
+	if buckets == nil {
+		return 0
+	}
+
+	sum := float64(0);
+	
+	for i:=0; i < len(buckets); i++ {
+		sum += math.Pow(math.E, buckets[i] * float64(10))
+	}	
+
+	/* DEBUG LOGS
+	if sim.Log != nil {
+		raw_avg := float64(0)
+		for i:=0; i < len(buckets); i++ {
+			raw_avg += buckets[i]
+		}
+		raw_avg = raw_avg / float64(len(buckets))
+		unit.Log(sim, "Sum of %d buckets was %f and raw mean bucket was %f", len(buckets), sum, raw_avg)
+		unit.Log(sim, "TMI should be reported as %f", float64(10000) * math.Log(float64(1)/float64(len(buckets)) * sum))
+	}
+	*/
+	
+	return float64(10) * math.Log(float64(1)/float64(len(buckets)) * sum)
+
+	// 100000 / factor * ln ( Sum( p(window) * e ^ (factor * dmg(window) / hp ) ) )
+	// factor = 10, multiplier of 100000 equivalent to 100% HP
+	// Rescale to 100 = 100%
+	
+}
+
 func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 	n := float64(unitMetrics.dps.n)
 	protoMetrics := &proto.UnitMetrics{
@@ -413,6 +507,7 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		Dpasp:         unitMetrics.dpasp.ToProto(),
 		Threat:        unitMetrics.threat.ToProto(),
 		Dtps:          unitMetrics.dtps.ToProto(),
+		Tmi:           unitMetrics.tmi.ToProto(),
 		Hps:           unitMetrics.hps.ToProto(),
 		Tto:           unitMetrics.tto.ToProto(),
 		SecondsOomAvg: unitMetrics.oomTimeSum / n,
