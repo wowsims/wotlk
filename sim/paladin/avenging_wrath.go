@@ -47,6 +47,10 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 				Timer:    paladin.NewTimer(),
 				Duration: time.Minute*3 - (time.Second * time.Duration(30*paladin.Talents.SanctifiedWrath)),
 			},
+			SharedCD: core.Cooldown{
+				Timer:    paladin.GetMutualLockoutDPAW(),
+				Duration: 30*time.Second,
+			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			paladin.AvengingWrathAura.Activate(sim)
