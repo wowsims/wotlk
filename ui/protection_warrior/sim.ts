@@ -166,6 +166,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InspirationUptime,
 					ProtectionWarriorInputs.StartingRage,

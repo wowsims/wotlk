@@ -792,7 +792,10 @@ message HealingModel {
 	double hps = 1;
 	// How often healing is applied.
 	double cadence_seconds = 2;
+	// % Inspiration buff uptime
 	double inspiration_uptime = 3;
+	// TMI burst window bin size
+	int32 burst_window = 4;
 }
 
 message CustomRotation {
