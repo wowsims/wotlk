@@ -35,7 +35,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
-			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
+			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() +

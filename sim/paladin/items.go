@@ -78,22 +78,10 @@ func (paladin *Paladin) getItemSetAegisBattlegearBonus2() float64 {
 	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisBattlegear, 2), .1, 0)
 }
 
-// Tier 9 ret (Alliance)
+// Tier 9 ret (Alliance/Horde)
 var ItemSetTuralyonsBattlegear = core.NewItemSet(core.ItemSet{
 	Name: "Turalyon's Battlegear",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Implemented in talents.go (Righteous Vengeance)
-		},
-		4: func(agent core.Agent) {
-			// Implemented in soc.go, sor.go, sov.go
-		},
-	},
-})
-
-// Tier 9 ret (Horde)
-var ItemSetLiadrinsBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Liadrin's Battlegear",
+	AlternativeName: "Liadrin's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Implemented in talents.go (Righteous Vengeance)
@@ -170,7 +158,8 @@ var ItemSetRedemptionPlate = core.NewItemSet(core.ItemSet{
 			// Implemented in hammer_of_the_righteous.go
 		},
 		4: func(agent core.Agent) {
-			// TODO: increase duration of divine shield and divine protection by 3sec
+			// TODO: increase duration of divine shield by 3sec
+			// Implemented in divine_protection.go
 		},
 	},
 })
@@ -210,36 +199,23 @@ func (paladin *Paladin) getItemSetAegisPlateBonus2() float64 {
 	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetAegisPlate, 2), .1, 0)
 }
 
-// Tier 9 prot (Alliance)
+// Tier 9 prot (Alliance/Horde)
 var ItemSetTuralyonsPlate = core.NewItemSet(core.ItemSet{
 	Name: "Turalyon's Plate",
+	AlternativeName: "Liadrin's Plate",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Implemented in hammer_of_the_righteous.go
 			// TODO: Implement Hand of Reckoning bonus, if it ever becomes relevant
 		},
 		4: func(agent core.Agent) {
-			// TODO: Decreases the cooldown of Divine Protection and duration of Forbearance by 30sec
-		},
-	},
-})
-
-// Tier 9 prot (Horde)
-var ItemSetLiadrinsPlate = core.NewItemSet(core.ItemSet{
-	Name: "Liadrin's Plate",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Implemented in hammer_of_the_righteous.go
-			// TODO: Implement Hand of Reckoning bonus, if it ever becomes relevant
-		},
-		4: func(agent core.Agent) {
-			// TODO: Decreases the cooldown of Divine Protection and duration of Forbearance by 30sec
+			// Implemented in divine_protection.go
 		},
 	},
 })
 
 func (paladin *Paladin) getItemSetT9PlateBonus2() float64 {
-	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsPlate, 2) || paladin.HasSetBonus(ItemSetLiadrinsPlate, 2), .05, 0)
+	return core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsPlate, 2), .05, 0)
 }
 
 // Tier 10 prot
