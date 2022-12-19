@@ -510,22 +510,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRetribution-AllItems-Liadrin'sBattlegear"
- value: {
-  dps: 5625.20277
-  tps: 5724.06755
-  dtps: 9.92959
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-Liadrin'sPlate"
- value: {
-  dps: 4976.26492
-  tps: 5074.40293
-  dtps: 8.90286
- }
-}
-dps_results: {
  key: "TestRetribution-AllItems-LibramofFuriousBlows-37574"
  value: {
   dps: 5872.30378
