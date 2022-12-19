@@ -56,7 +56,7 @@ func (shaman *Shaman) registerFeralSpirit() {
 				if shaman.FeralSpirit.Cast(sim, unit.CurrentTarget) {
 					// https://github.com/JamminL/wotlk-classic-bugs/issues/280
 					// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
-					shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+					shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 				}
 			}
 		},
