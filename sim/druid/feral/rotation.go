@@ -206,7 +206,7 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		cat.TigersFury.Cast(sim, nil)
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy)
+		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy+cat.latency)
 	}
 }
 
