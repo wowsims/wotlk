@@ -330,20 +330,20 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 	}
 }
 
-func (dk *Deathknight) Reset(sim *core.Simulation) {
-	dk.LastTickTime = -1
-
+func (dk *Deathknight) Prepull(sim *core.Simulation) {
 	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
 		dk.PrecastArmyOfTheDead(sim)
 	}
 
-	dk.LastCast = nil
-	dk.NextCast = nil
-
 	if dk.Inputs.PrecastHornOfWinter {
 		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
 	}
+}
 
+func (dk *Deathknight) Reset(sim *core.Simulation) {
+	dk.LastTickTime = -1
+	dk.LastCast = nil
+	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
 }
 
