@@ -10,12 +10,14 @@ import (
 
 func (priest *Priest) registerMindBlastSpell() {
 	baseCost := priest.BaseMana * 0.17 * core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), 0.9, 1)
-	miserySpellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
+	spellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
 
 	var replSrc core.ReplenishmentSource
 	if priest.Talents.VampiricTouch {
 		replSrc = priest.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 48160})
 	}
+
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48127},
@@ -45,13 +47,13 @@ func (priest *Priest) registerMindBlastSpell() {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(997, 1053) + miserySpellCoeff*spell.SpellPower()
+			baseDamage := sim.Roll(997, 1053) + spellCoeff*spell.SpellPower()
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 			}
-			if result.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+			if result.DidCrit() && hasGlyphOfShadow {
 				priest.ShadowyInsightAura.Activate(sim)
 			}
 			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
@@ -64,7 +66,7 @@ func (priest *Priest) registerMindBlastSpell() {
 			}
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := (997.0+1053.0)/2 + miserySpellCoeff*spell.SpellPower()
+			baseDamage := (997.0+1053.0)/2 + spellCoeff*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},
 	})

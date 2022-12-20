@@ -54,8 +54,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 			},
 		},
 
-		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance + core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
+		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: 0 +
+			float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
 			0.02*float64(priest.Talents.Darkness) +
 			0.01*float64(priest.Talents.TwinDisciplines),
@@ -134,4 +136,16 @@ func (priest *Priest) newMindFlayDot(numTicks int32) *core.Dot {
 
 func (priest *Priest) MindFlayTickDuration() time.Duration {
 	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0))
+}
+
+func (priest *Priest) AverageMindFlayLatencyDelay(numTicks int, gcd time.Duration) time.Duration {
+	wait := priest.ApplyCastSpeed(priest.MindFlay[numTicks].DefaultCast.ChannelTime)
+	if wait <= gcd || priest.Latency == 0 {
+		return 0
+	}
+
+	base := priest.Latency * 0.25
+	variation := base + 0.5*base
+	variation = core.MaxFloat(variation, 10)
+	return time.Duration(variation) * time.Millisecond
 }

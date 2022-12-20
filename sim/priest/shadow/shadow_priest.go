@@ -40,8 +40,8 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 		rotation: shadowOptions.Rotation,
 		options:  shadowOptions.Options,
 	}
-
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
+	spriest.CanRolloverSWP = spriest.Talents.MindFlay && spriest.Talents.PainAndSuffering > 0
 
 	return spriest
 }
@@ -49,11 +49,13 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 type ShadowPriest struct {
 	PrevTicks float64
 
-	BLUsedAt time.Duration
-
 	*priest.Priest
 	rotation *proto.ShadowPriest_Rotation
 	options  *proto.ShadowPriest_Options
+
+	BLUsedAt time.Duration
+
+	CanRolloverSWP bool
 }
 
 func (spriest *ShadowPriest) GetPriest() *priest.Priest {

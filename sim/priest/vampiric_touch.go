@@ -41,14 +41,21 @@ func (priest *Priest) registerVampiricTouchSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := 850/5 + 0.4*spell.SpellPower()
-			baseDamage *= float64(priest.VampiricTouchDot.NumberOfTicks)
-
-			if priest.Talents.Shadowform {
-				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				dot := priest.VampiricTouchDot
+				if priest.Talents.Shadowform {
+					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
+				} else {
+					return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
+				}
 			} else {
-				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				baseDamage := 850/5 + 0.4*spell.SpellPower()
+				if priest.Talents.Shadowform {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+				} else {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				}
 			}
 		},
 	})

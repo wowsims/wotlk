@@ -185,14 +185,7 @@ func (priest *Priest) RegisterHealingSpells() {
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
-	if priest.Talents.ShadowWeaving == 0 {
-		return
-	}
-
-	if priest.ShadowWeavingAura.IsActive() {
-		priest.ShadowWeavingAura.AddStack(sim)
-		priest.ShadowWeavingAura.Refresh(sim)
-	} else {
+	if priest.ShadowWeavingAura != nil {
 		priest.ShadowWeavingAura.Activate(sim)
 		priest.ShadowWeavingAura.AddStack(sim)
 	}

@@ -16,7 +16,6 @@ const (
 	swdIdx
 	mfIdx
 	swpIdx
-	spellLen
 )
 
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
@@ -28,7 +27,15 @@ func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
 		spriest.tryUseGCD(sim)
 	}
 }
+
+const doExperimental = true
+
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
+	if doExperimental {
+		spriest.experimentalRotation(sim)
+		return
+	}
+
 	// TODO: probably do something different instead of making it global?
 	// some global variables used throughout the code
 	var currentWait time.Duration
@@ -100,10 +107,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	}
 
 	rotType := spriest.rotation.RotationType
-
-	if spriest.ShadowWeavingAura.IsActive() {
-		swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
-	}
+	swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
 
 	if rotType == proto.ShadowPriest_Rotation_AoE {
 		numTicks := 5
@@ -157,7 +161,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 		// If there is at least 2 VT ticks then it's worth using
 		vtDamage = 0
 		if deltaTimeBL <= gcd || numVTbeforeBL >= 2 || sim.CurrentTime >= spriest.BLUsedAt {
-			vtDamage = spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget)
+			vtDamage = spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget) * float64(spriest.VampiricTouchDot.NumberOfTicks)
 		}
 
 		// SWD dmg
@@ -1086,43 +1090,3 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allC
 		return 3
 	}
 }
-
-//func (spriest *ShadowPriest) experimentalRotation(sim *core.Simulation) {
-//	// Time after which casting the corresponding spell would be a delay of
-//	// its cadence.
-//	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
-//	spellDelayStart := [spellLen]time.Duration{
-//		core.MaxDuration(sim.CurrentTime, spriest.MindBlast.ReadyAt()),
-//		core.MaxDuration(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()),
-//		core.MaxDuration(sim.CurrentTime, spriest.DevouringPlagueDot.ExpiresAt()),
-//		core.MaxDuration(sim.CurrentTime, spriest.VampiricTouchDot.ExpiresAt()-vtCastTime),
-//		core.MaxDuration(sim.CurrentTime, spriest.ShadowWordPainDot.ExpiresAt()),
-//		sim.CurrentTime, // MF1
-//		sim.CurrentTime, // MF2
-//		sim.CurrentTime, // MF3
-//	}
-//
-//	dpTickDamage := spriest.DevouringPlague.ExpectedDamage(sim, spriest.CurrentTarget)
-//	dpInitDamage := dpTickDamage * spriest.DpInitMultiplier
-//
-//	// Total damage done by a cast of each spell.
-//	spellDamage := [spellLen]float64{
-//		spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget),
-//		spriest.ShadowWordDeath.ExpectedDamage(sim, spriest.CurrentTarget),
-//		dpInitDamage + 8*dpTickDamage,
-//		spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget),
-//		spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget)*spriest.ShadowWordPainDot.NumberOfTicks,
-//		spriest.MindFlay[1].ExpectedDamage(sim, spriest.CurrentTarget),
-//	}
-//
-//	if !spriest.options.UseMindBlast {
-//		spellDamage[0] = 0
-//	}
-//	if !spriest.options.UseShadowWordDeath {
-//		spellDamage[1] = 0
-//	}
-//
-//	// Resulting net damage for each spell, with the opportunity cost of casting
-//	// other spells subtracted.
-//	netSpellDamage := spellDamage[:]
-//}

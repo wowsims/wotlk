@@ -58,11 +58,10 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
 			if useSnapshot {
 				dot := priest.DevouringPlagueDot
-				baseDamage := dot.SnapshotBaseDamage
 				if priest.Talents.Shadowform {
-					return spell.CalcPeriodicDamage(sim, target, baseDamage, dot.OutcomeExpectedMagicSnapshotCrit)
+					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
 				} else {
-					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+					return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
 				}
 			} else {
 				baseDamage := 1376/8 + 0.1849*spell.SpellPower()

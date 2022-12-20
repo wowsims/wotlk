@@ -21,6 +21,8 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		})
 	}
 
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48158},
 		SpellSchool:  core.SpellSchoolShadow,
@@ -56,7 +58,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 			}
-			if result.DidCrit() && priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow)) {
+			if result.DidCrit() && hasGlyphOfShadow {
 				priest.ShadowyInsightAura.Activate(sim)
 			}
 			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
