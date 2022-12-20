@@ -27,6 +27,8 @@ type Druid struct {
 	RaidBuffTargets   int
 	PrePopBerserk     bool
 
+	ReplaceBearMHFunc core.ReplaceMHSwing
+
 	Barkskin             *core.Spell
 	Berserk              *core.Spell
 	DemoralizingRoar     *core.Spell
@@ -179,6 +181,10 @@ func (druid *Druid) HasMajorGlyph(glyph proto.DruidMajorGlyph) bool {
 }
 func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
 	return druid.HasGlyph(int32(glyph))
+}
+
+func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+	return druid.MaulReplaceMH(sim, mhSwingSpell)
 }
 
 func (druid *Druid) Initialize() {

@@ -30,12 +30,19 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 		panic("auto attack out of form?")
 	}
 
-	cat.checkQueueMaul(sim)
+	// If the swing/Maul resulted in an Omen proc, then schedule the
+	// next player decision based on latency.
+
+	if cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
+		// Kick gcd loop, also need to account for any gcd 'left'
+		// otherwise it breaks gcd logic
+		cat.WaitUntil(sim, sim.CurrentTime+cat.GCD.TimeToReady(sim)+cat.latency)
+	}
 }
 
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
-func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
+func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 	// If we will have enough time and Energy leeway to stay in
 	// Dire Bear Form once the GCD expires, then only Maul if we
 	// will be left with enough Rage to cast Mangle or Lacerate
@@ -78,7 +85,9 @@ func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
 	}
 
 	if cat.CurrentRage() >= maulRageThresh {
-		cat.QueueMaul(sim)
+		return cat.Maul
+	} else {
+		return nil
 	}
 }
 
@@ -106,7 +115,6 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 		if cat.Enrage.IsReady(sim) {
 			cat.Enrage.Cast(sim, nil)
 		}
-		cat.checkQueueMaul(sim)
 		return true
 	}
 }

@@ -71,6 +71,7 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 			return bear.TryMaul(sim, mhSwingSpell)
 		},
 	})
+	bear.ReplaceBearMHFunc = bear.TryMaul
 
 	return bear
 }

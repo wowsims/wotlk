@@ -63,6 +63,9 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 		},
 		AutoSwingMelee: true,
 	})
+	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		return cat.checkReplaceMaul(sim)
+	}
 
 	return cat
 }

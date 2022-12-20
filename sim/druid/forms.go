@@ -273,9 +273,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.GainHealth(sim, healthFrac*druid.MaxHealth()-druid.CurrentHealth(), healthMetrics)
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-					return druid.TryMaul(sim, mhSwingSpell)
-				}
+				druid.AutoAttacks.ReplaceMHSwing = druid.ReplaceBearMHFunc
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()
