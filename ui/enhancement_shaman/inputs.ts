@@ -78,9 +78,9 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecEnhancementShaman, ItemSwap>({
 	fieldName: 'itemSwap',
 	values: [
-		{itemSlot: ItemSlot.ItemSlotMainHand},
-		{itemSlot: ItemSlot.ItemSlotOffHand},
-		{itemSlot: ItemSlot.ItemSlotRanged},
+		ItemSlot.ItemSlotMainHand,
+		ItemSlot.ItemSlotOffHand,
+		ItemSlot.ItemSlotRanged,
 	]
 })
 

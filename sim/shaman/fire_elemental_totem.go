@@ -25,8 +25,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 	})
 
 	shaman.FireElementalTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-
+		ActionID:     actionID,
 		ResourceType: stats.Mana,
 		BaseCost:     manaCost,
 
@@ -71,6 +70,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			}
 
 			if success {
+
 				shaman.castFireElemental = true
 				shaman.fireElementalSnapShot.ActivateMajorCooldowns(sim)
 				shaman.fireElementalSnapShot.ResetProcTrackers()

@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/shaman"
 )
 
@@ -56,6 +57,29 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		SyncType:       int32(enhOptions.Options.SyncType),
 	})
 
+	if enhOptions.Options.ItemSwap != nil {
+		if enhOptions.Options.ItemSwap.MhItem != nil {
+			itemSpec := core.ItemSpec{
+				ID:      enhOptions.Options.ItemSwap.MhItem.Id,
+				Gems:    enhOptions.Options.ItemSwap.MhItem.Gems,
+				Enchant: enhOptions.Options.ItemSwap.MhItem.Enchant,
+			}
+			item := core.NewItem(itemSpec)
+			enh.mh = &item
+		}
+
+		if enhOptions.Options.ItemSwap.OhItem != nil {
+			itemSpec := core.ItemSpec{
+				ID:      enhOptions.Options.ItemSwap.OhItem.Id,
+				Gems:    enhOptions.Options.ItemSwap.OhItem.Gems,
+				Enchant: enhOptions.Options.ItemSwap.OhItem.Enchant,
+			}
+			item := core.NewItem(itemSpec)
+			enh.oh = &item
+		}
+
+	}
+
 	if !enh.HasMHWeapon() {
 		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
@@ -96,6 +120,9 @@ type EnhancementShaman struct {
 
 	rotation Rotation
 
+	mh *core.Item
+	oh *core.Item
+
 	scheduler common.GCDScheduler
 }
 
@@ -110,6 +137,69 @@ func (enh *EnhancementShaman) Initialize() {
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
+
+	mcd := enh.GetMajorCooldown(enh.FireElementalTotem.ActionID)
+	oldShouldActive := mcd.ShouldActivate
+	mcd.ShouldActivate = func(s *core.Simulation, c *core.Character) bool {
+		success := oldShouldActive(s, c)
+
+		if success {
+			swapped := false
+			if enh.mh != nil {
+				swappMh := enh.mh
+				currentMh := enh.GetMHWeapon()
+				newStats := swappMh.Stats.Add(currentMh.Stats.Multiply(-1))
+
+				spBonus := 211.0
+				spMod := 1.0 + 0.1*float64(enh.Talents.ElementalWeapons)
+				newStats = newStats.Add(stats.Stats{stats.SpellPower: spBonus * spMod})
+
+				enh.AddStatsDynamic(s, newStats)
+
+				if sim.Log != nil {
+					sim.Log("Swapping Main Hand: %v", newStats)
+				}
+				swapped = true
+			}
+
+			if enh.oh != nil {
+				swappMh := enh.oh
+				currentWep := enh.GetOHWeapon()
+				newStats := swappMh.Stats.Add(currentWep.Stats.Multiply(-1))
+
+				spBonus := 211.0
+				spMod := 1.0 + 0.1*float64(enh.Talents.ElementalWeapons)
+				newStats = newStats.Add(stats.Stats{stats.SpellPower: spBonus * spMod})
+
+				enh.AddStatsDynamic(s, newStats)
+
+				if sim.Log != nil {
+					sim.Log("Swapping Off Hand: %v", newStats)
+				}
+				swapped = true
+			}
+
+			if swapped {
+				enh.AutoAttacks.StopMeleeUntil(s, s.CurrentTime)
+				core.StartDelayedAction(s, core.DelayedActionOptions{
+					DoAt: s.CurrentTime + 1500*time.Millisecond,
+					OnAction: func(s *core.Simulation) {
+						newStats := stats.Stats{}
+						if enh.mh != nil {
+							newStats = enh.GetMHWeapon().Stats.Add(enh.mh.Stats.Multiply(-1))
+						} else if enh.oh != nil {
+							newStats = newStats.Add(enh.GetOHWeapon().Stats.Add(enh.oh.Stats.Multiply(-1)))
+						}
+
+						enh.AddStatsDynamic(s, newStats)
+						enh.AutoAttacks.StopMeleeUntil(s, s.CurrentTime)
+					},
+				})
+			}
+		}
+
+		return success
+	}
 }
 
 func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, reactionTime time.Duration) bool {

@@ -9,6 +9,7 @@ import {
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
+	ItemSwap,
 	Profession,
 	PseudoStat,
 	Race,
@@ -74,6 +75,8 @@ import { Sim } from './sim.js';
 import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
+import { EnhancementShaman_Options } from './proto/shaman.js';
+import { ItemSwapGear } from './proto_utils/item_swap_gear.js';
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -87,6 +90,7 @@ export class Player<SpecType extends Spec> {
 	private consumes: Consumes = Consumes.create();
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
+	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
@@ -397,6 +401,10 @@ export class Player<SpecType extends Spec> {
 
 	getGear(): Gear {
 		return this.gear;
+	}
+
+	getItemSwapGear(): ItemSwapGear {
+		return this.itemSwapGear;
 	}
 
 	setGear(eventID: EventID, newGear: Gear) {
@@ -794,6 +802,16 @@ export class Player<SpecType extends Spec> {
 		}
 	}
 
+	private toDatabase(): SimDatabase {
+		const dbGear =  this.getGear().toDatabase()
+		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
+		return SimDatabase.create({
+			items: dbGear.items.concat(dbItemSwapGear.items),
+			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants),
+			gems: dbGear.gems.concat(dbItemSwapGear.gems),
+		})
+	}
+
 	toProto(forExport?: boolean): PlayerProto {
 		const gear = this.getGear();
 		return withSpecProto(
@@ -814,7 +832,7 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
-				database: forExport ? SimDatabase.create() : gear.toDatabase(),
+				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
 			this.getRotation(),
 			forExport ? this.specTypeFunctions.talentsCreate() : this.getTalents(),

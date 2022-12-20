@@ -56,7 +56,7 @@ func newWeaponFromUnarmed(critMultiplier float64) Weapon {
 	}
 }
 
-func newWeaponFromItem(item Item, critMultiplier float64) Weapon {
+func NewWeaponFromItem(item Item, critMultiplier float64) Weapon {
 	normalizedWeaponSpeed := 2.4
 	if item.WeaponType == proto.WeaponType_WeaponTypeDagger {
 		normalizedWeaponSpeed = 1.7
@@ -80,7 +80,7 @@ func newWeaponFromItem(item Item, critMultiplier float64) Weapon {
 // Returns weapon stats using the main hand equipped weapon.
 func (character *Character) WeaponFromMainHand(critMultiplier float64) Weapon {
 	if weapon := character.GetMHWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusMHDps)
+		return NewWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusMHDps)
 	} else {
 		return newWeaponFromUnarmed(critMultiplier).WithBonusDPS(character.PseudoStats.BonusMHDps)
 	}
@@ -89,7 +89,7 @@ func (character *Character) WeaponFromMainHand(critMultiplier float64) Weapon {
 // Returns weapon stats using the off hand equipped weapon.
 func (character *Character) WeaponFromOffHand(critMultiplier float64) Weapon {
 	if weapon := character.GetOHWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusOHDps)
+		return NewWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusOHDps)
 	} else {
 		return Weapon{}
 	}
@@ -98,7 +98,7 @@ func (character *Character) WeaponFromOffHand(critMultiplier float64) Weapon {
 // Returns weapon stats using the ranged equipped weapon.
 func (character *Character) WeaponFromRanged(critMultiplier float64) Weapon {
 	if weapon := character.GetRangedWeapon(); weapon != nil {
-		return newWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusRangedDps)
+		return NewWeaponFromItem(*weapon, critMultiplier).WithBonusDPS(character.PseudoStats.BonusRangedDps)
 	} else {
 		return Weapon{}
 	}

@@ -2,13 +2,10 @@ import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, Spec, GemColor, ItemSpec } from '../proto/common.js';
-import { HandType } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
+import { Class, Spec, GemColor, ItemSwap, ItemSpec } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
 import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 import { ActionId } from '../proto_utils/action_id.js';
@@ -17,7 +14,6 @@ import { setItemQualityCssClass } from '../css_utils.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
-import { getEnumValues } from '../utils.js';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
@@ -32,7 +28,6 @@ import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
-import { getEnvironmentData } from 'worker_threads';
 
 declare var $: any;
 declare var tippy: any;
@@ -265,13 +260,13 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, slot: ItemSlot, gear: ItemSwapGear, config: InputConfig<Player<SpecType>, ValueType>) {
+	constructor(parent: HTMLElement, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
 		super(parent, 'icon-picker-root', player, config)
 		this.rootElem.classList.add('icon-picker');
 		this.player = player;
 		this.config = config;
 		this.slot = slot;
-		this.gear = gear;
+		this.gear = this.player.getItemSwapGear();
 
 		this.iconAnchor = document.createElement('a');
 		this.iconAnchor.classList.add('icon-picker-button');
@@ -292,7 +287,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 					this.inputChanged(eventID);
 				},
 				getEquippedItem: () => this.gear.getEquippedItem(this.slot),
-				changeEvent: player.specOptionsChangeEmitter,
+				changeEvent: config.changedEvent(player),
 			}
 
 			const onClickStart = (event: Event) => {
@@ -324,8 +319,15 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 
 	}
 
-	addItemSpecToGear() {
-		const itemSpec = this.config.getValue(this.player) as unknown as ItemSpec
+	private addItemSpecToGear() {
+		const itemSwap = this.config.getValue(this.player) as unknown as ItemSwap
+		const fieldName = this.getFieldNameFromItemSlot(this.slot) 
+
+		if (!fieldName)
+			return;
+
+		const itemSpec = itemSwap[fieldName] as unknown as ItemSpec
+		
 		if (!itemSpec)
 			return;
 
@@ -336,11 +338,24 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		}
 	}
 
+	private getFieldNameFromItemSlot(slot: ItemSlot): keyof ItemSwap | undefined {
+		switch (slot) {
+			case ItemSlot.ItemSlotMainHand:
+				return 'mhItem';
+			case ItemSlot.ItemSlotOffHand:
+				return 'ohItem';
+			case ItemSlot.ItemSlotRanged:
+				return 'rangedItem';
+		}
+
+		return undefined;
+	}
+
 	getInputElem(): HTMLElement {
 		return this.iconAnchor;
 	}
 	getInputValue(): ValueType {
-		return this.gear.getEquippedItem(this.slot)?.asSpec() as unknown as ValueType;
+		return this.gear.toProto() as unknown as ValueType
 	}
 
 	setInputValue(newValue: ValueType): void {
