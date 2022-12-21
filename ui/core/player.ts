@@ -33,7 +33,7 @@ import { StatWeightsResult } from './proto/api.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
 
 import { playerTalentStringToProto } from './talents/factory.js';
-import { Gear } from './proto_utils/gear.js';
+import { Gear, ItemSwapGear } from './proto_utils/gear.js';
 import {
 	isUnrestrictedGem,
 	gemEligibleForSocket,
@@ -76,7 +76,6 @@ import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
 import { EnhancementShaman_Options } from './proto/shaman.js';
-import { ItemSwapGear } from './proto_utils/item_swap_gear.js';
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {

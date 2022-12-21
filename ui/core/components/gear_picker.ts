@@ -7,7 +7,6 @@ import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
-import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
@@ -28,6 +27,7 @@ import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
+import {ItemSwapGear } from '../proto_utils/gear.js'
 
 declare var $: any;
 declare var tippy: any;
@@ -283,7 +283,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this.addItemSpecToGear();
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
-					this.gear.equipItem(this.slot, equippedItem);
+					this.gear.equipItem(this.slot, equippedItem, player.canDualWield2H());
 					this.inputChanged(eventID);
 				},
 				getEquippedItem: () => this.gear.getEquippedItem(this.slot),
@@ -334,7 +334,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		const equippedItem = this.player.sim.db.lookupItemSpec(itemSpec);
 
 		if (equippedItem) {
-			this.gear.equipItem(this.slot, equippedItem);
+			this.gear.equipItem(this.slot, equippedItem, this.player.canDualWield2H());
 		}
 	}
 
