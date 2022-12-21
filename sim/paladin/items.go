@@ -80,7 +80,7 @@ func (paladin *Paladin) getItemSetAegisBattlegearBonus2() float64 {
 
 // Tier 9 ret (Alliance/Horde)
 var ItemSetTuralyonsBattlegear = core.NewItemSet(core.ItemSet{
-	Name: "Turalyon's Battlegear",
+	Name:            "Turalyon's Battlegear",
 	AlternativeName: "Liadrin's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
@@ -201,7 +201,7 @@ func (paladin *Paladin) getItemSetAegisPlateBonus2() float64 {
 
 // Tier 9 prot (Alliance/Horde)
 var ItemSetTuralyonsPlate = core.NewItemSet(core.ItemSet{
-	Name: "Turalyon's Plate",
+	Name:            "Turalyon's Plate",
 	AlternativeName: "Liadrin's Plate",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {

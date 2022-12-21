@@ -41,7 +41,7 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 			},
 			SharedCD: core.Cooldown{
 				Timer:    paladin.GetMutualLockoutDPAW(),
-				Duration: 30*time.Second,
+				Duration: 30 * time.Second,
 			},
 		},
 
@@ -66,7 +66,7 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 }
 
 func (paladin *Paladin) registerForbearanceDebuff() {
-	
+
 	actionID := core.ActionID{SpellID: 25771}
 	duration := core.TernaryDuration(paladin.HasSetBonus(ItemSetTuralyonsPlate, 4), 90*time.Second, 120*time.Second)
 	paladin.ForbearanceAura = paladin.RegisterAura(core.Aura{
@@ -74,5 +74,5 @@ func (paladin *Paladin) registerForbearanceDebuff() {
 		ActionID: actionID,
 		Duration: duration,
 	})
-	
+
 }

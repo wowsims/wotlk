@@ -127,7 +127,7 @@ func init() {
 		core.NewSimpleStatItemActiveEffect(itemID, stats.Stats{stats.BlockValue: bonus}, duration, cooldown, func(character *core.Character) core.Cooldown {
 			return core.Cooldown{
 				Timer:    character.GetDefensiveTrinketCD(),
-				Duration: time.Second*20,
+				Duration: time.Second * 20,
 			}
 		}, nil)
 	})

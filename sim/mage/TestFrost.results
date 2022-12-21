@@ -383,8 +383,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 4320.82148
-  tps: 3630.06255
+  dps: 4315.363
+  tps: 3625.83826
  }
 }
 dps_results: {

@@ -49,7 +49,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			},
 			SharedCD: core.Cooldown{
 				Timer:    paladin.GetMutualLockoutDPAW(),
-				Duration: 30*time.Second,
+				Duration: 30 * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

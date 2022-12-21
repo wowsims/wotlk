@@ -70,7 +70,7 @@ type Paladin struct {
 
 	AvoidClippingConsecration           bool
 	HoldLastAvengingWrathUntilExecution bool
-	
+
 	mutualLockoutDPAW *core.Timer
 }
 
@@ -110,7 +110,7 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if paladin.Talents.SwiftRetribution == 3 {
 		raidBuffs.SwiftRetribution = paladin.Talents.SwiftRetribution == 3 // TODO: Fix-- though having something between 0/3 and 3/3 is unlikely
 	}
-	
+
 	// TODO: Figure out a way to just start with 1 DG cooldown available without making a redundant Spell
 	//if paladin.Talents.DivineGuardian == 2 {
 	//	raidBuffs.divineGuardians++

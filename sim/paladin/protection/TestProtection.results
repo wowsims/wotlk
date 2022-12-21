@@ -411,8 +411,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 3199.81375
-  tps: 7718.87584
+  dps: 3176.58264
+  tps: 7659.07897
  }
 }
 dps_results: {

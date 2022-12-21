@@ -383,8 +383,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 6626.56635
-  tps: 3979.39781
+  dps: 6624.83847
+  tps: 3978.51672
  }
 }
 dps_results: {

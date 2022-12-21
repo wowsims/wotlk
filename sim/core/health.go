@@ -2,7 +2,7 @@ package core
 
 import (
 	"time"
-	
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -17,7 +17,7 @@ type healthBar struct {
 
 func (unit *Unit) EnableHealthBar() {
 	unit.healthBar = healthBar{
-		unit: unit,
+		unit:                     unit,
 		DamageTakenHealthMetrics: unit.NewHealthMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken}),
 	}
 }
@@ -70,11 +70,11 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	newHealth := MaxFloat(oldHealth-amount, 0)
 	metrics := hb.DamageTakenHealthMetrics
 	metrics.AddEvent(-amount, newHealth-oldHealth)
-	
+
 	// TMI calculations need timestamps and Max HP information for each damage taken event
 	if hb.unit.Metrics.isTanking {
 		entry := tmiListItem{
-			Timestamp: sim.CurrentTime,
+			Timestamp:      sim.CurrentTime,
 			WeightedDamage: amount / hb.MaxHealth(),
 		}
 		hb.unit.Metrics.tmiList = append(hb.unit.Metrics.tmiList, entry)
