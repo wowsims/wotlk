@@ -3,21 +3,21 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/sim/core"
-	"github.com/wowsims/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (rogue) registerAmbushSpell() {
+func (rogue *Rogue) registerAmbushSpell() {
 	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
 	refundAmount := baseCost * 0.8
 
 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:	core.ActionID{SpellID: 48691},
-		SpellSchool:	core.SpellSchoolPhysical,
-		ProcMask:		core.ProcMaskMeleeMHSpecial,
-		Flags:			core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
-		ResourceType:	stats.Energy,
-		BaseCost:		baseCost,
+		ActionID:     core.ActionID{SpellID: 48691},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
+		ResourceType: stats.Energy,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -41,11 +41,11 @@ func (rogue) registerAmbushSpell() {
 			baseDamage := 908 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
-			
+
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
-				comboPoints = 2 + (1 * 1/3 * float64(rogue.Talents.Initiative))
+				comboPoints := 2
 				rogue.AddComboPoints(sim, comboPoints, spell.ComboPointMetrics())
 			} else {
 				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)

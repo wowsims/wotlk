@@ -16,12 +16,12 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:		ActionID,
-		SpellSchool:	core.SpellSchoolPhysical,
-		ProcMask:		core.ProcMaskMeleeMHSpecial,
-		Flags:			core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagBuilder,
-		ResourceType:	stats.Energy,
-		BaseCost:		baseCost,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
+		ResourceType: stats.Energy,
+		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -37,18 +37,17 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		DamageMultiplier: core.TernaryFloat64(daggerMH, 1.8, 1.25) * (1 + 0.02*float64(rogue.Talents.FindWeakness) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) *
 			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),
-		CritMultiplier:	rogue.MeleeCritMultiplier(true),
+		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
-			
+
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-			}
-			else {
+			} else {
 				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 			}
 		},
