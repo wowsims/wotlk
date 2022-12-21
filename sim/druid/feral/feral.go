@@ -100,7 +100,6 @@ func (cat *FeralDruid) MissChance() float64 {
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
-	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

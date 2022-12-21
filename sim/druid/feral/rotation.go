@@ -149,6 +149,15 @@ func (cat *FeralDruid) berserkExpectedAt(sim *core.Simulation, futureTime time.D
 	return false
 }
 
+func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
+	// Calculate current damage-per-Energy of Rake vs. Shred. Used to
+	// determine whether Rake is worth casting when player stats change upon a
+	// dynamic proc occurring
+	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
+	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
+	return rakeDpc / 35., shredDpc / 42.
+}
+
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	ripdotRemaining := cat.RipDot.RemainingDuration(sim)
 	if !cat.RipDot.IsActive() || (ripdotRemaining < 10*time.Second) {
@@ -269,7 +278,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rakeNow := rotation.UseRake && !cat.RakeDot.IsActive() && (simTimeRemain > cat.RakeDot.Duration) && !isClearcast
 
-	//berserkEnergyThresh := core.TernaryFloat64(isClearcast, 80.0, 90.0)
+	// Additionally, don't Rake if the current Shred DPE is higher due to
+	// trinket procs etc.
+	if rakeNow {
+		rakeDpe, shredDpe := cat.calcBuilderDpe(sim)
+		rakeNow = (rakeDpe > shredDpe)
+	}
+
 	// Berserk algorithm: time Berserk for just after a Tiger's Fury
 	// *unless* we'll lose Berserk uptime by waiting for Tiger's Fury to
 	// come off cooldown. The latter exception is necessary for
