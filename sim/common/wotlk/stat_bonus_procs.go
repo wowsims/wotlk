@@ -302,7 +302,8 @@ func init() {
 		ID:         45490,
 		Bonus:      stats.Stats{stats.SpellPower: 794},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnCastComplete,
+		Callback:   core.CallbackOnHealDealt | core.CallbackOnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
 		ProcChance: 0.1,
 		ICD:        time.Second * 45,
 	})
