@@ -14,6 +14,7 @@ export interface SimResultData {
 export interface ResultComponentConfig {
 	parent: HTMLElement,
 	rootCssClass?: string,
+	cssScheme?: String | null,
 	resultsEmitter: TypedEvent<SimResultData | null>,
 	colorSettings: ColorSettings,
 };

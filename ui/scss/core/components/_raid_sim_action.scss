@@ -25,7 +25,9 @@
 	.results-sim-dtps .topline-result-avg:after {
 		content: " DTPS";
 	}
-
+	.results-sim-tmi .topline-result-avg:after {
+		content: "% TMI";
+	}
 	.results-sim-cod .topline-result-avg:after {
 		content: "% Chance of Death";
 	}

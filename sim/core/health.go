@@ -17,8 +17,7 @@ type healthBar struct {
 
 func (unit *Unit) EnableHealthBar() {
 	unit.healthBar = healthBar{
-		unit: unit,
-
+		unit:                     unit,
 		DamageTakenHealthMetrics: unit.NewHealthMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken}),
 	}
 }
@@ -72,6 +71,15 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	metrics := hb.DamageTakenHealthMetrics
 	metrics.AddEvent(-amount, newHealth-oldHealth)
 
+	// TMI calculations need timestamps and Max HP information for each damage taken event
+	if hb.unit.Metrics.isTanking {
+		entry := tmiListItem{
+			Timestamp:      sim.CurrentTime,
+			WeightedDamage: amount / hb.MaxHealth(),
+		}
+		hb.unit.Metrics.tmiList = append(hb.unit.Metrics.tmiList, entry)
+	}
+
 	if sim.Log != nil {
 		hb.unit.Log(sim, "Spent %0.3f health from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, oldHealth, newHealth)
 	}
@@ -82,19 +90,22 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 var ChanceOfDeathAuraLabel = "Chance of Death"
 
 func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel) {
+
+	character.Unit.Metrics.isTanking = false
+	for _, target := range character.Env.Encounter.Targets {
+		if target.CurrentTarget == &character.Unit {
+			character.Unit.Metrics.isTanking = true
+		}
+	}
+	if !character.Unit.Metrics.isTanking {
+		return
+	}
+
 	if healingModel == nil {
 		return
 	}
 
-	isTanking := false
-	for _, target := range character.Env.Encounter.Targets {
-		if target.CurrentTarget == &character.Unit {
-			isTanking = true
-		}
-	}
-	if !isTanking {
-		return
-	}
+	character.Unit.Metrics.tmiBin = healingModel.BurstWindow
 
 	character.RegisterAura(Aura{
 		Label:    ChanceOfDeathAuraLabel,

@@ -23,6 +23,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRetributionPaladin>) {
 		super(parentElem, player, {
 			cssClass: 'retribution-paladin-sim-ui',
+			cssScheme: 'paladin',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

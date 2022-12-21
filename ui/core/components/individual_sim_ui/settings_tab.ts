@@ -349,7 +349,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-    const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
+    const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
 			label: 'Encounter',
       header: {title: 'Saved Encounters'},
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
@@ -361,7 +361,7 @@ export class SettingsTab extends SimTab {
 			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
 		});
 
-    const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, {
+    const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, this.simUI, {
 			label: 'Settings',
       header: {title: 'Saved Settings'},
 			storageKey: this.simUI.getSavedSettingsStorageKey(),
@@ -425,9 +425,9 @@ export class SettingsTab extends SimTab {
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
-				new CustomRotationPicker(sectionElem, this.simUI.player, inputConfig);
+				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'itemSwap'){
-				new ItemSwapPicker(sectionElem, this.simUI.player, inputConfig)
+				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});
 	};

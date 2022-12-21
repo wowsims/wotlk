@@ -1,7 +1,6 @@
 :root {
 	--bs-body-font-size: 14px;
 	--bs-gap: 1vw;
-	--theme-color-primary: black;
 	--theme-color-background: DarkSlateGrey;
 	--theme-color-background-raw: 0, 0, 0;
 	--theme-background-image: linear-gradient(black, black);
@@ -197,14 +196,6 @@ $sim-transitions: .2s ease-in;
 }
 
 .bold {
-	font-weight: bold;
-}
-
-.sim-button {
-	color: var(--main-text-color);
-	background-color: var(--theme-color-primary);
-	border: none;
-	padding: 5px;
 	font-weight: bold;
 }
 

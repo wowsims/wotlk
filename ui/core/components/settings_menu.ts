@@ -36,7 +36,7 @@ export class SettingsMenu extends Popup {
 			</div>
 			<div class="menu-content">
 				<div class="settings-menu-content-left">
-					<button class="restore-defaults-button btn btn-primary">Restore Defaults</button>
+					<button class="restore-defaults-button btn btn-${this.simUI.cssScheme}">Restore Defaults</button>
 					<div class="fixed-rng-seed"></div>
 					<div class="last-used-rng-seed-container form-text">
 						<small>Last used RNG seed:</small><small class="last-used-rng-seed">0</small>

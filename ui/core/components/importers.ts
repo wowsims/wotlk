@@ -1,23 +1,21 @@
-import { Class } from '../proto/common.js';
-import { EquipmentSpec } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { Glyphs } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { IndividualSimSettings } from '../proto/ui.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
-import { Player } from '../player.js';
-import { Database } from '../proto_utils/database.js';
-import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names.js';
-import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory.js';
-import { GlyphConfig } from '../talents/glyphs_picker.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-
-import { Popup } from './popup.js';
-
-declare var $: any;
-declare var tippy: any;
+import { Popup } from './popup';
+import { IndividualSimUI } from '../individual_sim_ui';
+import { SimUI } from '../sim_ui';
+import { TypedEvent } from '../typed_event';
+import {
+	Class,
+	EquipmentSpec,
+	Glyphs,
+	ItemSpec,
+	Profession,
+	Race,
+	Spec,
+} from '../proto/common';
+import { IndividualSimSettings } from '../proto/ui';
+import { Database } from '../proto_utils/database';
+import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names';
+import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
+import { GlyphConfig } from '../talents/glyphs_picker';
 
 export abstract class Importer extends Popup {
 	private readonly textElem: HTMLTextAreaElement;
@@ -25,7 +23,7 @@ export abstract class Importer extends Popup {
 	protected readonly importButton: HTMLButtonElement;
 	private readonly includeFile: boolean;
 
-	constructor(parent: HTMLElement, title: string, includeFile: boolean) {
+	constructor(parent: HTMLElement, simUI: SimUI, title: string, includeFile: boolean) {
 		super(parent);
 		this.includeFile = includeFile;
 		const uploadInputId = 'upload-input-' + title.toLowerCase().replaceAll(' ', '-');
@@ -41,11 +39,11 @@ export abstract class Importer extends Popup {
 			<div class="actions-row">
 		`;
 		if (this.includeFile) {
-			htmlVal += `<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button">UPLOAD FROM FILE</label>
+			htmlVal += `<label for="${uploadInputId}" class="importer-button btn btn-${simUI.cssScheme} upload-button">UPLOAD FROM FILE</label>
 				<input type="file" id="${uploadInputId}" class="importer-upload-input" hidden>
 			`
 		}
-		htmlVal += `<button class="importer-button btn btn-primary import-button">IMPORT</button>
+		htmlVal += `<button class="importer-button btn btn-${simUI.cssScheme} import-button">IMPORT</button>
 			</div>
 		`;
 
@@ -125,7 +123,7 @@ export abstract class Importer extends Popup {
 export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, 'JSON Import', true);
+		super(parent, simUI, 'JSON Import', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
@@ -157,7 +155,7 @@ export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 export class Individual80UImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, '80 Upgrades Import', true);
+		super(parent, simUI, '80 Upgrades Import', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
@@ -215,7 +213,7 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, 'Addon Import', true);
+		super(parent, simUI, 'Addon Import', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `

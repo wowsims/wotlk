@@ -31,6 +31,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecProtectionWarrior>) {
 		super(parentElem, player, {
 			cssClass: 'protection-warrior-sim-ui',
+			cssScheme: 'warrior',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],
@@ -166,6 +167,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InspirationUptime,
 					ProtectionWarriorInputs.StartingRage,

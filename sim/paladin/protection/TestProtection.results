@@ -95,15 +95,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 3176.62314
-  tps: 22886.19299
+  dps: 3176.65992
+  tps: 23104.99734
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 3176.62314
-  tps: 22886.19299
+  dps: 3176.65992
+  tps: 23104.99734
  }
 }
 dps_results: {
@@ -313,8 +313,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3232.6039
-  tps: 7789.8927
+  dps: 3232.63608
+  tps: 7789.97554
  }
 }
 dps_results: {
@@ -440,7 +440,7 @@ dps_results: {
  key: "TestProtection-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 3203.35218
-  tps: 7740.75464
+  tps: 7740.73106
  }
 }
 dps_results: {
@@ -456,20 +456,6 @@ dps_results: {
  value: {
   dps: 3195.79595
   tps: 7708.53402
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-Liadrin'sBattlegear"
- value: {
-  dps: 3363.61315
-  tps: 8035.75669
- }
-}
-dps_results: {
- key: "TestProtection-AllItems-Liadrin'sPlate"
- value: {
-  dps: 3117.99013
-  tps: 7506.48577
  }
 }
 dps_results: {
@@ -721,7 +707,7 @@ dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
   dps: 3264.84365
-  tps: 7870.18871
+  tps: 7870.19853
  }
 }
 dps_results: {
@@ -896,8 +882,8 @@ dps_results: {
  key: "TestProtection-Average-Default"
  value: {
   dps: 3584.58064
-  tps: 8597.07744
-  dtps: 16.18688
+  tps: 8597.07268
+  dtps: 15.01878
  }
 }
 dps_results: {
@@ -1157,6 +1143,6 @@ dps_results: {
  value: {
   dps: 3758.67434
   tps: 9009.73746
-  dtps: 13.2107
+  dtps: 12.47426
  }
 }

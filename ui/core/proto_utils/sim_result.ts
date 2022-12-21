@@ -282,6 +282,7 @@ export class UnitMetrics {
 	readonly hps: DistributionMetricsProto;
 	readonly tps: DistributionMetricsProto;
 	readonly dtps: DistributionMetricsProto;
+	readonly tmi: DistributionMetricsProto;
 	readonly tto: DistributionMetricsProto;
 	readonly actions: Array<ActionMetrics>;
 	readonly auras: Array<AuraMetrics>;
@@ -332,6 +333,7 @@ export class UnitMetrics {
 		this.hps = this.metrics.hps!;
 		this.tps = this.metrics.threat!;
 		this.dtps = this.metrics.dtps!;
+		this.tmi = this.metrics.tmi!;
 		this.tto = this.metrics.tto!;
 		this.actions = actions;
 		this.auras = auras;

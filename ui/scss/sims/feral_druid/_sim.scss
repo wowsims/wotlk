@@ -2,22 +2,8 @@ $theme: 'druid';
 
 // Set color variables which control the site theme.
 .feral-druid-sim-ui {
-	--theme-color-primary: #e0a335;
 	--theme-color-background: #1d1510;
 	--theme-color-background-raw: 29, 21, 16;
 	--theme-background-image: url('/wotlk/assets/img/feral_druid_background.jpg');
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.feral-druid-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(1, 1fr);
-}
-.feral-druid-sim-ui .consumes-section {
-  grid-template-columns: repeat(5, 1fr);
-}
-
-// Balance has a lot of EP stats, so make the text smaller so it fits vertically.
-.feral-druid-sim-ui .character-stats-table-row {
-  font-size: 12px;
 }

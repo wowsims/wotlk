@@ -14,6 +14,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecBalanceDruid>) {
 		super(parentElem, player, {
 			cssClass: 'balance-druid-sim-ui',
+			cssScheme: 'druid',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

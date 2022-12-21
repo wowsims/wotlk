@@ -2,15 +2,9 @@ $theme: 'shaman';
 
 // Set color variables which control the site theme.
 .elemental-shaman-sim-ui {
-	--theme-color-primary: #228db0;
 	--theme-color-background: #181d2d;
 	--theme-color-background-raw: 24, 29, 45;
 	--theme-background-image: url('/wotlk/assets/img/elemental_shaman_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.elemental-shaman-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(2, 1fr);
 }

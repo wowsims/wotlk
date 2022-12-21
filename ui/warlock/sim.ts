@@ -35,6 +35,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecWarlock>) {
 		super(parentElem, player, {
 			cssClass: 'warlock-sim-ui',
+			cssScheme: 'warlock',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Several secondary spells need to be implemented.",
