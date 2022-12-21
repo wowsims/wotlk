@@ -27,6 +27,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathknight>) {
 		super(parentElem, player, {
 			cssClass: 'deathknight-sim-ui',
+			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Blood dps is not implemented.",

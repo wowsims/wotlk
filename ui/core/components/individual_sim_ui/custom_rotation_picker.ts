@@ -9,12 +9,14 @@ import { NumberPicker } from '../number_picker.js';
 import { getEnumValues } from '../../utils.js';
 
 import { Component } from '../component.js';
+import { SimUI } from 'ui/core/sim_ui.js';
 
 export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 	getValue: (player: Player<SpecType>) => CustomRotation,
 	setValue: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
 
 	numColumns: number,
+	extraCssClasses?: string[];
 	showCastsPerMinute?: boolean,
 	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
 
@@ -22,10 +24,13 @@ export interface CustomRotationPickerConfig<SpecType extends Spec, T> {
 }
 
 export class CustomRotationPicker<SpecType extends Spec, T> extends Component {
-	constructor(parent: HTMLElement, modPlayer: Player<SpecType>, config: CustomRotationPickerConfig<SpecType, T>) {
+	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<SpecType>, config: CustomRotationPickerConfig<SpecType, T>) {
 		super(parent, 'custom-rotation-picker-root');
 
-		new ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>(this.rootElem, modPlayer, {
+		if (config.extraCssClasses)
+			this.rootElem.classList.add(...config.extraCssClasses);
+
+		new ListPicker<Player<SpecType>, CustomSpell, CustomSpellPicker<SpecType, T>>(this.rootElem, simUI, modPlayer, {
 			extraCssClasses: ['custom-spells-picker'],
 			title: 'Spell Priority',
 			titleTooltip: 'Spells at the top of the list are prioritized first. Safely ignores untalented options.',

@@ -1,29 +1,21 @@
-import { Class } from '../proto/common.js';
-import { EquipmentSpec } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { Stat, PseudoStat } from '../proto/common.js';
-import { IndividualSimSettings } from '../proto/ui.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
-import { Player } from '../player.js';
-import { UnitStat } from '../proto_utils/stats.js';
-import { classNames, nameToClass, nameToRace } from '../proto_utils/names.js';
-import { specNames } from '../proto_utils/utils.js';
-import { talentSpellIdsToTalentString } from '../talents/factory.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { downloadString, getEnumValues } from '../utils.js';
-
-import { Popup } from './popup.js';
-
-declare var $: any;
-declare var tippy: any;
-declare var pako: any;
+import { Popup } from './popup';
+import { IndividualSimUI } from '../individual_sim_ui';
+import { SimUI } from '../sim_ui';
+import {
+	PseudoStat,
+	Spec,
+	Stat
+} from '../proto/common';
+import { IndividualSimSettings } from '../proto/ui';
+import { classNames } from '../proto_utils/names';
+import { UnitStat } from '../proto_utils/stats';
+import { specNames } from '../proto_utils/utils';
+import { downloadString } from '../utils';
 
 export abstract class Exporter extends Popup {
 	private readonly textElem: HTMLElement;
 
-	constructor(parent: HTMLElement, title: string, allowDownload: boolean) {
+	constructor(parent: HTMLElement, simUI: SimUI, title: string, allowDownload: boolean) {
 		super(parent);
 
 		this.rootElem.classList.add('exporter');
@@ -33,8 +25,8 @@ export abstract class Exporter extends Popup {
 				<textarea class="exporter-textarea form-control" readonly></textarea>
 			</div>
 			<div class="actions-row">
-				<button class="exporter-button btn btn-primary clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button btn btn-primary download-button">DOWNLOAD</button>
+				<button class="exporter-button btn btn-${simUI.cssScheme} clipboard-button">COPY TO CLIPBOARD</button>
+				<button class="exporter-button btn btn-${simUI.cssScheme} download-button">DOWNLOAD</button>
 			</div>
 		`;
 
@@ -74,7 +66,7 @@ export class IndividualLinkExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, 'Sharable Link', false);
+		super(parent, simUI, 'Sharable Link', false);
 		this.simUI = simUI;
 		this.init();
 	}
@@ -88,7 +80,7 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, 'JSON Export', true);
+		super(parent, simUI, 'JSON Export', true);
 		this.simUI = simUI;
 		this.init();
 	}
@@ -102,7 +94,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, '80Upgrades EP Export', true);
+		super(parent, simUI, '80Upgrades EP Export', true);
 		this.simUI = simUI;
 		this.init();
 	}
@@ -158,7 +150,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatMeleeHit]: 'hitRating',
 		[Stat.StatMeleeCrit]: 'critRating',
 		[Stat.StatMeleeHaste]: 'hasteRating',
-		[Stat.StatArmorPenetration]: 'armorPen',
+		[Stat.StatArmorPenetration]: 'armorPenRating',
 		[Stat.StatExpertise]: 'expertiseRating',
 		[Stat.StatMana]: 'mana',
 		[Stat.StatEnergy]: 'energy',
@@ -189,7 +181,7 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, 'Pawn EP Export', true);
+		super(parent, simUI, 'Pawn EP Export', true);
 		this.simUI = simUI;
 		this.init();
 	}

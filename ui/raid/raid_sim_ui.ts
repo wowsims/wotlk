@@ -57,6 +57,7 @@ export class RaidSimUI extends SimUI {
 
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
+			cssScheme: 'raid',
 			spec: null,
 			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
@@ -138,32 +139,34 @@ export class RaidSimUI extends SimUI {
 
 		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
 
-		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, {
-			label: 'Raid',
-			storageKey: this.getSavedRaidStorageKey(),
-			getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
-				raid: this.sim.raid.toProto(),
-				buffBots: this.getBuffBots().map(b => b.toProto()),
-				blessings: this.blessingsPicker!.getAssignments(),
-				faction: this.sim.getFaction(),
-				phase: this.sim.getPhase(),
-			}),
-			setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
-				TypedEvent.freezeAllAndDo(() => {
-					this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-					this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
-					this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
-					if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
-					if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
-				});
-			},
-			changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
-			equals: (a: SavedRaid, b: SavedRaid) => {
-				return SavedRaid.equals(a, b);
-			},
-			toJson: (a: SavedRaid) => SavedRaid.toJson(a),
-			fromJson: (obj: any) => SavedRaid.fromJson(obj),
-		});
+		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
+			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
+				label: 'Raid',
+				storageKey: this.getSavedRaidStorageKey(),
+				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
+					raid: this.sim.raid.toProto(),
+					buffBots: this.getBuffBots().map(b => b.toProto()),
+					blessings: this.blessingsPicker!.getAssignments(),
+					faction: this.sim.getFaction(),
+					phase: this.sim.getPhase(),
+				}),
+				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
+					TypedEvent.freezeAllAndDo(() => {
+						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
+						this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
+						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
+						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
+						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
+					});
+				},
+				changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
+				equals: (a: SavedRaid, b: SavedRaid) => {
+					return SavedRaid.equals(a, b);
+				},
+				toJson: (a: SavedRaid) => SavedRaid.toJson(a),
+				fromJson: (obj: any) => SavedRaid.fromJson(obj),
+			}
+		);
 		this.sim.waitForInit().then(() => {
 			savedRaidManager.loadUserData();
 		});
@@ -202,16 +205,18 @@ export class RaidSimUI extends SimUI {
 		new EncounterPicker(encounterSectionElem, this.sim.encounter, {
 			showExecuteProportion: true,
 		}, this);
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this.sim.encounter, {
-			label: 'Encounter',
-			storageKey: this.getSavedEncounterStorageKey(),
-			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
-			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
-			changeEmitters: [this.sim.encounter.changeEmitter],
-			equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
-			toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
-			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
-		});
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(
+			this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this, this.sim.encounter, {
+				label: 'Encounter',
+				storageKey: this.getSavedEncounterStorageKey(),
+				getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
+				setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
+				changeEmitters: [this.sim.encounter.changeEmitter],
+				equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
+				toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
+				fromJson: (obj: any) => SavedEncounter.fromJson(obj),
+			}
+		);
 		this.sim.waitForInit().then(() => {
 			savedEncounterManager.loadUserData();
 		});

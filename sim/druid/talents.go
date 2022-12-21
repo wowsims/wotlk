@@ -87,6 +87,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyEclipse()
 	druid.applyImprovedLotp()
 	druid.applyPredatoryInstincts()
+	druid.applyNaturalReaction()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -225,7 +226,7 @@ func (druid *Druid) applyPrimalFury() {
 
 // Modifies the Bleed aura to apply the bonus.
 func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
-	if druid.Talents.RendAndTear == 0 || druid.AssumeBleedActive {
+	if druid.FerociousBite == nil || druid.Talents.RendAndTear == 0 || druid.AssumeBleedActive {
 		return aura
 	}
 
@@ -248,7 +249,9 @@ func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
 }
 
 func (druid *Druid) applyOmenOfClarity() {
-	if !druid.Talents.OmenOfClarity {
+	// Feral 2p needs clearcasting aura
+	// Interaction here between boomkin set and feral is probably incorrect, but kinda irrelevant
+	if !druid.Talents.OmenOfClarity && !druid.HasSetBonus(ItemSetNightsongBattlegear, 2) {
 		return
 	}
 
@@ -320,6 +323,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 	})
+
+	if !druid.Talents.OmenOfClarity {
+		return
+	}
 
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
@@ -477,8 +484,11 @@ func (druid *Druid) applyImprovedLotp() {
 		return
 	}
 
-	manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 34300})
+	actionID := core.ActionID{SpellID: 34300}
+	manaMetrics := druid.NewManaMetrics(actionID)
+	healthMetrics := druid.NewHealthMetrics(actionID)
 	manaRestore := float64(druid.Talents.ImprovedLeaderOfThePack) * 0.04
+	healthRestore := 0.5 * manaRestore
 
 	icd := core.Cooldown{
 		Timer:    druid.NewTimer(),
@@ -503,6 +513,7 @@ func (druid *Druid) applyImprovedLotp() {
 			}
 			icd.Use(sim)
 			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
+			druid.GainHealth(sim, druid.MaxHealth()*healthRestore, healthMetrics)
 		},
 	})
 }
@@ -527,6 +538,27 @@ func (druid *Druid) applyPredatoryInstincts() {
 			druid.LacerateDot.Spell.CritMultiplier = onExpireMod
 			druid.RipDot.Spell.CritMultiplier = onExpireMod
 			druid.RakeDot.Spell.CritMultiplier = onExpireMod
+		},
+	})
+}
+
+func (druid *Druid) applyNaturalReaction() {
+	if druid.Talents.NaturalReaction == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 59072}
+	rageMetrics := druid.NewRageMetrics(actionID)
+	rageAdded := float64(druid.Talents.NaturalReaction)
+
+	core.MakeProcTriggerAura(&druid.Unit, core.ProcTrigger{
+		Name:     "Natural Reaction Trigger",
+		Callback: core.CallbackOnSpellHitTaken,
+		ProcMask: core.ProcMaskMelee,
+		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			if druid.InForm(Bear) && result.Outcome.Matches(core.OutcomeDodge) {
+				druid.AddRage(sim, rageAdded, rageMetrics)
+			}
 		},
 	})
 }

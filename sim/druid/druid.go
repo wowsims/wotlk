@@ -27,6 +27,8 @@ type Druid struct {
 	RaidBuffTargets   int
 	PrePopBerserk     bool
 
+	ReplaceBearMHFunc core.ReplaceMHSwing
+
 	Barkskin             *core.Spell
 	Berserk              *core.Spell
 	DemoralizingRoar     *core.Spell
@@ -79,7 +81,6 @@ type Druid struct {
 	EnrageAura               *core.Aura
 	FaerieFireAura           *core.Aura
 	FrenziedRegenerationAura *core.Aura
-	MangleAura               *core.Aura
 	MaulQueueAura            *core.Aura
 	MoonkinT84PCAura         *core.Aura
 	NaturesGraceProcAura     *core.Aura
@@ -182,6 +183,10 @@ func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
 	return druid.HasGlyph(int32(glyph))
 }
 
+func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+	return druid.MaulReplaceMH(sim, mhSwingSpell)
+}
+
 func (druid *Druid) Initialize() {
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
@@ -202,29 +207,41 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerForceOfNatureCD()
 }
 
-func (druid *Druid) RegisterFeralSpells(maulRageThreshold float64) {
-	druid.registerBarkskinCD()
+func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerBerserkCD()
 	druid.registerCatFormSpell()
 	druid.registerBearFormSpell()
-	druid.registerDemoralizingRoarSpell()
 	druid.registerEnrageSpell()
 	druid.registerFerociousBiteSpell()
-	druid.registerFrenziedRegenerationCD()
 	druid.registerMangleBearSpell()
 	druid.registerMangleCatSpell()
+	druid.registerMaulSpell(0)
+	druid.registerLacerateSpell()
+	druid.registerRakeSpell()
+	druid.registerRipSpell()
+	druid.registerSavageRoarSpell()
+	druid.registerShredSpell()
+	druid.registerSwipeBearSpell()
+	druid.registerSwipeCatSpell()
+	druid.registerTigersFurySpell()
+	druid.registerFakeGotw()
+}
+
+func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
+	druid.registerBarkskinCD()
+	druid.registerBerserkCD()
+	druid.registerBearFormSpell()
+	druid.registerDemoralizingRoarSpell()
+	druid.registerEnrageSpell()
+	druid.registerFrenziedRegenerationCD()
+	druid.registerMangleBearSpell()
 	druid.registerMaulSpell(maulRageThreshold)
 	druid.registerLacerateSpell()
 	druid.registerRakeSpell()
 	druid.registerRipSpell()
 	druid.registerSavageDefensePassive()
-	druid.registerSavageRoarSpell()
-	druid.registerShredSpell()
 	druid.registerSurvivalInstinctsCD()
 	druid.registerSwipeBearSpell()
-	druid.registerSwipeCatSpell()
-	druid.registerTigersFurySpell()
-	druid.registerFakeGotw()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {

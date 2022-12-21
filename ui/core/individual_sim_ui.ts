@@ -1,97 +1,69 @@
-import { ActionId } from './proto_utils/action_id.js';
-import { BattleElixir, HandType } from './proto/common.js';
-import { BooleanPicker, BooleanPickerConfig } from './components/boolean_picker.js';
-import { CharacterStats, StatMods } from './components/character_stats.js';
-import { Class } from './proto/common.js';
-import { Conjured } from './proto/common.js';
-import { Consumes } from './proto/common.js';
-import { Cooldowns } from './proto/common.js';
-import { CooldownsPicker } from './components/individual_sim_ui/cooldowns_picker.js';
-import { Debuffs } from './proto/common.js';
-import { DetailedResults } from './components/detailed_results.js';
+import { simLaunchStatuses } from './launched_sims';
+import { Player } from './player';
+import { SimUI, SimWarning } from './sim_ui';
+import { EventID, TypedEvent } from './typed_event';
 
-import { CustomRotationPicker } from './components/individual_sim_ui/custom_rotation_picker.js';
-import { Encounter as EncounterProto } from './proto/common.js';
-import { Encounter } from './encounter.js';
-import { EncounterPicker, EncounterPickerConfig } from './components/encounter_picker.js';
-import { EnumPicker, EnumPickerConfig } from './components/enum_picker.js';
-import { EquipmentSpec } from './proto/common.js';
-import { EventID, TypedEvent } from './typed_event.js';
-import { Flask } from './proto/common.js';
-import { Food } from './proto/common.js';
-import { Gear } from './proto_utils/gear.js';
-import { GearPicker } from './components/gear_picker.js';
-import { Glyphs } from './proto/common.js';
-import { GuardianElixir } from './proto/common.js';
-import { HealingModel } from './proto/common.js';
-import { HunterPetTalentsPicker } from './talents/hunter_pet.js';
-import { IconEnumPicker, IconEnumPickerConfig } from './components/icon_enum_picker.js';
-import { IconPicker, IconPickerConfig } from './components/icon_picker.js';
-import { ItemSlot } from './proto/common.js';
-import { IndividualBuffs } from './proto/common.js';
-import { IndividualSimSettings } from './proto/ui.js';
-import { Input } from './components/input.js';
-import { LogRunner } from './components/log_runner.js';
-import { MobType } from './proto/common.js';
-import { MultiIconPicker } from './components/multi_icon_picker.js';
-import { NumberPicker, NumberPickerConfig } from './components/number_picker.js';
-import { Party } from './party.js';
-import { PartyBuffs } from './proto/common.js';
-import { PetFood } from './proto/common.js';
-import { Player as PlayerProto } from './proto/api.js';
-import { Player } from './player.js';
-import { Potions } from './proto/common.js';
-import { Profession } from './proto/common.js';
-import { Race } from './proto/common.js';
-import { Raid } from './raid.js';
-import { RaidBuffs } from './proto/common.js';
-import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager.js';
-import { SavedEncounter } from './proto/ui.js';
-import { SavedGearSet } from './proto/ui.js';
-import { SavedSettings } from './proto/ui.js';
-import { SavedTalents } from './proto/ui.js';
-import { SettingsMenu } from './components/settings_menu.js';
-import { Sim } from './sim.js';
-import { SimOptions } from './proto/api.js';
-import { SimSettings as SimSettingsProto } from './proto/ui.js';
-import { SimUI, SimWarning } from './sim_ui.js';
-import { Spec } from './proto/common.js';
-import { SpecOptions } from './proto_utils/utils.js';
-import { SpecRotation } from './proto_utils/utils.js';
-import { Stat, PseudoStat } from './proto/common.js';
-import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
-import { Stats } from './proto_utils/stats.js';
-import { Target } from './target.js';
-import { Target as TargetProto } from './proto/common.js';
-import { UnitStats } from './proto/common.js';
-import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action.js';
-import { addStatWeightsAction } from './components/stat_weights_action.js';
-import { equalsOrBothNull, getEnumValues } from './utils.js';
-import { getMetaGemConditionDescription } from './proto_utils/gems.js';
-import { getTalentPoints } from './proto_utils/utils.js';
-import { isDualWieldSpec } from './proto_utils/utils.js';
-import { simLaunchStatuses } from './launched_sims.js';
-import { makePetTypeInputConfig } from './talents/hunter_pet.js';
-import { newGlyphsPicker } from './talents/factory.js';
-import { newTalentsPicker } from './talents/factory.js';
-import { professionNames, raceNames } from './proto_utils/names.js';
-import { isHealingSpec, isTankSpec } from './proto_utils/utils.js';
-import { specToEligibleRaces } from './proto_utils/utils.js';
-import { specToLocalStorageKey } from './proto_utils/utils.js';
+import { CharacterStats, StatMods } from './components/character_stats';
+import { ContentBlock } from './components/content_block';
+import { DetailedResults } from './components/detailed_results';
+import { EncounterPickerConfig } from './components/encounter_picker';
+import { EnumPicker } from './components/enum_picker';
+import { GearPicker } from './components/gear_picker';
+import { IconEnumPicker } from './components/icon_enum_picker';
+import { LogRunner } from './components/log_runner';
+import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
+import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
+import { addStatWeightsAction } from './components/stat_weights_action';
 
-import { Tooltip } from 'bootstrap';
+import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 
-import * as Exporters from './components/exporters.js';
-import * as Importers from './components/importers.js';
-import * as IconInputs from './components/icon_inputs.js';
-import * as InputHelpers from './components/input_helpers.js';
-import * as Mechanics from './constants/mechanics.js';
-import * as OtherConstants from './constants/other.js';
-import * as Tooltips from './constants/tooltips.js';
-import { SettingsTab } from './components/individual_sim_ui/settings_tab.js';
-import { ContentBlock } from './components/content_block.js';
+import {
+	Class,
+	Consumes,
+	Debuffs,
+	Encounter as EncounterProto,
+	EquipmentSpec,
+	Glyphs,
+	HandType,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	Profession,
+	PseudoStat,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	UnitStats,
+} from './proto/common';
 
-declare var tippy: any;
+import { IndividualSimSettings, SavedGearSet, SavedTalents } from './proto/ui';
+import { StatWeightsResult } from './proto/api';
+
+import { Gear } from './proto_utils/gear';
+import { getMetaGemConditionDescription } from './proto_utils/gems';
+import { professionNames } from './proto_utils/names';
+import { Stats } from './proto_utils/stats';
+import {
+	getTalentPoints,
+	isHealingSpec,
+	isTankSpec,
+	SpecOptions,
+	SpecRotation,
+	specToEligibleRaces,
+	specToLocalStorageKey,
+} from './proto_utils/utils';
+
+import { HunterPetTalentsPicker, makePetTypeInputConfig } from './talents/hunter_pet';
+import { newGlyphsPicker, newTalentsPicker } from './talents/factory';
+
+import * as Exporters from './components/exporters';
+import * as Importers from './components/importers';
+import * as IconInputs from './components/icon_inputs';
+import * as InputHelpers from './components/input_helpers';
+import * as Mechanics from './constants/mechanics';
+import * as Tooltips from './constants/tooltips';
+
 declare var pako: any;
 
 const SAVED_GEAR_STORAGE_KEY = '__savedGear__';
@@ -103,7 +75,8 @@ export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
 	InputHelpers.TypedEnumPickerConfig<ModObject> |
-	InputHelpers.TypedCustomRotationPickerConfig<any, any>
+	InputHelpers.TypedCustomRotationPickerConfig<any, any> |
+	InputHelpers.TypedItemSwapPickerConfig<any, any>
 );
 
 export interface InputSection {
@@ -120,6 +93,8 @@ export interface OtherDefaults {
 export interface IndividualSimUIConfig<SpecType extends Spec> {
 	// Additional css class to add to the root element.
 	cssClass: string,
+	// Used to generate schemed components. E.g. 'shaman', 'druid', 'raid'
+	cssScheme: string,
 
 	knownIssues?: Array<string>;
 	warnings?: Array<(simUI: IndividualSimUI<SpecType>) => SimWarning>,
@@ -201,6 +176,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: IndividualSimUIConfig<SpecType>) {
 		super(parentElem, player.sim, {
+			cssScheme: config.cssScheme,
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
@@ -375,33 +351,35 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const gearPicker = new GearPicker(this.rootElem.getElementsByClassName('gear-picker')[0] as HTMLElement, this.player);
+		const gearPicker = new GearPicker(this.rootElem.getElementsByClassName('gear-picker')[0] as HTMLElement, this, this.player);
 
-		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rootElem.getElementsByClassName('saved-gear-manager')[0] as HTMLElement, this.player, {
-			header: {title: "Gear Sets"},
-			label: 'Gear Set',
-			storageKey: this.getSavedGearStorageKey(),
-			getData: (player: Player<any>) => {
-				return SavedGearSet.create({
-					gear: player.getGear().asSpec(),
-					bonusStatsStats: player.getBonusStats().toProto(),
-				});
-			},
-			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
-				TypedEvent.freezeAllAndDo(() => {
-					player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-					if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
-						player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
-					} else {
-						player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
-					}
-				});
-			},
-			changeEmitters: [this.player.changeEmitter],
-			equals: (a: SavedGearSet, b: SavedGearSet) => SavedGearSet.equals(a, b),
-			toJson: (a: SavedGearSet) => SavedGearSet.toJson(a),
-			fromJson: (obj: any) => SavedGearSet.fromJson(obj),
-		});
+		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(
+			this.rootElem.getElementsByClassName('saved-gear-manager')[0] as HTMLElement, this, this.player, {
+				header: {title: "Gear Sets"},
+				label: 'Gear Set',
+				storageKey: this.getSavedGearStorageKey(),
+				getData: (player: Player<any>) => {
+					return SavedGearSet.create({
+						gear: player.getGear().asSpec(),
+						bonusStatsStats: player.getBonusStats().toProto(),
+					});
+				},
+				setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
+					TypedEvent.freezeAllAndDo(() => {
+						player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
+						if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
+							player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
+						} else {
+							player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
+						}
+					});
+				},
+				changeEmitters: [this.player.changeEmitter],
+				equals: (a: SavedGearSet, b: SavedGearSet) => SavedGearSet.equals(a, b),
+				toJson: (a: SavedGearSet) => SavedGearSet.toJson(a),
+				fromJson: (obj: any) => SavedGearSet.fromJson(obj),
+			}
+		);
 
 		this.sim.waitForInit().then(() => {
 			savedGearManager.loadUserData();
@@ -446,25 +424,27 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.rootElem.querySelector('#talents-tab-tab')?.classList.add('sim-tab');
 
-		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this.player, {
-			label: 'Talents',
-			header: {title: 'Saved Talents'},
-			storageKey: this.getSavedTalentsStorageKey(),
-			getData: (player: Player<any>) => SavedTalents.create({
-				talentsString: player.getTalentsString(),
-				glyphs: player.getGlyphs(),
-			}),
-			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
-				TypedEvent.freezeAllAndDo(() => {
-					player.setTalentsString(eventID, newTalents.talentsString);
-					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
-				});
-			},
-			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
-			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
-			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
-			fromJson: (obj: any) => SavedTalents.fromJson(obj),
-		});
+		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(
+			this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this, this.player, {
+				label: 'Talents',
+				header: {title: 'Saved Talents'},
+				storageKey: this.getSavedTalentsStorageKey(),
+				getData: (player: Player<any>) => SavedTalents.create({
+					talentsString: player.getTalentsString(),
+					glyphs: player.getGlyphs(),
+				}),
+				setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
+					TypedEvent.freezeAllAndDo(() => {
+						player.setTalentsString(eventID, newTalents.talentsString);
+						player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
+					});
+				},
+				changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
+				equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
+				toJson: (a: SavedTalents) => SavedTalents.toJson(a),
+				fromJson: (obj: any) => SavedTalents.fromJson(obj),
+			}
+		);
 
 		this.sim.waitForInit().then(() => {
 			savedTalentsManager.loadUserData();
@@ -478,7 +458,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			});
 
 			if (this.player.getClass() == Class.ClassHunter) {
-				const petTalentsPicker = new HunterPetTalentsPicker(this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this.player as Player<Spec.SpecHunter>);
+				const petTalentsPicker = new HunterPetTalentsPicker(
+					this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this, this.player as Player<Spec.SpecHunter>
+				);
 
 				let curShown = 0;
 				const updateToggle = () => {

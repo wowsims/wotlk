@@ -25,7 +25,6 @@ import { EventID, TypedEvent } from '../typed_event.js';
 
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
-import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
 import * as InputHelpers from './input_helpers.js';
 import { Tooltip } from 'bootstrap';
@@ -159,6 +158,11 @@ export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
 ], 'Spell Power');
 
 export const Bloodlust = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(2825), 'bloodlust'), 'Lust');
+
+export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
+	makeMultistateIndividualBuffInput(ActionId.fromSpellId(53530), 11, 'divineGuardians'),
+	makeMultistateIndividualBuffInput(ActionId.fromSpellId(33206), 11, 'painSuppressions'),
+], 'Defensive CDs');
 
 // Misc Buffs
 export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');

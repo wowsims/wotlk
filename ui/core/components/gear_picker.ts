@@ -2,7 +2,7 @@ import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, GemColor } from '../proto/common.js';
+import { Class, Spec, GemColor, ItemSpec } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
@@ -10,6 +10,7 @@ import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
+import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
@@ -30,6 +31,8 @@ import { makePhaseSelector } from './other_inputs.js';
 import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
+import { Input, InputConfig } from './input.js';
+import { SimUI } from '../sim_ui.js';
 
 declare var $: any;
 declare var tippy: any;
@@ -39,7 +42,7 @@ export class GearPicker extends Component {
 	// ItemSlot is used as the index
 	readonly itemPickers: Array<ItemPicker>;
 
-	constructor(parent: HTMLElement, player: Player<any>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
 		super(parent, 'gear-picker-root');
 
 		const leftSide = document.createElement('div');
@@ -60,7 +63,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotMainHand,
 			ItemSlot.ItemSlotOffHand,
 			ItemSlot.ItemSlotRanged,
-		].map(slot => new ItemPicker(leftSide, player, slot));
+		].map(slot => new ItemPicker(leftSide, simUI, player, slot));
 
 		const rightItemPickers = [
 			ItemSlot.ItemSlotHands,
@@ -71,7 +74,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotFinger2,
 			ItemSlot.ItemSlotTrinket1,
 			ItemSlot.ItemSlotTrinket2,
-		].map(slot => new ItemPicker(rightSide, player, slot));
+		].map(slot => new ItemPicker(rightSide, simUI, player, slot));
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);
 	}
@@ -80,22 +83,22 @@ export class GearPicker extends Component {
 class ItemPicker extends Component {
 	readonly slot: ItemSlot;
 
+	private readonly simUI: SimUI;
 	private readonly player: Player<any>;
 	private readonly iconElem: HTMLAnchorElement;
 	private readonly nameElem: HTMLAnchorElement;
 	private readonly enchantElem: HTMLAnchorElement;
 	private readonly socketsContainerElem: HTMLElement;
-
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
 
 	private _equippedItem: EquippedItem | null = null;
 
-
-	constructor(parent: HTMLElement, player: Player<any>, slot: ItemSlot) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
 		super(parent, 'item-picker-root');
 		this.slot = slot;
+		this.simUI = simUI;
 		this.player = player;
 
 		this.rootElem.innerHTML = `
@@ -119,9 +122,18 @@ class ItemPicker extends Component {
 			this._items = this.player.getItems(this.slot);
 			this._enchants = this.player.getEnchants(this.slot);
 
+			const gearData = {
+				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
+					this.player.equipItem(eventID, this.slot, equippedItem);
+				},
+				getEquippedItem: () => this.player.getEquippedItem(this.slot),
+				changeEvent: player.gearChangeEmitter,
+			};
+
+
 			const onClickStart = (event: Event) => {
 				event.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 			};
 			const onClickEnd = (event: Event) => {
 				event.preventDefault();
@@ -136,12 +148,12 @@ class ItemPicker extends Component {
 			// Make enchant name open enchant tab.
 			this.enchantElem.addEventListener('click', (ev: Event) => {
 				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 				selectorModal.openTab(1);
 			});
 			this.enchantElem.addEventListener('touchstart', (ev: Event) => {
 				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 				selectorModal.openTab(1);
 			});
 			this.enchantElem.addEventListener('touchend', onClickEnd);
@@ -156,7 +168,7 @@ class ItemPicker extends Component {
 		});
 
 		// Use hacky wowhead xhr override to 'preprocess' tooltips
-		WowSim.WhOnLoadHook = (a:any) => {
+		WowSim.WhOnLoadHook = (a: any) => {
 			if (a.tooltip) {
 				// This fixes wowhead being able to parse 'pcs' aka set bonus highlighting in tooltip
 				// Their internal regex looks for 'href="/item=' but for wotlk we get 'href="/wotlk/item="'
@@ -242,14 +254,161 @@ class ItemPicker extends Component {
 	}
 }
 
+export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<Player<SpecType>, ValueType> {
+	private readonly config: InputConfig<Player<SpecType>, ValueType>;
+	private readonly iconAnchor: HTMLAnchorElement;
+	private readonly socketsContainerElem: HTMLElement;
+	private readonly player: Player<SpecType>;
+	private readonly slot: ItemSlot;
+	private readonly gear: ItemSwapGear;
+
+	// All items and enchants that are eligible for this slot
+	private _items: Array<Item> = [];
+	private _enchants: Array<Enchant> = [];
+
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, gear: ItemSwapGear, config: InputConfig<Player<SpecType>, ValueType>) {
+		super(parent, 'icon-picker-root', player, config)
+		this.rootElem.classList.add('icon-picker');
+		this.player = player;
+		this.config = config;
+		this.slot = slot;
+		this.gear = gear;
+
+		this.iconAnchor = document.createElement('a');
+		this.iconAnchor.classList.add('icon-picker-button');
+		this.iconAnchor.target = '_blank';
+		this.rootElem.prepend(this.iconAnchor);
+
+		this.socketsContainerElem = document.createElement('div')
+		this.socketsContainerElem.classList.add('item-picker-sockets-container')
+		this.iconAnchor.appendChild(this.socketsContainerElem);
+
+		player.sim.waitForInit().then(() => {
+			this._items = this.player.getItems(slot);
+			this._enchants = this.player.getEnchants(slot);
+			this.addItemSpecToGear();
+			const gearData = {
+				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
+					this.gear.equipItem(this.slot, equippedItem);
+					this.inputChanged(eventID);
+				},
+				getEquippedItem: () => this.gear.getEquippedItem(this.slot),
+				changeEvent: player.specOptionsChangeEmitter,
+			}
+
+			const onClickStart = (event: Event) => {
+				event.preventDefault();
+				new SelectorModal(
+					simUI.rootElem,
+					simUI,
+					this.player,
+					this.slot,
+					this.gear.getEquippedItem(slot),
+					this._items,
+					this._enchants,
+					gearData,
+				)
+			};
+
+			this.iconAnchor.addEventListener('click', onClickStart);
+			this.iconAnchor.addEventListener('touchstart', onClickStart);
+		}).finally(() => this.init());
+
+		// Use hacky wowhead xhr override to 'preprocess' tooltips
+		WowSim.WhOnLoadHook = (a: any) => {
+			if (a.tooltip) {
+				// This fixes wowhead being able to parse 'pcs' aka set bonus highlighting in tooltip
+				// Their internal regex looks for 'href="/item=' but for wotlk we get 'href="/wotlk/item="'
+				a.tooltip = (<String>a.tooltip).replaceAll("href=\"/wotlk/item", "href=\"/item");
+			}
+			return a;
+		}
+
+	}
+
+	addItemSpecToGear() {
+		const itemSpec = this.config.getValue(this.player) as unknown as ItemSpec
+		if (!itemSpec)
+			return;
+
+		const equippedItem = this.player.sim.db.lookupItemSpec(itemSpec);
+
+		if (equippedItem) {
+			this.gear.equipItem(this.slot, equippedItem);
+		}
+	}
+
+	getInputElem(): HTMLElement {
+		return this.iconAnchor;
+	}
+	getInputValue(): ValueType {
+		return this.gear.getEquippedItem(this.slot)?.asSpec() as unknown as ValueType;
+	}
+
+	setInputValue(newValue: ValueType): void {
+		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
+		this.iconAnchor.removeAttribute('data-wowhead');
+		this.iconAnchor.href = "#";
+		this.socketsContainerElem.innerHTML = '';
+
+		const equippedItem = this.gear.getEquippedItem(this.slot);
+		if (equippedItem) {
+			this.iconAnchor.classList.add("active")
+
+			equippedItem.asActionId().fillAndSet(this.iconAnchor, true, true);
+			this.player.setWowheadData(equippedItem, this.iconAnchor);
+
+			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
+				const gemIconElem = document.createElement('img');
+				gemIconElem.classList.add('item-picker-gem-icon');
+				setGemSocketCssClass(gemIconElem, socketColor);
+				if (equippedItem!.gems[gemIdx] == null) {
+					gemIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+				} else {
+					ActionId.fromItemId(equippedItem!.gems[gemIdx]!.id).fill().then(filledId => {
+						gemIconElem.src = filledId.iconUrl;
+					});
+				}
+				this.socketsContainerElem.appendChild(gemIconElem);
+
+				if (gemIdx == equippedItem!.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(equippedItem!.item.type)) {
+					const updateProfession = () => {
+						if (this.player.isBlacksmithing()) {
+							gemIconElem.style.removeProperty('display');
+						} else {
+							gemIconElem.style.display = 'none';
+						}
+					};
+					this.player.professionChangeEmitter.on(updateProfession);
+					updateProfession();
+				}
+			});
+
+		} else {
+			this.iconAnchor.classList.remove("active")
+		}
+	}
+
+}
+
+interface GearData {
+	equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => void,
+	getEquippedItem: () => EquippedItem | null,
+	changeEvent: TypedEvent<any>,
+}
+
 class SelectorModal extends Popup {
+	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
-	constructor(parent: HTMLElement, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
 		super(parent);
+		this.simUI = simUI;
 		this.player = player;
+
+		window.scrollTo({top: 0});
 
 		this.rootElem.classList.add('selector-modal');
 		this.rootElem.innerHTML = `
@@ -263,7 +422,7 @@ class SelectorModal extends Popup {
 		this.tabsElem = this.rootElem.getElementsByClassName('selector-modal-tabs')[0] as HTMLElement;
 		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
 
-		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants);
+		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants, gearData);
 	}
 
 	openTab(idx: number) {
@@ -271,14 +430,14 @@ class SelectorModal extends Popup {
 		(elems[idx] as HTMLElement).click();
 	}
 
-	setData(slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>) {
+	setData(slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
 		this.tabsElem.innerHTML = '';
 		this.contentElem.innerHTML = '';
 
 		this.addTab(
 			'Items',
 			slot,
-			equippedItem,
+			gearData,
 			eligibleItems.map(item => {
 				return {
 					item: item,
@@ -291,11 +450,11 @@ class SelectorModal extends Popup {
 					baseEP: this.player.computeItemEP(item, slot),
 					ignoreEPFilter: false,
 					onEquip: (eventID, item: Item) => {
-						const equippedItem = this.player.getEquippedItem(slot);
+						const equippedItem = gearData.getEquippedItem();
 						if (equippedItem) {
-							this.player.equipItem(eventID, slot, equippedItem.withItem(item));
+							gearData.equipItem(eventID, equippedItem.withItem(item));
 						} else {
-							this.player.equipItem(eventID, slot, new EquippedItem(item));
+							gearData.equipItem(eventID, new EquippedItem(item));
 						}
 					},
 				};
@@ -304,13 +463,13 @@ class SelectorModal extends Popup {
 			equippedItem => equippedItem?.item,
 			GemColor.GemColorUnknown,
 			eventID => {
-				this.player.equipItem(eventID, slot, null);
+				gearData.equipItem(eventID, null);
 			});
 
 		this.addTab(
 			'Enchants',
 			slot,
-			equippedItem,
+			gearData,
 			eligibleEnchants.map(enchant => {
 				return {
 					item: enchant,
@@ -323,9 +482,9 @@ class SelectorModal extends Popup {
 					ignoreEPFilter: true,
 					heroic: false,
 					onEquip: (eventID, enchant: Enchant) => {
-						const equippedItem = this.player.getEquippedItem(slot);
+						const equippedItem = gearData.getEquippedItem();
 						if (equippedItem)
-							this.player.equipItem(eventID, slot, equippedItem.withEnchant(enchant));
+							gearData.equipItem(eventID, equippedItem.withEnchant(enchant));
 					},
 				};
 			}),
@@ -333,15 +492,15 @@ class SelectorModal extends Popup {
 			equippedItem => equippedItem?.enchant,
 			GemColor.GemColorUnknown,
 			eventID => {
-				const equippedItem = this.player.getEquippedItem(slot);
+				const equippedItem = gearData.getEquippedItem();
 				if (equippedItem)
-					this.player.equipItem(eventID, slot, equippedItem.withEnchant(null));
+					gearData.equipItem(eventID, equippedItem.withEnchant(null));
 			});
 
-		this.addGemTabs(slot, equippedItem);
+		this.addGemTabs(slot, equippedItem, gearData);
 	}
 
-	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null) {
+	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
 		if (equippedItem == undefined) {
 			return;
 		}
@@ -351,7 +510,7 @@ class SelectorModal extends Popup {
 			this.addTab(
 				'Gem ' + (socketIdx + 1),
 				slot,
-				equippedItem,
+				gearData,
 				this.player.getGems(socketColor).map((gem: Gem) => {
 					return {
 						item: gem,
@@ -364,9 +523,9 @@ class SelectorModal extends Popup {
 						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
 						ignoreEPFilter: true,
 						onEquip: (eventID, gem: Gem) => {
-							const equippedItem = this.player.getEquippedItem(slot);
+							const equippedItem = gearData.getEquippedItem();
 							if (equippedItem)
-								this.player.equipItem(eventID, slot, equippedItem.withGem(gem, socketIdx));
+								gearData.equipItem(eventID, equippedItem.withGem(gem, socketIdx));
 						},
 					};
 				}),
@@ -380,16 +539,16 @@ class SelectorModal extends Popup {
 				equippedItem => equippedItem?.gems[socketIdx],
 				socketColor,
 				eventID => {
-					const equippedItem = this.player.getEquippedItem(slot);
+					const equippedItem = gearData.getEquippedItem();
 					if (equippedItem)
-						this.player.equipItem(eventID, slot, equippedItem.withGem(null, socketIdx));
+					gearData.equipItem(eventID, equippedItem.withGem(null, socketIdx));
 				},
 				tabAnchor => {
 					tabAnchor.classList.add('selector-modal-tab-gem-icon');
 					setGemSocketCssClass(tabAnchor, socketColor);
 
 					const updateGemIcon = () => {
-						const equippedItem = this.player.getEquippedItem(slot);
+						const equippedItem = gearData.getEquippedItem();
 						const gem = equippedItem?.gems[socketIdx];
 
 						if (gem) {
@@ -402,8 +561,8 @@ class SelectorModal extends Popup {
 						}
 					};
 
-					this.player.gearChangeEmitter.on(updateGemIcon);
-					this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateGemIcon));
+					gearData.changeEvent.on(updateGemIcon);
+					this.addOnDisposeCallback(() => gearData.changeEvent.off(updateGemIcon));
 					updateGemIcon();
 				});
 		});
@@ -418,7 +577,7 @@ class SelectorModal extends Popup {
 	private addTab<T>(
 		label: string,
 		slot: ItemSlot,
-		equippedItem: EquippedItem | null,
+		gearData: GearData,
 		itemData: Array<ItemData<T>>,
 		computeEP: (item: T) => number,
 		equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined),
@@ -481,7 +640,7 @@ class SelectorModal extends Popup {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
+					<button class="selector-modal-filters-button btn btn-${this.simUI.cssScheme}">Filters</button>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
@@ -580,7 +739,7 @@ class SelectorModal extends Popup {
 				// If the item changes, the gem slots might change, so remove and recreate the gem tabs
 				if (Item.is(item)) {
 					this.removeTabs('Gem');
-					this.addGemTabs(slot, this.player.getEquippedItem(slot));
+					this.addGemTabs(slot, gearData.getEquippedItem(), gearData);
 				}
 			};
 			nameElem.addEventListener('click', onclick);
@@ -692,7 +851,7 @@ class SelectorModal extends Popup {
 		});
 
 		const updateSelected = () => {
-			const newEquippedItem = this.player.getEquippedItem(slot);
+			const newEquippedItem = gearData.getEquippedItem();
 			const newItem = equippedToItemFn(newEquippedItem);
 
 			const newItemId = newItem ? (label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item|Gem).id) : 0;
@@ -716,8 +875,8 @@ class SelectorModal extends Popup {
 				}
 			});
 		};
-		this.player.gearChangeEmitter.on(updateSelected);
-		this.addOnDisposeCallback(() => this.player.gearChangeEmitter.off(updateSelected));
+		gearData.changeEvent.on(updateSelected);
+		this.addOnDisposeCallback(() => gearData.changeEvent.off(updateSelected));
 		updateSelected();
 
 		const applyFilters = () => {
@@ -800,11 +959,11 @@ class SelectorModal extends Popup {
 
 		this.player.sim.phaseChangeEmitter.on(applyFilters);
 		this.player.sim.filtersChangeEmitter.on(applyFilters);
-		this.player.gearChangeEmitter.on(applyFilters);
+		gearData.changeEvent.on(applyFilters);
 		this.addOnDisposeCallback(() => {
 			this.player.sim.phaseChangeEmitter.off(applyFilters);
 			this.player.sim.filtersChangeEmitter.off(applyFilters);
-			this.player.gearChangeEmitter.off(applyFilters);
+			gearData.changeEvent.off(applyFilters);
 		});
 
 		applyFilters();

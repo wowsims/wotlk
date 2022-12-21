@@ -31,6 +31,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecWarrior>) {
 		super(parentElem, player, {
 			cssClass: 'warrior-sim-ui',
+			cssScheme: 'warrior',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

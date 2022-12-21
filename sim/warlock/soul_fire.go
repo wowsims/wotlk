@@ -9,11 +9,13 @@ import (
 
 func (warlock *Warlock) registerSoulFireSpell() {
 	baseCost := 0.09 * warlock.BaseMana
+	decimationMod := 1.0 - 0.2*float64(warlock.Talents.Decimation)
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47825},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
+		MissileSpeed: 24,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -24,8 +26,13 @@ func (warlock *Warlock) registerSoulFireSpell() {
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier() * warlock.soulFireCastTime())
+				totalMod := warlock.backdraftModifier()
+				if warlock.DecimationAura.IsActive() {
+					totalMod *= decimationMod
+				}
+
+				cast.GCD = time.Duration(float64(cast.GCD) * totalMod)
+				cast.CastTime = time.Duration(float64(cast.CastTime) * totalMod)
 			},
 		},
 
@@ -41,18 +48,14 @@ func (warlock *Warlock) registerSoulFireSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1323, 1657) + 1.15*spell.SpellPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
+
 			if warlock.MoltenCoreAura.IsActive() {
 				warlock.MoltenCoreAura.RemoveStack(sim)
 			}
 		},
 	})
-}
-
-func (warlock *Warlock) soulFireCastTime() float64 {
-	castTimeModifier := 1.0
-	if warlock.DecimationAura.IsActive() {
-		castTimeModifier *= 1.0 - 0.2*float64(warlock.Talents.Decimation)
-	}
-	return castTimeModifier
 }

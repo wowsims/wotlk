@@ -81,7 +81,6 @@ func (druid *Druid) registerCatFormSpell() {
 		hotwDep = druid.NewDynamicMultiplyStat(stats.AttackPower, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 	}
 
-	regWeapon := druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
 	clawWeapon := core.Weapon{
 		BaseDamageMin:              43,
 		BaseDamageMax:              66,
@@ -136,7 +135,7 @@ func (druid *Druid) registerCatFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = regWeapon
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
@@ -211,6 +210,7 @@ func (druid *Druid) calcArmorBonus() float64 {
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	baseCost := druid.BaseMana * 0.35
+	healthMetrics := druid.NewHealthMetrics(actionID)
 
 	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
 		stats.Armor:       druid.calcArmorBonus(),
@@ -231,7 +231,6 @@ func (druid *Druid) registerBearFormSpell() {
 
 	potpdtm := 1 - 0.04*float64(druid.Talents.ProtectorOfThePack)
 
-	regWeapon := druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
 	clawWeapon := core.Weapon{
 		BaseDamageMin:              109,
 		BaseDamageMax:              165,
@@ -261,18 +260,20 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 			druid.AddStatsDynamic(sim, statBonus)
-			druid.EnableDynamicStatDep(sim, stamDep)
 			if potpDep != nil {
 				druid.EnableDynamicStatDep(sim, potpDep)
 			}
+
+			// Preserve fraction of max health when shifting
+			healthFrac := druid.CurrentHealth() / druid.MaxHealth()
+			druid.EnableDynamicStatDep(sim, stamDep)
 			if hotwDep != nil {
 				druid.EnableDynamicStatDep(sim, hotwDep)
 			}
+			druid.GainHealth(sim, healthFrac*druid.MaxHealth()-druid.CurrentHealth(), healthMetrics)
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-					return druid.TryMaul(sim, mhSwingSpell)
-				}
+				druid.AutoAttacks.ReplaceMHSwing = druid.ReplaceBearMHFunc
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()
@@ -281,7 +282,7 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
-			druid.AutoAttacks.MH = regWeapon
+			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
 
 			druid.PseudoStats.ThreatMultiplier /= 29. / 14.
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
@@ -289,13 +290,16 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
-			druid.DisableDynamicStatDep(sim, stamDep)
 			if potpDep != nil {
 				druid.DisableDynamicStatDep(sim, potpDep)
 			}
+
+			healthFrac := druid.CurrentHealth() / druid.MaxHealth()
+			druid.DisableDynamicStatDep(sim, stamDep)
 			if hotwDep != nil {
 				druid.DisableDynamicStatDep(sim, hotwDep)
 			}
+			druid.RemoveHealth(sim, druid.CurrentHealth()-healthFrac*druid.MaxHealth())
 
 			if !druid.Env.MeasuringStats {
 				druid.AutoAttacks.ReplaceMHSwing = nil

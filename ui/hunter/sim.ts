@@ -41,6 +41,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHunter>) {
 		super(parentElem, player, {
 			cssClass: 'hunter-sim-ui',
+			cssScheme: 'hunter',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

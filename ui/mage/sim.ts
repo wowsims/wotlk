@@ -36,6 +36,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecMage>) {
 		super(parentElem, player, {
 			cssClass: 'mage-sim-ui',
+			cssScheme: 'mage',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

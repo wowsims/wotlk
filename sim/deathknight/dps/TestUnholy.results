@@ -446,8 +446,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 7532.14912
-  tps: 4740.15666
+  dps: 7526.47486
+  tps: 4736.13967
   hps: 274.47683
  }
 }

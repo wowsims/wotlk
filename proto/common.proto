@@ -494,6 +494,8 @@ message IndividualBuffs {
 	int32 revitalize_rejuvination = 13;
 	int32 revitalize_wild_growth = 21;
 	int32 tricks_of_the_trades = 19;
+	int32 divine_guardians = 23;
+	int32 pain_suppressions = 24;
 
 	// Technically a debuff, but only used by individual sims.
 	int32 shattering_throws = 20;
@@ -792,7 +794,10 @@ message HealingModel {
 	double hps = 1;
 	// How often healing is applied.
 	double cadence_seconds = 2;
+	// % Inspiration buff uptime
 	double inspiration_uptime = 3;
+	// TMI burst window bin size
+	int32 burst_window = 4;
 }
 
 message CustomRotation {
@@ -806,4 +811,10 @@ message CustomSpell {
 	// Desired cast rate for this spell. Not used by most custom rotations, this is
 	// primarily for healers.
 	double casts_per_minute = 2;
+}
+
+message ItemSwap {
+	ItemSpec mh_item = 1;
+	ItemSpec oh_item = 2;
+	ItemSpec ranged_item = 3;
 }

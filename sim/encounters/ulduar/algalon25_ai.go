@@ -43,10 +43,10 @@ func addAlgalon25(bossPrefix string) {
 type Algalon25AI struct {
 	Target *core.Target
 
-	QuantumStrike *core.Spell
-	PhasePunch    *core.Spell
+	QuantumStrike      *core.Spell
+	PhasePunch         *core.Spell
 	BlackHoleExplosion *core.Spell
-	CosmicSmash   *core.Spell
+	CosmicSmash        *core.Spell
 }
 
 func NewAlgalon25AI() core.AIFactory {
@@ -175,8 +175,6 @@ func (ai *Algalon25AI) registerCosmicSmashSpell(target *core.Target) {
 	})
 }
 
-
-
 func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
 
 	// Expected behavior based on PTR: No mutual cooldowns, Algalon will happily overlap everything
@@ -194,34 +192,30 @@ func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
 		ai.BlackHoleExplosion.Cast(sim, ai.Target.CurrentTarget)
 	}
 
-	if ai.CosmicSmash.IsReady(sim)  && sim.CurrentTime >= ai.CosmicSmash.CD.Duration {
+	if ai.CosmicSmash.IsReady(sim) && sim.CurrentTime >= ai.CosmicSmash.CD.Duration {
 		ai.CosmicSmash.Cast(sim, ai.Target.CurrentTarget)
 	}
-/*
-	nextEventAt := time.Minute
+	/*
+		nextEventAt := time.Minute
 
-	// All possible next events
-	events := []time.Duration{
-		ai.QuantumStrike.ReadyAt(),
-		ai.PhasePunch.ReadyAt(),
-		ai.BlackHoleExplosion.ReadyAt(),
-		ai.CosmicSmash.ReadyAt(),
-	}
-
-	for _, elem := range events {
-		if elem > sim.CurrentTime && elem < nextEventAt {
-			nextEventAt = elem
+		// All possible next events
+		events := []time.Duration{
+			ai.QuantumStrike.ReadyAt(),
+			ai.PhasePunch.ReadyAt(),
+			ai.BlackHoleExplosion.ReadyAt(),
+			ai.CosmicSmash.ReadyAt(),
 		}
-	}
 
-	if nextEventAt == 0 {
-		nextEventAt = time.Millisecond * 100
-	}
-	
-	ai.Target.WaitUntil(sim, nextEventAt)
+		for _, elem := range events {
+			if elem > sim.CurrentTime && elem < nextEventAt {
+				nextEventAt = elem
+			}
+		}
+
+		if nextEventAt == 0 {
+			nextEventAt = time.Millisecond * 100
+		}
+
+		ai.Target.WaitUntil(sim, nextEventAt)
 	*/
 }
-
-
-
-

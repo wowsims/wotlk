@@ -218,7 +218,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 			}
 
 			druid.RegisterAura(core.Aura{
-				Label:    "Nightsong 4pc",
+				Label:    "Nightsong 2pc",
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
@@ -228,14 +228,13 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 					}
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					isLacerate := druid.LacerateDot != nil && druid.LacerateDot.Spell == spell
-					if spell != druid.Rake && spell != druid.Rip && !isLacerate {
+					if spell != druid.Rake && spell != druid.Rip && !druid.IsLacerateSpell(spell) {
 						return
 					}
 					if !icd.IsReady(sim) {
 						return
 					}
-					if sim.RandomFloat("Nightsong 4pc") < procChance {
+					if sim.RandomFloat("Nightsong 2pc") < procChance {
 						icd.Use(sim)
 						cca.Activate(sim)
 					}
@@ -307,6 +306,9 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Ashtongue Talisman",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
+					return
+				}
 				if spell == druid.Starfire {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.25 {
 						procAura.Activate(sim)
@@ -349,6 +351,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
+					return
+				}
+
 				if spell == druid.Moonfire {
 					if sim.RandomFloat("Idol of the Unseen Moon") > 0.5 {
 						return
@@ -407,35 +413,6 @@ func init() {
 		}))
 	})
 
-	//core.NewItemEffect(37573, func(agent core.Agent) {
-	//	druid := agent.(DruidAgent).GetDruid()
-	//	actionID := core.ActionID{ItemID: 37573}
-	//	procAura := druid.NewTemporaryStatsAura("Idol of the Plainstalker Proc", actionID, stats.Stats{stats.Agility: 55}, time.Second*10)
-	//	procChance := 0.75
-	//	icd := core.Cooldown{
-	//		Timer:    druid.NewTimer(),
-	//		Duration: time.Second * 10,
-	//	}
-	//	core.MakePermanent(druid.RegisterAura(core.Aura{
-	//		Label: "Idol of the Plainstalker",
-	//		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-	//			if !druid.IsMangle(spell) {
-	//				return
-	//			}
-
-	//			if !icd.IsReady(sim) {
-	//				return
-	//			}
-	//			if sim.RandomFloat("Idol of the Plainstalker") > procChance {
-	//				return
-	//			}
-
-	//			icd.Use(sim)
-	//			procAura.Activate(sim)
-	//		},
-	//	}))
-	//})
-
 	core.NewItemEffect(45509, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		actionID := core.ActionID{ItemID: 45509}
@@ -447,6 +424,10 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Corruptor",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
+					return
+				}
+
 				procChance := 0.0
 				if spell == druid.MangleBear {
 					procChance = procChanceBear
@@ -464,34 +445,99 @@ func init() {
 		}))
 	})
 
-	//core.NewItemEffect(38295, func(agent core.Agent) {
-	//	druid := agent.(DruidAgent).GetDruid()
-	//	actionID := core.ActionID{ItemID: 38295}
-	//	procAura := druid.NewTemporaryStatsAura("Idol of the Wastes Proc", actionID, stats.Stats{stats.Strength: 61}, time.Second*10)
-	//	procChance := 0.75
-	//	icd := core.Cooldown{
-	//		Timer:    druid.NewTimer(),
-	//		Duration: time.Second * 10,
-	//	}
-	//	core.MakePermanent(druid.RegisterAura(core.Aura{
-	//		Label: "Idol of the Wastes",
-	//		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-	//			if druid.Shred != spell && druid.IsSwipeSpell(spell) {
-	//				return
-	//			}
+	core.NewItemEffect(47668, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 47668}
+		bearAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Bear Proc", actionID, stats.Stats{stats.Dodge: 200.0 / core.DodgeRatingPerDodgeChance}, time.Second*9)
+		catAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Cat Proc", actionID, stats.Stats{stats.Agility: 200.0}, time.Second*16)
 
-	//			if !icd.IsReady(sim) {
-	//				return
-	//			}
-	//			if sim.RandomFloat("Idol of the Wastes") > procChance {
-	//				return
-	//			}
+		// Based off of wowhead tooltip
+		icd := core.Cooldown{
+			Timer:    druid.NewTimer(),
+			Duration: time.Second * 8,
+		}
+		procChance := 0.7
 
-	//			icd.Use(sim)
-	//			procAura.Activate(sim)
-	//		},
-	//	}))
-	//})
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Idol of Mutilation",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() {
+					return
+				}
+
+				if !icd.IsReady(sim) {
+					return
+				}
+
+				if sim.RandomFloat("Idol of Mutilation") > procChance {
+					return
+				}
+				if spell == druid.SwipeBear || spell == druid.Lacerate {
+					bearAura.Activate(sim)
+				}
+				if spell == druid.MangleCat || spell == druid.Shred {
+					catAura.Activate(sim)
+				}
+			},
+		}))
+	})
+
+	core.NewItemEffect(50456, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 50456}
+		procAura := wotlk.MakeStackingAura(agent.GetCharacter(), wotlk.StackingProcAura{
+			Aura: core.Aura{
+				Label:     "Idol of the Crying Moon Proc",
+				ActionID:  actionID,
+				Duration:  time.Second * 15,
+				MaxStacks: 5,
+			},
+			BonusPerStack: stats.Stats{stats.Agility: 44},
+		})
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Idol of the Crying Moon",
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if druid.Rake != spell && !druid.IsLacerateSpell(spell) {
+					return
+				}
+				procAura.Activate(sim)
+				procAura.AddStack(sim)
+			},
+		}))
+	})
+
+	core.NewItemEffect(33947, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 33947}
+		procAura := druid.NewTemporaryStatsAura("Vengeful Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.Resilience: 34}, time.Second*6)
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Vengeful Gladiator's Idol of Resolve",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !druid.IsMangle(spell) {
+					return
+				}
+				procAura.Activate(sim)
+			},
+		}))
+	})
+
+	core.NewItemEffect(35019, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 35019}
+		procAura := druid.NewTemporaryStatsAura("Brutal Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.Resilience: 39}, time.Second*6)
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Brutal Gladiator's Idol of Resolve",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !druid.IsMangle(spell) {
+					return
+				}
+				procAura.Activate(sim)
+			},
+		}))
+	})
 
 	core.NewItemEffect(42574, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
@@ -501,7 +547,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Savage Gladiator's Idol of Resolve",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
+				if !result.Landed() || !druid.IsMangle(spell) {
 					return
 				}
 				procAura.Activate(sim)
@@ -517,7 +563,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Hateful Gladiator's Idol of Resolve",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
+				if !result.Landed() || !druid.IsMangle(spell) {
 					return
 				}
 				procAura.Activate(sim)
@@ -533,7 +579,55 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Deadly Gladiator's Idol of Resolve",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !druid.IsMangle(spell) {
+				if !result.Landed() || !druid.IsMangle(spell) {
+					return
+				}
+				procAura.Activate(sim)
+			},
+		}))
+	})
+
+	core.NewItemEffect(42589, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 42589}
+		procAura := druid.NewTemporaryStatsAura("Furious Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 152}, time.Second*10)
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Furious Gladiator's Idol of Resolve",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !druid.IsMangle(spell) {
+					return
+				}
+				procAura.Activate(sim)
+			},
+		}))
+	})
+
+	core.NewItemEffect(42591, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 42591}
+		procAura := druid.NewTemporaryStatsAura("Relentless Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 172}, time.Second*10)
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Relentless Gladiator's Idol of Resolve",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !druid.IsMangle(spell) {
+					return
+				}
+				procAura.Activate(sim)
+			},
+		}))
+	})
+
+	core.NewItemEffect(51429, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		actionID := core.ActionID{ItemID: 51429}
+		procAura := druid.NewTemporaryStatsAura("Wrathful Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 204}, time.Second*10)
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Wrathful Gladiator's Idol of Resolve",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !druid.IsMangle(spell) {
 					return
 				}
 				procAura.Activate(sim)

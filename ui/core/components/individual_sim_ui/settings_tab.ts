@@ -37,6 +37,7 @@ import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
+import { ItemSwapPicker } from "../item_swap";
 
 export class SettingsTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
@@ -188,7 +189,8 @@ export class SettingsTab extends SimTab {
 
 	private buildCustomSettingsSections() {
 		(this.simUI.individualConfig.customSections || []).forEach(customSection => {
-			customSection(this.column2, this.simUI);
+			let section = customSection(this.column2, this.simUI);
+			section.rootElem.classList.add('custom-section');
 		});
 	}
 
@@ -202,15 +204,18 @@ export class SettingsTab extends SimTab {
 
 	private buildCooldownSettings() {
 		const contentBlock = new ContentBlock(this.column2, 'cooldown-settings', {
-			header: {title: 'Cooldowns'}
+			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
 		});
 
 		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
 	}
 
 	private buildOtherSettings() {
-		if (this.simUI.individualConfig.otherInputs?.inputs.length) {
+		let settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
+			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || false
+		)
 
+		if (settings.length > 0) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: {title: 'Other'}
 			});
@@ -246,6 +251,7 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
+			{ item: IconInputs.DefensiveCooldownBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
 			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
@@ -343,7 +349,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-    const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
+    const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
 			label: 'Encounter',
       header: {title: 'Saved Encounters'},
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
@@ -355,7 +361,7 @@ export class SettingsTab extends SimTab {
 			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
 		});
 
-    const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, {
+    const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, this.simUI, {
 			label: 'Settings',
       header: {title: 'Saved Settings'},
 			storageKey: this.simUI.getSavedSettingsStorageKey(),
@@ -419,7 +425,9 @@ export class SettingsTab extends SimTab {
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
-				new CustomRotationPicker(sectionElem, this.simUI.player, inputConfig);
+				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
+			} else if (inputConfig.type == 'itemSwap'){
+				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});
 	};
