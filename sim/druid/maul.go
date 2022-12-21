@@ -85,27 +85,23 @@ func (druid *Druid) QueueMaul(sim *core.Simulation) {
 	druid.MaulQueueAura.Activate(sim)
 }
 
-func (druid *Druid) DequeueMaul(sim *core.Simulation) {
-	druid.MaulQueueAura.Deactivate(sim)
-}
-
 // Returns true if the regular melee swing should be used, false otherwise.
-func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+func (druid *Druid) MaulReplaceMH(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !druid.MaulQueueAura.IsActive() {
 		return nil
 	}
 
 	if druid.CurrentRage() < druid.Maul.DefaultCast.Cost {
-		druid.DequeueMaul(sim)
+		druid.MaulQueueAura.Deactivate(sim)
 		return nil
 	} else if druid.CurrentRage() < druid.MaulRageThreshold {
 		if mhSwingSpell == druid.AutoAttacks.MHAuto {
-			druid.DequeueMaul(sim)
+			druid.MaulQueueAura.Deactivate(sim)
 			return nil
 		}
 	}
 
-	druid.DequeueMaul(sim)
+	druid.MaulQueueAura.Deactivate(sim)
 	return druid.Maul
 }
 

@@ -14,6 +14,9 @@ func (druid *Druid) registerRakeSpell() {
 
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
+	numTicks := 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0)
+	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
+
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -49,9 +52,31 @@ func (druid *Druid) registerRakeSpell() {
 				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
 			}
 		},
+
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
+			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(numTicks)
+			if bleedCategory.AnyActive() {
+				baseDamage *= 1.3
+				tickBase *= 1.3
+			}
+
+			initial := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+			ticks := spell.CalcDamage(sim, target, tickBase, spell.OutcomeExpectedMagicAlwaysHit)
+
+			critRating := druid.GetStat(stats.MeleeCrit) + spell.BonusCritRating
+			critChance := critRating / (core.CritRatingPerCritChance * 100)
+			critMod := (critChance * (spell.CritMultiplier - 1))
+
+			if dotCanCrit {
+				ticks.Damage *= critChance * (1 + critMod)
+			}
+
+			ticks.Damage += initial.Damage * (critChance * (1 + critMod))
+			return ticks
+		},
 	})
 
-	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 	dotAura := druid.CurrentTarget.RegisterAura(druid.applyRendAndTear(core.Aura{
 		Label:    "Rake-" + strconv.Itoa(int(druid.Index)),
 		ActionID: actionID,
@@ -60,7 +85,7 @@ func (druid *Druid) registerRakeSpell() {
 	druid.RakeDot = core.NewDot(core.Dot{
 		Spell:         druid.Rake,
 		Aura:          dotAura,
-		NumberOfTicks: 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0),
+		NumberOfTicks: numTicks,
 		TickLength:    time.Second * 3,
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 			dot.SnapshotBaseDamage = 358 + 0.06*dot.Spell.MeleeAttackPower()

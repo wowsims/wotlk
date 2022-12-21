@@ -63,6 +63,9 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 		},
 		AutoSwingMelee: true,
 	})
+	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		return cat.checkReplaceMaul(sim)
+	}
 
 	return cat
 }
@@ -81,6 +84,8 @@ type FeralDruid struct {
 	maxRipTicks    int32
 	berserkUsed    bool
 	bleedAura      *core.Aura
+
+	rotationAction *core.PendingAction
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -97,7 +102,6 @@ func (cat *FeralDruid) MissChance() float64 {
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
-	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

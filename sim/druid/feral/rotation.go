@@ -20,6 +20,15 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
 	cat.doRotation(sim)
+
+	// Replace gcd event with our own if we casted a spell
+	if !cat.GCD.IsReady(sim) {
+		nextGcd := cat.NextGCDAt()
+		cat.DoNothing()
+		cat.CancelGCDTimer(sim)
+
+		cat.NextRotationAction(sim, nextGcd)
+	}
 }
 
 func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -30,12 +39,38 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 		panic("auto attack out of form?")
 	}
 
-	cat.checkQueueMaul(sim)
+	// If the swing/Maul resulted in an Omen proc, then schedule the
+	// next player decision based on latency.
+
+	if cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
+		// Kick gcd loop, also need to account for any gcd 'left'
+		// otherwise it breaks gcd logic
+		kickTime := core.MaxDuration(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
+		cat.NextRotationAction(sim, kickTime)
+	}
+}
+
+func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
+	if cat.rotationAction == nil {
+		cat.rotationAction = &core.PendingAction{
+			Priority:     core.ActionPriorityGCD,
+			OnAction:     cat.OnGCDReady,
+			NextActionAt: kickAt,
+		}
+	} else {
+		cat.rotationAction.Cancel(sim)
+		cat.rotationAction = &core.PendingAction{
+			Priority:     core.ActionPriorityGCD,
+			OnAction:     cat.OnGCDReady,
+			NextActionAt: kickAt,
+		}
+	}
+	sim.AddPendingAction(cat.rotationAction)
 }
 
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
-func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
+func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 	// If we will have enough time and Energy leeway to stay in
 	// Dire Bear Form once the GCD expires, then only Maul if we
 	// will be left with enough Rage to cast Mangle or Lacerate
@@ -78,7 +113,9 @@ func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
 	}
 
 	if cat.CurrentRage() >= maulRageThresh {
-		cat.QueueMaul(sim)
+		return cat.Maul
+	} else {
+		return nil
 	}
 }
 
@@ -106,7 +143,6 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 		if cat.Enrage.IsReady(sim) {
 			cat.Enrage.Cast(sim, nil)
 		}
-		cat.checkQueueMaul(sim)
 		return true
 	}
 }
@@ -139,6 +175,15 @@ func (cat *FeralDruid) berserkExpectedAt(sim *core.Simulation, futureTime time.D
 		return futureTime > cat.TigersFuryAura.ExpiresAt()
 	}
 	return false
+}
+
+func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
+	// Calculate current damage-per-Energy of Rake vs. Shred. Used to
+	// determine whether Rake is worth casting when player stats change upon a
+	// dynamic proc occurring
+	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
+	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
+	return rakeDpc / 35., shredDpc / 42.
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
@@ -198,7 +243,7 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		cat.TigersFury.Cast(sim, nil)
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy)
+		cat.NextRotationAction(sim, sim.CurrentTime+leewayTime)
 	}
 }
 
@@ -261,7 +306,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rakeNow := rotation.UseRake && !cat.RakeDot.IsActive() && (simTimeRemain > cat.RakeDot.Duration) && !isClearcast
 
-	//berserkEnergyThresh := core.TernaryFloat64(isClearcast, 80.0, 90.0)
+	// Additionally, don't Rake if the current Shred DPE is higher due to
+	// trinket procs etc.
+	if rakeNow {
+		rakeDpe, shredDpe := cat.calcBuilderDpe(sim)
+		rakeNow = (rakeDpe > shredDpe)
+	}
+
 	// Berserk algorithm: time Berserk for just after a Tiger's Fury
 	// *unless* we'll lose Berserk uptime by waiting for Tiger's Fury to
 	// come off cooldown. The latter exception is necessary for
@@ -582,7 +633,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if nextAction <= sim.CurrentTime {
 		panic("nextaction in the past")
 	} else {
-		cat.WaitUntil(sim, nextAction)
+		cat.NextRotationAction(sim, nextAction)
 	}
 }
 
