@@ -1,0 +1,56 @@
+package rogue
+
+import (
+	"time"
+
+	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
+)
+
+func (rogue *Rogue) registerGhostlyStrikeSpell() {
+	actionID := core.ActionID{SpellID: 14278}
+	target := rogue.CurrentTarget
+	// FIXME: Add Ghostly Strike Glyph
+	baseCost := rogue.costModifier(40)
+	refundAmount := baseCost * 0.8
+	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:		ActionID,
+		SpellSchool:	core.SpellSchoolPhysical,
+		ProcMask:		core.ProcMaskMeleeMHSpecial,
+		Flags:			core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagBuilder,
+		ResourceType:	stats.Energy,
+		BaseCost:		baseCost,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: baseCost,
+				GCD:  time.Second,
+			},
+			IgnoreHaste: true,
+		},
+
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
+
+		DamageMultiplier: core.TernaryFloat64(daggerMH, 1.8, 1.25) * (1 + 0.02*float64(rogue.Talents.FindWeakness) +
+			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) *
+			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),
+		CritMultiplier:	rogue.MeleeCritMultiplier(true),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+			
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+			if result.Landed() {
+				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+			}
+			else {
+				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+			}
+		},
+	})
+}

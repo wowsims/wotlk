@@ -45,9 +45,11 @@ func (rogue *Rogue) registerGarrote() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// #FIXME Can be dodged by boss
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 			if result.Landed() {
-				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				comboPoints = 1 + (1 * 1/3 * float64(rogue.Talents.Initiative))
+				rogue.AddComboPoints(sim, comboPoints, spell.ComboPointMetrics())
 				rogue.garroteDot.Apply(sim)
 			} else {
 				rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.EnergyRefundMetrics)
