@@ -95,6 +95,14 @@ func (rogue *Rogue) murderMultiplier() float64 {
 	return 1.0 + 0.02*float64(rogue.Talents.Murder)
 }
 
+func (rogue *Rogue) applySlaughterFromTheShadows() {
+	rogue.PseudoStats.DamageDealtMultiplier *= rogue.slaughterFromTheShadowsMultiplier()
+}
+
+func (rogue *Rogue) slaughterFromTheShadowsMultiplier() float64 {
+	return 1.0 + 0.01*float64(rogue.Talents.SlaughterFromTheShadows)
+}
+
 func (rogue *Rogue) registerHungerForBlood() {
 	if !rogue.Talents.HungerForBlood {
 		return

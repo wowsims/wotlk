@@ -9,8 +9,11 @@ import (
 )
 
 func (rogue *Rogue) registerGhostlyStrikeSpell() {
+	if !rogue.Talents.GhostlyStrike {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 14278}
-	target := rogue.CurrentTarget
 	// FIXME: Add Ghostly Strike Glyph
 	baseCost := rogue.costModifier(40)
 	refundAmount := baseCost * 0.8
@@ -41,7 +44,7 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 0 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
+			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 

@@ -59,7 +59,9 @@ type Rogue struct {
 	FanOfKnives      *core.Spell
 	Feint            *core.Spell
 	Garrote          *core.Spell
+	Ambush           *core.Spell
 	Hemorrhage       *core.Spell
+	GhostlyStrike    *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
 	WoundPoison      [3]*core.Spell
@@ -67,6 +69,9 @@ type Rogue struct {
 	Shiv             *core.Spell
 	SinisterStrike   *core.Spell
 	TricksOfTheTrade *core.Spell
+	Shadowstep       *core.Spell
+	Preparation      *core.Spell
+	ShadowDance      *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -91,6 +96,9 @@ type Rogue struct {
 	OverkillAura         *core.Aura
 	SliceAndDiceAura     *core.Aura
 	TricksOfTheTradeAura *core.Aura
+	MasterOfSubtletyAura *core.Aura
+	ShadowstepAura       *core.Aura
+	ShadowDanceAura      *core.Aura
 
 	masterPoisonerDebuffAuras []*core.Aura
 	savageCombatDebuffAuras   []*core.Aura
@@ -164,6 +172,11 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSliceAndDice()
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
+	rogue.registerAmbushSpell()
+	rogue.registerShadowstepCD()
+	rogue.registerMasterOfSubtletyCD()
+	rogue.registerGhostlyStrikeSpell()
+	rogue.registerPreparationCD()
 
 	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
 		rogue.registerEnvenom()

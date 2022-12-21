@@ -45,8 +45,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
-				comboPoints := 2
-				rogue.AddComboPoints(sim, comboPoints, spell.ComboPointMetrics())
+				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
 			} else {
 				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 			}

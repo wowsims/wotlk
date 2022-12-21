@@ -13,52 +13,68 @@ func (rogue *Rogue) registerShadowstepCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 36554}
-	target := rogue.CurrentTarget
 	baseCost := rogue.costModifier(10 - 5*float64(rogue.Talents.FilthyTricks))
+	var affectedSpells []*core.Spell
 
-	shadowstepAura := target.GetOrRegisterAura(core.Aura{
+	// TODO: 50% threat reduction on triggering ability
+	rogue.ShadowstepAura = rogue.RegisterAura(core.Aura{
 		Label:    "Shadowstep",
 		ActionID: actionID,
 		Duration: time.Second * 10,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
+					affectedSpells = append(affectedSpells, spell)
+				}
+			}
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			// Damage of your next ability is increased by 20% and the threat caused is reduced by 50%.
-			// 20% damage, but only ability casts
+			for _, spell := range affectedSpells {
+				spell.DamageMultiplier *= 1.2
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range affectedSpells {
+				spell.DamageMultiplier *= 1 / 1.2
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// if spell is no ability
-			// return
-			// Remove aura on hit
-			// 20% more damage by ability
+			for _, affectedSpell := range affectedSpells {
+				if spell == affectedSpell {
+					aura.Deactivate(sim)
+				}
+			}
 		},
 	})
 
-	shadowstepSpell := rogue.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-
+	rogue.Shadowstep = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     actionID,
 		ResourceType: stats.Energy,
 		BaseCost:     baseCost,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: BaseCost,
-				GCD:  time.Second,
+				Cost: baseCost,
+				GCD:  time.Second * 0,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second * (30 - 5*float64(rogue.Talents.FilthyTricks)),
+				Duration: time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rogue.shadowstepAura.Activate(sim)
+			rogue.ShadowstepAura.Activate(sim)
 		},
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell:    rogue.shadowstepSpell,
+		Spell:    rogue.Shadowstep,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy > 35
+			return rogue.CurrentEnergy() > float64(35)
 		},
 	})
 }

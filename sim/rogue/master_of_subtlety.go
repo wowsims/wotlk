@@ -15,6 +15,13 @@ func getMasterofSubtletySpellID(talentPoints int32) int32 {
 	return 31220 + talentPoints
 }
 
+func getMasterofSubtletyCDDuration(talentPoints int32) int32 {
+	if talentPoints > 0 {
+		return 180 - 30*talentPoints
+	}
+	return 180
+}
+
 func (rogue *Rogue) registerMasterOfSubtletyCD() {
 	if rogue.Talents.MasterOfSubtlety == 0 {
 		return
@@ -43,9 +50,14 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 	masterOfSubtletySpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: MasterOfSubtletyID,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: 0,
+				GCD:  time.Second * 0,
+			},
+			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute * (3 - (time.Second * 30 * rogue.Talents.Elusiveness)),
+				Duration: time.Second * time.Duration(getMasterofSubtletyCDDuration(rogue.Talents.MasterOfSubtlety)),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
