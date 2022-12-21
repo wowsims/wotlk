@@ -20,6 +20,15 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
 	cat.doRotation(sim)
+
+	// Replace gcd event with our own if we casted a spell
+	if !cat.GCD.IsReady(sim) {
+		nextGcd := cat.NextGCDAt()
+		cat.DoNothing()
+		cat.CancelGCDTimer(sim)
+
+		cat.NextRotationAction(sim, nextGcd)
+	}
 }
 
 func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -36,8 +45,27 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	if cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+cat.GCD.TimeToReady(sim)+cat.latency)
+		kickTime := core.MaxDuration(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
+		cat.NextRotationAction(sim, kickTime)
 	}
+}
+
+func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
+	if cat.rotationAction == nil {
+		cat.rotationAction = &core.PendingAction{
+			Priority:     core.ActionPriorityGCD,
+			OnAction:     cat.OnGCDReady,
+			NextActionAt: kickAt,
+		}
+	} else {
+		cat.rotationAction.Cancel(sim)
+		cat.rotationAction = &core.PendingAction{
+			Priority:     core.ActionPriorityGCD,
+			OnAction:     cat.OnGCDReady,
+			NextActionAt: kickAt,
+		}
+	}
+	sim.AddPendingAction(cat.rotationAction)
 }
 
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
@@ -215,7 +243,7 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		cat.TigersFury.Cast(sim, nil)
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy+cat.latency)
+		cat.NextRotationAction(sim, sim.CurrentTime+leewayTime)
 	}
 }
 
@@ -605,7 +633,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if nextAction <= sim.CurrentTime {
 		panic("nextaction in the past")
 	} else {
-		cat.WaitUntil(sim, nextAction)
+		cat.NextRotationAction(sim, nextAction)
 	}
 }
 

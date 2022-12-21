@@ -84,6 +84,8 @@ type FeralDruid struct {
 	maxRipTicks    int32
 	berserkUsed    bool
 	bleedAura      *core.Aura
+
+	rotationAction *core.PendingAction
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
