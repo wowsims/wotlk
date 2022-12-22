@@ -18,8 +18,6 @@ const (
 	swpIdx
 )
 
-const useExpectedValues = true
-
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
 }
