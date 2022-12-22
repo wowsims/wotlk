@@ -16,6 +16,8 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
 	rogue.applyFocusedAttacks()
+	rogue.applyInitiative()
+	// FIXME: add Honor Among Thieves
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
 	rogue.PseudoStats.MeleeSpeedMultiplier *= []float64{1, 1.03, 1.06, 1.10}[rogue.Talents.LightningReflexes]
@@ -45,6 +47,11 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
 	rogue.registerKillingSpreeCD()
+	rogue.registerShadowstepCD()
+	rogue.registerShadowDanceCD()
+	rogue.registerMasterOfSubtletyCD()
+	rogue.registerPreparationCD()
+	rogue.registerGhostlyStrikeSpell()
 }
 
 // dwsMultiplier returns the offhand damage multiplier

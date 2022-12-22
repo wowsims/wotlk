@@ -18,7 +18,8 @@ func (rogue *Rogue) registerPremeditation() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: time.Second * 0,
+				Cost: 0,
+				GCD:  0,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

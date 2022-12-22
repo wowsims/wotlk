@@ -178,12 +178,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
 	rogue.registerAmbushSpell()
-	rogue.registerShadowstepCD()
-	rogue.registerMasterOfSubtletyCD()
-	rogue.registerGhostlyStrikeSpell()
-	rogue.registerPreparationCD()
-	rogue.registerShadowDanceCD()
-	rogue.registerOverkillCD()
 
 	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
 		rogue.registerEnvenom()

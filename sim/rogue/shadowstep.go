@@ -16,7 +16,6 @@ func (rogue *Rogue) registerShadowstepCD() {
 	baseCost := rogue.costModifier(10 - 5*float64(rogue.Talents.FilthyTricks))
 	var affectedSpells []*core.Spell
 
-	// TODO: 50% threat reduction on triggering ability
 	rogue.ShadowstepAura = rogue.RegisterAura(core.Aura{
 		Label:    "Shadowstep",
 		ActionID: actionID,
@@ -58,7 +57,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				Cost: baseCost,
-				GCD:  time.Second * 0,
+				GCD:  0,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -76,7 +75,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() > float64(35)
+			return rogue.CurrentEnergy() > float64(35) && rogue.CurrentTarget.ComboPoints() == 5
 		},
 	})
 }

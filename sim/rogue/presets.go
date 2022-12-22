@@ -140,6 +140,36 @@ var AssassinationTalents = &proto.RogueTalents{
 	Opportunity:       2,
 }
 
+var SubtletyTalents = &proto.RogueTalents{
+	Malice:                  5,
+	BloodSpatter:            2,
+	PuncturingWounds:        3,
+	Lethality:               5,
+	VilePoisons:             2,
+	ImprovedPoisons:         3,
+	RelentlessStrikes:       5,
+	Opportunity:             2,
+	Camouflage:              3,
+	Elusiveness:             2,
+	GhostlyStrike:           true,
+	SerratedBlades:          3,
+	Initiative:              3,
+	ImprovedAmbush:          2,
+	Preparation:             true,
+	DirtyDeeds:              2,
+	Hemorrhage:              true,
+	MasterOfSubtlety:        3,
+	Deadliness:              5,
+	Premeditation:           true,
+	CheatDeath:              1,
+	SinisterCalling:         5,
+	HonorAmongThieves:       3,
+	Shadowstep:              true,
+	FilthyTricks:            1,
+	SlaughterFromTheShadows: 5,
+	ShadowDance:             true,
+}
+
 var AssassinationRotationOptions = []*proto.Rogue_Rotation{
 	{
 		ExposeArmorFrequency:          proto.Rogue_Rotation_Never,

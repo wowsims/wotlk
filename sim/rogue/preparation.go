@@ -14,6 +14,10 @@ func (rogue *Rogue) registerPreparationCD() {
 	rogue.Preparation = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 14185},
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				Cost: 0,
+				GCD:  0,
+			},
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
 				Duration: time.Second*8*60 - time.Second*time.Duration(90*rogue.Talents.FilthyTricks),
@@ -25,6 +29,15 @@ func (rogue *Rogue) registerPreparationCD() {
 			rogue.Shadowstep.CD.Reset()
 			rogue.MasterOfSubtlety.CD.Reset()
 			rogue.Overkill.CD.Reset()
+		},
+	})
+
+	rogue.AddMajorCooldown(core.MajorCooldown{
+		Spell:    rogue.Preparation,
+		Type:     core.CooldownTypeDPS,
+		Priority: core.CooldownPriorityDefault,
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return !rogue.MasterOfSubtlety.CD.IsReady(sim)
 		},
 	})
 }
