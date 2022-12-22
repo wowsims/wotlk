@@ -19,6 +19,10 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
+	if !cat.GCD.IsReady(sim) {
+		return
+	}
+
 	cat.doRotation(sim)
 
 	// Replace gcd event with our own if we casted a spell
@@ -51,20 +55,16 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 }
 
 func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
-	if cat.rotationAction == nil {
-		cat.rotationAction = &core.PendingAction{
-			Priority:     core.ActionPriorityGCD,
-			OnAction:     cat.OnGCDReady,
-			NextActionAt: kickAt,
-		}
-	} else {
+	if cat.rotationAction != nil {
 		cat.rotationAction.Cancel(sim)
-		cat.rotationAction = &core.PendingAction{
-			Priority:     core.ActionPriorityGCD,
-			OnAction:     cat.OnGCDReady,
-			NextActionAt: kickAt,
-		}
 	}
+
+	cat.rotationAction = &core.PendingAction{
+		Priority:     core.ActionPriorityGCD,
+		OnAction:     cat.OnGCDReady,
+		NextActionAt: kickAt,
+	}
+
 	sim.AddPendingAction(cat.rotationAction)
 }
 
