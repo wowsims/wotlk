@@ -1,9 +1,8 @@
-import { Spec, ItemSwap, ItemSlot } from '../proto/common.js';
+import { Spec, ItemSlot } from '../proto/common.js';
 import { Player } from '../player.js';
 import { Component } from './component.js';
 import { IconItemSwapPicker } from './gear_picker.js'
 import { Input, InputConfig } from './input.js'
-import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 
 export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T>{
 	itemSlots: Array<ItemSlot>;

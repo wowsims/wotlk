@@ -10,7 +10,7 @@ import { Target } from '../target.js';
 import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-import { ItemSwapPickerConfig } from './item_swap.js'
+import { ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { InputConfig } from './input.js'
 import { IconPickerConfig } from './icon_picker.js';

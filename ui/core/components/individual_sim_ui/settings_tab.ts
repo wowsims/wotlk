@@ -37,7 +37,7 @@ import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
-import { ItemSwapPicker } from "../item_swap";
+import { ItemSwapPicker } from "../item_swap_picker";
 
 export class SettingsTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;

@@ -25,7 +25,7 @@ import { Stats } from './stats.js';
 
 type InternalGear = Record<ItemSlot, EquippedItem | null>;
 
-abstract class GearBase {
+abstract class BaseGear {
 	protected readonly gear: InternalGear;
 
 	constructor(gear: Partial<InternalGear>) {
@@ -97,7 +97,7 @@ abstract class GearBase {
  *
  * This is an immutable type.
  */
-export class Gear extends GearBase {
+export class Gear extends BaseGear {
 
 	constructor(gear: Partial<InternalGear>) {
 		super(gear)
@@ -291,7 +291,7 @@ export class Gear extends GearBase {
  *
  * This is an immutable type.
  */
-export class ItemSwapGear extends GearBase {
+export class ItemSwapGear extends BaseGear {
 
 	constructor() {
 		super({})
