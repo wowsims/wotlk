@@ -71,7 +71,11 @@ type Rogue struct {
 	TricksOfTheTrade *core.Spell
 	Shadowstep       *core.Spell
 	Preparation      *core.Spell
+	Premeditation    *core.Spell
 	ShadowDance      *core.Spell
+	ColdBlood        *core.Spell
+	MasterOfSubtlety *core.Spell
+	Overkill         *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -99,6 +103,7 @@ type Rogue struct {
 	MasterOfSubtletyAura *core.Aura
 	ShadowstepAura       *core.Aura
 	ShadowDanceAura      *core.Aura
+	DirtyDeedsAura       *core.Aura
 
 	masterPoisonerDebuffAuras []*core.Aura
 	savageCombatDebuffAuras   []*core.Aura
@@ -177,6 +182,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerMasterOfSubtletyCD()
 	rogue.registerGhostlyStrikeSpell()
 	rogue.registerPreparationCD()
+	rogue.registerShadowDanceCD()
+	rogue.registerOverkillCD()
 
 	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
 		rogue.registerEnvenom()

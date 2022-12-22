@@ -23,7 +23,7 @@ func (rogue *Rogue) registerOverkillCD() {
 			rogue.ApplyEnergyTickMultiplier(-0.3)
 		},
 	})
-	overkillSpell := rogue.RegisterSpell(core.SpellConfig{
+	rogue.Overkill = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: OverkillActionID,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -37,7 +37,7 @@ func (rogue *Rogue) registerOverkillCD() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: overkillSpell,
+		Spell: rogue.Overkill,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
 			return rogue.CurrentEnergy() < 50

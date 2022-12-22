@@ -150,6 +150,44 @@ func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
 }
 
+func (rogue *Rogue) applyDirtyDeeds(target *core.Unit) {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return
+	}
+	// Special abilities cause 20% more damage against targets below 35% health
+	if target.CurrentHealthPercent() < 0.35 {
+		// Apply Dirty Deeds damage increase
+	}
+}
+
+func (rogue *Rogue) registerDirtyDeeds() {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 14083}
+
+	rogue.DirtyDeedsAura = rogue.RegisterAura(core.Aura{
+		Label:    "Dirty Deeds",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= rogue.DirtyDeedsMultiplier()
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 / rogue.DirtyDeedsMultiplier()
+		},
+	})
+}
+
+func (rogue *Rogue) DirtyDeedsMultiplier() float64 {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return 1
+	}
+
+	return 1 + 0.1*float64(rogue.Talents.DirtyDeeds)
+}
+
 func (rogue *Rogue) registerColdBloodCD() {
 	if !rogue.Talents.ColdBlood {
 		return
@@ -188,7 +226,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 		},
 	})
 
-	coldBloodSpell := rogue.RegisterSpell(core.SpellConfig{
+	rogue.ColdBlood = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
@@ -204,7 +242,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: coldBloodSpell,
+		Spell: rogue.ColdBlood,
 		Type:  core.CooldownTypeDPS,
 	})
 }
@@ -244,7 +282,7 @@ func (rogue *Rogue) applyInitiative() {
 		return
 	}
 
-	procChance := []float64{0.33, 0.66, 1.0}[rogue.Talents.Initiative]
+	procChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.Initiative]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
 	var affectedSpells []*core.Spell
 
@@ -553,4 +591,23 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 		return
 	}
 	rogue.registerKillingSpreeSpell()
+}
+
+func (rogue *Rogue) applyHonorAmongThieves() {
+	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
+	if rogue.Talents.HonorAmongThieves == 0 {
+		return
+	}
+
+	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
+	// procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
+	// comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Honor Among Thieves",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+	})
 }

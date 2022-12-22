@@ -21,8 +21,10 @@ func (rogue *Rogue) registerPreparationCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			// Reset Cooldown on Evasion, Sprint, Vanish (Overkill/Master of Subtlety), Cold Blood and Shadowstep
-			// FIXME: Reset Cold Blood cooldown rogue.coldBloodAura.CD.Reset()
+			rogue.ColdBlood.CD.Reset()
 			rogue.Shadowstep.CD.Reset()
+			rogue.MasterOfSubtlety.CD.Reset()
+			rogue.Overkill.CD.Reset()
 		},
 	})
 }

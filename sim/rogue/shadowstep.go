@@ -32,11 +32,13 @@ func (rogue *Rogue) registerShadowstepCD() {
 			// Damage of your next ability is increased by 20% and the threat caused is reduced by 50%.
 			for _, spell := range affectedSpells {
 				spell.DamageMultiplier *= 1.2
+				spell.ThreatMultiplier *= 0.5
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range affectedSpells {
 				spell.DamageMultiplier *= 1 / 1.2
+				spell.ThreatMultiplier *= 1 / 0.5
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

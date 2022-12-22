@@ -47,7 +47,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 			rogue.MultiplyStat(stats.AttackPower, 1.0/(1.0+percent))
 		},
 	})
-	masterOfSubtletySpell := rogue.RegisterSpell(core.SpellConfig{
+	rogue.MasterOfSubtlety = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: MasterOfSubtletyID,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -66,7 +66,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: masterOfSubtletySpell,
+		Spell: rogue.MasterOfSubtlety,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
 			return rogue.CurrentEnergy() > 90
