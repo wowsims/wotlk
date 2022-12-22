@@ -203,6 +203,7 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
 		if unit.Env.MeasuringStats {
 			unit.AddStats(bonus)
+			return
 		} else {
 			panic("Not finalized, use AddStats instead!")
 		}
