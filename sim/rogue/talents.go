@@ -11,6 +11,7 @@ import (
 
 func (rogue *Rogue) ApplyTalents() {
 	rogue.applyMurder()
+	rogue.applySlaughterFromTheShadows()
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
@@ -233,6 +234,41 @@ func (rogue *Rogue) applySealFate() {
 
 			if sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
+			}
+		},
+	})
+}
+
+func (rogue *Rogue) applyInitiative() {
+	if rogue.Talents.Initiative == 0 {
+		return
+	}
+
+	procChance := []float64{0.33, 0.66, 1.0}[rogue.Talents.Initiative]
+	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
+	var affectedSpells []*core.Spell
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Initiative",
+		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = append(affectedSpells, rogue.Ambush)
+			affectedSpells = append(affectedSpells, rogue.Garrote)
+		},
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			for _, affectedSpell := range affectedSpells {
+				if spell == affectedSpell {
+					if !result.Outcome.Matches(core.OutcomeLanded) {
+						return
+					}
+
+					if sim.Proc(procChance, "Initiative") {
+						rogue.AddComboPoints(sim, 1, cpMetrics)
+					}
+				}
 			}
 		},
 	})
