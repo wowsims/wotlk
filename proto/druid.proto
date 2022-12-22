@@ -207,12 +207,13 @@ message FeralDruid {
 	int32 min_combos_for_bite = 8;
 	int32 berserk_bite_thresh = 9;
 	bool powerbear = 10;
-	float max_roar_offset = 11;
+	float min_roar_offset = 11;
 	BiteModeType bite_mode_type = 12;
 	float hot_uptime = 13;
 	bool snek_weave = 14;
 	bool flower_weave = 15;
 	int32 raid_targets = 16;
+	bool manual_params = 17;
   }
   Rotation rotation = 1;
 

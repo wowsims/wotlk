@@ -206,7 +206,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 
 	// Clip as soon as we have enough CPs for the new roar to expire well
 	// after the current rip
-	return newRoarDur >= (ripDur + cat.Rotation.MaxRoarOffset)
+	return newRoarDur >= (ripDur + cat.Rotation.MinRoarOffset)
 }
 
 func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Duration) bool {
@@ -261,10 +261,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
-		didShift := cat.shiftBearCat(sim, false)
-		if !didShift {
-			panic("didnt shift?")
-		}
+		cat.shiftBearCat(sim, false)
 		// Reset swing timer from snek (or idol/weapon swap) when going into cat
 		if cat.InForm(druid.Cat) && cat.Rotation.SnekWeave {
 			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
@@ -373,7 +370,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 
 	weaveEnd := time.Duration(float64(sim.CurrentTime) + (4.5+2*latencySecs)*float64(time.Second))
-
 	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!ripRefreshPending || cat.RipDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
 
 	if bearweaveNow && rotation.BearweaveType != proto.FeralDruid_Rotation_Lacerate {
@@ -419,6 +415,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.BaseCost {
 			flowershiftNow = false
 			cat.Metrics.MarkOOM(sim)
+
 		}
 	}
 
@@ -481,11 +478,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 
 		buildLacerate := !cat.LacerateDot.IsActive() || cat.LacerateDot.GetStacks() < 5
-
 		maintainLacerate := !buildLacerate && (lacRemain <= rotation.LacerateTime) && (curRage < 38 || shiftNext) && (lacRemain < simTimeRemain)
 
 		lacerateNow := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && (buildLacerate || maintainLacerate)
-
 		emergencyLacerate := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && (lacRemain < 3*time.Second+2*cat.latency) && lacRemain < simTimeRemain
 
 		if (rotation.BearweaveType != proto.FeralDruid_Rotation_Lacerate) || !lacerateNow {
@@ -504,7 +499,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
 		} else if shiftNow {
-
 			// If we are resetting our swing timer using Albino Snake or a
 			// duplicate weapon swap, then do an additional check here to
 			// see whether we can delay the shift until the next bear swing
@@ -653,7 +647,7 @@ type FeralDruidRotation struct {
 	MangleSpam         bool
 	BerserkBiteThresh  float64
 	Powerbear          bool
-	MaxRoarOffset      time.Duration
+	MinRoarOffset      time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
 	SnekWeave          bool
@@ -672,10 +666,26 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
-		MaxRoarOffset:      time.Duration(float64(rotation.MaxRoarOffset) * float64(time.Second)),
+		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
 		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
+	}
+
+	// Use automatic values unless specified
+	if rotation.ManualParams {
+		return
+	}
+
+	cat.Rotation.UseRake = true
+	cat.Rotation.UseBite = true
+	if cat.Rotation.FlowerWeave {
+		cat.Rotation.MinRoarOffset = 13 * time.Second
+		cat.Rotation.BiteTime = 4 * time.Second
+
+	} else {
+		cat.Rotation.MinRoarOffset = 14 * time.Second
+		cat.Rotation.BiteTime = 10 * time.Second
 	}
 }
