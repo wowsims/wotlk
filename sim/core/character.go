@@ -403,6 +403,8 @@ func (character *Character) init(sim *Simulation, agent Agent) {
 	character.Unit.init(sim)
 }
 
+func (character *Character) Prepull(sim *Simulation) {}
+
 func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
