@@ -12,7 +12,7 @@ import (
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
-	if cat.InForm(druid.Cat) {
+	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
 	}
 }
