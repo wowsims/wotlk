@@ -53,7 +53,9 @@ type ShadowPriest struct {
 	rotation *proto.ShadowPriest_Rotation
 	options  *proto.ShadowPriest_Options
 
-	BLUsedAt time.Duration
+	VTCastTime time.Duration
+	AllCDs     []time.Duration
+	BLUsedAt   time.Duration
 
 	CanRolloverSWP bool
 }
