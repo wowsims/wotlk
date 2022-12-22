@@ -52,15 +52,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
-		MainHand: core.Weapon{
-			BaseDamageMin:              43,
-			BaseDamageMax:              66,
-			SwingSpeed:                 1.0,
-			NormalizedSwingSpeed:       1.0,
-			SwingDuration:              time.Second,
-			CritMultiplier:             cat.MeleeCritMultiplier(druid.Cat),
-			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
-		},
+		MainHand:       cat.GetCatWeapon(),
 		AutoSwingMelee: true,
 	})
 	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
