@@ -50,7 +50,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	biteTime: 10.0,
 	berserkBiteThresh: 30.0,
 	powerbear: false,
-	maxRoarOffset: 14.0,
+	minRoarOffset: 14.0,
 	maintainFaerieFire: true,
 	hotUptime: 0.0,
 	snekWeave: false,
