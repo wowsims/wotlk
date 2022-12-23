@@ -432,8 +432,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-KirinTorGarb"
  value: {
-  dps: 4243.08719
-  tps: 3554.3943
+  dps: 4260.03758
+  tps: 3565.44656
  }
 }
 dps_results: {
