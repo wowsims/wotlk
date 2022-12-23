@@ -13,7 +13,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 36554}
-	baseCost := rogue.costModifier(10 - 5*float64(rogue.Talents.FilthyTricks))
+	baseCost := 10 - 5*float64(rogue.Talents.FilthyTricks)
 	var affectedSpells []*core.Spell
 
 	rogue.ShadowstepAura = rogue.RegisterAura(core.Aura{

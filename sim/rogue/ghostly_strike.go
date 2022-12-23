@@ -15,9 +15,10 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 	actionID := core.ActionID{SpellID: 14278}
 	// FIXME: Add Ghostly Strike Glyph
-	baseCost := rogue.costModifier(40)
+	baseCost := 40.0
 	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolPhysical,
