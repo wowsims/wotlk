@@ -594,7 +594,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 1,
 					colIdx: 2,
 				},
-				spellIds: [13975, 14062, 14603],
+				spellIds: [13975, 14062, 14063],
 				maxPoints: 3,
 			},
 			{
@@ -768,7 +768,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 8,
 					colIdx: 0,
 				},
-				spellIds: [51698, 51670, 51671],
+				spellIds: [51698, 51700, 51671],
 				maxPoints: 3,
 			},
 			{
@@ -786,7 +786,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 8,
 					colIdx: 2,
 				},
-				spellIds: [36554],
+				spellIds: [58414, 58415],
 				maxPoints: 2,
 			},
 			{
