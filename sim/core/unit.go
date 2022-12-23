@@ -201,10 +201,7 @@ func (unit *Unit) AddDynamicDamageTakenModifier(ddtm DynamicDamageTakenModifier)
 
 func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 	if unit.Env == nil || !unit.Env.IsFinalized() {
-		if unit.Env.MeasuringStats {
-			unit.AddStats(bonus)
-			return
-		} else {
+		if !unit.Env.MeasuringStats {
 			panic("Not finalized, use AddStats instead!")
 		}
 	}
