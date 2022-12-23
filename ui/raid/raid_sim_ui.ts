@@ -1,6 +1,7 @@
 import { BooleanPicker } from "../core/components/boolean_picker.js";
 import { DetailedResults } from "../core/components/detailed_results.js";
 import { EncounterPicker } from "../core/components/encounter_picker.js";
+import { IconPicker } from "../core/components/icon_picker.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 import { SavedDataManager } from "../core/components/saved_data_manager.js";
@@ -10,9 +11,10 @@ import * as Tooltips from "../core/constants/tooltips.js";
 import { Encounter } from "../core/encounter.js";
 import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
-import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "../core/proto/common.js";
+import { Class, Encounter as EncounterProto, Faction, RaidBuffs, Stat, TristateEffect } from "../core/proto/common.js";
 import { Blessings } from "../core/proto/paladin.js";
 import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
+import { ActionId } from '../core/proto_utils/action_id.js';
 import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Raid } from "../core/raid.js";
 import { Sim } from "../core/sim.js";
@@ -128,7 +130,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addRaidTab() {
-		this.addTab('RAID', 'raid-tab', `
+		this.addTab('Raid', 'raid-tab', `
 			<div class="raid-picker">
 			</div>
 			<div class="saved-raids-div">
@@ -173,7 +175,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addSettingsTab() {
-		this.addTab('SETTINGS', 'raid-settings-tab', `
+		this.addTab('Settings', 'raid-settings-tab', `
 			<div class="raid-settings-sections">
 				<div class="settings-section-container raid-settings-section-container">
 					<fieldset class="settings-section raid-encounter-section">
@@ -190,6 +192,9 @@ export class RaidSimUI extends SimUI {
 				<div class="settings-section-container tanks-section-container">
 				</div>
 				<div class="settings-section-container raid-settings-section-container">
+					<fieldset class="settings-section consumes-section">
+						<legend>Consumes</legend>
+					</fieldset>
 					<fieldset class="settings-section other-options-section">
 						<legend>Other Options</legend>
 					</fieldset>
@@ -233,6 +238,16 @@ export class RaidSimUI extends SimUI {
 		const assignmentsPicker = new AssignmentsPicker(this.rootElem.getElementsByClassName('assignments-section-container')[0] as HTMLElement, this);
 		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
 
+		const consumesSectionElem = this.rootElem.getElementsByClassName('consumes-section')[0] as HTMLElement;
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37094), 'scrollOfStamina'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43466), 'scrollOfStrength'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43464), 'scrollOfAgility'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37092), 'scrollOfIntellect'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37098), 'scrollOfSpirit'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43468), 'scrollOfProtection'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49634), 'drumsOfTheWild');
+
 		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
 		otherOptionsSectionElem.classList.add('hide');
 		//new BooleanPicker(otherOptionsSectionElem, this.sim.raid, {
@@ -261,7 +276,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addDetailedResultsTab() {
-		this.addTab('DETAILED RESULTS', 'detailed-results-tab', `
+		this.addTab('Results', 'detailed-results-tab', `
 			<div class="detailed-results">
 			</div>
 		`);
@@ -270,7 +285,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addLogTab() {
-		this.addTab('LOG', 'log-tab', `
+		this.addTab('Log', 'log-tab', `
 			<div class="log-runner">
 			</div>
 		`);
@@ -425,4 +440,18 @@ export class RaidSimUI extends SimUI {
 	getSavedRaidStorageKey(): string {
 		return this.getStorageKey('__savedRaid__');
 	}
+}
+
+function makeBooleanRaidIconBuffInput(parent: HTMLElement, raid: Raid, id: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
+	return new IconPicker<Raid, boolean>(parent, raid, {
+		id: id,
+		states: 2,
+		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
+		getValue: (raid: Raid) => raid.getBuffs()[field] as unknown as boolean,
+		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
+			const newBuffs = raid.getBuffs();
+			(newBuffs[field] as unknown as boolean) = newValue;
+			raid.setBuffs(eventID, newBuffs);
+		},
+	});
 }
