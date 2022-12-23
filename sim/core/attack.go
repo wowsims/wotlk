@@ -306,7 +306,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-			agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
 		},
 	}
 
@@ -555,6 +554,7 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
+	aa.agent.OnAutoAttack(sim, aa.RangedAuto)
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
