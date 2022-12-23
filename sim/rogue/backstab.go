@@ -10,6 +10,7 @@ import (
 func (rogue *Rogue) registerBackstabSpell() {
 	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
 	refundAmount := baseCost * 0.8
+	//daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 26863},
@@ -43,7 +44,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 465 +
+			baseDamage := 310 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
