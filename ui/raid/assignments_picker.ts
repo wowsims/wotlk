@@ -191,7 +191,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 					}
 					// Don't include shadow priests even if they have the talent, because they
 					// don't have a raid target option for this.
-					return player.spec == Spec.SpecSmitePriest;
+					return player.spec != Spec.SpecShadowPriest;
 				}
 			}) as Array<Player<any> | BuffBot>;
 	}
@@ -245,7 +245,7 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 
 class UnholyFrenzyPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Unholy Frenzy';
+		return 'Unholy Frenzies';
 	}
 
 	getSourcePlayers(): Array<Player<any> | BuffBot> {
