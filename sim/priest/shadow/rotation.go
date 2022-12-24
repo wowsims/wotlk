@@ -224,16 +224,10 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	var nextTickWait time.Duration
 	var currDPS2 float64
 	var overwriteDPS2 float64
-	//var nextTickWait2 time.Duration
 
 	if spriest.DevouringPlagueDot.IsActive() {
 		currDotTickSpeed = spriest.DevouringPlagueDot.TickPeriod().Seconds()
-
-		dpRemainTicks := spriest.AllCDs[dpIdx].Seconds() / currDotTickSpeed
-		nextTick := dpRemainTicks - math.Floor(dpRemainTicks)
-		nextTickWait = time.Duration(nextTick * currDotTickSpeed * 1e9)
-
-		//potmfdps := math.Floor(nextTick * currDotTickSpeed / float64(tickLength.Seconds()))
+		nextTickWait = spriest.DevouringPlagueDot.TimeUntilNextTick(sim)
 
 		dpDotCurr := spriest.DevouringPlague.ExpectedDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
 		dpInitCurr := dpDotCurr * spriest.DpInitMultiplier
@@ -250,16 +244,8 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		if blAura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag); blAura != nil {
 			blRemainingDur := blAura.RemainingDuration(sim)
 			if blRemainingDur < time.Second*3 && blRemainingDur > time.Millisecond*100 {
-				//dpRemainTicks := float64(spriest.DevouringPlagueDot.NumTicksRemaining(sim))
-				dpRemainTicks := 8 - spriest.AllCDs[dpIdx].Seconds()/currDotTickSpeed
-				//nextTick := (dpRemainTicks) - math.Floor(dpRemainTicks)
-				//nextTickWait2 = time.Duration(nextTick * currDotTickSpeed * 1e9)
-
-				//dpDotNext := dpDotCurr // TODO: Why doesn't this work, instead of the following line?
-				dpDotNext := spriest.DevouringPlague.ExpectedDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
-				dpInitCurr := dpDotNext * spriest.DpInitMultiplier
-
-				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotNext*(1-spriest.CastSpeed)
+				dpRemainTicks := float64(spriest.DevouringPlagueDot.NumTicksRemaining(sim))
+				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotCurr*(1-spriest.CastSpeed)
 				currDPS2 = cdDamage
 
 				// if sim.Log != nil {

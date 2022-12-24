@@ -435,6 +435,11 @@ func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 
 func (spell *Spell) expectedDamageHelper(sim *Simulation, target *Unit, useSnapshot bool) float64 {
 	result := spell.expectedDamageInternal(sim, target, spell, useSnapshot)
+	if !spell.SpellSchool.Matches(SpellSchoolPhysical) {
+		result.Damage /= result.ResistanceMultiplier
+		result.Damage *= AverageMagicPartialResistMultiplier
+		result.ResistanceMultiplier = AverageMagicPartialResistMultiplier
+	}
 	result.inUse = false
 	return result.Damage
 }
