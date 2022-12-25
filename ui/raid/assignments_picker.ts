@@ -24,6 +24,7 @@ export class AssignmentsPicker extends Component {
 	private readonly powerInfusionsPicker: PowerInfusionsPicker;
 	private readonly tricksOfTheTradesPicker: TricksOfTheTradesPicker;
 	private readonly unholyFrenzyPicker: UnholyFrenzyPicker;
+	private readonly focusMagicsPicker: FocusMagicsPicker;
 
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
@@ -32,6 +33,7 @@ export class AssignmentsPicker extends Component {
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
 		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
 		this.unholyFrenzyPicker = new UnholyFrenzyPicker(this.rootElem, raidSimUI);
+		this.focusMagicsPicker = new FocusMagicsPicker(this.rootElem, raidSimUI);
 	}
 }
 
@@ -66,7 +68,7 @@ abstract class AssignedBuffPicker extends Component {
 
 	private update() {
 		this.playersContainer.innerHTML = `
-			<legend>${this.getTitle().toUpperCase()}</legend>
+			<legend>${this.getTitle()}</legend>
 		`;
 
 		const sourcePlayers = this.getSourcePlayers();
@@ -147,7 +149,7 @@ abstract class AssignedBuffPicker extends Component {
 
 class InnervatesPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Innervates';
+		return 'Innervate';
 	}
 
 	getSourcePlayers(): Array<Player<any> | BuffBot> {
@@ -175,7 +177,7 @@ class InnervatesPicker extends AssignedBuffPicker {
 
 class PowerInfusionsPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Power Infusions';
+		return 'Power Infusion';
 	}
 
 	getSourcePlayers(): Array<Player<any> | BuffBot> {
@@ -217,7 +219,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 
 class TricksOfTheTradesPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Tricks of the Trades';
+		return 'Tricks of the Trade';
 	}
 
 	getSourcePlayers(): Array<Player<any> | BuffBot> {
@@ -245,7 +247,7 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 
 class UnholyFrenzyPicker extends AssignedBuffPicker {
 	getTitle(): string {
-		return 'Unholy Frenzies';
+		return 'Unholy Frenzy';
 	}
 
 	getSourcePlayers(): Array<Player<any> | BuffBot> {
@@ -277,5 +279,33 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 
 	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
 		buffBot.setUnholyFrenzyAssignment(eventID, newValue);
+	}
+}
+
+class FocusMagicsPicker extends AssignedBuffPicker {
+	getTitle(): string {
+		return 'Focus Magic';
+	}
+
+	getSourcePlayers(): Array<Player<any> | BuffBot> {
+		return this.raidSimUI.getPlayersAndBuffBots().filter(playerOrBot => playerOrBot?.getClass() == Class.ClassMage) as Array<Player<any> | BuffBot>;
+	}
+
+	getPlayerValue(player: Player<any>): RaidTarget {
+		return (player as Player<Spec.SpecMage>).getSpecOptions().focusMagicTarget || emptyRaidTarget();
+	}
+
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+		const newOptions = (player as Player<Spec.SpecMage>).getSpecOptions();
+		newOptions.focusMagicTarget = newValue;
+		player.setSpecOptions(eventID, newOptions);
+	}
+
+	getBuffBotValue(buffBot: BuffBot): RaidTarget {
+		throw new Error('Unimplemented focus magic buff bot');
+	}
+
+	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
+		throw new Error('Unimplemented focus magic buff bot');
 	}
 }

@@ -8,8 +8,10 @@ import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
+import { NO_TARGET } from '../core/proto_utils/utils';
 
 import {
 	Mage,
@@ -98,6 +100,9 @@ export const DefaultFireRotation = MageRotation.create({
 export const DefaultFireOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
+	focusMagicTarget: RaidTarget.create({
+		targetIndex: NO_TARGET,
+	}),
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -114,6 +119,9 @@ export const DefaultFrostRotation = MageRotation.create({
 
 export const DefaultFrostOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
+	focusMagicTarget: RaidTarget.create({
+		targetIndex: NO_TARGET,
+	}),
 });
 
 export const DefaultFrostConsumes = Consumes.create({
@@ -134,6 +142,9 @@ export const DefaultArcaneRotation = MageRotation.create({
 export const DefaultArcaneOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
+	focusMagicTarget: RaidTarget.create({
+		targetIndex: NO_TARGET,
+	}),
 });
 
 export const DefaultArcaneConsumes = Consumes.create({
