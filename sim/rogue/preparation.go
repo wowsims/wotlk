@@ -11,6 +11,8 @@ func (rogue *Rogue) registerPreparationCD() {
 		return
 	}
 
+	var affectedSpells = []*core.Spell{rogue.ColdBlood, rogue.Shadowstep, rogue.MasterOfSubtlety, rogue.Overkill}
+
 	rogue.Preparation = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 14185},
 		Cast: core.CastConfig{
@@ -25,10 +27,11 @@ func (rogue *Rogue) registerPreparationCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			// Reset Cooldown on Evasion, Sprint, Vanish (Overkill/Master of Subtlety), Cold Blood and Shadowstep
-			rogue.ColdBlood.CD.Reset()
-			rogue.Shadowstep.CD.Reset()
-			rogue.MasterOfSubtlety.CD.Reset()
-			rogue.Overkill.CD.Reset()
+			for _, affectedSpell := range affectedSpells {
+				if affectedSpell != nil {
+					affectedSpell.CD.Reset()
+				}
+			}
 		},
 	})
 

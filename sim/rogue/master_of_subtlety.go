@@ -32,7 +32,6 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 		ActionID: MasterOfSubtletyID,
 		Duration: time.Second * 6,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-
 			rogue.PseudoStats.DamageDealtMultiplier *= 1 + percent
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
