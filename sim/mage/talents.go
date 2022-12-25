@@ -10,6 +10,7 @@ import (
 
 func (mage *Mage) ApplyTalents() {
 	mage.applyArcaneConcentration()
+	mage.applyFocusMagic()
 	mage.applyIgnite()
 	mage.applyEmpoweredFire()
 	mage.applyMasterOfElements()
@@ -30,11 +31,6 @@ func (mage *Mage) ApplyTalents() {
 
 	if mage.Talents.StudentOfTheMind > 0 {
 		mage.MultiplyStat(stats.Spirit, 1.0+[]float64{0, .04, .07, .10}[mage.Talents.StudentOfTheMind])
-	}
-
-	if mage.Talents.FocusMagic {
-		totalCritPercent := float64(mage.Options.FocusMagicPercentUptime*3) / 100.0
-		mage.AddStat(stats.SpellCrit, totalCritPercent*core.CritRatingPerCritChance)
 	}
 
 	if mage.Talents.ArcaneMind > 0 {
