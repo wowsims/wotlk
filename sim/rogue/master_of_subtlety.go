@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Each rank is a different ID. 31223 is 3/3
@@ -34,10 +33,10 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 		Duration: time.Second * 6,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 
-			rogue.MultiplyStat(stats.AttackPower, 1.0+percent)
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 + percent
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.MultiplyStat(stats.AttackPower, 1.0/(1.0+percent))
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 / (1 + percent)
 		},
 	})
 	rogue.MasterOfSubtlety = rogue.RegisterSpell(core.SpellConfig{
