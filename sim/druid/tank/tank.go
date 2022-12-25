@@ -63,6 +63,13 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 	})
 	bear.ReplaceBearMHFunc = bear.TryMaul
 
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(bear.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
+
 	return bear
 }
 
