@@ -2,6 +2,7 @@ package core
 
 import (
 	"math"
+	"strconv"
 	"time"
 
 	"golang.org/x/exp/slices"
@@ -285,7 +286,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
 	if individualBuffs.FocusMagic {
-		character.AddStats(stats.Stats{stats.SpellCrit: 3 * CritRatingPerCritChance})
+		FocusMagicAura(nil, character)
 	}
 }
 
@@ -1253,4 +1254,64 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 			})
 		},
 	})
+}
+
+func FocusMagicAura(caster *Character, target *Character) (*Aura, *Aura) {
+	actionID := ActionID{SpellID: 54648}
+
+	var casterAura *Aura
+	var onHitCallback OnSpellHit
+	casterIndex := -1
+	if caster != nil {
+		casterIndex = int(caster.Index)
+		casterAura = caster.GetOrRegisterAura(Aura{
+			Label:    "Focus Magic",
+			ActionID: actionID,
+			Duration: time.Second * 10,
+			OnGain: func(aura *Aura, sim *Simulation) {
+				aura.Unit.AddStatsDynamic(sim, stats.Stats{
+					stats.SpellCrit: 3 * CritRatingPerCritChance,
+				})
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				aura.Unit.AddStatsDynamic(sim, stats.Stats{
+					stats.SpellCrit: -3 * CritRatingPerCritChance,
+				})
+			},
+		})
+
+		onHitCallback = func(_ *Aura, sim *Simulation, _ *Spell, result *SpellResult) {
+			if result.DidCrit() {
+				casterAura.Activate(sim)
+			}
+		}
+	}
+
+	var aura *Aura
+	if target != nil {
+		aura = target.GetOrRegisterAura(Aura{
+			Label:      "Focus Magic" + strconv.Itoa(casterIndex),
+			ActionID:   actionID.WithTag(int32(casterIndex)),
+			Duration:   NeverExpires,
+			BuildPhase: CharacterBuildPhaseBuffs,
+			OnReset: func(aura *Aura, sim *Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: onHitCallback,
+		})
+		aura.NewExclusiveEffect("FocusMagic", true, ExclusiveEffect{
+			OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+				ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+					stats.SpellCrit: 3 * CritRatingPerCritChance,
+				})
+			},
+			OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+				ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+					stats.SpellCrit: -3 * CritRatingPerCritChance,
+				})
+			},
+		})
+	}
+
+	return casterAura, aura
 }

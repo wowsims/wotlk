@@ -6,7 +6,6 @@ import (
 )
 
 var FireTalents = &proto.MageTalents{
-
 	ArcaneSubtlety:      2,
 	ArcaneFocus:         3,
 	ArcaneConcentration: 5,
@@ -69,7 +68,6 @@ var FrostTalents = &proto.MageTalents{
 }
 
 var ArcaneTalents = &proto.MageTalents{
-
 	ArcaneFocus:         3,
 	ArcaneSubtlety:      2,
 	ArcaneConcentration: 5,

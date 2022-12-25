@@ -33,6 +33,7 @@ import { RaidSimUI } from './raid_sim_ui.js';
 import { buffBotPresets, playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
+import { Mage_Options as MageOptions } from '../core/proto/mage.js';
 import { SmitePriest_Options as SmitePriestOptions } from '../core/proto/priest.js';
 import { MessageType } from '@protobuf-ts/runtime';
 
@@ -497,25 +498,7 @@ export class PlayerPicker extends Component {
 				this.partyPicker.party.setPlayer(eventID, this.index, newPlayer);
 
 				if (dragType == DragType.New) {
-					if (isTankSpec(newPlayer.spec)) {
-						const tanks = this.raidPicker.raid.getTanks();
-						const emptyIdx = tanks.findIndex(tank => this.raidPicker.raid.getPlayerFromRaidTarget(tank) == null);
-						if (emptyIdx == -1) {
-							if (tanks.length < 3) {
-								this.raidPicker.raid.setTanks(eventID, tanks.concat([newPlayer.makeRaidTarget()]));
-							}
-						} else {
-							tanks[emptyIdx] = newPlayer.makeRaidTarget();
-							this.raidPicker.raid.setTanks(eventID, tanks);
-						}
-					}
-
-					// On creation, boomies should default to innervating themselves.
-					if (newPlayer.spec == Spec.SpecBalanceDruid) {
-						setBalanceDruidSelfInnervate(eventID, newPlayer);
-					} else if (newPlayer.spec == Spec.SpecSmitePriest) {
-						setSmitePriestSelfPI(eventID, newPlayer);
-					}
+					applyNewPlayerAssignments(eventID, newPlayer, this.raidPicker.raid);
 				}
 			} else {
 				this.partyPicker.party.setPlayer(eventID, this.index, newPlayer);
@@ -759,13 +742,32 @@ class NewPlayerPicker extends Component {
 	}
 }
 
-function setBalanceDruidSelfInnervate(eventID: EventID, player: Player<any>) {
-	const newOptions = player.getSpecOptions() as BalanceDruidOptions;
-	newOptions.innervateTarget = newRaidTarget(player.getRaidIndex());
-	player.setSpecOptions(eventID, newOptions);
-}
-function setSmitePriestSelfPI(eventID: EventID, player: Player<any>) {
-	const newOptions = player.getSpecOptions() as SmitePriestOptions;
-	newOptions.powerInfusionTarget = newRaidTarget(player.getRaidIndex());
-	player.setSpecOptions(eventID, newOptions);
+function applyNewPlayerAssignments(eventID: EventID, newPlayer: Player<any>, raid: Raid) {
+	if (isTankSpec(newPlayer.spec)) {
+		const tanks = raid.getTanks();
+		const emptyIdx = tanks.findIndex(tank => raid.getPlayerFromRaidTarget(tank) == null);
+		if (emptyIdx == -1) {
+			if (tanks.length < 3) {
+				raid.setTanks(eventID, tanks.concat([newPlayer.makeRaidTarget()]));
+			}
+		} else {
+			tanks[emptyIdx] = newPlayer.makeRaidTarget();
+			raid.setTanks(eventID, tanks);
+		}
+	}
+
+	// Spec-specific assignments. For most cases, default to buffing self.
+	if (newPlayer.spec == Spec.SpecBalanceDruid) {
+		const newOptions = newPlayer.getSpecOptions() as BalanceDruidOptions;
+		newOptions.innervateTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newPlayer.setSpecOptions(eventID, newOptions);
+	} else if (newPlayer.spec == Spec.SpecSmitePriest) {
+		const newOptions = newPlayer.getSpecOptions() as SmitePriestOptions;
+		newOptions.powerInfusionTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newPlayer.setSpecOptions(eventID, newOptions);
+	} else if (newPlayer.spec == Spec.SpecMage) {
+		const newOptions = newPlayer.getSpecOptions() as MageOptions;
+		newOptions.focusMagicTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newPlayer.setSpecOptions(eventID, newOptions);
+	}
 }
