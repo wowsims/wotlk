@@ -137,7 +137,7 @@ export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	}
 
 	async onImport(data: string) {
-		const proto = IndividualSimSettings.fromJsonString(data);
+		const proto = IndividualSimSettings.fromJsonString(data, { ignoreUnknownFields: true });
 		if (proto.player?.equipment) {
 			await Database.loadLeftoversIfNecessary(proto.player.equipment);
 		}
