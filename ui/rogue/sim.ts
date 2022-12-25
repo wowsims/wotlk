@@ -13,6 +13,7 @@ import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	RogueMajorGlyph,
 	Rogue_Options_PoisonImbue,
@@ -238,6 +239,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				talents: [
 					Presets.AssassinationTalents,
 					Presets.CombatTalents,
+					Presets.SubtletyTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -257,12 +259,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
 				}
 				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
-			} else {
+			} else if (this.player.getTalents().combatPotency) {
 				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
 				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
 					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
 				}
+			} else {
+				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+				if (rotation.subtletyFinisherPriority == SubtletyPriority.SubtletyPriorityUnknown) {
+					rotation.subtletyFinisherPriority = Presets.DefaultRotation.subtletyFinisherPriority;
+				}
 			}
+
 			this.player.setRotation(c, rotation)
 			if (!options.applyPoisonsManually) {
 				const mhWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;

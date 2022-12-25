@@ -16,6 +16,7 @@ import {
 	Rogue_Rotation_Frequency,
 	Rogue_Rotation_AssassinationPriority,
 	Rogue_Rotation_CombatPriority,
+	Rogue_Rotation_SubtletyPriority,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -64,6 +65,7 @@ export const DefaultRotation = RogueRotation.create({
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
 	envenomEnergyThreshold: 60,

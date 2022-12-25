@@ -7,6 +7,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
 } from '../core/proto/rogue.js';
