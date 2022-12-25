@@ -42,6 +42,7 @@ type Rogue struct {
 	priorityItems      []roguePriorityItem
 	rotationItems      []rogueRotationItem
 	assassinationPrios []assassinationPrio
+	subtletyPrios      []subtletyPrio
 	bleedCategory      *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
@@ -198,6 +199,12 @@ func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier += multiplier
+}
+
+func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
+	const criticalPerSecond = 0.9
+	honorAmongThievesChance := []float64{0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
+	return criticalPerSecond * honorAmongThievesChance
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {

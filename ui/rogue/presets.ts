@@ -46,6 +46,18 @@ export const AssassinationTalents = {
 	}),
 };
 
+export const SubtletyTalents = {
+	name: 'Subtlety',
+	data: SavedTalents.create({
+		talentsString: '00502300523--5020032130320121350115031151',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfBackstab,
+			major2: RogueMajorGlyph.GlyphOfGarrote,
+			major3: RogueMajorGlyph.GlyphOfShadowDance,
+		})
+	}),
+}
+
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
 	minimumComboPointsExposeArmor: 4,
