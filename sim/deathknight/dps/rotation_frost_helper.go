@@ -31,7 +31,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 
 	km := dk.KM()
 	rime := dk.Rime()
-	if canCastSpell && dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*20 { // Based on Raised dead doing 30-40k versus Frost Strike's 8-10k
+	if canCastSpell && dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
 		return dk.RaiseDead
 	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && km {
 		return dk.FrostStrike
