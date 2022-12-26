@@ -202,9 +202,6 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 			stats.RangedAttackPower: math.Floor(bonusAP),
 		})
 	}
-	character.AddStats(stats.Stats{
-		stats.Health: GetTristateValueFloat(raidBuffs.CommandingShout, 1080, 1080*1.25),
-	})
 
 	if raidBuffs.FlametongueTotem {
 		MakePermanent(FlametongueTotemAura(character))
