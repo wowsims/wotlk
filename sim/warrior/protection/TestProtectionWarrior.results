@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 379.22343
   final_stats: 299
   final_stats: 15
-  final_stats: 41159.375
+  final_stats: 40079.375
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -486,7 +486,7 @@ dps_results: {
  value: {
   dps: 1938.87119
   tps: 5640.61754
-  hps: 18.27017
+  hps: 17.78651
  }
 }
 dps_results: {
