@@ -174,6 +174,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			rotationInputs: ProtectionPaladinInputs.ProtectionPaladinRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+					IconInputs.HealthBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
