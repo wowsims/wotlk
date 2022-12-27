@@ -205,6 +205,24 @@ export const HealingCadence = {
 	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
+export const BurstWindow = {
+	type: 'number' as const,
+	float: false,
+	label: 'TMI Burst Window',
+	labelTooltip: `
+		<p>Size in whole seconds of the burst window for calculating TMI. It is important to use a consistent setting when comparing this metric.</p>
+		<p>Default is 6 seconds. If set to 0, TMI calculations are disabled.</p>
+	`,
+	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
+	getValue: (player: Player<any>) => player.getHealingModel().burstWindow,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const healingModel = player.getHealingModel();
+		healingModel.burstWindow = newValue;
+		player.setHealingModel(eventID, healingModel);
+	},
+	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+};
+
 export const HpPercentForDefensives = {
 	type: 'number' as const,
 	float: true,

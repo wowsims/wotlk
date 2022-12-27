@@ -36,6 +36,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecFeralTankDruid>) {
 		super(parentElem, player, {
 			cssClass: 'feral-tank-druid-sim-ui',
+			cssScheme: 'druid',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],
@@ -163,6 +164,8 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.BurstWindow,
+					OtherInputs.InspirationUptime,
 					OtherInputs.HpPercentForDefensives,
 					DruidInputs.StartingRage,
 					OtherInputs.InFrontOfTarget,

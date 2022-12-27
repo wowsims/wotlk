@@ -16,6 +16,7 @@ message DpsTestResult {
 	double tps = 2;
 	double dtps = 3;
 	double hps = 4;
+	double tmi = 5;
 }
 
 message CastsTestResult {

@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1524.05
   final_stats: 280.72
   final_stats: 301.4
-  final_stats: 560
+  final_stats: 280
   final_stats: 109
   final_stats: 267
   final_stats: 1574.23692
@@ -455,8 +455,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 5770.00661
-  tps: 5871.50796
+  dps: 5720.88589
+  tps: 5822.38724
   dtps: 9.92959
  }
 }
@@ -507,22 +507,6 @@ dps_results: {
   dps: 5713.61771
   tps: 5815.11906
   dtps: 9.92959
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-Liadrin'sBattlegear"
- value: {
-  dps: 5625.20277
-  tps: 5724.06755
-  dtps: 9.92959
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-Liadrin'sPlate"
- value: {
-  dps: 4976.26492
-  tps: 5074.40293
-  dtps: 8.90286
  }
 }
 dps_results: {

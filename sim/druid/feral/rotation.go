@@ -12,14 +12,27 @@ import (
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
-	if cat.InForm(druid.Cat) {
+	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
 	}
 }
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
+	if !cat.GCD.IsReady(sim) {
+		return
+	}
+
 	cat.doRotation(sim)
+
+	// Replace gcd event with our own if we casted a spell
+	if !cat.GCD.IsReady(sim) {
+		nextGcd := cat.NextGCDAt()
+		cat.DoNothing()
+		cat.CancelGCDTimer(sim)
+
+		cat.NextRotationAction(sim, nextGcd)
+	}
 }
 
 func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -30,12 +43,34 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 		panic("auto attack out of form?")
 	}
 
-	cat.checkQueueMaul(sim)
+	// If the swing/Maul resulted in an Omen proc, then schedule the
+	// next player decision based on latency.
+
+	if cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
+		// Kick gcd loop, also need to account for any gcd 'left'
+		// otherwise it breaks gcd logic
+		kickTime := core.MaxDuration(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
+		cat.NextRotationAction(sim, kickTime)
+	}
+}
+
+func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
+	if cat.rotationAction != nil {
+		cat.rotationAction.Cancel(sim)
+	}
+
+	cat.rotationAction = &core.PendingAction{
+		Priority:     core.ActionPriorityGCD,
+		OnAction:     cat.OnGCDReady,
+		NextActionAt: kickAt,
+	}
+
+	sim.AddPendingAction(cat.rotationAction)
 }
 
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
-func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
+func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 	// If we will have enough time and Energy leeway to stay in
 	// Dire Bear Form once the GCD expires, then only Maul if we
 	// will be left with enough Rage to cast Mangle or Lacerate
@@ -78,7 +113,9 @@ func (cat *FeralDruid) checkQueueMaul(sim *core.Simulation) {
 	}
 
 	if cat.CurrentRage() >= maulRageThresh {
-		cat.QueueMaul(sim)
+		return cat.Maul
+	} else {
+		return nil
 	}
 }
 
@@ -106,7 +143,6 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 		if cat.Enrage.IsReady(sim) {
 			cat.Enrage.Cast(sim, nil)
 		}
-		cat.checkQueueMaul(sim)
 		return true
 	}
 }
@@ -141,6 +177,15 @@ func (cat *FeralDruid) berserkExpectedAt(sim *core.Simulation, futureTime time.D
 	return false
 }
 
+func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
+	// Calculate current damage-per-Energy of Rake vs. Shred. Used to
+	// determine whether Rake is worth casting when player stats change upon a
+	// dynamic proc occurring
+	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
+	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
+	return rakeDpc / 35., shredDpc / 42.
+}
+
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	ripdotRemaining := cat.RipDot.RemainingDuration(sim)
 	if !cat.RipDot.IsActive() || (ripdotRemaining < 10*time.Second) {
@@ -161,7 +206,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 
 	// Clip as soon as we have enough CPs for the new roar to expire well
 	// after the current rip
-	return newRoarDur >= (ripDur + cat.Rotation.MaxRoarOffset)
+	return newRoarDur >= (ripDur + cat.Rotation.MinRoarOffset)
 }
 
 func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Duration) bool {
@@ -198,7 +243,7 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		cat.TigersFury.Cast(sim, nil)
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		cat.WaitUntil(sim, sim.CurrentTime+gcdTimeToRdy)
+		cat.NextRotationAction(sim, sim.CurrentTime+leewayTime)
 	}
 }
 
@@ -216,13 +261,10 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// If we previously decided to shift, then execute the shift now once
 	// the input delay is over.
 	if cat.readyToShift {
-		didShift := cat.shiftBearCat(sim, false)
-		if !didShift {
-			panic("didnt shift?")
-		}
+		cat.shiftBearCat(sim, false)
 		// Reset swing timer from snek (or idol/weapon swap) when going into cat
 		if cat.InForm(druid.Cat) && cat.Rotation.SnekWeave {
-			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime)
+			cat.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 		}
 		return
 	}
@@ -261,7 +303,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rakeNow := rotation.UseRake && !cat.RakeDot.IsActive() && (simTimeRemain > cat.RakeDot.Duration) && !isClearcast
 
-	//berserkEnergyThresh := core.TernaryFloat64(isClearcast, 80.0, 90.0)
+	// Additionally, don't Rake if the current Shred DPE is higher due to
+	// trinket procs etc.
+	if rakeNow {
+		rakeDpe, shredDpe := cat.calcBuilderDpe(sim)
+		rakeNow = (rakeDpe > shredDpe)
+	}
+
 	// Berserk algorithm: time Berserk for just after a Tiger's Fury
 	// *unless* we'll lose Berserk uptime by waiting for Tiger's Fury to
 	// come off cooldown. The latter exception is necessary for
@@ -322,7 +370,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 
 	weaveEnd := time.Duration(float64(sim.CurrentTime) + (4.5+2*latencySecs)*float64(time.Second))
-
 	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!ripRefreshPending || cat.RipDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
 
 	if bearweaveNow && rotation.BearweaveType != proto.FeralDruid_Rotation_Lacerate {
@@ -368,6 +415,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.BaseCost {
 			flowershiftNow = false
 			cat.Metrics.MarkOOM(sim)
+
 		}
 	}
 
@@ -430,11 +478,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 
 		buildLacerate := !cat.LacerateDot.IsActive() || cat.LacerateDot.GetStacks() < 5
-
 		maintainLacerate := !buildLacerate && (lacRemain <= rotation.LacerateTime) && (curRage < 38 || shiftNext) && (lacRemain < simTimeRemain)
 
 		lacerateNow := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && (buildLacerate || maintainLacerate)
-
 		emergencyLacerate := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.LacerateDot.IsActive() && (lacRemain < 3*time.Second+2*cat.latency) && lacRemain < simTimeRemain
 
 		if (rotation.BearweaveType != proto.FeralDruid_Rotation_Lacerate) || !lacerateNow {
@@ -453,7 +499,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
 		} else if shiftNow {
-
 			// If we are resetting our swing timer using Albino Snake or a
 			// duplicate weapon swap, then do an additional check here to
 			// see whether we can delay the shift until the next bear swing
@@ -582,7 +627,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if nextAction <= sim.CurrentTime {
 		panic("nextaction in the past")
 	} else {
-		cat.WaitUntil(sim, nextAction)
+		cat.NextRotationAction(sim, nextAction)
 	}
 }
 
@@ -602,7 +647,7 @@ type FeralDruidRotation struct {
 	MangleSpam         bool
 	BerserkBiteThresh  float64
 	Powerbear          bool
-	MaxRoarOffset      time.Duration
+	MinRoarOffset      time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
 	SnekWeave          bool
@@ -621,10 +666,26 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
-		MaxRoarOffset:      time.Duration(float64(rotation.MaxRoarOffset) * float64(time.Second)),
+		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       10.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
 		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
+	}
+
+	// Use automatic values unless specified
+	if rotation.ManualParams {
+		return
+	}
+
+	cat.Rotation.UseRake = true
+	cat.Rotation.UseBite = true
+	if cat.Rotation.FlowerWeave {
+		cat.Rotation.MinRoarOffset = 13 * time.Second
+		cat.Rotation.BiteTime = 4 * time.Second
+
+	} else {
+		cat.Rotation.MinRoarOffset = 14 * time.Second
+		cat.Rotation.BiteTime = 10 * time.Second
 	}
 }

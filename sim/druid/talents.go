@@ -249,7 +249,9 @@ func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
 }
 
 func (druid *Druid) applyOmenOfClarity() {
-	if !druid.Talents.OmenOfClarity {
+	// Feral 2p needs clearcasting aura
+	// Interaction here between boomkin set and feral is probably incorrect, but kinda irrelevant
+	if !druid.Talents.OmenOfClarity && !druid.HasSetBonus(ItemSetNightsongBattlegear, 2) {
 		return
 	}
 
@@ -321,6 +323,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 	})
+
+	if !druid.Talents.OmenOfClarity {
+		return
+	}
 
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",

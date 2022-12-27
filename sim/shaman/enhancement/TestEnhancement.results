@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1356.85
   final_stats: 831.6
   final_stats: 320.1
-  final_stats: 3213.15556
+  final_stats: 2933.15556
   final_stats: 109
   final_stats: 374
   final_stats: 1448.17453
@@ -453,8 +453,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 6741.39355
-  tps: 3822.35197
+  dps: 6734.636
+  tps: 3818.03679
  }
 }
 dps_results: {

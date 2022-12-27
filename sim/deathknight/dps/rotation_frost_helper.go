@@ -26,18 +26,22 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim
 func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *deathknight.RuneSpell {
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
+	canCastAbility := sim.CurrentTime+abGcd <= untilTime
+	canCastSpell := sim.CurrentTime+spGcd <= untilTime
 
 	km := dk.KM()
 	rime := dk.Rime()
-	if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && km {
+	if canCastSpell && dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
+		return dk.RaiseDead
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && km {
 		return dk.FrostStrike
-	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
 		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HowlingBlast.CanCast(sim) && rime {
+	} else if canCastSpell && dk.HowlingBlast.CanCast(sim) && rime {
 		return dk.HowlingBlast
-	} else if sim.CurrentTime+abGcd <= untilTime && dk.FrostStrike.CanCast(sim) {
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim) {
 		return dk.FrostStrike
-	} else if sim.CurrentTime+spGcd <= untilTime && dk.HornOfWinter.CanCast(sim) {
+	} else if canCastSpell && dk.HornOfWinter.CanCast(sim) {
 		return dk.HornOfWinter
 	} else {
 		return nil

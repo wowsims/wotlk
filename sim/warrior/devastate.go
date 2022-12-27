@@ -46,6 +46,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
 
 	weaponMulti := 1.2
+	overallMulti := core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsPlate, 2), 1.05, 1.00)
 
 	warrior.Devastate = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47498},
@@ -67,7 +68,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 		BonusCritRating: 5*core.CritRatingPerCritChance*float64(warrior.Talents.SwordAndBoard) +
 			core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerPlate, 2), 10*core.CritRatingPerCritChance, 0),
 
-		DamageMultiplier: weaponMulti * core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsPlate, 2), 1.05, 1.00),
+		DamageMultiplier: overallMulti,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  flatThreatBonus,
@@ -80,7 +81,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 				sunderBonus = 242 * float64(core.MinInt32(saStacks+1, 5))
 			}
 
-			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) + sunderBonus
+			baseDamage := (weaponMulti * spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())) + sunderBonus
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage+dynaThreatBonus*spell.MeleeAttackPower())

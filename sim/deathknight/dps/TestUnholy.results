@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1720.95
   final_stats: 174.9
   final_stats: 228.8
-  final_stats: 560
+  final_stats: 280
   final_stats: 109
   final_stats: 327.696
   final_stats: 1023.28
@@ -446,8 +446,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 7532.14912
-  tps: 4740.15666
+  dps: 7526.47486
+  tps: 4736.13967
   hps: 274.47683
  }
 }

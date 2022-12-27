@@ -156,15 +156,17 @@ func (hunter *Hunter) Initialize() {
 	}
 }
 
-func (hunter *Hunter) Reset(sim *core.Simulation) {
-	hunter.mayMoveAt = 0
-	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
-	hunter.permaHawk = false
-
+func (hunter *Hunter) Prepull(sim *core.Simulation) {
 	if hunter.Options.UseHuntersMark {
 		huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
 		huntersMarkAura.Activate(sim)
 	}
+}
+
+func (hunter *Hunter) Reset(sim *core.Simulation) {
+	hunter.mayMoveAt = 0
+	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
+	hunter.permaHawk = false
 }
 
 func NewHunter(character core.Character, options *proto.Player) *Hunter {

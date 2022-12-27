@@ -59,7 +59,7 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 			BiteTime:           10.0,
 			MaintainFaerieFire: true,
 			BerserkBiteThresh:  30.0,
-			MaxRoarOffset:      14.0,
+			MinRoarOffset:      14.0,
 			SnekWeave:          true,
 			FlowerWeave:        false,
 			RaidTargets:        30,

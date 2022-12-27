@@ -322,6 +322,8 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 func (sim *Simulation) runOnce() {
 	sim.reset()
 
+	sim.Raid.Prepull(sim)
+
 	for {
 		last := len(sim.pendingActions) - 1
 		pa := sim.pendingActions[last]

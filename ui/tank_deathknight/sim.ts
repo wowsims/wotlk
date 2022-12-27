@@ -29,6 +29,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecTankDeathknight>) {
 		super(parentElem, player, {
 			cssClass: 'tank-deathknight-sim-ui',
+			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"<p>Completely unfinished.</p>"
@@ -163,6 +164,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InFrontOfTarget,
 					DeathKnightInputs.StartingRunicPower,

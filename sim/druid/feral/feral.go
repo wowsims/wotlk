@@ -52,17 +52,12 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat.EnableAutoAttacks(cat, core.AutoAttackOptions{
 		// Base paw weapon.
-		MainHand: core.Weapon{
-			BaseDamageMin:              43,
-			BaseDamageMax:              66,
-			SwingSpeed:                 1.0,
-			NormalizedSwingSpeed:       1.0,
-			SwingDuration:              time.Second,
-			CritMultiplier:             cat.MeleeCritMultiplier(druid.Cat),
-			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
-		},
+		MainHand:       cat.GetCatWeapon(),
 		AutoSwingMelee: true,
 	})
+	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		return cat.checkReplaceMaul(sim)
+	}
 
 	return cat
 }
@@ -81,6 +76,8 @@ type FeralDruid struct {
 	maxRipTicks    int32
 	berserkUsed    bool
 	bleedAura      *core.Aura
+
+	rotationAction *core.PendingAction
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -94,10 +91,18 @@ func (cat *FeralDruid) MissChance() float64 {
 	return miss + dodge
 }
 
+func (cat *FeralDruid) Prepull(sim *core.Simulation) {
+	if cat.prepopOoc && cat.Talents.OmenOfClarity {
+		cat.ClearcastingAura.Activate(sim)
+	}
+	if cat.PrePopBerserk && cat.Talents.Berserk {
+		cat.Berserk.CD.UsePrePull(sim, time.Second)
+	}
+}
+
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
-	cat.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {
@@ -107,11 +112,4 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.readyToShift = false
 	cat.waitingForTick = false
 	cat.berserkUsed = false
-
-	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.ClearcastingAura.Activate(sim)
-	}
-	if cat.PrePopBerserk && cat.Talents.Berserk {
-		cat.Berserk.CD.UsePrePull(sim, time.Second)
-	}
 }

@@ -35,6 +35,7 @@ export interface ResultMetrics {
 	dps:   string,
 	dpasp: string,
 	dtps:  string,
+	tmi:   string,
 	dur:   string,
 	hps:   string,
 	tps:   string,
@@ -60,6 +61,7 @@ export class RaidSimResultsManager {
 		dpasp: 'demo',
 		tps:   'threat',
 		dtps:  'threat',
+		tmi:   'threat',
 		cod:   'threat',
 		tto:   'healing',
 		hps:   'healing',
@@ -70,6 +72,7 @@ export class RaidSimResultsManager {
 		dps:    'results-sim-dps',
 		dpasp:  'results-sim-dpasp',
 		dtps:   'results-sim-dtps',
+		tmi:    'results-sim-tmi',
 		dur:    'results-sim-dur',
 		hps:    'results-sim-hps',
 		tps:    'results-sim-tps',
@@ -103,35 +106,19 @@ export class RaidSimResultsManager {
 	}
 
 	setSimProgress(progress: ProgressMetrics) {
-		if (progress.presimRunning) {
-			this.simUI.resultsViewer.setContent(`
-				<div class="results-sim">
-						<div class="results-sim-dps damage-metrics">
-							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
-						</div>
-						<div class="results-sim-hps healing-metrics">
-							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
-						</div>
-						<div class="">
-							presimulations running
-						</div>
+		this.simUI.resultsViewer.setContent(`
+			<div class="results-sim">
+				<div class="results-sim-dps damage-metrics">
+					<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
 				</div>
-			`);
-		} else {
-			this.simUI.resultsViewer.setContent(`
-				<div class="results-sim">
-						<div class="results-sim-dps damage-metrics">
-							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
-						</div>
-						<div class="results-sim-hps healing-metrics">
-							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
-						</div>
-						<div class="">
-							${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
-						</div>
+				${!this.simUI.isIndividualSim() ? '' : `<div class="results-sim-hps healing-metrics">
+					<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
+				</div>`}
+				<div class="">
+					${progress.presimRunning ? 'presimulations running' : `${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete`}
 				</div>
-			`);
-		}
+			</div>
+		`);
 	}
 
 	setSimResult(eventID: EventID, simResult: SimResult) {
@@ -158,7 +145,7 @@ export class RaidSimResultsManager {
 						data-bs-toggle="tooltip"
 						data-bs-title="Use as reference"
 					>
-						<i class="fa fa-map-pin fa-lg text-primary me-2"></i>Save as Reference
+						<i class="fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2"></i>Save as Reference
 					</a>
 					<div class="results-sim-reference-bar">
 						<a href="javascript:void(0)" class="results-sim-reference-swap me-3" role="button">
@@ -188,6 +175,11 @@ export class RaidSimResultsManager {
 		setResultTooltip('results-sim-hps', 'Healing+Shielding Per Second, including overhealing.');
 		setResultTooltip('results-sim-tps', 'Threat Per Second');
 		setResultTooltip('results-sim-dtps', 'Damage Taken Per Second');
+		setResultTooltip('results-sim-tmi', `
+			<p>Theck-Meloree Index (TMI)</p>
+			<p>A measure of incoming damage smoothness which combines the benefits of avoidance with effective health.</p>
+			<p><b>Lower is better.</b> This represents the % of your HP to expect in a 6-second burst window based on the encounter settings.</p>
+		`);
 		setResultTooltip('results-sim-cod', `
 			<p>Chance of Death</p>
 			<p>The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the <b>Incoming HPS</b> and <b>Healing Cadence</b> options).</p>
@@ -196,10 +188,13 @@ export class RaidSimResultsManager {
 
 		if (!this.simUI.isIndividualSim()) {
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-diff-separator')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dpasp-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-cod-diff')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-dpasp')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tto')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-hps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-dtps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tmi')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-cod')).forEach(e => e.remove());
 		}
 
 		const simReferenceElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference')[0] as HTMLDivElement;
@@ -263,18 +258,23 @@ export class RaidSimResultsManager {
 		}
 
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
-		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dpasp']} .results-reference-diff`, res => res.getPlayers()[0]!.dpasp, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tto']} .results-reference-diff`, res => res.getPlayers()[0]!.tto, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tps']} .results-reference-diff`, res => res.getPlayers()[0]!.tps, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dtps']} .results-reference-diff`, res => res.getPlayers()[0]!.dtps, 2, true);
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tmi']} .results-reference-diff`, res => res.getPlayers()[0]!.tmi, 2, true);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['cod']} .results-reference-diff`, res => res.getPlayers()[0]!.chanceOfDeath, 1, true);
 		}
 	}
 
 	private formatToplineResult(querySelector: string, getMetrics: (result: SimResult) => DistributionMetricsProto|number, precision: number, lowerIsBetter?: boolean) {
 		const elem = this.simUI.resultsViewer.contentElem.querySelector(querySelector) as HTMLSpanElement;
+		if (!elem) {
+			return;
+		}
+
 		const cur = this.currentData!.simResult;
 		const ref = this.referenceData!.simResult;
 		const curMetricsTemp = getMetrics(cur);
@@ -363,6 +363,7 @@ export class RaidSimResultsManager {
 				const dpaspMetrics = playerMetrics.dpasp;
 				const tpsMetrics = playerMetrics.tps;
 				const dtpsMetrics = playerMetrics.dtps;
+				const tmiMetrics = playerMetrics.tmi;
 				content += this.buildResultsLine({
 					average: dpsMetrics.avg,
 					stdev: dpsMetrics.stdev,
@@ -389,6 +390,11 @@ export class RaidSimResultsManager {
 					average: dtpsMetrics.avg,
 					stdev: dtpsMetrics.stdev,
 					classes: this.getResultsLineClasses('dtps'),
+				}).outerHTML;
+				content += this.buildResultsLine({
+					average: tmiMetrics.avg,
+					stdev: tmiMetrics.stdev,
+					classes: this.getResultsLineClasses('tmi'),
 				}).outerHTML;
 				content += this.buildResultsLine({
 					average: playerMetrics.chanceOfDeath,
@@ -479,4 +485,5 @@ export class RaidSimResultsManager {
 
 		return resultsFragment.children[0] as HTMLElement;
 	}
+
 }

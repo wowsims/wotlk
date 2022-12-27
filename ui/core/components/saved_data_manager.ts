@@ -4,6 +4,7 @@ import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
 import { Component } from '../components/component.js';
 import { Tooltip } from 'bootstrap';
 import { json } from 'stream/consumers';
+import { SimUI } from '../sim_ui.js';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
@@ -36,6 +37,7 @@ type SavedData<ModObject, T> = {
 };
 
 export class SavedDataManager<ModObject, T> extends Component {
+	private readonly simUI: SimUI;
 	private readonly modObject: ModObject;
 	private readonly config: SavedDataManagerConfig<ModObject, T>;
 
@@ -46,8 +48,9 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private readonly saveInput?: HTMLInputElement;
 	private frozen: boolean;
 
-	constructor(parent: HTMLElement, modObject: ModObject, config: SavedDataManagerConfig<ModObject, T>) {
+	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: SavedDataManagerConfig<ModObject, T>) {
 		super(parent, 'saved-data-manager-root');
+		this.simUI = simUI;
 		this.modObject = modObject;
 		this.config = config;
 
@@ -210,7 +213,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			<div class="saved-data-create-container">
 				<label class="form-label">${this.config.label} Name</label>
 				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
-				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
+				<button class="saved-data-save-button btn btn-${this.simUI.cssScheme}">Save ${this.config.label}</button>
 			</div>
 		`;
 

@@ -1,4 +1,4 @@
-import { RaidTarget } from '../core/proto/common.js';
+import { RaidTarget, SpellSchool } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
@@ -97,27 +97,37 @@ export const FeralDruidRotationConfig = {
 			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None && player.getRotation().flowerWeave == true,
 		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'hotUptime',
-			label: 'Revitalize Hot Uptime',
-			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
-			percent: true,
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Analytical,
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'manualParams',
+			label: 'Manual Advanced Parameters',
+			labelTooltip: 'Manually specify advanced parameters, otherwise will use preset defaults',
 		}),
+
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'maxRoarOffset',
+			fieldName: 'minRoarOffset',
 			label: 'Roar Offset',
 			labelTooltip: 'Targeted offset in Rip/Roar timings',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'useBite',
-			label: 'Bite during rotation',
-			labelTooltip: 'Use bite during rotation rather than just at end',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'useRake',
 			label: 'Use Rake',
 			labelTooltip: 'Use rake during rotation',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'useBite',
+			label: 'Bite during rotation',
+			labelTooltip: 'Use bite during rotation rather than just at end',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'biteTime',
+			label: 'Bite Time',
+			labelTooltip: 'Min seconds on Rip/Roar to bite',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => 
+				player.getRotation().manualParams && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
 		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
@@ -130,10 +140,11 @@ export const FeralDruidRotationConfig = {
 		//	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true
 		//}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'biteTime',
-			label: 'Bite Time',
-			labelTooltip: 'Min seconds on Rip/Roar to bite',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+			fieldName: 'hotUptime',
+			label: 'Revitalize Hot Uptime',
+			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
+			percent: true,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Analytical,
 		}),
 	],
 };

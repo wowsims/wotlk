@@ -30,6 +30,7 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecSmitePriest>) {
 		super(parentElem, player, {
 			cssClass: 'smite-priest-sim-ui',
+			cssScheme: 'priest',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

@@ -26,5 +26,14 @@
         }
       }
     }
+
+		.consumes-section {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+
+			.icon-picker-root {
+				margin: 3px;
+			}
+		}
   }
 }

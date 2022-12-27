@@ -2,15 +2,9 @@ $theme: 'warrior';
 
 // Set color variables which control the site theme.
 .warrior-sim-ui {
-	--theme-color-primary: #e2563f;
 	--theme-color-background: #1e0f0c;
 	--theme-color-background-raw: 29, 21, 16;
 	--theme-background-image: url('/wotlk/assets/img/warrior_background.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.warrior-sim-ui .self-buffs-section {
-  grid-template-columns: repeat(2, 1fr);
 }

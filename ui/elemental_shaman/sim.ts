@@ -23,6 +23,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
 		super(parentElem, player, {
 			cssClass: 'elemental-shaman-sim-ui',
+			cssScheme: 'shaman',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

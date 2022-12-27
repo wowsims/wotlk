@@ -215,6 +215,7 @@ message UnitMetrics {
 	DistributionMetrics dpasp = 16;
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
+	DistributionMetrics tmi = 17;
 	DistributionMetrics hps = 14;
 	DistributionMetrics tto = 15; // Time To OOM, in seconds.
 

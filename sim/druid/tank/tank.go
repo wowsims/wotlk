@@ -1,8 +1,6 @@
 package tank
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/druid"
@@ -57,20 +55,20 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
 		// Base paw weapon.
-		MainHand: core.Weapon{
-			BaseDamageMin:              109,
-			BaseDamageMax:              165,
-			SwingSpeed:                 2.5,
-			NormalizedSwingSpeed:       2.5,
-			SwingDuration:              time.Millisecond * 2500,
-			CritMultiplier:             bear.MeleeCritMultiplier(druid.Bear),
-			MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
-		},
+		MainHand:       bear.GetBearWeapon(),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 			return bear.TryMaul(sim, mhSwingSpell)
 		},
 	})
+	bear.ReplaceBearMHFunc = bear.TryMaul
+
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(bear.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
 
 	return bear
 }

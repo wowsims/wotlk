@@ -306,7 +306,6 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := spell.Unit.RangedWeaponDamage(sim, spell.RangedAttackPower(target)) +
 				spell.BonusWeaponDamage()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
-			agent.OnAutoAttack(sim, unit.AutoAttacks.RangedAuto)
 		},
 	}
 
@@ -555,6 +554,7 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
+	aa.agent.OnAutoAttack(sim, aa.RangedAuto)
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
@@ -584,18 +584,29 @@ func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
 
 // StopMeleeUntil should be used whenever a non-melee spell is cast. It stops melee, then restarts it
 // at end of cast, but with a reset swing timer (as if swings had just landed).
-func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration) {
+func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, desyncOH bool) {
 	if !aa.AutoSwingMelee { // if not auto swinging, don't auto restart.
 		return
 	}
 	aa.CancelAutoSwing(sim)
 
-	// schedule restart action
-	sim.AddPendingAction(&PendingAction{
-		NextActionAt: readyAt,
-		Priority:     ActionPriorityAuto,
-		OnAction:     aa.restartMelee,
-	})
+	// Used by warrior to desync offhand after Shattering Throw.
+	if desyncOH {
+		// schedule restart action
+		sim.AddPendingAction(&PendingAction{
+			NextActionAt: readyAt,
+			Priority:     ActionPriorityAuto,
+			OnAction:     aa.desyncedRestartMelee,
+		})
+	} else {
+		// schedule restart action
+		sim.AddPendingAction(&PendingAction{
+			NextActionAt: readyAt,
+			Priority:     ActionPriorityAuto,
+			OnAction:     aa.restartMelee,
+		})
+	}
+
 }
 
 func (aa *AutoAttacks) restartMelee(sim *Simulation) {
@@ -606,6 +617,21 @@ func (aa *AutoAttacks) restartMelee(sim *Simulation) {
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	if aa.IsDualWielding {
 		aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
+	}
+	aa.autoSwingCancelled = false
+	aa.resetAutoSwing(sim)
+}
+
+// Emulating how desyncing OH works in the game.
+// After swing timer has passed half the swing time, Offhand swing timer will be reset.
+func (aa *AutoAttacks) desyncedRestartMelee(sim *Simulation) {
+	if !aa.autoSwingCancelled {
+		panic("desyncedRestartMelee used while auto swing isn't cancelled")
+	}
+
+	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
+	if aa.IsDualWielding {
+		aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed() + aa.OffhandSwingSpeed()/2
 	}
 	aa.autoSwingCancelled = false
 	aa.resetAutoSwing(sim)
