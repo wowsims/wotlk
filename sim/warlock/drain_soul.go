@@ -16,7 +16,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
+		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        core.SpellFlagChanneled,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

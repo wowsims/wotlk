@@ -128,7 +128,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 		Cast: core.CastConfig{
@@ -179,7 +179,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 	warlock.CurseOfDoom = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
+		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
