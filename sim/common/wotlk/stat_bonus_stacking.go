@@ -200,7 +200,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
-		Callback:  core.CallbackOnHealDealt | core.CallbackOnSpellHitDealt,
+		Callback:  core.CallbackOnCastComplete,
 		ProcMask:  core.ProcMaskSpellHealing | core.ProcMaskSpellDamage,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
