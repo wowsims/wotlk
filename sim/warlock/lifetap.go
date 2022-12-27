@@ -23,7 +23,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 	warlock.LifeTap = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskSpellDamage,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
