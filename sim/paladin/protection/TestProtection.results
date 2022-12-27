@@ -313,8 +313,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3232.63608
-  tps: 7789.97554
+  dps: 3217.35475
+  tps: 7750.64139
  }
 }
 dps_results: {
@@ -706,8 +706,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
-  dps: 3264.84365
-  tps: 7870.19853
+  dps: 3214.44018
+  tps: 7744.23048
  }
 }
 dps_results: {

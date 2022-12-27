@@ -742,7 +742,7 @@ dps_results: {
  key: "TestFeral-AllItems-SparkofLife-37657"
  value: {
   dps: 7260.7713
-  tps: 7726.23447
+  tps: 7727.273
  }
 }
 dps_results: {

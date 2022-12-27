@@ -26,6 +26,10 @@ type ProcStatBonusEffect struct {
 
 func newProcStatBonusEffect(config ProcStatBonusEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
+		if config.Callback == core.CallbackOnCastComplete {
+			return
+		}
+
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
 

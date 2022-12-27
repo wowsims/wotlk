@@ -644,7 +644,7 @@ dps_results: {
  key: "TestHunter-AllItems-SparkofLife-37657"
  value: {
   dps: 6925.33422
-  tps: 5937.45794
+  tps: 5939.14921
  }
 }
 dps_results: {

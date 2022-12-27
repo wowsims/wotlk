@@ -320,8 +320,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6786.44061
-  tps: 3840.02577
+  dps: 6681.0521
+  tps: 3773.99843
  }
 }
 dps_results: {
@@ -453,8 +453,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 6734.636
-  tps: 3818.03679
+  dps: 6581.75156
+  tps: 3722.31731
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SparkofLife-37657"
  value: {
-  dps: 6663.91918
-  tps: 3760.52819
+  dps: 6667.77853
+  tps: 3780.86815
  }
 }
 dps_results: {
