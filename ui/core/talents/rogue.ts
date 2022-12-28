@@ -768,7 +768,7 @@ export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(
 					rowIdx: 8,
 					colIdx: 0,
 				},
-				spellIds: [51698, 51700, 51671],
+				spellIds: [51698, 51700, 51701],
 				maxPoints: 3,
 			},
 			{
