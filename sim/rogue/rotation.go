@@ -29,6 +29,10 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 		rogue.OnCanAct(sim)
 		return
 	}
+	if rogue.Talents.Shadowstep && sim.GetNumTargets() <= 3 {
+		rogue.OnCanActSubtlety(sim)
+		return
+	}
 	if rogue.KillingSpreeAura.IsActive() {
 		rogue.DoNothing()
 		return
@@ -74,6 +78,7 @@ const (
 
 func (rogue *Rogue) energyToBuild(points int32) float64 {
 	costPerBuilder := rogue.Builder.DefaultCast.Cost
+
 	buildersNeeded := math.Ceil(float64(points) / float64(rogue.BuilderPoints))
 	return buildersNeeded * costPerBuilder
 }

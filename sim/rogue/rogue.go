@@ -52,31 +52,32 @@ type Rogue struct {
 
 	maxEnergy float64
 
-	BuilderPoints    int32
-	Builder          *core.Spell
-	Backstab         *core.Spell
-	BladeFlurry      *core.Spell
-	DeadlyPoison     *core.Spell
-	FanOfKnives      *core.Spell
-	Feint            *core.Spell
-	Garrote          *core.Spell
-	Ambush           *core.Spell
-	Hemorrhage       *core.Spell
-	GhostlyStrike    *core.Spell
-	HungerForBlood   *core.Spell
-	InstantPoison    [3]*core.Spell
-	WoundPoison      [3]*core.Spell
-	Mutilate         *core.Spell
-	Shiv             *core.Spell
-	SinisterStrike   *core.Spell
-	TricksOfTheTrade *core.Spell
-	Shadowstep       *core.Spell
-	Preparation      *core.Spell
-	Premeditation    *core.Spell
-	ShadowDance      *core.Spell
-	ColdBlood        *core.Spell
-	MasterOfSubtlety *core.Spell
-	Overkill         *core.Spell
+	BuilderPoints     int32
+	Builder           *core.Spell
+	Backstab          *core.Spell
+	BladeFlurry       *core.Spell
+	DeadlyPoison      *core.Spell
+	FanOfKnives       *core.Spell
+	Feint             *core.Spell
+	Garrote           *core.Spell
+	Ambush            *core.Spell
+	Hemorrhage        *core.Spell
+	GhostlyStrike     *core.Spell
+	HungerForBlood    *core.Spell
+	InstantPoison     [3]*core.Spell
+	WoundPoison       [3]*core.Spell
+	Mutilate          *core.Spell
+	Shiv              *core.Spell
+	SinisterStrike    *core.Spell
+	TricksOfTheTrade  *core.Spell
+	Shadowstep        *core.Spell
+	Preparation       *core.Spell
+	Premeditation     *core.Spell
+	ShadowDance       *core.Spell
+	ColdBlood         *core.Spell
+	MasterOfSubtlety  *core.Spell
+	Overkill          *core.Spell
+	HonorAmongThieves *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -91,6 +92,7 @@ type Rogue struct {
 	instantPoisonPPMM           core.PPMManager
 	ruptureDot                  *core.Dot
 	woundPoisonPPMM             core.PPMManager
+	HonorAmongThievesDot        *core.Dot
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura

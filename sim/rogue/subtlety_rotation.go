@@ -165,7 +165,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			energyNeeded := core.MinFloat(r.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThreshold))
 			// Don't pool when fight is about to end
 			if s.GetRemainingDuration() <= time.Second*4 {
-				energyNeeded = r.Envenom[1].DefaultCast.Cost
+				energyNeeded = r.Eviscerate[1].DefaultCast.Cost
 			}
 			energyNeeded = core.MaxFloat(r.Eviscerate[1].DefaultCast.Cost, energyNeeded)
 			minimumCP := int32(4)
@@ -223,6 +223,9 @@ func (rogue *Rogue) doSubtletyRotation(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) OnCanActSubtlety(sim *core.Simulation) {
+	if !rogue.HonorAmongThievesDot.IsActive() {
+		rogue.HonorAmongThieves.Cast(sim, rogue.CurrentTarget)
+	}
 	if rogue.KillingSpreeAura.IsActive() {
 		rogue.DoNothing()
 		return

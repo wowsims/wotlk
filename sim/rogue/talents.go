@@ -52,6 +52,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerMasterOfSubtletyCD()
 	rogue.registerPreparationCD()
 	rogue.registerGhostlyStrikeSpell()
+	rogue.registerHonorAmongThieves()
 }
 
 // dwsMultiplier returns the offhand damage multiplier
@@ -600,21 +601,49 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 	rogue.registerKillingSpreeSpell()
 }
 
-func (rogue *Rogue) applyHonorAmongThieves() {
+func (rogue *Rogue) registerHonorAmongThieves() {
 	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
 	if rogue.Talents.HonorAmongThieves == 0 {
 		return
 	}
 
 	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
-	// procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
-	// comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
+	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
+	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
+	honorAmongThievesID := core.ActionID{SpellID: 51701}
 
-	rogue.RegisterAura(core.Aura{
-		Label:    "Honor Among Thieves",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
+	rogue.HonorAmongThievesDot = core.NewDot(core.Dot{
+		Spell: rogue.HonorAmongThieves,
+		Aura: rogue.RegisterAura(core.Aura{
+			Label:    "Honor Among Thieves",
+			ActionID: honorAmongThievesID,
+		}),
+		NumberOfTicks: 0, // Set dynamically
+		TickLength:    time.Second,
+
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			// Tick effect here
+			if sim.Proc(procChance, "Honor Among Thieves") {
+				rogue.AddComboPoints(sim, 1, comboMetrics)
+			}
+		},
+	})
+
+	rogue.HonorAmongThieves = rogue.RegisterSpell(core.SpellConfig{
+		ActionID: honorAmongThievesID,
+
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: 0,
+			},
+			IgnoreHaste: true,
+		},
+
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.HonorAmongThievesDot.Spell = spell
+			rogue.HonorAmongThievesDot.NumberOfTicks = int32(sim.Duration + sim.DurationVariation)
+			rogue.HonorAmongThievesDot.RecomputeAuraDuration()
+			rogue.HonorAmongThievesDot.Apply(sim)
 		},
 	})
 }
