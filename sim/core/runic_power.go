@@ -136,6 +136,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
 		isACopy:          false,
+		btslot:           -1,
 	}
 
 	unit.bloodRuneGainMetrics = unit.NewBloodRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionBloodRuneGain, Tag: 1})

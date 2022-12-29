@@ -109,15 +109,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6398.13427
-  tps: 3742.02026
+  dps: 6422.92824
+  tps: 3757.54075
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6173.93473
-  tps: 3608.63277
+  dps: 6202.63721
+  tps: 3625.22005
  }
 }
 dps_results: {
@@ -180,15 +180,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7451.8964
-  tps: 4359.51705
+  dps: 7451.79634
+  tps: 4359.46406
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedPlate"
  value: {
-  dps: 6557.5681
-  tps: 3828.39839
+  dps: 6557.53862
+  tps: 3828.38794
  }
 }
 dps_results: {
@@ -580,29 +580,29 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 7241.63879
-  tps: 4238.21794
+  dps: 7239.74852
+  tps: 4237.16788
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-ScourgebornePlate"
  value: {
-  dps: 6464.69344
-  tps: 3774.07792
+  dps: 6482.49617
+  tps: 3785.04699
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 8165.21823
-  tps: 4786.44638
+  dps: 8189.46733
+  tps: 4800.83544
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 6878.34242
-  tps: 4016.43062
+  dps: 6878.24561
+  tps: 4016.5151
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-StormshroudArmor"
  value: {
-  dps: 6109.17296
-  tps: 3570.68675
+  dps: 6109.02876
+  tps: 3570.66901
  }
 }
 dps_results: {
@@ -741,15 +741,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7492.31294
-  tps: 4383.04036
+  dps: 7493.3525
+  tps: 4383.54135
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6605.54386
-  tps: 3854.7198
+  dps: 6587.39489
+  tps: 3844.04427
  }
 }
 dps_results: {
@@ -762,8 +762,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 7032.27077
-  tps: 4104.55671
+  dps: 7031.77399
+  tps: 4103.98017
  }
 }
 dps_results: {
@@ -825,8 +825,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6467.27486
-  tps: 3784.24083
+  dps: 6458.73143
+  tps: 3778.76274
  }
 }
 dps_results: {
