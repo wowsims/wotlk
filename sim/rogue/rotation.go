@@ -20,7 +20,11 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 	}
 	rogue.TryUseCooldowns(sim)
 	if rogue.GCD.IsReady(sim) {
-		rogue.rotation(sim)
+		if rogue.Talents.Shadowstep {
+			rogue.doSubtletyRotation(sim)
+		} else {
+			rogue.rotation(sim)
+		}
 	}
 }
 
@@ -264,13 +268,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.setupAssassinationRotation(sim)
 	}
 	if rogue.Talents.Shadowstep {
-		if mhDagger {
-			rogue.Builder = rogue.Backstab
-			rogue.BuilderPoints = 1
-		} else {
-			rogue.Builder = rogue.Hemorrhage
-			rogue.BuilderPoints = 1
-		}
+		rogue.setSubtletyBuilder()
 		rogue.setupSubtletyRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() > 3

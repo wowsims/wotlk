@@ -42,8 +42,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 		ActionID: MasterOfSubtletyID,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: 0,
-				GCD:  time.Second * 0,
+				GCD: 0,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
