@@ -13,14 +13,14 @@ func init() {
 	// Keep these in order by item ID.
 
 	// TODO: Crusader, Mongoose, and Executioner could also be modelled as AddWeaponEffect instead
-	core.AddWeaponEffect(1897, func(agent core.Agent, slot proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.MH
-		if slot == proto.ItemSlot_ItemSlotOffHand {
-			w = &agent.GetCharacter().AutoAttacks.OH
-		}
-		w.BaseDamageMin += 5
-		w.BaseDamageMax += 5
-	})
+	// core.AddWeaponEffect(1897, func(agent core.Agent, slot proto.ItemSlot) {
+	// 	w := &agent.GetCharacter().AutoAttacks.MH
+	// 	if slot == proto.ItemSlot_ItemSlotOffHand {
+	// 		w = &agent.GetCharacter().AutoAttacks.OH
+	// 	}
+	// 	w.BaseDamageMin += 5
+	// 	w.BaseDamageMax += 5
+	// })
 
 	core.NewEnchantEffect(2523, func(agent core.Agent) {
 		agent.GetCharacter().AddBonusRangedHitRating(30)
@@ -46,14 +46,14 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(963, func(agent core.Agent, slot proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.MH
-		if slot == proto.ItemSlot_ItemSlotOffHand {
-			w = &agent.GetCharacter().AutoAttacks.OH
-		}
-		w.BaseDamageMin += 7
-		w.BaseDamageMax += 7
-	})
+	// core.AddWeaponEffect(963, func(agent core.Agent, slot proto.ItemSlot) {
+	// 	w := &agent.GetCharacter().AutoAttacks.MH
+	// 	if slot == proto.ItemSlot_ItemSlotOffHand {
+	// 		w = &agent.GetCharacter().AutoAttacks.OH
+	// 	}
+	// 	w.BaseDamageMin += 7
+	// 	w.BaseDamageMax += 7
+	// })
 
 	// ApplyCrusaderEffect will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
@@ -137,11 +137,11 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(2723, func(agent core.Agent, _ proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.Ranged
-		w.BaseDamageMin += 12
-		w.BaseDamageMax += 12
-	})
+	// core.AddWeaponEffect(2723, func(agent core.Agent, _ proto.ItemSlot) {
+	// 	w := &agent.GetCharacter().AutoAttacks.Ranged
+	// 	w.BaseDamageMin += 12
+	// 	w.BaseDamageMax += 12
+	// })
 
 	core.NewEnchantEffect(2621, func(agent core.Agent) {
 		character := agent.GetCharacter()

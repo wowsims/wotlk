@@ -162,38 +162,31 @@ func init() {
 		character.PseudoStats.ThreatMultiplier *= 0.98
 	})
 
-	core.NewEnchantEffect(3789, func(agent core.Agent) {
+	core.AddWeaponEffect(3789, func(agent core.Agent, slot proto.ItemSlot) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3789
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3789
-		if !mh && !oh {
-			return
-		}
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		procMask := core.GetMeleeProcMaskForHands(slot == proto.ItemSlot_ItemSlotMainHand, slot == proto.ItemSlot_ItemSlotOffHand)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// Modify only gear armor, including from agility
 		fivePercentOfArmor := (character.Equip.Stats()[stats.Armor] + 2.0*character.Equip.Stats()[stats.Agility]) * 0.05
-		procAuraMH := character.NewTemporaryStatsAura("Berserking MH Proc", core.ActionID{SpellID: 59620, Tag: 1}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
-		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
+		name := core.Ternary(slot == proto.ItemSlot_ItemSlotMainHand, "MH", "OH")
+		tag := core.Ternary(slot == proto.ItemSlot_ItemSlotMainHand, 1, 2)
+		procAura := character.NewTemporaryStatsAura("Berserking "+name+" Proc", core.ActionID{SpellID: 59620, Tag: int32(tag)}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 
 		character.GetOrRegisterAura(core.Aura{
-			Label:    "Berserking (Enchant)",
+			Label:    name + " Berserking (Enchant)",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				hasEnchant := character.Equip[slot].Enchant.EffectID == 3789
+				if !hasEnchant || !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 					return
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "Berserking") {
-					if spell.IsMH() {
-						procAuraMH.Activate(sim)
-					} else {
-						procAuraOH.Activate(sim)
-					}
+					procAura.Activate(sim)
 				}
 			},
 		})
@@ -258,11 +251,11 @@ func init() {
 		})
 	})
 
-	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.Ranged
-		w.BaseDamageMin += 15
-		w.BaseDamageMax += 15
-	})
+	// core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
+	// 	w := &agent.GetCharacter().AutoAttacks.Ranged
+	// 	w.BaseDamageMin += 15
+	// 	w.BaseDamageMax += 15
+	// })
 
 	core.NewEnchantEffect(3603, func(agent core.Agent) {
 		character := agent.GetCharacter()
