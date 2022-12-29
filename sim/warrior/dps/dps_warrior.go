@@ -123,6 +123,12 @@ func (war *DpsWarrior) Initialize() {
 		}
 	}
 
+	if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
+		war.BerserkerStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
+	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
+		war.BattleStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
+	}
+
 	war.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
