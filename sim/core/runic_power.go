@@ -1057,6 +1057,10 @@ func (rp *RunicPowerBar) ReadyDeathRune() int8 {
 	return -1
 }
 
+func (rp *RunicPowerBar) IsBloodTappedRune(slot int8) bool {
+	return slot == rp.btslot
+}
+
 func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetrics) int8 {
 	if rp.runeStates&checkDeath == 0 {
 		panic("Trying to spend death runes that don't exist!")
