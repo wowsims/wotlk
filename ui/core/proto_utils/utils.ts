@@ -267,6 +267,7 @@ export const titleIcons: Record<Class|Spec, string> = {
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
 export const raidSimLabel: string = 'Full Raid Sim';
 
+// Converts '1231321-12313123-0' to [40, 21, 0].
 export function getTalentTreePoints(talentsString: string): Array<number> {
 	const trees = talentsString.split('-');
 	return trees.map(tree => sum([...tree].map(char => parseInt(char))));
