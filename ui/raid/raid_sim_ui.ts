@@ -5,7 +5,6 @@ import { IconPicker } from "../core/components/icon_picker.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 import { SavedDataManager } from "../core/components/saved_data_manager.js";
-import { SettingsMenu } from "../core/components/settings_menu.js";
 
 import * as Tooltips from "../core/constants/tooltips.js";
 import { Encounter } from "../core/encounter.js";
@@ -388,6 +387,7 @@ export class RaidSimUI extends SimUI {
 			this.sim.encounter.applyDefaults(eventID);
 			this.sim.applyDefaults(eventID, true, true);
 			this.sim.setShowDamageMetrics(eventID, true);
+			this.raidPicker!.setBuffBots(eventID, []);
 		});
 	}
 

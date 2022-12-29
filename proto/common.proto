@@ -500,11 +500,13 @@ message IndividualBuffs {
 	// Technically a debuff, but only used by individual sims.
 	int32 shattering_throws = 20;
 
+	// Replenishment
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
 	bool judgements_of_the_wise = 16;
 	bool improved_soul_leech = 17;
 	bool enduring_winter = 18;
+
 	bool focus_magic = 22;
 }
 
