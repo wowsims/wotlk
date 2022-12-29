@@ -116,10 +116,8 @@ func (war *DpsWarrior) Initialize() {
 	if war.Rotation.StanceOption == proto.Warrior_Rotation_DefaultStance {
 		if war.Warrior.PrimaryTalentTree == warrior.FuryTree {
 			war.Rotation.StanceOption = proto.Warrior_Rotation_BerserkerStance
-
 		} else {
 			war.Rotation.StanceOption = proto.Warrior_Rotation_BattleStance
-			war.BerserkerStanceAura.BuildPhase = core.CharacterBuildPhaseNone
 		}
 	}
 
