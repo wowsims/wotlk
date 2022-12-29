@@ -51,6 +51,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerShadowDanceCD()
 	rogue.registerMasterOfSubtletyCD()
 	rogue.registerPreparationCD()
+	rogue.registerPremeditation()
 	rogue.registerGhostlyStrikeSpell()
 	rogue.registerHonorAmongThieves()
 }
