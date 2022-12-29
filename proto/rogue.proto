@@ -193,9 +193,13 @@ message Rogue {
 
 		bool open_with_garrote = 15;
 
-		bool rupture_for_bleed = 16;
+		bool open_with_premeditation = 16;
 
-		int32 envenom_energy_threshold = 17;
+		bool open_with_shadowstep = 17;
+
+		bool rupture_for_bleed = 18;
+
+		int32 envenom_energy_threshold = 19;
 	}
 	Rotation rotation = 1;
 
