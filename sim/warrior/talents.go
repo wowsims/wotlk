@@ -196,6 +196,11 @@ func (warrior *Warrior) applyTrauma() {
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
+
+			if !spell.SpellSchool.Matches(core.SpellSchoolPhysical) || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
 			proc := warrior.TraumaAuras[result.Target.Index]
 			proc.Duration = time.Minute * 1
 			proc.Activate(sim)
