@@ -238,6 +238,40 @@ var CombatRotationOptions = []*proto.Rogue_Rotation{
 	},
 }
 
+var SubtletyRotationOptions = []*proto.Rogue_Rotation{
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Never,
+		SubtletyFinisherPriority:  proto.Rogue_Rotation_Rupture,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Once,
+		SubtletyFinisherPriority:  proto.Rogue_Rotation_Rupture,
+	},
+	{
+		ExposeArmorFrequency:          proto.Rogue_Rotation_Once,
+		MinimumComboPointsExposeArmor: 3,
+		TricksOfTheTradeFrequency:     proto.Rogue_Rotation_Never,
+		SubtletyFinisherPriority:      proto.Rogue_Rotation_Rupture,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Maintain,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Never,
+		SubtletyFinisherPriority:  proto.Rogue_Rotation_Rupture,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Maintain,
+		SubtletyFinisherPriority:  proto.Rogue_Rotation_Rupture,
+	},
+	{
+		ExposeArmorFrequency:      proto.Rogue_Rotation_Never,
+		TricksOfTheTradeFrequency: proto.Rogue_Rotation_Maintain,
+		SubtletyFinisherPriority:  proto.Rogue_Rotation_Eviscerate,
+	},
+}
+
 var RotationNames = []string{
 	"No Expose No Tricks Primary",
 	"No Expose One Tricks Primary",

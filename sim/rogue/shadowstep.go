@@ -69,13 +69,4 @@ func (rogue *Rogue) registerShadowstepCD() {
 			rogue.ShadowstepAura.Activate(sim)
 		},
 	})
-
-	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell:    rogue.Shadowstep,
-		Type:     core.CooldownTypeDPS,
-		Priority: core.CooldownPriorityDefault,
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() > float64(35) && rogue.CurrentTarget.ComboPoints() == 5
-		},
-	})
 }
