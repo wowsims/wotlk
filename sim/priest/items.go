@@ -73,7 +73,7 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				// TODO: Does this affect the spell that procs it?
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == priest.MindBlast {
 						procAura.Activate(sim)
 					}
