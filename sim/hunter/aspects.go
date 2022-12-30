@@ -74,13 +74,12 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 
 	damagePenalty := core.TernaryFloat64(hunter.Talents.AspectMastery, 0.6, 0.5)
 
-	gronnstalkerMultiplier := core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 2), 1.25, 1)
-	baseManaRegen := 0.02 * hunter.BaseMana *
+	baseManaRegenMultiplier := 0.01 *
 		core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAspectOfTheViper), 1.1, 1) *
-		gronnstalkerMultiplier
-	manaPerRangedHit := baseManaRegen * hunter.AutoAttacks.Ranged.SwingSpeed * gronnstalkerMultiplier
-	manaPerMHHit := baseManaRegen * hunter.AutoAttacks.MH.SwingSpeed * gronnstalkerMultiplier
-	manaPerOHHit := baseManaRegen * hunter.AutoAttacks.OH.SwingSpeed * gronnstalkerMultiplier
+		core.TernaryFloat64(hunter.HasSetBonus(ItemSetGronnstalker, 2), 1.25, 1)
+	manaPerRangedHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.Ranged.SwingSpeed
+	manaPerMHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.MH.SwingSpeed
+	manaPerOHHitMultiplier := baseManaRegenMultiplier * hunter.AutoAttacks.OH.SwingSpeed
 	var tickPA *core.PendingAction
 
 	hasCryptstalker4pc := hunter.HasSetBonus(ItemSetCryptstalkerBattlegear, 4)
@@ -111,11 +110,11 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskRanged) {
-				hunter.AddMana(sim, manaPerRangedHit, hunter.AspectOfTheViper.ResourceMetrics, false)
+				hunter.AddMana(sim, manaPerRangedHitMultiplier*hunter.MaxMana(), hunter.AspectOfTheViper.ResourceMetrics, false)
 			} else if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-				hunter.AddMana(sim, manaPerMHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
+				hunter.AddMana(sim, manaPerMHHitMultiplier*hunter.MaxMana(), hunter.AspectOfTheViper.ResourceMetrics, false)
 			} else if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-				hunter.AddMana(sim, manaPerOHHit, hunter.AspectOfTheViper.ResourceMetrics, false)
+				hunter.AddMana(sim, manaPerOHHitMultiplier*hunter.MaxMana(), hunter.AspectOfTheViper.ResourceMetrics, false)
 			}
 		},
 	}
