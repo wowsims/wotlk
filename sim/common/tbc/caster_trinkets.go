@@ -39,7 +39,7 @@ func init() {
 				}),
 			},
 			core.Aura{
-				Label:    "Power Word Shield",
+				Label:    "Scarab Brooch Shield",
 				ActionID: shieldID,
 				Duration: time.Second * 30,
 			})
