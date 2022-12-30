@@ -351,8 +351,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 5771.85976
-  tps: 5873.37942
+  dps: 5808.9184
+  tps: 5910.43806
   dtps: 9.92959
  }
 }
@@ -455,8 +455,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 5713.61771
-  tps: 5815.11906
+  dps: 5720.4416
+  tps: 5821.94295
   dtps: 9.92959
  }
 }
@@ -808,8 +808,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-SparkofLife-37657"
  value: {
-  dps: 5763.48843
-  tps: 5864.66045
+  dps: 5765.17247
+  tps: 5861.94612
   dtps: 9.92959
  }
 }

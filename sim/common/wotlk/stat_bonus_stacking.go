@@ -39,10 +39,6 @@ type StackingStatBonusEffect struct {
 
 func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
-		if config.Callback == core.CallbackOnCastComplete {
-			return
-		}
-
 		character := agent.GetCharacter()
 
 		procAura := MakeStackingAura(character, StackingProcAura{
