@@ -70,16 +70,29 @@ import { Deathknight, Deathknight_Rotation as DeathknightRotation, DeathknightTa
 import { TankDeathknight, TankDeathknight_Rotation as TankDeathknightRotation, TankDeathknight_Options as TankDeathknightOptions } from '../proto/deathknight.js';
 import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../proto/warrior.js';
 
-export type DeathknightSpecs = [Spec.SpecDeathknight, Spec.SpecTankDeathknight];
-export type DruidSpecs = [Spec.SpecBalanceDruid, Spec.SpecFeralDruid, Spec.SpecFeralTankDruid];
+export type DeathknightSpecs = Spec.SpecDeathknight | Spec.SpecTankDeathknight;
+export type DruidSpecs = Spec.SpecBalanceDruid | Spec.SpecFeralDruid | Spec.SpecFeralTankDruid;
 export type HunterSpecs = Spec.SpecHunter;
 export type MageSpecs = Spec.SpecMage;
+export type PaladinSpecs = Spec.SpecRetributionPaladin | Spec.SpecProtectionPaladin;
+export type PriestSpecs = Spec.SpecHealingPriest | Spec.SpecShadowPriest | Spec.SpecSmitePriest;
 export type RogueSpecs = Spec.SpecRogue;
-export type PaladinSpecs = [Spec.SpecRetributionPaladin, Spec.SpecProtectionPaladin];
-export type PriestSpecs = [Spec.SpecHealingPriest, Spec.SpecShadowPriest, Spec.SpecSmitePriest];
-export type ShamanSpecs = [Spec.SpecElementalShaman, Spec.SpecEnhancementShaman];
+export type ShamanSpecs = Spec.SpecElementalShaman | Spec.SpecEnhancementShaman;
 export type WarlockSpecs = Spec.SpecWarlock;
-export type WarriorSpecs = [Spec.SpecWarrior, Spec.SpecProtectionWarrior];
+export type WarriorSpecs = Spec.SpecWarrior | Spec.SpecProtectionWarrior;
+
+export type ClassSpecs<T extends Class> =
+	T extends Class.ClassDeathknight ? DeathknightSpecs :
+	T extends Class.ClassDruid ? DruidSpecs :
+	T extends Class.ClassHunter ? HunterSpecs :
+	T extends Class.ClassMage ? MageSpecs :
+	T extends Class.ClassPaladin ? PaladinSpecs :
+	T extends Class.ClassPriest ? PriestSpecs :
+	T extends Class.ClassRogue ? RogueSpecs :
+	T extends Class.ClassShaman ? ShamanSpecs :
+	T extends Class.ClassWarlock ? WarlockSpecs :
+	T extends Class.ClassWarrior ? WarriorSpecs :
+	ShamanSpecs; // Should never reach this case
 
 export const NUM_SPECS = getEnumValues(Spec).length;
 
@@ -267,6 +280,7 @@ export const titleIcons: Record<Class|Spec, string> = {
 export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
 export const raidSimLabel: string = 'Full Raid Sim';
 
+// Converts '1231321-12313123-0' to [40, 21, 0].
 export function getTalentTreePoints(talentsString: string): Array<number> {
 	const trees = talentsString.split('-');
 	return trees.map(tree => sum([...tree].map(char => parseInt(char))));

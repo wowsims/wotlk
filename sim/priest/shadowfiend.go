@@ -14,7 +14,7 @@ func (priest *Priest) registerShadowfiendSpell() {
 	actionID := core.ActionID{SpellID: 34433}
 
 	priest.ShadowfiendAura = priest.RegisterAura(core.Aura{
-		ActionID: core.ActionID{SpellID: 34433},
+		ActionID: actionID,
 		Label:    "Shadowfiend",
 		Duration: time.Second * 15.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -36,7 +36,7 @@ func (priest *Priest) registerShadowfiendSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: (time.Minute * 5) - (time.Minute * time.Duration(priest.Talents.VeiledShadows)),
+				Duration: time.Minute * time.Duration(5-priest.Talents.VeiledShadows),
 			},
 		},
 

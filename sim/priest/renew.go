@@ -92,7 +92,10 @@ func (priest *Priest) renewTicks() int32 {
 
 func (priest *Priest) renewHealingMultiplier() float64 {
 	return 1 *
-		(1 + 0.01*float64(priest.Talents.TwinDisciplines)) *
-		(1 + 0.05*float64(priest.Talents.ImprovedRenew)) *
+		(1 + .02*float64(priest.Talents.SpiritualHealing)) *
+		(1 + .01*float64(priest.Talents.BlessedResilience)) *
+		(1 + .02*float64(priest.Talents.FocusedPower)) *
+		(1 + .01*float64(priest.Talents.TwinDisciplines)) *
+		(1 + .05*float64(priest.Talents.ImprovedRenew)) *
 		core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfRenew), 1.25, 1)
 }

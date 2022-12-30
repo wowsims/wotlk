@@ -36,9 +36,11 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 			},
 		},
 
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating:  float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1,
+		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 +
+			0.02*float64(priest.Talents.Darkness) +
+			0.01*float64(priest.Talents.TwinDisciplines),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -58,8 +60,6 @@ func (priest *Priest) newMindSearDot(numTicks int32) *core.Dot {
 	miseryCoeff := 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
-	normMod := 1 + float64(priest.Talents.Darkness)*0.02 + float64(priest.Talents.TwinDisciplines)*0.01 // initialize modifier
-
 	return core.NewDot(core.Dot{
 		Spell: priest.MindSear[numTicks],
 		Aura: target.RegisterAura(core.Aura{
@@ -72,9 +72,7 @@ func (priest *Priest) newMindSearDot(numTicks int32) *core.Dot {
 		AffectedByCastSpeed: true,
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dmg := sim.Roll(212, 228) + miseryCoeff*dot.Spell.SpellPower()
-
-			dot.SnapshotBaseDamage = dmg * normMod
+			dot.SnapshotBaseDamage = sim.Roll(212, 228) + miseryCoeff*dot.Spell.SpellPower()
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

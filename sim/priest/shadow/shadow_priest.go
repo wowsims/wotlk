@@ -1,6 +1,8 @@
 package shadow
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/priest"
@@ -38,8 +40,8 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 		rotation: shadowOptions.Rotation,
 		options:  shadowOptions.Options,
 	}
-
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
+	spriest.CanRolloverSWP = spriest.Talents.MindFlay && spriest.Talents.PainAndSuffering > 0
 
 	return spriest
 }
@@ -47,23 +49,34 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 type ShadowPriest struct {
 	PrevTicks float64
 
-	DPstatH  float64
-	DPstatpH float64
-	DPstatSp float64
-
-	VTstatH  float64
-	VTstatpH float64
-	VTstatSp float64
-
 	*priest.Priest
 	rotation *proto.ShadowPriest_Rotation
 	options  *proto.ShadowPriest_Options
+
+	VTCastTime time.Duration
+	AllCDs     []time.Duration
+	BLUsedAt   time.Duration
+
+	CanRolloverSWP bool
 }
 
 func (spriest *ShadowPriest) GetPriest() *priest.Priest {
 	return spriest.Priest
 }
 
+func (spriest *ShadowPriest) Initialize() {
+	spriest.Priest.Initialize()
+}
+
 func (spriest *ShadowPriest) Reset(sim *core.Simulation) {
 	spriest.Priest.Reset(sim)
+
+	// Save info related to blood lust timing
+	spriest.BLUsedAt = 0
+	if bloodlustMCD := spriest.GetMajorCooldownIgnoreTag(core.BloodlustActionID); bloodlustMCD != nil {
+		timings := bloodlustMCD.GetTimings()
+		if len(timings) > 0 {
+			spriest.BLUsedAt = timings[0]
+		}
+	}
 }
