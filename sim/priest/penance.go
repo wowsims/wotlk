@@ -59,7 +59,12 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		},
 
 		DamageMultiplier: 1 +
-			core.TernaryFloat64(isHeal, 0, .05*float64(priest.Talents.SearingLight)) +
+			core.TernaryFloat64(isHeal,
+				1*
+					(1+.02*float64(priest.Talents.SpiritualHealing))*
+					(1+.01*float64(priest.Talents.BlessedResilience))*
+					(1+.02*float64(priest.Talents.FocusedPower)),
+				.05*float64(priest.Talents.SearingLight)) +
 			.01*float64(priest.Talents.TwinDisciplines),
 		CritMultiplier:   core.TernaryFloat64(isHeal, priest.DefaultHealingCritMultiplier(), priest.DefaultSpellCritMultiplier()),
 		ThreatMultiplier: 0,
