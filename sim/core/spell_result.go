@@ -434,9 +434,7 @@ func (spell *Spell) CasterHealingMultiplier() float64 {
 		return 1
 	}
 
-	return spell.Unit.PseudoStats.HealingDealtMultiplier *
-		spell.DamageMultiplier *
-		spell.DamageMultiplierAdditive
+	return spell.DamageMultiplier * spell.DamageMultiplierAdditive
 }
 func (spell *Spell) applyTargetHealingModifiers(damage float64, attackTable *AttackTable) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {

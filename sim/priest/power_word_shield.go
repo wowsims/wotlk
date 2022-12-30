@@ -100,6 +100,8 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 
 			// Talent effects are combined differently in this spell compared to PWS, for some reason.
 			DamageMultiplier: 0.2 *
+				(1 + .01*float64(priest.Talents.BlessedResilience)) *
+				(1 + .02*float64(priest.Talents.FocusedPower)) *
 				(1 +
 					.05*float64(priest.Talents.ImprovedPowerWordShield) +
 					.01*float64(priest.Talents.TwinDisciplines)) *
