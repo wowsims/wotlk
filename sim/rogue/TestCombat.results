@@ -60,8 +60,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-AshtongueTalismanofLethality-32492"
  value: {
-  dps: 6227.63426
-  tps: 4421.62032
+  dps: 6158.45716
+  tps: 4372.50458
  }
 }
 dps_results: {
