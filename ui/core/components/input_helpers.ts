@@ -502,7 +502,6 @@ export function MakeItemSwapInput<SpecType extends Spec, T extends ItemSwap>(con
 		setValue: (eventID: EventID, player: Player<SpecType>, newValue: T) => {
 			const options = player.getSpecOptions();
 			(options[config.fieldName] as unknown as T) = newValue;
-			console.log(options)
 			player.setSpecOptions(eventID, options);
 		},
 		itemSlots: config.values,

@@ -30,6 +30,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecShadowPriest>) {
 		super(parentElem, player, {
 			cssClass: 'shadow-priest-sim-ui',
+			cssScheme: 'priest',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

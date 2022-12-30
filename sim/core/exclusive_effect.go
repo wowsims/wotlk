@@ -130,7 +130,7 @@ func (ee *ExclusiveEffect) Activate(sim *Simulation) bool {
 		return true
 	}
 
-	if ee.Category.SingleAura && ee.Category.activeEffect != nil && ee.Category.activeEffect != ee && ee.Category.activeEffect.Priority > ee.Priority {
+	if ee.Category.SingleAura && ee.Category.activeEffect != nil && ee.Category.activeEffect != ee && (ee.Category.activeEffect.Priority > ee.Priority || (ee.Priority == ee.Category.activeEffect.Priority && ee.Category.activeEffect.Aura.RemainingDuration(sim) > ee.Aura.Duration)) {
 		return false
 	}
 

@@ -17,6 +17,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {
 		super(parentElem, player, {
 			cssClass: 'enhancement-shaman-sim-ui',
+			cssScheme: 'shaman',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Fire Elemental is in a alpha state",

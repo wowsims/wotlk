@@ -96,6 +96,7 @@ func (war *ProtectionWarrior) Initialize() {
 	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
+	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
 
 	war.CustomRotation = war.makeCustomRotation()
 	if war.Options.UseShatteringThrow {

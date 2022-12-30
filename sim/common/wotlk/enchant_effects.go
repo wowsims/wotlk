@@ -530,7 +530,7 @@ func init() {
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
 					icd.Use(sim)
 					procAura.Activate(sim)

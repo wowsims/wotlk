@@ -126,13 +126,13 @@ func init() {
 	//	ICD:        time.Second * 45,
 	//})
 	newProcStatBonusEffect(ProcStatBonusEffect{
+		// TODO: should not proc from procs
 		Name:       "Embrace of the Spider",
 		ID:         39229,
 		Bonus:      stats.Stats{stats.MeleeHaste: 505, stats.SpellHaste: 505},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnCastComplete,
 		ProcMask:   core.ProcMaskSpellDamage,
-		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
 	})
@@ -141,9 +141,8 @@ func init() {
 		ID:         40255,
 		Bonus:      stats.Stats{stats.SpellPower: 765},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnCastComplete,
 		ProcMask:   core.ProcMaskSpellDamage,
-		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.15,
 		ICD:        time.Second * 45,
 	})
@@ -163,9 +162,8 @@ func init() {
 		ID:         40682,
 		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnCastComplete,
 		ProcMask:   core.ProcMaskSpellDamage,
-		Harmful:    true,
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
 	})
@@ -302,7 +300,8 @@ func init() {
 		ID:         45490,
 		Bonus:      stats.Stats{stats.SpellPower: 794},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnCastComplete,
+		Callback:   core.CallbackOnHealDealt | core.CallbackOnSpellHitDealt,
+		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
 		ProcChance: 0.1,
 		ICD:        time.Second * 45,
 	})

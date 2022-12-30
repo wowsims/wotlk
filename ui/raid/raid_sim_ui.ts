@@ -1,6 +1,7 @@
 import { BooleanPicker } from "../core/components/boolean_picker.js";
 import { DetailedResults } from "../core/components/detailed_results.js";
 import { EncounterPicker } from "../core/components/encounter_picker.js";
+import { IconPicker } from "../core/components/icon_picker.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 import { SavedDataManager } from "../core/components/saved_data_manager.js";
@@ -10,9 +11,10 @@ import * as Tooltips from "../core/constants/tooltips.js";
 import { Encounter } from "../core/encounter.js";
 import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
-import { Class, Encounter as EncounterProto, Faction, Stat, TristateEffect } from "../core/proto/common.js";
+import { Class, Encounter as EncounterProto, Faction, RaidBuffs, Stat, TristateEffect } from "../core/proto/common.js";
 import { Blessings } from "../core/proto/paladin.js";
 import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
+import { ActionId } from '../core/proto_utils/action_id.js';
 import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Raid } from "../core/raid.js";
 import { Sim } from "../core/sim.js";
@@ -57,6 +59,7 @@ export class RaidSimUI extends SimUI {
 
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
+			cssScheme: 'raid',
 			spec: null,
 			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
@@ -127,7 +130,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addRaidTab() {
-		this.addTab('RAID', 'raid-tab', `
+		this.addTab('Raid', 'raid-tab', `
 			<div class="raid-picker">
 			</div>
 			<div class="saved-raids-div">
@@ -138,39 +141,41 @@ export class RaidSimUI extends SimUI {
 
 		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
 
-		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, {
-			label: 'Raid',
-			storageKey: this.getSavedRaidStorageKey(),
-			getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
-				raid: this.sim.raid.toProto(),
-				buffBots: this.getBuffBots().map(b => b.toProto()),
-				blessings: this.blessingsPicker!.getAssignments(),
-				faction: this.sim.getFaction(),
-				phase: this.sim.getPhase(),
-			}),
-			setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
-				TypedEvent.freezeAllAndDo(() => {
-					this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-					this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
-					this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
-					if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
-					if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
-				});
-			},
-			changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
-			equals: (a: SavedRaid, b: SavedRaid) => {
-				return SavedRaid.equals(a, b);
-			},
-			toJson: (a: SavedRaid) => SavedRaid.toJson(a),
-			fromJson: (obj: any) => SavedRaid.fromJson(obj),
-		});
+		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
+			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
+				label: 'Raid',
+				storageKey: this.getSavedRaidStorageKey(),
+				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
+					raid: this.sim.raid.toProto(),
+					buffBots: this.getBuffBots().map(b => b.toProto()),
+					blessings: this.blessingsPicker!.getAssignments(),
+					faction: this.sim.getFaction(),
+					phase: this.sim.getPhase(),
+				}),
+				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
+					TypedEvent.freezeAllAndDo(() => {
+						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
+						this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
+						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
+						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
+						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
+					});
+				},
+				changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
+				equals: (a: SavedRaid, b: SavedRaid) => {
+					return SavedRaid.equals(a, b);
+				},
+				toJson: (a: SavedRaid) => SavedRaid.toJson(a),
+				fromJson: (obj: any) => SavedRaid.fromJson(obj),
+			}
+		);
 		this.sim.waitForInit().then(() => {
 			savedRaidManager.loadUserData();
 		});
 	}
 
 	private addSettingsTab() {
-		this.addTab('SETTINGS', 'raid-settings-tab', `
+		this.addTab('Settings', 'raid-settings-tab', `
 			<div class="raid-settings-sections">
 				<div class="settings-section-container raid-settings-section-container">
 					<fieldset class="settings-section raid-encounter-section">
@@ -187,6 +192,9 @@ export class RaidSimUI extends SimUI {
 				<div class="settings-section-container tanks-section-container">
 				</div>
 				<div class="settings-section-container raid-settings-section-container">
+					<fieldset class="settings-section consumes-section">
+						<legend>Consumes</legend>
+					</fieldset>
 					<fieldset class="settings-section other-options-section">
 						<legend>Other Options</legend>
 					</fieldset>
@@ -202,16 +210,18 @@ export class RaidSimUI extends SimUI {
 		new EncounterPicker(encounterSectionElem, this.sim.encounter, {
 			showExecuteProportion: true,
 		}, this);
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this.sim.encounter, {
-			label: 'Encounter',
-			storageKey: this.getSavedEncounterStorageKey(),
-			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
-			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
-			changeEmitters: [this.sim.encounter.changeEmitter],
-			equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
-			toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
-			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
-		});
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(
+			this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this, this.sim.encounter, {
+				label: 'Encounter',
+				storageKey: this.getSavedEncounterStorageKey(),
+				getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
+				setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
+				changeEmitters: [this.sim.encounter.changeEmitter],
+				equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
+				toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
+				fromJson: (obj: any) => SavedEncounter.fromJson(obj),
+			}
+		);
 		this.sim.waitForInit().then(() => {
 			savedEncounterManager.loadUserData();
 		});
@@ -227,6 +237,16 @@ export class RaidSimUI extends SimUI {
 
 		const assignmentsPicker = new AssignmentsPicker(this.rootElem.getElementsByClassName('assignments-section-container')[0] as HTMLElement, this);
 		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
+
+		const consumesSectionElem = this.rootElem.getElementsByClassName('consumes-section')[0] as HTMLElement;
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37094), 'scrollOfStamina'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43466), 'scrollOfStrength'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43464), 'scrollOfAgility'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37092), 'scrollOfIntellect'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37098), 'scrollOfSpirit'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43468), 'scrollOfProtection'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
+		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49634), 'drumsOfTheWild');
 
 		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
 		otherOptionsSectionElem.classList.add('hide');
@@ -256,7 +276,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addDetailedResultsTab() {
-		this.addTab('DETAILED RESULTS', 'detailed-results-tab', `
+		this.addTab('Results', 'detailed-results-tab', `
 			<div class="detailed-results">
 			</div>
 		`);
@@ -265,7 +285,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addLogTab() {
-		this.addTab('LOG', 'log-tab', `
+		this.addTab('Log', 'log-tab', `
 			<div class="log-runner">
 			</div>
 		`);
@@ -420,4 +440,18 @@ export class RaidSimUI extends SimUI {
 	getSavedRaidStorageKey(): string {
 		return this.getStorageKey('__savedRaid__');
 	}
+}
+
+function makeBooleanRaidIconBuffInput(parent: HTMLElement, raid: Raid, id: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
+	return new IconPicker<Raid, boolean>(parent, raid, {
+		id: id,
+		states: 2,
+		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
+		getValue: (raid: Raid) => raid.getBuffs()[field] as unknown as boolean,
+		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
+			const newBuffs = raid.getBuffs();
+			(newBuffs[field] as unknown as boolean) = newValue;
+			raid.setBuffs(eventID, newBuffs);
+		},
+	});
 }

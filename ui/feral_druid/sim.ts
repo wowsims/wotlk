@@ -20,6 +20,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecFeralDruid>) {
 		super(parentElem, player, {
 			cssClass: 'feral-druid-sim-ui',
+			cssScheme: 'druid',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],

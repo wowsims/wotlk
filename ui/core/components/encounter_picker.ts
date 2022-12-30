@@ -121,9 +121,9 @@ export class EncounterPicker extends Component {
 			}
 
 			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
+			advancedButton.classList.add('advanced-button', 'btn', `btn-${simUI.cssScheme}`);
 			advancedButton.textContent = 'Advanced';
-			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(this.rootElem, modEncounter, simUI));
+			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(this.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
 		});
 	}
@@ -132,7 +132,7 @@ export class EncounterPicker extends Component {
 class AdvancedEncounterModal extends BaseModal {
 	private readonly encounter: Encounter;
 
-	constructor(parent: HTMLElement, encounter: Encounter, simUI: SimUI) {
+	constructor(parent: HTMLElement, simUI: SimUI, encounter: Encounter) {
 		super('advanced-encounter-picker-modal');
 
 		this.encounter = encounter;
@@ -160,7 +160,7 @@ class AdvancedEncounterModal extends BaseModal {
 				},
 			});
 		}
-		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, this.encounter, {
+		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, simUI, this.encounter, {
 			extraCssClasses: ['targets-picker', 'mb-0'],
 			itemLabel: 'Target',
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,

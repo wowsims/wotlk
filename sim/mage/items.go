@@ -45,7 +45,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	},
 })
 
-const T84PcProcChance = 0.1
+const T84PcProcChance = 0.2
 
 // T9
 var ItemSetKhadgarsRegalia = core.NewItemSet(core.ItemSet{

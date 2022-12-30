@@ -58,7 +58,11 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 					return
 				}
 				if ShatteringThrowSpell.Cast(sim, character.CurrentTarget) {
-					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime)
+					if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
+						warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime, true)
+					} else {
+						warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime, false)
+					}
 				}
 			}
 		},

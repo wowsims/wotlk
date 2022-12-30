@@ -3,6 +3,7 @@ import { Player } from '../player.js';
 import { Component } from './component.js';
 import { IconItemSwapPicker } from './gear_picker.js'
 import { Input, InputConfig } from './input.js'
+import { SimUI } from '../sim_ui.js';
 
 export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T>{
 	itemSlots: Array<ItemSlot>;
@@ -10,7 +11,7 @@ export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputCon
 
 export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 
-	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
+	constructor(parentElem: HTMLElement, simUI: SimUI, player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
 		super(parentElem, 'item-swap-picker-root');
 
 		this.rootElem.classList.add('input-root', 'input-inline')
@@ -25,7 +26,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		this.rootElem.appendChild(itemSwapContianer);
 
 		config.itemSlots.forEach(itemSlot => {
-			new IconItemSwapPicker(itemSwapContianer, player,itemSlot, config);
+			new IconItemSwapPicker(itemSwapContianer, simUI, player,itemSlot, config);
 		});
 	}
 }

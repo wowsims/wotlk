@@ -201,7 +201,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  core.CallbackOnCastComplete,
-		Harmful:   true,
+		ProcMask:  core.ProcMaskSpellHealing | core.ProcMaskSpellDamage,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:       "DMC Berserker",

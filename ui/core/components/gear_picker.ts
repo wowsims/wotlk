@@ -28,6 +28,7 @@ import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
 import {ItemSwapGear } from '../proto_utils/gear.js'
+import { SimUI } from '../sim_ui.js';
 
 declare var $: any;
 declare var tippy: any;
@@ -37,7 +38,7 @@ export class GearPicker extends Component {
 	// ItemSlot is used as the index
 	readonly itemPickers: Array<ItemPicker>;
 
-	constructor(parent: HTMLElement, player: Player<any>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
 		super(parent, 'gear-picker-root');
 
 		const leftSide = document.createElement('div');
@@ -58,7 +59,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotMainHand,
 			ItemSlot.ItemSlotOffHand,
 			ItemSlot.ItemSlotRanged,
-		].map(slot => new ItemPicker(leftSide, player, slot));
+		].map(slot => new ItemPicker(leftSide, simUI, player, slot));
 
 		const rightItemPickers = [
 			ItemSlot.ItemSlotHands,
@@ -69,7 +70,7 @@ export class GearPicker extends Component {
 			ItemSlot.ItemSlotFinger2,
 			ItemSlot.ItemSlotTrinket1,
 			ItemSlot.ItemSlotTrinket2,
-		].map(slot => new ItemPicker(rightSide, player, slot));
+		].map(slot => new ItemPicker(rightSide, simUI, player, slot));
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);
 	}
@@ -78,6 +79,7 @@ export class GearPicker extends Component {
 class ItemPicker extends Component {
 	readonly slot: ItemSlot;
 
+	private readonly simUI: SimUI;
 	private readonly player: Player<any>;
 	private readonly iconElem: HTMLAnchorElement;
 	private readonly nameElem: HTMLAnchorElement;
@@ -89,10 +91,10 @@ class ItemPicker extends Component {
 
 	private _equippedItem: EquippedItem | null = null;
 
-
-	constructor(parent: HTMLElement, player: Player<any>, slot: ItemSlot) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
 		super(parent, 'item-picker-root');
 		this.slot = slot;
+		this.simUI = simUI;
 		this.player = player;
 
 		this.rootElem.innerHTML = `
@@ -127,7 +129,7 @@ class ItemPicker extends Component {
 
 			const onClickStart = (event: Event) => {
 				event.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 			};
 			const onClickEnd = (event: Event) => {
 				event.preventDefault();
@@ -142,12 +144,12 @@ class ItemPicker extends Component {
 			// Make enchant name open enchant tab.
 			this.enchantElem.addEventListener('click', (ev: Event) => {
 				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 				selectorModal.openTab(1);
 			});
 			this.enchantElem.addEventListener('touchstart', (ev: Event) => {
 				ev.preventDefault();
-				const selectorModal = new SelectorModal(this.rootElem.closest('.individual-sim-ui')!, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
+				const selectorModal = new SelectorModal(this.simUI.rootElem, this.simUI, this.player, this.slot, this._equippedItem, this._items, this._enchants, gearData);
 				selectorModal.openTab(1);
 			});
 			this.enchantElem.addEventListener('touchend', onClickEnd);
@@ -260,7 +262,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
 
-	constructor(parent: HTMLElement, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
 		super(parent, 'icon-picker-root', player, config)
 		this.rootElem.classList.add('icon-picker');
 		this.player = player;
@@ -293,7 +295,8 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			const onClickStart = (event: Event) => {
 				event.preventDefault();
 				new SelectorModal(
-					this.rootElem.closest('.individual-sim-ui')!,
+					simUI.rootElem,
+					simUI,
 					this.player,
 					this.slot,
 					this.gear.getEquippedItem(slot),
@@ -383,18 +386,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 					});
 				}
 				this.socketsContainerElem.appendChild(gemIconElem);
-
-				if (gemIdx == equippedItem!.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(equippedItem!.item.type)) {
-					const updateProfession = () => {
-						if (this.player.isBlacksmithing()) {
-							gemIconElem.style.removeProperty('display');
-						} else {
-							gemIconElem.style.display = 'none';
-						}
-					};
-					this.player.professionChangeEmitter.on(updateProfession);
-					updateProfession();
-				}
 			});
 
 		} else {
@@ -411,12 +402,14 @@ interface GearData {
 }
 
 class SelectorModal extends Popup {
+	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
-	constructor(parent: HTMLElement, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
 		super(parent);
+		this.simUI = simUI;
 		this.player = player;
 
 		window.scrollTo({top: 0});
@@ -651,7 +644,7 @@ class SelectorModal extends Popup {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
+					<button class="selector-modal-filters-button btn btn-${this.simUI.cssScheme}">Filters</button>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>

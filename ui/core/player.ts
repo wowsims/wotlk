@@ -868,7 +868,9 @@ export class Player<SpecType extends Spec> {
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
-			this.setHealingModel(eventID, HealingModel.create());
+			this.setHealingModel(eventID, HealingModel.create({
+				burstWindow: isTankSpec(this.spec) ? 6 : 0,
+			}));
 			this.setCooldowns(eventID, Cooldowns.create({
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));

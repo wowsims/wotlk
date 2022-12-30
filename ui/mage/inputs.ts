@@ -45,6 +45,7 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
 	labelTooltip: 'Percent of uptime for Focus Magic Buddy',
+	extraCssClasses: ['within-raid-sim-hide'],
 });
 
 export const MageRotationConfig = {

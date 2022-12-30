@@ -2,19 +2,9 @@ $theme: 'paladin';
 
 // Set color variables which control the site theme.
 .retribution-paladin-sim-ui {
-	--theme-color-primary: #cc48a4;
 	--theme-color-background: rgb(20, 13, 18);
 	--theme-color-background-raw: 20, 13, 18;
 	--theme-background-image: url('/wotlk/assets/img/retribution_paladin.jpg');
 	--theme-background-opacity: 0.95;
 	--main-text-color: White;
-}
-
-// Set grid width for icon sections based on how many buffs we configured.
-.retribution-paladin-sim-ui .self-buffs-section {
-	grid-template-columns: repeat(2, 1fr);
-}
-
-.retribution-paladin-sim-ui .character-stats-table-row {
-	font-size: 12px;
 }

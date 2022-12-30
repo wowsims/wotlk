@@ -38,6 +38,7 @@ type Paladin struct {
 	SealOfRighteousness   *core.Spell
 	SealOfCommand         *core.Spell
 	AvengingWrath         *core.Spell
+	DivineProtection      *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
@@ -53,6 +54,8 @@ type Paladin struct {
 	SealOfCommandAura       *core.Aura
 	SealOfRighteousnessAura *core.Aura
 	AvengingWrathAura       *core.Aura
+	DivineProtectionAura    *core.Aura
+	ForbearanceAura         *core.Aura
 
 	// SealOfWisdomAura        *core.Aura
 	// SealOfLightAura         *core.Aura
@@ -67,6 +70,8 @@ type Paladin struct {
 
 	AvoidClippingConsecration           bool
 	HoldLastAvengingWrathUntilExecution bool
+
+	mutualLockoutDPAW *core.Timer
 }
 
 // Implemented by each Paladin spec.
@@ -105,6 +110,11 @@ func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if paladin.Talents.SwiftRetribution == 3 {
 		raidBuffs.SwiftRetribution = paladin.Talents.SwiftRetribution == 3 // TODO: Fix-- though having something between 0/3 and 3/3 is unlikely
 	}
+
+	// TODO: Figure out a way to just start with 1 DG cooldown available without making a redundant Spell
+	//if paladin.Talents.DivineGuardian == 2 {
+	//	raidBuffs.divineGuardians++
+	//}
 }
 
 func (paladin *Paladin) AddPartyBuffs(_ *proto.PartyBuffs) {
@@ -138,6 +148,8 @@ func (paladin *Paladin) Initialize() {
 
 	paladin.registerSpiritualAttunement()
 	paladin.registerDivinePleaSpell()
+	paladin.registerDivineProtectionSpell()
+	paladin.registerForbearanceDebuff()
 
 	paladin.SealOfVengeanceDots = make([]*core.Dot, paladin.Env.GetNumTargets())
 	for i := range paladin.SealOfVengeanceDots {
@@ -164,7 +176,8 @@ func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladi
 		Talents:   talents,
 	}
 
-	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2) || paladin.HasSetBonus(ItemSetLiadrinsBattlegear, 2)
+	// This is used to cache its effect in talents.go
+	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2)
 
 	paladin.PseudoStats.CanParry = true
 
@@ -192,6 +205,11 @@ func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladi
 	paladin.PseudoStats.BaseParry += 0.05
 
 	return paladin
+}
+
+// Shared 30sec cooldown for Divine Protection and Avenging Wrath
+func (paladin *Paladin) GetMutualLockoutDPAW() *core.Timer {
+	return paladin.Character.GetOrInitTimer(&paladin.mutualLockoutDPAW)
 }
 
 func init() {
