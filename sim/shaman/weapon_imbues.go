@@ -151,15 +151,9 @@ func (shaman *Shaman) ApplyFlametongueImbue(mh bool, oh bool) {
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}
-	newStats := stats.Stats{stats.SpellPower: spBonus * spMod}
+	shaman.AddStat(stats.SpellPower, spBonus*spMod*imbueCount)
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
-		newStats = newStats.Add(stats.Stats{stats.SpellCrit: 2 * core.CritRatingPerCritChance})
-	}
-
-	if mh {
-		shaman.GetMHWeapon().Stats = shaman.GetMHWeapon().Stats.Add(newStats)
-	} else if oh {
-		shaman.GetOHWeapon().Stats = shaman.GetOHWeapon().Stats.Add(newStats)
+		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
 	}
 
 	ftIcd := core.Cooldown{
@@ -242,16 +236,9 @@ func (shaman *Shaman) ApplyFlametongueDownrankImbue(mh bool, oh bool) {
 	if mh && oh { // grant double SP+Crit bonuses for ft/ft (possible bug, but currently working on beta, its unclear)
 		imbueCount += 1.0
 	}
-
-	newStats := stats.Stats{stats.SpellPower: spBonus * spMod}
+	shaman.AddStat(stats.SpellPower, spBonus*spMod*imbueCount)
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
-		newStats = newStats.Add(stats.Stats{stats.SpellCrit: 2 * core.CritRatingPerCritChance})
-	}
-
-	if mh {
-		shaman.GetMHWeapon().Stats = shaman.GetMHWeapon().Stats.Add(newStats)
-	} else if oh {
-		shaman.GetOHWeapon().Stats = shaman.GetOHWeapon().Stats.Add(newStats)
+		shaman.AddStat(stats.SpellCrit, 2*core.CritRatingPerCritChance*imbueCount)
 	}
 
 	ftDownrankIcd := core.Cooldown{
