@@ -136,6 +136,7 @@ func (unit *Unit) EnableRunicPowerBar(currentRunicPower float64, maxRunicPower f
 		onDeathRuneGain:  onDeathRuneGain,
 		onRunicPowerGain: onRunicPowerGain,
 		isACopy:          false,
+		btslot:           -1,
 	}
 
 	unit.bloodRuneGainMetrics = unit.NewBloodRuneMetrics(ActionID{OtherID: proto.OtherAction_OtherActionBloodRuneGain, Tag: 1})
@@ -1055,6 +1056,10 @@ func (rp *RunicPowerBar) ReadyDeathRune() int8 {
 		}
 	}
 	return -1
+}
+
+func (rp *RunicPowerBar) IsBloodTappedRune(slot int8) bool {
+	return slot == rp.btslot
 }
 
 func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetrics) int8 {
