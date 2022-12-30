@@ -39,7 +39,6 @@ import * as WarriorPresets from '../warrior/presets.js';
 import * as ProtectionWarriorPresets from '../protection_warrior/presets.js';
 import * as WarlockPresets from '../warlock/presets.js';
 
-
 import { BalanceDruidSimUI } from '../balance_druid/sim.js';
 import { FeralDruidSimUI } from '../feral_druid/sim.js';
 import { FeralTankDruidSimUI } from '../feral_tank_druid/sim.js';
@@ -76,6 +75,14 @@ export const specSimFactories: Partial<Record<Spec, (parentElem: HTMLElement, pl
 	[Spec.SpecWarlock]: (parentElem: HTMLElement, player: Player<any>) => new WarlockSimUI(parentElem, player),
 };
 
+export type BuffBotId =
+	'Resto Druid' |
+	'Paladin' |
+	'Holy Priest' |
+	'Divine Spirit Priest' |
+	'Resto Shaman' |
+	'Blood DK Tank';
+
 // Configuration necessary for creating new players.
 export interface PresetSpecSettings<SpecType extends Spec> {
 	spec: Spec,
@@ -96,7 +103,7 @@ export interface PresetSpecSettings<SpecType extends Spec> {
 // Configuration necessary for creating new BuffBots.
 export interface BuffBotSettings {
 	// The value of this field must never change, to preserve local storage data.
-	buffBotId: string,
+	buffBotId: BuffBotId,
 
 	// Set this to true to remove a buff bot option after launching a real sim.
 	// This will allow users with saved settings to properly load the buffbot but
@@ -749,31 +756,6 @@ export const implementedSpecs: Array<Spec> = [...new Set(playerPresets.map(prese
 export const buffBotPresets: Array<BuffBotSettings> = [
 	{
 		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Bear',
-		deprecated: true,
-		spec: Spec.SpecBalanceDruid,
-		name: 'Bear',
-		tooltip: 'Bear: Adds Gift of the Wild, an Innervate, Faerie Fire, and Leader of the Pack.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.giftOfTheWild = Math.max(raidProto.buffs!.giftOfTheWild, TristateEffect.TristateEffectRegular);
-			raidProto.buffs!.thorns = Math.max(raidProto.buffs!.thorns, TristateEffect.TristateEffectRegular);
-			raidProto.debuffs!.faerieFire = Math.max(raidProto.debuffs!.faerieFire, TristateEffect.TristateEffectRegular);
-			raidProto.buffs!.leaderOfThePack = Math.max(raidProto.buffs!.leaderOfThePack, TristateEffect.TristateEffectRegular);
-
-			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
-			if (innervateIndex != NO_TARGET) {
-				const partyIndex = Math.floor(innervateIndex / 5);
-				const playerIndex = innervateIndex % 5;
-				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
-				if (playerProto.buffs) {
-					playerProto.buffs.innervates++;
-				}
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
 		buffBotId: 'Resto Druid',
 		spec: Spec.SpecBalanceDruid,
 		name: 'Resto Druid',
@@ -796,41 +778,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 	},
 	{
 		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Dreamstate',
-		spec: Spec.SpecBalanceDruid,
-		name: 'Dreamstate',
-		tooltip: 'Dreamstate: Adds Improved Gift of the Wild, an Innervate, and Improved Faerie Fire.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_faeriefire.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.giftOfTheWild = TristateEffect.TristateEffectImproved;
-			raidProto.buffs!.thorns = TristateEffect.TristateEffectImproved;
-			raidProto.debuffs!.faerieFire = TristateEffect.TristateEffectImproved;
-
-			const innervateIndex = buffBot.getInnervateAssignment().targetIndex;
-			if (innervateIndex != NO_TARGET) {
-				const partyIndex = Math.floor(innervateIndex / 5);
-				const playerIndex = innervateIndex % 5;
-				const playerProto = raidProto.parties[partyIndex].players[playerIndex];
-				if (playerProto.buffs) {
-					playerProto.buffs.innervates++;
-				}
-			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Mage',
-		deprecated: true,
-		spec: Spec.SpecMage,
-		name: 'Mage',
-		tooltip: 'Mage: Adds Arcane Brilliance.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_arcaneintellect.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.arcaneBrilliance = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
 		buffBotId: 'Paladin',
 		spec: Spec.SpecRetributionPaladin,
 		name: 'Holy Paladin',
@@ -838,18 +785,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 		iconUrl: talentTreeIcons[Class.ClassPaladin][0],
 		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
 			// Do nothing, blessings are handled elswhere.
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'JoW Paladin',
-		spec: Spec.SpecRetributionPaladin,
-		name: 'JoW Paladin',
-		tooltip: 'JoW Paladin: Adds a set of blessings and Judgement of Wisdom.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_righteousnessaura.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			// Blessings are handled elswhere.
-			raidProto.debuffs!.judgementOfWisdom = true;
 		},
 	},
 	{
@@ -929,48 +864,6 @@ export const buffBotPresets: Array<BuffBotSettings> = [
 			} else {
 				raidProto.buffs!.windfuryTotem = TristateEffect.TristateEffectRegular;
 			}
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Arms Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Arms Warrior',
-		tooltip: 'Arms Warrior: Adds Sunder Armor, Blood Frenzy, and Improved Battle Shout.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_savageblow.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
-			debuffs.bloodFrenzy = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Fury Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Fury Warrior',
-		tooltip: 'Fury Warrior: Adds Sunder Armor and Improved Battle Shout.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_innerrage.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			raidProto.buffs!.battleShout = TristateEffect.TristateEffectImproved;
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
-		},
-	},
-	{
-		// The value of this field must never change, to preserve local storage data.
-		buffBotId: 'Prot Warrior',
-		deprecated: true,
-		spec: Spec.SpecWarrior,
-		name: 'Prot Warrior',
-		tooltip: 'Prot Warrior: Adds Sunder Armor.',
-		iconUrl: 'https://wow.zamimg.com/images/wow/icons/medium/inv_shield_06.jpg',
-		modifyRaidProto: (buffBot: BuffBot, raidProto: RaidProto, partyProto: PartyProto) => {
-			const debuffs = raidProto.debuffs!;
-			debuffs.sunderArmor = true;
 		},
 	},
 	{

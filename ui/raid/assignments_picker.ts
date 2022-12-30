@@ -255,7 +255,7 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 			.filter(playerOrBot => playerOrBot?.getClass() == Class.ClassDeathknight)
 			.filter(playerOrBot => {
 				if (playerOrBot instanceof BuffBot) {
-					return playerOrBot.settings.buffBotId == 'Unholy Frenzy Dk';
+					return playerOrBot.settings.buffBotId == 'Blood DK Tank';
 				} else {
 					const player = playerOrBot as Player<Spec.SpecDeathknight>;
 					return player.getTalents().hysteria;

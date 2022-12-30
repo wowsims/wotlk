@@ -19,7 +19,7 @@ import { Player } from '../core/player';
 import { Target } from '../core/target';
 import { sortByProperty } from '../core/utils';
 
-import { playerPresets, PresetSpecSettings } from './presets';
+import { BuffBotId, playerPresets, PresetSpecSettings } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
 
 declare var $: any;
@@ -448,7 +448,7 @@ class WCLSimPlayer implements wclSimPlayer {
 	private simUI: RaidSimUI;
 	private fullType: string;
 	private spec: Spec|null;
-	private buffBotID: string;
+	private buffBotID: BuffBotId | '';
 	private faction: Faction;
 
 	constructor(data: wclPlayer, simUI: RaidSimUI, faction: Faction = Faction.Unknown) {
@@ -677,7 +677,7 @@ const specSortPriority: Record<string, number> = {
 
 // Maps WCL spec names to Spec enum if there is an implementation, or a buff bot ID
 // otherwise.
-const playerTypeIDs: Record<string, Spec|string> = {
+const playerTypeIDs: Record<string, Spec|BuffBotId> = {
 	'DeathKnightBlood': 'Blood DK Tank',
 	'DeathKnightLichborne': 'Blood DK Tank',
 	'DeathKnightFrost': Spec.SpecDeathknight,
