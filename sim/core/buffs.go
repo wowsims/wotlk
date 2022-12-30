@@ -537,8 +537,9 @@ func registerExternalConsecutiveCDApproximation(agent Agent, config externalCons
 	})
 }
 
-const BloodlustAuraTag = "Bloodlust"
+var BloodlustActionID = ActionID{SpellID: 2825}
 
+const BloodlustAuraTag = "Bloodlust"
 const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
@@ -574,7 +575,7 @@ func registerBloodlustCD(agent Agent) {
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
-	actionID := ActionID{SpellID: 2825, Tag: actionTag}
+	actionID := BloodlustActionID.WithTag(actionTag)
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Bloodlust-" + actionID.String(),
 		Tag:      BloodlustAuraTag,

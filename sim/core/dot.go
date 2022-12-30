@@ -40,6 +40,16 @@ func (dot *Dot) TickPeriod() time.Duration {
 	return dot.tickPeriod
 }
 
+func (dot *Dot) TimeUntilNextTick(sim *Simulation) time.Duration {
+	return dot.lastTickTime + dot.tickPeriod - sim.CurrentTime
+}
+
+func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
+	maxTicksRemaining := dot.NumberOfTicks - dot.TickCount
+	finalTickAt := dot.lastTickTime + dot.tickPeriod*time.Duration(maxTicksRemaining)
+	return MaxInt(0, int((finalTickAt-sim.CurrentTime)/dot.tickPeriod)+1)
+}
+
 // Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.
 // - Example: critical strike rating, internal % damage modifiers: buffs or debuffs on player
 // Nevermelting Ice, Shadow Mastery (ISB), Trick of the Trades, Deaths Embrace, Thadius Polarity, Hera Spores, Crit on weapons from swapping
@@ -178,7 +188,7 @@ func NewDot(config Dot) *Dot {
 	dot.Aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
 
 	dot.Aura.ApplyOnGain(func(aura *Aura, sim *Simulation) {
-		dot.lastTickTime = -1 // reset last tick time.
+		dot.lastTickTime = sim.CurrentTime
 		dot.TakeSnapshot(sim, false)
 
 		periodicOptions := dot.basePeriodicOptions()
