@@ -30,7 +30,7 @@ import { hexToRgba } from '../core/utils.js';
 
 import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';
-import { buffBotPresets, playerPresets, specSimFactories } from './presets.js';
+import { BuffBotId, buffBotPresets, playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { Mage_Options as MageOptions } from '../core/proto/mage.js';
@@ -127,7 +127,7 @@ export class RaidPicker extends Component {
 					return;
 				}
 
-				const buffBot = new BuffBot(buffBotProto.id, this.raid.sim);
+				const buffBot = new BuffBot(buffBotProto.id as BuffBotId, this.raid.sim);
 				buffBot.fromProto(eventID, buffBotProto);
 				this.getPlayerPicker(buffBotProto.raidIndex).setPlayer(eventID, buffBot, DragType.None);
 			});

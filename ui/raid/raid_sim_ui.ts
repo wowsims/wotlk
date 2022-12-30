@@ -26,6 +26,7 @@ import { BlessingsPicker } from "./blessings_picker.js";
 import { BuffBot } from "./buff_bot.js";
 import { implementedSpecs } from "./presets.js";
 import { RaidPicker } from "./raid_picker.js";
+import { RaidStats } from "./raid_stats.js";
 import { TanksPicker } from "./tanks_picker.js";
 
 import * as ImportExport from "./import_export.js";
@@ -132,6 +133,8 @@ export class RaidSimUI extends SimUI {
 		this.addTab('Raid', 'raid-tab', `
 			<div class="raid-picker">
 			</div>
+			<div class="raid-stats-div">
+			</div>
 			<div class="saved-raids-div">
 				<div class="saved-raids-manager">
 				</div>
@@ -139,6 +142,7 @@ export class RaidSimUI extends SimUI {
 		`);
 
 		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
+		new RaidStats(this.rootElem.getElementsByClassName('raid-stats-div')[0] as HTMLElement, this);
 
 		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
 			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
@@ -357,6 +361,10 @@ export class RaidSimUI extends SimUI {
 				.filter(buffBot => buffBot.getClass() == playerClass).length;
 	}
 
+	getPlayers(): Array<Player<any> | null> {
+		return this.sim.raid.getPlayers();
+	}
+
 	getBuffBots(): Array<BuffBot> {
 		return this.raidPicker!.getBuffBots();
 	}
@@ -370,7 +378,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	getPlayersAndBuffBots(): Array<Player<any> | BuffBot | null> {
-		const players = this.sim.raid.getPlayers();
+		const players = this.getPlayers();
 		const buffBots = this.getBuffBots();
 
 		const playersAndBuffBots: Array<Player<any> | BuffBot | null> = players.slice();

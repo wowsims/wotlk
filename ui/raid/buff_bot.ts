@@ -7,7 +7,7 @@ import { emptyRaidTarget } from '../core/proto_utils/utils.js';
 import { specToClass } from '../core/proto_utils/utils.js';
 import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { BuffBotSettings, buffBotPresets } from './presets.js';
+import { BuffBotId, BuffBotSettings, buffBotPresets } from './presets.js';
 
 export const NO_ASSIGNMENT = -1;
 
@@ -15,6 +15,7 @@ export const NO_ASSIGNMENT = -1;
 export class BuffBot {
 	settings: BuffBotSettings;
 	spec: Spec = 0;
+	id: BuffBotId;
 	name: string = '';
 
 	private raidIndex: number = NO_ASSIGNMENT;
@@ -32,12 +33,13 @@ export class BuffBot {
 
 	private readonly sim: Sim;
 
-	constructor(id: string, sim: Sim) {
+	constructor(id: BuffBotId, sim: Sim) {
 		const settings = buffBotPresets.find(preset => preset.buffBotId == id);
 		if (!settings) {
 			throw new Error('No buff bot config with id \'' + id + '\'!');
 		}
 
+		this.id = id;
 		this.sim = sim;
 		this.settings = settings;
 		this.updateSettings();
