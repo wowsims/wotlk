@@ -1,12 +1,10 @@
 import { Spec } from '../../proto/common.js';
 import { CustomRotation, CustomSpell } from '../../proto/common.js';
-import { EventID, TypedEvent } from '../../typed_event.js';
+import { EventID } from '../../typed_event.js';
 import { Player } from '../../player.js';
-import { BooleanPicker } from '../boolean_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../icon_enum_picker.js';
-import { ListPicker, ListPickerConfig } from '../list_picker.js';
+import { IconEnumPicker, IconEnumValueConfig } from '../icon_enum_picker.js';
+import { ListPicker } from '../list_picker.js';
 import { NumberPicker } from '../number_picker.js';
-import { getEnumValues } from '../../utils.js';
 
 import { Component } from '../component.js';
 import { SimUI } from 'ui/core/sim_ui.js';

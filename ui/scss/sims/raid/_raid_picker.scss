@@ -192,31 +192,3 @@
 	margin: 5px;
 	text-align: center;
 }
-
-.player-editor-modal {
-	display: none;
-	height: 95vh;
-	width: 95vw;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-dialog {
-	width: initial;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-content {
-	height: 95vh;
-	width: 95vw;
-	margin: auto;
-}
-
-.player-editor-modal .modal-body {
-	height: 100%;
-	padding: 5px;
-}
-
-.player-editor-modal .player-editor {
-	height: 100%;
-	width: 100%;
-}
