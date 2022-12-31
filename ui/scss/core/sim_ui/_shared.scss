@@ -39,7 +39,9 @@ td, th {
 		}
 
 		.sim-sidebar {
-			flex:1;
+			flex: 1;
+			// This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
+			z-index: 2;
 
 			.sim-title {
 				height: $sim-header-height;
@@ -55,6 +57,7 @@ td, th {
 			padding-left: $gap-width * 2;
 			padding-right: $gap-width * 2;
 			flex: 4;
+			z-index: 1;
 	
 			.sim-header {
 				height: $sim-header-height;

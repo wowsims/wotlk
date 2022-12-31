@@ -33,10 +33,13 @@ interface RaidOptions {
   type: 'Raid'
 }
 
+type SimTitleDropdownConfig = {
+  noDropdown?: boolean,
+}
+
 // Dropdown menu for selecting a player.
 export class SimTitleDropdown extends Component {
-
-  private readonly dropdownMenu: HTMLElement;
+  private readonly dropdownMenu: HTMLElement | undefined;
 
   private readonly specLabels: Record<Spec, string> = {
     [Spec.SpecBalanceDruid]:       'Balance',
@@ -59,11 +62,16 @@ export class SimTitleDropdown extends Component {
     [Spec.SpecTankDeathknight]:    'Tank',
   }
 
-  constructor(parent: HTMLElement, currentSpecIndex: Spec | null) {
+  constructor(parent: HTMLElement, currentSpecIndex: Spec | null, config: SimTitleDropdownConfig = {}) {
     super(parent, 'sim-title-dropdown-root');
 
     let rootLinkArgs: SpecOptions|RaidOptions = currentSpecIndex === null ? {type: 'Raid'} : {type: 'Spec', index: currentSpecIndex}
     let rootLink = this.buildRootSimLink(rootLinkArgs);
+
+    if (config.noDropdown) {
+      this.rootElem.innerHTML = rootLink.outerHTML;
+      return
+    }
 
     this.rootElem.innerHTML = `
       <div class="dropdown sim-link-dropdown">
@@ -92,7 +100,7 @@ export class SimTitleDropdown extends Component {
       // Add the raid sim to the top of the dropdown
       let raidListItem = document.createElement('li');
       raidListItem.appendChild(this.buildRaidLink());
-      this.dropdownMenu.appendChild(raidListItem);
+      this.dropdownMenu?.appendChild(raidListItem);
     }
 
     naturalClassOrder.forEach( classIndex => {
@@ -102,11 +110,11 @@ export class SimTitleDropdown extends Component {
       if (sims.length == 1) {
         // The class only has one listed sim so make a direct link to the sim
         listItem.appendChild(this.buildClassLink(classIndex));
-        this.dropdownMenu.appendChild(listItem);
+        this.dropdownMenu?.appendChild(listItem);
       } else if (sims.length > 1) {
         // Add the class to the dropdown with an additional spec dropdown
         listItem.appendChild(this.buildClassDropdown(classIndex));
-        this.dropdownMenu.appendChild(listItem);
+        this.dropdownMenu?.appendChild(listItem);
       }
     });
   }

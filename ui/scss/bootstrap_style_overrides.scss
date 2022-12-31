@@ -103,6 +103,27 @@
   }
 }
 
+// Class-themed form checks
+@each $color, $value in $theme-colors {
+  .form-check-#{$color} {
+    @extend .form-check;
+
+    .form-check-input:checked[type="checkbox"] {
+      background-color: $value;
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{color-contrast($value)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>")
+      );
+    }
+
+    .form-check-input:checked[type="radio"] {
+      background-color: $value;
+      background-image: escape-svg(
+        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{color-contrast($value)}'/></svg>")
+      );
+    }
+  }
+}
+
 @include media-breakpoint-down(xl) {
   .tooltip {
     --bs-tooltip-max-width: #{$tooltip-max-width-lg};

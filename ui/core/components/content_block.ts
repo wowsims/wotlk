@@ -4,14 +4,14 @@ import { Component } from './component.js';
 
 export interface ContentBlockHeaderConfig {
   title: string,
-  classes?: Array<string>,
+  extraCssClasses?: Array<string>,
   titleTag?: string,
   tooltip?: string,
 }
 
 export interface ContentBlockConfig {
 	bodyClasses?: Array<string>,
-  classes?: Array<string>,
+  extraCssClasses?: Array<string>,
   rootElem?: HTMLElement,
   header?: ContentBlockHeaderConfig,
 }
@@ -27,8 +27,8 @@ export class ContentBlock extends Component {
     this.config = config;
 		this.rootElem.classList.add(cssClass);
 
-		if (config.classes) {
-			this.rootElem.classList.add(...config.classes);
+		if (config.extraCssClasses) {
+			this.rootElem.classList.add(...config.extraCssClasses);
     }
 
     this.headerElement = this.buildHeader();
@@ -52,8 +52,8 @@ export class ContentBlock extends Component {
 
       let header = headerFragment.children[0] as HTMLElement;
       
-      if (this.config.header.classes) {
-        header.classList.add(...this.config.header.classes);
+      if (this.config.header.extraCssClasses) {
+        header.classList.add(...this.config.header.extraCssClasses);
       }
 
       if (this.config.header.tooltip)

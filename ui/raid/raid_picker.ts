@@ -36,6 +36,7 @@ import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid
 import { Mage_Options as MageOptions } from '../core/proto/mage.js';
 import { SmitePriest_Options as SmitePriestOptions } from '../core/proto/priest.js';
 import { MessageType } from '@protobuf-ts/runtime';
+import { BaseModal } from '../core/components/base_modal.js';
 
 declare var tippy: any;
 declare var $: any;
@@ -540,30 +541,20 @@ export class PlayerPicker extends Component {
 	}
 }
 
-class PlayerEditorModal extends Component {
+class PlayerEditorModal extends BaseModal {
 	constructor(player: Player<any>) {
-		super(document.body, 'player-editor-modal');
+		super('player-editor-modal', {
+			closeButton: {fixed: true, text: false},
+			header: false
+		});
 
 		this.rootElem.id = 'playerEditorModal';
-		this.rootElem.innerHTML = `
-			<div class="player-editor within-raid-sim">
-			</div>
-		`;
-
-		new CloseButton(this.rootElem, () => {
-			$('#playerEditorModal').bPopup().close();
-			this.rootElem.remove();
-		});
+		this.body.insertAdjacentHTML('beforeend', `
+			<div class="player-editor within-raid-sim"></div>
+		`);
 
 		const editorRoot = this.rootElem.getElementsByClassName('player-editor')[0] as HTMLElement;
 		const individualSim = specSimFactories[player.spec]!(editorRoot, player);
-
-		$('#playerEditorModal').bPopup({
-			closeClass: 'player-editor-close',
-			onClose: () => {
-				this.rootElem.remove();
-			},
-		});
 	}
 }
 

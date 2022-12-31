@@ -1,5 +1,8 @@
 .close-button {
+	top: $modal-inner-padding;
+	right: $modal-inner-padding;
 	white-space: nowrap;
+	z-index: 1;
 
 	&> i {
 		vertical-align: middle;

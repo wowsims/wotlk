@@ -177,7 +177,7 @@ class AdvancedEncounterModal extends BaseModal {
 	private addHeader() {
 		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
 
-		new EnumPicker<Encounter>(this.header, this.encounter, {
+		new EnumPicker<Encounter>(this.header as HTMLElement, this.encounter, {
 			label: 'Encounter',
 			extraCssClasses: ['encounter-picker', 'mb-0'],
 			values: [
@@ -196,8 +196,6 @@ class AdvancedEncounterModal extends BaseModal {
 				}
 			},
 		});
-
-		this.addCloseButton();
 	}
 }
 

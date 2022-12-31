@@ -217,7 +217,7 @@ export class CharacterStats extends Component {
 				role="button"
 				data-bs-toggle="popover"
 				data-bs-content="
-					<div class='input-root number-picker-root'>
+					<div class='input-root number-picker-root mb-0'>
 						<label class='form-label'>Bonus Health</label>
 						<input type='text' class='form-control number-picker-input' value=${this.player.getBonusStats().getStat(stat)}>
 					</div>
@@ -241,6 +241,7 @@ export class CharacterStats extends Component {
 			popoverBody.innerHTML = '';
 			let picker = new NumberPicker(popoverBody, this.player, {
 				label: `Bonus ${statName}`,
+				extraCssClasses: ['mb-0'],
 				changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
 				getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),
 				setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
