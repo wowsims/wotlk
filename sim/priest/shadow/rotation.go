@@ -243,16 +243,16 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 
 		if blAura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag); blAura != nil {
 			blRemainingDur := blAura.RemainingDuration(sim)
-			if blRemainingDur < time.Second*3 && blRemainingDur > time.Millisecond*100 {
-				dpRemainTicks := float64(spriest.DevouringPlagueDot.NumTicksRemaining(sim))
+			if blRemainingDur < time.Second*2 && blRemainingDur > time.Millisecond*100 {
+				dpRemainTicks := 8 - float64(spriest.DevouringPlagueDot.NumTicksRemaining(sim))
 				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotCurr*(1-spriest.CastSpeed)
 				currDPS2 = cdDamage
 
-				// if sim.Log != nil {
-				// 	spriest.Log(sim, "currDPS2[%d]", currDPS2)
-				// 	spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
-				// 	spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
-				// }
+				if sim.Log != nil {
+					spriest.Log(sim, "currDPS2[%d]", currDPS2)
+					spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
+					spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+				}
 			}
 		}
 	}
