@@ -201,13 +201,12 @@ func init() {
 			oh = character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3789
 
 			procMask = core.GetMeleeProcMaskForHands(mh, oh)
-
-			if procMask == 0 {
+			ppmm = character.AutoAttacks.NewPPMManager(1.0, procMask)
+			if ppmm.Chance(procMask) == 0 {
 				aura.Deactivate(sim)
 				return
 			}
 
-			ppmm = character.AutoAttacks.NewPPMManager(1.0, procMask)
 			if !aura.IsActive() {
 				aura.Activate(sim)
 			}
@@ -249,13 +248,13 @@ func init() {
 			oh = character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3241
 
 			procMask = core.GetMeleeProcMaskForHands(mh, oh)
+			ppmm = character.AutoAttacks.NewPPMManager(3.0, procMask)
 
-			if procMask == 0 {
+			if ppmm.Chance(procMask) == 0 {
 				aura.Deactivate(sim)
 				return
 			}
 
-			ppmm = character.AutoAttacks.NewPPMManager(3.0, procMask)
 			if !aura.IsActive() {
 				aura.Activate(sim)
 			}

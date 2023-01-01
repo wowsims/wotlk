@@ -23,8 +23,8 @@ type ItemSwap struct {
 	unEquippedItems [3]Item
 }
 
-func RegisterOnItemSwap(key int32, callback OnSwapItem) {
-	onSwapCallbacks[key] = callback
+func RegisterOnItemSwap(id int32, callback OnSwapItem) {
+	onSwapCallbacks[id] = callback
 }
 
 func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap) {
@@ -72,6 +72,9 @@ func toItem(itemSpecProto *proto.ItemSpec) Item {
 }
 
 func (swap *ItemSwap) GetItem(slot proto.ItemSlot) Item {
+	if slot-offset < 0 {
+		panic("Not able to swap Item " + slot.String() + " not supported")
+	}
 	return swap.unEquippedItems[slot-offset]
 }
 
@@ -88,11 +91,9 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 
 	meeleWeaponSwapped := false
 	for _, slot := range slots {
-		if slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand {
-			meeleWeaponSwapped = true
+		if swap.swapItem(sim, slot) {
+			meeleWeaponSwapped = slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand
 		}
-
-		swap.swapItem(sim, slot)
 	}
 
 	for _, onSwap := range onSwapCallbacks {
@@ -108,14 +109,14 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	}
 }
 
-func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot) {
+func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot) bool {
 	character := swap.character
 	oldItem := character.Equip[slot]
 	newItem := swap.GetItem(slot)
 
 	// No item to swap too
 	if newItem.ID == 0 {
-		return
+		return false
 	}
 
 	character.Equip[slot] = newItem
@@ -124,6 +125,8 @@ func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot) {
 
 	swap.setItem(slot, oldItem)
 	swap.swapWeapon(sim, slot)
+
+	return true
 }
 
 func (swap *ItemSwap) swapWeapon(sim *Simulation, slot proto.ItemSlot) {
