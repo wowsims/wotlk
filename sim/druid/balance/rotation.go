@@ -59,8 +59,14 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	useIs := moonkin.Rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs
 	maximizeMfUptime := moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf
 	maximizeIsUptime := moonkin.Rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs
+	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
+
+	shouldHoldIs := false
+	if lunarIsActive {
+		shouldHoldIs = lunarUptime.Seconds() < (moonkin.InsectSwarm.DamageMultiplier-1)/0.042
+	}
 	shouldRefreshMf := moonfireUptime <= 0 && useMf
-	shouldRefreshIs := insectSwarmUptime <= 0 && useIs
+	shouldRefreshIs := insectSwarmUptime <= 0 && useIs && !shouldHoldIs
 	if maximizeIsUptime && shouldRefreshIs {
 		return moonkin.InsectSwarm
 	}
@@ -77,7 +83,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	if moonkin.Talents.Eclipse > 0 {
 
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
-		lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 
 		// "Dispelling" eclipse effects before casting if needed
