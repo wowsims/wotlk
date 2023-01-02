@@ -16,7 +16,6 @@ import { Race } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { BuffBot as BuffBotProto } from '../core/proto/ui.js';
 import { playerToSpec, specNames } from '../core/proto_utils/utils.js';
 import { classColors } from '../core/proto_utils/utils.js';
 import { isTankSpec } from '../core/proto_utils/utils.js';
@@ -28,9 +27,8 @@ import { formatDeltaTextElem } from '../core/utils.js';
 import { getEnumValues } from '../core/utils.js';
 import { hexToRgba } from '../core/utils.js';
 
-import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';
-import { BuffBotId, buffBotPresets, playerPresets, specSimFactories } from './presets.js';
+import { playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { Mage_Options as MageOptions } from '../core/proto/mage.js';
@@ -58,7 +56,7 @@ export class RaidPicker extends Component {
 	readonly newPlayerPicker: NewPlayerPicker;
 
 	// Hold data about the player being dragged while the drag is happening.
-	currentDragPlayer: Player<any> | BuffBot | null = null;
+	currentDragPlayer: Player<any> | null = null;
 	currentDragPlayerFromIndex: number = NEW_PLAYER;
 	currentDragType: DragType = DragType.New;
 
@@ -111,31 +109,7 @@ export class RaidPicker extends Component {
 		return [...new Array(25).keys()].map(i => this.getPlayerPicker(i));
 	}
 
-	getBuffBots(): Array<BuffBot> {
-		return this.getPlayerPickers()
-			.filter(picker => picker.player instanceof BuffBot)
-			.map(picker => picker.player as BuffBot);
-	}
-
-	setBuffBots(eventID: EventID, newBuffBotProtos: Array<BuffBotProto>) {
-		TypedEvent.freezeAllAndDo(() => {
-			this.getBuffBots().forEach(buffBot => this.getPlayerPicker(buffBot.getRaidIndex()).setPlayer(eventID, null, DragType.None));
-
-			newBuffBotProtos.forEach(buffBotProto => {
-				const settings = buffBotPresets.find(preset => preset.buffBotId == buffBotProto.id);
-				if (!settings) {
-					console.warn('Invalid buff bot ID: ' + buffBotProto.id);
-					return;
-				}
-
-				const buffBot = new BuffBot(buffBotProto.id as BuffBotId, this.raid.sim);
-				buffBot.fromProto(eventID, buffBotProto);
-				this.getPlayerPicker(buffBotProto.raidIndex).setPlayer(eventID, buffBot, DragType.None);
-			});
-		});
-	}
-
-	setDragPlayer(player: Player<any> | BuffBot, fromIndex: number, type: DragType) {
+	setDragPlayer(player: Player<any>, fromIndex: number, type: DragType) {
 		this.clearDragPlayer();
 
 		this.currentDragPlayer = player;
@@ -222,7 +196,7 @@ export class PlayerPicker extends Component {
 	// Index of this player within the whole raid (0-24).
 	readonly raidIndex: number;
 
-	player: Player<any> | BuffBot | null;
+	player: Player<any> | null;
 
 	readonly partyPicker: PartyPicker;
 	readonly raidPicker: RaidPicker;
@@ -244,7 +218,7 @@ export class PlayerPicker extends Component {
 
 		this.partyPicker.party.compChangeEmitter.on(eventID => {
 			const newPlayer = this.partyPicker.party.getPlayer(this.index);
-			if (newPlayer != this.player && !(newPlayer == null && this.player instanceof BuffBot)) {
+			if (newPlayer != this.player) {
 				this.setPlayer(eventID, newPlayer, DragType.None);
 			}
 		});
@@ -482,7 +456,7 @@ export class PlayerPicker extends Component {
 		this.update();
 	}
 
-	setPlayer(eventID: EventID, newPlayer: Player<any> | BuffBot | null, dragType: DragType) {
+	setPlayer(eventID: EventID, newPlayer: Player<any> | null, dragType: DragType) {
 		if (newPlayer == this.player) {
 			return;
 		}
@@ -492,10 +466,7 @@ export class PlayerPicker extends Component {
 
 		TypedEvent.freezeAllAndDo(() => {
 			this.player = newPlayer;
-			if (newPlayer instanceof BuffBot) {
-				this.partyPicker.party.setPlayer(eventID, this.index, null);
-				newPlayer.setRaidIndex(eventID, this.raidIndex);
-			} else if (newPlayer instanceof Player) {
+			if (newPlayer) {
 				this.partyPicker.party.setPlayer(eventID, this.index, newPlayer);
 
 				if (dragType == DragType.New) {
@@ -513,24 +484,13 @@ export class PlayerPicker extends Component {
 	private update() {
 		if (this.player == null) {
 			this.rootElem.classList.add('empty');
-			this.rootElem.classList.remove('buff-bot');
 			this.rootElem.style.backgroundColor = 'black';
 			this.labelElem.setAttribute('draggable', 'false');
 			this.resultsElem.setAttribute('draggable', 'false');
 			this.nameElem.textContent = '';
 			this.nameElem.removeAttribute('contenteditable');
-		} else if (this.player instanceof BuffBot) {
-			this.rootElem.classList.remove('empty');
-			this.rootElem.classList.add('buff-bot');
-			this.rootElem.style.backgroundColor = classColors[specToClass[this.player.spec]];
-			this.labelElem.setAttribute('draggable', 'true');
-			this.resultsElem.setAttribute('draggable', 'true');
-			this.nameElem.textContent = this.player.name;
-			this.nameElem.removeAttribute('contenteditable');
-			this.iconElem.src = this.player.settings.iconUrl;
 		} else {
 			this.rootElem.classList.remove('empty');
-			this.rootElem.classList.remove('buff-bot');
 			this.rootElem.style.backgroundColor = this.player.getClassColor();
 			this.labelElem.setAttribute('draggable', 'true');
 			this.resultsElem.setAttribute('draggable', 'true');
@@ -571,12 +531,6 @@ class NewPlayerPicker extends Component {
 				<div class="phase-selector"></div>
 			</div>
 			<div class="presets-container"></div>
-			<div class="buff-bots-container">
-				<div class="buff-bots-title">
-					<span class="buff-bots-title-text">Buff Bots</span>
-					<span class="buff-bots-tooltip fa fa-info-circle"></span>
-				</div>
-			</div>
 		`;
 
 		const factionSelector = new EnumPicker<NewPlayerPicker>(this.rootElem.getElementsByClassName('faction-selector')[0] as HTMLElement, this, {
@@ -675,58 +629,6 @@ class NewPlayerPicker extends Component {
 
 						this.raidPicker.setDragPlayer(newPlayer, NEW_PLAYER, DragType.New);
 					});
-				};
-			});
-		});
-
-		const buffbotsTooltip = this.rootElem.getElementsByClassName('buff-bots-tooltip')[0] as HTMLElement;
-		tippy(buffbotsTooltip, {
-			'content': 'Buff bots do not do DPS or any actions at all, except to buff their raid/party members. They are used as placeholders for classes we haven\'t implemented yet, or never will (e.g. healers) so that a proper raid environment can still be simulated.',
-			'allowHTML': true,
-		});
-
-		const buffbotsContainer = this.rootElem.getElementsByClassName('buff-bots-container')[0] as HTMLElement;
-		getEnumValues(Class).forEach(wowClass => {
-			if (wowClass == Class.ClassUnknown) {
-				return;
-			}
-
-			const matchingBuffBots = buffBotPresets
-				.filter(buffBot => specToClass[buffBot.spec] == wowClass)
-				.filter(buffBot => !buffBot.deprecated);
-			if (matchingBuffBots.length == 0) {
-				return;
-			}
-
-			const classPresetsContainer = document.createElement('div');
-			classPresetsContainer.classList.add('class-presets-container');
-			buffbotsContainer.appendChild(classPresetsContainer);
-			classPresetsContainer.style.backgroundColor = hexToRgba(classColors[wowClass as Class], 0.5);
-
-			matchingBuffBots.forEach(matchingBuffBot => {
-				const presetElem = document.createElement('div');
-				presetElem.classList.add('preset-picker');
-				presetElem.classList.add('preset-picker-buff-bot');
-				classPresetsContainer.appendChild(presetElem);
-
-				const presetIconElem = document.createElement('img');
-				presetIconElem.classList.add('preset-picker-icon');
-				presetElem.appendChild(presetIconElem);
-				presetIconElem.src = matchingBuffBot.iconUrl;
-				tippy(presetIconElem, {
-					'content': matchingBuffBot.tooltip,
-					'allowHTML': true,
-				});
-
-				presetElem.setAttribute('draggable', 'true');
-				presetElem.ondragstart = event => {
-					const dragImage = new Image();
-					dragImage.src = matchingBuffBot.iconUrl;
-					event.dataTransfer!.setDragImage(dragImage, 30, 30);
-					event.dataTransfer!.setData("text/plain", "");
-					event.dataTransfer!.dropEffect = 'copy';
-
-					this.raidPicker.setDragPlayer(new BuffBot(matchingBuffBot.buffBotId, this.raidPicker.raidSimUI.sim), NEW_PLAYER, DragType.New);
 				};
 			});
 		});

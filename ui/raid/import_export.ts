@@ -1,7 +1,7 @@
 import { Exporter } from '../core/components/exporters';
 import { Importer } from '../core/components/importers';
 import { MAX_PARTY_SIZE } from '../core/party';
-import { BuffBot, RaidSimSettings } from '../core/proto/ui';
+import { RaidSimSettings } from '../core/proto/ui';
 import { TypedEvent } from '../core/typed_event';
 import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api';
 import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '../core/proto/common';
@@ -19,7 +19,7 @@ import { Player } from '../core/player';
 import { Target } from '../core/target';
 import { sortByProperty } from '../core/utils';
 
-import { BuffBotId, playerPresets, PresetSpecSettings } from './presets';
+import { playerPresets, PresetSpecSettings } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
 
 declare var $: any;
@@ -252,12 +252,10 @@ export class RaidWCLImporter extends Importer {
 				raid: this.getRaidProto(wclPlayers),
 				blessings: makeDefaultBlessings(numPaladins),
 			});
-			const buffBots = this.getBuffBots(wclPlayers);
 
 			// Clear the raid out to avoid any taint issues.
 			this.simUI.clearRaid(eventID);
 			this.simUI.fromProto(eventID, settings);
-			this.simUI.setBuffBots(eventID, buffBots);
 		});
 
 		this.close();
@@ -358,8 +356,7 @@ export class RaidWCLImporter extends Importer {
 					const sourcePlayer = wclPlayers.find((player) => player.name === cast.name);
 					const targetPlayer = wclPlayers.find((player) => player.name === cast.targets[0].name);
 
-					// Buff bots do not get PI/Innervates.
-					if (sourcePlayer && targetPlayer && !targetPlayer.isBuffBot) {
+					if (sourcePlayer && targetPlayer) {
 						playerCasts.push({ player: sourcePlayer, target: targetPlayer });
 					}
 				});
@@ -419,10 +416,6 @@ export class RaidWCLImporter extends Importer {
 
 		return raid;
 	}
-
-	private getBuffBots(wclPlayers: WCLSimPlayer[]): Array<BuffBot> {
-		return wclPlayers.filter(p => p.isBuffBot).map(p => p.getBuffBot()!);
-	}
 }
 
 class WCLSimPlayer implements wclSimPlayer {
@@ -448,7 +441,6 @@ class WCLSimPlayer implements wclSimPlayer {
 	private simUI: RaidSimUI;
 	private fullType: string;
 	private spec: Spec|null;
-	private buffBotID: BuffBotId | '';
 	private faction: Faction;
 
 	constructor(data: wclPlayer, simUI: RaidSimUI, faction: Faction = Faction.Unknown) {
@@ -469,28 +461,17 @@ class WCLSimPlayer implements wclSimPlayer {
 		}
 
 		this.fullType = this.type + this.wclSpec;
-		const typeID = playerTypeIDs[this.fullType];
-		if (typeof typeID === 'string') {
-			this.spec = null;
-			this.buffBotID = typeID;
-		} else {
-			this.spec = typeID;
-			this.buffBotID = '';
-		}
+		this.spec = fullTypeToSpec[this.fullType] || null;
 		this.sortPriority = specSortPriority[this.fullType] ?? 99;
 
 		console.log(`WCL spec: ${this.fullType}`);
-		if (!this.isPlayer && !this.isBuffBot) {
+		if (this.spec != null) {
 			throw new Error('Player type not implemented: ' + this.fullType);
 		}
 	}
 
 	public get isPlayer(): boolean {
-		return this.spec !== null;
-	}
-
-	public get isBuffBot(): boolean {
-		return Boolean(this.buffBotID);
+		return this.spec != null;
 	}
 
 	public getPlayer(): PlayerProto | undefined {
@@ -500,7 +481,7 @@ class WCLSimPlayer implements wclSimPlayer {
 
 		const matchingPreset = this.getMatchingPreset();
 		if (matchingPreset === undefined) {
-			throw new Error('Could not find matching preset for non buff bot: ' + JSON.stringify({
+			throw new Error('Could not find matching preset: ' + JSON.stringify({
 				'name': this.name,
 				'type': this.fullType,
 				'talents': this.talents,
@@ -536,27 +517,6 @@ class WCLSimPlayer implements wclSimPlayer {
 		}
 
 		return player;
-	}
-
-	public getBuffBot(): BuffBot | undefined {
-		if (!this.isBuffBot) {
-			return;
-		}
-
-		const buffBot = BuffBot.create({
-			id: this.buffBotID,
-			raidIndex: this.raidIndex,
-		});
-
-		if (this.innervateTarget) {
-			buffBot.innervateAssignment = this.innervateTarget.toRaidTarget();
-		} else if (this.powerInfusionTarget) {
-			buffBot.powerInfusionAssignment = this.powerInfusionTarget.toRaidTarget();
-		} else if (this.tricksOfTheTradeTarget) {
-			buffBot.tricksOfTheTradeAssignment = this.tricksOfTheTradeTarget.toRaidTarget();
-		}
-
-		return buffBot;
 	}
 
 	public toRaidTarget(): RaidTarget {
@@ -675,18 +635,16 @@ const specSortPriority: Record<string, number> = {
 	'HunterMarksman': 13,
 };
 
-// Maps WCL spec names to Spec enum if there is an implementation, or a buff bot ID
-// otherwise.
-const playerTypeIDs: Record<string, Spec|BuffBotId> = {
-	'DeathKnightBlood': 'Blood DK Tank',
-	'DeathKnightLichborne': 'Blood DK Tank',
+const fullTypeToSpec: Record<string, Spec> = {
+	'DeathKnightBlood': Spec.SpecTankDeathknight,
+	'DeathKnightLichborne': Spec.SpecTankDeathknight,
 	'DeathKnightFrost': Spec.SpecDeathknight,
 	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,
 	'DruidFeral': Spec.SpecFeralDruid,
 	'DruidWarden': Spec.SpecFeralTankDruid,
 	'DruidGuardian': Spec.SpecFeralTankDruid,
-	'DruidRestoration': 'Resto Druid',
+	'DruidRestoration': Spec.SpecRestorationDruid,
 	'HunterBeastMastery': Spec.SpecHunter,
 	'HunterSurvival': Spec.SpecHunter,
 	'HunterMarksman': Spec.SpecHunter,
@@ -695,9 +653,9 @@ const playerTypeIDs: Record<string, Spec|BuffBotId> = {
 	'MageFrost': Spec.SpecMage,
 	'PaladinRetribution': Spec.SpecRetributionPaladin,
 	'PaladinJusticar': Spec.SpecProtectionPaladin,
-	'PaladinHoly': 'Paladin',
-	'PriestHoly': 'Holy Priest',
-	'PriestDiscipline': 'Divine Spirit Priest',
+	'PaladinHoly': Spec.SpecHolyPaladin,
+	'PriestHoly': Spec.SpecHealingPriest,
+	'PriestDiscipline': Spec.SpecHealingPriest,
 	'PriestShadow': Spec.SpecShadowPriest,
 	'PriestSmite': Spec.SpecSmitePriest,
 	'RogueAssassination': Spec.SpecRogue,
@@ -705,7 +663,7 @@ const playerTypeIDs: Record<string, Spec|BuffBotId> = {
 	'RogueSubtlety': Spec.SpecRogue,
 	'ShamanElemental': Spec.SpecElementalShaman,
 	'ShamanEnhancement': Spec.SpecEnhancementShaman,
-	'ShamanRestoration': 'Resto Shaman',
+	'ShamanRestoration': Spec.SpecRestorationShaman,
 	'WarlockDestruction': Spec.SpecWarlock,
 	'WarlockAffliction': Spec.SpecWarlock,
 	'WarlockDemonology': Spec.SpecWarlock,
@@ -788,7 +746,6 @@ interface wclSimPlayer extends wclPlayer {
 	wclSpec: string;
 	partyAssigned: boolean;
 	partyMembers: string[];
-	isBuffBot: boolean;
 }
 
 interface wclAura {

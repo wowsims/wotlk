@@ -141,10 +141,6 @@
 	margin: 5px;
 }
 
-.buff-bot .player-edit {
-	display: none;
-}
-
 .new-player-picker {
 	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
 	margin-top: calc(var(--bs-gap) / -2);
@@ -179,16 +175,4 @@
 	height: 30px;
 	cursor: pointer;
 	margin: 0 3px;
-}
-
-.buff-bots-container {
-	border-top: 1px solid white;
-	margin-top: 10px;
-}
-
-.buff-bots-title {
-	font-size: 16px;
-	font-weight: 700;
-	margin: 5px;
-	text-align: center;
 }
