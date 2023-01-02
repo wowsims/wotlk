@@ -30,6 +30,10 @@ type ItemSwap struct {
 	has2H bool
 }
 
+/*
+	TODO All the extra parameters here and the code in multiple places for handling the Weapon struct is really messy,
+		we'll need to figure out something cleaner as this will be quite error-prone
+*/
 func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap, mhCritMultiplier float64, ohCritMultiplier float64, rangedCritMultiplier float64) {
 	items := getItems(itemSwap)
 
