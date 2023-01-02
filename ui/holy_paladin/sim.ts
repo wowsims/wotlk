@@ -1,20 +1,29 @@
+import { RaidBuffs } from '../core/proto/common.js';
+import { PartyBuffs } from '../core/proto/common.js';
+import { IndividualBuffs } from '../core/proto/common.js';
+import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { Stat, PseudoStat } from '../core/proto/common.js';
+import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import * as Mechanics from '../core/constants/mechanics.js';
 
-import * as DruidInputs from './inputs.js';
+import { PaladinMajorGlyph } from '../core/proto/paladin.js';
+
+import * as HolyPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecBalanceDruid>) {
+export class HolyPaladinSimUI extends IndividualSimUI<Spec.SpecHolyPaladin> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHolyPaladin>) {
 		super(parentElem, player, {
-			cssClass: 'balance-druid-sim-ui',
-			cssScheme: 'druid',
+			cssClass: 'holy-paladin-sim-ui',
+			cssScheme: 'paladin',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 			],
@@ -24,7 +33,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
@@ -34,16 +42,15 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
 			],
-
 			defaults: {
 				// Default equipped gear.
 				gear: Presets.P1_PRESET.gear,
@@ -61,36 +68,62 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.StandardTalents.data,
+				talents: Presets.GenericAoeTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
-				raidBuffs: Presets.DefaultRaidBuffs,
-
-				partyBuffs: Presets.DefaultPartyBuffs,
-
-				individualBuffs: Presets.DefaultIndividualBuffs,
-
-				debuffs: Presets.DefaultDebuffs,
-
-				other: Presets.OtherDefaults,
+				raidBuffs: RaidBuffs.create({
+					giftOfTheWild: TristateEffect.TristateEffectImproved,
+					powerWordFortitude: TristateEffect.TristateEffectImproved,
+					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+					arcaneBrilliance: true,
+					unleashedRage: true,
+					leaderOfThePack: TristateEffect.TristateEffectRegular,
+					icyTalons: true,
+					totemOfWrath: true,
+					demonicPact: 500,
+					swiftRetribution: true,
+					moonkinAura: TristateEffect.TristateEffectRegular,
+					sanctifiedRetribution: true,
+					manaSpringTotem: TristateEffect.TristateEffectRegular,
+					bloodlust: true,
+					thorns: TristateEffect.TristateEffectImproved,
+					devotionAura: TristateEffect.TristateEffectImproved,
+					shadowProtection: true,
+				}),
+				partyBuffs: PartyBuffs.create({
+				}),
+				individualBuffs: IndividualBuffs.create({
+					blessingOfKings: true,
+					blessingOfSanctuary: true,
+					blessingOfWisdom: TristateEffect.TristateEffectImproved,
+					blessingOfMight: TristateEffect.TristateEffectImproved,
+				}),
+				debuffs: Debuffs.create({
+					judgementOfWisdom: true,
+					judgementOfLight: true,
+					misery: true,
+					faerieFire: TristateEffect.TristateEffectImproved,
+					ebonPlaguebringer: true,
+					totemOfWrath: true,
+					shadowMastery: true,
+					bloodFrenzy: true,
+					mangle: true,
+					exposeArmor: true,
+					sunderArmor: true,
+					vindication: true,
+					thunderClap: TristateEffect.TristateEffectImproved,
+					insectSwarm: true,
+				}),
 			},
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
-				DruidInputs.SelfInnervate,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: DruidInputs.BalanceDruidRotationConfig,
+			rotationInputs: HolyPaladinInputs.HolyPaladinRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.MeleeHasteBuff,
-				IconInputs.MeleeCritBuff,
-				IconInputs.AttackPowerPercentBuff,
-				IconInputs.AttackPowerBuff,
-				IconInputs.MajorArmorDebuff,
-				IconInputs.MinorArmorDebuff,
-				IconInputs.PhysicalDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -98,7 +131,9 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
-					OtherInputs.DistanceFromTarget,
+					OtherInputs.InspirationUptime,
+					HolyPaladinInputs.AuraSelection,
+					HolyPaladinInputs.JudgementSelection,
 				],
 			},
 			encounterPicker: {
@@ -109,11 +144,11 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.StandardTalents,
+					Presets.GenericAoeTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRE_RAID_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
 			},
