@@ -391,17 +391,15 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 					return
 				}
 
 				vulnAura.Activate(sim)
-				isMH := spell.ProcMask.Matches(procMask)
-				isOH := spell.ProcMask.Matches(procMask)
-				if isMH {
+				if spell.IsMH() {
 					mhRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
-				} else if isOH {
+				} else {
 					ohRazoriceSpell.Cast(sim, target)
 					vulnAura.AddStack(sim)
 				}
