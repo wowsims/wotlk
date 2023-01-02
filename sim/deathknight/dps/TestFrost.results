@@ -194,8 +194,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DeadlyGladiator'sSigilofStrife-42620"
  value: {
-  dps: 7513.05207
-  tps: 4391.04227
+  dps: 7512.92074
+  tps: 4390.96347
  }
 }
 dps_results: {
@@ -355,8 +355,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-FuriousGladiator'sSigilofStrife-42621"
  value: {
-  dps: 7513.72763
-  tps: 4391.4476
+  dps: 7513.57003
+  tps: 4391.35304
  }
 }
 dps_results: {
@@ -397,8 +397,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-HatefulGladiator'sSigilofStrife-42619"
  value: {
-  dps: 7511.73027
-  tps: 4390.24918
+  dps: 7511.61425
+  tps: 4390.17958
  }
 }
 dps_results: {
@@ -552,8 +552,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-RelentlessGladiator'sSigilofStrife-42622"
  value: {
-  dps: 7514.51578
-  tps: 4391.92049
+  dps: 7514.32753
+  tps: 4391.80754
  }
 }
 dps_results: {
@@ -573,8 +573,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-SavageGladiator'sSigilofStrife-42618"
  value: {
-  dps: 7511.49751
-  tps: 4390.10953
+  dps: 7511.39464
+  tps: 4390.04781
  }
 }
 dps_results: {
@@ -629,22 +629,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-SigilofHauntedDreams-40715"
  value: {
-  dps: 7524.3103
-  tps: 4397.79721
+  dps: 7523.16034
+  tps: 4397.10723
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-SigilofVirulence-47673"
  value: {
-  dps: 7921.3763
-  tps: 4630.39893
+  dps: 7918.39859
+  tps: 4628.61231
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-SigiloftheHangedMan-50459"
  value: {
-  dps: 7951.87933
-  tps: 4650.26426
+  dps: 7950.23557
+  tps: 4649.27801
  }
 }
 dps_results: {
@@ -741,8 +741,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7493.3525
-  tps: 4383.54135
+  dps: 7491.21404
+  tps: 4382.25827
  }
 }
 dps_results: {
@@ -846,8 +846,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-WrathfulGladiator'sSigilofStrife-51417"
  value: {
-  dps: 7515.41652
-  tps: 4392.46094
+  dps: 7515.19325
+  tps: 4392.32698
  }
 }
 dps_results: {

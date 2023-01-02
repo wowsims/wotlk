@@ -41,6 +41,10 @@ func (druid *Druid) registerTyphoonSpell() {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if druid.ClearcastingAura != nil {
+				druid.ClearcastingAura.Deactivate(sim)
+			}
+
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				baseDamage := 1190 + (spellCoeff * spell.SpellPower())
 				baseDamage *= sim.Encounter.AOECapMultiplier()

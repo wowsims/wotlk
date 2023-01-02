@@ -176,21 +176,7 @@ var ItemSetAegisPlate = core.NewItemSet(core.ItemSet{
 			// Implemented in sov.go
 		},
 		4: func(agent core.Agent) {
-			paladin := agent.(PaladinAgent).GetPaladin()
-			procAura := paladin.NewTemporaryStatsAura("Aegis", core.ActionID{SpellID: 64883}, stats.Stats{stats.BlockValue: 225}, time.Second*6)
-
-			paladin.RegisterAura(core.Aura{
-				Label:    "Aegis Plate 4P Bonus",
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
-				},
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell.SpellID == paladin.ShieldOfRighteousness.SpellID {
-						procAura.Activate(sim)
-					}
-				},
-			})
+			// Implemented in shield_of_righteousness.go
 		},
 	},
 })

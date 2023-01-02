@@ -322,14 +322,6 @@ func (druid *Druid) applyOmenOfClarity() {
 				spell.CostMultiplier += 1
 			}
 		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			for _, as := range affectedSpells {
-				if as == spell {
-					aura.Deactivate(sim)
-					break
-				}
-			}
-		},
 	})
 
 	if !druid.Talents.OmenOfClarity {

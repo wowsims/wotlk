@@ -194,8 +194,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-DeadlyGladiator'sSigilofStrife-42620"
  value: {
-  dps: 1440.47115
-  tps: 4653.54712
+  dps: 1436.02474
+  tps: 4644.32749
  }
 }
 dps_results: {
@@ -355,8 +355,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-FuriousGladiator'sSigilofStrife-42621"
  value: {
-  dps: 1443.90959
-  tps: 4663.76118
+  dps: 1438.57389
+  tps: 4652.69761
  }
 }
 dps_results: {
@@ -397,8 +397,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-HatefulGladiator'sSigilofStrife-42619"
  value: {
-  dps: 1433.65695
-  tps: 4630.16908
+  dps: 1429.72928
+  tps: 4622.02507
  }
 }
 dps_results: {
@@ -552,8 +552,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-RelentlessGladiator'sSigilofStrife-42622"
  value: {
-  dps: 1447.92109
-  tps: 4675.67758
+  dps: 1441.5479
+  tps: 4662.46276
  }
 }
 dps_results: {
@@ -573,8 +573,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-SavageGladiator'sSigilofStrife-42618"
  value: {
-  dps: 1432.48208
-  tps: 4627.03411
+  dps: 1428.99906
+  tps: 4619.81206
  }
 }
 dps_results: {
@@ -629,8 +629,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-SigilofHauntedDreams-40715"
  value: {
-  dps: 1426.53652
-  tps: 4609.23135
+  dps: 1426.14179
+  tps: 4608.41287
  }
 }
 dps_results: {
@@ -741,8 +741,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 1673.2034
-  tps: 5282.97168
+  dps: 1672.48616
+  tps: 5281.48448
  }
 }
 dps_results: {
@@ -846,8 +846,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-WrathfulGladiator'sSigilofStrife-51417"
  value: {
-  dps: 1452.50567
-  tps: 4689.29632
+  dps: 1444.94677
+  tps: 4673.62293
  }
 }
 dps_results: {

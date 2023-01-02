@@ -82,11 +82,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.LifeTap {
-						if warlock.SpiritsoftheDamnedAura.IsActive() {
-							warlock.SpiritsoftheDamnedAura.Refresh(sim)
-						} else {
-							warlock.SpiritsoftheDamnedAura.Activate(sim)
-						}
+						warlock.SpiritsoftheDamnedAura.Activate(sim)
 					}
 				},
 			})

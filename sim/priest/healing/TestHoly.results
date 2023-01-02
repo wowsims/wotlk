@@ -199,8 +199,8 @@ dps_results: {
  key: "TestHoly-AllItems-DarkmoonCard:Greatness-44255"
  value: {
   dps: 101.55248
-  tps: 55.20195
-  hps: 5014.4967
+  tps: 55.20269
+  hps: 5015.787
  }
 }
 dps_results: {
@@ -336,7 +336,7 @@ dps_results: {
  value: {
   dps: 105.20322
   tps: 49.31353
-  hps: 4846.45316
+  hps: 4845.56518
  }
 }
 dps_results: {
@@ -456,7 +456,7 @@ dps_results: {
  value: {
   dps: 107.21798
   tps: 49.26353
-  hps: 4870.31195
+  hps: 4868.98452
  }
 }
 dps_results: {
@@ -512,7 +512,7 @@ dps_results: {
  value: {
   dps: 102.95747
   tps: 49.51353
-  hps: 4903.91839
+  hps: 4903.60856
  }
 }
 dps_results: {
@@ -656,7 +656,7 @@ dps_results: {
  value: {
   dps: 100.81334
   tps: 45.6408
-  hps: 4556.04138
+  hps: 4541.00224
  }
 }
 dps_results: {
@@ -848,7 +848,7 @@ dps_results: {
  value: {
   dps: 108.05267
   tps: 49.74005
-  hps: 5265.96544
+  hps: 5265.98874
  }
 }
 dps_results: {

@@ -40,6 +40,10 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		FlatThreatBonus:  424,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if druid.ClearcastingAura != nil {
+				druid.ClearcastingAura.Deactivate(sim)
+			}
+
 			modifier := 1.0
 			if bleedCategory.AnyActive() {
 				modifier += .3

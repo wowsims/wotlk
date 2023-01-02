@@ -35,15 +35,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				Timer:    warlock.NewTimer(),
 				Duration: time.Second * 10,
 			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				if !warlock.ImmolateDot.IsActive() {
-					panic("Conflagrate spell is cast while Immolate is not active.")
-				}
-				if !hasGlyphOfConflag {
-					warlock.ImmolateDot.Deactivate(sim)
-					//warlock.ShadowflameDot.Deactivate(sim)
-				}
-			},
 		},
 
 		BonusCritRating: 0 +
@@ -60,12 +51,21 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if !warlock.ImmolateDot.IsActive() {
+				panic("Conflagrate spell is cast while Immolate is not active.")
+			}
+
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				warlock.ConflagrateDot.Apply(sim)
 			}
 			spell.DealDamage(sim, result)
+
+			if !hasGlyphOfConflag {
+				warlock.ImmolateDot.Deactivate(sim)
+				//warlock.ShadowflameDot.Deactivate(sim)
+			}
 		},
 	})
 

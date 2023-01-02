@@ -313,8 +313,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3232.63608
-  tps: 7789.97554
+  dps: 3232.6039
+  tps: 7789.8927
  }
 }
 dps_results: {

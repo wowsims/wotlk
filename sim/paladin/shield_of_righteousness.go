@@ -9,6 +9,10 @@ import (
 
 func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 	baseCost := paladin.BaseMana * 0.06
+	var aegisPlateProcAura *core.Aura
+	if paladin.HasSetBonus(ItemSetAegisPlate, 4) {
+		aegisPlateProcAura = paladin.NewTemporaryStatsAura("Aegis", core.ActionID{SpellID: 64883}, stats.Stats{stats.BlockValue: 225}, time.Second*6)
+	}
 
 	paladin.ShieldOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 61411},
@@ -36,6 +40,10 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if aegisPlateProcAura != nil {
+				aegisPlateProcAura.Activate(sim)
+			}
+
 			var baseDamage float64
 			// TODO: Derive or find accurate source for DR curve
 			bv := paladin.BlockValue()
