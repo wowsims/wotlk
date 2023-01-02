@@ -877,14 +877,4 @@ export class Player<SpecType extends Spec> {
 			this.setBonusStats(eventID, new Stats());
 		});
 	}
-
-	static applySharedDefaultsToProto(proto: PlayerProto) {
-		const spec = playerToSpec(proto);
-		proto.inFrontOfTarget = isTankSpec(spec);
-		proto.healingModel = HealingModel.create();
-		proto.cooldowns = Cooldowns.create({
-			hpPercentForDefensives: isTankSpec(spec) ? 0.35 : 0,
-		});
-		proto.bonusStats = new Stats().toProto();
-	}
 }
