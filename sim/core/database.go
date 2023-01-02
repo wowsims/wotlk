@@ -188,15 +188,6 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 	return coreEquip
 }
 
-func ProtoToItem(itemSpec *proto.ItemSpec) Item {
-	spec := ItemSpec{
-		ID: itemSpec.Id,
-	}
-	spec.Gems = itemSpec.Gems
-	spec.Enchant = itemSpec.Enchant
-	return NewItem(spec)
-}
-
 func NewItem(itemSpec ItemSpec) Item {
 	item := Item{}
 	if foundItem, ok := ItemsByID[itemSpec.ID]; ok {
