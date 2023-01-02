@@ -80,7 +80,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
+				rotation: Presets.DiscDefaultRotation,
 				// Default talents.
 				talents: Presets.DiscTalents.data,
 				// Default spec-specific settings.

@@ -181,24 +181,6 @@ message SavedTalents {
 	Glyphs glyphs = 2;
 }
 
-// A buff bot placed in a raid.
-message BuffBot {
-	// Uniquely identifies which buffbot this is.
-	string id = 1;
-
-	int32 raid_index = 2;
-
-	// The assigned player to innervate. Only used for druid buffbots.
-	RaidTarget innervate_assignment = 3;
-
-	// The assigned player to PI. Only used for disc priest buffbots.
-	RaidTarget power_infusion_assignment = 4;
-
-	RaidTarget tricks_of_the_trade_assignment = 5;
-
-	RaidTarget unholy_frenzy_assignment = 6;
-}
-
 message BlessingsAssignment {
 	// Index corresponds to Spec that the blessing should be applied to.
 	repeated Blessings blessings = 1;
@@ -217,7 +199,6 @@ message SavedEncounter {
 // Local storage data for raid sim settings.
 message SavedRaid {
 	Raid raid = 1;
-	repeated BuffBot buff_bots = 2;
 	BlessingsAssignments blessings = 3;
 	Faction faction = 4;
 	int32 phase = 5;
@@ -227,7 +208,6 @@ message SavedRaid {
 message RaidSimSettings {
 	SimSettings settings = 5;
 	Raid raid = 1;
-	repeated BuffBot buff_bots = 2;
 	BlessingsAssignments blessings = 3;
 	Encounter encounter = 4;
 }

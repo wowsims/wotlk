@@ -12,7 +12,7 @@ import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
 import { Class, Encounter as EncounterProto, Faction, RaidBuffs, Stat, TristateEffect } from "../core/proto/common.js";
 import { Blessings } from "../core/proto/paladin.js";
-import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
+import { BlessingsAssignments, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Raid } from "../core/raid.js";
@@ -23,7 +23,6 @@ import { EventID, TypedEvent } from "../core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
 import { BlessingsPicker } from "./blessings_picker.js";
-import { BuffBot } from "./buff_bot.js";
 import { implementedSpecs } from "./presets.js";
 import { RaidPicker } from "./raid_picker.js";
 import { RaidStats } from "./raid_stats.js";
@@ -150,7 +149,6 @@ export class RaidSimUI extends SimUI {
 				storageKey: this.getSavedRaidStorageKey(),
 				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
 					raid: this.sim.raid.toProto(),
-					buffBots: this.getBuffBots().map(b => b.toProto()),
 					blessings: this.blessingsPicker!.getAssignments(),
 					faction: this.sim.getFaction(),
 					phase: this.sim.getPhase(),
@@ -158,7 +156,6 @@ export class RaidSimUI extends SimUI {
 				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
 					TypedEvent.freezeAllAndDo(() => {
 						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-						this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
 						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
 						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
 						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
@@ -304,15 +301,6 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private modifyRaidProto(raidProto: RaidProto) {
-		// Invoke all the buff bot callbacks.
-		this.getBuffBots().forEach(buffBot => {
-			const partyProto = raidProto.parties[buffBot.getPartyIndex()];
-			if (!partyProto) {
-				throw new Error('No party proto for party index: ' + buffBot.getPartyIndex());
-			}
-			buffBot.settings.modifyRaidProto(buffBot, raidProto, partyProto);
-		});
-
 		// Apply blessings.
 		const numPaladins = this.getClassCount(Class.ClassPaladin);
 		const blessingsAssignments = this.blessingsPicker!.getAssignments();
@@ -356,46 +344,20 @@ export class RaidSimUI extends SimUI {
 	}
 
 	getClassCount(playerClass: Class): number {
-		return this.sim.raid.getClassCount(playerClass)
-			+ this.getBuffBots()
-				.filter(buffBot => buffBot.getClass() == playerClass).length;
+		return this.sim.raid.getClassCount(playerClass);
 	}
 
 	getPlayers(): Array<Player<any> | null> {
 		return this.sim.raid.getPlayers();
 	}
 
-	getBuffBots(): Array<BuffBot> {
-		return this.raidPicker!.getBuffBots();
-	}
-
-	setBuffBots(eventID: EventID, buffBotProtos: BuffBotProto[]): void {
-		this.raidPicker!.setBuffBots(eventID, buffBotProtos);
-	}
-
-	clearBuffBots(eventID: EventID): void {
-		this.raidPicker!.setBuffBots(eventID, []);
-	}
-
-	getPlayersAndBuffBots(): Array<Player<any> | BuffBot | null> {
-		const players = this.getPlayers();
-		const buffBots = this.getBuffBots();
-
-		const playersAndBuffBots: Array<Player<any> | BuffBot | null> = players.slice();
-		buffBots.forEach(buffBot => {
-			playersAndBuffBots[buffBot.getRaidIndex()] = buffBot;
-		});
-
-		return playersAndBuffBots;
-	}
-
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.sim.raid.fromProto(eventID, RaidProto.create());
+			this.sim.setPhase(eventID, 1);
 			this.sim.encounter.applyDefaults(eventID);
 			this.sim.applyDefaults(eventID, true, true);
 			this.sim.setShowDamageMetrics(eventID, true);
-			this.raidPicker!.setBuffBots(eventID, []);
 		});
 	}
 
@@ -403,7 +365,6 @@ export class RaidSimUI extends SimUI {
 		return RaidSimSettings.create({
 			settings: this.sim.toProto(),
 			raid: this.sim.raid.toProto(true),
-			buffBots: this.getBuffBots().map(b => b.toProto()),
 			blessings: this.blessingsPicker!.getAssignments(),
 			encounter: this.sim.encounter.toProto(),
 		});
@@ -430,14 +391,12 @@ export class RaidSimUI extends SimUI {
 			}
 			this.sim.raid.fromProto(eventID, settings.raid || RaidProto.create());
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
-			this.raidPicker!.setBuffBots(eventID, settings.buffBots);
 			this.blessingsPicker!.setAssignments(eventID, settings.blessings || BlessingsAssignments.create());
 		});
 	}
 
 	clearRaid(eventID: EventID) {
 		this.sim.raid.clear(eventID);
-		this.clearBuffBots(eventID);
 	}
 
 	// Returns the actual key to use for local storage, based on the given key part and the site context.
