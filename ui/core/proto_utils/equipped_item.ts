@@ -9,6 +9,7 @@ import {
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
+import { distinct } from '../utils.js';
 
 import { ActionId } from './action_id.js';
 import { enchantAppliesToItem } from './utils.js';
@@ -187,6 +188,12 @@ export class EquippedItem {
 		return [ItemType.ItemTypeWaist, ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type);
 	}
 
+	requiresExtraSocket(): boolean {
+		return [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type)
+			&& this.hasExtraGem()
+			&& this._gems[this._gems.length - 1] != null;
+	}
+
 	hasExtraSocket(isBlacksmithing: boolean): boolean {
 		return this.item.type == ItemType.ItemTypeWaist ||
 			(isBlacksmithing && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(this.item.type));
@@ -211,6 +218,24 @@ export class EquippedItem {
 		return (this._gems.filter(g => g != null) as Array<Gem>).slice(0, this.numSockets(isBlacksmithing));
 	}
 
+	getProfessionRequirements(): Array<Profession> {
+		let profs: Array<Profession> = [];
+		if (this._item.requiredProfession != Profession.ProfessionUnknown) {
+			profs.push(this._item.requiredProfession);
+		}
+		if (this._enchant != null && this._enchant.requiredProfession != Profession.ProfessionUnknown) {
+			profs.push(this._enchant.requiredProfession);
+		}
+		this._gems.forEach(gem => {
+			if (gem != null && gem.requiredProfession != Profession.ProfessionUnknown) {
+				profs.push(gem.requiredProfession);
+			}
+		});
+		if (this.requiresExtraSocket()) {
+			profs.push(Profession.Blacksmithing);
+		}
+		return distinct(profs);
+	}
 	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
 		let failed: Array<Item | Gem | Enchant> = [];
 		if (this._item.requiredProfession != Profession.ProfessionUnknown && !professions.includes(this._item.requiredProfession)) {

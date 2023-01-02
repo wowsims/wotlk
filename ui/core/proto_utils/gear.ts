@@ -270,6 +270,11 @@ export class Gear extends BaseGear {
 		return weapon != null && isSharpWeaponType(weapon.item.weaponType);
 	}
 
+	getProfessionRequirements(): Array<Profession> {
+		return distinct((this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
+			.map(ei => ei.getProfessionRequirements())
+			.flat());
+	}
 	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
 		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
 			.map(ei => ei.getFailedProfessionRequirements(professions))

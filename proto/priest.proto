@@ -164,6 +164,7 @@ message ShadowPriest {
 		Armor armor = 2;
 		bool use_mind_blast = 4;
 		bool use_shadow_word_death = 5;
+		RaidTarget power_infusion_target = 6;
 	}
 	Options options = 3;
 }
