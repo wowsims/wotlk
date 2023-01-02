@@ -1,7 +1,6 @@
 package hunter
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -190,7 +189,7 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
-		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := ownerHitChance * core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.3 * (1 + 0.2*float64(wildHunt)),
@@ -199,7 +198,7 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

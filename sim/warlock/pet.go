@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -309,7 +308,7 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
 
 	return func(ownerStats stats.Stats) stats.Stats {
-		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 
 		// TODO: Account for sunfire/soulfrost
 		return stats.Stats{
