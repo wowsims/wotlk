@@ -156,7 +156,7 @@ export const TankAssignment = {
 		{ name: 'Tank 4', value: 3 },
 	],
 	changedEvent: (player: Player<any>) => player.getRaid()!.tanksChangeEmitter,
-	getValue: (player: Player<any>) => player.getRaid()!.getTanks().findIndex(tank => RaidTarget.equals(tank, player.makeRaidTarget())),
+	getValue: (player: Player<any>) => (player.getRaid()?.getTanks() || []).findIndex(tank => RaidTarget.equals(tank, player.makeRaidTarget())),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		const newTanks = [];
 		if (newValue != -1) {
@@ -183,7 +183,7 @@ export const IncomingHps = {
 		healingModel.hps = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const HealingCadence = {
@@ -202,7 +202,7 @@ export const HealingCadence = {
 		healingModel.cadenceSeconds = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const BurstWindow = {
@@ -220,7 +220,7 @@ export const BurstWindow = {
 		healingModel.burstWindow = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const HpPercentForDefensives = {
