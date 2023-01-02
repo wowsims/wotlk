@@ -11,7 +11,7 @@ import (
 
 func (shaman *Shaman) registerLavaBurstSpell() {
 	actionID := core.ActionID{SpellID: 60043}
-	baseCost := baseMana * 0.1
+	baseCost := 0.1 * shaman.BaseMana
 	dmgBonus := core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
 		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)
 	spellCoeff := 0.5714 +

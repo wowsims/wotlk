@@ -249,7 +249,7 @@ export class PlayerPicker extends Component {
 		this.referenceDeltaElem = this.rootElem.getElementsByClassName('player-results-reference-delta')[0] as HTMLElement;
 
 		this.nameElem.addEventListener('input', event => {
-			if (this.player instanceof Player) {
+			if (this.player) {
 				this.player.setName(TypedEvent.nextEventID(), this.nameElem.textContent || '');
 			}
 		});
@@ -259,7 +259,7 @@ export class PlayerPicker extends Component {
 			// 9 is tab, 13 is enter
 			if (event.keyCode == 9 || event.keyCode == 13) {
 				event.preventDefault();
-				const realPlayerPickers = this.raidPicker.getPlayerPickers().filter(pp => pp.player instanceof Player);
+				const realPlayerPickers = this.raidPicker.getPlayerPickers().filter(pp => pp.player != null);
 				const indexOfThis = realPlayerPickers.indexOf(this);
 				if (indexOfThis != -1 && realPlayerPickers.length > indexOfThis + 1) {
 					realPlayerPickers[indexOfThis + 1].nameElem.focus();
@@ -292,7 +292,7 @@ export class PlayerPicker extends Component {
 		this.nameElem.addEventListener('focusout', event => {
 			if (!this.nameElem.textContent) {
 				this.nameElem.textContent = emptyName;
-				if (this.player instanceof Player) {
+				if (this.player) {
 					this.player.setName(TypedEvent.nextEventID(), emptyName);
 				}
 			}
@@ -310,7 +310,7 @@ export class PlayerPicker extends Component {
 			const dragImage = new Image();
 			dragImage.src = iconSrc;
 			event.dataTransfer!.setDragImage(dragImage, 30, 30);
-			if (this.player instanceof Player) {
+			if (this.player) {
 				var playerDataProto = this.player.toProto(true);
 				event.dataTransfer!.setData("text/plain", btoa(String.fromCharCode(...PlayerProto.toBinary(playerDataProto))));
 			}
@@ -425,7 +425,7 @@ export class PlayerPicker extends Component {
 			'allowHTML': true,
 		});
 		editElem.addEventListener('click', event => {
-			if (this.player instanceof Player) {
+			if (this.player) {
 				new PlayerEditorModal(this.player);
 			}
 		});

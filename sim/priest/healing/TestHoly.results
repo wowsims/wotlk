@@ -918,25 +918,25 @@ dps_results: {
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongMultiTarget"
  value: {
-  dps: 48.47615
-  tps: 442.41013
-  hps: 2397.88991
+  dps: 48.815
+  tps: 445.41013
+  hps: 2465.27937
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongSingleTarget"
  value: {
-  dps: 48.47615
-  tps: 22.12051
-  hps: 2397.88991
+  dps: 48.815
+  tps: 22.27051
+  hps: 2465.27937
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 242.38076
-  tps: 99.36047
-  hps: 5855.88701
+  dps: 244.07498
+  tps: 98.28599
+  hps: 5912.81696
  }
 }
 dps_results: {

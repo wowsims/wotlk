@@ -415,7 +415,7 @@ dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
   dps: 4609.89575
-  tps: 2714.13196
+  tps: 2714.50497
  }
 }
 dps_results: {
@@ -443,7 +443,7 @@ dps_results: {
  key: "TestElemental-AllItems-Gladiator'sEarthshaker"
  value: {
   dps: 3354.47482
-  tps: 2016.86097
+  tps: 2017.05078
  }
 }
 dps_results: {
@@ -730,7 +730,7 @@ dps_results: {
  key: "TestElemental-AllItems-SouloftheDead-40382"
  value: {
   dps: 4237.4174
-  tps: 2534.0618
+  tps: 2534.62444
  }
 }
 dps_results: {
@@ -961,7 +961,7 @@ dps_results: {
  key: "TestElemental-Average-Default"
  value: {
   dps: 4557.83064
-  tps: 2703.10588
+  tps: 2703.11008
  }
 }
 dps_results: {

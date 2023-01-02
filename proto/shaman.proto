@@ -138,6 +138,7 @@ enum EarthTotem {
 	NoEarthTotem = 0;
 	StrengthOfEarthTotem = 1;
 	TremorTotem = 2;
+	StoneskinTotem = 3;
 }
 
 enum AirTotem {

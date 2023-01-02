@@ -19,7 +19,7 @@ func (shaman *Shaman) registerChainLightningSpell() {
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {
 	spellConfig := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: 49271},
-		baseMana*0.26,
+		0.26*shaman.BaseMana,
 		time.Millisecond*2000,
 		isLightningOverload)
 
