@@ -30,17 +30,31 @@ import {NO_TARGET} from "../core/proto_utils/utils";
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const StandardTalents = {
-	name: 'Phase 1',
+export const CelestialFocusTalents = {
+	name: 'Celestial Focus',
 	data: SavedTalents.create({
-		talentsString: '5032003115331303213305311231--205003012',
+		talentsString: '05320031103--230023312131502331050313051',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfFocus,
-			major2: DruidMajorGlyph.GlyphOfInsectSwarm,
-			major3: DruidMajorGlyph.GlyphOfStarfall,
-			minor1: DruidMinorGlyph.GlyphOfTyphoon,
+			major1: DruidMajorGlyph.GlyphOfWildGrowth,
+			major2: DruidMajorGlyph.GlyphOfSwiftmend,
+			major3: DruidMajorGlyph.GlyphOfNourish,
 			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
 			minor3: DruidMinorGlyph.GlyphOfTheWild,
+			minor1: DruidMinorGlyph.GlyphOfDash,
+		}),
+	}),
+};
+export const ThiccRestoTalents = {
+	name: 'Thicc Resto',
+	data: SavedTalents.create({
+		talentsString: '05320001--230023312331502531053313051',
+		glyphs: Glyphs.create({
+			major1: DruidMajorGlyph.GlyphOfWildGrowth,
+			major2: DruidMajorGlyph.GlyphOfSwiftmend,
+			major3: DruidMajorGlyph.GlyphOfNourish,
+			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+			minor3: DruidMinorGlyph.GlyphOfTheWild,
+			minor1: DruidMinorGlyph.GlyphOfDash,
 		}),
 	}),
 };
@@ -106,93 +120,87 @@ export const PRE_RAID_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
-			"id": 42554,
-			"enchant": 3820,
+			"id": 37149,
+			"enchant": 3819,
 			"gems": [
-				41285,
-				40049
+				41401,
+				40051
 			]
 		},
 		{
-			"id": 40680
-		},
-		{
-			"id": 37673,
-			"enchant": 3810,
+			"id": 42339,
 			"gems": [
-				42144
-			]
-		},
-		{
-			"id": 41610,
-			"enchant": 3859
-		},
-		{
-			"id": 39547,
-			"enchant": 3832,
-			"gems": [
-				42144,
 				40026
 			]
 		},
 		{
-			"id": 37884,
+			"id": 37673,
+			"enchant": 3809,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 41610,
+			"enchant": 3831
+		},
+		{
+			"id": 42102,
+			"enchant": 3832
+		},
+		{
+			"id": 37361,
 			"enchant": 2332,
 			"gems": [
 				0
 			]
 		},
 		{
-			"id": 39544,
-			"enchant": 3604,
+			"id": 42113,
+			"enchant": 3246,
 			"gems": [
-				42144,
 				0
 			]
 		},
 		{
-			"id": 40696,
+			"id": 37643,
 			"enchant": 3601,
 			"gems": [
-				40014,
 				39998
 			]
 		},
 		{
-			"id": 37854,
+			"id": 37791,
 			"enchant": 3719
 		},
 		{
 			"id": 44202,
-			"enchant": 3606,
+			"enchant": 3232,
 			"gems": [
 				39998
 			]
 		},
 		{
-			"id": 40585
+			"id": 37694
 		},
 		{
-			"id": 43253,
-			"gems": [
-				40026
-			]
+			"id": 37192
 		},
 		{
-			"id": 37873
+			"id": 37111
 		},
 		{
-			"id": 40682
+			"id": 37657
 		},
 		{
-			"id": 45085,
+			"id": 37169,
 			"enchant": 3834
 		},
 		{
-			"id": 40698
+			"id": 40699
 		},
 		{
-			"id": 40712
+			"id": 33508
 		}
 	]}`),
 };
@@ -202,39 +210,33 @@ export const P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 40467,
-			"enchant": 3820,
+			"id": 44007,
+			"enchant": 3819,
 			"gems": [
-				41285,
-				42144
+				41401,
+				40017
 			]
 		},
 		{
-			"id": 44661,
+			"id": 40071
+		},
+		{
+			"id": 39719,
+			"enchant": 3809,
 			"gems": [
-				40026
+				39998
 			]
 		},
 		{
-			"id": 40470,
-			"enchant": 3810,
-			"gems": [
-				42144
-			]
+			"id": 40723,
+			"enchant": 3859
 		},
 		{
-			"id": 44005,
-			"enchant": 3859,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40469,
+			"id": 44002,
 			"enchant": 3832,
 			"gems": [
-				42144,
-				39998
+				39998,
+				40026
 			]
 		},
 		{
@@ -246,10 +248,10 @@ export const P1_PRESET = {
 			]
 		},
 		{
-			"id": 40466,
-			"enchant": 3604,
+			"id": 40460,
+			"enchant": 3246,
 			"gems": [
-				39998,
+				40017,
 				0
 			]
 		},
@@ -261,21 +263,25 @@ export const P1_PRESET = {
 			]
 		},
 		{
-			"id": 40560,
-			"enchant": 3719
+			"id": 40379,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				40017
+			]
 		},
 		{
-			"id": 40519,
+			"id": 40558,
 			"enchant": 3606
 		},
 		{
-			"id": 40399
+			"id": 40719
 		},
 		{
-			"id": 40080
+			"id": 40375
 		},
 		{
-			"id": 40255
+			"id": 37111
 		},
 		{
 			"id": 40432
@@ -285,10 +291,10 @@ export const P1_PRESET = {
 			"enchant": 3834
 		},
 		{
-			"id": 40192
+			"id": 39766
 		},
 		{
-			"id": 40321
+			"id": 40342
 		}
 	]}`),
 };

@@ -15,6 +15,7 @@ const (
 	Bear
 	Cat
 	Moonkin
+	Tree
 )
 
 // Converts from 0.009327 to 0.0085

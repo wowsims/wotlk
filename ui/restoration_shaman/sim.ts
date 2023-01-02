@@ -78,7 +78,7 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.StandardTalents.data,
+				talents: Presets.RaidHealingTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -133,7 +133,8 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.StandardTalents,
+					Presets.RaidHealingTalents,
+					Presets.TankHealingTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

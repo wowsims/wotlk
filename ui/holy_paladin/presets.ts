@@ -30,16 +30,16 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 
-export const GenericAoeTalents = {
-	name: 'Baseline Example',
+export const StandardTalents = {
+	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '-05005135200132311333312321-511302012003',
+		talentsString: '50350151020013053100515221-50023131203',
 		glyphs: {
-			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
-			major2: PaladinMajorGlyph.GlyphOfRighteousDefense,
-			major3: PaladinMajorGlyph.GlyphOfDivinePlea,
-			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
+			major1: PaladinMajorGlyph.GlyphOfHolyLight,
+			major2: PaladinMajorGlyph.GlyphOfSealOfWisdom,
+			major3: PaladinMajorGlyph.GlyphOfBeaconOfLight,
 			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
+			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
 			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
 		}
 	}),
@@ -65,95 +65,97 @@ export const PRERAID_PRESET = {
 	enableWhen: (player: Player<Spec.SpecHolyPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 42549,
-			"enchant": 3818,
+			"id": 44949,
+			"enchant": 3819,
 			"gems": [
-				41396,
-				49110
+				41401,
+				40012
 			]
 		},
 		{
-			"id": 40679
-		},
-		{
-			"id": 37635,
-			"enchant": 3852,
+			"id": 42647,
 			"gems": [
-				40015
+				42702
 			]
 		},
 		{
-			"id": 44188,
-			"enchant": 3605
-		},
-		{
-			"id": 39638,
-			"enchant": 1953,
+			"id": 37673,
+			"enchant": 3809,
 			"gems": [
-				36767,
-				40089
+				40012
 			]
 		},
 		{
-			"id": 37682,
-			"enchant": 3850,
+			"id": 41609,
+			"enchant": 3831
+		},
+		{
+			"id": 39629,
+			"enchant": 3832,
+			"gems": [
+				40012,
+				40012
+			]
+		},
+		{
+			"id": 37788,
+			"enchant": 1119,
 			"gems": [
 				0
 			]
 		},
 		{
-			"id": 39639,
-			"enchant": 3860,
+			"id": 39632,
+			"enchant": 3604,
 			"gems": [
-				36767,
+				40012,
 				0
 			]
 		},
 		{
-			"id": 37379,
-			"enchant": 3601,
+			"id": 40691,
 			"gems": [
-				40022,
-				40008
+				40012,
+				40012
 			]
 		},
 		{
-			"id": 37292,
-			"enchant": 3822,
+			"id": 37362,
+			"enchant": 3721,
 			"gems": [
-				40089
+				40012,
+				40012
 			]
 		},
 		{
-			"id": 44243,
-			"enchant": 3606
-		},
-		{
-			"id": 37186
-		},
-		{
-			"id": 37257
-		},
-		{
-			"id": 44063,
+			"id": 44202,
+			"enchant": 3606,
 			"gems": [
-				36767,
-				40015
+				40094
 			]
 		},
 		{
-			"id": 37220
+			"id": 44283
 		},
 		{
-			"id": 37179,
-			"enchant": 2673
+			"id": 37694
 		},
 		{
-			"id": 43085,
-			"enchant": 3849
+			"id": 44255
 		},
 		{
-			"id": 40707
+			"id": 37111
+		},
+		{
+			"id": 37169,
+			"enchant": 2666
+		},
+		{
+			"id": 40700,
+			"enchant": 1128
+		},
+		{
+			"id": 40705
 		}
 	]}`),
 };
@@ -164,95 +166,97 @@ export const P1_PRESET = {
 	enableWhen: (player: Player<Spec.SpecHolyPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 40581,
-			"enchant": 3818,
+			"id": 40298,
+			"enchant": 3819,
 			"gems": [
-				41380,
-				36767
+				41401,
+				40012
 			]
 		},
 		{
-			"id": 40387
-		},
-		{
-			"id": 40584,
-			"enchant": 3852,
+			"id": 44662,
 			"gems": [
-				40008
+				40012
 			]
 		},
 		{
-			"id": 40410,
-			"enchant": 3605
+			"id": 40573,
+			"enchant": 3809,
+			"gems": [
+				40012
+			]
 		},
 		{
-			"id": 40579,
+			"id": 44005,
+			"enchant": 3831,
+			"gems": [
+				40012
+			]
+		},
+		{
+			"id": 40569,
 			"enchant": 3832,
 			"gems": [
-				36767,
-				40022
+				40012,
+				40012
 			]
 		},
 		{
-			"id": 39764,
-			"enchant": 3850,
+			"id": 40332,
+			"enchant": 1119,
 			"gems": [
+				40012,
 				0
 			]
 		},
 		{
-			"id": 40580,
-			"enchant": 3860,
+			"id": 40570,
+			"enchant": 3604,
 			"gems": [
-				40008,
+				40012,
 				0
 			]
 		},
 		{
-			"id": 39759,
-			"enchant": 3601,
+			"id": 40259,
 			"gems": [
-				40008,
-				40008
+				40012
 			]
 		},
 		{
-			"id": 40589,
-			"enchant": 3822
-		},
-		{
-			"id": 39717,
-			"enchant": 3606,
+			"id": 40572,
+			"enchant": 3721,
 			"gems": [
-				40089
+				40027,
+				40012
 			]
 		},
 		{
-			"id": 40718
+			"id": 40592,
+			"enchant": 3606
 		},
 		{
-			"id": 40107
+			"id": 40399
 		},
 		{
-			"id": 44063,
-			"gems": [
-				36767,
-				40089
-			]
+			"id": 40375
 		},
 		{
-			"id": 37220
+			"id": 44255
 		},
 		{
-			"id": 40345,
-			"enchant": 3788
+			"id": 37111
 		},
 		{
-			"id": 40400,
-			"enchant": 3849
+			"id": 40395,
+			"enchant": 2666
 		},
 		{
-			"id": 40707
+			"id": 40401,
+			"enchant": 1128
+		},
+		{
+			"id": 40705
 		}
 	]}`),
 };

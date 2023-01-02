@@ -160,6 +160,7 @@ var ItemAllowList = map[int32]struct{}{
 	33504: {}, // Libram of Divine Purpose
 	33506: {}, // Skycall Totem
 	33507: {}, // Stonebreaker's Totem
+	33508: {}, // Idol of Budding Life
 	33510: {}, // Unseen moon idol
 	33829: {}, // Hex Shrunken Head
 	33831: {}, // Berserkers Call
