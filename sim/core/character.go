@@ -39,6 +39,8 @@ type Character struct {
 
 	// Current gear.
 	Equip Equipment
+	//Item Swap Handler
+	ItemSwap ItemSwap
 
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
@@ -241,6 +243,19 @@ func (character *Character) applyItemEffects(agent Agent) {
 			applyWeaponEffect(agent, proto.ItemSlot(slot))
 		}
 	}
+
+	if character.ItemSwap.IsEnabled() {
+		offset := int(proto.ItemSlot_ItemSlotMainHand)
+		for i, item := range character.ItemSwap.unEquippedItems {
+			if applyEnchantEffect, ok := enchantEffects[item.Enchant.EffectID]; ok {
+				applyEnchantEffect(agent)
+			}
+
+			if applyWeaponEffect, ok := weaponEffects[item.Enchant.EffectID]; ok {
+				applyWeaponEffect(agent, proto.ItemSlot(offset+i))
+			}
+		}
+	}
 }
 
 func (character *Character) AddPet(pet PetAgent) {
@@ -409,6 +424,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
+	character.ItemSwap.reset(sim)
 	character.CurrentTarget = character.defaultTarget
 
 	if character.Type == PlayerUnit {
