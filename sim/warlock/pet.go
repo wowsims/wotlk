@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -309,7 +308,10 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
 
 	return func(ownerStats stats.Stats) stats.Stats {
-		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+		// EJ posts claim this value is passed through math.Floor, but in-game testing
+		// shows pets benefit from each point of owner hit rating in WotLK Classic.
+		// https://web.archive.org/web/20120112003252/http://elitistjerks.com/f80/t100099-demonology_releasing_demon_you
+		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 
 		// TODO: Account for sunfire/soulfrost
 		return stats.Stats{
