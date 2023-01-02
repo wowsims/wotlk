@@ -42,10 +42,6 @@ func (druid *Druid) registerSwipeBearSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if druid.ClearcastingAura != nil {
-				druid.ClearcastingAura.Deactivate(sim)
-			}
-
 			baseDamage := flatBaseDamage + 0.063*spell.MeleeAttackPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
@@ -82,10 +78,6 @@ func (druid *Druid) registerSwipeCatSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if druid.ClearcastingAura != nil {
-				druid.ClearcastingAura.Deactivate(sim)
-			}
-
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
 				baseDamage *= sim.Encounter.AOECapMultiplier()
