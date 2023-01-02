@@ -10,10 +10,10 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
-export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
-	constructor(parentElem: HTMLElement, player: Player<Spec.SpecBalanceDruid>) {
+export class RestorationDruidSimUI extends IndividualSimUI<Spec.SpecRestorationDruid> {
+	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRestorationDruid>) {
 		super(parentElem, player, {
-			cssClass: 'balance-druid-sim-ui',
+			cssClass: 'restoration-druid-sim-ui',
 			cssScheme: 'druid',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
@@ -24,7 +24,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
@@ -34,11 +33,11 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
-				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
 				Stat.StatMP5,
@@ -81,16 +80,9 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				DruidInputs.SelfInnervate,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationInputs: DruidInputs.BalanceDruidRotationConfig,
+			rotationInputs: DruidInputs.RestorationDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.MeleeHasteBuff,
-				IconInputs.MeleeCritBuff,
-				IconInputs.AttackPowerPercentBuff,
-				IconInputs.AttackPowerBuff,
-				IconInputs.MajorArmorDebuff,
-				IconInputs.MinorArmorDebuff,
-				IconInputs.PhysicalDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -98,7 +90,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
-					OtherInputs.DistanceFromTarget,
 				],
 			},
 			encounterPicker: {

@@ -9,13 +9,16 @@ UI_SRC := $(shell find ui -name '*.ts' -o -name '*.scss' -o -name '*.html')
 HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/feral_druid/index.html \
 				 ui/feral_tank_druid/index.html \
+				 ui/restoration_druid/index.html \
 				 ui/elemental_shaman/index.html \
 				 ui/enhancement_shaman/index.html \
+				 ui/restoration_shaman/index.html \
 				 ui/hunter/index.html \
 				 ui/mage/index.html \
 				 ui/rogue/index.html \
-				 ui/retribution_paladin/index.html \
+				 ui/holy_paladin/index.html \
 				 ui/protection_paladin/index.html \
+				 ui/retribution_paladin/index.html \
 				 ui/healing_priest/index.html \
 				 ui/shadow_priest/index.html \
 				 ui/smite_priest/index.html \
