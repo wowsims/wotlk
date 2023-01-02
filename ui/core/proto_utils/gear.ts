@@ -1,4 +1,4 @@
-import { EquipmentSpec } from '../proto/common.js';
+import { EquipmentSpec, ItemSwap } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
@@ -8,7 +8,7 @@ import { SimItem } from '../proto/common.js';
 import { SimEnchant } from '../proto/common.js';
 import { SimGem } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
-import { equalsOrBothNull } from '../utils.js';
+import { arrayEquals, equalsOrBothNull } from '../utils.js';
 import { distinct, getEnumValues } from '../utils.js';
 import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
 import {
@@ -25,20 +25,86 @@ import { Stats } from './stats.js';
 
 type InternalGear = Record<ItemSlot, EquippedItem | null>;
 
+abstract class BaseGear {
+	protected readonly gear: InternalGear;
+
+	constructor(gear: Partial<InternalGear>) {
+		this.getItemSlots().forEach(slot => {
+			if (!gear[slot as ItemSlot])
+				gear[slot as ItemSlot] = null;
+		});
+		this.gear = gear as InternalGear;
+	}
+
+	getEquippedItem(slot: ItemSlot): EquippedItem | null {
+		return this.gear[slot];
+	}
+
+	asArray(): Array<EquippedItem | null> {
+		return Object.values(this.gear);
+	}
+
+	removeUniqueGems(gear: InternalGear, newItem: EquippedItem) {
+			// If the new item has unique gems, remove matching.
+			newItem.gems
+				.filter(gem => gem?.unique)
+				.forEach(gem => {
+					this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
+						gear[slot] = gear[slot]?.removeGemsWithId(gem!.id) || null;
+					});
+				});
+	}
+
+	removeUniqueItems(gear: InternalGear, newItem: EquippedItem){
+		if (newItem.item.unique) {
+			this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
+				if (gear[slot]?.item.id == newItem.item.id) {
+					gear[slot] = null;
+				}
+			});
+		}
+	}
+
+	validateWeaponCombo(gear: InternalGear, newSlot: ItemSlot, canDualWield2H: boolean) {
+		// Check for valid weapon combos.
+		if (!validWeaponCombo(gear[ItemSlot.ItemSlotMainHand]?.item, gear[ItemSlot.ItemSlotOffHand]?.item, canDualWield2H)) {
+			if (newSlot == ItemSlot.ItemSlotOffHand) {
+				gear[ItemSlot.ItemSlotMainHand] = null;
+			} else {
+				gear[ItemSlot.ItemSlotOffHand] = null;
+			}
+		}
+	}
+
+	abstract toDatabase(): SimDatabase
+	abstract getItemSlots(): ItemSlot[]
+
+	protected static itemToDB(item: Item): SimItem {
+		return SimItem.fromJson(Item.toJson(item), { ignoreUnknownFields: true });
+	}
+
+	protected static enchantToDB(enchant: Enchant): SimEnchant {
+		return SimEnchant.fromJson(Enchant.toJson(enchant), { ignoreUnknownFields: true });
+	}
+
+	protected static gemToDB(gem: Gem): SimGem {
+		return SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true });
+	}
+}
+
 /**
  * Represents a full gear set, including items/enchants/gems for every slot.
  *
  * This is an immutable type.
  */
-export class Gear {
-	private readonly gear: InternalGear;
+export class Gear extends BaseGear {
 
 	constructor(gear: Partial<InternalGear>) {
-		getEnumValues(ItemSlot).forEach(slot => {
-			if (!gear[slot as ItemSlot])
-				gear[slot as ItemSlot] = null;
-		});
-		this.gear = gear as InternalGear;
+		super(gear)
+	}
+
+	getItemSlots(): ItemSlot[] {
+		return getEnumValues(ItemSlot)
 	}
 
 	equals(other: Gear): boolean {
@@ -55,42 +121,16 @@ export class Gear {
 		const newInternalGear = this.asMap();
 
 		if (newItem) {
-			// If the new item has unique gems, remove matching.
-			newItem.gems
-				.filter(gem => gem?.unique)
-				.forEach(gem => {
-					getEnumValues(ItemSlot).map(slot => Number(slot) as ItemSlot).forEach(slot => {
-						newInternalGear[slot] = newInternalGear[slot]?.removeGemsWithId(gem!.id) || null;
-					});
-				});
-
-			// If the new item is unique, remove matching items.
-			if (newItem.item.unique) {
-				getEnumValues(ItemSlot).map(slot => Number(slot) as ItemSlot).forEach(slot => {
-					if (newInternalGear[slot]?.item.id == newItem.item.id) {
-						newInternalGear[slot] = null;
-					}
-				});
-			}
+			this.removeUniqueGems(newInternalGear, newItem)
+			this.removeUniqueItems(newInternalGear, newItem)
 		}
 
 		// Actually assign the new item.
 		newInternalGear[newSlot] = newItem;
 
-		// Check for valid weapon combos.
-		if (!validWeaponCombo(newInternalGear[ItemSlot.ItemSlotMainHand]?.item, newInternalGear[ItemSlot.ItemSlotOffHand]?.item, canDualWield2H)) {
-			if (newSlot == ItemSlot.ItemSlotOffHand) {
-				newInternalGear[ItemSlot.ItemSlotMainHand] = null;
-			} else {
-				newInternalGear[ItemSlot.ItemSlotOffHand] = null;
-			}
-		}
+		this.validateWeaponCombo(newInternalGear, newSlot, canDualWield2H)
 
 		return new Gear(newInternalGear);
-	}
-
-	getEquippedItem(slot: ItemSlot): EquippedItem | null {
-		return this.gear[slot];
 	}
 
 	getTrinkets(): Array<EquippedItem | null> {
@@ -110,10 +150,6 @@ export class Gear {
 			newInternalGear[slot] = this.getEquippedItem(slot);
 		});
 		return newInternalGear as InternalGear;
-	}
-
-	asArray(): Array<EquippedItem | null> {
-		return Object.values(this.gear);
 	}
 
 	asSpec(): EquipmentSpec {
@@ -248,16 +284,47 @@ export class Gear {
 			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => Gear.gemToDB(gem))).flat()),
 		});
 	}
+}
 
-	private static itemToDB(item: Item): SimItem {
-		return SimItem.fromJson(Item.toJson(item), { ignoreUnknownFields: true });
+/**
+ * Represents a item swap gear set, including items/enchants/gems.
+ *
+ * This is an immutable type.
+ */
+export class ItemSwapGear extends BaseGear {
+
+	constructor() {
+		super({})
 	}
 
-	private static enchantToDB(enchant: Enchant): SimEnchant {
-		return SimEnchant.fromJson(Enchant.toJson(enchant), { ignoreUnknownFields: true });
+	getItemSlots(): ItemSlot[] {
+		return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged]
 	}
 
-	private static gemToDB(gem: Gem): SimGem {
-		return SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true });
+	equipItem(slot: ItemSlot, equippedItem: EquippedItem | null, canDualWield2H: boolean) {
+		if (equippedItem) {
+			this.removeUniqueGems(this.gear, equippedItem)
+			this.removeUniqueItems(this.gear, equippedItem)
+		}
+		
+		this.gear[slot] = equippedItem;
+		this.validateWeaponCombo(this.gear, slot, canDualWield2H)
+	}
+
+	toProto(): ItemSwap {
+		return ItemSwap.create({
+			mhItem: this.gear[ItemSlot.ItemSlotMainHand]?.asSpec(),
+			ohItem: this.gear[ItemSlot.ItemSlotOffHand]?.asSpec(),
+			rangedItem: this.gear[ItemSlot.ItemSlotRanged]?.asSpec(),
+		})
+	}
+
+	toDatabase(): SimDatabase {
+		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
+		return SimDatabase.create({
+			items: distinct(equippedItems.map(ei => ItemSwapGear.itemToDB(ei.item))),
+			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => ItemSwapGear.enchantToDB(ei.enchant!))),
+			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => ItemSwapGear.gemToDB(gem))).flat()),
+		});
 	}
 }
