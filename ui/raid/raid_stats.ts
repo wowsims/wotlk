@@ -266,17 +266,16 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {sections: [
 						actionId: ActionId.fromSpellId(48942),
 						providedByPlayer: playerClassAndMissingTalent(Class.ClassPaladin, 'improvedDevotionAura', player => player.getSpecOptions().aura == PaladinAura.DevotionAura),
 					},
-					// TODO: Implement stoneskin totem
-					//{
-					//	label: 'Improved Stoneskin Totem',
-					//	actionId: ActionId.fromSpellId(16293),
-					//	providedByPlayer: playerClassAndTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
-					//},
-					//{
-					//	label: 'Stoneskin Totem',
-					//	actionId: ActionId.fromSpellId(58753),
-					//	providedByPlayer: playerClassAndMissingTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
-					//},
+					{
+						label: 'Improved Stoneskin Totem',
+						actionId: ActionId.fromSpellId(16293),
+						providedByPlayer: playerClassAndTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
+					},
+					{
+						label: 'Stoneskin Totem',
+						actionId: ActionId.fromSpellId(58753),
+						providedByPlayer: playerClassAndMissingTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
+					},
 					{
 						label: 'Scroll of Protection',
 						actionId: ActionId.fromItemId(43468),
@@ -342,7 +341,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {sections: [
 						actionId: ActionId.fromSpellId(43002),
 						providedByPlayer: playerClass(Class.ClassMage),
 					},
-					// TODO: Double-check the talent
 					{
 						label: 'Improved Fel Intelligence',
 						actionId: ActionId.fromSpellId(54038),
@@ -363,13 +361,11 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {sections: [
 			{
 				label: 'Spirit',
 				effects: [
-					// TODO: Implement divine spirit
 					{
 						label: 'Divine Spirit',
 						actionId: ActionId.fromSpellId(48073),
 						providedByPlayer: playerClass(Class.ClassPriest),
 					},
-					// TODO: Double-check the talent
 					{
 						label: 'Improved Fel Intelligence',
 						actionId: ActionId.fromSpellId(54038),

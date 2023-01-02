@@ -965,7 +965,7 @@ dps_results: {
  value: {
   dps: 46.29484
   tps: 923.38559
-  hps: 3815.47503
+  hps: 3865.92202
  }
 }
 dps_results: {
@@ -973,7 +973,7 @@ dps_results: {
  value: {
   dps: 46.29484
   tps: 46.16928
-  hps: 3815.47503
+  hps: 3865.92202
  }
 }
 dps_results: {
@@ -981,7 +981,7 @@ dps_results: {
  value: {
   dps: 231.47421
   tps: 111.20851
-  hps: 6223.79078
+  hps: 6224.24357
  }
 }
 dps_results: {

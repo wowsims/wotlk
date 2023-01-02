@@ -70,6 +70,7 @@ export class RaidWCLImporter extends Importer {
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
 		super(parent, simUI, 'WCL Import', false);
 		this.simUI = simUI;
+		this.textElem.classList.add('small-textarea');
 		this.descriptionElem.innerHTML = `
 			<p>
 				Imports the entire raid from a WCL report.<br>
@@ -402,7 +403,6 @@ export class RaidWCLImporter extends Importer {
 		});
 
 		wclPlayers
-			.filter(p => p.isPlayer)
 			.forEach(player => {
 				const positionInParty = player.raidIndex % 5;
 				const partyIdx = (player.raidIndex - positionInParty) / 5;
@@ -461,24 +461,17 @@ class WCLSimPlayer implements wclSimPlayer {
 		}
 
 		this.fullType = this.type + this.wclSpec;
-		this.spec = fullTypeToSpec[this.fullType] || null;
+		const foundSpec = fullTypeToSpec[this.fullType] ?? null;
+		if (foundSpec == null) {
+			throw new Error('Player type not implemented: ' + this.fullType);
+		}
+		this.spec = foundSpec;
 		this.sortPriority = specSortPriority[this.fullType] ?? 99;
 
 		console.log(`WCL spec: ${this.fullType}`);
-		if (this.spec != null) {
-			throw new Error('Player type not implemented: ' + this.fullType);
-		}
-	}
-
-	public get isPlayer(): boolean {
-		return this.spec != null;
 	}
 
 	public getPlayer(): PlayerProto | undefined {
-		if (!this.isPlayer) {
-			return;
-		}
-
 		const matchingPreset = this.getMatchingPreset();
 		if (matchingPreset === undefined) {
 			throw new Error('Could not find matching preset: ' + JSON.stringify({

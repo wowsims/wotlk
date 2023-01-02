@@ -43,6 +43,7 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Sh
 		values: [
 			{ color: '#ffdfba', value: EarthTotem.NoEarthTotem },
 			{ actionId: ActionId.fromSpellId(58643), value: EarthTotem.StrengthOfEarthTotem },
+			{ actionId: ActionId.fromSpellId(58753), value: EarthTotem.StoneskinTotem },
 			{ actionId: ActionId.fromSpellId(8143), value: EarthTotem.TremorTotem },
 		],
 		equals: (a: EarthTotem, b: EarthTotem) => a == b,

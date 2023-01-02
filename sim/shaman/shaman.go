@@ -8,8 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-const baseMana = 4396.0
-
 // Start looking to refresh 5 minute totems at 4:55.
 const TotemRefreshTime5M = time.Second * 295
 
@@ -22,7 +20,7 @@ const (
 
 func NewShaman(character core.Character, talents *proto.ShamanTalents, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
-		totems.Fire = proto.FireTotem_NoFireTotem
+		totems.Fire = proto.FireTotem_FlametongueTotem
 	}
 
 	shaman := &Shaman{
@@ -117,6 +115,7 @@ type Shaman struct {
 	StrengthOfEarthTotem *core.Spell
 	TotemOfWrath         *core.Spell
 	TremorTotem          *core.Spell
+	StoneskinTotem       *core.Spell
 	WindfuryTotem        *core.Spell
 	WrathOfAirTotem      *core.Spell
 	FlametongueTotem     *core.Spell
@@ -185,6 +184,11 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 			totem = proto.TristateEffect_TristateEffectImproved
 		}
 		raidBuffs.StrengthOfEarthTotem = core.MaxTristate(raidBuffs.StrengthOfEarthTotem, totem)
+	case proto.EarthTotem_StoneskinTotem:
+		raidBuffs.StoneskinTotem = core.MaxTristate(raidBuffs.StoneskinTotem, core.MakeTristateValue(
+			true,
+			shaman.Talents.GuardianTotems == 2,
+		))
 	}
 
 	if shaman.Talents.UnleashedRage > 0 {
@@ -220,6 +224,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerTotemOfWrathSpell()
 	shaman.registerFlametongueTotemSpell()
 	shaman.registerTremorTotemSpell()
+	shaman.registerStoneskinTotemSpell()
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
 
@@ -378,7 +383,7 @@ func init() {
 		stats.Stamina:     135,
 		stats.Intellect:   126,
 		stats.Spirit:      145,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -390,7 +395,7 @@ func init() {
 		stats.Stamina:     138,
 		stats.Intellect:   122,
 		stats.Spirit:      146,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -402,7 +407,7 @@ func init() {
 		stats.Stamina:     138,
 		stats.Intellect:   120,
 		stats.Spirit:      145,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -414,7 +419,7 @@ func init() {
 		stats.Stamina:     137,
 		stats.Intellect:   122,
 		stats.Spirit:      144,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,

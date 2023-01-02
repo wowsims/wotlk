@@ -68,14 +68,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-AustereEarthsiegeDiamond"
  value: {
   dps: 6623.43723
-  tps: 3751.78128
+  tps: 3751.79221
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 6763.15268
-  tps: 3834.0025
+  tps: 3834.01344
  }
 }
 dps_results: {
@@ -131,14 +131,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-BracingEarthsiegeDiamond"
  value: {
   dps: 6643.54056
-  tps: 3660.15542
+  tps: 3660.16636
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 6788.01497
-  tps: 3844.55278
+  tps: 3844.56371
  }
 }
 dps_results: {
@@ -188,7 +188,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-DeadlyGladiator'sTotemofSurvival-42602"
  value: {
   dps: 6806.44782
-  tps: 3861.36448
+  tps: 3861.3648
  }
 }
 dps_results: {
@@ -230,14 +230,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-DestructiveSkyflareDiamond"
  value: {
   dps: 6643.6889
-  tps: 3761.04418
+  tps: 3761.05512
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 6927.75795
-  tps: 3934.30043
+  dps: 6926.24875
+  tps: 3933.23667
  }
 }
 dps_results: {
@@ -265,7 +265,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-EffulgentSkyflareDiamond"
  value: {
   dps: 6623.43723
-  tps: 3751.78128
+  tps: 3751.79221
  }
 }
 dps_results: {
@@ -279,21 +279,21 @@ dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticSkyflareDiamond"
  value: {
   dps: 6643.6017
-  tps: 3761.13608
+  tps: 3761.14701
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EnigmaticStarflareDiamond"
  value: {
   dps: 6640.38947
-  tps: 3759.33754
+  tps: 3759.34848
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EphemeralSnowflake-50260"
  value: {
   dps: 6731.60913
-  tps: 3810.3569
+  tps: 3810.36784
  }
 }
 dps_results: {
@@ -307,7 +307,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-EternalEarthsiegeDiamond"
  value: {
   dps: 6623.43723
-  tps: 3751.78128
+  tps: 3751.79221
  }
 }
 dps_results: {
@@ -349,14 +349,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-ForlornSkyflareDiamond"
  value: {
   dps: 6643.54056
-  tps: 3764.41318
+  tps: 3764.42412
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ForlornStarflareDiamond"
  value: {
   dps: 6639.5199
-  tps: 3761.8868
+  tps: 3761.89774
  }
 }
 dps_results: {
@@ -377,7 +377,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-FuriousGladiator'sTotemofSurvival-42603"
  value: {
   dps: 6817.76858
-  tps: 3868.46699
+  tps: 3868.46731
  }
 }
 dps_results: {
@@ -433,21 +433,21 @@ dps_results: {
  key: "TestEnhancement-AllItems-HatefulGladiator'sTotemofSurvival-42601"
  value: {
   dps: 6785.01888
-  tps: 3847.37617
+  tps: 3847.37648
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Heartpierce-49982"
  value: {
   dps: 6794.17617
-  tps: 3849.3003
+  tps: 3849.31124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Heartpierce-50641"
  value: {
   dps: 6794.17617
-  tps: 3849.3003
+  tps: 3849.31124
  }
 }
 dps_results: {
@@ -461,14 +461,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveSkyflareDiamond"
  value: {
   dps: 6643.6017
-  tps: 3761.13608
+  tps: 3761.14701
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ImpassiveStarflareDiamond"
  value: {
   dps: 6640.38947
-  tps: 3759.33754
+  tps: 3759.34848
  }
 }
 dps_results: {
@@ -489,7 +489,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
   dps: 6648.86251
-  tps: 3765.86158
+  tps: 3765.87251
   hps: 10.80745
  }
 }
@@ -525,14 +525,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthshatterDiamond"
  value: {
   dps: 6644.0196
-  tps: 3763.17962
+  tps: 3763.19055
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PersistentEarthsiegeDiamond"
  value: {
   dps: 6648.86251
-  tps: 3765.86158
+  tps: 3765.87251
  }
 }
 dps_results: {
@@ -553,14 +553,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthshatterDiamond"
  value: {
   dps: 6623.43723
-  tps: 3751.78128
+  tps: 3751.79221
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-PowerfulEarthsiegeDiamond"
  value: {
   dps: 6623.43723
-  tps: 3751.78128
+  tps: 3751.79221
  }
 }
 dps_results: {
@@ -588,14 +588,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-RelentlessEarthsiegeDiamond"
  value: {
   dps: 6794.17617
-  tps: 3849.3003
+  tps: 3849.31124
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-RelentlessGladiator'sTotemofSurvival-42604"
  value: {
   dps: 6831.51522
-  tps: 3877.09147
+  tps: 3877.09179
  }
 }
 dps_results: {
@@ -616,7 +616,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-SavageGladiator'sTotemofSurvival-42594"
  value: {
   dps: 6779.34552
-  tps: 3843.90451
+  tps: 3843.90483
  }
 }
 dps_results: {
@@ -630,7 +630,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Shadowmourne-49623"
  value: {
   dps: 6794.17617
-  tps: 3849.3003
+  tps: 3849.31124
  }
 }
 dps_results: {
@@ -671,8 +671,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SliverofPureIce-50339"
  value: {
-  dps: 6716.86465
-  tps: 3802.72722
+  dps: 6717.15786
+  tps: 3803.08146
  }
 }
 dps_results: {
@@ -714,7 +714,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
  value: {
   dps: 6781.41154
-  tps: 3843.25865
+  tps: 3843.25896
  }
 }
 dps_results: {
@@ -728,21 +728,21 @@ dps_results: {
  key: "TestEnhancement-AllItems-SwiftSkyflareDiamond"
  value: {
   dps: 6648.86251
-  tps: 3765.86158
+  tps: 3765.87251
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftStarflareDiamond"
  value: {
   dps: 6644.0196
-  tps: 3763.17962
+  tps: 3763.19055
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SwiftWindfireDiamond"
  value: {
   dps: 6635.5445
-  tps: 3758.48618
+  tps: 3758.49712
  }
 }
 dps_results: {
@@ -791,7 +791,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
   dps: 6730.29301
-  tps: 3813.33531
+  tps: 3813.34625
  }
 }
 dps_results: {
@@ -805,7 +805,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50351"
  value: {
   dps: 6787.45718
-  tps: 3847.01426
+  tps: 3847.03613
  }
 }
 dps_results: {
@@ -819,14 +819,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-TirelessSkyflareDiamond"
  value: {
   dps: 6643.54056
-  tps: 3764.41318
+  tps: 3764.42412
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TirelessStarflareDiamond"
  value: {
   dps: 6639.5199
-  tps: 3761.8868
+  tps: 3761.89774
  }
 }
 dps_results: {
@@ -847,7 +847,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-TotemoftheAvalanche-50463"
  value: {
   dps: 7009.81073
-  tps: 3970.67203
+  tps: 3970.68296
  }
 }
 dps_results: {
@@ -861,14 +861,14 @@ dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthshatterDiamond"
  value: {
   dps: 6639.5199
-  tps: 3761.8868
+  tps: 3761.89774
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TrenchantEarthsiegeDiamond"
  value: {
   dps: 6643.54056
-  tps: 3764.41318
+  tps: 3764.42412
  }
 }
 dps_results: {
@@ -882,7 +882,7 @@ dps_results: {
  key: "TestEnhancement-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
   dps: 6869.79206
-  tps: 3884.76918
+  tps: 3884.78012
  }
 }
 dps_results: {
@@ -902,22 +902,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 6161.213
-  tps: 3507.86358
+  dps: 6160.63764
+  tps: 3507.45287
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WrathfulGladiator'sTotemofSurvival-51513"
  value: {
   dps: 6846.07049
-  tps: 3886.22327
+  tps: 3886.22359
  }
 }
 dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
-  dps: 6799.41121
-  tps: 3849.39068
+  dps: 6799.38611
+  tps: 3849.40146
  }
 }
 dps_results: {
@@ -951,8 +951,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3770.08617
-  tps: 2134.60187
+  dps: 3770.23621
+  tps: 2134.7069
  }
 }
 dps_results: {
@@ -986,15 +986,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 13274.5514
-  tps: 7909.42958
+  dps: 13275.52041
+  tps: 7911.23808
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3906.37835
-  tps: 2013.88267
+  dps: 3905.18557
+  tps: 2013.0408
  }
 }
 dps_results: {
@@ -1015,7 +1015,7 @@ dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-Basic-FullBuffs-LongSingleTarget"
  value: {
   dps: 6794.17617
-  tps: 3849.3003
+  tps: 3849.31124
  }
 }
 dps_results: {
@@ -1049,8 +1049,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 18225.38021
-  tps: 10245.9404
+  dps: 18216.08453
+  tps: 10241.1522
  }
 }
 dps_results: {

@@ -14,7 +14,7 @@ func (shaman *Shaman) registerLightningBoltSpell() {
 }
 
 func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
-	baseCost := baseMana * 0.1
+	baseCost := 0.1 * shaman.BaseMana
 	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 2) {
 		baseCost -= baseCost * 0.05
 	}
