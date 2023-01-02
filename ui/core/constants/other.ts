@@ -1,4 +1,4 @@
-export const CURRENT_PHASE = 1;
+export const CURRENT_PHASE = 2;
 
 // Github pages serves our site under the /wotlk directory (because the repo name is wotlk)
 export const REPO_NAME = 'wotlk';

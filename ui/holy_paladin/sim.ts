@@ -68,7 +68,7 @@ export class HolyPaladinSimUI extends IndividualSimUI<Spec.SpecHolyPaladin> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.GenericAoeTalents.data,
+				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -144,7 +144,7 @@ export class HolyPaladinSimUI extends IndividualSimUI<Spec.SpecHolyPaladin> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.GenericAoeTalents,
+					Presets.StandardTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

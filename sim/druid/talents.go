@@ -152,12 +152,20 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.Starfire.CastTimeMultiplier -= 1
-			druid.Wrath.CastTimeMultiplier -= 1
+			if druid.Starfire != nil {
+				druid.Starfire.CastTimeMultiplier -= 1
+			}
+			if druid.Wrath != nil {
+				druid.Wrath.CastTimeMultiplier -= 1
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.Starfire.CastTimeMultiplier += 1
-			druid.Wrath.CastTimeMultiplier += 1
+			if druid.Starfire != nil {
+				druid.Starfire.CastTimeMultiplier += 1
+			}
+			if druid.Wrath != nil {
+				druid.Wrath.CastTimeMultiplier += 1
+			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if spell != druid.Wrath && spell != druid.Starfire {
