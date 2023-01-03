@@ -17,8 +17,7 @@ func (druid *Druid) registerFakeGotw() {
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
-		// Not actually 'Healing' but close enough
-		ProcMask: core.ProcMaskSpellDamage,
+		Flags:        SpellFlagOmenTrigger | core.SpellFlagHelpful,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

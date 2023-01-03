@@ -81,6 +81,7 @@ func (druid *Druid) ApplyTalents() {
 
 	druid.setupNaturesGrace()
 	druid.registerNaturesSwiftnessCD()
+	druid.applyEarthAndMoon()
 	druid.applyMoonkinForm()
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()
@@ -258,7 +259,6 @@ func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
 
 func (druid *Druid) applyOmenOfClarity() {
 	// Feral 2p needs clearcasting aura
-	// Interaction here between boomkin set and feral is probably incorrect, but kinda irrelevant
 	if !druid.Talents.OmenOfClarity && !druid.HasSetBonus(ItemSetNightsongBattlegear, 2) {
 		return
 	}
@@ -280,8 +280,6 @@ func (druid *Druid) applyOmenOfClarity() {
 			},
 		})
 	}
-
-	var proccedAt time.Duration
 
 	var affectedSpells []*core.Spell
 	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
@@ -324,7 +322,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if sim.CurrentTime == proccedAt {
+			if aura.RemainingDuration(sim) == aura.Duration {
 				// OnCastComplete is called after OnSpellHitDealt / etc, so don't deactivate
 				// if it was just activated.
 				return
@@ -343,8 +341,7 @@ func (druid *Druid) applyOmenOfClarity() {
 		return
 	}
 
-	procCC := func(sim *core.Simulation) {
-		proccedAt = sim.CurrentTime
+	druid.ProcOoc = func(sim *core.Simulation) {
 		druid.ClearcastingAura.Activate(sim)
 		if lasherweave2P != nil {
 			lasherweave2P.Activate(sim)
@@ -365,7 +362,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
 				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
-					procCC(sim)
+					druid.ProcOoc(sim)
 				}
 			}
 		},
@@ -376,8 +373,8 @@ func (druid *Druid) applyOmenOfClarity() {
 			// Not ideal to have new ppm manager here, but this needs to account for feral druid bear<->cat swaps
 			ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
-				procCC(sim)
-			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
+				druid.ProcOoc(sim)
+			} else if spell.Flags.Matches(SpellFlagOmenTrigger) { // Spells
 				// Heavily based on comment here
 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 				// Instants are treated as 1.5
@@ -395,7 +392,7 @@ func (druid *Druid) applyOmenOfClarity() {
 					chanceToProc *= 0.666
 				}
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
-					procCC(sim)
+					druid.ProcOoc(sim)
 				}
 			}
 		},
@@ -404,7 +401,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				// Based on ingame testing by druid discord, subject to change or incorrectness
 				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
-					procCC(sim)
+					druid.ProcOoc(sim)
 				}
 			}
 		},
