@@ -40,6 +40,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		FlatThreatBonus:  424,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Need to specially deactivate CC here in case maul is cast simultaneously with another spell.
 			if druid.ClearcastingAura != nil {
 				druid.ClearcastingAura.Deactivate(sim)
 			}

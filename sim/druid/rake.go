@@ -38,10 +38,6 @@ func (druid *Druid) registerRakeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if druid.ClearcastingAura != nil {
-				druid.ClearcastingAura.Deactivate(sim)
-			}
-
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
 			if bleedCategory.AnyActive() {
 				baseDamage *= 1.3

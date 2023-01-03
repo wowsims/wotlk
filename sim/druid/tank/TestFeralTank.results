@@ -584,8 +584,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-LasherweaveRegalia"
  value: {
-  dps: 2262.39627
-  tps: 4792.17993
+  dps: 2262.44609
+  tps: 4792.28312
   dtps: 3.25874
  }
 }

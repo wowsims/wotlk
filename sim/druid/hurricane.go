@@ -59,10 +59,6 @@ func (druid *Druid) registerHurricaneSpell() {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			if druid.ClearcastingAura != nil {
-				druid.ClearcastingAura.Deactivate(sim)
-			}
-
 			hurricaneDot.Apply(sim)
 		},
 	})
