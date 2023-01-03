@@ -51,7 +51,9 @@ func (warlock *Warlock) registerInfernoSpell() {
 				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 
-			warlock.Pet.Disable(sim)
+			if warlock.Pet != nil {
+				warlock.Pet.Disable(sim)
+			}
 			warlock.Infernal.EnableWithTimeout(sim, warlock.Infernal, time.Second*60)
 
 			// fake aura to show duration
