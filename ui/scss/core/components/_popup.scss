@@ -4,7 +4,7 @@
 	@include vertical-horizontal-center;
 	min-width: 50%;
 	max-height: 98vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 	padding: 1rem;
 	background-color: #111218;
 	border: 1px solid $primary;
