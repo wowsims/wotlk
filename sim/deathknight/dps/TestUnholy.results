@@ -238,8 +238,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7922.78496
-  tps: 5043.50322
+  dps: 7923.21277
+  tps: 5044.07483
   hps: 281.76663
  }
 }
@@ -950,8 +950,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8136.50159
-  tps: 5080.43286
+  dps: 8136.52113
+  tps: 5080.43706
   hps: 272.08092
  }
 }

@@ -461,8 +461,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 1475.57434
-  tps: 4718.92909
+  dps: 1475.21725
+  tps: 4716.53339
  }
 }
 dps_results: {
@@ -762,15 +762,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 1421.94374
-  tps: 4571.0022
+  dps: 1423.71214
+  tps: 4573.56157
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 1435.75431
-  tps: 4618.66768
+  dps: 1435.28411
+  tps: 4621.73117
  }
 }
 dps_results: {

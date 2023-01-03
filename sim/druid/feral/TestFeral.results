@@ -75,7 +75,7 @@ dps_results: {
  key: "TestFeral-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 7306.27583
-  tps: 7676.5811
+  tps: 7676.58273
  }
 }
 dps_results: {
@@ -181,7 +181,7 @@ dps_results: {
  key: "TestFeral-AllItems-Death'sChoice-47464"
  value: {
   dps: 7569.29234
-  tps: 7955.63558
+  tps: 7955.6372
  }
 }
 dps_results: {
@@ -195,7 +195,7 @@ dps_results: {
  key: "TestFeral-AllItems-Deathbringer'sWill-50362"
  value: {
   dps: 7584.96962
-  tps: 8003.36818
+  tps: 8003.36981
  }
 }
 dps_results: {
@@ -356,7 +356,7 @@ dps_results: {
  key: "TestFeral-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 7299.14796
-  tps: 7667.30816
+  tps: 7667.30979
  }
 }
 dps_results: {
@@ -910,7 +910,7 @@ dps_results: {
  key: "TestFeral-Average-Default"
  value: {
   dps: 7511.38095
-  tps: 8005.48356
+  tps: 8005.48381
  }
 }
 dps_results: {

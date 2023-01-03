@@ -14,45 +14,33 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.AddStat(stats.SpellPower, 280*0.3)
 	}
 
-	if shaman.Talents.ThunderingStrikes > 0 {
-		shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
-		shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
-	}
-
+	shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
+	shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
 	shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= []float64{1, 1.04, 1.07, 1.1}[shaman.Talents.WeaponMastery]
 
-	//unleashed rage
 	shaman.AddStat(stats.Expertise, 3*core.ExpertisePerQuarterPercentReduction*float64(shaman.Talents.UnleashedRage))
 
 	if shaman.Talents.DualWieldSpecialization > 0 && shaman.HasOHWeapon() {
 		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*2*float64(shaman.Talents.DualWieldSpecialization))
 	}
 
-	if shaman.Talents.BlessingOfTheEternals > 0 {
-		shaman.AddStat(stats.SpellCrit, float64(shaman.Talents.BlessingOfTheEternals)*2*core.CritRatingPerCritChance)
-	}
-
+	shaman.AddStat(stats.SpellCrit, float64(shaman.Talents.BlessingOfTheEternals)*2*core.CritRatingPerCritChance)
 	if shaman.Talents.Toughness > 0 {
 		shaman.MultiplyStat(stats.Stamina, 1.0+0.02*float64(shaman.Talents.Toughness))
 	}
-
 	if shaman.Talents.UnrelentingStorm > 0 {
 		shaman.AddStatDependency(stats.Intellect, stats.MP5, 0.04*float64(shaman.Talents.UnrelentingStorm))
 	}
-
 	if shaman.Talents.AncestralKnowledge > 0 {
 		shaman.MultiplyStat(stats.Intellect, 1.0+0.02*float64(shaman.Talents.AncestralKnowledge))
 	}
-
 	if shaman.Talents.MentalQuickness > 0 {
 		shaman.AddStatDependency(stats.AttackPower, stats.SpellPower, 0.1*float64(shaman.Talents.MentalQuickness))
 	}
-
 	if shaman.Talents.MentalDexterity > 0 {
 		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
 	}
-
 	if shaman.Talents.NaturesBlessing > 0 {
 		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
 	}
@@ -70,8 +58,7 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.registerElementalMasteryCD()
 	shaman.registerNaturesSwiftnessCD()
 	shaman.registerShamanisticRageCD()
-
-	// TODO: FeralSpirit Spirit summons
+	shaman.registerManaTideTotemCD()
 }
 
 func (shaman *Shaman) spellThreatMultiplier() float64 {
@@ -431,6 +418,43 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			}
 			procAura.Activate(sim)
 			procAura.AddStack(sim)
+		},
+	})
+}
+
+func (shaman *Shaman) registerManaTideTotemCD() {
+	if !shaman.Talents.ManaTideTotem {
+		return
+	}
+
+	mttAura := core.ManaTideTotemAura(shaman.GetCharacter(), shaman.Index)
+	mttSpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID: core.ManaTideTotemActionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: time.Second,
+			},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Minute * 5,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			mttAura.Activate(sim)
+			// TODO: Current water totem buff needs to be removed from party/raid.
+			if shaman.Totems.Water != proto.WaterTotem_NoWaterTotem {
+				shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*12
+			}
+		},
+	})
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell: mttSpell,
+		Type:  core.CooldownTypeDPS,
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return sim.CurrentTime > time.Second*30
 		},
 	})
 }
