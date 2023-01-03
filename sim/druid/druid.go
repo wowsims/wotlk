@@ -10,6 +10,7 @@ import (
 
 const (
 	SpellFlagNaturesGrace = core.SpellFlagAgentReserved1
+	SpellFlagOmenTrigger  = core.SpellFlagAgentReserved2
 )
 
 type Druid struct {

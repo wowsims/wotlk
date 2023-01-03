@@ -26,6 +26,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
+		Flags:        SpellFlagOmenTrigger,
 		BaseCost:     baseCost,
 
 		Cast: core.CastConfig{

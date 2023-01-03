@@ -259,7 +259,6 @@ func (druid *Druid) applyRendAndTear(aura core.Aura) core.Aura {
 
 func (druid *Druid) applyOmenOfClarity() {
 	// Feral 2p needs clearcasting aura
-	// Interaction here between boomkin set and feral is probably incorrect, but kinda irrelevant
 	if !druid.Talents.OmenOfClarity && !druid.HasSetBonus(ItemSetNightsongBattlegear, 2) {
 		return
 	}
@@ -378,7 +377,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
 			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
 				procCC(sim)
-			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) { // Spells
+			} else if spell.Flags.Matches(SpellFlagOmenTrigger) { // Spells
 				// Heavily based on comment here
 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 				// Instants are treated as 1.5

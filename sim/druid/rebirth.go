@@ -21,6 +21,7 @@ func (druid *Druid) registerRebirthSpell() {
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+		Flags:        SpellFlagOmenTrigger,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

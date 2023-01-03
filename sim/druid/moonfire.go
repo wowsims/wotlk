@@ -20,7 +20,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		ActionID:     core.ActionID{SpellID: 48463},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace,
+		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

@@ -39,7 +39,7 @@ func (druid *Druid) registerHurricaneSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger,
 
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,

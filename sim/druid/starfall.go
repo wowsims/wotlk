@@ -24,7 +24,7 @@ func (druid *Druid) registerStarfallSpell() {
 		ActionID:     core.ActionID{SpellID: 53201},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace,
+		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
