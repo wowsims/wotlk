@@ -81,6 +81,7 @@ func (druid *Druid) ApplyTalents() {
 
 	druid.setupNaturesGrace()
 	druid.registerNaturesSwiftnessCD()
+	druid.applyEarthAndMoon()
 	druid.applyMoonkinForm()
 	druid.applyPrimalFury()
 	druid.applyOmenOfClarity()

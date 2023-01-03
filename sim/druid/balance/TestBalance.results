@@ -929,22 +929,22 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3866.44296
-  tps: 4490.84377
+  dps: 4179.07597
+  tps: 4803.47679
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2477.31184
-  tps: 2390.57673
+  dps: 2751.81477
+  tps: 2665.07966
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4434.01073
-  tps: 4170.81516
+  dps: 4944.10632
+  tps: 4680.91075
  }
 }
 dps_results: {
