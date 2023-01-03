@@ -68,6 +68,31 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	},
 }
 
+var PlayerOptionsMonoCatFlowerWeave = &proto.Player_FeralDruid{
+	FeralDruid: &proto.FeralDruid{
+		Talents: StandardTalents,
+		Options: &proto.FeralDruid_Options{
+			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
+			LatencyMs:       100,
+			PrepopOoc:       true,
+		},
+		Rotation: &proto.FeralDruid_Rotation{
+			BearWeaveType:      proto.FeralDruid_Rotation_None,
+			UseRake:            true,
+			UseBite:            true,
+			MinCombosForRip:    5,
+			MinCombosForBite:   5,
+			BiteTime:           10.0,
+			MaintainFaerieFire: true,
+			BerserkBiteThresh:  30.0,
+			MinRoarOffset:      14.0,
+			SnekWeave:          false,
+			FlowerWeave:        true,
+			RaidTargets:        30,
+		},
+	},
+}
+
 var FullConsumes = &proto.Consumes{
 	BattleElixir:    proto.BattleElixir_ElixirOfMajorAgility,
 	GuardianElixir:  proto.GuardianElixir_ElixirOfMajorMageblood,

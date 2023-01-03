@@ -956,6 +956,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 6603.62613
+  tps: 6089.1708
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 6603.62613
+  tps: 4815.34822
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 7581.28286
+  tps: 5486.33798
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 3982.5336
+  tps: 3605.08471
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3982.5336
+  tps: 2893.73005
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 4252.47194
+  tps: 3073.20982
+ }
+}
+dps_results: {
  key: "TestFeral-SwitchInFrontOfTarget-Default"
  value: {
   dps: 6298.98565
