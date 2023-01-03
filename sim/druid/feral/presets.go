@@ -49,6 +49,7 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:       100,
+			PrepopOoc:       true,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
 			BearWeaveType:      proto.FeralDruid_Rotation_Lacerate,

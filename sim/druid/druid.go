@@ -96,6 +96,8 @@ type Druid struct {
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 	SavageRoarDurationTable        [6]time.Duration
 
+	ProcOoc func(sim *core.Simulation)
+
 	LunarICD core.Cooldown
 	SolarICD core.Cooldown
 	Treant1  *TreantPet
