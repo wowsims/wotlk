@@ -27,7 +27,7 @@ const dbUrlBin = '/wotlk/assets/database/db.bin';
 const leftoversUrlJson = '/wotlk/assets/database/leftover_db.json';
 const leftoversUrlBin = '/wotlk/assets/database/leftover_db.bin';
 // When changing this value, don't forget to change the html <link> for preloading!
-const READ_JSON = false;
+const READ_JSON = true;
 
 export class Database {
 	private static loadPromise: Promise<Database>|null = null;
