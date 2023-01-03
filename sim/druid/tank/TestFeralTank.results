@@ -272,7 +272,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-DreamwalkerGarb"
  value: {
   dps: 2060.63418
-  tps: 4345.66753
+  tps: 4345.67003
   dtps: 3.35741
  }
 }
@@ -416,7 +416,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-Gladiator'sWildhide"
  value: {
   dps: 2061.31451
-  tps: 4332.93769
+  tps: 4332.93519
   dtps: 4.38768
  }
 }

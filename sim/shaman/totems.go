@@ -102,12 +102,8 @@ func (shaman *Shaman) registerStoneskinTotemSpell() {
 
 func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
 	nextTotemAt := core.MinDuration(
-		shaman.NextTotemDrops[0],
-		core.MinDuration(
-			shaman.NextTotemDrops[1],
-			core.MinDuration(
-				shaman.NextTotemDrops[2],
-				shaman.NextTotemDrops[3])))
+		core.MinDuration(shaman.NextTotemDrops[0], shaman.NextTotemDrops[1]),
+		core.MinDuration(shaman.NextTotemDrops[2], shaman.NextTotemDrops[3]))
 
 	return nextTotemAt
 }

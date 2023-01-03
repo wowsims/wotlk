@@ -1,6 +1,8 @@
 package restoration
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 )
 
@@ -9,5 +11,5 @@ func (resto *RestorationDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (resto *RestorationDruid) tryUseGCD(sim *core.Simulation) {
-	resto.DoNothing()
+	resto.WaitUntil(sim, sim.CurrentTime+time.Second*5)
 }

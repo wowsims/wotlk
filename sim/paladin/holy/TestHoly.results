@@ -74,13 +74,13 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 150.51175
+  tps: 2273.91346
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 150.51175
+  tps: 2273.91346
  }
 }
 dps_results: {
@@ -122,7 +122,7 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-CorrodedSkeletonKey-50356"
  value: {
-  hps: 21.33333
+  hps: 64
  }
 }
 dps_results: {
@@ -252,8 +252,8 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 7.30323
-  tps: 7.98697
+  dps: 40.49231
+  tps: 46.28892
  }
 }
 dps_results: {
