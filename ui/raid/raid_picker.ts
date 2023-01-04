@@ -60,6 +60,9 @@ export class RaidPicker extends Component {
 	currentDragPlayerFromIndex: number = NEW_PLAYER;
 	currentDragType: DragType = DragType.New;
 
+	// Hold data about the party being dragged while the drag is happening.
+	currentDragParty: PartyPicker | null = null;
+
 	constructor(parent: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parent, 'raid-picker-root');
 		this.raidSimUI = raidSimUI;
@@ -90,6 +93,7 @@ export class RaidPicker extends Component {
 			//}
 
 			this.clearDragPlayer();
+			this.clearDragParty();
 		};
 	}
 
@@ -118,19 +122,30 @@ export class RaidPicker extends Component {
 
 		if (fromIndex != NEW_PLAYER) {
 			const playerPicker = this.getPlayerPicker(fromIndex);
-			playerPicker.rootElem.classList.add('dragFrom');
+			playerPicker.rootElem.classList.add('dragfrom');
 		}
 	}
 
 	clearDragPlayer() {
 		if (this.currentDragPlayerFromIndex != NEW_PLAYER) {
 			const playerPicker = this.getPlayerPicker(this.currentDragPlayerFromIndex);
-			playerPicker.rootElem.classList.remove('dragFrom');
+			playerPicker.rootElem.classList.remove('dragfrom');
 		}
 
 		this.currentDragPlayer = null;
 		this.currentDragPlayerFromIndex = NEW_PLAYER;
 		this.currentDragType = DragType.New;
+	}
+
+	setDragParty(party: PartyPicker) {
+		this.currentDragParty = party;
+		party.rootElem.classList.add('dragfrom');
+	}
+	clearDragParty() {
+		if (this.currentDragParty) {
+			this.currentDragParty.rootElem.classList.remove('dragfrom');
+			this.currentDragParty = null;
+		}
 	}
 }
 
@@ -148,7 +163,7 @@ export class PartyPicker extends Component {
 
 		this.rootElem.innerHTML = `
 			<div class="party-header">
-				<span>Group ${index + 1}</span>
+				<span class="party-label" draggable="true">Group ${index + 1}</span>
 				<div class="party-results">
 					<span class="party-results-dps"></span>
 					<span class="party-results-reference-delta"></span>
@@ -186,6 +201,66 @@ export class PartyPicker extends Component {
 
 			formatDeltaTextElem(referenceDeltaElem, referenceDps, partyDps, 1);
 		});
+
+		const dragStart = (event: DragEvent, type: DragType) => {
+			event.dataTransfer!.dropEffect = 'move';
+			event.dataTransfer!.effectAllowed = 'all';
+			this.raidPicker.setDragParty(this);
+		};
+		const labelElem = this.rootElem.getElementsByClassName('party-label')[0] as HTMLElement;
+		labelElem.ondragstart = event => {
+			dragStart(event, DragType.Swap);
+		};
+
+		let dragEnterCounter = 0;
+		this.rootElem.ondragenter = event => {
+			event.preventDefault();
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+			dragEnterCounter++;
+			this.rootElem.classList.add('dragto');
+		};
+		this.rootElem.ondragleave = event => {
+			event.preventDefault();
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+			dragEnterCounter--;
+			if (dragEnterCounter <= 0) {
+				this.rootElem.classList.remove('dragto');
+			}
+		};
+		this.rootElem.ondragover = event => {
+			event.preventDefault();
+		};
+		this.rootElem.ondrop = event => {
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+
+			event.preventDefault();
+			dragEnterCounter = 0;
+			this.rootElem.classList.remove('dragto');
+
+			const eventID = TypedEvent.nextEventID();
+			TypedEvent.freezeAllAndDo(() => {
+				const srcPartyPicker = this.raidPicker.currentDragParty!;
+
+				for (let i = 0; i < MAX_PARTY_SIZE; i++) {
+					const srcPlayerPicker = srcPartyPicker.playerPickers[i]!;
+					const dstPlayerPicker = this.playerPickers[i]!;
+
+					const srcPlayer = srcPlayerPicker.player;
+					const dstPlayer = dstPlayerPicker.player;
+
+					srcPlayerPicker.setPlayer(eventID, dstPlayer, DragType.Swap);
+					dstPlayerPicker.setPlayer(eventID, srcPlayer, DragType.Swap);
+				}
+			});
+
+			this.raidPicker.clearDragParty();
+		};
 	}
 }
 
@@ -305,11 +380,7 @@ export class PlayerPicker extends Component {
 			}
 			event.dataTransfer!.dropEffect = 'move';
 			event.dataTransfer!.effectAllowed = 'all';
-
-			const iconSrc = this.iconElem.src;
-			const dragImage = new Image();
-			dragImage.src = iconSrc;
-			event.dataTransfer!.setDragImage(dragImage, 30, 30);
+			event.dataTransfer!.setDragImage(this.iconElem, 30, 30);
 			if (this.player) {
 				var playerDataProto = this.player.toProto(true);
 				event.dataTransfer!.setData("text/plain", btoa(String.fromCharCode(...PlayerProto.toBinary(playerDataProto))));
@@ -345,11 +416,17 @@ export class PlayerPicker extends Component {
 		let dragEnterCounter = 0;
 		this.rootElem.ondragenter = event => {
 			event.preventDefault();
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			dragEnterCounter++;
 			this.rootElem.classList.add('dragto');
 		};
 		this.rootElem.ondragleave = event => {
 			event.preventDefault();
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			dragEnterCounter--;
 			if (dragEnterCounter <= 0) {
 				this.rootElem.classList.remove('dragto');
@@ -359,6 +436,9 @@ export class PlayerPicker extends Component {
 			event.preventDefault();
 		};
 		this.rootElem.ondrop = event => {
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			var dropData = event.dataTransfer!.getData("text/plain");
 
 			event.preventDefault();
@@ -382,11 +462,7 @@ export class PlayerPicker extends Component {
 					const fromPlayerPicker = this.raidPicker.getPlayerPicker(this.raidPicker.currentDragPlayerFromIndex);
 					if (dragType == DragType.Swap) {
 						fromPlayerPicker.setPlayer(eventID, this.player, dragType);
-						var myicon = this.iconElem.src
-						this.iconElem.src = fromPlayerPicker.iconElem.src;
-						fromPlayerPicker.iconElem.src = myicon;
 					} else if (dragType == DragType.Move) {
-						this.iconElem.src = fromPlayerPicker.iconElem.src;
 						fromPlayerPicker.setPlayer(eventID, null, dragType);
 					}
 				} else if (this.raidPicker.currentDragPlayer == null) {
@@ -407,12 +483,6 @@ export class PlayerPicker extends Component {
 					this.setPlayer(eventID, this.raidPicker.currentDragPlayer!.clone(eventID), dragType);
 				} else {
 					this.setPlayer(eventID, this.raidPicker.currentDragPlayer, dragType);
-				}
-
-				if (this.iconElem.src == "") {
-					this.iconElem.src = playerPresets.filter(preset => {
-						return preset.spec == localPlayer.spec;
-					})[0].iconUrl;
 				}
 
 				this.raidPicker.clearDragPlayer();

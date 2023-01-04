@@ -1334,6 +1334,9 @@ const rangedDpsSpecs: Array<Spec> = [
 export function isRangedDpsSpec(spec: Spec): boolean {
 	return rangedDpsSpecs.includes(spec);
 }
+export function isMeleeDpsSpec(spec: Spec): boolean {
+	return !isTankSpec(spec) && !isHealingSpec(spec) && !isRangedDpsSpec(spec);
+}
 
 // Prefixes used for storing browser data for each site. Even if a Spec is
 // renamed, DO NOT change these values or people will lose their saved data.
