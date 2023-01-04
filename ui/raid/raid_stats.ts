@@ -14,6 +14,7 @@ import {
   specToClass,
 	isTankSpec,
 	isHealingSpec,
+	isMeleeDpsSpec,
 	isRangedDpsSpec,
 	textCssClassForClass,
 } from '../core/proto_utils/utils.js';
@@ -261,7 +262,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {sections: [
 				effects: [
 					{
 						label: 'Melee',
-						playerData: { condition: player => !isTankSpec(player.spec) && !isHealingSpec(player.spec) && !isRangedDpsSpec(player.spec) },
+						playerData: { condition: player => isMeleeDpsSpec(player.spec) },
 					},
 				],
 			},
