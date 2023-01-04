@@ -246,7 +246,8 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.ActionID.SpellID != 47465 && spell.ActionID.SpellID != 12867 {
+				isSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867 || spell.ActionID.SpellID == 58790 || spell.ActionID.SpellID == 58789
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && !isSpell {
 					return
 				}
 

@@ -120,7 +120,8 @@ var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
 			Id: 41752,
 		},
 		OhItem: &proto.ItemSpec{
-			Id: 41752,
+			Id:      41752,
+			Enchant: 3790,
 		},
 	},
 }
