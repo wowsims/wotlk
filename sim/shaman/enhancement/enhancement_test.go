@@ -18,9 +18,12 @@ func TestEnhancement(t *testing.T) {
 		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-		GearSet:          core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
-		SpecOptions:      core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		OtherSpecOptions: []core.SpecOptionsCombo{{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental}},
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental},
+			{Label: "EnhItemSwap", SpecOptions: PlayerOptionsItemSwap},
+		},
 
 		Consumes: FullConsumes,
 
