@@ -233,7 +233,7 @@ export const PhysicalDamageDebuff = InputHelpers.makeMultiIconInput([
 ], 'Phys Vuln');
 
 export const SpellCritDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(17800), 'shadowMastery'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'shadowMastery'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill'),
 ], 'Spell Crit');

@@ -448,6 +448,30 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecRogue,
 		rotation: RoguePresets.DefaultRotation,
+		talents: RoguePresets.AssassinationTalents.data,
+		specOptions: RoguePresets.DefaultOptions,
+		consumes: RoguePresets.DefaultConsumes,
+		defaultName: 'Assassination Rogue',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
+			},
+			[Faction.Horde]: {
+				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
+			},
+		},
+		tooltip: 'Assassination Rogue',
+		iconUrl: talentTreeIcons[Class.ClassRogue][0],
+	},
+	{
+		spec: Spec.SpecRogue,
+		rotation: RoguePresets.DefaultRotation,
 		talents: RoguePresets.CombatTalents.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
@@ -467,7 +491,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Combat Rogue',
-		iconUrl: specIconsLarge[Spec.SpecRogue],
+		iconUrl: talentTreeIcons[Class.ClassRogue][1],
 	},
 	{
 		spec: Spec.SpecElementalShaman,

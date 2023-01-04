@@ -42,6 +42,7 @@ import {
 import { Stats } from './proto_utils/stats.js';
 
 import {
+	ClassSpecs,
 	SpecRotation,
 	SpecTalents,
 	SpecTypeFunctions,
@@ -176,6 +177,13 @@ export class Player<SpecType extends Spec> {
 
 	getClassColor(): string {
 		return classColors[this.getClass()];
+	}
+
+	isSpec<T extends Spec>(spec: T): this is Player<T> {
+		return this.spec == spec;
+	}
+	isClass<T extends Class>(clazz: T): this is Player<ClassSpecs<T>> {
+		return this.getClass() == clazz;
 	}
 
 	getParty(): Party | null {
