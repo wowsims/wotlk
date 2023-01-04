@@ -291,6 +291,7 @@ message EnhancementShaman {
 		int32 flame_shock_clip_ticks = 12;
 		double delay_gcd_weave = 13;
 		ItemSwap item_swap = 14;
+		bool enable_item_swap = 15;
 	}
 
 	message Options {

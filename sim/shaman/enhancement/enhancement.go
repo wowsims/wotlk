@@ -56,7 +56,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		SyncType:       int32(enhOptions.Options.SyncType),
 	})
 
-	if enh.Totems.UseFireElemental {
+	if enh.Totems.UseFireElemental && enhOptions.Rotation.EnableItemSwap {
 		enh.EnableItemSwap(enhOptions.Rotation.ItemSwap, enh.DefaultMeleeCritMultiplier(), enh.DefaultMeleeCritMultiplier(), 0)
 	}
 
