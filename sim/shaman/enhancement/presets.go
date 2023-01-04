@@ -114,6 +114,7 @@ var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
 	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
 	WeaveFlameShock:              true,
 	//Temp to test Item Swap, will switch to a more realistic swap with Phase 2 gear.
+	EnableItemSwap: true,
 	ItemSwap: &proto.ItemSwap{
 		MhItem: &proto.ItemSpec{
 			Id: 41752,
