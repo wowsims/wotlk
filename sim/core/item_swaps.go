@@ -38,14 +38,12 @@ func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap, mhCritMulti
 	items := getItems(itemSwap)
 
 	character.ItemSwap = ItemSwap{
-		character:              character,
-		mhCritMultiplier:       mhCritMultiplier,
-		ohCritMultiplier:       ohCritMultiplier,
-		rangedCritMultiplier:   rangedCritMultiplier,
-		initialEquippedItems:   getInitialEquippedItems(character),
-		initialUnequippedItems: items,
-		unEquippedItems:        items,
-		has2H:                  items[0].HandType == proto.HandType_HandTypeTwoHand,
+		character:            character,
+		mhCritMultiplier:     mhCritMultiplier,
+		ohCritMultiplier:     ohCritMultiplier,
+		rangedCritMultiplier: rangedCritMultiplier,
+		unEquippedItems:      items,
+		has2H:                items[0].HandType == proto.HandType_HandTypeTwoHand,
 	}
 }
 
@@ -95,11 +93,11 @@ func (swap *ItemSwap) IsEnabled() bool {
 	return swap.character != nil
 }
 
-func (swap *ItemSwap) GetItem(slot proto.ItemSlot) Item {
+func (swap *ItemSwap) GetItem(slot proto.ItemSlot) *Item {
 	if slot-offset < 0 {
 		panic("Not able to swap Item " + slot.String() + " not supported")
 	}
-	return swap.unEquippedItems[slot-offset]
+	return &swap.unEquippedItems[slot-offset]
 }
 
 func (swap *ItemSwap) setItem(slot proto.ItemSlot, item Item) {
@@ -124,7 +122,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 
 		if ok, swapStats := swap.swapItem(sim, slot, has2H); ok {
 			newStats = newStats.Add(swapStats)
-			meeleWeaponSwapped = slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand
+			meeleWeaponSwapped = slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand || meeleWeaponSwapped
 		}
 	}
 
@@ -134,12 +132,12 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 		onSwap(sim)
 	}
 
-	if character.AutoAttacks.IsEnabled() && meeleWeaponSwapped {
+	if character.AutoAttacks.IsEnabled() && meeleWeaponSwapped && sim.CurrentTime > 0 {
 		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 	}
 
 	if useGCD {
-		character.GCD.Set(1500 * time.Millisecond)
+		character.SetGCDTimer(sim, 1500*time.Millisecond+sim.CurrentTime)
 	}
 }
 
@@ -151,7 +149,8 @@ func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot, has2H bool)
 	if newItem.ID == 0 && !(has2H && slot == proto.ItemSlot_ItemSlotOffHand) {
 		return false, stats.Stats{}
 	}
-	character.Equip[slot] = newItem
+
+	character.Equip[slot] = *newItem
 	newStats := newItem.Stats.Add(oldItem.Stats.Multiply(-1))
 
 	//2H will swap out the offhand also.
@@ -188,6 +187,15 @@ func (swap *ItemSwap) swapWeapon(sim *Simulation, slot proto.ItemSlot) {
 	}
 
 	character.AutoAttacks.IsDualWielding = character.Equip[proto.ItemSlot_ItemSlotMainHand].SwingSpeed != 0 && character.Equip[proto.ItemSlot_ItemSlotOffHand].SwingSpeed != 0
+}
+
+func (swap *ItemSwap) finalize() {
+	if !swap.IsEnabled() {
+		return
+	}
+
+	swap.initialEquippedItems = getInitialEquippedItems(swap.character)
+	swap.initialUnequippedItems = swap.unEquippedItems
 }
 
 func (swap *ItemSwap) reset(sim *Simulation) {

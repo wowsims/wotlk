@@ -145,8 +145,14 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 				}
 
 				mhHit.Cast(sim, target)
-				ohHit.Cast(sim, target)
-				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Casts -= 2
+				casts := int32(1)
+
+				if shaman.AutoAttacks.IsDualWielding {
+					ohHit.Cast(sim, target)
+					casts++
+				}
+
+				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Casts -= casts
 				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Hits--
 			}
 			spell.DealOutcome(sim, result)

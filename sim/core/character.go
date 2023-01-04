@@ -401,6 +401,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	character.Unit.finalize()
 
 	character.majorCooldownManager.finalize()
+	character.ItemSwap.finalize()
 
 	if playerStats != nil {
 		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)

@@ -491,20 +491,26 @@ export interface TypedItemSwapPickerConfig<SpecType extends Spec, T> extends Ite
 }
 
 interface WrappedItemSwapInputConfig<SpecType extends Spec> {
-	fieldName: keyof SpecOptions<SpecType>,
-	values: Array<ItemSlot>
+	fieldName: keyof SpecRotation<SpecType>,
+	values: Array<ItemSlot>,
+	labelTooltip?: string,
+	getValue?: (player: Player<SpecType>) => ItemSwap,
+	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => void,
+	showWhen?: (player: Player<SpecType>) => boolean
 }
 
-export function MakeItemSwapInput<SpecType extends Spec, T extends ItemSwap>(config: WrappedItemSwapInputConfig<SpecType>): TypedItemSwapPickerConfig<SpecType, T> {
+export function MakeItemSwapInput<SpecType extends Spec>(config: WrappedItemSwapInputConfig<SpecType>): TypedItemSwapPickerConfig<SpecType, ItemSwap> {
 	return {
 		type: 'itemSwap',
-		getValue: (player: Player<SpecType>) =>  (player.getSpecOptions()[config.fieldName] as unknown as T) || ItemSwap.create(),
-		setValue: (eventID: EventID, player: Player<SpecType>, newValue: T) => {
-			const options = player.getSpecOptions();
-			(options[config.fieldName] as unknown as T) = newValue;
-			player.setSpecOptions(eventID, options);
-		},
+		getValue: config.getValue || ((player: Player<SpecType>) =>  (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create()),
+		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => {
+			const options = player.getRotation();
+			(options[config.fieldName] as unknown as ItemSwap) = newValue;
+			player.setRotation(eventID, options);
+		}),
 		itemSlots: config.values,
-		changedEvent: (player: Player<SpecType>) => player.specOptionsChangeEmitter,
+		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
+		labelTooltip: config.labelTooltip,
+		showWhen: config.showWhen,
 	}
 }

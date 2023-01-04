@@ -290,6 +290,7 @@ message EnhancementShaman {
 		PrimaryShock primary_shock = 11;
 		int32 flame_shock_clip_ticks = 12;
 		double delay_gcd_weave = 13;
+		ItemSwap item_swap = 14;
 	}
 
 	message Options {
@@ -298,7 +299,6 @@ message EnhancementShaman {
 		ShamanSyncType sync_type = 3;
 		ShamanImbue imbue_mh = 4;
 		ShamanImbue imbue_oh = 5;
-		ItemSwap item_swap = 6;
 	}
 
 	Rotation rotation = 1;
