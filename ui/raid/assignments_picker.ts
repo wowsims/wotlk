@@ -157,12 +157,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getPlayers()
 			.filter(player => player?.getClass() == Class.ClassPriest)
 			.filter(player => {
-				if (!(player! as Player<Spec.SpecSmitePriest>).getTalents().powerInfusion) {
-					return false;
-				}
-				// Don't include shadow priests even if they have the talent, because they
-				// don't have a raid target option for this.
-				return player!.spec != Spec.SpecShadowPriest;
+				return (player as Player<Spec.SpecSmitePriest>).getTalents().powerInfusion;
 			}) as Array<Player<any>>;
 	}
 

@@ -348,6 +348,13 @@ export function getSpecSiteUrl(spec: Spec): string {
 }
 export const raidSimSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/raid/`).toString();
 
+export function textCssClassForClass(clazz: Class): string {
+	return `text-${classNames[clazz].toLowerCase().replace(/\s/g, '-')}`;
+}
+export function textCssClassForSpec(spec: Spec): string {
+	return textCssClassForClass(specToClass[spec]);
+}
+
 export type RotationUnion =
 	BalanceDruidRotation |
 	FeralDruidRotation |
@@ -1313,6 +1320,22 @@ const healingSpecs: Array<Spec> = [
 ];
 export function isHealingSpec(spec: Spec): boolean {
 	return healingSpecs.includes(spec);
+}
+
+const rangedDpsSpecs: Array<Spec> = [
+	Spec.SpecBalanceDruid,
+	Spec.SpecHunter,
+	Spec.SpecMage,
+	Spec.SpecShadowPriest,
+	Spec.SpecSmitePriest,
+	Spec.SpecElementalShaman,
+	Spec.SpecWarlock,
+];
+export function isRangedDpsSpec(spec: Spec): boolean {
+	return rangedDpsSpecs.includes(spec);
+}
+export function isMeleeDpsSpec(spec: Spec): boolean {
+	return !isTankSpec(spec) && !isHealingSpec(spec) && !isRangedDpsSpec(spec);
 }
 
 // Prefixes used for storing browser data for each site. Even if a Spec is

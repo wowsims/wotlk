@@ -49,14 +49,15 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
-    type: RotationType.Adaptive,
-	useSmartCooldowns : true,
-	mfUsage : BalanceDruid_Rotation_MfUsage.NoMf,
-	isUsage : BalanceDruid_Rotation_IsUsage.MaximizeIs,
+	type: RotationType.Adaptive,
+	maintainFaerieFire: true,
+	useSmartCooldowns: true,
+	mfUsage: BalanceDruid_Rotation_MfUsage.NoMf,
+	isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
 	useStarfire:       true,
 	useWrath:          true,
-    useBattleRes: false,
-	playerLatency : 200,
+	useBattleRes: false,
+	playerLatency: 200,
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({

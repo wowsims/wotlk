@@ -16,6 +16,8 @@ import {
   raidSimLabel,
   specNames,
   specToClass,
+	textCssClassForClass,
+	textCssClassForSpec,
 	titleIcons,
 } from '../proto_utils/utils.js';
 
@@ -283,18 +285,13 @@ export class SimTitleDropdown extends Component {
   }
 
   private getContextualKlass(data: ClassOptions | SpecOptions | RaidOptions): string {
-    let klass: string;
-
     if (data.type == 'Raid')
       // Raid link
-      klass = 'text-white';
+      return 'text-white';
     else if (data.type == 'Class')
       // Class links
-      klass = `text-${classNames[data.index].toLowerCase().replace(/\s/g, '-')}`;
+      return textCssClassForClass(data.index);
     else
-      // Spec links
-      klass = `text-${classNames[specToClass[data.index]].toLowerCase().replace(/\s/g, '-')}`;
-    
-    return klass;
+      return textCssClassForSpec(data.index);
   }
 }

@@ -13,12 +13,15 @@
 }
 
 .party-picker-root {
-	margin-right: var(--bs-gap);
-	margin-bottom: var(--bs-gap);
+	margin: calc(var(--bs-gap) / 2);
 }
 
 .party-header, .player-picker-root {
 	margin: 3px 0;
+}
+
+.party-label {
+	cursor: pointer;
 }
 
 .party-header {
@@ -38,7 +41,7 @@
 	border-color: gray;
 }
 
-.player-picker-root.dragfrom {
+.player-picker-root.dragfrom, .party-picker-root.dragfrom {
 	box-shadow:
 		0 0 5px blue,
 		0 0 5px blue,
@@ -46,7 +49,7 @@
 		0 0 5px blue;
 }
 
-.player-picker-root.dragto:not(.dragfrom) {
+.player-picker-root.dragto:not(.dragfrom), .party-picker-root.dragto:not(.dragfrom) {
 	box-shadow:
 		0 0 5px red,
 		0 0 5px red,

@@ -61,6 +61,10 @@ func main() {
 		db.AddItemIcon(itemID, itemTooltips)
 	}
 
+	for _, spellId := range database.SharedSpellsIcons {
+		db.AddSpellIcon(spellId, spellTooltips)
+	}
+
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
 }
 
