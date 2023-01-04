@@ -189,7 +189,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 	lavaLash := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			//Checking if we learned the spell, ie untalented
-			return enh.LavaLash != nil
+			return enh.LavaLash != nil && enh.AutoAttacks.IsDualWielding
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			//TODO add in LL delay so we don't lose flametongues, if Last attack = current time

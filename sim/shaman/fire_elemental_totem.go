@@ -41,7 +41,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			},
 		},
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
 			// TODO: ToW needs a unique buff/debuff aura for each raidmember/target.
 			//  Otherwise we will be possibly disabling another ele shaman's ToW debuff/buff.
 			if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
@@ -51,7 +51,13 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			}
 			shaman.MagmaTotemDot.Cancel(sim)
 			shaman.SearingTotemDot.Cancel(sim)
+
 			shaman.FireElemental.EnableWithTimeout(sim, shaman.FireElemental, fireTotemDuration)
+
+			//TODO handle more then one swap if the fight is greater then 5 mins, for now will just do the one.
+			if shaman.FireElementalTotem.SpellMetrics[target.Index].Casts == 1 {
+				shaman.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+			}
 
 			// Add a dummy aura to show in metrics
 			fireElementalAura.Activate(sim)

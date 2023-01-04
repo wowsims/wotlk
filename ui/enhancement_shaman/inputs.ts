@@ -75,18 +75,26 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 	],
 });
 
-export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecEnhancementShaman, ItemSwap>({
+export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecEnhancementShaman>({
 	fieldName: 'itemSwap',
 	values: [
 		ItemSlot.ItemSlotMainHand,
 		ItemSlot.ItemSlotOffHand,
-		ItemSlot.ItemSlotRanged,
-	]
+		//ItemSlot.ItemSlotRanged, Not support yet
+	],
+	showWhen: (player: Player<Spec.SpecEnhancementShaman>) => (player.getRotation().totems?.useFireElemental && player.getRotation().enableItemSwap) || false
 })
 
 export const EnhancementShamanRotationConfig = {
 	inputs:
-		[
+		[	
+			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+				fieldName: 'enableItemSwap',
+				label: 'Enable Item Swapping',
+				labelTooltip: 'Toggle on/off item swapping',
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) =>  player.getRotation().totems?.useFireElemental || false
+			}),
+			EnhancmentItemSwapInputs,
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, RotationType>({
 				fieldName: 'rotationType',
 				label: 'Type',

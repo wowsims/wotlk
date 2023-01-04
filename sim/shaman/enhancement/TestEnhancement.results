@@ -965,43 +965,85 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 18427.3275
-  tps: 10569.49721
+  dps: 18350.14699
+  tps: 10794.12731
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6551.74283
-  tps: 3409.82982
+  dps: 7169.09677
+  tps: 3847.9685
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8124.13453
-  tps: 3763.89963
+  dps: 8748.57128
+  tps: 4208.84218
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12289.81141
-  tps: 7527.39702
+  dps: 10928.88386
+  tps: 6616.08205
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3822.88657
-  tps: 1959.59812
+  dps: 4018.18967
+  tps: 2107.48746
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5087.0879
-  tps: 2326.69769
+  dps: 5487.55774
+  tps: 2606.54689
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 18027.1628
+  tps: 10734.78879
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 7019.56281
+  tps: 3814.34092
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 8286.75432
+  tps: 4015.96099
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10683.60507
+  tps: 6680.9108
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3916.39435
+  tps: 2094.096
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Orc-P1-EnhItemSwap-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5135.56259
+  tps: 2474.96063
  }
 }
 dps_results: {
@@ -1049,43 +1091,85 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongMultiTarget"
  value: {
-  dps: 18155.25369
-  tps: 10571.5263
+  dps: 18108.91415
+  tps: 10706.69596
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6497.58489
-  tps: 3418.91255
+  dps: 7106.07908
+  tps: 3866.74502
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8048.8596
-  tps: 3824.45761
+  dps: 8702.15441
+  tps: 4290.08611
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12187.40385
-  tps: 7554.38411
+  dps: 10687.4914
+  tps: 6590.06479
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3822.70847
-  tps: 1995.90089
+  dps: 3949.11615
+  tps: 2099.76949
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-P1-EnhFireElemental-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5060.3432
-  tps: 2384.33478
+  dps: 5460.2514
+  tps: 2667.08154
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 17672.89979
+  tps: 10552.6156
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 6934.74984
+  tps: 3805.17746
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 8169.40864
+  tps: 4063.34794
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10349.8698
+  tps: 6560.35538
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3814.93477
+  tps: 2067.02014
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Settings-Troll-P1-EnhItemSwap-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5120.2284
+  tps: 2542.67712
  }
 }
 dps_results: {
