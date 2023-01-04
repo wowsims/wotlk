@@ -177,13 +177,19 @@ export class CharacterStats extends Component {
 		} else if (stat == Stat.StatExpertise) {
 			displayStr += ` (${(Math.floor(rawValue / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION) / 4).toFixed(2)}%)`;
 		} else if (stat == Stat.StatDefense) {
-			displayStr += ` (${(Mechanics.CHARACTER_LEVEL * 5 + rawValue / Mechanics.DEFENSE_RATING_PER_DEFENSE).toFixed(1)})`;
+			displayStr += ` (${(Mechanics.CHARACTER_LEVEL * 5 + Math.floor(rawValue / Mechanics.DEFENSE_RATING_PER_DEFENSE)).toFixed(0)})`;
 		} else if (stat == Stat.StatBlock) {
-			displayStr += ` (${(rawValue / Mechanics.BLOCK_RATING_PER_BLOCK_CHANCE).toFixed(2)}%)`;
+			// TODO: Figure out how to display these differently for the components than the final value
+			//displayStr += ` (${(rawValue / Mechanics.BLOCK_RATING_PER_BLOCK_CHANCE).toFixed(2)}%)`;
+			displayStr += ` (${((rawValue / Mechanics.BLOCK_RATING_PER_BLOCK_CHANCE) + (Mechanics.MISS_DODGE_PARRY_BLOCK_CRIT_CHANCE_PER_DEFENSE * Math.floor(stats.getStat(Stat.StatDefense) / Mechanics.DEFENSE_RATING_PER_DEFENSE)) + 5.00).toFixed(2)}%)`;
 		} else if (stat == Stat.StatDodge) {
-			displayStr += ` (${(rawValue / Mechanics.DODGE_RATING_PER_DODGE_CHANCE).toFixed(2)}%)`;
+			//displayStr += ` (${(rawValue / Mechanics.DODGE_RATING_PER_DODGE_CHANCE).toFixed(2)}%)`;
+			displayStr += ` (${(stats.getPseudoStat(PseudoStat.PseudoStatDodge)*100).toFixed(2)}%)`;
 		} else if (stat == Stat.StatParry) {
-			displayStr += ` (${(rawValue / Mechanics.PARRY_RATING_PER_PARRY_CHANCE).toFixed(2)}%)`;
+			//displayStr += ` (${(rawValue / Mechanics.PARRY_RATING_PER_PARRY_CHANCE).toFixed(2)}%)`;
+			displayStr += ` (${(stats.getPseudoStat(PseudoStat.PseudoStatParry)*100).toFixed(2)}%)`;
+		} else if (stat == Stat.StatResilience) {
+			displayStr += ` (${(rawValue / Mechanics.RESILIENCE_RATING_PER_CRIT_REDUCTION_CHANCE).toFixed(2)}%)`;
 		}
 
 		return displayStr;
