@@ -9,11 +9,25 @@ import (
 )
 
 func (shaman *Shaman) registerLightningBoltSpell() {
-	shaman.LightningBolt = shaman.newLightningBoltSpell(false)
-	shaman.LightningBoltLO = shaman.newLightningBoltSpell(true)
+	shaman.LightningBolt = shaman.RegisterSpell(shaman.newLightningBoltSpellConfig(false))
+	shaman.LightningBoltLO = shaman.RegisterSpell(shaman.newLightningBoltSpellConfig(true))
 }
 
-func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spell {
+func (shaman *Shaman) RegisterMaelstromLightningBoltSpells(minStacks int32) []*core.Spell {
+	var spells []*core.Spell
+
+	spellConfig := shaman.newLightningBoltSpellConfig(false)
+
+	for i := minStacks; i <= 5; i++ {
+		spellConfig.ActionID.Tag = i
+		spell := shaman.RegisterSpell(spellConfig)
+		spells = append(spells, spell)
+	}
+
+	return spells
+}
+
+func (shaman *Shaman) newLightningBoltSpellConfig(isLightningOverload bool) core.SpellConfig {
 	baseCost := 0.1 * shaman.BaseMana
 	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 2) {
 		baseCost -= baseCost * 0.05
@@ -45,8 +59,7 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 		spellConfig.DamageMultiplier += 0.05
 	}
 
-	var lbDot *core.Dot
-	if !isLightningOverload && shaman.HasSetBonus(ItemSetWorldbreakerGarb, 4) {
+	if !isLightningOverload && shaman.HasSetBonus(ItemSetWorldbreakerGarb, 4) && shaman.LightningBoltDot == nil {
 		lbDotSpell := shaman.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 64930},
 			SpellSchool:      core.SpellSchoolNature,
@@ -56,12 +69,12 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				lbDot.ApplyOrReset(sim)
+				shaman.LightningBoltDot.ApplyOrReset(sim)
 				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 			},
 		})
 
-		lbDot = core.NewDot(core.Dot{
+		shaman.LightningBoltDot = core.NewDot(core.Dot{
 			Spell: lbDotSpell,
 			Aura: shaman.CurrentTarget.RegisterAura(core.Aura{
 				Label:    "Electrified-" + strconv.Itoa(int(shaman.Index)),
@@ -83,12 +96,12 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 
 	canLO := !isLightningOverload && shaman.Talents.LightningOverload > 0
 	lightningOverloadChance := float64(shaman.Talents.LightningOverload) * 0.11
-
+	lbDot := shaman.LightningBoltDot
 	spellConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := dmgBonus + sim.Roll(719, 819) + spellCoeff*spell.SpellPower()
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+		if !isLightningOverload && lbDot != nil && result.DidCrit() {
 
-		if lbDot != nil && result.DidCrit() {
 			var outstandingDamage float64
 			if lbDot.IsActive() {
 				outstandingDamage = lbDot.SnapshotBaseDamage * float64(lbDot.NumberOfTicks-lbDot.TickCount)
@@ -106,5 +119,5 @@ func (shaman *Shaman) newLightningBoltSpell(isLightningOverload bool) *core.Spel
 		spell.DealDamage(sim, result)
 	}
 
-	return shaman.RegisterSpell(spellConfig)
+	return spellConfig
 }

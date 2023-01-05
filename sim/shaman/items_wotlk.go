@@ -88,7 +88,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if (spell == shaman.LightningBolt || spell == shaman.LightningBoltLO) && sim.RandomFloat("totem of elemental plane") < 0.15 {
+				if spell.ActionID.SpellID == 49238 && sim.RandomFloat("totem of elemental plane") < 0.15 {
 					procAura.Activate(sim)
 					icd.Use(sim)
 				}
@@ -114,7 +114,7 @@ func init() {
 				if !icd.IsReady(sim) {
 					return
 				}
-				if (spell == shaman.LightningBolt || spell == shaman.LightningBoltLO) && sim.RandomFloat("totem of elemental plane") < 0.7 {
+				if spell.ActionID.SpellID == 49238 && sim.RandomFloat("totem of elemental plane") < 0.7 {
 					procAura.Activate(sim)
 					icd.Use(sim) // put on CD
 				}
