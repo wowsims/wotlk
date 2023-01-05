@@ -71,7 +71,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			return enh.MaelstromWeaponAura.GetStacks() == 5
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.LightningBolt.Cast(sim, target)
+			return enh.CastLightningBolt(sim, enh.CurrentTarget)
 		},
 		readyAt: func() time.Duration {
 			return 0
@@ -94,7 +94,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	weaveLightningBolt := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return rotation.options.LightningboltWeave && enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack && enh.CurrentMana() >= enh.LightningBolt.CurCast.Cost
+			return rotation.options.LightningboltWeave && enh.MaelstromWeaponAura.GetStacks() >= rotation.options.MaelstromweaponMinStack && enh.CurrentMana() >= enh.LightningBolt.BaseCost
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
 			reactionTime := time.Millisecond * time.Duration(rotation.options.AutoWeaveDelay)
@@ -228,7 +228,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	delayedWeave := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			if enh.CurrentMana() < enh.LightningBolt.CurCast.Cost {
+			if enh.CurrentMana() < enh.LightningBolt.BaseCost {
 				return false
 			}
 
@@ -338,7 +338,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
-	cheapestSpell := core.TernaryFloat64(enh.LavaLash == nil, enh.LightningBolt.CurCast.Cost, enh.LavaBurst.CurCast.Cost)
+	cheapestSpell := core.TernaryFloat64(enh.LavaLash == nil, enh.LightningBolt.CurCast.Cost, enh.LavaLash.CurCast.Cost)
 
 	// Incase the array is empty
 	if len(rotation.spellPriority) == 0 {

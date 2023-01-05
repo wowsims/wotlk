@@ -60,6 +60,12 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		enh.EnableItemSwap(enhOptions.Rotation.ItemSwap, enh.DefaultMeleeCritMultiplier(), enh.DefaultMeleeCritMultiplier(), 0)
 	}
 
+	if enhOptions.Rotation.LightningboltWeave {
+		enh.maelstromweaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
+	} else {
+		enh.maelstromweaponMinStack = 5
+	}
+
 	if !enh.HasMHWeapon() {
 		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
@@ -93,7 +99,9 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 type EnhancementShaman struct {
 	*shaman.Shaman
 
-	rotation Rotation
+	rotation                Rotation
+	LightningBolts          []*core.Spell
+	maelstromweaponMinStack int32
 
 	scheduler common.GCDScheduler
 }
@@ -110,7 +118,6 @@ func (enh *EnhancementShaman) Initialize() {
 		enh.ApplyFlametongueImbueToItem(mh, true)
 		oh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotOffHand)
 		enh.ApplyFlametongueImbueToItem(oh, false)
-
 		enh.RegisterOnItemSwap(func(s *core.Simulation) {
 			mh := enh.GetMHWeapon()
 			oh := enh.GetOHWeapon()
@@ -122,7 +129,7 @@ func (enh *EnhancementShaman) Initialize() {
 			}
 		})
 	}
-
+	enh.LightningBolts = enh.RegisterMaelstromLightningBoltSpells(enh.maelstromweaponMinStack)
 	enh.DelayDPSCooldowns(3 * time.Second)
 
 }
@@ -147,16 +154,20 @@ func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, react
 
 			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
 				enh.GCD.Reset()
-				enh.LightningBolt.Cast(sim, enh.CurrentTarget)
+				enh.CastLightningBolt(sim, enh.CurrentTarget)
 			})
 
 			enh.WaitUntil(sim, reactionTime)
 			return true
 		}
-		return enh.LightningBolt.Cast(sim, enh.CurrentTarget)
+		return enh.CastLightningBolt(sim, enh.CurrentTarget)
 	}
 
 	return false
+}
+
+func (enh *EnhancementShaman) CastLightningBolt(sim *core.Simulation, target *core.Unit) bool {
+	return enh.LightningBolts[enh.MaelstromWeaponAura.GetStacks()-enh.maelstromweaponMinStack].Cast(sim, target)
 }
 
 func (enh *EnhancementShaman) CastLavaBurstWeave(sim *core.Simulation, reactionTime time.Duration) bool {

@@ -62,7 +62,6 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 	}
 
 	if ele.Talents.FeralSpirit {
-
 		// Enable Auto Attacks but don't enable auto swinging
 		ele.EnableAutoAttacks(ele, core.AutoAttackOptions{
 			MainHand: ele.WeaponFromMainHand(ele.DefaultMeleeCritMultiplier()),
