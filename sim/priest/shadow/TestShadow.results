@@ -572,8 +572,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-SanctificationGarb"
  value: {
-  dps: 6928.20891
-  tps: 6787.08022
+  dps: 6881.31748
+  tps: 6800.65845
  }
 }
 dps_results: {
