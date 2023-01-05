@@ -1,8 +1,6 @@
 package hunter
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -56,12 +54,13 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		}
 	})
 
+	atkSpd := 2 / (1 + 0.15*float64(hp.Talents().CobraReflexes))
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  50,
 			BaseDamageMax:  78,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
+			SwingSpeed:     atkSpd,
+			SwingDuration:  core.DurationFromSeconds(atkSpd),
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
