@@ -172,8 +172,12 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	// This is needed throughout the code to determine the optimal spell(s) to cast next
 	// MB dmg
 	mbDamage = 0
+	impDamage := 0
 	if spriest.options.UseMindBlast {
-		mbDamage = spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget)
+		if spriest.T8FourSetBonus { //include benefit of 240 haste rating for 4 seconds. This isnt perfect because 1.6 dps per haste is an average and varies throughout the fight
+			impDamage = 1.6 * 240 * 4
+		}
+		mbDamage = spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget) + float64(impDamage)
 	}
 
 	// DP dmg
@@ -248,11 +252,11 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotCurr*(1-spriest.CastSpeed)
 				currDPS2 = cdDamage
 
-				if sim.Log != nil {
-					spriest.Log(sim, "currDPS2[%d]", currDPS2)
-					spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
-					spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
-				}
+				//if sim.Log != nil {
+				//spriest.Log(sim, "currDPS2[%d]", currDPS2)
+				//spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
+				//spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+				//}
 			}
 		}
 	}
