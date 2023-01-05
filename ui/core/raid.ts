@@ -13,7 +13,7 @@ import { EventID, TypedEvent } from './typed_event.js';
 import { Sim } from './sim.js';
 import { sum } from './utils.js';
 
-export const MAX_NUM_PARTIES = 5;
+export const MAX_NUM_PARTIES = 8;
 
 // Manages all the settings for a single Raid.
 export class Raid {
@@ -21,6 +21,7 @@ export class Raid {
 	private debuffs: Debuffs = Debuffs.create();
 	private tanks: Array<RaidTarget> = [];
 	private targetDummies: number = 0;
+	private numActiveParties: number = 5;
 
 	// Emits when a raid member is added/removed/moved.
 	readonly compChangeEmitter = new TypedEvent<void>();
@@ -29,12 +30,16 @@ export class Raid {
 	readonly debuffsChangeEmitter = new TypedEvent<void>();
 	readonly tanksChangeEmitter = new TypedEvent<void>();
 	readonly targetDummiesChangeEmitter = new TypedEvent<void>();
+	readonly numActivePartiesChangeEmitter = new TypedEvent<void>();
 
 	// Emits when anything in the raid changes.
 	readonly changeEmitter: TypedEvent<void>;
 
 	// Should always hold exactly MAX_NUM_PARTIES elements.
 	private parties: Array<Party>;
+
+	// Cached return value for getActivePlayers().
+	private activePlayers: Array<Player<any>>;
 
 	readonly sim: Sim;
 
@@ -47,6 +52,9 @@ export class Raid {
 			newParty.changeEmitter.on(eventID => this.changeEmitter.emit(eventID));
 			return newParty;
 		});
+		this.activePlayers = [];
+
+		this.numActivePartiesChangeEmitter.on(eventID => this.compChangeEmitter.emit(eventID));
 
 		this.changeEmitter = TypedEvent.onAny([
 			this.compChangeEmitter,
@@ -55,6 +63,10 @@ export class Raid {
 			this.tanksChangeEmitter,
 			this.targetDummiesChangeEmitter,
 		], 'RaidChange');
+
+		this.changeEmitter.on(() => {
+			this.activePlayers = [];
+		});
 	}
 
 	size(): number {
@@ -168,6 +180,26 @@ export class Raid {
 		this.targetDummiesChangeEmitter.emit(eventID);
 	}
 
+	getNumActiveParties(): number {
+		return this.numActiveParties;
+	}
+	setNumActiveParties(eventID: EventID, newNumActiveParties: number) {
+		if (newNumActiveParties != this.numActiveParties && newNumActiveParties > 0) {
+			this.numActiveParties = newNumActiveParties;
+			this.numActivePartiesChangeEmitter.emit(eventID);
+		}
+	}
+	getActivePlayers(): Array<Player<any>> {
+		if (this.activePlayers.length == 0) {
+			const activeParties = this.getParties().filter((party, i) => i < this.numActiveParties);
+			this.activePlayers = activeParties
+				.map(party => party.getPlayers())
+				.flat()
+				.filter(player => player != null) as Array<Player<any>>;
+		}
+		return this.activePlayers;
+	}
+
 	toProto(forExport?: boolean): RaidProto {
 		return RaidProto.create({
 			parties: this.parties.map(party => party.toProto(forExport)),
@@ -175,6 +207,7 @@ export class Raid {
 			debuffs: this.getDebuffs(),
 			tanks: this.getTanks(),
 			targetDummies: this.getTargetDummies(),
+			numActiveParties: this.getNumActiveParties(),
 		});
 	}
 
@@ -184,6 +217,7 @@ export class Raid {
 			this.setDebuffs(eventID, proto.debuffs || Debuffs.create());
 			this.setTanks(eventID, proto.tanks);
 			this.setTargetDummies(eventID, proto.targetDummies);
+			this.setNumActiveParties(eventID, proto.numActiveParties || 5);
 
 			for (let i = 0; i < MAX_NUM_PARTIES; i++) {
 				if (proto.parties[i]) {

@@ -18,7 +18,7 @@ import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Raid } from "../core/raid.js";
 import { Sim } from "../core/sim.js";
 import { SimUI } from "../core/sim_ui.js";
-import { LaunchStatus, raidSimLaunched } from '../core/launched_sims.js';
+import { LaunchStatus, raidSimStatus } from '../core/launched_sims.js';
 import { EventID, TypedEvent } from "../core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
@@ -60,7 +60,7 @@ export class RaidSimUI extends SimUI {
 		super(parentElem, new Sim(), {
 			cssScheme: 'raid',
 			spec: null,
-			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
+			launchStatus: raidSimStatus,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
 		this.rootElem.classList.add('raid-sim-ui');
@@ -69,13 +69,13 @@ export class RaidSimUI extends SimUI {
 		this.settingsMuuri = null;
 
 		this.sim.raid.compChangeEmitter.on(eventID => this.compChangeEmitter.emit(eventID));
-		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
-
 		[
 			this.compChangeEmitter,
 			this.sim.changeEmitter,
 		].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
+		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 
+		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
 		this.sim.waitForInit().then(() => this.loadSettings());
 
 		this.addSidebarComponents();
@@ -84,8 +84,6 @@ export class RaidSimUI extends SimUI {
 		this.addSettingsTab();
 		this.addDetailedResultsTab();
 		this.addLogTab();
-
-		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 	}
 
 	private loadSettings() {
@@ -132,11 +130,11 @@ export class RaidSimUI extends SimUI {
 		this.addTab('Raid', 'raid-tab', `
 			<div class="raid-picker">
 			</div>
-			<div class="raid-stats-div">
-			</div>
 			<div class="saved-raids-div">
 				<div class="saved-raids-manager">
 				</div>
+			</div>
+			<div class="raid-stats-div">
 			</div>
 		`);
 
@@ -343,17 +341,19 @@ export class RaidSimUI extends SimUI {
 		}
 	}
 
-	getClassCount(playerClass: Class): number {
-		return this.sim.raid.getClassCount(playerClass);
+	getActivePlayers(): Array<Player<any>> {
+		return this.sim.raid.getActivePlayers();
 	}
 
-	getPlayers(): Array<Player<any> | null> {
-		return this.sim.raid.getPlayers();
+	getClassCount(playerClass: Class): number {
+		return this.getActivePlayers().filter(player => player.isClass(playerClass)).length;
 	}
 
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
-			this.sim.raid.fromProto(eventID, RaidProto.create());
+			this.sim.raid.fromProto(eventID, RaidProto.create({
+				numActiveParties: 5,
+			}));
 			this.sim.setPhase(eventID, 1);
 			this.sim.encounter.applyDefaults(eventID);
 			this.sim.applyDefaults(eventID, true, true);

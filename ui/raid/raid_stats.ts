@@ -168,7 +168,7 @@ class RaidStatsEffect extends Component {
 
 	update() {
 		if (this.options.playerData) {
-			this.curPlayers = this.raidSimUI.getPlayers().filter(p => p != null && this.options.playerData!.condition(p)) as Array<Player<any>>;
+			this.curPlayers = this.raidSimUI.getActivePlayers().filter(p => this.options.playerData!.condition(p));
 		}
 
 		const raidData = this.options.raidData && this.options.raidData(this.raidSimUI.sim.raid);

@@ -2,7 +2,6 @@ import { Component } from './component.js';
 import {
   getLaunchedSimsForClass,
   LaunchStatus,
-  raidSimLaunched,
   raidSimStatus,
   simLaunchStatuses
 } from '../launched_sims.js';
@@ -101,7 +100,7 @@ export class SimTitleDropdown extends Component {
   }
   
   private buildDropdown() {
-    if (raidSimLaunched) {
+    if (raidSimStatus >= LaunchStatus.Alpha) {
       // Add the raid sim to the top of the dropdown
       let raidListItem = document.createElement('li');
       raidListItem.appendChild(this.buildRaidLink());

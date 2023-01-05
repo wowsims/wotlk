@@ -134,7 +134,7 @@ class InnervatesPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getPlayers().filter(player => player?.getClass() == Class.ClassDruid) as Array<Player<any>>;
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDruid));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -154,11 +154,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getPlayers()
-			.filter(player => player?.getClass() == Class.ClassPriest)
-			.filter(player => {
-				return (player as Player<Spec.SpecSmitePriest>).getTalents().powerInfusion;
-			}) as Array<Player<any>>;
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassPriest) && player.getTalents().powerInfusion);
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -178,7 +174,7 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getPlayers().filter(player => player?.getClass() == Class.ClassRogue) as Array<Player<any>>;
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassRogue));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -198,11 +194,7 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getPlayers()
-			.filter(player => player?.getClass() == Class.ClassDeathknight)
-			.filter(player => {
-				return (player as Player<Spec.SpecDeathknight>).getTalents().hysteria;
-			}) as Array<Player<any>>;
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && player.getTalents().hysteria);
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -222,7 +214,7 @@ class FocusMagicsPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getPlayers().filter(player => player?.getClass() == Class.ClassMage) as Array<Player<any>>;
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassMage));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
