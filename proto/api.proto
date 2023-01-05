@@ -76,7 +76,14 @@ message Party {
 message Raid {
 	repeated Party parties = 1; 
 
-	RaidBuffs buffs = 2;
+	// The number of parties in the raid who participate in the sim, e.g.
+	// 10-man vs 25-man raids. The remaining parties are unused but can hold
+	// bench players.
+	//
+	// If this value is 0, all parties are included.
+	int32 num_active_parties = 2;
+
+	RaidBuffs buffs = 7;
 
 	// Extra debuffs provided by buff bots in this raid.
 	// This is also used for debuffs in the individual sims.

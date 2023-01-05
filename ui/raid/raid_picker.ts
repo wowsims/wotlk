@@ -68,21 +68,51 @@ export class RaidPicker extends Component {
 		this.raidSimUI = raidSimUI;
 		this.raid = raidSimUI.sim.raid;
 
-		const raidViewer = document.createElement('div');
-		raidViewer.classList.add('current-raid-viewer');
-		this.rootElem.appendChild(raidViewer);
-		raidViewer.innerHTML = `
-			<div class="parties-container">
+		this.rootElem.innerHTML = `
+			<div class="current-raid-viewer">
+				<div class="raid-controls">
+				</div>
+				<div class="parties-container">
+				</div>
+			</div>
+			<div class="new-player-picker">
 			</div>
 		`;
+
+		const raidControls = this.rootElem.getElementsByClassName('raid-controls')[0] as HTMLDivElement;
+		const activePartiesSelector = new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
+			label: 'Raid Size',
+			extraCssClasses: ['input-inline'],
+			labelTooltip: 'Number of players participating in the sim.',
+			values: [
+				{ name: '5', value: 1 },
+				{ name: '10', value: 2 },
+				{ name: '25', value: 5 },
+				{ name: '40', value: 8 },
+			],
+			changedEvent: (raid: Raid) => raid.numActivePartiesChangeEmitter,
+			getValue: (raid: Raid) => raid.getNumActiveParties(),
+			setValue: (eventID: EventID, raid: Raid, newValue: number) => {
+				raid.setNumActiveParties(eventID, newValue);
+			},
+		});
 
 		const partiesContainer = this.rootElem.getElementsByClassName('parties-container')[0] as HTMLDivElement;
 		this.partyPickers = this.raid.getParties().map((party, i) => new PartyPicker(partiesContainer, party, i, this));
 
-		const newPlayerPickerRoot = document.createElement('div');
-		newPlayerPickerRoot.classList.add('new-player-picker');
-		this.rootElem.appendChild(newPlayerPickerRoot);
+		const updateActiveParties = () => {
+			this.partyPickers.forEach(partyPicker => {
+				if (partyPicker.index < this.raidSimUI.sim.raid.getNumActiveParties()) {
+					partyPicker.rootElem.classList.add('active');
+				} else {
+					partyPicker.rootElem.classList.remove('active');
+				}
+			});
+		};
+		this.raidSimUI.sim.raid.numActivePartiesChangeEmitter.on(updateActiveParties);
+		updateActiveParties();
 
+		const newPlayerPickerRoot = this.rootElem.getElementsByClassName('new-player-picker')[0] as HTMLDivElement;
 		this.newPlayerPicker = new NewPlayerPicker(newPlayerPickerRoot, this);
 
 		this.rootElem.ondragend = event => {
@@ -183,8 +213,8 @@ export class PartyPicker extends Component {
 			const currentData = this.raidPicker.raidSimUI.getCurrentData();
 			const referenceData = this.raidPicker.raidSimUI.getReferenceData();
 
-			const partyDps = currentData?.simResult.raidMetrics.parties[this.index].dps.avg || 0;
-			const referenceDps = referenceData?.simResult.raidMetrics.parties[this.index].dps.avg || 0;
+			const partyDps = currentData?.simResult.raidMetrics.parties[this.index]?.dps.avg || 0;
+			const referenceDps = referenceData?.simResult.raidMetrics.parties[this.index]?.dps.avg || 0;
 
 			if (partyDps == 0 && referenceDps == 0) {
 				dpsResultElem.textContent = '';

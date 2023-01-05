@@ -5,6 +5,10 @@
 	max-height: 95%;
 }
 
+.raid-controls {
+	display: inline-block;
+}
+
 .parties-container {
 	display: flex;
 	flex-wrap: wrap;
@@ -14,6 +18,9 @@
 
 .party-picker-root {
 	margin: calc(var(--bs-gap) / 2);
+}
+.party-picker-root:not(.active) {
+	opacity: 0.5;
 }
 
 .party-header, .player-picker-root {
