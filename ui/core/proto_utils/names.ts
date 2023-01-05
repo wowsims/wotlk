@@ -109,6 +109,7 @@ export function nameToProfession(name: string): Profession {
 
 export const statOrder: Array<Stat> = [
 	Stat.StatHealth,
+	Stat.StatMana,
 	Stat.StatArmor,
 	Stat.StatStamina,
 	Stat.StatStrength,
@@ -128,7 +129,6 @@ export const statOrder: Array<Stat> = [
 	Stat.StatMeleeHaste,
 	Stat.StatArmorPenetration,
 	Stat.StatExpertise,
-	Stat.StatMana,
 	Stat.StatEnergy,
 	Stat.StatRage,
 	Stat.StatDefense,
