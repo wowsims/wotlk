@@ -258,8 +258,8 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_auraoflight.jpg',
 	],
 	[Class.ClassPriest]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_powerinfusion.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_holybolt.jpg',
+		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_wordfortitude.jpg',
+		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_guardianspirit.jpg',
 		'https://wow.zamimg.com/images/wow/icons/medium/spell_shadow_shadowwordpain.jpg',
 	],
 	[Class.ClassRogue]: [
