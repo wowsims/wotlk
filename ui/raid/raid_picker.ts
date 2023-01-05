@@ -634,7 +634,7 @@ class NewPlayerPicker extends Component {
 		`;
 
 		const factionSelector = new EnumPicker<NewPlayerPicker>(this.rootElem.getElementsByClassName('faction-selector')[0] as HTMLElement, this, {
-			label: 'Faction',
+			label: 'Default Faction',
 			labelTooltip: 'Default faction for newly-created players.',
 			values: [
 				{ name: 'Alliance', value: Faction.Alliance },
@@ -648,15 +648,15 @@ class NewPlayerPicker extends Component {
 		});
 
 		const phaseSelector = new EnumPicker<NewPlayerPicker>(this.rootElem.getElementsByClassName('phase-selector')[0] as HTMLElement, this, {
-			label: 'Phase',
+			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
 			values: [
-				{ name: '1', value: 1 },
+				{ name: 'Phase 1', value: 1 },
 				// Presets aren't filled for most roles so disable these options for now.
-				//{ name: '2', value: 2 },
-				//{ name: '3', value: 3 },
-				//{ name: '4', value: 4 },
-				//{ name: '5', value: 5 },
+				//{ name: 'Phase 2', value: 2 },
+				//{ name: 'Phase 3', value: 3 },
+				//{ name: 'Phase 4', value: 4 },
+				//{ name: 'Phase 5', value: 5 },
 			],
 			changedEvent: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.phaseChangeEmitter,
 			getValue: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.getPhase(),
