@@ -128,6 +128,10 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 
 	character.AddStatsDynamic(sim, newStats)
 
+	if sim.Log != nil {
+		sim.Log("Weapon Swap Stats: %v", newStats)
+	}
+
 	for _, onSwap := range swap.onSwapCallbacks {
 		onSwap(sim)
 	}
@@ -151,7 +155,9 @@ func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot, has2H bool)
 	}
 
 	character.Equip[slot] = *newItem
-	newStats := newItem.Stats.Add(oldItem.Stats.Multiply(-1))
+	oldItemStats := swap.getItemStats(oldItem)
+	newItemStats := swap.getItemStats(*newItem)
+	newStats := newItemStats.Add(oldItemStats.Multiply(-1))
 
 	//2H will swap out the offhand also.
 	if has2H && slot == proto.ItemSlot_ItemSlotMainHand {
@@ -163,6 +169,17 @@ func (swap *ItemSwap) swapItem(sim *Simulation, slot proto.ItemSlot, has2H bool)
 	swap.swapWeapon(sim, slot)
 
 	return true, newStats
+}
+
+func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
+	itemStats := item.Stats
+	itemStats = itemStats.Add(item.Enchant.Stats)
+
+	for _, gem := range item.Gems {
+		itemStats = itemStats.Add(gem.Stats)
+	}
+
+	return itemStats
 }
 
 func (swap *ItemSwap) swapWeapon(sim *Simulation, slot proto.ItemSlot) {
