@@ -129,7 +129,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	character.AddStatsDynamic(sim, newStats)
 
 	if sim.Log != nil {
-		sim.Log("Weapon Swap Stats: %v", newStats)
+		sim.Log("Item Swap Stats: %v", newStats)
 	}
 
 	for _, onSwap := range swap.onSwapCallbacks {

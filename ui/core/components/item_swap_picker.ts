@@ -24,6 +24,13 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		label.textContent = "Item Swap"
 		this.rootElem.appendChild(label);
 
+		if (config.labelTooltip) {
+			tippy(label, {
+				'content': config.labelTooltip,
+				'allowHTML': true,
+			});
+		}
+
 		let itemSwapContianer = Input.newGroupContainer();
 		itemSwapContianer.classList.add('icon-group');
 		this.rootElem.appendChild(itemSwapContianer);
