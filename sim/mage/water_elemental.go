@@ -83,7 +83,6 @@ func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 		),
 		disobeyChance: disobeyChance,
 	}
-	waterElemental.EnableManaBar()
 	waterElemental.EnableManaBarWithModifier(0.333)
 
 	mage.AddPet(waterElemental)
