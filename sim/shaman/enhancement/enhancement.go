@@ -122,10 +122,10 @@ func (enh *EnhancementShaman) Initialize() {
 			mh := enh.GetMHWeapon()
 			oh := enh.GetOHWeapon()
 
-			if mh.SwingSpeed == oh.SwingSpeed {
-				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_SyncMainhandOffhandSwings)
-			} else {
+			if mh == nil || oh == nil || mh.SwingSpeed != oh.SwingSpeed {
 				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_NoSync)
+			} else {
+				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_SyncMainhandOffhandSwings)
 			}
 		})
 	}
