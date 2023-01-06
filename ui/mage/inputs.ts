@@ -111,12 +111,6 @@ export const MageRotationConfig = {
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'maintainImprovedScorch',
-			label: 'Maintain Imp. Scorch',
-			labelTooltip: 'Always use Scorch when below 5 stacks, or < 5.5s remaining on debuff.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
 			fieldName: 'lbBeforeHotstreak',
 			label: 'Living Bomb Over Hot Streak',
 			labelTooltip: 'Choose to reapply living bomb before consuming hot streak',
@@ -160,6 +154,14 @@ export const MageRotationConfig = {
 			label: 'Extra blasts during first AP',
 			labelTooltip: 'Number of extra arcane blasts to use during your first cooldown phase with AP',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'maintainImprovedScorch',
+			label: 'Maintain Imp. Scorch',
+			labelTooltip: 'Always use Scorch when below 5 stacks, or < 4s remaining on debuff.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalents().improvedScorch > 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 	],
 };

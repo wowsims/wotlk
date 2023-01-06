@@ -37,7 +37,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dmgFromSP := 0.243 * spell.SpellPower()
+			dmgFromSP := 0.2357 * spell.SpellPower()
 			for _, aoeTarget := range sim.Encounter.Targets {
 				baseDamage := sim.Roll(876, 1071) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()

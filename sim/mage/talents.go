@@ -155,14 +155,9 @@ func (mage *Mage) applyArcaneConcentration() {
 			lastCheckedCastIdx = 0
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if mage.bonusAMCCCrit != 0 {
-				mage.AddStatDynamic(sim, stats.SpellCrit, -mage.bonusAMCCCrit)
-				mage.bonusAMCCCrit = 0
+			if spell.Flags.Matches(SpellFlagMage) {
+				curCastIdx++
 			}
-			if !spell.Flags.Matches(SpellFlagMage) {
-				return
-			}
-			curCastIdx++
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagMage) {
@@ -204,7 +199,13 @@ func (mage *Mage) applyMissileBarrage() {
 				mage.isMissilesBarrageVisible = true
 			}
 		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			mage.ArcaneMissiles.CostMultiplier -= 1
+			mage.ArcaneMissiles.CastTimeMultiplier /= 2
+		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.ArcaneMissiles.CostMultiplier += 1
+			mage.ArcaneMissiles.CastTimeMultiplier *= 2
 			mage.isMissilesBarrageVisible = false
 		},
 	})
