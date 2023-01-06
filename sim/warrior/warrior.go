@@ -300,7 +300,7 @@ func init() {
 		stats.Health:      9641,
 		stats.Strength:    177,
 		stats.Agility:     110,
-		stats.Stamina:     170,
+		stats.Stamina:     160,
 		stats.Intellect:   33,
 		stats.Spirit:      62,
 		stats.AttackPower: 220,
