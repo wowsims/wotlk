@@ -63,6 +63,14 @@ var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
 	},
 }
 
+var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
+	EnhancementShaman: &proto.EnhancementShaman{
+		Talents:  StandardTalents,
+		Options:  enhShamOptions,
+		Rotation: enhShamRotationItemSwap,
+	},
+}
+
 var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
 	Totems: &proto.ShamanTotems{
 		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
@@ -74,6 +82,8 @@ var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
 	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
+	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
+	WeaveFlameShock:              true,
 }
 
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
@@ -88,6 +98,32 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 	ShamanisticRageManaThreshold: 25,
 	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
 	WeaveFlameShock:              true,
+}
+
+var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
+	Totems: &proto.ShamanTotems{
+		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
+		Air:              proto.AirTotem_WindfuryTotem,
+		Water:            proto.WaterTotem_ManaSpringTotem,
+		Fire:             proto.FireTotem_MagmaTotem,
+		UseFireElemental: true,
+	},
+	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
+	FirenovaManaThreshold:        3000,
+	ShamanisticRageManaThreshold: 25,
+	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
+	WeaveFlameShock:              true,
+	//Temp to test Item Swap, will switch to a more realistic swap with Phase 2 gear.
+	EnableItemSwap: true,
+	ItemSwap: &proto.ItemSwap{
+		MhItem: &proto.ItemSpec{
+			Id: 41752,
+		},
+		OhItem: &proto.ItemSpec{
+			Id:      41752,
+			Enchant: 3790,
+		},
+	},
 }
 
 var enhShamOptions = &proto.EnhancementShaman_Options{

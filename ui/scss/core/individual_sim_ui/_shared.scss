@@ -1,9 +1,9 @@
 .within-raid-sim .within-raid-sim-hide {
-	display: none;
+	display: none !important;
 }
 
 .not-within-raid-sim .not-within-raid-sim-hide {
-	display: none;
+  display: none !important;
 }
 
 .character-stats-header {

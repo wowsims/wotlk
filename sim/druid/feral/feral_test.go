@@ -19,6 +19,9 @@ func TestFeral(t *testing.T) {
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsBearweaveLacerate},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "FlowerWeave", SpecOptions: PlayerOptionsMonoCatFlowerWeave},
+		},
 
 		Consumes: FullConsumes,
 		Glyphs:   StandardGlyphs,

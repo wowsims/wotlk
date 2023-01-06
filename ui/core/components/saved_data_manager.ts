@@ -92,7 +92,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private makeSavedData(config: SavedDataConfig<ModObject, T>): SavedData<ModObject, T> {
 		const dataElemFragment = document.createElement('fragment');
 		dataElemFragment.innerHTML = `
-			<div class="saved-data-set-chip badge rounded-pill">
+			<div class="saved-data-set-chip-${this.simUI.cssScheme} badge rounded-pill">
 				<a href="javascript:void(0)" class="saved-data-set-name" role="button">${config.name}</a>
 			</div>
 		`;

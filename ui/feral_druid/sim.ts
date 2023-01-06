@@ -150,6 +150,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				gear: [
 					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET
 				],
 			},
 		});

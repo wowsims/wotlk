@@ -44,6 +44,7 @@ func (druid *Druid) registerSurvivalInstinctsCD() {
 				Duration: cd,
 			},
 		},
+		Flags: SpellFlagOmenTrigger,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			druid.SurvivalInstinctsAura.Activate(sim)
 		},

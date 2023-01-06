@@ -279,11 +279,11 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		configOnCastComplete := config.OnCastComplete
 		oldOnCastComplete1 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
-			spell.Unit.OnCastComplete(sim, spell)
+			oldOnCastComplete1(sim, target)
 			if configOnCastComplete != nil {
 				configOnCastComplete(sim, spell)
 			}
-			oldOnCastComplete1(sim, target)
+			spell.Unit.OnCastComplete(sim, spell)
 		}
 	}
 

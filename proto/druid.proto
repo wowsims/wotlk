@@ -246,3 +246,16 @@ message FeralTankDruid {
   }
   Options options = 3;
 }
+
+message RestorationDruid {
+  message Rotation {
+  }
+  Rotation rotation = 1;
+
+  DruidTalents talents = 2;
+
+  message Options {
+    RaidTarget innervate_target = 1;
+  }
+  Options options = 3;
+}

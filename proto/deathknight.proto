@@ -16,7 +16,7 @@ message DeathknightTalents {
 	bool rune_tap = 7;
 	int32 dark_conviction = 8;
 	int32 death_rune_mastery = 9;
-    int32 improved_rune_tap = 10;
+	int32 improved_rune_tap = 10;
 	int32 spell_deflection = 11;
 	int32 vendetta = 12;
 	int32 bloody_strikes = 13;

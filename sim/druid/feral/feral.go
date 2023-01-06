@@ -93,7 +93,8 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Prepull(sim *core.Simulation) {
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.ClearcastingAura.Activate(sim)
+		cat.ProcOoc(sim)
+		cat.ClearcastingAura.UpdateExpires(cat.ClearcastingAura.Duration - cat.SpellGCD())
 	}
 	if cat.PrePopBerserk && cat.Talents.Berserk {
 		cat.Berserk.CD.UsePrePull(sim, time.Second)

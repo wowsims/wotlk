@@ -740,7 +740,7 @@ export class Timeline extends ResultComponent {
 		// If there are any auras that correspond to this cast, visualize them in the same row.
 		aurasById
 			.filter(auraUptimeLogs => auraUptimeLogs[0].actionId!.equalsIgnoringTag(actionId))
-			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem, duration));
+			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem));
 
 		this.rotationTimeline.appendChild(rowElem);
 	}
@@ -753,20 +753,20 @@ export class Timeline extends ResultComponent {
 		this.rotationHiddenIdsContainer.appendChild(this.makeLabelElem(actionId, true));
 		this.rotationTimeline.appendChild(rowElem);
 
-		this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem, duration);
+		this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, rowElem: HTMLElement, duration: number) {
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, rowElem: HTMLElement) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = document.createElement('div');
 			auraElem.classList.add('rotation-timeline-aura');
 			auraElem.style.left = this.timeToPx(aul.gainedAt);
-			auraElem.style.minWidth = this.timeToPx((aul.fadedAt || duration) - aul.gainedAt);
+			auraElem.style.minWidth = this.timeToPx(aul.fadedAt === aul.gainedAt ? 0.001 : aul.fadedAt - aul.gainedAt);
 			rowElem.appendChild(auraElem);
 
 			tippy(auraElem, {
 				content: `
-					<span>${aul.actionId!.name}: ${aul.gainedAt.toFixed(2)}s - ${(aul.fadedAt || duration).toFixed(2)}s</span>
+					<span>${aul.actionId!.name}: ${aul.gainedAt.toFixed(2)}s - ${(aul.fadedAt).toFixed(2)}s</span>
 				`,
 				allowHTML: true,
 			});

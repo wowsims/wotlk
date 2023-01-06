@@ -38,8 +38,6 @@ func (priest *Priest) ApplyTalents() {
 	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= 1 - .02*float64(priest.Talents.SpellWarding)
 	priest.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= 1 - .02*float64(priest.Talents.SpellWarding)
-	priest.PseudoStats.HealingDealtMultiplier *= 1 + .02*float64(priest.Talents.SpiritualHealing)
-	priest.PseudoStats.HealingDealtMultiplier *= 1 + .01*float64(priest.Talents.BlessedResilience)
 
 	if priest.Talents.Shadowform {
 		priest.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.15
@@ -64,7 +62,6 @@ func (priest *Priest) ApplyTalents() {
 
 	if priest.Talents.FocusedPower > 0 {
 		priest.PseudoStats.DamageDealtMultiplier *= 1 + .02*float64(priest.Talents.FocusedPower)
-		priest.PseudoStats.HealingDealtMultiplier *= 1 + .02*float64(priest.Talents.FocusedPower)
 	}
 
 	if priest.Talents.SpiritOfRedemption {

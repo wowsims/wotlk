@@ -38,20 +38,20 @@ func (rs *RuneSpell) OnResult(sim *core.Simulation, result *core.SpellResult) {
 		if !sim.Proc(rs.DeathConvertChance, "Blood of The North / Reaping / DRM") {
 			return
 		}
-		if (rs.ConvertType&RuneTypeBlood != 0 && (slot1 == 0 || slot1 == 1)) ||
-			(rs.ConvertType&RuneTypeFrost != 0 && (slot1 == 2 || slot1 == 3)) ||
-			rs.ConvertType&RuneTypeUnholy != 0 && (slot1 == 4 || slot1 == 5) {
-			rs.dk.ConvertToDeath(sim, slot1, core.NeverExpires)
-		}
-		if (rs.ConvertType&RuneTypeBlood != 0 && (slot2 == 0 || slot2 == 1)) ||
-			(rs.ConvertType&RuneTypeFrost != 0 && (slot2 == 2 || slot2 == 3)) ||
-			rs.ConvertType&RuneTypeUnholy != 0 && (slot2 == 4 || slot2 == 5) {
-			rs.dk.ConvertToDeath(sim, slot2, core.NeverExpires)
-		}
-		if (rs.ConvertType&RuneTypeBlood != 0 && (slot3 == 0 || slot3 == 1)) ||
-			(rs.ConvertType&RuneTypeFrost != 0 && (slot3 == 2 || slot3 == 3)) ||
-			rs.ConvertType&RuneTypeUnholy != 0 && (slot3 == 4 || slot3 == 5) {
-			rs.dk.ConvertToDeath(sim, slot3, core.NeverExpires)
+
+		for _, slot := range [3]int8{slot1, slot2, slot3} {
+			if (rs.ConvertType&RuneTypeBlood != 0 && (slot == 0 || slot == 1)) ||
+				(rs.ConvertType&RuneTypeFrost != 0 && (slot == 2 || slot == 3)) ||
+				rs.ConvertType&RuneTypeUnholy != 0 && (slot == 4 || slot == 5) {
+
+				// If the slot to be converted is already blood-tapped, then we convert the other blood rune
+				if (slot == 0 || slot == 1) && rs.dk.IsBloodTappedRune(slot) && rs.ConvertType&RuneTypeBlood != 0 {
+					otherRune := (slot + 1) % 2
+					rs.dk.ConvertToDeath(sim, otherRune, core.NeverExpires)
+				} else {
+					rs.dk.ConvertToDeath(sim, slot, core.NeverExpires)
+				}
+			}
 		}
 	}
 	// misses just don't get spent as a way to avoid having to cancel regeneration PAs

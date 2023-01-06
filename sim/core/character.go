@@ -39,6 +39,8 @@ type Character struct {
 
 	// Current gear.
 	Equip Equipment
+	//Item Swap Handler
+	ItemSwap ItemSwap
 
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
@@ -241,6 +243,19 @@ func (character *Character) applyItemEffects(agent Agent) {
 			applyWeaponEffect(agent, proto.ItemSlot(slot))
 		}
 	}
+
+	if character.ItemSwap.IsEnabled() {
+		offset := int(proto.ItemSlot_ItemSlotMainHand)
+		for i, item := range character.ItemSwap.unEquippedItems {
+			if applyEnchantEffect, ok := enchantEffects[item.Enchant.EffectID]; ok {
+				applyEnchantEffect(agent)
+			}
+
+			if applyWeaponEffect, ok := weaponEffects[item.Enchant.EffectID]; ok {
+				applyWeaponEffect(agent, proto.ItemSlot(offset+i))
+			}
+		}
+	}
 }
 
 func (character *Character) AddPet(pet PetAgent) {
@@ -386,6 +401,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	character.Unit.finalize()
 
 	character.majorCooldownManager.finalize()
+	character.ItemSwap.finalize()
 
 	if playerStats != nil {
 		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
@@ -409,6 +425,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
+	character.ItemSwap.reset(sim)
 	character.CurrentTarget = character.defaultTarget
 
 	if character.Type == PlayerUnit {
@@ -545,6 +562,10 @@ func (character *Character) GetPseudoStatsProto() []float64 {
 	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.WeaponFromOffHand(0).DPS()
 	vals[proto.PseudoStat_PseudoStatRangedDps] = character.WeaponFromRanged(0).DPS()
 	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
+	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
+	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()
+	vals[proto.PseudoStat_PseudoStatParry] = character.PseudoStats.BaseParry + character.GetDiminishedParryChance()
+	//vals[proto.PseudoStat_PseudoStatMiss] = 0.05 + character.GetDiminishedMissChance() + character.PseudoStats.ReducedPhysicalHitTakenChance
 	return vals
 }
 

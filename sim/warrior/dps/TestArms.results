@@ -187,8 +187,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Death'sChoice-47464"
  value: {
-  dps: 8077.63932
-  tps: 6612.14199
+  dps: 8080.94266
+  tps: 6615.04544
  }
 }
 dps_results: {
@@ -229,15 +229,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7714.41751
-  tps: 6310.94594
+  dps: 7714.36033
+  tps: 6310.92423
  }
 }
 dps_results: {
  key: "TestArms-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7769.03023
-  tps: 6362.58109
+  dps: 7767.63787
+  tps: 6360.48176
  }
 }
 dps_results: {
@@ -369,8 +369,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Gladiator'sBattlegear"
  value: {
-  dps: 7707.50178
-  tps: 6259.44637
+  dps: 7706.94136
+  tps: 6260.05599
  }
 }
 dps_results: {
@@ -713,8 +713,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheFistsofFury"
  value: {
-  dps: 4485.71843
-  tps: 3749.94008
+  dps: 4479.4238
+  tps: 3742.7268
  }
 }
 dps_results: {
@@ -727,8 +727,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 4816.67004
-  tps: 4023.3323
+  dps: 4809.12223
+  tps: 4016.60548
  }
 }
 dps_results: {
@@ -769,8 +769,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TomeofArcanePhenomena-36972"
  value: {
-  dps: 7570.54183
-  tps: 6193.55327
+  dps: 7581.86941
+  tps: 6202.00395
  }
 }
 dps_results: {
@@ -797,8 +797,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 4975.68243
-  tps: 4178.9449
+  dps: 4970.75649
+  tps: 4176.43795
  }
 }
 dps_results: {
@@ -839,8 +839,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Average-Default"
  value: {
-  dps: 8023.85001
-  tps: 6571.66687
+  dps: 8023.92109
+  tps: 6571.73592
  }
 }
 dps_results: {

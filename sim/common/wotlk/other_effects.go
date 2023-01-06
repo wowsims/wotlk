@@ -329,7 +329,7 @@ func init() {
 				}),
 			},
 			core.Aura{
-				Label:    "Power Word Shield",
+				Label:    "Val'anyr Shield",
 				ActionID: shieldID,
 				Duration: time.Second * 30,
 			})

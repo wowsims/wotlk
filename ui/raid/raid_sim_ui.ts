@@ -5,7 +5,6 @@ import { IconPicker } from "../core/components/icon_picker.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 import { SavedDataManager } from "../core/components/saved_data_manager.js";
-import { SettingsMenu } from "../core/components/settings_menu.js";
 
 import * as Tooltips from "../core/constants/tooltips.js";
 import { Encounter } from "../core/encounter.js";
@@ -13,20 +12,20 @@ import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
 import { Class, Encounter as EncounterProto, Faction, RaidBuffs, Stat, TristateEffect } from "../core/proto/common.js";
 import { Blessings } from "../core/proto/paladin.js";
-import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
+import { BlessingsAssignments, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { playerToSpec } from "../core/proto_utils/utils.js";
 import { Raid } from "../core/raid.js";
 import { Sim } from "../core/sim.js";
 import { SimUI } from "../core/sim_ui.js";
-import { LaunchStatus, raidSimLaunched } from '../core/launched_sims.js';
+import { LaunchStatus, raidSimStatus } from '../core/launched_sims.js';
 import { EventID, TypedEvent } from "../core/typed_event.js";
 
 import { AssignmentsPicker } from "./assignments_picker.js";
 import { BlessingsPicker } from "./blessings_picker.js";
-import { BuffBot } from "./buff_bot.js";
 import { implementedSpecs } from "./presets.js";
 import { RaidPicker } from "./raid_picker.js";
+import { RaidStats } from "./raid_stats.js";
 import { TanksPicker } from "./tanks_picker.js";
 
 import * as ImportExport from "./import_export.js";
@@ -61,7 +60,7 @@ export class RaidSimUI extends SimUI {
 		super(parentElem, new Sim(), {
 			cssScheme: 'raid',
 			spec: null,
-			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
+			launchStatus: raidSimStatus,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
 		this.rootElem.classList.add('raid-sim-ui');
@@ -70,13 +69,13 @@ export class RaidSimUI extends SimUI {
 		this.settingsMuuri = null;
 
 		this.sim.raid.compChangeEmitter.on(eventID => this.compChangeEmitter.emit(eventID));
-		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
-
 		[
 			this.compChangeEmitter,
 			this.sim.changeEmitter,
 		].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
+		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 
+		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
 		this.sim.waitForInit().then(() => this.loadSettings());
 
 		this.addSidebarComponents();
@@ -85,8 +84,6 @@ export class RaidSimUI extends SimUI {
 		this.addSettingsTab();
 		this.addDetailedResultsTab();
 		this.addLogTab();
-
-		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 	}
 
 	private loadSettings() {
@@ -137,9 +134,12 @@ export class RaidSimUI extends SimUI {
 				<div class="saved-raids-manager">
 				</div>
 			</div>
+			<div class="raid-stats-div">
+			</div>
 		`);
 
 		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
+		new RaidStats(this.rootElem.getElementsByClassName('raid-stats-div')[0] as HTMLElement, this);
 
 		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
 			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
@@ -147,7 +147,6 @@ export class RaidSimUI extends SimUI {
 				storageKey: this.getSavedRaidStorageKey(),
 				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
 					raid: this.sim.raid.toProto(),
-					buffBots: this.getBuffBots().map(b => b.toProto()),
 					blessings: this.blessingsPicker!.getAssignments(),
 					faction: this.sim.getFaction(),
 					phase: this.sim.getPhase(),
@@ -155,7 +154,6 @@ export class RaidSimUI extends SimUI {
 				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
 					TypedEvent.freezeAllAndDo(() => {
 						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-						this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
 						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
 						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
 						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
@@ -301,15 +299,6 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private modifyRaidProto(raidProto: RaidProto) {
-		// Invoke all the buff bot callbacks.
-		this.getBuffBots().forEach(buffBot => {
-			const partyProto = raidProto.parties[buffBot.getPartyIndex()];
-			if (!partyProto) {
-				throw new Error('No party proto for party index: ' + buffBot.getPartyIndex());
-			}
-			buffBot.settings.modifyRaidProto(buffBot, raidProto, partyProto);
-		});
-
 		// Apply blessings.
 		const numPaladins = this.getClassCount(Class.ClassPaladin);
 		const blessingsAssignments = this.blessingsPicker!.getAssignments();
@@ -352,39 +341,20 @@ export class RaidSimUI extends SimUI {
 		}
 	}
 
+	getActivePlayers(): Array<Player<any>> {
+		return this.sim.raid.getActivePlayers();
+	}
+
 	getClassCount(playerClass: Class): number {
-		return this.sim.raid.getClassCount(playerClass)
-			+ this.getBuffBots()
-				.filter(buffBot => buffBot.getClass() == playerClass).length;
-	}
-
-	getBuffBots(): Array<BuffBot> {
-		return this.raidPicker!.getBuffBots();
-	}
-
-	setBuffBots(eventID: EventID, buffBotProtos: BuffBotProto[]): void {
-		this.raidPicker!.setBuffBots(eventID, buffBotProtos);
-	}
-
-	clearBuffBots(eventID: EventID): void {
-		this.raidPicker!.setBuffBots(eventID, []);
-	}
-
-	getPlayersAndBuffBots(): Array<Player<any> | BuffBot | null> {
-		const players = this.sim.raid.getPlayers();
-		const buffBots = this.getBuffBots();
-
-		const playersAndBuffBots: Array<Player<any> | BuffBot | null> = players.slice();
-		buffBots.forEach(buffBot => {
-			playersAndBuffBots[buffBot.getRaidIndex()] = buffBot;
-		});
-
-		return playersAndBuffBots;
+		return this.getActivePlayers().filter(player => player.isClass(playerClass)).length;
 	}
 
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
-			this.sim.raid.fromProto(eventID, RaidProto.create());
+			this.sim.raid.fromProto(eventID, RaidProto.create({
+				numActiveParties: 5,
+			}));
+			this.sim.setPhase(eventID, 1);
 			this.sim.encounter.applyDefaults(eventID);
 			this.sim.applyDefaults(eventID, true, true);
 			this.sim.setShowDamageMetrics(eventID, true);
@@ -395,7 +365,6 @@ export class RaidSimUI extends SimUI {
 		return RaidSimSettings.create({
 			settings: this.sim.toProto(),
 			raid: this.sim.raid.toProto(true),
-			buffBots: this.getBuffBots().map(b => b.toProto()),
 			blessings: this.blessingsPicker!.getAssignments(),
 			encounter: this.sim.encounter.toProto(),
 		});
@@ -422,14 +391,12 @@ export class RaidSimUI extends SimUI {
 			}
 			this.sim.raid.fromProto(eventID, settings.raid || RaidProto.create());
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
-			this.raidPicker!.setBuffBots(eventID, settings.buffBots);
 			this.blessingsPicker!.setAssignments(eventID, settings.blessings || BlessingsAssignments.create());
 		});
 	}
 
 	clearRaid(eventID: EventID) {
 		this.sim.raid.clear(eventID);
-		this.clearBuffBots(eventID);
 	}
 
 	// Returns the actual key to use for local storage, based on the given key part and the site context.

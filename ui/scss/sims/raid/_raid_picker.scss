@@ -5,6 +5,10 @@
 	max-height: 95%;
 }
 
+.raid-controls {
+	display: inline-block;
+}
+
 .parties-container {
 	display: flex;
 	flex-wrap: wrap;
@@ -13,12 +17,18 @@
 }
 
 .party-picker-root {
-	margin-right: var(--bs-gap);
-	margin-bottom: var(--bs-gap);
+	margin: calc(var(--bs-gap) / 2);
+}
+.party-picker-root:not(.active) {
+	opacity: 0.5;
 }
 
 .party-header, .player-picker-root {
 	margin: 3px 0;
+}
+
+.party-label {
+	cursor: pointer;
 }
 
 .party-header {
@@ -38,7 +48,7 @@
 	border-color: gray;
 }
 
-.player-picker-root.dragfrom {
+.player-picker-root.dragfrom, .party-picker-root.dragfrom {
 	box-shadow:
 		0 0 5px blue,
 		0 0 5px blue,
@@ -46,7 +56,7 @@
 		0 0 5px blue;
 }
 
-.player-picker-root.dragto:not(.dragfrom) {
+.player-picker-root.dragto:not(.dragfrom), .party-picker-root.dragto:not(.dragfrom) {
 	box-shadow:
 		0 0 5px red,
 		0 0 5px red,
@@ -141,10 +151,6 @@
 	margin: 5px;
 }
 
-.buff-bot .player-edit {
-	display: none;
-}
-
 .new-player-picker {
 	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
 	margin-top: calc(var(--bs-gap) / -2);
@@ -179,44 +185,4 @@
 	height: 30px;
 	cursor: pointer;
 	margin: 0 3px;
-}
-
-.buff-bots-container {
-	border-top: 1px solid white;
-	margin-top: 10px;
-}
-
-.buff-bots-title {
-	font-size: 16px;
-	font-weight: 700;
-	margin: 5px;
-	text-align: center;
-}
-
-.player-editor-modal {
-	display: none;
-	height: 95vh;
-	width: 95vw;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-dialog {
-	width: initial;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-content {
-	height: 95vh;
-	width: 95vw;
-	margin: auto;
-}
-
-.player-editor-modal .modal-body {
-	height: 100%;
-	padding: 5px;
-}
-
-.player-editor-modal .player-editor {
-	height: 100%;
-	width: 100%;
 }

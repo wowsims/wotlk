@@ -1,0 +1,54 @@
+
+.raid-stats {
+	.raid-stats-section {
+		margin: 5px;
+
+		.raid-stats-section-label {
+			margin: 5px 0;
+			font-weight: bold;
+		}
+		.raid-stats-section-content {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			background-color: #303030;
+			padding: 8px;
+			border-radius: 5px;
+		}
+	}
+}
+
+.raid-stats-category {
+	margin: 2px;
+
+	.raid-stats-category-counter {
+		font-weight: bold
+	}
+	.raid-stats-category-label {
+	}
+}
+
+.raid-stats-category-tooltip {
+	.raid-stats-effect {
+		display: flex;
+		align-items: center;
+		margin: 3px 1px;
+
+		.raid-stats-effect-counter {
+			font-weight: bold;
+		}
+		.raid-stats-effect-icon {
+			width: 25px;
+			height: 25px;
+			margin: 2px;
+		}
+		.raid-stats-effect-label {
+		}
+	}
+}
+
+.raid-stats-category:not(.active) {
+	opacity: 0.5;
+}
+.raid-stats-effect:not(.active) {
+	opacity: 0.5;
+}

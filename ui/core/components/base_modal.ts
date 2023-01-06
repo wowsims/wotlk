@@ -1,15 +1,28 @@
+import { CloseButton, CloseButtonConfig } from './close_button';
+import { Component } from './component';
+
 import { Modal } from 'bootstrap';
-import { CloseButton } from './close_button.js';
-import { Component } from './component.js';
+
+type BaseModalConfig = {
+	closeButton?: CloseButtonConfig,
+	header?: boolean,
+};
+
+const DEFAULT_CONFIG = {
+	closeButton: {},
+	header: true,
+}
 
 export class BaseModal extends Component {
-	readonly header: HTMLElement;
-	readonly body: HTMLElement;
+	readonly config: BaseModalConfig;
 
 	readonly modal: Modal;
+	readonly header: HTMLElement | undefined;
+	readonly body: HTMLElement;
 
-	constructor(cssClass: string) {
+	constructor(cssClass: string, config: BaseModalConfig = {}) {
 		super(document.body, 'modal');
+		this.config = {...DEFAULT_CONFIG, ...config};
 
 		this.rootElem.classList.add('fade');
 		this.rootElem.innerHTML = `
@@ -21,13 +34,17 @@ export class BaseModal extends Component {
 
 		const container = this.rootElem.querySelector('.modal-content') as HTMLElement;
 
-		this.header = document.createElement('div');
-		this.header.classList.add('modal-header');
-		container.appendChild(this.header);
+		if (this.config.header) {
+			this.header = document.createElement('div');
+			this.header.classList.add('modal-header');
+			container.appendChild(this.header);
+		}
 
 		this.body = document.createElement('div');
 		this.body.classList.add('modal-body');
 		container.appendChild(this.body);
+
+		this.addCloseButton();
 
 		this.modal = new Modal(this.rootElem);
 		this.open();
@@ -37,11 +54,24 @@ export class BaseModal extends Component {
 		})
 	}
 
-	protected addCloseButton() {
-		new CloseButton(this.header, () => this.close());
+	private addCloseButton() {
+		new CloseButton(this.header ? this.header : this.body, () => this.close(), this.config.closeButton);
 	}
 
 	open() {
+		// Hacks for better looking multi modals
+		this.rootElem.addEventListener('show.bs.modal', () => {
+			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
+			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
+			siblingModals.forEach((element, index) => element.style.zIndex = '1049');
+		});
+
+		this.rootElem.addEventListener('hide.bs.modal', () => {
+			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
+			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
+			siblingModals[siblingModals.length - 1].style.zIndex = '1055';
+		});
+
 		this.modal.show();
 	}
 

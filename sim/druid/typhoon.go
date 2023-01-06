@@ -23,6 +23,7 @@ func (druid *Druid) registerTyphoonSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
+		Flags:        SpellFlagOmenTrigger,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

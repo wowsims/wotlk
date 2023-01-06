@@ -60,13 +60,13 @@ export abstract class SimUI extends Component {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
 		this.cssScheme = config.cssScheme;
+		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 		this.rootElem.innerHTML = simHTML;
 		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;
 		this.simHeader = new SimHeader(this.simContentContainer, this);
 		this.simMain = document.createElement('main');
 		this.simMain.classList.add('sim-main', 'tab-content');
 		this.simContentContainer.appendChild(this.simMain);
-		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 
 		if (!this.isWithinRaidSim) {
 			this.rootElem.classList.add('not-within-raid-sim');
@@ -118,7 +118,7 @@ export abstract class SimUI extends Component {
 		this.addKnownIssues(config);
 
 		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
-		new SimTitleDropdown(titleElem, config.spec);
+		new SimTitleDropdown(titleElem, config.spec, {noDropdown: this.isWithinRaidSim});
 
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);

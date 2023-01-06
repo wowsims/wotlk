@@ -16,7 +16,6 @@ import { Race } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { BuffBot as BuffBotProto } from '../core/proto/ui.js';
 import { playerToSpec, specNames } from '../core/proto_utils/utils.js';
 import { classColors } from '../core/proto_utils/utils.js';
 import { isTankSpec } from '../core/proto_utils/utils.js';
@@ -28,14 +27,14 @@ import { formatDeltaTextElem } from '../core/utils.js';
 import { getEnumValues } from '../core/utils.js';
 import { hexToRgba } from '../core/utils.js';
 
-import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';
-import { buffBotPresets, playerPresets, specSimFactories } from './presets.js';
+import { playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { Mage_Options as MageOptions } from '../core/proto/mage.js';
 import { SmitePriest_Options as SmitePriestOptions } from '../core/proto/priest.js';
 import { MessageType } from '@protobuf-ts/runtime';
+import { BaseModal } from '../core/components/base_modal.js';
 
 declare var tippy: any;
 declare var $: any;
@@ -57,30 +56,63 @@ export class RaidPicker extends Component {
 	readonly newPlayerPicker: NewPlayerPicker;
 
 	// Hold data about the player being dragged while the drag is happening.
-	currentDragPlayer: Player<any> | BuffBot | null = null;
+	currentDragPlayer: Player<any> | null = null;
 	currentDragPlayerFromIndex: number = NEW_PLAYER;
 	currentDragType: DragType = DragType.New;
+
+	// Hold data about the party being dragged while the drag is happening.
+	currentDragParty: PartyPicker | null = null;
 
 	constructor(parent: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parent, 'raid-picker-root');
 		this.raidSimUI = raidSimUI;
 		this.raid = raidSimUI.sim.raid;
 
-		const raidViewer = document.createElement('div');
-		raidViewer.classList.add('current-raid-viewer');
-		this.rootElem.appendChild(raidViewer);
-		raidViewer.innerHTML = `
-			<div class="parties-container">
+		this.rootElem.innerHTML = `
+			<div class="current-raid-viewer">
+				<div class="raid-controls">
+				</div>
+				<div class="parties-container">
+				</div>
+			</div>
+			<div class="new-player-picker">
 			</div>
 		`;
+
+		const raidControls = this.rootElem.getElementsByClassName('raid-controls')[0] as HTMLDivElement;
+		const activePartiesSelector = new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
+			label: 'Raid Size',
+			extraCssClasses: ['input-inline'],
+			labelTooltip: 'Number of players participating in the sim.',
+			values: [
+				{ name: '5', value: 1 },
+				{ name: '10', value: 2 },
+				{ name: '25', value: 5 },
+				{ name: '40', value: 8 },
+			],
+			changedEvent: (raid: Raid) => raid.numActivePartiesChangeEmitter,
+			getValue: (raid: Raid) => raid.getNumActiveParties(),
+			setValue: (eventID: EventID, raid: Raid, newValue: number) => {
+				raid.setNumActiveParties(eventID, newValue);
+			},
+		});
 
 		const partiesContainer = this.rootElem.getElementsByClassName('parties-container')[0] as HTMLDivElement;
 		this.partyPickers = this.raid.getParties().map((party, i) => new PartyPicker(partiesContainer, party, i, this));
 
-		const newPlayerPickerRoot = document.createElement('div');
-		newPlayerPickerRoot.classList.add('new-player-picker');
-		this.rootElem.appendChild(newPlayerPickerRoot);
+		const updateActiveParties = () => {
+			this.partyPickers.forEach(partyPicker => {
+				if (partyPicker.index < this.raidSimUI.sim.raid.getNumActiveParties()) {
+					partyPicker.rootElem.classList.add('active');
+				} else {
+					partyPicker.rootElem.classList.remove('active');
+				}
+			});
+		};
+		this.raidSimUI.sim.raid.numActivePartiesChangeEmitter.on(updateActiveParties);
+		updateActiveParties();
 
+		const newPlayerPickerRoot = this.rootElem.getElementsByClassName('new-player-picker')[0] as HTMLDivElement;
 		this.newPlayerPicker = new NewPlayerPicker(newPlayerPickerRoot, this);
 
 		this.rootElem.ondragend = event => {
@@ -91,6 +123,7 @@ export class RaidPicker extends Component {
 			//}
 
 			this.clearDragPlayer();
+			this.clearDragParty();
 		};
 	}
 
@@ -110,31 +143,7 @@ export class RaidPicker extends Component {
 		return [...new Array(25).keys()].map(i => this.getPlayerPicker(i));
 	}
 
-	getBuffBots(): Array<BuffBot> {
-		return this.getPlayerPickers()
-			.filter(picker => picker.player instanceof BuffBot)
-			.map(picker => picker.player as BuffBot);
-	}
-
-	setBuffBots(eventID: EventID, newBuffBotProtos: Array<BuffBotProto>) {
-		TypedEvent.freezeAllAndDo(() => {
-			this.getBuffBots().forEach(buffBot => this.getPlayerPicker(buffBot.getRaidIndex()).setPlayer(eventID, null, DragType.None));
-
-			newBuffBotProtos.forEach(buffBotProto => {
-				const settings = buffBotPresets.find(preset => preset.buffBotId == buffBotProto.id);
-				if (!settings) {
-					console.warn('Invalid buff bot ID: ' + buffBotProto.id);
-					return;
-				}
-
-				const buffBot = new BuffBot(buffBotProto.id, this.raid.sim);
-				buffBot.fromProto(eventID, buffBotProto);
-				this.getPlayerPicker(buffBotProto.raidIndex).setPlayer(eventID, buffBot, DragType.None);
-			});
-		});
-	}
-
-	setDragPlayer(player: Player<any> | BuffBot, fromIndex: number, type: DragType) {
+	setDragPlayer(player: Player<any>, fromIndex: number, type: DragType) {
 		this.clearDragPlayer();
 
 		this.currentDragPlayer = player;
@@ -143,19 +152,30 @@ export class RaidPicker extends Component {
 
 		if (fromIndex != NEW_PLAYER) {
 			const playerPicker = this.getPlayerPicker(fromIndex);
-			playerPicker.rootElem.classList.add('dragFrom');
+			playerPicker.rootElem.classList.add('dragfrom');
 		}
 	}
 
 	clearDragPlayer() {
 		if (this.currentDragPlayerFromIndex != NEW_PLAYER) {
 			const playerPicker = this.getPlayerPicker(this.currentDragPlayerFromIndex);
-			playerPicker.rootElem.classList.remove('dragFrom');
+			playerPicker.rootElem.classList.remove('dragfrom');
 		}
 
 		this.currentDragPlayer = null;
 		this.currentDragPlayerFromIndex = NEW_PLAYER;
 		this.currentDragType = DragType.New;
+	}
+
+	setDragParty(party: PartyPicker) {
+		this.currentDragParty = party;
+		party.rootElem.classList.add('dragfrom');
+	}
+	clearDragParty() {
+		if (this.currentDragParty) {
+			this.currentDragParty.rootElem.classList.remove('dragfrom');
+			this.currentDragParty = null;
+		}
 	}
 }
 
@@ -173,7 +193,7 @@ export class PartyPicker extends Component {
 
 		this.rootElem.innerHTML = `
 			<div class="party-header">
-				<span>Group ${index + 1}</span>
+				<span class="party-label" draggable="true">Group ${index + 1}</span>
 				<div class="party-results">
 					<span class="party-results-dps"></span>
 					<span class="party-results-reference-delta"></span>
@@ -193,8 +213,8 @@ export class PartyPicker extends Component {
 			const currentData = this.raidPicker.raidSimUI.getCurrentData();
 			const referenceData = this.raidPicker.raidSimUI.getReferenceData();
 
-			const partyDps = currentData?.simResult.raidMetrics.parties[this.index].dps.avg || 0;
-			const referenceDps = referenceData?.simResult.raidMetrics.parties[this.index].dps.avg || 0;
+			const partyDps = currentData?.simResult.raidMetrics.parties[this.index]?.dps.avg || 0;
+			const referenceDps = referenceData?.simResult.raidMetrics.parties[this.index]?.dps.avg || 0;
 
 			if (partyDps == 0 && referenceDps == 0) {
 				dpsResultElem.textContent = '';
@@ -211,6 +231,66 @@ export class PartyPicker extends Component {
 
 			formatDeltaTextElem(referenceDeltaElem, referenceDps, partyDps, 1);
 		});
+
+		const dragStart = (event: DragEvent, type: DragType) => {
+			event.dataTransfer!.dropEffect = 'move';
+			event.dataTransfer!.effectAllowed = 'all';
+			this.raidPicker.setDragParty(this);
+		};
+		const labelElem = this.rootElem.getElementsByClassName('party-label')[0] as HTMLElement;
+		labelElem.ondragstart = event => {
+			dragStart(event, DragType.Swap);
+		};
+
+		let dragEnterCounter = 0;
+		this.rootElem.ondragenter = event => {
+			event.preventDefault();
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+			dragEnterCounter++;
+			this.rootElem.classList.add('dragto');
+		};
+		this.rootElem.ondragleave = event => {
+			event.preventDefault();
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+			dragEnterCounter--;
+			if (dragEnterCounter <= 0) {
+				this.rootElem.classList.remove('dragto');
+			}
+		};
+		this.rootElem.ondragover = event => {
+			event.preventDefault();
+		};
+		this.rootElem.ondrop = event => {
+			if (!this.raidPicker.currentDragParty) {
+				return;
+			}
+
+			event.preventDefault();
+			dragEnterCounter = 0;
+			this.rootElem.classList.remove('dragto');
+
+			const eventID = TypedEvent.nextEventID();
+			TypedEvent.freezeAllAndDo(() => {
+				const srcPartyPicker = this.raidPicker.currentDragParty!;
+
+				for (let i = 0; i < MAX_PARTY_SIZE; i++) {
+					const srcPlayerPicker = srcPartyPicker.playerPickers[i]!;
+					const dstPlayerPicker = this.playerPickers[i]!;
+
+					const srcPlayer = srcPlayerPicker.player;
+					const dstPlayer = dstPlayerPicker.player;
+
+					srcPlayerPicker.setPlayer(eventID, dstPlayer, DragType.Swap);
+					dstPlayerPicker.setPlayer(eventID, srcPlayer, DragType.Swap);
+				}
+			});
+
+			this.raidPicker.clearDragParty();
+		};
 	}
 }
 
@@ -221,7 +301,7 @@ export class PlayerPicker extends Component {
 	// Index of this player within the whole raid (0-24).
 	readonly raidIndex: number;
 
-	player: Player<any> | BuffBot | null;
+	player: Player<any> | null;
 
 	readonly partyPicker: PartyPicker;
 	readonly raidPicker: RaidPicker;
@@ -243,7 +323,7 @@ export class PlayerPicker extends Component {
 
 		this.partyPicker.party.compChangeEmitter.on(eventID => {
 			const newPlayer = this.partyPicker.party.getPlayer(this.index);
-			if (newPlayer != this.player && !(newPlayer == null && this.player instanceof BuffBot)) {
+			if (newPlayer != this.player) {
 				this.setPlayer(eventID, newPlayer, DragType.None);
 			}
 		});
@@ -274,7 +354,7 @@ export class PlayerPicker extends Component {
 		this.referenceDeltaElem = this.rootElem.getElementsByClassName('player-results-reference-delta')[0] as HTMLElement;
 
 		this.nameElem.addEventListener('input', event => {
-			if (this.player instanceof Player) {
+			if (this.player) {
 				this.player.setName(TypedEvent.nextEventID(), this.nameElem.textContent || '');
 			}
 		});
@@ -284,7 +364,7 @@ export class PlayerPicker extends Component {
 			// 9 is tab, 13 is enter
 			if (event.keyCode == 9 || event.keyCode == 13) {
 				event.preventDefault();
-				const realPlayerPickers = this.raidPicker.getPlayerPickers().filter(pp => pp.player instanceof Player);
+				const realPlayerPickers = this.raidPicker.getPlayerPickers().filter(pp => pp.player != null);
 				const indexOfThis = realPlayerPickers.indexOf(this);
 				if (indexOfThis != -1 && realPlayerPickers.length > indexOfThis + 1) {
 					realPlayerPickers[indexOfThis + 1].nameElem.focus();
@@ -317,7 +397,7 @@ export class PlayerPicker extends Component {
 		this.nameElem.addEventListener('focusout', event => {
 			if (!this.nameElem.textContent) {
 				this.nameElem.textContent = emptyName;
-				if (this.player instanceof Player) {
+				if (this.player) {
 					this.player.setName(TypedEvent.nextEventID(), emptyName);
 				}
 			}
@@ -330,12 +410,8 @@ export class PlayerPicker extends Component {
 			}
 			event.dataTransfer!.dropEffect = 'move';
 			event.dataTransfer!.effectAllowed = 'all';
-
-			const iconSrc = this.iconElem.src;
-			const dragImage = new Image();
-			dragImage.src = iconSrc;
-			event.dataTransfer!.setDragImage(dragImage, 30, 30);
-			if (this.player instanceof Player) {
+			event.dataTransfer!.setDragImage(this.iconElem, 30, 30);
+			if (this.player) {
 				var playerDataProto = this.player.toProto(true);
 				event.dataTransfer!.setData("text/plain", btoa(String.fromCharCode(...PlayerProto.toBinary(playerDataProto))));
 			}
@@ -370,11 +446,17 @@ export class PlayerPicker extends Component {
 		let dragEnterCounter = 0;
 		this.rootElem.ondragenter = event => {
 			event.preventDefault();
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			dragEnterCounter++;
 			this.rootElem.classList.add('dragto');
 		};
 		this.rootElem.ondragleave = event => {
 			event.preventDefault();
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			dragEnterCounter--;
 			if (dragEnterCounter <= 0) {
 				this.rootElem.classList.remove('dragto');
@@ -384,6 +466,9 @@ export class PlayerPicker extends Component {
 			event.preventDefault();
 		};
 		this.rootElem.ondrop = event => {
+			if (this.raidPicker.currentDragParty) {
+				return;
+			}
 			var dropData = event.dataTransfer!.getData("text/plain");
 
 			event.preventDefault();
@@ -407,11 +492,7 @@ export class PlayerPicker extends Component {
 					const fromPlayerPicker = this.raidPicker.getPlayerPicker(this.raidPicker.currentDragPlayerFromIndex);
 					if (dragType == DragType.Swap) {
 						fromPlayerPicker.setPlayer(eventID, this.player, dragType);
-						var myicon = this.iconElem.src
-						this.iconElem.src = fromPlayerPicker.iconElem.src;
-						fromPlayerPicker.iconElem.src = myicon;
 					} else if (dragType == DragType.Move) {
-						this.iconElem.src = fromPlayerPicker.iconElem.src;
 						fromPlayerPicker.setPlayer(eventID, null, dragType);
 					}
 				} else if (this.raidPicker.currentDragPlayer == null) {
@@ -434,12 +515,6 @@ export class PlayerPicker extends Component {
 					this.setPlayer(eventID, this.raidPicker.currentDragPlayer, dragType);
 				}
 
-				if (this.iconElem.src == "") {
-					this.iconElem.src = playerPresets.filter(preset => {
-						return preset.spec == localPlayer.spec;
-					})[0].iconUrl;
-				}
-
 				this.raidPicker.clearDragPlayer();
 			});
 		};
@@ -450,7 +525,7 @@ export class PlayerPicker extends Component {
 			'allowHTML': true,
 		});
 		editElem.addEventListener('click', event => {
-			if (this.player instanceof Player) {
+			if (this.player) {
 				new PlayerEditorModal(this.player);
 			}
 		});
@@ -481,7 +556,7 @@ export class PlayerPicker extends Component {
 		this.update();
 	}
 
-	setPlayer(eventID: EventID, newPlayer: Player<any> | BuffBot | null, dragType: DragType) {
+	setPlayer(eventID: EventID, newPlayer: Player<any> | null, dragType: DragType) {
 		if (newPlayer == this.player) {
 			return;
 		}
@@ -491,10 +566,7 @@ export class PlayerPicker extends Component {
 
 		TypedEvent.freezeAllAndDo(() => {
 			this.player = newPlayer;
-			if (newPlayer instanceof BuffBot) {
-				this.partyPicker.party.setPlayer(eventID, this.index, null);
-				newPlayer.setRaidIndex(eventID, this.raidIndex);
-			} else if (newPlayer instanceof Player) {
+			if (newPlayer) {
 				this.partyPicker.party.setPlayer(eventID, this.index, newPlayer);
 
 				if (dragType == DragType.New) {
@@ -512,24 +584,13 @@ export class PlayerPicker extends Component {
 	private update() {
 		if (this.player == null) {
 			this.rootElem.classList.add('empty');
-			this.rootElem.classList.remove('buff-bot');
 			this.rootElem.style.backgroundColor = 'black';
 			this.labelElem.setAttribute('draggable', 'false');
 			this.resultsElem.setAttribute('draggable', 'false');
 			this.nameElem.textContent = '';
 			this.nameElem.removeAttribute('contenteditable');
-		} else if (this.player instanceof BuffBot) {
-			this.rootElem.classList.remove('empty');
-			this.rootElem.classList.add('buff-bot');
-			this.rootElem.style.backgroundColor = classColors[specToClass[this.player.spec]];
-			this.labelElem.setAttribute('draggable', 'true');
-			this.resultsElem.setAttribute('draggable', 'true');
-			this.nameElem.textContent = this.player.name;
-			this.nameElem.removeAttribute('contenteditable');
-			this.iconElem.src = this.player.settings.iconUrl;
 		} else {
 			this.rootElem.classList.remove('empty');
-			this.rootElem.classList.remove('buff-bot');
 			this.rootElem.style.backgroundColor = this.player.getClassColor();
 			this.labelElem.setAttribute('draggable', 'true');
 			this.resultsElem.setAttribute('draggable', 'true');
@@ -540,30 +601,20 @@ export class PlayerPicker extends Component {
 	}
 }
 
-class PlayerEditorModal extends Component {
+class PlayerEditorModal extends BaseModal {
 	constructor(player: Player<any>) {
-		super(document.body, 'player-editor-modal');
+		super('player-editor-modal', {
+			closeButton: {fixed: true, text: false},
+			header: false
+		});
 
 		this.rootElem.id = 'playerEditorModal';
-		this.rootElem.innerHTML = `
-			<div class="player-editor within-raid-sim">
-			</div>
-		`;
-
-		new CloseButton(this.rootElem, () => {
-			$('#playerEditorModal').bPopup().close();
-			this.rootElem.remove();
-		});
+		this.body.insertAdjacentHTML('beforeend', `
+			<div class="player-editor within-raid-sim"></div>
+		`);
 
 		const editorRoot = this.rootElem.getElementsByClassName('player-editor')[0] as HTMLElement;
 		const individualSim = specSimFactories[player.spec]!(editorRoot, player);
-
-		$('#playerEditorModal').bPopup({
-			closeClass: 'player-editor-close',
-			onClose: () => {
-				this.rootElem.remove();
-			},
-		});
 	}
 }
 
@@ -580,16 +631,10 @@ class NewPlayerPicker extends Component {
 				<div class="phase-selector"></div>
 			</div>
 			<div class="presets-container"></div>
-			<div class="buff-bots-container">
-				<div class="buff-bots-title">
-					<span class="buff-bots-title-text">Buff Bots</span>
-					<span class="buff-bots-tooltip fa fa-info-circle"></span>
-				</div>
-			</div>
 		`;
 
 		const factionSelector = new EnumPicker<NewPlayerPicker>(this.rootElem.getElementsByClassName('faction-selector')[0] as HTMLElement, this, {
-			label: 'Faction',
+			label: 'Default Faction',
 			labelTooltip: 'Default faction for newly-created players.',
 			values: [
 				{ name: 'Alliance', value: Faction.Alliance },
@@ -603,15 +648,15 @@ class NewPlayerPicker extends Component {
 		});
 
 		const phaseSelector = new EnumPicker<NewPlayerPicker>(this.rootElem.getElementsByClassName('phase-selector')[0] as HTMLElement, this, {
-			label: 'Phase',
+			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
 			values: [
-				{ name: '1', value: 1 },
+				{ name: 'Phase 1', value: 1 },
 				// Presets aren't filled for most roles so disable these options for now.
-				//{ name: '2', value: 2 },
-				//{ name: '3', value: 3 },
-				//{ name: '4', value: 4 },
-				//{ name: '5', value: 5 },
+				//{ name: 'Phase 2', value: 2 },
+				//{ name: 'Phase 3', value: 3 },
+				//{ name: 'Phase 4', value: 4 },
+				//{ name: 'Phase 5', value: 5 },
 			],
 			changedEvent: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.phaseChangeEmitter,
 			getValue: (picker: NewPlayerPicker) => this.raidPicker.raid.sim.getPhase(),
@@ -684,58 +729,6 @@ class NewPlayerPicker extends Component {
 
 						this.raidPicker.setDragPlayer(newPlayer, NEW_PLAYER, DragType.New);
 					});
-				};
-			});
-		});
-
-		const buffbotsTooltip = this.rootElem.getElementsByClassName('buff-bots-tooltip')[0] as HTMLElement;
-		tippy(buffbotsTooltip, {
-			'content': 'Buff bots do not do DPS or any actions at all, except to buff their raid/party members. They are used as placeholders for classes we haven\'t implemented yet, or never will (e.g. healers) so that a proper raid environment can still be simulated.',
-			'allowHTML': true,
-		});
-
-		const buffbotsContainer = this.rootElem.getElementsByClassName('buff-bots-container')[0] as HTMLElement;
-		getEnumValues(Class).forEach(wowClass => {
-			if (wowClass == Class.ClassUnknown) {
-				return;
-			}
-
-			const matchingBuffBots = buffBotPresets
-				.filter(buffBot => specToClass[buffBot.spec] == wowClass)
-				.filter(buffBot => !buffBot.deprecated);
-			if (matchingBuffBots.length == 0) {
-				return;
-			}
-
-			const classPresetsContainer = document.createElement('div');
-			classPresetsContainer.classList.add('class-presets-container');
-			buffbotsContainer.appendChild(classPresetsContainer);
-			classPresetsContainer.style.backgroundColor = hexToRgba(classColors[wowClass as Class], 0.5);
-
-			matchingBuffBots.forEach(matchingBuffBot => {
-				const presetElem = document.createElement('div');
-				presetElem.classList.add('preset-picker');
-				presetElem.classList.add('preset-picker-buff-bot');
-				classPresetsContainer.appendChild(presetElem);
-
-				const presetIconElem = document.createElement('img');
-				presetIconElem.classList.add('preset-picker-icon');
-				presetElem.appendChild(presetIconElem);
-				presetIconElem.src = matchingBuffBot.iconUrl;
-				tippy(presetIconElem, {
-					'content': matchingBuffBot.tooltip,
-					'allowHTML': true,
-				});
-
-				presetElem.setAttribute('draggable', 'true');
-				presetElem.ondragstart = event => {
-					const dragImage = new Image();
-					dragImage.src = matchingBuffBot.iconUrl;
-					event.dataTransfer!.setDragImage(dragImage, 30, 30);
-					event.dataTransfer!.setData("text/plain", "");
-					event.dataTransfer!.dropEffect = 'copy';
-
-					this.raidPicker.setDragPlayer(new BuffBot(matchingBuffBot.buffBotId, this.raidPicker.raidSimUI.sim), NEW_PLAYER, DragType.New);
 				};
 			});
 		});

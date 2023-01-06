@@ -20,7 +20,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		ActionID:     core.ActionID{SpellID: 48463},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace,
+		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -53,6 +53,23 @@ func (druid *Druid) registerMoonfireSpell() {
 
 	starfireBonusCrit := float64(druid.Talents.ImprovedInsectSwarm) * core.CritRatingPerCritChance
 	dotCanCrit := druid.HasSetBonus(ItemSetMalfurionsRegalia, 2)
+	var applyLunarFire func(*core.Simulation)
+
+	if druid.Equip[proto.ItemSlot_ItemSlotRanged].ID == 47670 {
+		icd := core.Cooldown{
+			Timer:    druid.NewTimer(),
+			Duration: time.Second * 6,
+		}
+		aura := druid.NewTemporaryStatsAura("Lunar Fire", core.ActionID{SpellID: 67360}, stats.Stats{stats.MeleeCrit: 200, stats.SpellCrit: 200}, time.Second*12)
+		applyLunarFire = func(sim *core.Simulation) {
+			if !icd.IsReady(sim) || sim.RandomFloat("lunar fire") > 0.7 {
+				return
+			}
+			aura.Activate(sim)
+			icd.Use(sim)
+		}
+	}
+
 	druid.MoonfireDot = core.NewDot(core.Dot{
 		Spell: druid.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 48463},
@@ -92,6 +109,9 @@ func (druid *Druid) registerMoonfireSpell() {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 			} else {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			}
+			if applyLunarFire != nil {
+				applyLunarFire(sim)
 			}
 		},
 	})

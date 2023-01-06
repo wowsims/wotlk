@@ -682,14 +682,20 @@ func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) b
 		return false
 	}
 
+	chance := ppmm.Chance(procMask)
+	return chance > 0 && sim.RandomFloat(label) < chance
+}
+
+func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 	if procMask.Matches(ProcMaskMeleeMH) {
-		return ppmm.mhProcChance > 0 && sim.RandomFloat(label) < ppmm.mhProcChance
+		return ppmm.mhProcChance
 	} else if procMask.Matches(ProcMaskMeleeOH) {
-		return ppmm.ohProcChance > 0 && sim.RandomFloat(label) < ppmm.ohProcChance
+		return ppmm.ohProcChance
 	} else if procMask.Matches(ProcMaskRanged) {
-		return ppmm.rangedProcChance > 0 && sim.RandomFloat(label) < ppmm.rangedProcChance
+		return ppmm.rangedProcChance
 	}
-	return false
+
+	return 0
 }
 
 func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager {

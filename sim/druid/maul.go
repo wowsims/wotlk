@@ -23,7 +23,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 26996},
 		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 		ResourceType: stats.Rage,
 		BaseCost:     cost,
@@ -40,6 +40,11 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		FlatThreatBonus:  424,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Need to specially deactivate CC here in case maul is cast simultaneously with another spell.
+			if druid.ClearcastingAura != nil {
+				druid.ClearcastingAura.Deactivate(sim)
+			}
+
 			modifier := 1.0
 			if bleedCategory.AnyActive() {
 				modifier += .3

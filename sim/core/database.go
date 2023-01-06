@@ -59,6 +59,9 @@ type Item struct {
 	// Modified for each instance of the item.
 	Gems    []Gem
 	Enchant Enchant
+
+	//Internal use
+	TempEnchant int32
 }
 
 func ItemFromProto(pData *proto.SimItem) Item {

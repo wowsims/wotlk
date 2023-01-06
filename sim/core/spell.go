@@ -8,7 +8,7 @@ import (
 )
 
 type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
-type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell) *SpellResult
+type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell, useSnapshot bool) *SpellResult
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -433,8 +433,19 @@ func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 	spell.ApplyAOEThreatIgnoreMultipliers(threatAmount * spell.Unit.PseudoStats.ThreatMultiplier)
 }
 
-func (spell *Spell) ExpectedDamage(sim *Simulation, target *Unit) float64 {
-	result := spell.expectedDamageInternal(sim, target, spell)
+func (spell *Spell) expectedDamageHelper(sim *Simulation, target *Unit, useSnapshot bool) float64 {
+	result := spell.expectedDamageInternal(sim, target, spell, useSnapshot)
+	if !spell.SpellSchool.Matches(SpellSchoolPhysical) {
+		result.Damage /= result.ResistanceMultiplier
+		result.Damage *= AverageMagicPartialResistMultiplier
+		result.ResistanceMultiplier = AverageMagicPartialResistMultiplier
+	}
 	result.inUse = false
 	return result.Damage
+}
+func (spell *Spell) ExpectedDamage(sim *Simulation, target *Unit) float64 {
+	return spell.expectedDamageHelper(sim, target, false)
+}
+func (spell *Spell) ExpectedDamageFromCurrentSnapshot(sim *Simulation, target *Unit) float64 {
+	return spell.expectedDamageHelper(sim, target, true)
 }

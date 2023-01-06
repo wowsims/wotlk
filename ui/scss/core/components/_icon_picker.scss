@@ -8,6 +8,7 @@
 
   .icon-picker-button,
   .icon-dropdown-option {
+    min-width: 40px;
     width: 40px;
     height: 40px;
     border: 1px solid $border-color;

@@ -15,6 +15,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 	ignoreHaste := false
 	cd := core.Cooldown{}
 	flatThreatBonus := 66. * 2.
+	flags := SpellFlagOmenTrigger
 
 	if druid.InForm(Cat | Bear) {
 		actionID = core.ActionID{SpellID: 16857}
@@ -22,6 +23,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		baseCost = 0
 		gcd = time.Second
 		ignoreHaste = true
+		flags = core.SpellFlagNone
 		cd = core.Cooldown{
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
@@ -37,6 +39,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: resourceType,
 		BaseCost:     baseCost,
+		Flags:        flags,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

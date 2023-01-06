@@ -61,7 +61,6 @@ export const ArmorBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(48942), ActionId.fromSpellId(20140), 'devotionAura'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(58753), ActionId.fromSpellId(16293), 'stoneskinTotem'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
-	// stoneskin?
 ], 'Armor');
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
@@ -234,7 +233,7 @@ export const PhysicalDamageDebuff = InputHelpers.makeMultiIconInput([
 ], 'Phys Vuln');
 
 export const SpellCritDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(17800), 'shadowMastery'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'shadowMastery'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill'),
 ], 'Spell Crit');

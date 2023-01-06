@@ -589,6 +589,8 @@ func (mage *Mage) applyMoltenFury() {
 			mage.GetMajorCooldown(core.ActionID{SpellID: EvocationId}).Disable()
 			if isExecute == 35 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
+				// For some reason Molten Fury doesn't apply to living bomb DoT, so cancel it out.
+				mage.LivingBomb.DamageMultiplier /= multiplier
 			}
 		})
 	})

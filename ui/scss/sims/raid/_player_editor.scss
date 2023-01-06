@@ -1,0 +1,35 @@
+// Styles for the player editor modal
+
+$player-editor-modal-width: 95vw;
+$player-editor-modal-height: calc(100vh - (2 * #{$modal-dialog-margin-y-sm-up}));
+
+// We're using direct child selectors to avoid affecting modals within the individual sims
+.player-editor-modal {
+	max-width: $player-editor-modal-width;
+	width: $player-editor-modal-width;
+
+	&> .modal-content {
+		height: $player-editor-modal-height;
+		overflow: scroll;
+
+		&> .modal-body {
+			padding: 0;
+		}
+	}
+
+	.sim-bg {
+		top: unset !important;
+		left: unset !important;
+		// Subtract 2 pixels for the borders of the modal
+		width: calc(#{$player-editor-modal-width} - 2px) !important;
+		height: calc(#{$player-editor-modal-height} - 2px) !important;
+		// The default -1 causes the background to be hidden within the modal
+		z-index: 0 !important;
+	}
+
+  .settings-tab {
+    .tab-panel-col {
+      flex: 1 !important;
+    }
+  }
+}

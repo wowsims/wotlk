@@ -11,7 +11,7 @@ import (
 
 func (shaman *Shaman) registerSearingTotemSpell() {
 	actionID := core.ActionID{SpellID: 58704}
-	baseCost := baseMana * 0.07
+	baseCost := 0.07 * shaman.BaseMana
 
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
@@ -87,7 +87,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
 	actionID := core.ActionID{SpellID: 58734}
-	baseCost := baseMana * 0.27
+	baseCost := 0.27 * shaman.BaseMana
 
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,

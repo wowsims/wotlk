@@ -46,7 +46,11 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		},
 
 		DamageMultiplier: 1 *
-			(1 + .05*float64(priest.Talents.ImprovedPowerWordShield) + .01*float64(priest.Talents.TwinDisciplines)) *
+			(1 + .05*float64(priest.Talents.ImprovedPowerWordShield)) *
+			(1 +
+				.01*float64(priest.Talents.TwinDisciplines) +
+				.02*float64(priest.Talents.FocusedPower) +
+				.02*float64(priest.Talents.SpiritualHealing)) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.05, 1),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
@@ -94,7 +98,14 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			ProcMask:    core.ProcMaskSpellHealing,
 			Flags:       core.SpellFlagHelpful,
 
-			DamageMultiplier: 0.2 * priest.PowerWordShield.DamageMultiplier,
+			// Talent effects are combined differently in this spell compared to PWS, for some reason.
+			DamageMultiplier: 0.2 *
+				(1 + .01*float64(priest.Talents.BlessedResilience)) *
+				(1 + .02*float64(priest.Talents.FocusedPower)) *
+				(1 +
+					.05*float64(priest.Talents.ImprovedPowerWordShield) +
+					.01*float64(priest.Talents.TwinDisciplines)) *
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolytesRaiment, 4), 1.05, 1),
 			ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

@@ -62,7 +62,7 @@ export const HolyTalents = {
 	}),
 };
 
-export const DefaultRotation = Rotation.create({
+export const DiscDefaultRotation = Rotation.create({
 	type: RotationType.Cycle,
 	customRotation: CustomRotation.create({
 		spells: [
@@ -70,6 +70,18 @@ export const DefaultRotation = Rotation.create({
 			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
 			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
 			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
+		],
+	}),
+});
+
+export const HolyDefaultRotation = Rotation.create({
+	type: RotationType.Cycle,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 10 }),
+			CustomSpell.create({ spell: SpellOption.CircleOfHealing, castsPerMinute: 5 }),
+			CustomSpell.create({ spell: SpellOption.Renew, castsPerMinute: 10 }),
+			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
 		],
 	}),
 });

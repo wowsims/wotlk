@@ -70,6 +70,8 @@ type Priest struct {
 
 	ProcPrayerOfMending core.ApplySpellResults
 
+	DpInitMultiplier float64
+
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
 	T7TwoSetBonus bool
@@ -109,6 +111,7 @@ func (priest *Priest) HasMinorGlyph(glyph proto.PriestMinorGlyph) bool {
 
 func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
+	raidBuffs.DivineSpirit = true
 
 	raidBuffs.PowerWordFortitude = core.MaxTristate(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
 		true,
@@ -183,14 +186,7 @@ func (priest *Priest) RegisterHealingSpells() {
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
-	if priest.Talents.ShadowWeaving == 0 {
-		return
-	}
-
-	if priest.ShadowWeavingAura.IsActive() {
-		priest.ShadowWeavingAura.AddStack(sim)
-		priest.ShadowWeavingAura.Refresh(sim)
-	} else {
+	if priest.ShadowWeavingAura != nil {
 		priest.ShadowWeavingAura.Activate(sim)
 		priest.ShadowWeavingAura.AddStack(sim)
 	}

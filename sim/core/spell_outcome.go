@@ -646,3 +646,14 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *Spel
 
 	result.Damage *= averageMultiplier
 }
+
+func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	if dot.Spell.CritMultiplier == 0 {
+		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
+	}
+
+	averageMultiplier := 1.0
+	averageMultiplier += dot.SnapshotCritChance * (dot.Spell.CritMultiplier - 1)
+
+	result.Damage *= averageMultiplier
+}

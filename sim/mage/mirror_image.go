@@ -43,6 +43,14 @@ func (mage *Mage) registerMirrorImageCD() {
 				Timer:    mage.NewTimer(),
 				Duration: time.Minute * 3,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				// Assume this is a pre-cast, so disable the GCD.
+				// Probably should keep the mana cost but this matches the other mage sim.
+				if sim.CurrentTime == 0 {
+					cast.Cost = 0
+					cast.GCD = 0
+				}
+			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

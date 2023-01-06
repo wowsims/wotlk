@@ -11,21 +11,23 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimLaunched = false;
-export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Unlaunched;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
-	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
-	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
 	[Spec.SpecFeralDruid]: LaunchStatus.Alpha,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Alpha,
+	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
+	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
+	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
 	[Spec.SpecHunter]: LaunchStatus.Beta,
 	[Spec.SpecMage]: LaunchStatus.Alpha,
 	[Spec.SpecRogue]: LaunchStatus.Alpha,
-	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
+	[Spec.SpecHolyPaladin]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Alpha,
+	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
 	[Spec.SpecHealingPriest]: LaunchStatus.Alpha,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
 	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
