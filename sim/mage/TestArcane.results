@@ -740,43 +740,43 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10297.84677
-  tps: 8333.25194
+  dps: 10387.43923
+  tps: 8387.00741
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1387.2573
-  tps: 870.52278
+  dps: 1398.73032
+  tps: 877.40659
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 2229.81514
-  tps: 1333.46617
+  dps: 2247.45749
+  tps: 1344.05157
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6029.31377
-  tps: 5254.15706
+  dps: 6073.20026
+  tps: 5280.48895
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 720.23364
-  tps: 466.48513
+  dps: 724.60959
+  tps: 469.1107
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1517.42315
-  tps: 928.35433
+  dps: 1526.65242
+  tps: 933.8919
  }
 }
 dps_results: {

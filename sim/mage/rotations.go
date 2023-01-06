@@ -16,19 +16,25 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 }
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
-	var spell *core.Spell
-	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
-		spell = mage.doArcaneRotation(sim)
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
-		spell = mage.doFireRotation(sim)
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
-		spell = mage.doFrostRotation(sim)
-	} else {
-		spell = mage.doAoeRotation(sim)
-	}
-
+	spell := mage.chooseSpell(sim)
 	if success := spell.Cast(sim, mage.CurrentTarget); !success {
 		mage.WaitForMana(sim, spell.CurCast.Cost)
+	}
+}
+
+func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
+	if mage.Rotation.MaintainImprovedScorch && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
+		return mage.Scorch
+	}
+
+	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
+		return mage.doArcaneRotation(sim)
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
+		return mage.doFireRotation(sim)
+	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
+		return mage.doFrostRotation(sim)
+	} else {
+		return mage.doAoeRotation(sim)
 	}
 }
 
@@ -72,11 +78,6 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-
-	if mage.Rotation.MaintainImprovedScorch && mage.ScorchAura != nil && (!mage.ScorchAura.IsActive() || mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000) {
-		return mage.Scorch
-	}
-
 	if !mage.LivingBombDot.IsActive() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
 		return mage.LivingBomb
 	}

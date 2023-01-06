@@ -22,7 +22,7 @@ func (mage *Mage) registerBlizzardSpell() {
 		AffectedByCastSpeed: true,
 		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
 			target := mage.CurrentTarget
-			dot.SnapshotBaseDamage = 352 + 0.119*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage = 426 + (4.0/3.5/8)*dot.Spell.SpellPower()
 			dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},

@@ -39,7 +39,6 @@ type Mage struct {
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	isMissilesBarrage        bool
 	isMissilesBarrageVisible bool
 	numCastsDone             int32
 	num4CostAB               int32
@@ -51,10 +50,7 @@ type Mage struct {
 
 	// Cached values for a few mechanics.
 	spellDamageMultiplier float64
-
-	// Current bonus crit from AM+CC interaction.
-	bonusAMCCCrit   float64
-	bonusCritDamage float64
+	bonusCritDamage       float64
 
 	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
@@ -195,7 +191,6 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.num4CostAB = 0
 	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 	mage.manaTracker.Reset()
-	mage.bonusAMCCCrit = 0
 
 	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
 		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
@@ -218,6 +213,10 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
+
+	if mage.Talents.ImprovedScorch == 0 {
+		mage.Rotation.MaintainImprovedScorch = false
+	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += .5

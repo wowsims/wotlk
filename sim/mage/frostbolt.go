@@ -40,7 +40,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		DamageMultiplier: mage.spellDamageMultiplier *
 			(1 + .01*float64(mage.Talents.ChilledToTheBone)) *
 			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), 1.05, 1),
-		CritMultiplier:   mage.SpellCritMultiplier(1, 0.25*float64(mage.Talents.SpellPower)+float64(mage.Talents.IceShards)/3),
+		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

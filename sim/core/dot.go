@@ -131,7 +131,7 @@ func (dot *Dot) Cancel(sim *Simulation) {
 // Call this after manually changing NumberOfTicks or TickLength.
 func (dot *Dot) RecomputeAuraDuration() {
 	if dot.AffectedByCastSpeed {
-		dot.tickPeriod = dot.Spell.Unit.ApplyCastSpeed(dot.TickLength)
+		dot.tickPeriod = dot.Spell.Unit.ApplyCastSpeedForSpell(dot.TickLength, dot.Spell)
 		dot.Aura.Duration = dot.tickPeriod * time.Duration(dot.NumberOfTicks)
 	} else {
 		dot.tickPeriod = dot.TickLength
