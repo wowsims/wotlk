@@ -8,13 +8,13 @@ import { ContentBlock } from './components/content_block';
 import { DetailedResults } from './components/detailed_results';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import { EnumPicker } from './components/enum_picker';
-import { GearPicker } from './components/gear_picker';
 import { IconEnumPicker } from './components/icon_enum_picker';
 import { LogRunner } from './components/log_runner';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
 
+import { GearTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 
 import {
@@ -34,10 +34,9 @@ import {
 	RaidBuffs,
 	Spec,
 	Stat,
-	UnitStats,
 } from './proto/common';
 
-import { IndividualSimSettings, SavedGearSet, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
 
 import { Gear } from './proto_utils/gear';
@@ -340,63 +339,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addGearTab() {
-		this.addTab('Gear', 'gear-tab', `
-			<div class="gear-tab-columns">
-				<div class="left-gear-panel">
-					<div class="gear-picker"></div>
-				</div>
-				<div class="right-gear-panel">
-					<div class="saved-gear-manager"></div>
-				</div>
-			</div>
-		`);
-
-		const gearPicker = new GearPicker(this.rootElem.getElementsByClassName('gear-picker')[0] as HTMLElement, this, this.player);
-
-		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(
-			this.rootElem.getElementsByClassName('saved-gear-manager')[0] as HTMLElement, this, this.player, {
-				header: {title: "Gear Sets"},
-				label: 'Gear Set',
-				storageKey: this.getSavedGearStorageKey(),
-				getData: (player: Player<any>) => {
-					return SavedGearSet.create({
-						gear: player.getGear().asSpec(),
-						bonusStatsStats: player.getBonusStats().toProto(),
-					});
-				},
-				setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
-					TypedEvent.freezeAllAndDo(() => {
-						player.setGear(eventID, this.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-						if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
-							player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
-						} else {
-							player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
-						}
-					});
-				},
-				changeEmitters: [this.player.changeEmitter],
-				equals: (a: SavedGearSet, b: SavedGearSet) => SavedGearSet.equals(a, b),
-				toJson: (a: SavedGearSet) => SavedGearSet.toJson(a),
-				fromJson: (obj: any) => SavedGearSet.fromJson(obj),
-			}
-		);
-
-		this.sim.waitForInit().then(() => {
-			savedGearManager.loadUserData();
-			this.individualConfig.presets.gear.forEach(presetGear => {
-				savedGearManager.addSavedData({
-					name: presetGear.name,
-					tooltip: presetGear.tooltip,
-					isPreset: true,
-					data: SavedGearSet.create({
-						// Convert to gear and back so order is always the same.
-						gear: this.sim.db.lookupEquipmentSpec(presetGear.gear).asSpec(),
-						bonusStatsStats: new Stats().toProto(),
-					}),
-					enableWhen: presetGear.enableWhen,
-				});
-			});
-		});
+		let gearTab = new GearTab(this.simTabContentsContainer, this);
+		gearTab.rootElem.classList.add('active', 'show');
 	}
 
 

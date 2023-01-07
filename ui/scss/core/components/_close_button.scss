@@ -1,7 +1,15 @@
+@use "sass:map";
+
 .close-button {
 	white-space: nowrap;
 
 	&> i {
 		vertical-align: middle;
+	}
+}
+
+.modal {
+	.close-button {
+		margin: map.get($spacers, 3) 0;
 	}
 }

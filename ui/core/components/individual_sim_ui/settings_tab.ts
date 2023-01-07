@@ -212,7 +212,7 @@ export class SettingsTab extends SimTab {
 
 	private buildOtherSettings() {
 		let settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
-			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || false
+			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
 
 		if (settings.length > 0) {

@@ -44,16 +44,10 @@ $theme-colors: map-merge($theme-colors, $class-colors);
 }
 
 $success: #1eff00;
-$quality-uncommon: $success;
-$quality-rare: #0070dd;
-$quality-epic: #a335ee;
 
 $custom-colors: (
   "brand": $brand-color,
   "primary": $primary,
-  "quality-epic": $quality-epic,
-  "quality-rare": $quality-rare,
-  "quality-uncommon": $quality-uncommon,
   "success": $success,
 );
 

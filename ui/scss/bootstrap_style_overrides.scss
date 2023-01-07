@@ -80,6 +80,9 @@
 
 .nav-tabs {
   .nav-item {
+    display: flex;
+    align-items: center;
+
     .nav-link {
       margin-bottom: 0;
       border: 0;
