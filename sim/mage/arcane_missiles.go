@@ -41,7 +41,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 		},
 
-		BonusHitRating:   float64(mage.Talents.ArcaneFocus+FrostTalents.Precision) * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 + .04*float64(mage.Talents.TormentTheWeak),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles), .25, 0)),
@@ -50,6 +50,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				mage.ArcaneMissilesDot.Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
