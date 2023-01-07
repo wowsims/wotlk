@@ -21,7 +21,8 @@ func (mage *Mage) registerLivingBombSpell() {
 		BonusCritRating: 0 +
 			2*float64(mage.Talents.WorldInFlames)*core.CritRatingPerCritChance +
 			2*float64(mage.Talents.CriticalMass)*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier,
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.FirePower),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
@@ -52,7 +53,8 @@ func (mage *Mage) registerLivingBombSpell() {
 		// WorldInFlames doesn't apply to DoT component.
 		BonusCritRating: 0 +
 			2*float64(mage.Talents.CriticalMass)*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier,
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.FirePower),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 

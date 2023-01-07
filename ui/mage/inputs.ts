@@ -132,27 +132,36 @@ export const MageRotationConfig = {
 		//                      ARCANE INPUTS
 		// ********************************************************
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'minBlastBeforeMissiles',
-			label: 'Min ABs before missiles',
-			labelTooltip: 'Minimum arcane blasts to cast before using a missile barrage proc',
+			fieldName: 'only3ArcaneBlastStacksBelowManaPercent',
+			percent: true,
+			label: 'Stack Arcane Blast to 3 below mana %',
+			labelTooltip: 'When below this mana %, AM/ABarr will be used at 3 stacks of AB instead of 4.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'num4StackBlastsToMissilesGamble',
-			label: 'Switch to AM Gamble At',
-			labelTooltip: 'Number of times mage has cast a 4 stacked arcane blast over the whole fight before gambling on AM when you dont have missile barrage',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'num4StackBlastsToEarlyMissiles',
-			label: 'Switch to ASAP missiles barrage At',
-			labelTooltip: 'Switch to using missiles barrage ASAP after this many 4 cost ABs',
+			fieldName: 'blastWithoutMissileBarrageAboveManaPercent',
+			percent: true,
+			label: 'AB without Missile Barrage above mana %',
+			labelTooltip: 'When above this mana %, spam AB until a Missile Barrage proc occurs.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'extraBlastsDuringFirstAp',
-			label: 'Extra blasts during first AP',
-			labelTooltip: 'Number of extra arcane blasts to use during your first cooldown phase with AP',
+			label: 'Extra ABs during first AP',
+			labelTooltip: 'Extend AB streak by this mana casts, during the first Arcane Power CD duration.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'missileBarrageBelowArcaneBlastStacks',
+			label: 'Use Missile Barrage below n AB stacks',
+			labelTooltip: 'Setting this to 1 or 2 can potentially be a DPS increase with Arcane Barrage rotation or T8 4pc set bonus.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'missileBarrageBelowManaPercent',
+			percent: true,
+			label: 'Use Missile Barrage ASAP below mana %',
+			labelTooltip: 'When below this mana %, use Missile Barrage proc as soon as possible. Can be useful to conserve mana.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
 

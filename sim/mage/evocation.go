@@ -61,6 +61,10 @@ func (mage *Mage) registerEvocationCD() {
 				return false
 			}
 
+			if sim.GetRemainingDuration() < 12*time.Second {
+				return false
+			}
+
 			curMana := character.CurrentMana()
 
 			return curMana < manaThreshold

@@ -33,7 +33,7 @@ func (mage *Mage) registerDeepFreezeSpell() {
 			},
 		},
 
-		DamageMultiplier: mage.spellDamageMultiplier,
+		DamageMultiplier: 1,
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 

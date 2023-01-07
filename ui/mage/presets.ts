@@ -133,10 +133,11 @@ export const DefaultFrostConsumes = Consumes.create({
 
 export const DefaultArcaneRotation = MageRotation.create({
 	type: RotationType.Arcane,
-	minBlastBeforeMissiles: 4,
-	num4StackBlastsToMissilesGamble: 12,
-	num4StackBlastsToEarlyMissiles: 6,
-	extraBlastsDuringFirstAp: 2,
+	only3ArcaneBlastStacksBelowManaPercent: 0.15,
+	blastWithoutMissileBarrageAboveManaPercent: 0.2,
+	extraBlastsDuringFirstAp: 0,
+	missileBarrageBelowArcaneBlastStacks: 0,
+	missileBarrageBelowManaPercent: 0,
 });
 
 export const DefaultArcaneOptions = MageOptions.create({

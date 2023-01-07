@@ -16,7 +16,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = []*core.Spell{
+			affectedSpells = core.FilterSlice([]*core.Spell{
 				warrior.HeroicStrikeOrCleave,
 				warrior.Bloodthirst,
 				warrior.Devastate,
@@ -33,22 +33,18 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				warrior.ConcussionBlow,
 				warrior.Bladestorm,
 				warrior.BladestormOH,
-			}
+			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 			for _, spell := range affectedSpells {
-				if spell != nil {
-					spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-				}
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
 			for _, spell := range affectedSpells {
-				if spell != nil {
-					spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-				}
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

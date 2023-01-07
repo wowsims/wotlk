@@ -3,7 +3,6 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -40,17 +39,15 @@ type Mage struct {
 	Rotation *proto.Mage_Rotation
 
 	isMissilesBarrageVisible bool
-	numCastsDone             int32
-	num4CostAB               int32
-	extraABsAP               int32
 	disabledMCDs             []*core.MajorCooldown
+	arcaneBlastStreak        int32
+	arcanePowerMCD           *core.MajorCooldown
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
 
 	// Cached values for a few mechanics.
-	spellDamageMultiplier float64
-	bonusCritDamage       float64
+	bonusCritDamage float64
 
 	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
@@ -80,6 +77,7 @@ type Mage struct {
 	PyroblastDot      *core.Dot
 
 	ArcaneBlastAura    *core.Aura
+	ArcanePowerAura    *core.Aura
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
 	ScorchAura         *core.Aura
@@ -92,8 +90,6 @@ type Mage struct {
 	BrainFreezeActivatedAt time.Duration
 
 	IgniteDots []*core.Dot
-
-	manaTracker common.ManaSpendingRateTracker
 }
 
 func (mage *Mage) GetCharacter() *core.Character {
@@ -140,13 +136,9 @@ func (mage *Mage) Initialize() {
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
-
-	mage.num4CostAB = 0
-	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
 }
 
 func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
-
 	pa := &core.PendingAction{
 		Priority: core.ActionPriorityRegen,
 	}
@@ -187,15 +179,14 @@ func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
-	mage.numCastsDone = 0
-	mage.num4CostAB = 0
-	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
-	mage.manaTracker.Reset()
+	mage.arcaneBlastStreak = 0
 
 	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
 		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
 		mage.launchExecuteCDOptimizer(sim)
 	}
+
+	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
 }
 
 func NewMage(character core.Character, options *proto.Player) *Mage {
@@ -206,9 +197,6 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 		Talents:   mageOptions.Talents,
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
-
-		spellDamageMultiplier: 1.0,
-		manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()

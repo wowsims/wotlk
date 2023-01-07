@@ -28,7 +28,11 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 	}
 
 	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
-		return mage.doArcaneRotation(sim)
+		spell := mage.doArcaneRotation(sim)
+		if spell == mage.ArcaneBlast {
+			mage.arcaneBlastStreak++
+		}
+		return spell
 	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
 		return mage.doFireRotation(sim)
 	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
@@ -41,40 +45,75 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 // 4 ABs used < x always fish for AM
 // 4 ABs used > y always cast AM as soon as barrage procs
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
-	numStacks := mage.ArcaneBlastAura.GetStacks()
-
-	if sim.GetRemainingDuration() < 12*time.Second {
-		mage.GetMajorCooldown(core.ActionID{SpellID: EvocationId}).Disable()
+	// AB until the end.
+	if mage.canBlast(sim) {
+		return mage.ArcaneBlast
 	}
 
-	burstDuration := time.Duration(mage.Character.CurrentManaPercent()*40) * time.Second
-	if sim.GetRemainingDuration() < burstDuration {
-		mage.GetMajorCooldown(core.ActionID{SpellID: EvocationId}).Disable()
-		if mage.Character.CurrentMana() < mage.ArcaneBlast.CurCast.Cost {
-			return mage.ArcaneMissiles
-		} else {
-			return mage.ArcaneBlast
-		}
+	// Extra ABs before first AP.
+	if sim.CurrentTime < time.Second*10 && !mage.ArcanePowerAura.IsActive() && mage.arcanePowerMCD.TimeToNextCast(sim) < time.Second*5 {
+		return mage.ArcaneBlast
 	}
 
-	if mage.Rotation.MinBlastBeforeMissiles > numStacks {
-		if mage.isMissilesBarrageVisible && mage.Rotation.Num_4StackBlastsToEarlyMissiles < mage.num4CostAB {
-			return mage.ArcaneMissiles
-		} else {
-			return mage.ArcaneBlast
-		}
+	// Extra ABs during first AP.
+	if sim.CurrentTime < time.Second*60 && mage.ArcanePowerAura.IsActive() && mage.arcaneBlastStreak < mage.Rotation.ExtraBlastsDuringFirstAp+4 {
+		return mage.ArcaneBlast
+	}
+
+	abStacks := mage.ArcaneBlastAura.GetStacks()
+	hasMissileBarrage := mage.MissileBarrageAura.IsActive()
+
+	// AM if we have MB and below n AB stacks.
+	if hasMissileBarrage && abStacks < mage.Rotation.MissileBarrageBelowArcaneBlastStacks {
+		return mage.ArcaneMissiles
+	}
+
+	// AM if we have MB and below mana %.
+	manaPercent := mage.CurrentManaPercent()
+	if hasMissileBarrage && manaPercent < mage.Rotation.MissileBarrageBelowManaPercent {
+		return mage.ArcaneMissiles
+	}
+
+	// AM if we don't have barrage and over mana %.
+	if !hasMissileBarrage && manaPercent > mage.Rotation.BlastWithoutMissileBarrageAboveManaPercent {
+		return mage.ArcaneBlast
+	}
+
+	// If we've reached max desired stacks, use AM / ABarr. Otherwise blast.
+	maxAbStacks := int32(4)
+	if manaPercent < mage.Rotation.Only_3ArcaneBlastStacksBelowManaPercent {
+		maxAbStacks = 3
+	}
+	if abStacks < maxAbStacks {
+		return mage.ArcaneBlast
 	} else {
-		if mage.extraABsAP > 0 && mage.GetAura("Arcane Power").IsActive() {
-			mage.extraABsAP--
-			return mage.ArcaneBlast
-		}
+		// TODO: Option to use Arcane Barrage here.
+		return mage.ArcaneMissiles
+	}
+}
 
-		if mage.isMissilesBarrageVisible || mage.Rotation.Num_4StackBlastsToMissilesGamble < mage.num4CostAB {
-			return mage.ArcaneMissiles
-		} else {
-			return mage.ArcaneBlast
+func (mage *Mage) canBlast(sim *core.Simulation) bool {
+	// Save computation by assuming we can't blast for 30+ seconds.
+	remainingDur := sim.GetRemainingDuration()
+	if remainingDur > time.Second*30 {
+		return false
+	}
+
+	castTime := mage.ApplyCastSpeed(ArcaneBlastBaseCastTime)
+	manaCost := mage.ArcaneBlast.DefaultCast.Cost
+
+	stacks := float64(mage.ArcaneBlastAura.GetStacks())
+	curMana := mage.CurrentMana()
+	for curTime := time.Duration(0); curTime <= remainingDur; curTime += castTime {
+		if stacks < 4 {
+			stacks++
+		}
+		curMana -= manaCost * 1.75 * stacks
+		if curMana < 0 {
+			return false
 		}
 	}
+	return true
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {

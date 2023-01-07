@@ -42,12 +42,9 @@ func (mage *Mage) ApplyTalents() {
 	}
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.ArcaneInstability)*1*core.CritRatingPerCritChance)
-	mage.spellDamageMultiplier += .01 * float64(mage.Talents.ArcaneInstability)
-
+	mage.PseudoStats.DamageDealtMultiplier *= 1 + .01*float64(mage.Talents.ArcaneInstability)
+	mage.PseudoStats.DamageDealtMultiplier *= 1 + .01*float64(mage.Talents.PlayingWithFire)
 	mage.PseudoStats.CastSpeedMultiplier *= 1 + .02*float64(mage.Talents.NetherwindPresence)
-
-	mage.spellDamageMultiplier += .01 * float64(mage.Talents.PlayingWithFire)
-	mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1 + .02*float64(mage.Talents.FirePower)
 
 	mage.AddStat(stats.SpellCrit, float64(mage.Talents.Pyromaniac)*core.CritRatingPerCritChance)
 	mage.PseudoStats.SpiritRegenRateCasting += float64(mage.Talents.Pyromaniac) / 6
@@ -200,11 +197,11 @@ func (mage *Mage) applyMissileBarrage() {
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.ArcaneMissiles.CostMultiplier -= 1
+			mage.ArcaneMissiles.CostMultiplier -= 100
 			mage.ArcaneMissiles.CastTimeMultiplier /= 2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.ArcaneMissiles.CostMultiplier += 1
+			mage.ArcaneMissiles.CostMultiplier += 100
 			mage.ArcaneMissiles.CastTimeMultiplier *= 2
 			mage.isMissilesBarrageVisible = false
 		},
@@ -304,17 +301,28 @@ func (mage *Mage) registerArcanePowerCD() {
 	}
 	actionID := core.ActionID{SpellID: 12042}
 
-	apAura := mage.RegisterAura(core.Aura{
+	var affectedSpells []*core.Spell
+	mage.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.Flags.Matches(SpellFlagMage) {
+			affectedSpells = append(affectedSpells, spell)
+		}
+	})
+
+	mage.ArcanePowerAura = mage.RegisterAura(core.Aura{
 		Label:    "Arcane Power",
 		ActionID: actionID,
 		Duration: core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcanePower), time.Second*18, time.Second*15),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier *= 1.2
-			mage.PseudoStats.CostMultiplier *= 1.2
+			for _, spell := range affectedSpells {
+				spell.DamageMultiplierAdditive += 0.2
+				spell.CostMultiplier += 0.2
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.DamageDealtMultiplier /= 1.2
-			mage.PseudoStats.CostMultiplier /= 1.2
+			for _, spell := range affectedSpells {
+				spell.DamageMultiplierAdditive -= 0.2
+				spell.CostMultiplier -= 0.2
+			}
 		},
 	})
 
@@ -328,7 +336,7 @@ func (mage *Mage) registerArcanePowerCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			apAura.Activate(sim)
+			mage.ArcanePowerAura.Activate(sim)
 		},
 	})
 
@@ -657,15 +665,15 @@ func (mage *Mage) applyBrainFreeze() {
 		ActionID: core.ActionID{SpellID: 44549},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.Fireball.CostMultiplier -= 1
+			mage.Fireball.CostMultiplier -= 100
 			mage.Fireball.CastTimeMultiplier -= 1
-			mage.FrostfireBolt.CostMultiplier -= 1
+			mage.FrostfireBolt.CostMultiplier -= 100
 			mage.FrostfireBolt.CastTimeMultiplier -= 1
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.Fireball.CostMultiplier += 1
+			mage.Fireball.CostMultiplier += 100
 			mage.Fireball.CastTimeMultiplier += 1
-			mage.FrostfireBolt.CostMultiplier += 1
+			mage.FrostfireBolt.CostMultiplier += 100
 			mage.FrostfireBolt.CastTimeMultiplier += 1
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
