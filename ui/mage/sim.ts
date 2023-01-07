@@ -98,6 +98,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				talents: Presets.ArcaneTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultArcaneOptions,
+				other: Presets.OtherDefaults,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
@@ -146,8 +147,8 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				inputs: [
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
+					MageInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
-
 					OtherInputs.TankAssignment,
 				],
 			},

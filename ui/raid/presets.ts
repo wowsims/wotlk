@@ -211,6 +211,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: BalanceDruidPresets.StandardTalents.data,
 		specOptions: BalanceDruidPresets.DefaultOptions,
 		consumes: BalanceDruidPresets.DefaultConsumes,
+		otherDefaults: BalanceDruidPresets.OtherDefaults,
 		defaultName: 'Balance Druid',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
@@ -379,6 +380,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.ArcaneTalents.data,
 		specOptions: MagePresets.DefaultArcaneOptions,
 		consumes: MagePresets.DefaultArcaneConsumes,
+		otherDefaults: MagePresets.OtherDefaults,
 		defaultName: 'Arcane Mage',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
@@ -403,6 +405,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FireTalents.data,
 		specOptions: MagePresets.DefaultFireOptions,
 		consumes: MagePresets.DefaultFireConsumes,
+		otherDefaults: MagePresets.OtherDefaults,
 		defaultName: 'Fire Mage',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
@@ -427,6 +430,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FrostTalents.data,
 		specOptions: MagePresets.DefaultFrostOptions,
 		consumes: MagePresets.DefaultFrostConsumes,
+		otherDefaults: MagePresets.OtherDefaults,
 		defaultName: 'Frost Mage',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,

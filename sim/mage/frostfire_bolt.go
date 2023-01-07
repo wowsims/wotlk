@@ -19,7 +19,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		SpellSchool:  core.SpellSchoolFire | core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
-		MissileSpeed: 25,
+		MissileSpeed: 28,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

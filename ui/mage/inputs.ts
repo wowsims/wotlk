@@ -48,6 +48,12 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 	extraCssClasses: ['within-raid-sim-hide'],
 });
 
+export const ReactionTime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
+	fieldName: 'reactionTimeMs',
+	label: 'Reaction Time (ms)',
+	labelTooltip: 'Duration, in milliseconds, for player reaction time. Only used for a few effects (Missile Barrage / Hot Streak / Brain Freeze).',
+});
+
 export const MageRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecMage, RotationType>({

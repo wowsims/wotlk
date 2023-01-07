@@ -21,7 +21,7 @@ func (mage *Mage) registerFireballSpell() {
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
-		MissileSpeed: 22,
+		MissileSpeed: 24,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
