@@ -27,7 +27,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			mage := agent.(MageAgent).GetMage()
-			procAura := mage.NewTemporaryStatsAura("Kiron Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second)
+			procAura := mage.NewTemporaryStatsAura("Kirin Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second)
 			core.MakeProcTriggerAura(&mage.Unit, core.ProcTrigger{
 				Name:       "Mage2pT8",
 				Callback:   core.CallbackOnSpellHitDealt,

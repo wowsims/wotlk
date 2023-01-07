@@ -32,7 +32,9 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 			float64(mage.Talents.Pyromaniac)*1*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier,
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.SpellImpact) +
+			.02*float64(mage.Talents.FirePower),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 

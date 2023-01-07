@@ -641,13 +641,12 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 		Duration: PowerInfusionDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if character.HasManaBar() {
-				// TODO: Double-check this is how the calculation works.
-				character.PseudoStats.CostMultiplier *= 0.8
+				character.PseudoStats.CostMultiplier -= 0.2
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if character.HasManaBar() {
-				character.PseudoStats.CostMultiplier /= 0.8
+				character.PseudoStats.CostMultiplier += 0.2
 			}
 		},
 	})

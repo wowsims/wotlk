@@ -53,7 +53,7 @@ func (mage *Mage) registerBlizzardSpell() {
 			},
 		},
 
-		DamageMultiplier: mage.spellDamageMultiplier,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

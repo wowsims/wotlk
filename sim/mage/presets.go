@@ -155,8 +155,12 @@ var PlayerOptionsArcane = &proto.Player_Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type:                   proto.Mage_Rotation_Arcane,
-			MinBlastBeforeMissiles: 4,
+			Type:                                       proto.Mage_Rotation_Arcane,
+			ExtraBlastsDuringFirstAp:                   2,
+			MissileBarrageBelowArcaneBlastStacks:       0,
+			MissileBarrageBelowManaPercent:             0.1,
+			BlastWithoutMissileBarrageAboveManaPercent: 0.2,
+			Only_3ArcaneBlastStacksBelowManaPercent:    0.15,
 		},
 	},
 }

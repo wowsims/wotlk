@@ -38,11 +38,15 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
 			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
 			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier *
+		DamageMultiplier: 1 *
+			// Need to re-apply these frost talents because FFB only inherits the fire multipliers from core.
 			(1 + .02*float64(mage.Talents.PiercingIce)) *
-			(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)) *
-			(1 + .04*float64(mage.Talents.TormentTheWeak)) *
-			(1 + .01*float64(mage.Talents.ChilledToTheBone)),
+			(1 + .01*float64(mage.Talents.ArcticWinds)) *
+			(1 + .04*float64(mage.Talents.TormentTheWeak)),
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.FirePower) +
+			.01*float64(mage.Talents.ChilledToTheBone) +
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
@@ -76,8 +80,9 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | HotStreakSpells,
 
-			DamageMultiplier: mage.FrostfireBolt.DamageMultiplier /
-				(1 + core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0)),
+			DamageMultiplier: mage.FrostfireBolt.DamageMultiplier,
+			DamageMultiplierAdditive: mage.FrostfireBolt.DamageMultiplierAdditive -
+				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), .02, 0),
 			ThreatMultiplier: mage.FrostfireBolt.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{

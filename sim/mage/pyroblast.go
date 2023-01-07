@@ -48,7 +48,11 @@ func (mage *Mage) registerPyroblastSpell() {
 
 		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
+		DamageMultiplier: 1 *
+			(1 + .04*float64(mage.Talents.TormentTheWeak)),
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.SpellImpact) +
+			.02*float64(mage.Talents.FirePower),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
@@ -72,8 +76,9 @@ func (mage *Mage) registerPyroblastSpell() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage,
 
-			DamageMultiplier: mage.Pyroblast.DamageMultiplier,
-			ThreatMultiplier: mage.Pyroblast.ThreatMultiplier,
+			DamageMultiplier:         mage.Pyroblast.DamageMultiplier,
+			DamageMultiplierAdditive: mage.Pyroblast.DamageMultiplierAdditive,
+			ThreatMultiplier:         mage.Pyroblast.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Pyroblast-" + strconv.Itoa(int(mage.Index)),
