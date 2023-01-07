@@ -100,7 +100,8 @@ var ArcaneTalents = &proto.MageTalents{
 }
 
 var fireMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MoltenArmor,
+	Armor:          proto.Mage_Options_MoltenArmor,
+	ReactionTimeMs: 300,
 }
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
@@ -125,7 +126,8 @@ var PlayerOptionsFireAOE = &proto.Player_Mage{
 }
 
 var frostMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MageArmor,
+	Armor:          proto.Mage_Options_MageArmor,
+	ReactionTimeMs: 300,
 }
 var PlayerOptionsFrost = &proto.Player_Mage{
 	Mage: &proto.Mage{
@@ -148,7 +150,8 @@ var PlayerOptionsFrostAOE = &proto.Player_Mage{
 }
 
 var arcaneMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MoltenArmor,
+	Armor:          proto.Mage_Options_MoltenArmor,
+	ReactionTimeMs: 300,
 }
 var PlayerOptionsArcane = &proto.Player_Mage{
 	Mage: &proto.Mage{

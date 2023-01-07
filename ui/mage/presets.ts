@@ -103,6 +103,7 @@ export const DefaultFireOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -122,6 +123,7 @@ export const DefaultFrostOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
 });
 
 export const DefaultFrostConsumes = Consumes.create({
@@ -146,6 +148,7 @@ export const DefaultArcaneOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
 });
 
 export const DefaultArcaneConsumes = Consumes.create({

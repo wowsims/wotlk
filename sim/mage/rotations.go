@@ -9,10 +9,6 @@ import (
 
 func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 	mage.tryUseGCD(sim)
-
-	if mage.GCD.IsReady(sim) && (!mage.IsWaiting() && !mage.IsWaitingForMana()) {
-		panic("failed to use our gcd")
-	}
 }
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
@@ -51,7 +47,7 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	}
 
 	// Extra ABs before first AP.
-	if sim.CurrentTime < time.Second*10 && !mage.ArcanePowerAura.IsActive() && mage.arcanePowerMCD.TimeToNextCast(sim) < time.Second*5 {
+	if sim.CurrentTime < time.Second*10 && !mage.ArcanePowerAura.IsActive() && mage.arcanePowerMCD != nil && mage.arcanePowerMCD.TimeToNextCast(sim) < time.Second*5 {
 		return mage.ArcaneBlast
 	}
 
@@ -61,7 +57,7 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	}
 
 	abStacks := mage.ArcaneBlastAura.GetStacks()
-	hasMissileBarrage := mage.MissileBarrageAura.IsActive()
+	hasMissileBarrage := mage.MissileBarrageAura.IsActive() && mage.MissileBarrageAura.TimeActive(sim) > mage.ReactionTime
 
 	// AM if we have MB and below n AB stacks.
 	if hasMissileBarrage && abStacks < mage.Rotation.MissileBarrageBelowArcaneBlastStacks {

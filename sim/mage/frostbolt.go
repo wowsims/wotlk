@@ -23,6 +23,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells,
+		MissileSpeed: 28,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -45,11 +46,14 @@ func (mage *Mage) registerFrostboltSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(804, 866) + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-			if replProcChance == 1 || sim.RandomFloat("Enduring Winter") < replProcChance {
-				mage.Env.Raid.ProcReplenishment(sim, replSrc)
-			}
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+				if replProcChance == 1 || sim.RandomFloat("Enduring Winter") < replProcChance {
+					mage.Env.Raid.ProcReplenishment(sim, replSrc)
+				}
+			})
 		},
 	})
 }

@@ -66,13 +66,9 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
 				raidBuffs: Presets.DefaultRaidBuffs,
-
 				partyBuffs: Presets.DefaultPartyBuffs,
-
 				individualBuffs: Presets.DefaultIndividualBuffs,
-
 				debuffs: Presets.DefaultDebuffs,
-
 				other: Presets.OtherDefaults,
 			},
 

@@ -207,6 +207,15 @@ func (aura *Aura) UpdateExpires(newExpires time.Duration) {
 	aura.expires = newExpires
 }
 
+// The amount of time this aura has been active.
+func (aura *Aura) TimeActive(sim *Simulation) time.Duration {
+	if aura.IsActive() {
+		return sim.CurrentTime - aura.startTime
+	} else {
+		return 0
+	}
+}
+
 func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
 	if aura.expires == NeverExpires {
 		return NeverExpires

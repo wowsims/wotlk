@@ -21,6 +21,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | core.SpellFlagChanneled,
+		MissileSpeed: 18,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -85,7 +86,10 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
-			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+			result := dot.Spell.CalcDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+			dot.Spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				dot.Spell.DealDamage(sim, result)
+			})
 		},
 	})
 }

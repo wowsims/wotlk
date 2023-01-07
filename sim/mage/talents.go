@@ -191,11 +191,6 @@ func (mage *Mage) applyMissileBarrage() {
 		Label:    "Missile Barrage Proc",
 		ActionID: core.ActionID{SpellID: 44401},
 		Duration: time.Second * 15,
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.ActionID != mage.ArcaneMissiles.ActionID {
-				mage.isMissilesBarrageVisible = true
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			mage.ArcaneMissiles.CostMultiplier -= 100
 			mage.ArcaneMissiles.CastTimeMultiplier /= 2
@@ -203,7 +198,6 @@ func (mage *Mage) applyMissileBarrage() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.ArcaneMissiles.CostMultiplier += 100
 			mage.ArcaneMissiles.CastTimeMultiplier *= 2
-			mage.isMissilesBarrageVisible = false
 		},
 	})
 

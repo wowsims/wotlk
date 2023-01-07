@@ -33,15 +33,16 @@ func RegisterMage() {
 
 type Mage struct {
 	core.Character
-	Talents *proto.MageTalents
 
+	Talents  *proto.MageTalents
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	isMissilesBarrageVisible bool
-	disabledMCDs             []*core.MajorCooldown
-	arcaneBlastStreak        int32
-	arcanePowerMCD           *core.MajorCooldown
+	ReactionTime time.Duration
+
+	disabledMCDs      []*core.MajorCooldown
+	arcaneBlastStreak int32
+	arcanePowerMCD    *core.MajorCooldown
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
@@ -197,6 +198,8 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 		Talents:   mageOptions.Talents,
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
+
+		ReactionTime: time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
 	}
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
