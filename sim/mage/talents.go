@@ -75,11 +75,6 @@ func (mage *Mage) applyHotStreak() {
 		Label:    "HotStreak",
 		ActionID: core.ActionID{SpellID: 44448},
 		Duration: time.Second * 10,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.Pyroblast.CastTimeMultiplier -= 1
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-		},
 	})
 
 	mage.RegisterAura(core.Aura{
