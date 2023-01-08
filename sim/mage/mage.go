@@ -38,11 +38,15 @@ type Mage struct {
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	ReactionTime time.Duration
+	ReactionTime     time.Duration
+	PyroblastDelayMs time.Duration
 
 	arcaneBlastStreak int32
 	arcanePowerMCD    *core.MajorCooldown
 	heatingUp         bool
+	igniteMunchDmg    float64
+	igniteMunchTime   time.Duration
+	delayedPyroAt     time.Duration
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
@@ -142,6 +146,9 @@ func (mage *Mage) Initialize() {
 func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.arcaneBlastStreak = 0
 	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
+	mage.igniteMunchDmg = 0
+	mage.igniteMunchTime = 0
+	mage.delayedPyroAt = 0
 }
 
 func NewMage(character core.Character, options *proto.Player) *Mage {
@@ -153,7 +160,8 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
 
-		ReactionTime: time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
+		ReactionTime:     time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
+		PyroblastDelayMs: time.Millisecond * time.Duration(mageOptions.Rotation.PyroblastDelayMs),
 	}
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
@@ -161,6 +169,9 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 
 	if mage.Talents.ImprovedScorch == 0 {
 		mage.Rotation.MaintainImprovedScorch = false
+	}
+	if !mage.Options.IgniteMunching {
+		mage.PyroblastDelayMs = 0
 	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {

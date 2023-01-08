@@ -145,6 +145,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					MageInputs.IgniteMunching,
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
 					MageInputs.ReactionTime,

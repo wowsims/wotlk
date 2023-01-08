@@ -117,7 +117,7 @@ func (mage *Mage) applyArcaneConcentration() {
 
 	// The result that caused the proc. Used to check we don't deactivate from the same proc.
 	var proccedAt time.Duration
-	var proccedResult *core.SpellResult
+	var proccedSpell *core.Spell
 
 	mage.ArcanePotencyAura = mage.RegisterAura(core.Aura{
 		Label:    "Arcane Potency",
@@ -129,11 +129,12 @@ func (mage *Mage) applyArcaneConcentration() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		//OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
-			if proccedAt == sim.CurrentTime && proccedResult == result {
+			if proccedAt == sim.CurrentTime && proccedSpell == spell {
 				// Means this is another hit from the same cast that procced CC.
 				return
 			}
@@ -151,14 +152,15 @@ func (mage *Mage) applyArcaneConcentration() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.NoCost = false
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		//OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
 			if spell == mage.ArcaneMissiles && mage.MissileBarrageAura.IsActive() {
 				return
 			}
-			if proccedAt == sim.CurrentTime && proccedResult == result {
+			if proccedAt == sim.CurrentTime && proccedSpell == spell {
 				// Means this is another hit from the same cast that procced CC.
 				return
 			}
@@ -186,7 +188,7 @@ func (mage *Mage) applyArcaneConcentration() {
 			}
 
 			proccedAt = sim.CurrentTime
-			proccedResult = result
+			proccedSpell = spell
 			mage.ClearcastingAura.Activate(sim)
 			mage.ArcanePotencyAura.Activate(sim)
 		},

@@ -376,15 +376,27 @@ func (sim *Simulation) runOnce() {
 }
 
 func (sim *Simulation) AddPendingAction(pa *PendingAction) {
+	//if pa.NextActionAt < sim.CurrentTime {
+	//	panic(fmt.Sprintf("Cant add action in the past: %s", pa.NextActionAt))
+	//}
 	pa.consumed = false
 	for index, v := range sim.pendingActions {
 		if v.NextActionAt < pa.NextActionAt || (v.NextActionAt == pa.NextActionAt && v.Priority >= pa.Priority) {
+			//if sim.Log != nil {
+			//	sim.Log("Adding action at index %d for time %s", index - len(sim.pendingActions), pa.NextActionAt)
+			//	for i := index; i < len(sim.pendingActions); i++ {
+			//		sim.Log("Upcoming action at %s", sim.pendingActions[i].NextActionAt)
+			//	}
+			//}
 			sim.pendingActions = append(sim.pendingActions, pa)
 			copy(sim.pendingActions[index+1:], sim.pendingActions[index:])
 			sim.pendingActions[index] = pa
 			return
 		}
 	}
+	//if sim.Log != nil {
+	//	sim.Log("Adding action at end for time %s", pa.NextActionAt)
+	//}
 	sim.pendingActions = append(sim.pendingActions, pa)
 }
 
