@@ -11,6 +11,9 @@ import (
 
 type PetAbilityType int
 
+// Pet AI doesn't use abilities immediately, so model this with a 1.6s GCD.
+const PetGCD = time.Millisecond * 1600
+
 const (
 	Unknown PetAbilityType = iota
 	AcidSpit
@@ -158,7 +161,7 @@ func (hp *HunterPet) newFocusDump(pat PetAbilityType, spellID int32) PetAbility 
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+					GCD: PetGCD,
 				},
 				IgnoreHaste: true,
 			},
@@ -262,7 +265,7 @@ func (hp *HunterPet) newAcidSpit() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    AcidSpit,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 55754,
 		School:  core.SpellSchoolNature,
@@ -289,7 +292,7 @@ func (hp *HunterPet) newDemoralizingScreech() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    DemoralizingScreech,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 55487,
 		School:  core.SpellSchoolPhysical,
@@ -313,7 +316,7 @@ func (hp *HunterPet) newFireBreath() PetAbility {
 	pa := hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    FireBreath,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 55485,
 		School:  core.SpellSchoolFire,
@@ -400,7 +403,7 @@ func (hp *HunterPet) newGore() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Gore,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 35295,
 		School:  core.SpellSchoolPhysical,
@@ -414,7 +417,7 @@ func (hp *HunterPet) newLavaBreath() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    LavaBreath,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 58611,
 		School:  core.SpellSchoolFire,
@@ -428,7 +431,7 @@ func (hp *HunterPet) newLightningBreath() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    LightningBreath,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 25012,
 		School:  core.SpellSchoolNature,
@@ -453,7 +456,7 @@ func (hp *HunterPet) newMonstrousBite() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    MonstrousBite,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 55499,
 		School:  core.SpellSchoolPhysical,
@@ -473,7 +476,7 @@ func (hp *HunterPet) newNetherShock() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    NetherShock,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 53589,
 		School:  core.SpellSchoolShadow,
@@ -497,7 +500,7 @@ func (hp *HunterPet) newPin() PetAbility {
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD:         core.GCDDefault,
+					GCD:         PetGCD,
 					ChannelTime: time.Second * 4,
 				},
 				IgnoreHaste: true,
@@ -556,7 +559,7 @@ func (hp *HunterPet) newPoisonSpit() PetAbility {
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+					GCD: PetGCD,
 				},
 				IgnoreHaste: true,
 				CD: core.Cooldown{
@@ -606,7 +609,7 @@ func (hp *HunterPet) newRake() PetAbility {
 	pa := hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Rake,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 10,
 		SpellID: 59886,
 		School:  core.SpellSchoolPhysical,
@@ -749,7 +752,7 @@ func (hp *HunterPet) newScorpidPoison() PetAbility {
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+					GCD: PetGCD,
 				},
 				IgnoreHaste: true,
 				CD: core.Cooldown{
@@ -881,7 +884,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+					GCD: PetGCD,
 				},
 				IgnoreHaste: true,
 				CD: core.Cooldown{
@@ -950,7 +953,7 @@ func (hp *HunterPet) newSting() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Sting,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 6,
 		SpellID: 56631,
 		School:  core.SpellSchoolNature,
@@ -971,7 +974,7 @@ func (hp *HunterPet) newSwipe() PetAbility {
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Swipe,
 		Cost:    20,
-		GCD:     core.GCDDefault,
+		GCD:     PetGCD,
 		CD:      time.Second * 5,
 		SpellID: 53533,
 		School:  core.SpellSchoolPhysical,
