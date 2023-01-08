@@ -173,6 +173,7 @@ message Mage {
 
 		// Frost Options.
 		// Chance for water elemental to disobey, doing nothing rather than cast.
+		bool use_ice_lance = 18;
 		double water_elemental_disobey_chance = 6;
 
 		// Aoe Options.

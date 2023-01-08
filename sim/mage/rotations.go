@@ -80,8 +80,9 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	}
 	if abStacks < maxAbStacks {
 		return mage.ArcaneBlast
+	} else if mage.ArcaneBarrage != nil && mage.ArcaneBarrage.IsReady(sim) {
+		return mage.ArcaneBarrage
 	} else {
-		// TODO: Option to use Arcane Barrage here.
 		return mage.ArcaneMissiles
 	}
 }
@@ -141,8 +142,9 @@ func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
 			return mage.DeepFreeze
 		} else if hasBrainFreeze {
 			return mage.FrostfireBolt
+		} else if mage.Rotation.UseIceLance {
+			return mage.IceLance
 		}
-		// TODO: Ice lance here if user sets option
 	}
 
 	return mage.Frostbolt

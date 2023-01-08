@@ -623,6 +623,7 @@ func (mage *Mage) applyFingersOfFrost() {
 	}
 
 	bonusCrit := []float64{0, 17, 34, 50}[mage.Talents.Shatter] * core.CritRatingPerCritChance
+	iceLanceMultiplier := core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfIceLance), 4, 3)
 
 	var proccedAt time.Duration
 
@@ -633,9 +634,11 @@ func (mage *Mage) applyFingersOfFrost() {
 		MaxStacks: 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			mage.IceLance.DamageMultiplier *= iceLanceMultiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
+			mage.IceLance.DamageMultiplier /= iceLanceMultiplier
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if proccedAt != sim.CurrentTime {

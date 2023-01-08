@@ -114,6 +114,12 @@ export const MageRotationConfig = {
 		// ********************************************************
 		//                       FROST INPUTS
 		// ********************************************************
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'useIceLance',
+			label: 'Use Ice Lance',
+			labelTooltip: 'Casts Ice Lance at the end of Fingers of Frost, after using Deep Freeze.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'waterElementalDisobeyChance',
 			percent: true,

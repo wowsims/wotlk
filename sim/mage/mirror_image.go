@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -73,6 +74,8 @@ func (mage *Mage) registerMirrorImageCD() {
 type MirrorImage struct {
 	core.Pet
 
+	mageOwner *Mage
+
 	Frostbolt *core.Spell
 	Fireblast *core.Spell
 }
@@ -87,6 +90,7 @@ func (mage *Mage) NewMirrorImage() *MirrorImage {
 			false,
 			true,
 		),
+		mageOwner: mage,
 	}
 	mirrorImage.EnableManaBar()
 
@@ -132,6 +136,7 @@ var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
 
 func (mi *MirrorImage) registerFrostboltSpell() {
 	baseCost := 90.0
+	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Frostbolt = mi.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 59638},
@@ -154,7 +159,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
-			baseDamage := 163*3 + 0.9*spell.SpellPower()
+			baseDamage := (163 + 0.3*spell.SpellPower()) * numImages
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
@@ -162,6 +167,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 
 func (mi *MirrorImage) registerFireblastSpell() {
 	baseCost := 120.0
+	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Fireblast = mi.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 59637},
@@ -187,7 +193,7 @@ func (mi *MirrorImage) registerFireblastSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
-			baseDamage := 88*3 + 0.45*spell.SpellPower()
+			baseDamage := (88 + 0.15*spell.SpellPower()) * numImages
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})

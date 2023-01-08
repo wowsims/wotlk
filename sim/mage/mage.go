@@ -50,6 +50,7 @@ type Mage struct {
 	// Cached values for a few mechanics.
 	bonusCritDamage float64
 
+	ArcaneBarrage   *core.Spell
 	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
@@ -62,6 +63,7 @@ type Mage struct {
 	Flamestrike     *core.Spell
 	Frostbolt       *core.Spell
 	FrostfireBolt   *core.Spell
+	IceLance        *core.Spell
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
 	MirrorImage     *core.Spell
@@ -116,6 +118,7 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
+	mage.registerArcaneBarrageSpell()
 	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
@@ -125,6 +128,7 @@ func (mage *Mage) Initialize() {
 	mage.registerFireBlastSpell()
 	mage.registerFlamestrikeSpell()
 	mage.registerFrostboltSpell()
+	mage.registerIceLanceSpell()
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
 	mage.registerLivingBombSpell()

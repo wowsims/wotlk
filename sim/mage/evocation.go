@@ -12,7 +12,7 @@ func (mage *Mage) registerEvocationCD() {
 	actionID := core.ActionID{SpellID: EvocationId}
 	manaMetrics := mage.NewManaMetrics(actionID)
 
-	maxTicks := int32(4)
+	maxTicks := core.TernaryInt32(mage.HasSetBonus(ItemSetTempestRegalia, 2), 5, 4)
 
 	numTicks := core.MaxInt32(0, core.MinInt32(maxTicks, mage.Options.EvocationTicks))
 	if numTicks == 0 {
