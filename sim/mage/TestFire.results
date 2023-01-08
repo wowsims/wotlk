@@ -208,15 +208,15 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 5856.08799
-  tps: 5258.29567
+  dps: 5910.79005
+  tps: 5307.78061
  }
 }
 dps_results: {
  key: "TestFire-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 5805.52976
-  tps: 5213.35183
+  dps: 5841.09648
+  tps: 5245.54152
  }
 }
 dps_results: {
