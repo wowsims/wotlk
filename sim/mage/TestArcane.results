@@ -208,15 +208,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 6493.53368
-  tps: 3935.44312
+  dps: 6558.64291
+  tps: 3974.05384
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 6448.00236
-  tps: 3905.39985
+  dps: 6504.32406
+  tps: 3938.34026
  }
 }
 dps_results: {

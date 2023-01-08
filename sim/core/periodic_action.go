@@ -59,7 +59,7 @@ type PeriodicActionOptions struct {
 
 func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
 	pa := &PendingAction{
-		NextActionAt: TernaryDuration(options.TickImmediately, sim.CurrentTime, sim.CurrentTime+options.Period),
+		NextActionAt: sim.CurrentTime + options.Period,
 		Priority:     options.Priority,
 	}
 
@@ -80,6 +80,20 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 	pa.CleanUp = func(sim *Simulation) {
 		if options.CleanUp != nil {
 			options.CleanUp(sim)
+		}
+	}
+
+	if options.TickImmediately {
+		// t = 0 might be during reset, so put it in the actions queue instead of
+		// invoking the callback directly.
+		if sim.CurrentTime == 0 {
+			pa.NextActionAt = 0
+		} else {
+			options.OnAction(sim)
+			tickIndex++
+			if options.NumTicks == 1 {
+				pa.Cancel(sim)
+			}
 		}
 	}
 
