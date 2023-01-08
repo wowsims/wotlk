@@ -654,6 +654,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFire-AllItems-TempestRegalia"
+ value: {
+  dps: 4128.34291
+  tps: 3701.45895
+ }
+}
+dps_results: {
  key: "TestFire-AllItems-TheGeneral'sHeart-45507"
  value: {
   dps: 5398.83806
