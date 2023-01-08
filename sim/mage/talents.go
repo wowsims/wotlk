@@ -89,7 +89,7 @@ func (mage *Mage) applyHotStreak() {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeCrit) {
+			if !result.DidCrit() {
 				mage.heatingUp = false
 				return
 			}
@@ -222,12 +222,10 @@ func (mage *Mage) applyMissileBarrage() {
 			}
 
 			roll := sim.RandomFloat("Missile Barrage")
-
 			updChance := core.TernaryFloat64(spell.ActionID == mage.ArcaneBlast.ActionID, 2*procChance, procChance)
 
 			if roll < updChance {
 				mage.MissileBarrageAura.Activate(sim)
-				mage.MissileBarrageAura.Prioritize()
 			}
 		},
 	})
@@ -371,7 +369,7 @@ func (mage *Mage) applyMasterOfElements() {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if result.Outcome.Matches(core.OutcomeCrit) {
+			if result.DidCrit() {
 				if refundCoeff < 0 {
 					mage.SpendMana(sim, -1*spell.BaseCost*refundCoeff, manaMetrics)
 				} else {
@@ -450,7 +448,7 @@ func (mage *Mage) registerCombustionCD() {
 			// TODO: This wont work properly with flamestrike
 			aura.AddStack(sim)
 
-			if result.Outcome.Matches(core.OutcomeCrit) {
+			if result.DidCrit() {
 				numCrits++
 				if numCrits == 3 {
 					aura.Deactivate(sim)
@@ -467,7 +465,7 @@ func (mage *Mage) registerCombustionCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mage.CombustionAura.Activate(sim)
-			mage.CombustionAura.Prioritize()
+			mage.CombustionAura.AddStack(sim)
 		},
 	})
 
@@ -626,6 +624,8 @@ func (mage *Mage) applyFingersOfFrost() {
 
 	bonusCrit := []float64{0, 17, 34, 50}[mage.Talents.Shatter] * core.CritRatingPerCritChance
 
+	var proccedAt time.Duration
+
 	mage.FingersOfFrostAura = mage.RegisterAura(core.Aura{
 		Label:     "Fingers of Frost Proc",
 		ActionID:  core.ActionID{SpellID: 44545},
@@ -637,8 +637,10 @@ func (mage *Mage) applyFingersOfFrost() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			aura.RemoveStack(sim)
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if proccedAt != sim.CurrentTime {
+				aura.RemoveStack(sim)
+			}
 		},
 	})
 
@@ -653,10 +655,7 @@ func (mage *Mage) applyFingersOfFrost() {
 			if mage.hasChillEffect(spell) && sim.RandomFloat("Fingers of Frost") < procChance {
 				mage.FingersOfFrostAura.Activate(sim)
 				mage.FingersOfFrostAura.SetStacks(sim, 2)
-
-				// Fingers of frost proc callback needs to happen before this one, or it
-				// will immediately consume a stack.
-				mage.FingersOfFrostAura.Prioritize()
+				proccedAt = sim.CurrentTime
 			}
 		},
 	})
@@ -708,6 +707,40 @@ func (mage *Mage) applyBrainFreeze() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if mage.hasChillEffect(spell) && sim.RandomFloat("Brain Freeze") < procChance {
 				mage.BrainFreezeAura.Activate(sim)
+			}
+		},
+	})
+}
+
+func (mage *Mage) applyWintersChill() {
+	if mage.Talents.WintersChill == 0 {
+		return
+	}
+
+	procChance := []float64{0, 0.33, 0.66, 1}[mage.Talents.WintersChill]
+
+	wcAuras := make([]*core.Aura, mage.Env.GetNumTargets())
+	for _, target := range mage.Env.Encounter.Targets {
+		wcAuras[target.Index] = core.WintersChillAura(&target.Unit, 0)
+	}
+
+	mage.RegisterAura(core.Aura{
+		Label:    "Winters Chill Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || spell.SpellSchool != core.SpellSchoolFrost {
+				return
+			}
+
+			if sim.Proc(procChance, "Winters Chill") {
+				aura := wcAuras[result.Target.Index]
+				aura.Activate(sim)
+				if aura.IsActive() {
+					aura.AddStack(sim)
+				}
 			}
 		},
 	})
