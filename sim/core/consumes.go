@@ -1082,7 +1082,6 @@ func makeConjuredActivation(conjuredType proto.Conjured, character *Character) (
 		})
 
 		const procChance = 0.185
-		//flameCapAura := character.NewTemporaryStatsAura("Flame Cap", actionID, stats.Stats{stats.FireSpellPower: 80}, time.Minute)
 		var fireSpells []*Spell
 		character.OnSpellRegistered(func(spell *Spell) {
 			if spell.SpellSchool.Matches(SpellSchoolFire) {

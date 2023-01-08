@@ -36,8 +36,8 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		BonusCritRating: 0 +
 			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0) +
 			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostfire), 2*core.CritRatingPerCritChance, 0) +
-			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
-			float64(mage.Talents.ImprovedScorch)*1*core.CritRatingPerCritChance,
+			2*float64(mage.Talents.CriticalMass)*core.CritRatingPerCritChance +
+			1*float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			// Need to re-apply these frost talents because FFB only inherits the fire multipliers from core.
 			(1 + .02*float64(mage.Talents.PiercingIce)) *
@@ -51,7 +51,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul) - .04*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := (722+838)/2 + spellCoeff*spell.SpellPower()
+			baseDamage := sim.Roll(722, 838) + spellCoeff*spell.SpellPower()
 
 			// FFB also double-dips the bonus from debuff crit modifiers:
 			//  1) Totem of Wrath / Heart of the Crusader / Master Poisoner
