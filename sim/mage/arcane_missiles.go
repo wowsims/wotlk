@@ -21,7 +21,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | core.SpellFlagChanneled,
-		MissileSpeed: 18,
+		MissileSpeed: 20,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 

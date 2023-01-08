@@ -142,6 +142,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		ActionID:     core.ActionID{SpellID: 59638},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
+		MissileSpeed: 24,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -160,7 +161,10 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
 			baseDamage := (163 + 0.3*spell.SpellPower()) * numImages
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 	})
 }

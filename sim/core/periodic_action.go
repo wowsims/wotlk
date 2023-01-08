@@ -59,12 +59,8 @@ type PeriodicActionOptions struct {
 
 func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + options.Period,
+		NextActionAt: TernaryDuration(options.TickImmediately, sim.CurrentTime, sim.CurrentTime+options.Period),
 		Priority:     options.Priority,
-	}
-
-	if options.TickImmediately {
-		pa.NextActionAt = sim.CurrentTime
 	}
 
 	tickIndex := 0
