@@ -129,7 +129,6 @@ func (mage *Mage) applyArcaneConcentration() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
 		},
-		//OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
@@ -152,7 +151,6 @@ func (mage *Mage) applyArcaneConcentration() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.NoCost = false
 		},
-		//OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
