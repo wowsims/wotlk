@@ -215,9 +215,20 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
+	if rogue.HonorAmongThieves != nil {
+		rogue.HonorAmongThievesDot.Deactivate(sim)
+		rogue.HonorAmongThievesDot.NumberOfTicks = int32(sim.Duration + sim.DurationVariation)
+		rogue.HonorAmongThievesDot.RecomputeAuraDuration()
+		rogue.HonorAmongThievesDot.Activate(sim)
+	}
+	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
 	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
 		rogue.OverkillAura.Activate(sim)
 		rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
+	}
+	if rogue.MasterOfSubtletyAura != nil && rogue.Options.StartingOverkillDuration > 0 {
+		rogue.MasterOfSubtletyAura.Activate(sim)
+		rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
 	}
 	rogue.setPriorityItems(sim)
 }

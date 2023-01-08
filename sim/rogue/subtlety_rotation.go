@@ -329,10 +329,6 @@ func (rogue *Rogue) doSubtletyRotation(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) OnCanActSubtlety(sim *core.Simulation) {
-	// Activate Honor Among Thieves for the encounter
-	if !rogue.HonorAmongThievesDot.IsActive() {
-		rogue.HonorAmongThieves.Cast(sim, rogue.CurrentTarget)
-	}
 	if rogue.GCD.IsReady(sim) {
 		rogue.doSubtletyRotation(sim)
 	}
