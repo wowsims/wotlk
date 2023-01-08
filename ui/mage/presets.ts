@@ -95,6 +95,7 @@ export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
+	pyroblastDelayMs: 50,
 });
 
 export const DefaultFireOptions = MageOptions.create({
@@ -104,6 +105,7 @@ export const DefaultFireOptions = MageOptions.create({
 		targetIndex: NO_TARGET,
 	}),
 	reactionTimeMs: 300,
+	igniteMunching: true,
 });
 
 export const DefaultFireConsumes = Consumes.create({

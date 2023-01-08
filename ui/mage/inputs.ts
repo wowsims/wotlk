@@ -35,6 +35,18 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
+export const IgniteMunching = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecMage>({
+	fieldName: 'igniteMunching',
+	label: 'Ignite Munching',
+	labelTooltip: `
+		<p>When two spells crit at the same time, only the latter spell will count towards ignite.</p>
+		<p>For example when an instant pyroblast lands right after a fireball, or when Living Bomb explodes at the same time as another spell lands on the target.</p>
+		<p>However, this does not affect Hot Streak with Frostfire Bolt due to Frostfire Bolt having a faster travel time. </p>
+	`,
+	showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	changeEmitter: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
+});
+
 export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'evocationTicks',
 	label: '# Evocation Ticks',
@@ -110,6 +122,16 @@ export const MageRotationConfig = {
 				{ name: 'Scorch', value: PrimaryFireSpell.Scorch },
 			],
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'pyroblastDelayMs',
+			label: 'Pyroblast Delay (ms)',
+			labelTooltip: `
+				<p>Adds a delay to Pyroblast after a Hot Streak to prevent ignite munching. 50ms is a good default for this.</p>
+				<p>There is no way to do this perfectly in-game, but a cqs macro can do this with about 70-90% reliability.</p>
+			`,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && player.getSpecOptions().igniteMunching,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.specOptionsChangeEmitter]),
 		}),
 		// ********************************************************
 		//                       FROST INPUTS

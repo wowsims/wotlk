@@ -170,6 +170,7 @@ message Mage {
 		PrimaryFireSpell primary_fire_spell = 3;
 		
 		bool maintain_improved_scorch = 4;
+		double pyroblast_delay_ms = 19;
 
 		// Frost Options.
 		// Chance for water elemental to disobey, doing nothing rather than cast.
@@ -195,6 +196,8 @@ message Mage {
 			MoltenArmor = 2;
 		}
 		ArmorType armor = 1;
+
+		bool ignite_munching = 6;
 
 		// Number of Evocation ticks to use. If 0, use all of them.
 		int32 evocation_ticks = 2;

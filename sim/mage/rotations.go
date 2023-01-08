@@ -13,8 +13,10 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 	spell := mage.chooseSpell(sim)
-	if success := spell.Cast(sim, mage.CurrentTarget); !success {
-		mage.WaitForMana(sim, spell.CurCast.Cost)
+	if spell != nil {
+		if success := spell.Cast(sim, mage.CurrentTarget); !success {
+			mage.WaitForMana(sim, spell.CurCast.Cost)
+		}
 	}
 }
 
@@ -112,6 +114,11 @@ func (mage *Mage) canBlast(sim *core.Simulation) bool {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
+	if mage.delayedPyroAt != 0 && sim.CurrentTime >= mage.delayedPyroAt {
+		mage.delayedPyroAt = 0
+		return mage.Pyroblast
+	}
+
 	noBomb := mage.LivingBomb != nil && !mage.LivingBombDot.IsActive() && sim.GetRemainingDuration() > time.Second*12
 	if noBomb && !mage.heatingUp {
 		return mage.LivingBomb
@@ -119,7 +126,13 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 
 	hasHotStreak := mage.HotStreakAura.IsActive() && mage.HotStreakAura.TimeActive(sim) > mage.ReactionTime
 	if hasHotStreak && mage.Pyroblast != nil {
-		return mage.Pyroblast
+		if mage.PyroblastDelayMs == 0 {
+			return mage.Pyroblast
+		} else {
+			mage.delayedPyroAt = sim.CurrentTime + mage.PyroblastDelayMs
+			mage.WaitUntil(sim, mage.delayedPyroAt)
+			return nil
+		}
 	}
 
 	if noBomb {

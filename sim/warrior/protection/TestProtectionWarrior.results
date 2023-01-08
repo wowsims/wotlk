@@ -46,7 +46,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.92553
+  weights: 0.93946
   weights: 0
   weights: 0
   weights: 0
@@ -57,7 +57,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.42708
+  weights: 0.43273
   weights: 0
   weights: 0
   weights: 0
@@ -66,12 +66,12 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.01099
+  weights: 0.01254
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.47291
-  weights: -0.07369
+  weights: 0.47317
+  weights: -0.066
   weights: 0
   weights: 0
   weights: 0
@@ -253,8 +253,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 2135.2463
-  tps: 6125.53223
+  dps: 2131.23017
+  tps: 6112.89293
  }
 }
 dps_results: {
@@ -267,8 +267,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 1990.04315
-  tps: 5783.33446
+  dps: 1991.06063
+  tps: 5786.74835
  }
 }
 dps_results: {
@@ -323,8 +323,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 1973.76893
-  tps: 5733.91903
+  dps: 1971.5882
+  tps: 5726.70573
  }
 }
 dps_results: {
@@ -695,8 +695,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SparkofLife-37657"
  value: {
-  dps: 1978.35072
-  tps: 5755.40323
+  dps: 1976.61134
+  tps: 5750.89484
  }
 }
 dps_results: {
@@ -751,8 +751,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 1447.24014
-  tps: 4180.77185
+  dps: 1455.45533
+  tps: 4200.47291
  }
 }
 dps_results: {
@@ -765,8 +765,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 1586.67479
-  tps: 4535.94474
+  dps: 1598.00372
+  tps: 4566.11364
  }
 }
 dps_results: {
@@ -877,9 +877,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 3100.66459
-  tps: 8096.55071
-  dtps: 128.2678
+  dps: 3100.14713
+  tps: 8095.14991
+  dtps: 128.26564
  }
 }
 dps_results: {
@@ -969,8 +969,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3278.09119
-  tps: 8558.27534
+  dps: 3274.75335
+  tps: 8551.78541
   dtps: 118.11237
  }
 }

@@ -1,11 +1,17 @@
 package mage
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
+
+// If two spells proc Ignite at almost exactly the same time, the latter
+// overwrites the former.
+const IgniteMunchWindow = time.Millisecond * 10
+const IgniteTicks = 2
 
 func (mage *Mage) applyIgnite() {
 	if mage.Talents.Ignite == 0 {
@@ -60,7 +66,7 @@ func (mage *Mage) applyIgnite() {
 				ActionID: mage.Ignite.ActionID,
 				Tag:      "Ignite",
 			}),
-			NumberOfTicks: 2,
+			NumberOfTicks: IgniteTicks,
 			TickLength:    time.Second * 2,
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -73,14 +79,20 @@ func (mage *Mage) applyIgnite() {
 func (mage *Mage) procIgnite(sim *core.Simulation, result *core.SpellResult) {
 	dot := mage.IgniteDots[result.Target.Index]
 
-	var outstandingDamage float64
-	if dot.IsActive() {
-		outstandingDamage = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
+	newDamage := result.Damage * 0.08 * float64(mage.Talents.Ignite)
+	outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
+
+	var munchPenalty float64
+	if mage.Options.IgniteMunching && sim.CurrentTime <= mage.igniteMunchTime+IgniteMunchWindow {
+		munchPenalty = mage.igniteMunchDmg
+		if sim.Log != nil {
+			mage.Log(sim, fmt.Sprintf("Ignite munched: %0.01f", mage.igniteMunchDmg))
+		}
 	}
 
-	newDamage := result.Damage * 0.08 * float64(mage.Talents.Ignite)
-
-	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
+	dot.SnapshotBaseDamage = (outstandingDamage + newDamage - munchPenalty) / float64(IgniteTicks)
+	mage.igniteMunchDmg = newDamage
+	mage.igniteMunchTime = sim.CurrentTime
 	mage.Ignite.Cast(sim, result.Target)
 }
 

@@ -102,6 +102,7 @@ var ArcaneTalents = &proto.MageTalents{
 var fireMageOptions = &proto.Mage_Options{
 	Armor:          proto.Mage_Options_MoltenArmor,
 	ReactionTimeMs: 300,
+	IgniteMunching: true,
 }
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
@@ -111,6 +112,7 @@ var PlayerOptionsFire = &proto.Player_Mage{
 			Type:                   proto.Mage_Rotation_Fire,
 			PrimaryFireSpell:       proto.Mage_Rotation_Fireball,
 			MaintainImprovedScorch: false,
+			PyroblastDelayMs:       50,
 		},
 	},
 }

@@ -105,8 +105,9 @@ func (dot *Dot) ApplyOrReset(sim *Simulation) {
 
 	dot.TickCount = 0
 
-	dot.tickAction.NextActionAt = -1 // prevent tickAction.CleanUp() from adding an extra tick
-	dot.tickAction.Cancel(sim)       // remove old PA ticker
+	oldTickAction := dot.tickAction
+	dot.tickAction = nil      // prevent tickAction.CleanUp() from adding an extra tick
+	oldTickAction.Cancel(sim) // remove old PA ticker
 
 	// recreate with new period, resetting the next tick.
 	periodicOptions := dot.basePeriodicOptions()
