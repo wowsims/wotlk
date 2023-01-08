@@ -130,7 +130,7 @@ export const MageRotationConfig = {
 				<p>Adds a delay to Pyroblast after a Hot Streak to prevent ignite munching. 50ms is a good default for this.</p>
 				<p>There is no way to do this perfectly in-game, but a cqs macro can do this with about 70-90% reliability.</p>
 			`,
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && player.getSpecOptions().igniteMunching,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.Fireball && player.getSpecOptions().igniteMunching,
 			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.specOptionsChangeEmitter]),
 		}),
 		// ********************************************************

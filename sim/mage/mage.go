@@ -170,7 +170,7 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 	if mage.Talents.ImprovedScorch == 0 {
 		mage.Rotation.MaintainImprovedScorch = false
 	}
-	if !mage.Options.IgniteMunching {
+	if !mage.Options.IgniteMunching || mage.Rotation.PrimaryFireSpell != proto.Mage_Rotation_Fireball {
 		mage.PyroblastDelayMs = 0
 	}
 
