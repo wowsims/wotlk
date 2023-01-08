@@ -40,9 +40,9 @@ type Mage struct {
 
 	ReactionTime time.Duration
 
-	disabledMCDs      []*core.MajorCooldown
 	arcaneBlastStreak int32
 	arcanePowerMCD    *core.MajorCooldown
+	heatingUp         bool
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
@@ -78,6 +78,7 @@ type Mage struct {
 	PyroblastDot      *core.Dot
 
 	ArcaneBlastAura    *core.Aura
+	ArcanePotencyAura  *core.Aura
 	ArcanePowerAura    *core.Aura
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
@@ -86,9 +87,6 @@ type Mage struct {
 	CombustionAura     *core.Aura
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
-
-	// Used to prevent utilising Brain Freeze immediately after proccing it.
-	BrainFreezeActivatedAt time.Duration
 
 	IgniteDots []*core.Dot
 }
@@ -139,54 +137,8 @@ func (mage *Mage) Initialize() {
 	mage.registerMirrorImageCD()
 }
 
-func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
-	pa := &core.PendingAction{
-		Priority: core.ActionPriorityRegen,
-	}
-	pa.OnAction = func(sim *core.Simulation) {
-		if sim.IsExecutePhase35() {
-			for _, mcd := range mage.disabledMCDs {
-				mcd.Enable()
-			}
-			// TODO looks fishy, since disabledMCDs isn't emptied; also, this could use an executePhaseCallback instead
-		} else {
-			for _, mcd := range mage.GetMajorCooldowns() {
-				isBloodLust := mcd.Spell.ActionID == core.ActionID{SpellID: 2825, Tag: -1} //ignore blood lust as it shouldn't be saved
-				isFlameCap := mcd.Spell.ActionID == core.ActionID{ItemID: 22788}           //ignore flame cap because it's so long
-				isPotionOfSpeed := mcd.Spell.ActionID == core.ActionID{ItemID: 40211}
-				if mcd.Spell.CD.Duration > (sim.Duration-sim.CurrentTime) && mcd.Type.Matches(core.CooldownTypeDPS) &&
-					!isBloodLust && !isFlameCap || isPotionOfSpeed {
-					mcd.Disable()
-					mage.disabledMCDs = append(mage.disabledMCDs, mcd)
-				}
-			}
-
-			pa.NextActionAt = sim.CurrentTime + core.MinDuration(40*time.Second, time.Duration(.35*float64(sim.Duration)))
-
-			executeTime := time.Duration(.7 * float64(sim.Duration))
-
-			if pa.NextActionAt > executeTime {
-				pa.NextActionAt = executeTime
-			}
-			if pa.NextActionAt < sim.Duration {
-				sim.AddPendingAction(pa)
-			}
-
-		}
-
-	}
-
-	pa.OnAction(sim) // immediately activate first pending action
-}
-
 func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.arcaneBlastStreak = 0
-
-	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
-		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
-		mage.launchExecuteCDOptimizer(sim)
-	}
-
 	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
 }
 

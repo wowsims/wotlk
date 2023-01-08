@@ -10,6 +10,10 @@ import (
 )
 
 func (mage *Mage) registerLivingBombSpell() {
+	if !mage.Talents.LivingBomb {
+		return
+	}
+
 	baseCost := .22 * mage.BaseMana
 
 	livingBombExplosionSpell := mage.RegisterSpell(core.SpellConfig{
