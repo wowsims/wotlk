@@ -89,14 +89,11 @@ func (mage *Mage) applyEmpoweredFire() {
 		return
 	}
 
-	var actionId = core.ActionID{SpellID: 67545}
-
 	procChance := []float64{0, .33, .67, 1}[mage.Talents.EmpoweredFire]
-	manaMetrics := mage.NewManaMetrics(actionId)
+	manaMetrics := mage.NewManaMetrics(core.ActionID{SpellID: 67545})
 
 	mage.RegisterAura(core.Aura{
 		Label:    "Empowered Fire",
-		ActionID: actionId,
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)

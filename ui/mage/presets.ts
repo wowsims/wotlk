@@ -65,7 +65,7 @@ export const FireTalents = {
 export const FrostfireTalents = {
 	name: 'Frostfire',
 	data: SavedTalents.create({
-		talentsString: '-0055030011302331053120321351-2033030310003',
+		talentsString: '-2305030012303331053120311351-023303031002',
 		glyphs: Glyphs.create({
 			major1: MageMajorGlyph.GlyphOfFrostfire,
 			major2: MageMajorGlyph.GlyphOfMoltenArmor,

@@ -155,6 +155,9 @@ func (mage *Mage) applyArcaneConcentration() {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
+			if spell == mage.ArcaneMissiles && mage.MissileBarrageAura.IsActive() {
+				return
+			}
 			if proccedAt == sim.CurrentTime && proccedResult == result {
 				// Means this is another hit from the same cast that procced CC.
 				return
@@ -432,7 +435,7 @@ func (mage *Mage) registerCombustionCD() {
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.SpellSchool != core.SpellSchoolFire || !spell.Flags.Matches(SpellFlagMage) {
+			if !spell.SpellSchool.Matches(core.SpellSchoolFire) || !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
 			if spell == mage.Ignite || spell == mage.LivingBomb { //LB dot action should be ignored
@@ -734,7 +737,7 @@ func (mage *Mage) applyWintersChill() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || spell.SpellSchool != core.SpellSchoolFrost {
+			if !result.Landed() || !spell.SpellSchool.Matches(core.SpellSchoolFrost) {
 				return
 			}
 
