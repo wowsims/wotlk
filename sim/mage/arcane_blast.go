@@ -49,7 +49,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			},
 		},
 
-		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance, // maybe precision shouldnt be here
+		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
 		BonusCritRating: 0 +
 			float64(mage.Talents.Incineration)*2*core.CritRatingPerCritChance +
 			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),

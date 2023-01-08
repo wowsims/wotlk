@@ -38,8 +38,6 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 	}
 }
 
-// 4 ABs used < x always fish for AM
-// 4 ABs used > y always cast AM as soon as barrage procs
 func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	// AB until the end.
 	if mage.canBlast(sim) {
@@ -113,29 +111,41 @@ func (mage *Mage) canBlast(sim *core.Simulation) bool {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if !mage.LivingBombDot.IsActive() && (!mage.HotStreakAura.IsActive() || mage.Rotation.LbBeforeHotstreak) {
+	noBomb := mage.LivingBomb != nil && !mage.LivingBombDot.IsActive()
+	if noBomb && !mage.heatingUp {
 		return mage.LivingBomb
 	}
 
-	if mage.HotStreakAura.IsActive() {
+	hasHotStreak := mage.HotStreakAura.IsActive() && mage.HotStreakAura.TimeActive(sim) > mage.ReactionTime
+	if hasHotStreak && mage.Pyroblast != nil {
 		return mage.Pyroblast
+	}
+
+	if noBomb {
+		return mage.LivingBomb
 	}
 
 	if mage.Rotation.PrimaryFireSpell == proto.Mage_Rotation_Fireball {
 		return mage.Fireball
-	} else {
+	} else if mage.Rotation.PrimaryFireSpell == proto.Mage_Rotation_FrostfireBolt {
 		return mage.FrostfireBolt
+	} else {
+		return mage.Scorch
 	}
 }
 
 func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
-	if mage.FingersOfFrostAura.IsActive() && mage.DeepFreeze != nil && mage.DeepFreeze.IsReady(sim) {
-		return mage.DeepFreeze
-	} else if mage.BrainFreezeAura.IsActive() && sim.CurrentTime != mage.BrainFreezeActivatedAt {
-		return mage.FrostfireBolt
-	} else {
-		return mage.Frostbolt
+	hasBrainFreeze := mage.BrainFreezeAura.IsActive() && mage.BrainFreezeAura.TimeActive(sim) > mage.ReactionTime
+	if mage.FingersOfFrostAura.IsActive() {
+		if mage.DeepFreeze != nil && mage.DeepFreeze.IsReady(sim) {
+			return mage.DeepFreeze
+		} else if hasBrainFreeze {
+			return mage.FrostfireBolt
+		}
+		// TODO: Ice lance here if user sets option
 	}
+
+	return mage.Frostbolt
 }
 
 func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {

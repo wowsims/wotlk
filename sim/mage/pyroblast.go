@@ -9,9 +9,14 @@ import (
 )
 
 func (mage *Mage) registerPyroblastSpell() {
+	if !mage.Talents.Pyroblast {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 42891}
 	baseCost := .22 * mage.BaseMana
 	spellCoeff := 1.15 + 0.05*float64(mage.Talents.EmpoweredFire)
+	tickCoeff := 0.05 + 0.05*float64(mage.Talents.EmpoweredFire)
 
 	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
 	t10ProcAura := mage.BloodmagesRegalia2pcAura()
@@ -30,7 +35,7 @@ func (mage *Mage) registerPyroblastSpell() {
 				Cost: baseCost,
 
 				GCD:      core.GCDDefault,
-				CastTime: time.Second * 6,
+				CastTime: time.Second * 5,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.HotStreakAura.IsActive() {
@@ -47,7 +52,8 @@ func (mage *Mage) registerPyroblastSpell() {
 		},
 
 		BonusCritRating: 0 +
-			float64(mage.Talents.CriticalMass+mage.Talents.WorldInFlames)*2*core.CritRatingPerCritChance,
+			2*float64(mage.Talents.CriticalMass)*core.CritRatingPerCritChance +
+			2*float64(mage.Talents.WorldInFlames)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
 			(1 + .04*float64(mage.Talents.TormentTheWeak)),
 		DamageMultiplierAdditive: 1 +
@@ -87,7 +93,7 @@ func (mage *Mage) registerPyroblastSpell() {
 		NumberOfTicks: 4,
 		TickLength:    time.Second * 3,
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 113.0 + 0.02*dot.Spell.SpellPower()
+			dot.SnapshotBaseDamage = 113.0 + tickCoeff*dot.Spell.SpellPower()
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

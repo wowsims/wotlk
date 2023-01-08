@@ -106,20 +106,9 @@ export const MageRotationConfig = {
 			label: 'Primary Spell',
 			values: [
 				{ name: 'Fireball', value: PrimaryFireSpell.Fireball },
-				{ name: 'FrostfireBolt', value: PrimaryFireSpell.FrostfireBolt },
+				{ name: 'Frostfire Bolt', value: PrimaryFireSpell.FrostfireBolt },
+				{ name: 'Scorch', value: PrimaryFireSpell.Scorch },
 			],
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'optimizeCdsForExecute',
-			label: 'Optimize CDs for execute time',
-			labelTooltip: 'Automatically save cooldowns that only have 1 use remaining for execute time',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'lbBeforeHotstreak',
-			label: 'Living Bomb Over Hot Streak',
-			labelTooltip: 'Choose to reapply living bomb before consuming hot streak',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		}),
 		// ********************************************************

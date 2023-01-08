@@ -22,7 +22,7 @@ func (mage *Mage) applyIgnite() {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-			if spell.SpellSchool.Matches(core.SpellSchoolFire) && result.Outcome.Matches(core.OutcomeCrit) {
+			if spell.SpellSchool.Matches(core.SpellSchoolFire) && result.DidCrit() {
 				mage.procIgnite(sim, result)
 			}
 		},
@@ -30,7 +30,7 @@ func (mage *Mage) applyIgnite() {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-			if spell == mage.LivingBombDot.Spell && result.Outcome.Matches(core.OutcomeCrit) {
+			if spell == mage.LivingBombDot.Spell && result.DidCrit() {
 				mage.procIgnite(sim, result)
 			}
 		},
@@ -78,7 +78,7 @@ func (mage *Mage) procIgnite(sim *core.Simulation, result *core.SpellResult) {
 		outstandingDamage = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
 	}
 
-	newDamage := result.Damage * float64(mage.Talents.Ignite) * 0.08
+	newDamage := result.Damage * 0.08 * float64(mage.Talents.Ignite)
 
 	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
 	mage.Ignite.Cast(sim, result.Target)
@@ -102,7 +102,7 @@ func (mage *Mage) applyEmpoweredFire() {
 			aura.Activate(sim)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == mage.Ignite && sim.Proc(procChance, "Empowered Fire") {
+			if spell == mage.Ignite && (procChance == 1 || sim.Proc(procChance, "Empowered Fire")) {
 				mage.AddMana(sim, mage.Unit.BaseMana*0.02, manaMetrics, false)
 			}
 		},

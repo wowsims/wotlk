@@ -29,8 +29,7 @@ func (mage *Mage) registerMirrorImageCD() {
 	}
 
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 55342},
-
+		ActionID:     core.ActionID{SpellID: 55342},
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -44,9 +43,9 @@ func (mage *Mage) registerMirrorImageCD() {
 				Duration: time.Minute * 3,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				// Assume this is a pre-cast, so disable the GCD.
-				// Probably should keep the mana cost but this matches the other mage sim.
 				if sim.CurrentTime == 0 {
+					// Assume this is a pre-cast, so disable the GCD.
+					// Probably should keep the mana cost but this matches the other mage sim.
 					cast.Cost = 0
 					cast.GCD = 0
 				}
@@ -74,16 +73,11 @@ func (mage *Mage) registerMirrorImageCD() {
 type MirrorImage struct {
 	core.Pet
 
-	// Water Ele almost never just stands still and spams like we want, it sometimes
-	// does its own thing. This controls how much it does that.
-	waitBetweenCasts time.Duration
-
 	Frostbolt *core.Spell
 	Fireblast *core.Spell
 }
 
 func (mage *Mage) NewMirrorImage() *MirrorImage {
-
 	mirrorImage := &MirrorImage{
 		Pet: core.NewPet(
 			"Mirror Image",
@@ -93,7 +87,6 @@ func (mage *Mage) NewMirrorImage() *MirrorImage {
 			false,
 			true,
 		),
-		waitBetweenCasts: time.Second * 0,
 	}
 	mirrorImage.EnableManaBar()
 
@@ -116,7 +109,7 @@ func (mi *MirrorImage) Reset(sim *core.Simulation) {
 
 func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
 	spell := mi.Frostbolt
-	if mi.Fireblast.CD.IsReady(sim) {
+	if mi.Fireblast.CD.IsReady(sim) && sim.RandomFloat("MirrorImage FB") < 0.5 {
 		spell = mi.Fireblast
 	}
 
@@ -125,21 +118,14 @@ func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-// These numbers are just rough guesses based on looking at some logs.
 var mirrorImageBaseStats = stats.Stats{
-	stats.Mana: 2000,
+	stats.Mana: 3000, // Unknown
 }
 
 var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
-	// These numbers are just rough guesses based on looking at some logs.
 	return ownerStats.DotProduct(stats.Stats{
-		stats.Stamina:   1,
-		stats.Intellect: 1,
-		stats.Mana:      1,
-
-		stats.SpellCrit: 1,
-		stats.SpellHit:  1,
-
+		stats.SpellHit:   1,
+		stats.SpellCrit:  1,
 		stats.SpellPower: 0.33,
 	})
 }
@@ -158,7 +144,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost,
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 + mi.waitBetweenCasts, // extra wait time is pretty much cast time
+				CastTime: time.Second * 3,
 			},
 		},
 
