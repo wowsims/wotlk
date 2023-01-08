@@ -64,7 +64,6 @@ type Mage struct {
 	FrostfireBolt   *core.Spell
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
-	WintersChill    *core.Spell
 	MirrorImage     *core.Spell
 
 	IcyVeins             *core.Spell
@@ -128,7 +127,6 @@ func (mage *Mage) Initialize() {
 	mage.registerFrostboltSpell()
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
-	mage.registerWintersChillSpell()
 	mage.registerLivingBombSpell()
 	mage.registerFrostfireBoltSpell()
 

@@ -469,7 +469,7 @@ func WintersChillAura(target *Unit, startingStacks int32) *Aura {
 	var effect *ExclusiveEffect
 	aura := target.GetOrRegisterAura(Aura{
 		Label:     "Winter's Chill",
-		ActionID:  ActionID{SpellID: 28595},
+		ActionID:  ActionID{SpellID: 28593},
 		Duration:  time.Second * 15,
 		MaxStacks: 5,
 		OnGain: func(aura *Aura, sim *Simulation) {

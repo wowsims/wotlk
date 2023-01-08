@@ -205,6 +205,9 @@ export class ActionId {
 			case 'Pyroblast':
 				if (this.tag) name += ' (DoT)';
 				break;
+			case 'Living Bomb':
+				if (this.spellId == 55362) name += ' (Explosion)';
+				break;
 			case 'Mind Flay':
 				if (this.tag == 1) {
 					name += ' (1 Tick)';
