@@ -8,9 +8,6 @@ import (
 )
 
 func (mage *Mage) OnGCDReady(sim *core.Simulation) {
-	if sim.Log != nil {
-		mage.Log(sim, "On GCD ready")
-	}
 	mage.tryUseGCD(sim)
 }
 
