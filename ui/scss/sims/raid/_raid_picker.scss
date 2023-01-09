@@ -62,6 +62,7 @@
 
 		.party-label {
 			font-weight: bold;
+			cursor: pointer;
 		}
 	}
 
@@ -100,9 +101,11 @@
 			overflow: hidden;
 
 			.player-name {
-				overflow: hidden;
+				height: 1rem;
+				border: none;
+				outline: none;
+				background: transparent;
 				text-overflow: ellipsis;
-				white-space: nowrap;
 			}
 		}
 	}

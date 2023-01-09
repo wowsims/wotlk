@@ -320,7 +320,7 @@ export class PlayerPicker extends Component {
 
 	private labelElem: HTMLElement | null;
 	private iconElem: HTMLImageElement | null;
-	private nameElem: HTMLSpanElement | null;
+	private nameElem: HTMLInputElement | null;
 	private resultsElem: HTMLElement | null;
 	private dpsResultElem: HTMLElement | null;
 	private referenceDeltaElem: HTMLElement | null;
@@ -479,11 +479,15 @@ export class PlayerPicker extends Component {
 			this.rootElem.setAttribute('draggable', 'true');
 			this.rootElem.innerHTML = `
 				<div class="player-label">
-					<img class="player-icon" src="${this.player.getSpecIcon()}"/>
+					<img class="player-icon" src="${this.player.getSpecIcon()}" draggable="false"/>
 					<div class="player-details">
-						<div class="player-name text-${classCssClass}" contenteditable spellcheck="false">
-							${this.player.getName()}
-						</div>
+						<input
+							class="player-name text-${classCssClass}"
+							type="text"
+							value="${this.player.getName()}"
+							spellcheck="false"
+							maxlength="15"
+						/>
 						<div class="player-results hide">
 							<span class="player-results-dps"></span>
 							<span class="player-results-reference-delta"></span>
@@ -495,6 +499,7 @@ export class PlayerPicker extends Component {
 						href="javascript:void(0)"
 						class="player-edit"
 						role="button"
+						draggable="false"
 						data-bs-toggle="tooltip"
 						data-bs-title="Click to Edit"
 					>
@@ -504,6 +509,7 @@ export class PlayerPicker extends Component {
 						href="javascript:void(0)"
 						class="player-copy link-warning"
 						role="button"
+						draggable="true"
 						data-bs-toggle="tooltip"
 						data-bs-title="Drag to Copy"
 					>
@@ -513,6 +519,7 @@ export class PlayerPicker extends Component {
 						href="javascript:void(0)"
 						class="player-delete link-danger"
 						role="button"
+						draggable="false"
 						data-bs-toggle="tooltip"
 						data-bs-title="Click to Delete"
 					>
@@ -523,7 +530,7 @@ export class PlayerPicker extends Component {
 
 			this.labelElem = this.rootElem.querySelector('.player-label') as HTMLElement;
 			this.iconElem = this.rootElem.querySelector('.player-icon') as HTMLImageElement;
-			this.nameElem = this.rootElem.querySelector('.player-name') as HTMLSpanElement;
+			this.nameElem = this.rootElem.querySelector('.player-name') as HTMLInputElement;
 			this.resultsElem = this.rootElem.querySelector('.player-results') as HTMLElement;
 			this.dpsResultElem = this.rootElem.querySelector('.player-results-dps') as HTMLElement;
 			this.referenceDeltaElem = this.rootElem.querySelector('.player-results-reference-delta') as HTMLElement;
@@ -534,52 +541,24 @@ export class PlayerPicker extends Component {
 
 	private bindPlayerEvents() {
 		this.nameElem?.addEventListener('input', event => {
-			if (this.player)
-				this.player.setName(TypedEvent.nextEventID(), this.nameElem?.textContent || '');
+			this.player?.setName(TypedEvent.nextEventID(), this.nameElem?.value || '');
 		});
 
-		const maxLength = 15;
-		this.nameElem?.addEventListener('keydown', event => {
-			event = event as KeyboardEvent;
+		this.nameElem?.addEventListener('mousedown', event => {
+			this.rootElem.setAttribute('draggable', 'false')
+			this.partyPicker.rootElem.setAttribute('draggable', 'false')
+		})
 
-			// 9 is tab, 13 is enter
-			if (event.code == 'Tab' || event.code == 'Enter') {
-				event.preventDefault();
-				const realPlayerPickers = this.raidPicker.getPlayerPickers().filter(pp => pp.player != null);
-				const indexOfThis = realPlayerPickers.indexOf(this);
-
-				if (indexOfThis != -1 && realPlayerPickers.length > indexOfThis + 1)
-					realPlayerPickers[indexOfThis + 1].nameElem?.focus();
-				else
-					this.nameElem?.blur();
-			}
-
-			// escape
-			if (event.code == 'Escape')
-				this.nameElem?.blur();
-
-			// 8 is backspace, 46 is delete, 
-			if ((event.code != 'Backspace' && event.code != 'Delete') && (this.nameElem?.textContent?.length || 0) >= maxLength)
-				event.preventDefault();
-		});
+		this.nameElem?.addEventListener('mouseup', event => {
+			this.rootElem.setAttribute('draggable', 'true')
+			this.partyPicker.rootElem.setAttribute('draggable', 'true')
+		})
 
 		const emptyName = 'Unnamed';
-		this.nameElem?.addEventListener('focusin', event => {
-			const selection = window.getSelection();
-			if (selection) {
-				const range = document.createRange();
-				range.selectNodeContents(this.nameElem as HTMLElement);
-				selection.removeAllRanges();
-				selection.addRange(range);
-			}
-		});
-
 		this.nameElem?.addEventListener('focusout', event => {
-			if (this.nameElem && !this.nameElem.textContent) {
-				this.nameElem.textContent = emptyName;
-
-				if (this.player)
-					this.player.setName(TypedEvent.nextEventID(), emptyName);
+			if (this.nameElem && !this.nameElem.value) {
+				this.nameElem.value = emptyName;
+				this.player?.setName(TypedEvent.nextEventID(), emptyName);
 			}
 		});
 
@@ -600,13 +579,15 @@ export class PlayerPicker extends Component {
 			this.raidPicker.setDragPlayer(this.player, this.raidIndex, type);
 		};
 
-		this.rootElem.ondragstart = event => {
-			dragStart(event, DragType.Swap)
-		}
-
 		const editElem = this.rootElem.querySelector('.player-edit') as HTMLElement;
 		const copyElem = this.rootElem.querySelector('.player-copy') as HTMLElement;
 		const deleteElem = this.rootElem.querySelector('.player-delete') as HTMLElement;
+
+		this.rootElem.ondragstart = event => {
+			if (event.target != copyElem) {
+				dragStart(event, DragType.Swap)
+			}
+		}
 
 		const editTooltip = Tooltip.getOrCreateInstance(editElem);
 		const copyTooltip = Tooltip.getOrCreateInstance(copyElem);
@@ -616,6 +597,7 @@ export class PlayerPicker extends Component {
 			new PlayerEditorModal(this.player as Player<any>);
 		};
 		copyElem.ondragstart = event => {
+			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
 			dragStart(event, DragType.Copy);
 		}
 		deleteElem.onclick = event => {
