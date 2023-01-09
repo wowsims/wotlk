@@ -156,7 +156,7 @@ export function formatDeltaTextElem(elem: HTMLElement, before: number, after: nu
 	}
 	elem.textContent = deltaStr;
 
-	if (noColor) {
+	if (noColor || delta == 0) {
 		elem.classList.remove('positive');
 		elem.classList.remove('negative');
 	} else if (delta > 0 != Boolean(lowerIsBetter)) {
