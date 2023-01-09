@@ -27,9 +27,8 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 // We need to keep the B2 and F1 runes in sync and immediately use them for obliterate
 // otherwise if an unholy rune comes up then we can't continue the Desync rotation without
 // re-casting IT + PS
-func (dk *DpsDeathknight) canFitBeforeFirstOblit(sim *core.Simulation, gcd time.Duration) bool {
-	ob := core.MaxDuration(dk.RuneReadyAt(sim, 1), dk.RuneReadyAt(sim, 2))
-	return sim.CurrentTime+gcd < ob
+func (dk *DpsDeathknight) firstOblitAt(sim *core.Simulation) time.Duration {
+	return core.MaxDuration(dk.RuneReadyAt(sim, 1), dk.RuneReadyAt(sim, 2))
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -108,17 +107,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(
 }
 
 func (dk *DpsDeathknight) desync_Filler(sim *core.Simulation, target *core.Unit) {
-	canFitAb := dk.canFitBeforeFirstOblit(sim, dk.GetModifiedGCD())
-	canFitSpell := dk.canFitBeforeFirstOblit(sim, dk.SpellGCD())
-
-	if canFitAb && dk.KM() && dk.FrostStrike.CanCast(sim) {
-		dk.FrostStrike.Cast(sim, target)
-	} else if canFitSpell && dk.Rime() {
-		dk.HowlingBlast.Cast(sim, target)
-	} else if canFitAb && dk.FrostStrike.CanCast(sim) {
-		dk.FrostStrike.Cast(sim, target)
-	} else if canFitSpell {
-		dk.HornOfWinter.Cast(sim, target)
+	spell := dk.RegularPrioPickSpell(sim, target, dk.firstOblitAt(sim))
+	if spell != nil {
+		spell.Cast(sim, target)
 	}
 }
 
