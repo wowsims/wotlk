@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
+func (dk *DpsDeathknight) setupFrostSubBloodDesyncOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
 	dk.RotationSequence.

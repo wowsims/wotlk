@@ -147,7 +147,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) {
 			if dk.Rotation.DesyncRotation {
-				dk.setupFrostSubBloodDesyncERWOpener()
+				dk.setupFrostSubBloodDesyncOpener()
 			} else if dk.Rotation.UseEmpowerRuneWeapon {
 				dk.setupFrostSubBloodERWOpener()
 			} else {
