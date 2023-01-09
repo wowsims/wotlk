@@ -62,6 +62,11 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 // Custom variables
 $block-spacer: .75rem;
 $content-font-size: .75rem;
+$gap-width: 1.5rem;
+$gap-width-sm: .5rem;
+$link-danger-color: #ef9eaa;
+$link-warning-color: #faf07f;
+$wrath-blue: #7FCBD8;
 
 // Global Bootstrap variable overrides
 $body-bg: #15171e;
@@ -69,6 +74,8 @@ $body-color: white;
 
 $border-color: dimgrey;
 
+// This option doesn't seem to be working for some reason. Carets hidden manually instead
+// $enable-caret: false;
 $enable-negative-margins: true;
 $enable-rounded: false;
 

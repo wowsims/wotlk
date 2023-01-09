@@ -25,6 +25,9 @@ export abstract class SimTab extends Component {
     this.rootElem.id = this.config.identifier;
     this.rootElem.classList.add('tab-pane', 'fade');
 
+    if (parentElem.childNodes.length == 0)
+      this.rootElem.classList.add('active', 'show');
+
     this.navItem = this.buildNavItem();
     this.navLink = this.navItem.children[0] as HTMLElement;
     this.contentContainer = document.createElement('div');

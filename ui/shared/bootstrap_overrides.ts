@@ -4,6 +4,8 @@ import { isDescendant } from './utils';
 Dropdown.Default.offset = [0,0];
 Dropdown.Default.display = "static";
 
+Tooltip.Default.trigger = "hover";
+
 let body = document.querySelector('body') as HTMLElement;
 
 // Custom dropdown event handlers for mouseover dropdowns

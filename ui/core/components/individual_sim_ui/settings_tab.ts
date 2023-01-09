@@ -48,7 +48,7 @@ export class SettingsTab extends SimTab {
 	readonly column1: HTMLElement = this.buildColumn(1);
 	readonly column2: HTMLElement = this.buildColumn(2);
 	readonly column3: HTMLElement = this.buildColumn(3);
-	readonly column4: HTMLElement = this.buildColumn(4);
+	readonly column4?: HTMLElement;
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'settings-tab', title: 'Settings'});
@@ -60,12 +60,14 @@ export class SettingsTab extends SimTab {
 		this.leftPanel.appendChild(this.column1);
 		this.leftPanel.appendChild(this.column2);
 		this.leftPanel.appendChild(this.column3);
-		this.leftPanel.appendChild(this.column4);
 
 		// The 4th column is only used in the raid sim player editor to spread out player settings
-		this.column4.classList.add('not-within-raid-sim-hide');
+		if (this.simUI.isWithinRaidSim) {
+			this.column4 = this.buildColumn(4);
+			this.leftPanel.appendChild(this.column4);
+		}
 
-    this.rightPanel = document.createElement('div');
+		this.rightPanel = document.createElement('div');
     this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
 
     this.contentContainer.appendChild(this.leftPanel);
@@ -216,7 +218,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildCooldownSettings() {
-		const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
+		const column = (this.simUI.isWithinRaidSim ? this.column4 : this.column2) as HTMLElement;
 		const contentBlock = new ContentBlock(column, 'cooldown-settings', {
 			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
 		});

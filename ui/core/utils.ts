@@ -159,7 +159,7 @@ export function formatDeltaTextElem(elem: HTMLElement, before: number, after: nu
 	if (noColor) {
 		elem.classList.remove('positive');
 		elem.classList.remove('negative');
-	} else if (delta >= 0 != Boolean(lowerIsBetter)) {
+	} else if (delta > 0 != Boolean(lowerIsBetter)) {
 		elem.classList.remove('negative');
 		elem.classList.add('positive');
 	} else {

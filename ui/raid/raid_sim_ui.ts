@@ -29,6 +29,7 @@ import { RaidStats } from "./raid_stats.js";
 import { TanksPicker } from "./tanks_picker.js";
 
 import * as ImportExport from "./import_export.js";
+import { RaidTab } from "./raid_tab.js";
 
 declare var Muuri: any;
 declare var tippy: any;
@@ -46,7 +47,7 @@ export class RaidSimUI extends SimUI {
 	private readonly config: RaidSimConfig;
 	private raidSimResultsManager: RaidSimResultsManager | null = null;
 	public raidPicker: RaidPicker | null = null;
-	private blessingsPicker: BlessingsPicker | null = null;
+	public blessingsPicker: BlessingsPicker | null = null;
 
 	// Emits when the raid comp changes. Includes changes to buff bots.
 	readonly compChangeEmitter = new TypedEvent<void>();
@@ -127,49 +128,7 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addRaidTab() {
-		this.addTab('Raid', 'raid-tab', `
-			<div class="raid-picker">
-			</div>
-			<div class="saved-raids-div">
-				<div class="saved-raids-manager">
-				</div>
-			</div>
-			<div class="raid-stats-div">
-			</div>
-		`);
-
-		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
-		new RaidStats(this.rootElem.getElementsByClassName('raid-stats-div')[0] as HTMLElement, this);
-
-		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
-			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
-				label: 'Raid',
-				storageKey: this.getSavedRaidStorageKey(),
-				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
-					raid: this.sim.raid.toProto(),
-					blessings: this.blessingsPicker!.getAssignments(),
-					faction: this.sim.getFaction(),
-					phase: this.sim.getPhase(),
-				}),
-				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
-					TypedEvent.freezeAllAndDo(() => {
-						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
-						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
-						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
-					});
-				},
-				changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
-				equals: (a: SavedRaid, b: SavedRaid) => {
-					return SavedRaid.equals(a, b);
-				},
-				toJson: (a: SavedRaid) => SavedRaid.toJson(a),
-				fromJson: (obj: any) => SavedRaid.fromJson(obj),
-			}
-		);
-		this.sim.waitForInit().then(() => {
-			savedRaidManager.loadUserData();
-		});
+		new RaidTab(this.simTabContentsContainer, this);
 	}
 
 	private addSettingsTab() {
