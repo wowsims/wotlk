@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -29,8 +30,7 @@ func (mage *Mage) registerMirrorImageCD() {
 	}
 
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 55342},
-
+		ActionID:     core.ActionID{SpellID: 55342},
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -44,9 +44,9 @@ func (mage *Mage) registerMirrorImageCD() {
 				Duration: time.Minute * 3,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				// Assume this is a pre-cast, so disable the GCD.
-				// Probably should keep the mana cost but this matches the other mage sim.
 				if sim.CurrentTime == 0 {
+					// Assume this is a pre-cast, so disable the GCD.
+					// Probably should keep the mana cost but this matches the other mage sim.
 					cast.Cost = 0
 					cast.GCD = 0
 				}
@@ -74,16 +74,13 @@ func (mage *Mage) registerMirrorImageCD() {
 type MirrorImage struct {
 	core.Pet
 
-	// Water Ele almost never just stands still and spams like we want, it sometimes
-	// does its own thing. This controls how much it does that.
-	waitBetweenCasts time.Duration
+	mageOwner *Mage
 
 	Frostbolt *core.Spell
 	Fireblast *core.Spell
 }
 
 func (mage *Mage) NewMirrorImage() *MirrorImage {
-
 	mirrorImage := &MirrorImage{
 		Pet: core.NewPet(
 			"Mirror Image",
@@ -93,7 +90,7 @@ func (mage *Mage) NewMirrorImage() *MirrorImage {
 			false,
 			true,
 		),
-		waitBetweenCasts: time.Second * 0,
+		mageOwner: mage,
 	}
 	mirrorImage.EnableManaBar()
 
@@ -116,7 +113,7 @@ func (mi *MirrorImage) Reset(sim *core.Simulation) {
 
 func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
 	spell := mi.Frostbolt
-	if mi.Fireblast.CD.IsReady(sim) {
+	if mi.Fireblast.CD.IsReady(sim) && sim.RandomFloat("MirrorImage FB") < 0.5 {
 		spell = mi.Fireblast
 	}
 
@@ -125,32 +122,27 @@ func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-// These numbers are just rough guesses based on looking at some logs.
 var mirrorImageBaseStats = stats.Stats{
-	stats.Mana: 2000,
+	stats.Mana: 3000, // Unknown
 }
 
 var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
-	// These numbers are just rough guesses based on looking at some logs.
 	return ownerStats.DotProduct(stats.Stats{
-		stats.Stamina:   1,
-		stats.Intellect: 1,
-		stats.Mana:      1,
-
-		stats.SpellCrit: 1,
-		stats.SpellHit:  1,
-
+		stats.SpellHit:   1,
+		stats.SpellCrit:  1,
 		stats.SpellPower: 0.33,
 	})
 }
 
 func (mi *MirrorImage) registerFrostboltSpell() {
 	baseCost := 90.0
+	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Frostbolt = mi.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 59638},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
+		MissileSpeed: 24,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -158,7 +150,7 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 			DefaultCast: core.Cast{
 				Cost:     baseCost,
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 + mi.waitBetweenCasts, // extra wait time is pretty much cast time
+				CastTime: time.Second * 3,
 			},
 		},
 
@@ -168,14 +160,18 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
-			baseDamage := 163*3 + 0.9*spell.SpellPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			baseDamage := (163 + 0.3*spell.SpellPower()) * numImages
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 	})
 }
 
 func (mi *MirrorImage) registerFireblastSpell() {
 	baseCost := 120.0
+	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Fireblast = mi.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 59637},
@@ -201,7 +197,7 @@ func (mi *MirrorImage) registerFireblastSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			//3x damage for 3 mirror images
-			baseDamage := 88*3 + 0.45*spell.SpellPower()
+			baseDamage := (88 + 0.15*spell.SpellPower()) * numImages
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})

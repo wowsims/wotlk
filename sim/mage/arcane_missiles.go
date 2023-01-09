@@ -21,6 +21,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | core.SpellFlagChanneled,
+		MissileSpeed: 20,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -40,15 +41,18 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			},
 		},
 
-		BonusHitRating:   float64(mage.Talents.ArcaneFocus+FrostTalents.Precision) * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + .04*float64(mage.Talents.TormentTheWeak)),
+		DamageMultiplier: 1 + .04*float64(mage.Talents.TormentTheWeak),
+		DamageMultiplierAdditive: 1 +
+			core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), .05, 0),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneMissiles), .25, 0)),
 		ThreatMultiplier: 1 - 0.2*float64(mage.Talents.ArcaneSubtlety),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				mage.ArcaneMissilesDot.Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
@@ -85,7 +89,10 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
-			dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+			result := dot.Spell.CalcDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+			dot.Spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				dot.Spell.DealDamage(sim, result)
+			})
 		},
 	})
 }

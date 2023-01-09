@@ -1081,13 +1081,19 @@ const idToCategoryMap: Record<number, number> = {
 	[47610]: SPELL_ACTION_CATEGORY + 0.02, // Frostfire Bolt
 	[42897]: SPELL_ACTION_CATEGORY + 0.02, // Arcane Blast
 	[42833]: SPELL_ACTION_CATEGORY + 0.02, // Fireball
+	[42859]: SPELL_ACTION_CATEGORY + 0.03, // Scorch
 	[42891]: SPELL_ACTION_CATEGORY + 0.1, // Pyroblast
 	[42846]: SPELL_ACTION_CATEGORY + 0.1, // Arcane Missiles
-	[55360]: SPELL_ACTION_CATEGORY + 0.2, //Living Bomb
-	[12848]: SPELL_ACTION_CATEGORY + 0.3, // Ignite
+	[44572]: SPELL_ACTION_CATEGORY + 0.1, // Deep Freeze
+	[44781]: SPELL_ACTION_CATEGORY + 0.2, // Arcane Barrage
+	[42914]: SPELL_ACTION_CATEGORY + 0.2, // Ice Lance
+	[55360]: SPELL_ACTION_CATEGORY + 0.2, // Living Bomb
+	[55362]: SPELL_ACTION_CATEGORY + 0.21, // Living Bomb (Explosion)
+	[12654]: SPELL_ACTION_CATEGORY + 0.3, // Ignite
 	[12472]: SPELL_ACTION_CATEGORY + 0.4, // Icy Veins
 	[11129]: SPELL_ACTION_CATEGORY + 0.4, // Combustion
 	[12042]: SPELL_ACTION_CATEGORY + 0.4, // Arcane Power
+	[11958]: SPELL_ACTION_CATEGORY + 0.41, // Cold Snap
 	[12043]: SPELL_ACTION_CATEGORY + 0.41, // Presence of Mind
 	[31687]: SPELL_ACTION_CATEGORY + 0.41, // Water Elemental
 	[55342]: SPELL_ACTION_CATEGORY + 0.5, // Mirror Image
@@ -1095,9 +1101,9 @@ const idToCategoryMap: Record<number, number> = {
 	[12051]: SPELL_ACTION_CATEGORY + 0.52, // Evocate
 	[44401]: SPELL_ACTION_CATEGORY + 0.6, // Missile Barrage
 	[44448]: SPELL_ACTION_CATEGORY + 0.6, // Hot Streak
+	[44545]: SPELL_ACTION_CATEGORY + 0.6, // Fingers of Frost
+	[44549]: SPELL_ACTION_CATEGORY + 0.61, // Brain Freeze
 	[12536]: SPELL_ACTION_CATEGORY + 0.61, // Clearcasting
-	// [55360]: SPELL_ACTION_CATEGORY + 0.6, // Fingers of Frost
-	// [55360]: SPELL_ACTION_CATEGORY + 0.61, // Brain Freeze
 
 
 	// Warrior
@@ -1147,7 +1153,7 @@ const idToCategoryMap: Record<number, number> = {
 	[26992]: SPELL_ACTION_CATEGORY + 0.91, // Thorns
 	[27150]: SPELL_ACTION_CATEGORY + 0.92, // Retribution Aura
 	[27169]: SPELL_ACTION_CATEGORY + 0.93, // Blessing of Sanctuary
-	// [54758]: DEFAULT_ACTION_CATEGORY + 0.000001, // Hyperspeed Acceleration
+	[54758]: SPELL_ACTION_CATEGORY + 0.94, // Hyperspeed Acceleration
 };
 
 const idsToGroupForRotation: Array<number> = [

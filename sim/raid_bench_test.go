@@ -108,9 +108,7 @@ var castersWithElemental = &proto.Party{
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
-					Rotation: &proto.Mage_Rotation{
-						MinBlastBeforeMissiles: 4,
-					},
+					Rotation: &proto.Mage_Rotation{},
 				},
 			},
 			Consumes: &proto.Consumes{
@@ -189,9 +187,7 @@ var castersWithResto = &proto.Party{
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
-					Rotation: &proto.Mage_Rotation{
-						MinBlastBeforeMissiles: 4,
-					},
+					Rotation: &proto.Mage_Rotation{},
 				},
 			},
 			Consumes: &proto.Consumes{

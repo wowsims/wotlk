@@ -435,11 +435,11 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.CostMultiplier *= 0.5
+			aura.Unit.PseudoStats.CostMultiplier -= 0.5
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.CostMultiplier /= 0.5
+			aura.Unit.PseudoStats.CostMultiplier += 0.5
 		},
 	})
 

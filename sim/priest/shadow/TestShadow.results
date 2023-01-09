@@ -229,15 +229,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7393.88018
-  tps: 7328.73657
+  dps: 7471.01995
+  tps: 7404.43798
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7307.76901
-  tps: 7241.1999
+  dps: 7372.24765
+  tps: 7304.49535
  }
 }
 dps_results: {

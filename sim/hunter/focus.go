@@ -10,7 +10,7 @@ import (
 // Time between focus ticks.
 const MaxFocus = 100.0
 const tickDuration = time.Second * 1
-const BaseFocusPerTick = 10.0
+const BaseFocusPerTick = 5.0
 
 // OnFocusGain is called any time focus is increased.
 type OnFocusGain func(sim *core.Simulation)

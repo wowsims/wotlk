@@ -207,6 +207,15 @@ func (aura *Aura) UpdateExpires(newExpires time.Duration) {
 	aura.expires = newExpires
 }
 
+// The amount of time this aura has been active.
+func (aura *Aura) TimeActive(sim *Simulation) time.Duration {
+	if aura.IsActive() {
+		return sim.CurrentTime - aura.startTime
+	} else {
+		return 0
+	}
+}
+
 func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
 	if aura.expires == NeverExpires {
 		return NeverExpires
@@ -587,81 +596,6 @@ func (aura *Aura) Activate(sim *Simulation) {
 
 	if aura.OnGain != nil {
 		aura.OnGain(aura, sim)
-	}
-}
-
-// Moves an Aura to the front of the list of active Auras, so its callbacks are invoked first.
-func (aura *Aura) Prioritize() {
-	if aura.onCastCompleteIndex > 0 {
-		otherAura := aura.Unit.onCastCompleteAuras[0]
-		aura.Unit.onCastCompleteAuras[0] = aura
-		aura.Unit.onCastCompleteAuras[aura.onCastCompleteIndex] = otherAura
-		otherAura.onCastCompleteIndex = aura.onCastCompleteIndex
-		aura.onCastCompleteIndex = 0
-	}
-
-	if aura.onSpellHitDealtIndex > 0 {
-		otherAura := aura.Unit.onSpellHitDealtAuras[0]
-		aura.Unit.onSpellHitDealtAuras[0] = aura
-		aura.Unit.onSpellHitDealtAuras[aura.onSpellHitDealtIndex] = otherAura
-		otherAura.onSpellHitDealtIndex = aura.onSpellHitDealtIndex
-		aura.onSpellHitDealtIndex = 0
-	}
-
-	if aura.onSpellHitTakenIndex > 0 {
-		otherAura := aura.Unit.onSpellHitTakenAuras[0]
-		aura.Unit.onSpellHitTakenAuras[0] = aura
-		aura.Unit.onSpellHitTakenAuras[aura.onSpellHitTakenIndex] = otherAura
-		otherAura.onSpellHitTakenIndex = aura.onSpellHitTakenIndex
-		aura.onSpellHitTakenIndex = 0
-	}
-
-	if aura.onPeriodicDamageDealtIndex > 0 {
-		otherAura := aura.Unit.onPeriodicDamageDealtAuras[0]
-		aura.Unit.onPeriodicDamageDealtAuras[0] = aura
-		aura.Unit.onPeriodicDamageDealtAuras[aura.onPeriodicDamageDealtIndex] = otherAura
-		otherAura.onPeriodicDamageDealtIndex = aura.onPeriodicDamageDealtIndex
-		aura.onPeriodicDamageDealtIndex = 0
-	}
-
-	if aura.onPeriodicDamageTakenIndex > 0 {
-		otherAura := aura.Unit.onPeriodicDamageTakenAuras[0]
-		aura.Unit.onPeriodicDamageTakenAuras[0] = aura
-		aura.Unit.onPeriodicDamageTakenAuras[aura.onPeriodicDamageTakenIndex] = otherAura
-		otherAura.onPeriodicDamageTakenIndex = aura.onPeriodicDamageTakenIndex
-		aura.onPeriodicDamageTakenIndex = 0
-	}
-
-	if aura.onHealDealtIndex > 0 {
-		otherAura := aura.Unit.onHealDealtAuras[0]
-		aura.Unit.onHealDealtAuras[0] = aura
-		aura.Unit.onHealDealtAuras[aura.onHealDealtIndex] = otherAura
-		otherAura.onHealDealtIndex = aura.onHealDealtIndex
-		aura.onHealDealtIndex = 0
-	}
-
-	if aura.onHealTakenIndex > 0 {
-		otherAura := aura.Unit.onHealTakenAuras[0]
-		aura.Unit.onHealTakenAuras[0] = aura
-		aura.Unit.onHealTakenAuras[aura.onHealTakenIndex] = otherAura
-		otherAura.onHealTakenIndex = aura.onHealTakenIndex
-		aura.onHealTakenIndex = 0
-	}
-
-	if aura.onPeriodicHealDealtIndex > 0 {
-		otherAura := aura.Unit.onPeriodicHealDealtAuras[0]
-		aura.Unit.onPeriodicHealDealtAuras[0] = aura
-		aura.Unit.onPeriodicHealDealtAuras[aura.onPeriodicHealDealtIndex] = otherAura
-		otherAura.onPeriodicHealDealtIndex = aura.onPeriodicHealDealtIndex
-		aura.onPeriodicHealDealtIndex = 0
-	}
-
-	if aura.onPeriodicHealTakenIndex > 0 {
-		otherAura := aura.Unit.onPeriodicHealTakenAuras[0]
-		aura.Unit.onPeriodicHealTakenAuras[0] = aura
-		aura.Unit.onPeriodicHealTakenAuras[aura.onPeriodicHealTakenIndex] = otherAura
-		otherAura.onPeriodicHealTakenIndex = aura.onPeriodicHealTakenIndex
-		aura.onPeriodicHealTakenIndex = 0
 	}
 }
 

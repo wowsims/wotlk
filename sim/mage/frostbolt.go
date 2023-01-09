@@ -23,6 +23,7 @@ func (mage *Mage) registerFrostboltSpell() {
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells,
+		MissileSpeed: 28,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -37,19 +38,23 @@ func (mage *Mage) registerFrostboltSpell() {
 
 		BonusCritRating: 0 +
 			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: mage.spellDamageMultiplier *
-			(1 + .01*float64(mage.Talents.ChilledToTheBone)) *
-			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), 1.05, 1),
+		DamageMultiplierAdditive: 1 +
+			.01*float64(mage.Talents.ChilledToTheBone) +
+			core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFrostbolt), .05, 0) +
+			core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), .05, 0),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3),
 		ThreatMultiplier: 1 - (0.1/3)*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(804, 866) + spellCoeff*spell.SpellPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-			if replProcChance == 1 || sim.RandomFloat("Enduring Winter") < replProcChance {
-				mage.Env.Raid.ProcReplenishment(sim, replSrc)
-			}
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+				if replProcChance == 1 || sim.RandomFloat("Enduring Winter") < replProcChance {
+					mage.Env.Raid.ProcReplenishment(sim, replSrc)
+				}
+			})
 		},
 	})
 }

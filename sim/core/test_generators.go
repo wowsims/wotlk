@@ -477,7 +477,8 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Glyphs:        config.Glyphs,
 			Profession1:   proto.Profession_Engineering,
 
-			InFrontOfTarget: config.InFrontOfTarget,
+			InFrontOfTarget:    config.InFrontOfTarget,
+			DistanceFromTarget: 30,
 		},
 		config.SpecOptions.SpecOptions)
 
@@ -614,14 +615,16 @@ func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
 
 	defaultPlayer := &proto.Player{
-		Class:           config.Class,
-		Race:            config.Race,
-		Equipment:       config.GearSet.GearSet,
-		Consumes:        config.Consumes,
-		Buffs:           FullIndividualBuffs,
-		Glyphs:          config.Glyphs,
-		Profession1:     proto.Profession_Engineering,
-		InFrontOfTarget: config.InFrontOfTarget,
+		Class:       config.Class,
+		Race:        config.Race,
+		Equipment:   config.GearSet.GearSet,
+		Consumes:    config.Consumes,
+		Buffs:       FullIndividualBuffs,
+		Glyphs:      config.Glyphs,
+		Profession1: proto.Profession_Engineering,
+
+		InFrontOfTarget:    config.InFrontOfTarget,
+		DistanceFromTarget: 30,
 	}
 
 	generator := &CombinedTestGenerator{

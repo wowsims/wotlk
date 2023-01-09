@@ -51,7 +51,7 @@ export const ArcaneTalents = {
 export const FireTalents = {
 	name: 'Fire',
 	data: SavedTalents.create({
-		talentsString: '23000503110003-0055030011302331053120321351',
+		talentsString: '23000503110003-0055030012303331053120301351',
 		glyphs: Glyphs.create({
 			major1: MageMajorGlyph.GlyphOfFireball,
 			major2: MageMajorGlyph.GlyphOfMoltenArmor,
@@ -65,7 +65,7 @@ export const FireTalents = {
 export const FrostfireTalents = {
 	name: 'Frostfire',
 	data: SavedTalents.create({
-		talentsString: '-0055030011302331053120321351-2033030310003',
+		talentsString: '-2305030012303331053120311351-023303031002',
 		glyphs: Glyphs.create({
 			major1: MageMajorGlyph.GlyphOfFrostfire,
 			major2: MageMajorGlyph.GlyphOfMoltenArmor,
@@ -95,6 +95,7 @@ export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
+	pyroblastDelayMs: 50,
 });
 
 export const DefaultFireOptions = MageOptions.create({
@@ -103,6 +104,8 @@ export const DefaultFireOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
+	igniteMunching: true,
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -122,6 +125,7 @@ export const DefaultFrostOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
 });
 
 export const DefaultFrostConsumes = Consumes.create({
@@ -133,10 +137,11 @@ export const DefaultFrostConsumes = Consumes.create({
 
 export const DefaultArcaneRotation = MageRotation.create({
 	type: RotationType.Arcane,
-	minBlastBeforeMissiles: 4,
-	num4StackBlastsToMissilesGamble: 12,
-	num4StackBlastsToEarlyMissiles: 6,
-	extraBlastsDuringFirstAp: 2,
+	only3ArcaneBlastStacksBelowManaPercent: 0.15,
+	blastWithoutMissileBarrageAboveManaPercent: 0.2,
+	extraBlastsDuringFirstAp: 0,
+	missileBarrageBelowArcaneBlastStacks: 0,
+	missileBarrageBelowManaPercent: 0,
 });
 
 export const DefaultArcaneOptions = MageOptions.create({
@@ -145,6 +150,7 @@ export const DefaultArcaneOptions = MageOptions.create({
 	focusMagicTarget: RaidTarget.create({
 		targetIndex: NO_TARGET,
 	}),
+	reactionTimeMs: 300,
 });
 
 export const DefaultArcaneConsumes = Consumes.create({

@@ -281,15 +281,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 4554.2229
-  tps: 2723.15226
+  dps: 4612.14038
+  tps: 2756.40831
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 4519.08212
-  tps: 2703.55973
+  dps: 4567.62995
+  tps: 2732.12703
  }
 }
 dps_results: {
@@ -946,8 +946,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 4277.09767
-  tps: 2599.88027
+  dps: 4286.982
+  tps: 2606.22249
  }
 }
 dps_results: {

@@ -100,7 +100,9 @@ var ArcaneTalents = &proto.MageTalents{
 }
 
 var fireMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MoltenArmor,
+	Armor:          proto.Mage_Options_MoltenArmor,
+	ReactionTimeMs: 300,
+	IgniteMunching: true,
 }
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
@@ -110,6 +112,7 @@ var PlayerOptionsFire = &proto.Player_Mage{
 			Type:                   proto.Mage_Rotation_Fire,
 			PrimaryFireSpell:       proto.Mage_Rotation_Fireball,
 			MaintainImprovedScorch: false,
+			PyroblastDelayMs:       50,
 		},
 	},
 }
@@ -125,7 +128,8 @@ var PlayerOptionsFireAOE = &proto.Player_Mage{
 }
 
 var frostMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MageArmor,
+	Armor:          proto.Mage_Options_MageArmor,
+	ReactionTimeMs: 300,
 }
 var PlayerOptionsFrost = &proto.Player_Mage{
 	Mage: &proto.Mage{
@@ -148,15 +152,20 @@ var PlayerOptionsFrostAOE = &proto.Player_Mage{
 }
 
 var arcaneMageOptions = &proto.Mage_Options{
-	Armor: proto.Mage_Options_MoltenArmor,
+	Armor:          proto.Mage_Options_MoltenArmor,
+	ReactionTimeMs: 300,
 }
 var PlayerOptionsArcane = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
-			Type:                   proto.Mage_Rotation_Arcane,
-			MinBlastBeforeMissiles: 4,
+			Type:                                       proto.Mage_Rotation_Arcane,
+			ExtraBlastsDuringFirstAp:                   2,
+			MissileBarrageBelowArcaneBlastStacks:       0,
+			MissileBarrageBelowManaPercent:             0.1,
+			BlastWithoutMissileBarrageAboveManaPercent: 0.2,
+			Only_3ArcaneBlastStacksBelowManaPercent:    0.15,
 		},
 	},
 }

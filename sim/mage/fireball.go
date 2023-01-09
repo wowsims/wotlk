@@ -21,7 +21,7 @@ func (mage *Mage) registerFireballSpell() {
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
-		MissileSpeed: 22,
+		MissileSpeed: 24,
 		ResourceType: stats.Mana,
 		BaseCost:     baseCost,
 
@@ -36,12 +36,15 @@ func (mage *Mage) registerFireballSpell() {
 		},
 
 		BonusCritRating: 0 +
-			float64(mage.Talents.CriticalMass)*2*core.CritRatingPerCritChance +
+			2*float64(mage.Talents.CriticalMass)*core.CritRatingPerCritChance +
 			float64(mage.Talents.ImprovedScorch)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),
-		DamageMultiplier: mage.spellDamageMultiplier *
-			(1 + 0.02*float64(mage.Talents.SpellImpact)) *
+		DamageMultiplier: 1 *
 			(1 + .04*float64(mage.Talents.TormentTheWeak)),
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.SpellImpact) +
+			.02*float64(mage.Talents.FirePower) +
+			core.TernaryFloat64(mage.HasSetBonus(ItemSetTempestRegalia, 4), .05, 0),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
@@ -65,8 +68,9 @@ func (mage *Mage) registerFireballSpell() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
 
-			DamageMultiplier: mage.Fireball.DamageMultiplier,
-			ThreatMultiplier: mage.Fireball.ThreatMultiplier,
+			DamageMultiplier:         mage.Fireball.DamageMultiplier,
+			DamageMultiplierAdditive: mage.Fireball.DamageMultiplierAdditive,
+			ThreatMultiplier:         mage.Fireball.ThreatMultiplier,
 		}),
 		Aura: target.RegisterAura(core.Aura{
 			Label:    "Fireball-" + strconv.Itoa(int(mage.Index)),
