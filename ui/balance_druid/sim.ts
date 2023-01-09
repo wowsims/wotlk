@@ -111,6 +111,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				gear: [
 					Presets.PRE_RAID_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET,
 				],
 			},
 		});
