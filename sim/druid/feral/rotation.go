@@ -46,7 +46,7 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	// If the swing/Maul resulted in an Omen proc, then schedule the
 	// next player decision based on latency.
 
-	if cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
+	if cat.Talents.OmenOfClarity && cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
 		kickTime := core.MaxDuration(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
