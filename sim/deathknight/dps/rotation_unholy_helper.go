@@ -84,6 +84,10 @@ func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, f
 }
 
 func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
+	if !dk.Ghoul.Pet.IsEnabled() {
+		return false
+	}
+
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
