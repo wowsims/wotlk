@@ -1,23 +1,21 @@
 import { IndividualSimUI, OtherDefaults } from '../core/individual_sim_ui.js';
-import { Raid as RaidProto } from '../core/proto/api.js';
-import { Party as PartyProto } from '../core/proto/api.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
 
-import { Encounter as EncounterProto } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Race } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
+import {
+	Class,
+	Consumes,
+	EquipmentSpec,
+	Faction,
+	Race,
+	Spec
+} from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { SpecOptions } from '../core/proto_utils/utils.js';
-import { SpecRotation } from '../core/proto_utils/utils.js';
-import { playerToSpec } from '../core/proto_utils/utils.js';
-import { specIconsLarge } from '../core/proto_utils/utils.js';
-import { specNames } from '../core/proto_utils/utils.js';
-import { talentTreeIcons } from '../core/proto_utils/utils.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
+import {
+	getSpecIcon,
+	specNames,
+	SpecOptions,
+	SpecRotation,
+} from '../core/proto_utils/utils.js';
+
 import { Player } from '../core/player.js';
 
 import * as TankDeathknightPresets from '../tank_deathknight/presets.js';
@@ -112,7 +110,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: TankDeathknightPresets.BloodTalents.data,
 		specOptions: TankDeathknightPresets.DefaultOptions,
 		consumes: TankDeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood DK',
+		defaultName: 'Blood',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -128,7 +126,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Blood Tank Death Knight',
-		iconUrl: talentTreeIcons[Class.ClassDeathknight][0],
+		iconUrl: getSpecIcon(Class.ClassDeathknight, 0),
 	},
 	{
 		spec: Spec.SpecDeathknight,
@@ -136,7 +134,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: DeathknightPresets.FrostTalents.data,
 		specOptions: DeathknightPresets.DefaultFrostOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Frost DK',
+		defaultName: 'Frost',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -153,7 +151,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
 		tooltip: 'Frost Death Knight',
-		iconUrl: talentTreeIcons[Class.ClassDeathknight][1],
+		iconUrl: getSpecIcon(Class.ClassDeathknight, 1),
 	},
 	{
 		spec: Spec.SpecDeathknight,
@@ -161,7 +159,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: DeathknightPresets.UnholyDualWieldTalents.data,
 		specOptions: DeathknightPresets.DefaultUnholyOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'DW Unholy DK',
+		defaultName: 'Unholy',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -177,8 +175,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
-		tooltip: 'Dual Wield Unholy DK',
-		iconUrl: talentTreeIcons[Class.ClassDeathknight][2],
+		tooltip: 'Dual-Wield Unholy DK',
+		iconUrl: getSpecIcon(Class.ClassDeathknight, 2),
 	},
 	//{
 	//	spec: Spec.SpecDeathknight,
@@ -212,7 +210,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		specOptions: BalanceDruidPresets.DefaultOptions,
 		consumes: BalanceDruidPresets.DefaultConsumes,
 		otherDefaults: BalanceDruidPresets.OtherDefaults,
-		defaultName: 'Balance Druid',
+		defaultName: 'Balance',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -228,7 +226,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
-		iconUrl: specIconsLarge[Spec.SpecBalanceDruid],
+		iconUrl: getSpecIcon(Class.ClassDruid, 0),
 	},
 	{
 		spec: Spec.SpecFeralDruid,
@@ -236,7 +234,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: FeralDruidPresets.StandardTalents.data,
 		specOptions: FeralDruidPresets.DefaultOptions,
 		consumes: FeralDruidPresets.DefaultConsumes,
-		defaultName: 'Cat Druid',
+		defaultName: 'Cat',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -252,7 +250,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
-		iconUrl: specIconsLarge[Spec.SpecFeralDruid],
+		iconUrl: getSpecIcon(Class.ClassDruid, 3),
 	},
 	{
 		spec: Spec.SpecFeralTankDruid,
@@ -260,7 +258,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: FeralTankDruidPresets.StandardTalents.data,
 		specOptions: FeralTankDruidPresets.DefaultOptions,
 		consumes: FeralTankDruidPresets.DefaultConsumes,
-		defaultName: 'Bear Druid',
+		defaultName: 'Bear',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -276,7 +274,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralTankDruid],
-		iconUrl: specIconsLarge[Spec.SpecFeralTankDruid],
+		iconUrl: getSpecIcon(Class.ClassDruid, 1),
 	},
 	{
 		spec: Spec.SpecRestorationDruid,
@@ -284,7 +282,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: RestorationDruidPresets.CelestialFocusTalents.data,
 		specOptions: RestorationDruidPresets.DefaultOptions,
 		consumes: RestorationDruidPresets.DefaultConsumes,
-		defaultName: 'Restoration Druid',
+		defaultName: 'Restoration',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -300,7 +298,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationDruid],
-		iconUrl: specIconsLarge[Spec.SpecRestorationDruid],
+		iconUrl: getSpecIcon(Class.ClassDruid, 2),
 	},
 	{
 		spec: Spec.SpecHunter,
@@ -308,7 +306,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HunterPresets.BeastMasteryTalents.data,
 		specOptions: HunterPresets.BMDefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
-		defaultName: 'BM Hunter',
+		defaultName: 'Beast Mastery',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -323,8 +321,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: HunterPresets.MM_P1_PRESET.gear,
 			},
 		},
-		tooltip: 'BM Hunter',
-		iconUrl: talentTreeIcons[Class.ClassHunter][0],
+		tooltip: 'Beast Mastery Hunter',
+		iconUrl: getSpecIcon(Class.ClassHunter, 0),
 	},
 	{
 		spec: Spec.SpecHunter,
@@ -332,7 +330,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HunterPresets.MarksmanTalents.data,
 		specOptions: HunterPresets.DefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
-		defaultName: 'MM Hunter',
+		defaultName: 'Marksmanship',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -347,8 +345,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: HunterPresets.MM_P1_PRESET.gear,
 			},
 		},
-		tooltip: 'MM Hunter',
-		iconUrl: talentTreeIcons[Class.ClassHunter][1],
+		tooltip: 'Marksmanship Hunter',
+		iconUrl: getSpecIcon(Class.ClassHunter, 1),
 	},
 	{
 		spec: Spec.SpecHunter,
@@ -356,7 +354,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HunterPresets.SurvivalTalents.data,
 		specOptions: HunterPresets.DefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
-		defaultName: 'SV Hunter',
+		defaultName: 'Survival',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceNightElf,
@@ -371,8 +369,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: HunterPresets.SV_P1_PRESET.gear,
 			},
 		},
-		tooltip: 'SV Hunter',
-		iconUrl: talentTreeIcons[Class.ClassHunter][2],
+		tooltip: 'Survival Hunter',
+		iconUrl: getSpecIcon(Class.ClassHunter, 2),
 	},
 	{
 		spec: Spec.SpecMage,
@@ -381,7 +379,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		specOptions: MagePresets.DefaultArcaneOptions,
 		consumes: MagePresets.DefaultArcaneConsumes,
 		otherDefaults: MagePresets.OtherDefaults,
-		defaultName: 'Arcane Mage',
+		defaultName: 'Arcane',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
@@ -397,7 +395,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Arcane Mage',
-		iconUrl: talentTreeIcons[Class.ClassMage][0],
+		iconUrl: getSpecIcon(Class.ClassMage, 0),
 	},
 	{
 		spec: Spec.SpecMage,
@@ -405,8 +403,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FireTalents.data,
 		specOptions: MagePresets.DefaultFireOptions,
 		consumes: MagePresets.DefaultFireConsumes,
-		otherDefaults: MagePresets.OtherDefaults,
-		defaultName: 'Fire Mage',
+		otherDefaults: MagePresets.OtherDefaults,		
+		defaultName: 'Fire',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
@@ -422,7 +420,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Fire Mage',
-		iconUrl: talentTreeIcons[Class.ClassMage][1],
+		iconUrl: getSpecIcon(Class.ClassMage, 1),
 	},
 	{
 		spec: Spec.SpecMage,
@@ -430,8 +428,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FrostTalents.data,
 		specOptions: MagePresets.DefaultFrostOptions,
 		consumes: MagePresets.DefaultFrostConsumes,
-		otherDefaults: MagePresets.OtherDefaults,
-		defaultName: 'Frost Mage',
+		otherDefaults: MagePresets.OtherDefaults,		
+		defaultName: 'Frost',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceGnome,
@@ -447,7 +445,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Frost Mage',
-		iconUrl: talentTreeIcons[Class.ClassMage][2],
+		iconUrl: getSpecIcon(Class.ClassMage, 2),
 	},
 	{
 		spec: Spec.SpecRogue,
@@ -455,7 +453,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: RoguePresets.AssassinationTalents.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
-		defaultName: 'Assassination Rogue',
+		defaultName: 'Assassination',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -471,7 +469,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Assassination Rogue',
-		iconUrl: talentTreeIcons[Class.ClassRogue][0],
+		iconUrl: getSpecIcon(Class.ClassRogue, 0),
 	},
 	{
 		spec: Spec.SpecRogue,
@@ -479,7 +477,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: RoguePresets.CombatTalents.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
-		defaultName: 'Combat Rogue',
+		defaultName: 'Combat',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -495,7 +493,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Combat Rogue',
-		iconUrl: talentTreeIcons[Class.ClassRogue][1],
+		iconUrl: getSpecIcon(Class.ClassRogue, 1),
 	},
 	{
 		spec: Spec.SpecElementalShaman,
@@ -503,7 +501,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: ElementalShamanPresets.StandardTalents.data,
 		specOptions: ElementalShamanPresets.DefaultOptions,
 		consumes: ElementalShamanPresets.DefaultConsumes,
-		defaultName: 'Ele Shaman',
+		defaultName: 'Elemental',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDraenei,
@@ -519,7 +517,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
-		iconUrl: specIconsLarge[Spec.SpecElementalShaman],
+		iconUrl: getSpecIcon(Class.ClassShaman, 0),
 	},
 	{
 		spec: Spec.SpecEnhancementShaman,
@@ -527,7 +525,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: EnhancementShamanPresets.StandardTalents.data,
 		specOptions: EnhancementShamanPresets.DefaultOptions,
 		consumes: EnhancementShamanPresets.DefaultConsumes,
-		defaultName: 'Enh Shaman',
+		defaultName: 'Enhancement',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDraenei,
@@ -543,7 +541,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecEnhancementShaman],
-		iconUrl: specIconsLarge[Spec.SpecEnhancementShaman],
+		iconUrl: getSpecIcon(Class.ClassShaman, 1),
 	},
 	{
 		spec: Spec.SpecRestorationShaman,
@@ -551,7 +549,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: RestorationShamanPresets.RaidHealingTalents.data,
 		specOptions: RestorationShamanPresets.DefaultOptions,
 		consumes: RestorationShamanPresets.DefaultConsumes,
-		defaultName: 'Resto Shaman',
+		defaultName: 'Restoration',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDraenei,
@@ -567,7 +565,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationShaman],
-		iconUrl: specIconsLarge[Spec.SpecRestorationShaman],
+		iconUrl: getSpecIcon(Class.ClassShaman, 2),
 	},
 	{
 		spec: Spec.SpecHealingPriest,
@@ -575,7 +573,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HealingPriestPresets.DiscTalents.data,
 		specOptions: HealingPriestPresets.DefaultOptions,
 		consumes: HealingPriestPresets.DefaultConsumes,
-		defaultName: 'Disc Priest',
+		defaultName: 'Discipline',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDwarf,
@@ -590,8 +588,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: HealingPriestPresets.DISC_P1_PRESET.gear,
 			},
 		},
-		tooltip: 'Disc Priest',
-		iconUrl: talentTreeIcons[Class.ClassPriest][0],
+		tooltip: 'Discipline Priest',
+		iconUrl: getSpecIcon(Class.ClassPriest, 0),
 	},
 	{
 		spec: Spec.SpecHealingPriest,
@@ -599,7 +597,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HealingPriestPresets.HolyTalents.data,
 		specOptions: HealingPriestPresets.DefaultOptions,
 		consumes: HealingPriestPresets.DefaultConsumes,
-		defaultName: 'Holy Priest',
+		defaultName: 'Holy',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDwarf,
@@ -615,7 +613,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Holy Priest',
-		iconUrl: talentTreeIcons[Class.ClassPriest][1],
+		iconUrl: getSpecIcon(Class.ClassPriest, 1),
 	},
 	{
 		spec: Spec.SpecShadowPriest,
@@ -623,7 +621,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: ShadowPriestPresets.StandardTalents.data,
 		specOptions: ShadowPriestPresets.DefaultOptions,
 		consumes: ShadowPriestPresets.DefaultConsumes,
-		defaultName: 'Shadow Priest',
+		defaultName: 'Shadow',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDwarf,
@@ -639,7 +637,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
-		iconUrl: specIconsLarge[Spec.SpecShadowPriest],
+		iconUrl: getSpecIcon(Class.ClassPriest, 2),
 	},
 	{
 		spec: Spec.SpecSmitePriest,
@@ -647,7 +645,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: SmitePriestPresets.StandardTalents.data,
 		specOptions: SmitePriestPresets.DefaultOptions,
 		consumes: SmitePriestPresets.DefaultConsumes,
-		defaultName: 'Smite Priest',
+		defaultName: 'Smite',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceDwarf,
@@ -663,7 +661,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: specNames[Spec.SpecSmitePriest],
-		iconUrl: specIconsLarge[Spec.SpecSmitePriest],
+		iconUrl: getSpecIcon(Class.ClassPriest, 3),
 	},
 	{
 		spec: Spec.SpecWarrior,
@@ -671,7 +669,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: WarriorPresets.ArmsTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
-		defaultName: 'Arms Warrior',
+		defaultName: 'Arms',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -687,7 +685,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Arms Warrior',
-		iconUrl: talentTreeIcons[Class.ClassWarrior][0],
+		iconUrl: getSpecIcon(Class.ClassWarrior, 0),
 	},
 	{
 		spec: Spec.SpecWarrior,
@@ -695,7 +693,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: WarriorPresets.FuryTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
-		defaultName: 'Fury Warrior',
+		defaultName: 'Fury',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -711,7 +709,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Fury Warrior',
-		iconUrl: talentTreeIcons[Class.ClassWarrior][1],
+		iconUrl: getSpecIcon(Class.ClassWarrior, 1),
 	},
 	{
 		spec: Spec.SpecProtectionWarrior,
@@ -719,7 +717,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: ProtectionWarriorPresets.StandardTalents.data,
 		specOptions: ProtectionWarriorPresets.DefaultOptions,
 		consumes: ProtectionWarriorPresets.DefaultConsumes,
-		defaultName: 'Prot Warrior',
+		defaultName: 'Protection',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -735,7 +733,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Protection Warrior',
-		iconUrl: talentTreeIcons[Class.ClassWarrior][2],
+		iconUrl: getSpecIcon(Class.ClassWarrior, 2),
 	},
 	{
 		spec: Spec.SpecHolyPaladin,
@@ -743,7 +741,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: HolyPaladinPresets.StandardTalents.data,
 		specOptions: HolyPaladinPresets.DefaultOptions,
 		consumes: HolyPaladinPresets.DefaultConsumes,
-		defaultName: 'Holy Paladin',
+		defaultName: 'Holy',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -759,7 +757,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Holy Paladin',
-		iconUrl: talentTreeIcons[Class.ClassPaladin][0],
+		iconUrl: getSpecIcon(Class.ClassPaladin, 0),
 	},
 	{
 		spec: Spec.SpecProtectionPaladin,
@@ -767,7 +765,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: ProtectionPaladinPresets.GenericAoeTalents.data,
 		specOptions: ProtectionPaladinPresets.DefaultOptions,
 		consumes: ProtectionPaladinPresets.DefaultConsumes,
-		defaultName: 'Prot Paladin',
+		defaultName: 'Protection',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -783,7 +781,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			},
 		},
 		tooltip: 'Protection Paladin',
-		iconUrl: talentTreeIcons[Class.ClassPaladin][1],
+		iconUrl: getSpecIcon(Class.ClassPaladin, 1),
 	},
 	{
 		spec: Spec.SpecRetributionPaladin,
@@ -791,7 +789,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: RetributionPaladinPresets.AuraMasteryTalents.data,
 		specOptions: RetributionPaladinPresets.DefaultOptions,
 		consumes: RetributionPaladinPresets.DefaultConsumes,
-		defaultName: 'Ret Paladin',
+		defaultName: 'Retribution',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -814,8 +812,8 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				5: RetributionPaladinPresets.P5_PRESET.gear,
 			},
 		},
-		tooltip: 'Ret Paladin',
-		iconUrl: talentTreeIcons[Class.ClassPaladin][2],
+		tooltip: 'Retribution Paladin',
+		iconUrl: getSpecIcon(Class.ClassPaladin, 2),
 	},
 	{
 		spec: Spec.SpecWarlock,
@@ -823,7 +821,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: WarlockPresets.AfflictionTalents.data,
 		specOptions: WarlockPresets.AfflictionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Affli Warlock',
+		defaultName: 'Affliction',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -845,7 +843,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
 		tooltip: 'Affliction Warlock',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][0],
+		iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 	},
 	{
 		spec: Spec.SpecWarlock,
@@ -853,7 +851,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: WarlockPresets.DemonologyTalents.data,
 		specOptions: WarlockPresets.DemonologyOptions,
 		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Demo Warlock',
+		defaultName: 'Demonology',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -875,7 +873,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
 		tooltip: 'Demonology Warlock',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][1],
+		iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 	},
 	{
 		spec: Spec.SpecWarlock,
@@ -883,7 +881,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: WarlockPresets.DestructionTalents.data,
 		specOptions: WarlockPresets.DestructionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
-		defaultName: 'Destro Warlock',
+		defaultName: 'Destruction',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -905,7 +903,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
 		tooltip: 'Destruction Warlock',
-		iconUrl: talentTreeIcons[Class.ClassWarlock][2],
+		iconUrl: getSpecIcon(Class.ClassWarlock, 2),
 	},
 ];
 

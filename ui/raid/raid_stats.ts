@@ -1,6 +1,5 @@
 import {
 	Class,
-	Race,
 	RaidBuffs,
 	Spec,
 } from '../core/proto/common.js';
@@ -29,8 +28,7 @@ import { Warlock_Rotation_Curse as WarlockCurse, Warlock_Options_Summon as Warlo
 import { WarriorShout, Warrior_Rotation_SunderArmor as SunderArmor } from '../core/proto/warrior.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
-
-declare var tippy: any;
+import { Tooltip } from 'bootstrap';
 
 interface RaidStatsOptions {
 	sections: Array<RaidStatsSectionOptions>,
@@ -68,7 +66,9 @@ export class RaidStats extends Component {
 			sectionElem.classList.add('raid-stats-section');
 			this.rootElem.appendChild(sectionElem);
 			sectionElem.innerHTML = `
-				<div class="raid-stats-section-label"></span>${section.label}</span></div>
+				<div class="raid-stats-section-header">
+					<label class="raid-stats-section-label form-label">${section.label}</label>
+				</div>
 				<div class="raid-stats-section-content"></div>
 			`;
 			const contentElem = sectionElem.getElementsByClassName('raid-stats-section-content')[0] as HTMLDivElement;
@@ -91,25 +91,37 @@ class RaidStatsCategory extends Component {
 	private readonly tooltipElem: HTMLElement;
 
 	constructor(parent: HTMLElement, raidSimUI: RaidSimUI, options: RaidStatsCategoryOptions) {
-		super(parent, 'raid-stats-category');
+		super(parent, 'raid-stats-category-root');
 		this.raidSimUI = raidSimUI;
 		this.options = options;
+
 		this.rootElem.innerHTML = `
-			<span class="raid-stats-category-counter"></span>
-			<span class="raid-stats-category-label">${options.label}</span>
+			<a href="javascript:void(0)" role="button" class="raid-stats-category">
+				<span class="raid-stats-category-counter"></span>
+				<span class="raid-stats-category-label">${options.label}</span>
+			</a>
 		`;
 
-		this.counterElem = this.rootElem.getElementsByClassName('raid-stats-category-counter')[0] as HTMLElement;
+		this.counterElem = this.rootElem.querySelector('.raid-stats-category-counter') as HTMLElement;
 		this.tooltipElem = document.createElement('div');
-		this.tooltipElem.classList.add('raid-stats-category-tooltip');
+		this.tooltipElem.innerHTML = `
+			<label class="raid-stats-category-label">${options.label}</label>
+		`
 
 		this.effects = options.effects.map(opt => new RaidStatsEffect(this.tooltipElem, raidSimUI, opt));
 
 		if (options.effects.length != 1 || options.effects[0].playerData?.class) {
-			tippy(this.rootElem, {
-				content: this.tooltipElem,
-				allowHTML: true,
-			});
+			const statsLink = this.rootElem.querySelector('.raid-stats-category') as HTMLElement;
+
+			statsLink.setAttribute('data-bs-toggle', 'tooltip');
+			statsLink.setAttribute('data-bs-placement', 'right');
+			statsLink.setAttribute('data-bs-html', 'true');
+
+			// Using the title option here because outerHTML sanitizes and filters out the img src options
+			Tooltip.getOrCreateInstance(statsLink, {
+				customClass: 'raid-stats-category-tooltip',
+				title: this.tooltipElem,
+			})
 		}
 	}
 
@@ -118,10 +130,13 @@ class RaidStatsCategory extends Component {
 
 		const total = sum(this.effects.map(effect => effect.count));
 		this.counterElem.textContent = String(total);
+
+		const statsLink = this.rootElem.querySelector('.raid-stats-category') as HTMLElement;
+
 		if (total == 0) {
-			this.rootElem.classList.remove('active');
+			statsLink?.classList.remove('active');
 		} else {
-			this.rootElem.classList.add('active');
+			statsLink?.classList.add('active');
 		}
 	}
 }
@@ -147,20 +162,17 @@ class RaidStatsEffect extends Component {
 			<img class="raid-stats-effect-icon"></img>
 			<span class="raid-stats-effect-label">${options.label}</span>
 		`;
-		this.counterElem = this.rootElem.getElementsByClassName('raid-stats-effect-counter')[0] as HTMLElement;
+		this.counterElem = this.rootElem.querySelector('.raid-stats-effect-counter') as HTMLElement;
 
 		if (this.options.playerData?.class) {
-			const labelElem = this.rootElem.getElementsByClassName('raid-stats-effect-label')[0] as HTMLElement;
+			const labelElem = this.rootElem.querySelector('.raid-stats-effect-label') as HTMLElement;
 			const playerCssClass = textCssClassForClass(this.options.playerData.class);
-			this.counterElem.classList.add(playerCssClass);
 			labelElem.classList.add(playerCssClass);
 		}
 
-		const iconElem = this.rootElem.getElementsByClassName('raid-stats-effect-icon')[0] as HTMLImageElement;
+		const iconElem = this.rootElem.querySelector('.raid-stats-effect-icon') as HTMLImageElement;
 		if (options.actionId) {
-			options.actionId.fill().then(actionId => {
-				iconElem.src = actionId.iconUrl;
-			});
+			options.actionId.fill().then(actionId => iconElem.src = actionId.iconUrl);
 		} else {
 			iconElem.remove();
 		}
@@ -471,6 +483,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {sections: [
 					{
 						label: 'Blessing of Might',
 						actionId: ActionId.fromSpellId(48934),
+						playerData: playerClass(Class.ClassPaladin),
 					},
 					{
 						label: 'Improved Battle Shout',

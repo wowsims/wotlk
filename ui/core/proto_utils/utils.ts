@@ -211,81 +211,59 @@ export const classColors: Record<Class, string> = {
 	[Class.ClassDeathknight]: '#c41e3a'
 }
 
-export const specIconsLarge: Record<Spec, string> = {
-	[Spec.SpecBalanceDruid]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg',
-	[Spec.SpecFeralDruid]: 'https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg',
-	[Spec.SpecFeralTankDruid]: 'https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg',
-	[Spec.SpecRestorationDruid]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg',
-	[Spec.SpecElementalShaman]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg',
-	[Spec.SpecEnhancementShaman]: 'https://wow.zamimg.com/images/wow/icons/large/ability_shaman_stormstrike.jpg',
-	[Spec.SpecRestorationShaman]: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_magicimmunity.jpg',
-	[Spec.SpecHunter]: 'https://wow.zamimg.com/images/wow/icons/large/ability_marksmanship.jpg',
-	[Spec.SpecMage]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg',
-	[Spec.SpecRogue]: 'https://wow.zamimg.com/images/wow/icons/large/classicon_rogue.jpg',
-	[Spec.SpecHolyPaladin]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg',
-	[Spec.SpecProtectionPaladin]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg',
-	[Spec.SpecRetributionPaladin]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg',
-	[Spec.SpecHealingPriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg',
-	[Spec.SpecShadowPriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg',
-	[Spec.SpecSmitePriest]: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holysmite.jpg',
-	[Spec.SpecWarlock]: 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg',
-	[Spec.SpecWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg',
-	[Spec.SpecProtectionWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg',
-	[Spec.SpecDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
-	[Spec.SpecTankDeathknight]: 'https://wow.zamimg.com/images/wow/icons/medium/class_deathknight.jpg',
-};
-
 export const talentTreeIcons: Record<Class, Array<string>> = {
 	[Class.ClassUnknown]: [],
+	[Class.ClassDeathknight]: [
+		'spell_deathknight_bloodpresence.jpg',
+		'spell_deathknight_frostpresence.jpg',
+		'spell_deathknight_unholypresence.jpg',
+	],
 	[Class.ClassDruid]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_starfall.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_racial_bearform.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_healingtouch.jpg',
+		'spell_nature_starfall.jpg',
+		'ability_racial_bearform.jpg',
+		'spell_nature_healingtouch.jpg',
+		'ability_druid_catform.jpg',
 	],
 	[Class.ClassHunter]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_beasttaming.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_marksmanship.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_swiftstrike.jpg',
+		'ability_hunter_beasttaming.jpg',
+		'ability_marksmanship.jpg',
+		'ability_hunter_swiftstrike.jpg',
 	],
 	[Class.ClassMage]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_magicalsentry.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_fire_firebolt02.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_frost_frostbolt02.jpg',
+		'spell_holy_magicalsentry.jpg',
+		'spell_fire_firebolt02.jpg',
+		'spell_frost_frostbolt02.jpg',
 	],
 	[Class.ClassPaladin]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_holybolt.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_devotionaura.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_auraoflight.jpg',
+		'spell_holy_holybolt.jpg',
+		'spell_holy_devotionaura.jpg',
+		'spell_holy_auraoflight.jpg',
 	],
 	[Class.ClassPriest]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_wordfortitude.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_holy_guardianspirit.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_shadow_shadowwordpain.jpg',
+		'spell_holy_wordfortitude.jpg',
+		'spell_holy_guardianspirit.jpg',
+		'spell_shadow_shadowwordpain.jpg',
+		'spell_holy_holysmite.jpg',
 	],
 	[Class.ClassRogue]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_rogue_eviscerate.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_backstab.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_stealth.jpg',
+		'ability_rogue_eviscerate.jpg',
+		'ability_backstab.jpg',
+		'ability_stealth.jpg',
 	],
 	[Class.ClassShaman]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_lightning.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_shaman_stormstrike.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_magicimmunity.jpg',
+		'spell_nature_lightning.jpg',
+		'ability_shaman_stormstrike.jpg',
+		'spell_nature_magicimmunity.jpg',
 	],
 	[Class.ClassWarlock]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_shadow_deathcoil.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_shadow_metamorphosis.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_shadow_rainoffire.jpg',
+		'spell_shadow_deathcoil.jpg',
+		'spell_shadow_metamorphosis.jpg',
+		'spell_shadow_rainoffire.jpg',
 	],
 	[Class.ClassWarrior]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_savageblow.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/ability_warrior_innerrage.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/inv_shield_06.jpg',
-	],
-	[Class.ClassDeathknight]: [
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_bloodpresence.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_frostpresence.jpg',
-		'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_unholypresence.jpg',
+		'ability_warrior_savageblow.jpg',
+		'ability_warrior_innerrage.jpg',
+		'inv_shield_06.jpg',
 	],
 };
 
@@ -332,10 +310,33 @@ export function getTalentTree(talentsString: string): number {
 	return maxIndex(points) || 0;
 }
 
-// Returns the index of the talent tree (0, 1, or 2) that has the most points.
-export function getTalentTreeIcon(spec: Spec, talentsString: string): string {
-	const talentTreeIdx = getTalentTree(talentsString);
-	return talentTreeIcons[specToClass[spec]][talentTreeIdx];
+enum IconSizes {
+	Small = 'small',
+	Medium = 'medium',
+	Large = 'large',
+}
+
+// Returns the icon for a given spec
+export function getSpecIcon(klass: Class, specNumber: number, size: IconSizes = IconSizes.Medium): string {
+	const fileName = talentTreeIcons[klass][specNumber];
+		
+	return `https://wow.zamimg.com/images/wow/icons/${size}/${fileName}`;
+}
+
+// Returns the icon for a given spec based on talent point allocation.
+export function getTalentTreeIcon(spec: Spec, talentsString: string, size: IconSizes = IconSizes.Medium): string {
+	let specNumber = getTalentTree(talentsString);
+
+	// Cat Druid and Smite Priest are being considered a "4th spec"
+	if (spec == Spec.SpecFeralDruid)
+		specNumber += 2;
+	
+	if (spec == Spec.SpecSmitePriest)
+		specNumber += 3;
+	
+	const fileName = talentTreeIcons[specToClass[spec]][specNumber];
+		
+	return `https://wow.zamimg.com/images/wow/icons/${size}/${fileName}`;
 }
 
 // Gets the URL for the individual sim corresponding to the given spec.
@@ -348,8 +349,12 @@ export function getSpecSiteUrl(spec: Spec): string {
 }
 export const raidSimSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/raid/`).toString();
 
-export function textCssClassForClass(clazz: Class): string {
-	return `text-${classNames[clazz].toLowerCase().replace(/\s/g, '-')}`;
+export function cssClassForClass(klass: Class): string {
+	return classNames[klass].toLowerCase().replace(/\s/g, '-');
+}
+
+export function textCssClassForClass(klass: Class): string {
+	return `text-${cssClassForClass(klass)}`;
 }
 export function textCssClassForSpec(spec: Spec): string {
 	return textCssClassForClass(specToClass[spec]);

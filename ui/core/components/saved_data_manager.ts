@@ -132,7 +132,6 @@ export class SavedDataManager<ModObject, T> extends Component {
 		if (config.tooltip) {
 			dataElem.setAttribute('data-bs-toggle', 'tooltip');
 			dataElem.setAttribute('data-bs-title', config.tooltip);
-			dataElem.setAttribute('data-bs-trigger', 'hover');
 			dataElem.setAttribute('data-bs-placement', 'bottom');
 			dataElem.setAttribute('data-bs-html', 'true');
 			Tooltip.getOrCreateInstance(dataElem);
