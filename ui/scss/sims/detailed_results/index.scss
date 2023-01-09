@@ -13,10 +13,15 @@ body {
 	max-height: 100vh;
 	color: var(--main-text-color);
 }
+
 body.new-tab {
 	background-image:
 		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
 		var(--theme-background-image);
+
+	.dr-root {
+		padding: $gap-width $gap-width * 2;
+	}
 }
 
 .all-players .single-player-only {
