@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
+	"os"
 	"strings"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -63,6 +67,12 @@ func main() {
 
 	for _, spellId := range database.SharedSpellsIcons {
 		db.AddSpellIcon(spellId, spellTooltips)
+	}
+
+	for _, spellIds := range GetAllTalentSpellIds(&inputsDir) {
+		for _, spellId := range spellIds {
+			db.AddSpellIcon(spellId, spellTooltips)
+		}
 	}
 
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
@@ -178,4 +188,86 @@ func simmableGemFilter(_ int32, gem *proto.UIGem) bool {
 		return false
 	}
 	return true
+}
+
+type TalentConfig struct {
+	FieldName string `json:"fieldName"`
+	// Spell ID for each rank of this talent.
+	// Omitted ranks will be inferred by incrementing from the last provided rank.
+	SpellIds  []int32 `json:"spellIds"`
+	MaxPoints int32   `json:"maxPoints"`
+}
+
+type TalentTreeConfig struct {
+	Name          string         `json:"name"`
+	BackgroundUrl string         `json:"backgroundUrl"`
+	Talents       []TalentConfig `json:"talents"`
+}
+
+func getSpellIdsFromTalentJson(infile *string) []int32 {
+	data, err := os.ReadFile(*infile)
+	if err != nil {
+		log.Fatalf("failed to load talent json file: %s", err)
+	}
+
+	var buf bytes.Buffer
+	err = json.Compact(&buf, []byte(data))
+	if err != nil {
+		log.Fatalf("failed to compact json: %s", err)
+	}
+
+	var talents []TalentTreeConfig
+
+	err = json.Unmarshal(buf.Bytes(), &talents)
+	if err != nil {
+		log.Fatalf("failed to parse talent to json %s", err)
+	}
+
+	spellIds := make([]int32, 0)
+
+	for _, tree := range talents {
+		for _, talent := range tree.Talents {
+			spellIds = append(spellIds, talent.SpellIds...)
+
+			// Infer omitted spell IDs.
+			if len(talent.SpellIds) < int(talent.MaxPoints) {
+				curSpellId := talent.SpellIds[len(talent.SpellIds)-1]
+				for i := len(talent.SpellIds); i < int(talent.MaxPoints); i++ {
+					curSpellId++
+					spellIds = append(spellIds, curSpellId)
+				}
+			}
+		}
+	}
+
+	return spellIds
+}
+
+func GetAllTalentSpellIds(inputsDir *string) map[string][]int32 {
+	talentsDir := fmt.Sprintf("%s/../../ui/core/talents/trees", *inputsDir)
+	specFiles := []string{
+		"deathknight.json",
+		"druid.json",
+		"hunter.json",
+		"hunter_cunning.json",
+		"hunter_ferocity.json",
+		"hunter_tenacity.json",
+		"mage.json",
+		"paladin.json",
+		"priest.json",
+		"rogue.json",
+		"shaman.json",
+		"warlock.json",
+		"warrior.json",
+	}
+
+	ret_db := make(map[string][]int32, 0)
+
+	for _, specFile := range specFiles {
+		specPath := fmt.Sprintf("%s/%s", talentsDir, specFile)
+		ret_db[specFile[:len(specFile)-5]] = getSpellIdsFromTalentJson(&specPath)
+	}
+
+	return ret_db
+
 }
