@@ -297,7 +297,9 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		}
 	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
 		dk.RotationSequence.Clear()
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_Haste_Snapshot).
+			NewAction(dk.RotationActionCallback_AOTD)
 
 		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
@@ -305,6 +307,12 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 		}
 	}
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_Haste_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+	s.Advance()
+	return sim.CurrentTime
 }
 
 func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap bool) {

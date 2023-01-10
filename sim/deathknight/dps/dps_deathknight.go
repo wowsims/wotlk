@@ -5,7 +5,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
-	"time"
 )
 
 func RegisterDpsDeathknight() {
@@ -189,16 +188,25 @@ func (dk *DpsDeathknight) Initialize() {
 func (dk *DpsDeathknight) setupProcTrackers() {
 	snapshotManager := dk.ur.gargoyleSnapshot
 
-	snapshotManager.AddProc(40211, "Potion of Speed", true)
-	snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
-	snapshotManager.AddProc(26297, "Berserking (Troll)", true)
-	snapshotManager.AddProc(33697, "Blood Fury", true)
+	// Don't need to wait for haste snapshots anymore
+	if !dk.Rotation.NerfedGargoyle {
+		snapshotManager.AddProc(40211, "Potion of Speed", true)
+		snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
+		snapshotManager.AddProc(26297, "Berserking (Troll)", true)
+		snapshotManager.AddProc(33697, "Blood Fury", true)
+
+		snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
+		snapshotManager.AddProc(59626, "Black Magic Proc", false)
+
+		snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
+		snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
+		snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
+		snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
+		snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
+		snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
+	}
 
 	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
-	snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
-	snapshotManager.AddProc(59620, "Berserking MH Proc", false)
-	snapshotManager.AddProc(59620, "Berserking OH Proc", false)
-	snapshotManager.AddProc(59626, "Black Magic Proc", false)
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 
@@ -212,17 +220,11 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 	snapshotManager.AddProc(71561, "Deathbringer's Will H Strength Proc", false)
 	snapshotManager.AddProc(71560, "Deathbringer's Will H Haste Proc", false)
 
-	snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
-	snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
 	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)
 	snapshotManager.AddProc(40767, "Sonic Booster Proc", false)
-	snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
-	snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
 	snapshotManager.AddProc(44914, "Anvil of Titans Proc", false)
 	snapshotManager.AddProc(45286, "Pyrite Infuser Proc", false)
 	snapshotManager.AddProc(45522, "Blood of the Old God Proc", false)
-	snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
-	snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
 	snapshotManager.AddProc(47214, "Banner of Victory Proc", false)
 	snapshotManager.AddProc(49074, "Coren's Chromium Coaster Proc", false)
 	snapshotManager.AddProc(50342, "Whispering Fanged Skull Proc", false)
@@ -309,8 +311,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 			if dk.Rotation.NerfedGargoyle {
 				aura := dk.GetAura("Summon Gargoyle")
 
-				// Activate if Gargoyle has started casting, or will start soon
-				if aura != nil && aura.IsActive() && sim.CurrentTime-aura.StartedAt() >= dk.GargoyleSummonDelay-500*time.Millisecond {
+				if aura != nil && aura.IsActive() {
 					return true
 				}
 
