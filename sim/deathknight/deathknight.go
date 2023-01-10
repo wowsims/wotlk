@@ -418,7 +418,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 
 	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)
 	dk.OnGargoyleStartFirstCast = func() {}
-	dk.GargoyleSummonDelay = time.Millisecond * 1000
+	dk.GargoyleSummonDelay = time.Millisecond * 2500
 
 	dk.ArmyGhoul = make([]*GhoulPet, 8)
 	for i := 0; i < 8; i++ {
