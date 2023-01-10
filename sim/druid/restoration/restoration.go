@@ -27,14 +27,14 @@ func NewRestorationDruid(character core.Character, options *proto.Player) *Resto
 	restoOptions := options.GetRestorationDruid()
 	selfBuffs := druid.SelfBuffs{}
 
-	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
-	if restoOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = restoOptions.Options.InnervateTarget
+	resto := &RestorationDruid{
+		Druid:    druid.New(character, druid.Tree, selfBuffs, options.TalentsString),
+		Rotation: restoOptions.Rotation,
 	}
 
-	resto := &RestorationDruid{
-		Druid:    druid.New(character, druid.Tree, selfBuffs, restoOptions.Talents),
-		Rotation: restoOptions.Rotation,
+	resto.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	if restoOptions.Options.InnervateTarget != nil {
+		resto.SelfBuffs.InnervateTarget = restoOptions.Options.InnervateTarget
 	}
 
 	resto.EnableResumeAfterManaWait(resto.tryUseGCD)

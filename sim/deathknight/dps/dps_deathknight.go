@@ -40,7 +40,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 	dk := player.GetDeathknight()
 
 	dpsDk := &DpsDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, dk.Talents, deathknight.DeathknightInputs{
+		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			StartingRunicPower:  dk.Options.StartingRunicPower,
 			PrecastGhoulFrenzy:  dk.Options.PrecastGhoulFrenzy,
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
@@ -53,7 +53,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			UseAMS:              dk.Rotation.UseAms,
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
-		}),
+		}, player.TalentsString),
 		Rotation: dk.Rotation,
 	}
 

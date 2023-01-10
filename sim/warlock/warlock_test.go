@@ -11,58 +11,61 @@ func init() {
 	RegisterWarlock()
 }
 
-func TestWarlock(t *testing.T) {
+func TestAffliction(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     AfflictionTalents,
+		Glyphs:      AfflictionGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
-		OtherSpecOptions: []core.SpecOptionsCombo{
-			{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
-			{Label: "Destro Warlock", SpecOptions: DefaultDestroWarlock},
-		},
 
-		Glyphs:   defaultAfflictionGlyphs,
-		Consumes: FullConsumes,
-
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeDagger,
-			},
-			HandTypes: []proto.HandType{
-				proto.HandType_HandTypeOffHand,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
 }
 
-// func BenchmarkSimulate(b *testing.B) {
-// 	rsr := &proto.RaidSimRequest{
-// 		Raid: core.SinglePlayerRaidProto(
-// 			&proto.Player{
-// 				Race:      proto.Race_RaceBloodElf,
-// 				Class:     proto.Class_ClassWarlock,
-// 				Equipment: Phase4Gear,
-// 				Consumes:  FullConsumes,
-// 				Spec:      DefaultOptions,
-// 				Buffs:     FullIndividualBuffs,
-// 			},
-// 			FullPartyBuffs,
-// 			FullRaidBuffs),
-// 		Encounter: &proto.Encounter{
-// 			Duration: 300,
-// 			Targets: []*proto.Target{
-// 				FullDebuffTarget,
-// 			},
-// 		},
-// 		SimOptions: core.AverageDefaultSimTestOptions,
-// 	}
+func TestDemonology(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class: proto.Class_ClassWarlock,
+		Race:  proto.Race_RaceOrc,
 
-// 	core.RaidBenchmark(b, rsr)
-// }
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     DemonologyTalents,
+		Glyphs:      DemonologyGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
+
+		ItemFilter: ItemFilter,
+	}))
+}
+
+func TestDestruction(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class: proto.Class_ClassWarlock,
+		Race:  proto.Race_RaceOrc,
+
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     DestructionTalents,
+		Glyphs:      DestructionGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Destruction Warlock", SpecOptions: DefaultDestroWarlock},
+
+		ItemFilter: ItemFilter,
+	}))
+}
+
+var ItemFilter = core.ItemFilter{
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeSword,
+		proto.WeaponType_WeaponTypeDagger,
+	},
+	HandTypes: []proto.HandType{
+		proto.HandType_HandTypeOffHand,
+	},
+	ArmorType: proto.ArmorType_ArmorTypeCloth,
+	RangedWeaponTypes: []proto.RangedWeaponType{
+		proto.RangedWeaponType_RangedWeaponTypeWand,
+	},
+}

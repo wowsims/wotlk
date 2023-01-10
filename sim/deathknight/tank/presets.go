@@ -5,41 +5,18 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var BloodTankTalents = "005510153330330220102013-3050505100023101-002"
+var Glyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfDarkCommand),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfVampiricBlood),
+}
+
 var PlayerOptionsBloodTank = &proto.Player_TankDeathknight{
 	TankDeathknight: &proto.TankDeathknight{
-		Talents:  BloodTankTalents,
 		Options:  deathKnightOptions,
 		Rotation: bloodTankRotation,
 	},
-}
-
-var BloodTankTalents = &proto.DeathknightTalents{
-	BladeBarrier:         5,
-	BladedArmor:          5,
-	ScentOfBlood:         1,
-	RuneTap:              true,
-	DarkConviction:       5,
-	DeathRuneMastery:     3,
-	ImprovedRuneTap:      3,
-	SpellDeflection:      3,
-	BloodyStrikes:        3,
-	VeteranOfTheThirdWar: 3,
-	BloodyVengeance:      2,
-	AbominationsMight:    2,
-	Hysteria:             true,
-	ImprovedDeathStrike:  2,
-	VampiricBlood:        true,
-	WillOfTheNecropolis:  3,
-	ImprovedIcyTouch:     3,
-	Toughness:            5,
-	BlackIce:             5,
-	IcyTalons:            5,
-	Lichborne:            true,
-	EndlessWinter:        2,
-	FrigidDreadplate:     3,
-	GlacierRot:           2,
-	ImprovedIcyTalons:    true,
-	Anticipation:         2,
 }
 
 var bloodTankRotation = &proto.TankDeathknight_Rotation{
@@ -93,12 +70,6 @@ var FullDebuffs = &proto.Debuffs{
 	BloodFrenzy:        true,
 	EbonPlaguebringer:  true,
 	HeartOfTheCrusader: true,
-}
-
-var Glyphs = &proto.Glyphs{
-	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfDarkCommand),
-	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
-	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfVampiricBlood),
 }
 
 var BloodP1Gear = core.EquipmentSpecFromJsonString(`{"items": [

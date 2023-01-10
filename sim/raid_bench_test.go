@@ -6,10 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"github.com/wowsims/wotlk/sim/druid/balance"
-	"github.com/wowsims/wotlk/sim/mage"
-	"github.com/wowsims/wotlk/sim/priest/shadow"
-	"github.com/wowsims/wotlk/sim/shaman/elemental"
 	"github.com/wowsims/wotlk/sim/shaman/enhancement"
 )
 
@@ -23,7 +19,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: MoonkinEquipment,
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
-					Talents: balance.StandardTalents,
 					Rotation: &proto.BalanceDruid_Rotation{
 						Type: proto.BalanceDruid_Rotation_Adaptive,
 					},
@@ -49,7 +44,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
 					},
@@ -73,7 +67,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: ElementalEquipment,
 			Spec: &proto.Player_ElementalShaman{
 				ElementalShaman: &proto.ElementalShaman{
-					Talents: elemental.StandardTalents,
 					Rotation: &proto.ElementalShaman_Rotation{
 						Totems: &proto.ShamanTotems{
 							Earth: proto.EarthTotem_TremorTotem,
@@ -104,7 +97,6 @@ var castersWithElemental = &proto.Party{
 			Equipment: ArcaneEquipment,
 			Spec: &proto.Player_Mage{
 				Mage: &proto.Mage{
-					Talents: mage.ArcaneTalents,
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
@@ -133,7 +125,6 @@ var castersWithResto = &proto.Party{
 			Equipment: MoonkinEquipment,
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
-					Talents: balance.StandardTalents,
 					Rotation: &proto.BalanceDruid_Rotation{
 						Type: proto.BalanceDruid_Rotation_Adaptive,
 					},
@@ -159,7 +150,6 @@ var castersWithResto = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Talents: shadow.StandardTalents,
 					Rotation: &proto.ShadowPriest_Rotation{
 						RotationType: proto.ShadowPriest_Rotation_Ideal,
 					},
@@ -183,7 +173,6 @@ var castersWithResto = &proto.Party{
 			Equipment: ArcaneEquipment,
 			Spec: &proto.Player_Mage{
 				Mage: &proto.Mage{
-					Talents: mage.ArcaneTalents,
 					Options: &proto.Mage_Options{
 						Armor: proto.Mage_Options_MageArmor,
 					},
@@ -219,7 +208,6 @@ func BenchmarkSimulate(b *testing.B) {
 							Equipment: enhancement.Phase1Gear,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
-									Talents: enhancement.StandardTalents,
 									Rotation: &proto.EnhancementShaman_Rotation{
 										Totems: &proto.ShamanTotems{
 											Earth: proto.EarthTotem_TremorTotem,

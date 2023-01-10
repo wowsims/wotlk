@@ -5,41 +5,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.DruidTalents{
-	Ferocity:                5,
-	FeralInstinct:           3,
-	SavageFury:              2,
-	ThickHide:               3,
-	FeralSwiftness:          2,
-	SurvivalInstincts:       true,
-	SharpenedClaws:          3,
-	ShreddingAttacks:        2,
-	PredatoryStrikes:        3,
-	PrimalFury:              2,
-	PrimalPrecision:         2,
-	FeralCharge:             true,
-	NaturalReaction:         3,
-	HeartOfTheWild:          5,
-	SurvivalOfTheFittest:    3,
-	LeaderOfThePack:         true,
-	ImprovedLeaderOfThePack: 2,
-	ProtectorOfThePack:      3,
-	KingOfTheJungle:         3,
-	Mangle:                  true,
-	ImprovedMangle:          3,
-	RendAndTear:             5,
-	PrimalGore:              true,
-	Berserk:                 true,
-
-	ImprovedMarkOfTheWild: 2,
-	Furor:                 3,
-	Naturalist:            5,
-	OmenOfClarity:         true,
+var StandardTalents = "-503232132322010353120300313511-20350001"
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfMaul),
+	Major2: int32(proto.DruidMajorGlyph_GlyphOfSurvivalInstincts),
+	Major3: int32(proto.DruidMajorGlyph_GlyphOfFrenziedRegeneration),
 }
 
 var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 	FeralTankDruid: &proto.FeralTankDruid{
-		Talents: StandardTalents,
 		Options: &proto.FeralTankDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			StartingRage:    20,

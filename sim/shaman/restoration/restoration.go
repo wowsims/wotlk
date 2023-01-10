@@ -38,7 +38,7 @@ func NewRestorationShaman(character core.Character, options *proto.Player) *Rest
 	}
 
 	resto := &RestorationShaman{
-		Shaman: shaman.NewShaman(character, restoShamOptions.Talents, totems, selfBuffs, false),
+		Shaman: shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, false),
 	}
 	resto.EnableResumeAfterManaWait(resto.tryUseGCD)
 

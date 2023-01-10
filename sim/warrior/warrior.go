@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{31, 27, 27}
+
 type WarriorInputs struct {
 	ShoutType            proto.WarriorShout
 	PrecastShout         bool
@@ -182,12 +184,13 @@ func (warrior *Warrior) Reset(_ *core.Simulation) {
 	}
 }
 
-func NewWarrior(character core.Character, talents *proto.WarriorTalents, inputs WarriorInputs) *Warrior {
+func NewWarrior(character core.Character, talents string, inputs WarriorInputs) *Warrior {
 	warrior := &Warrior{
 		Character:     character,
-		Talents:       talents,
+		Talents:       &proto.WarriorTalents{},
 		WarriorInputs: inputs,
 	}
+	core.FillTalentsProto(warrior.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	warrior.PseudoStats.CanParry = true
 

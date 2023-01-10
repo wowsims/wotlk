@@ -570,7 +570,7 @@ dps_results: {
   dps: 2496.44715
   tps: 5186.42983
   dtps: 2.18293
-  hps: 21.32438
+  hps: 22.80431
  }
 }
 dps_results: {
@@ -1032,8 +1032,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3183.08228
-  tps: 6975.58528
+  dps: 4261.86599
+  tps: 9541.53937
   dtps: 3.70915
  }
 }
@@ -1056,8 +1056,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1260.20231
-  tps: 2970.0832
+  dps: 1501.8413
+  tps: 3570.84756
  }
 }
 dps_results: {

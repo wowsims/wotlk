@@ -19,13 +19,15 @@ func TestRetribution(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceDraenei, proto.Race_RaceDwarf},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{
 				Label: "Retribution Paladin SOC",
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
-						Talents: defaultRetTalents,
 						Options: &proto.RetributionPaladin_Options{
 							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:                 proto.PaladinSeal_Command,
@@ -40,7 +42,6 @@ func TestRetribution(t *testing.T) {
 				Label: "Retribution Paladin SOR",
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
-						Talents: defaultRetTalents,
 						Options: &proto.RetributionPaladin_Options{
 							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:                 proto.PaladinSeal_Righteousness,
@@ -55,7 +56,6 @@ func TestRetribution(t *testing.T) {
 				Label: "Retribution Paladin SOV 2 Target Swapping",
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
-						Talents: defaultRetTalents,
 						Options: &proto.RetributionPaladin_Options{
 							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:                 proto.PaladinSeal_Vengeance,
@@ -74,8 +74,6 @@ func TestRetribution(t *testing.T) {
 				},
 			},
 		},
-		Glyphs:   defaultRetGlyphs,
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -96,13 +94,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceBloodElf,
-				Class:     proto.Class_ClassPaladin,
-				Glyphs:    defaultRetGlyphs,
-				Equipment: Phase1Gear,
-				Consumes:  FullConsumes,
-				Spec:      DefaultOptions,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceBloodElf,
+				Class:         proto.Class_ClassPaladin,
+				TalentsString: StandardTalents,
+				Glyphs:        StandardGlyphs,
+				Equipment:     Phase1Gear,
+				Consumes:      FullConsumes,
+				Spec:          DefaultOptions,
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

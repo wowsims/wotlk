@@ -17,6 +17,8 @@ const (
 	FuStrike_Obliterate    Rotation_FuStrike = 2
 )
 
+var TalentTreeSizes = [3]int{28, 29, 31}
+
 type DeathknightInputs struct {
 	// Option Vars
 	IsDps bool
@@ -358,13 +360,14 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, talents *proto.DeathknightTalents, inputs DeathknightInputs) *Deathknight {
+func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
-		Talents:    talents,
+		Talents:    &proto.DeathknightTalents{},
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}
+	core.FillTalentsProto(dk.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))

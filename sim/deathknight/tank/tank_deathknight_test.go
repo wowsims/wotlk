@@ -14,17 +14,15 @@ func init() {
 
 func TestBloodTank(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class: proto.Class_ClassDeathknight,
-
+		Class:      proto.Class_ClassDeathknight,
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet: core.GearSetCombo{Label: "Blood Tank P1", GearSet: BloodP1Gear},
-
+		GearSet:     core.GearSetCombo{Label: "Blood Tank P1", GearSet: BloodP1Gear},
+		Talents:     BloodTankTalents,
+		Glyphs:      Glyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBloodTank},
-
-		Consumes: FullConsumes,
-		Glyphs:   Glyphs,
 
 		IsTank:          true,
 		InFrontOfTarget: true,

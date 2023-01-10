@@ -5,35 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.PriestTalents{
-	TwinDisciplines:            5,
-	SilentResolve:              3,
-	ImprovedInnerFire:          3,
-	ImprovedPowerWordFortitude: 2,
-	Meditation:                 3,
-	InnerFocus:                 true,
-	MentalAgility:              3,
-	MentalStrength:             5,
-	FocusedPower:               2,
-	Enlightenment:              3,
-	FocusedWill:                3,
-	PowerInfusion:              true,
-
-	HolySpecialization: 5,
-	SpellWarding:       5,
-	DivineFury:         5,
-	DesperatePrayer:    true,
-	HolyReach:          2,
-	SearingLight:       2,
-	SpiritOfRedemption: true,
-	SpiritualGuidance:  5,
-	SurgeOfLight:       2,
-
-	SpiritTap:         3,
-	ImprovedSpiritTap: 2,
-	Darkness:          4,
-}
-
+var DefaultTalents = "05332031013005023310001-005551002020152-00502"
 var DefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfSmite),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfHolyNova),
@@ -50,7 +22,6 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsBasic = &proto.Player_SmitePriest{
 	SmitePriest: &proto.SmitePriest{
-		Talents: StandardTalents,
 		Options: &proto.SmitePriest_Options{
 			UseInnerFire:   true,
 			UseShadowfiend: true,

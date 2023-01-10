@@ -18,9 +18,11 @@ func TestFeralTank(t *testing.T) {
 		Race:  proto.Race_RaceTauren,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsDefault},
 
-		Consumes:        FullConsumes,
 		IsTank:          true,
 		InFrontOfTarget: true,
 

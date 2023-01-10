@@ -18,13 +18,15 @@ func TestCombat(t *testing.T) {
 		Race:        proto.Race_RaceHuman,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     CombatTalents,
+		Glyphs:      CombatGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "MH Deadly OH Instant", SpecOptions: PlayerOptionsCombatDI},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "MH Instant OH Deadly", SpecOptions: PlayerOptionsCombatID},
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsCombatII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsCombatDD},
 		},
-		Consumes: FullConsumes,
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -42,13 +44,15 @@ func TestAssassination(t *testing.T) {
 		Race:        proto.Race_RaceHuman,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GearSetCombo{Label: "P1 Assassination", GearSet: P1Gear},
+		Talents:     AssassinationTalents,
+		Glyphs:      AssassinationGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Assassination", SpecOptions: PlayerOptionsAssassinationDI},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "MH Instant OH Deadly", SpecOptions: PlayerOptionsAssassinationID},
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsAssassinationII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsAssassinationDD},
 		},
-		Consumes: FullConsumes,
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -61,20 +65,6 @@ func TestAssassination(t *testing.T) {
 				proto.WeaponType_WeaponTypeFist,
 			},
 		},
-	}))
-}
-
-func TestRotation(t *testing.T) {
-	specOptions := RotationSpecOptions(PlayerOptionsCombatDI.Rogue.Talents, PlayerOptionsCombatDI.Rogue.Options)
-	specOptions = append(specOptions, RotationSpecOptions(PlayerOptionsAssassinationDI.Rogue.Talents, PlayerOptionsAssassinationDI.Rogue.Options)...)
-	core.RunTestSuite(t, t.Name(), core.RotationTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class:            proto.Class_ClassRogue,
-		Race:             proto.Race_RaceHuman,
-		OtherRaces:       []proto.Race{proto.Race_RaceOrc},
-		GearSet:          core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		SpecOptions:      specOptions[0],
-		OtherSpecOptions: specOptions[1:],
-		Consumes:         FullConsumes,
 	}))
 }
 
@@ -92,13 +82,15 @@ func GenerateCriticalDamageMultiplierTestCase(
 	t *testing.T,
 	testName string,
 	equipment *proto.EquipmentSpec,
+	talents string,
 	spec *proto.Player_Rogue,
 	attackType AttackType,
 	expectedMultiplier float64) {
 	raid := core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
-		Class:     proto.Class_ClassRogue,
-		Race:      proto.Race_RaceOrc,
-		Equipment: equipment,
+		Class:         proto.Class_ClassRogue,
+		Race:          proto.Race_RaceOrc,
+		Equipment:     equipment,
+		TalentsString: talents,
 	}, spec), nil, nil, nil)
 	encounter := core.MakeSingleTargetEncounter(0.0)
 	env, _ := core.NewEnvironment(raid, encounter)
@@ -130,29 +122,29 @@ func GenerateCriticalDamageMultiplierTestCase(
 // https://github.com/where-fore/rogue-wotlk/issues/31
 func TestCritDamageMultipliers(t *testing.T) {
 	// Poison, no RED
-	GenerateCriticalDamageMultiplierTestCase(t, "Poison", GearWithoutRED, PlayerOptionsNoPotW, Poison, 1.5)
+	GenerateCriticalDamageMultiplierTestCase(t, "Poison", GearWithoutRED, CombatNoPotWTalents, PlayerOptionsNoPotW, Poison, 1.5)
 	// Poison, with RED
-	GenerateCriticalDamageMultiplierTestCase(t, "PoisonRED", GearWithRED, PlayerOptionsNoPotW, Poison, 1.545000)
+	GenerateCriticalDamageMultiplierTestCase(t, "PoisonRED", GearWithRED, CombatNoPotWTalents, PlayerOptionsNoPotW, Poison, 1.545000)
 	// Poison, with RED & PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "PoisonREDPotW", GearWithRED, PlayerOptionsCombatDI, Poison, 1.854000)
+	GenerateCriticalDamageMultiplierTestCase(t, "PoisonREDPotW", GearWithRED, CombatTalents, PlayerOptionsCombatDI, Poison, 1.854000)
 	// Auto, no RED, no Lethality, no PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "Auto", GearWithoutRED, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.0)
+	GenerateCriticalDamageMultiplierTestCase(t, "Auto", GearWithoutRED, CombatNoLethalityNoPotWTalents, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.0)
 	// Auto, RED, no Lethality, no PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "AutoRED", GearWithRED, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.06)
+	GenerateCriticalDamageMultiplierTestCase(t, "AutoRED", GearWithRED, CombatNoLethalityNoPotWTalents, PlayerOptionsNoLethalityNoPotW, MHAuto, 2.06)
 	// Auto, RED, no Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "AutoREDPotW", GearWithRED, PlayerOptionsNoLethality, MHAuto, 2.472)
+	GenerateCriticalDamageMultiplierTestCase(t, "AutoREDPotW", GearWithRED, CombatNoLethalityTalents, PlayerOptionsNoLethality, MHAuto, 2.472)
 	// Builder, no RED, Lethality, no PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethality", GearWithoutRED, PlayerOptionsNoPotW, Builder, 2.3)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethality", GearWithoutRED, CombatNoPotWTalents, PlayerOptionsNoPotW, Builder, 2.3)
 	// Builder, RED, Lethality, no PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethality", GearWithRED, PlayerOptionsNoPotW, Builder, 2.378000)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethality", GearWithRED, CombatNoPotWTalents, PlayerOptionsNoPotW, Builder, 2.378000)
 	// Builder, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethalityPotW", GearWithoutRED, PlayerOptionsCombatDI, Builder, 2.820000)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderLethalityPotW", GearWithoutRED, CombatTalents, PlayerOptionsCombatDI, Builder, 2.820000)
 	// Builder, RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethalityPotW", GearWithRED, PlayerOptionsCombatDI, Builder, 2.913600)
+	GenerateCriticalDamageMultiplierTestCase(t, "BuilderREDLethalityPotW", GearWithRED, CombatTalents, PlayerOptionsCombatDI, Builder, 2.913600)
 	// Finisher, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "FinisherLethalityPotW", GearWithoutRED, PlayerOptionsCombatDI, Finisher, 2.4)
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherLethalityPotW", GearWithoutRED, CombatTalents, PlayerOptionsCombatDI, Finisher, 2.4)
 	// Finisher, no RED, Lethality, PotW
-	GenerateCriticalDamageMultiplierTestCase(t, "FinisherREDLethalityPotW", GearWithRED, PlayerOptionsCombatDI, Finisher, 2.472)
+	GenerateCriticalDamageMultiplierTestCase(t, "FinisherREDLethalityPotW", GearWithRED, CombatTalents, PlayerOptionsCombatDI, Finisher, 2.472)
 }
 
 func BenchmarkSimulate(b *testing.B) {

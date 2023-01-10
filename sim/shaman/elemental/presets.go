@@ -5,18 +5,11 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.ShamanTalents{
-	Convection:         5,
-	Concussion:         5,
-	ElementalFocus:     true,
-	CallOfThunder:      true,
-	ElementalFury:      5,
-	UnrelentingStorm:   3,
-	ElementalPrecision: 3,
-	LightningMastery:   5,
-	ElementalMastery:   true,
-	LightningOverload:  5,
-	TotemOfWrath:       true,
+var StandardTalents = "0532001523212351322301351-005052031"
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.ShamanMajorGlyph_GlyphOfLava),
+	Major2: int32(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath),
+	Major3: int32(proto.ShamanMajorGlyph_GlyphOfLightningBolt),
 }
 
 var NoTotems = &proto.ShamanTotems{}
@@ -41,7 +34,6 @@ var eleShamOptions = &proto.ElementalShaman_Options{
 }
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
 		Options: eleShamOptions,
 		Rotation: &proto.ElementalShaman_Rotation{
 			Totems: BasicTotems,
@@ -52,7 +44,6 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 
 var PlayerOptionsAdaptiveFireElemental = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
-		Talents: StandardTalents,
 		Options: eleShamOptions,
 		Rotation: &proto.ElementalShaman_Rotation{
 			Totems: FireElementalBasicTotems,

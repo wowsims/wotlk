@@ -5,36 +5,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var defaultProtTalents = &proto.PaladinTalents{
-	DivineStrength:                5,
-	Anticipation:                  5,
-	DivineSacrifice:               true,
-	ImprovedRighteousFury:         3,
-	Toughness:                     5,
-	DivineGuardian:                2,
-	BlessingOfSanctuary:           true,
-	Reckoning:                     3,
-	SacredDuty:                    2,
-	OneHandedWeaponSpecialization: 3,
-	SpiritualAttunement:           1,
-	HolyShield:                    true,
-	ArdentDefender:                3,
-	Redoubt:                       3,
-	CombatExpertise:               3,
-	TouchedByTheLight:             3,
-	AvengersShield:                true,
-	GuardedByTheLight:             2,
-	ShieldOfTheTemplar:            3,
-	JudgementsOfTheJust:           2,
-	HammerOfTheRighteous:          true,
-	Deflection:                    5,
-	Benediction:                   1,
-	ImprovedJudgements:            1,
-	HeartOfTheCrusader:            3,
-	Vindication:                   2,
-	SealOfCommand:                 true,
-	PursuitOfJustice:              2,
-	Crusade:                       3,
+var StandardTalents = "-05005135200132311333312321-511302012003"
+var StandardGlyphs = &proto.Glyphs{
+	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
+	Major2: int32(proto.PaladinMajorGlyph_GlyphOfRighteousDefense),
+	Major3: int32(proto.PaladinMajorGlyph_GlyphOfDivinePlea),
+	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
+	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
 }
 
 var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
@@ -47,7 +24,6 @@ var defaultProtOptions = &proto.ProtectionPaladin_Options{
 
 var DefaultOptions = &proto.Player_ProtectionPaladin{
 	ProtectionPaladin: &proto.ProtectionPaladin{
-		Talents:  defaultProtTalents,
 		Options:  defaultProtOptions,
 		Rotation: defaultProtRotation,
 	},

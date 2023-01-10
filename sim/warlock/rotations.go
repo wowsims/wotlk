@@ -263,9 +263,6 @@ func (warlock *Warlock) defineRotation() {
 
 // Regen Spells: Casts the regen spell that will give you the most mana, includes a error whenever we cast pact on full mana.
 func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
-	if warlock.CurrentManaPercent() == 1 {
-		panic("Life Tap or Dark Pact while full mana")
-	}
 	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 { //Evaluates based on your SP, if DP or LT will give you the highest mana.
 		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
 	} else {

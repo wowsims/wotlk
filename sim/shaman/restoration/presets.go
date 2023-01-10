@@ -5,35 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.ShamanTalents{
-	EnhancingTotems:    3,
-	AncestralKnowledge: 2,
-	ThunderingStrikes:  5,
-	ImprovedShields:    3,
-
-	ImprovedHealingWave:   5,
-	TidalFocus:            5,
-	ImprovedWaterShield:   3,
-	HealingFocus:          3,
-	TidalForce:            true,
-	AncestralHealing:      3,
-	RestorativeTotems:     3,
-	TidalMastery:          5,
-	HealingWay:            3,
-	NaturesSwiftness:      true,
-	Purification:          5,
-	ManaTideTotem:         true,
-	CleanseSpirit:         true,
-	BlessingOfTheEternals: 2,
-	ImprovedChainHeal:     2,
-	NaturesBlessing:       3,
-	AncestralAwakening:    3,
-	EarthShield:           true,
-	ImprovedEarthShield:   2,
-	TidalWaves:            5,
-	Riptide:               true,
-}
-
+var StandardTalents = "-3020503-50005331335310501122331251"
 var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.ShamanMajorGlyph_GlyphOfChainHeal),
 	Major2: int32(proto.ShamanMajorGlyph_GlyphOfEarthShield),
@@ -53,7 +25,6 @@ var restoShamOptions = &proto.RestorationShaman_Options{
 }
 var PlayerOptionsStandard = &proto.Player_RestorationShaman{
 	RestorationShaman: &proto.RestorationShaman{
-		Talents: StandardTalents,
 		Options: restoShamOptions,
 		Rotation: &proto.RestorationShaman_Rotation{
 			Totems: BasicTotems,

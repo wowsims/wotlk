@@ -5,47 +5,16 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.DruidTalents{
-	Ferocity:                5,
-	FeralInstinct:           3,
-	SavageFury:              2,
-	FeralSwiftness:          2,
-	SurvivalInstincts:       true,
-	SharpenedClaws:          3,
-	ShreddingAttacks:        2,
-	PredatoryStrikes:        3,
-	PrimalFury:              2,
-	PrimalPrecision:         2,
-	HeartOfTheWild:          5,
-	SurvivalOfTheFittest:    3,
-	LeaderOfThePack:         true,
-	ImprovedLeaderOfThePack: 2,
-	ProtectorOfThePack:      2,
-	PredatoryInstincts:      3,
-	KingOfTheJungle:         3,
-	Mangle:                  true,
-	RendAndTear:             5,
-	PrimalGore:              true,
-	Berserk:                 true,
-	ImprovedMarkOfTheWild:   2,
-	Furor:                   5,
-	Naturalist:              5,
-	NaturalShapeshifter:     3,
-	MasterShapeshifter:      2,
-	OmenOfClarity:           true,
-}
-
+var StandardTalents = "-503202132322010053120230310511-205503012"
 var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DruidMajorGlyph_GlyphOfRip),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
 	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
-
 	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTheWild),
 }
 
 var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
-		Talents: StandardTalents,
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:       100,
@@ -70,7 +39,6 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 
 var PlayerOptionsMonoCatFlowerWeave = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
-		Talents: StandardTalents,
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:       100,

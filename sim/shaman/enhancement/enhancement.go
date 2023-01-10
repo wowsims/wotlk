@@ -42,7 +42,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	}
 
 	enh := &EnhancementShaman{
-		Shaman: shaman.NewShaman(character, enhOptions.Talents, totems, selfBuffs, true),
+		Shaman: shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, true),
 	}
 
 	enh.EnableResumeAfterManaWait(enh.OnGCDReady)

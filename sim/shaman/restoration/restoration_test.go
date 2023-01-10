@@ -18,10 +18,10 @@ func TestRestoration(t *testing.T) {
 		Race:  proto.Race_RaceTroll,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Standard", SpecOptions: PlayerOptionsStandard},
-
-		Consumes: FullConsumes,
-		Glyphs:   StandardGlyphs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -45,13 +45,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassShaman,
-				Equipment: P1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsStandard,
-				Buffs:     core.FullIndividualBuffs,
-				Glyphs:    StandardGlyphs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassShaman,
+				Equipment:     P1Gear,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsStandard,
+				Buffs:         core.FullIndividualBuffs,
+				TalentsString: StandardTalents,
+				Glyphs:        StandardGlyphs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

@@ -13,6 +13,8 @@ const (
 	SpellFlagOmenTrigger  = core.SpellFlagAgentReserved2
 )
 
+var TalentTreeSizes = [3]int{28, 30, 27}
+
 type Druid struct {
 	core.Character
 	SelfBuffs
@@ -256,14 +258,15 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.SolarICD.Timer.Reset()
 }
 
-func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents *proto.DruidTalents) *Druid {
+func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
 	druid := &Druid{
 		Character:    char,
 		SelfBuffs:    selfBuffs,
-		Talents:      talents,
+		Talents:      &proto.DruidTalents{},
 		StartingForm: form,
 		form:         form,
 	}
+	core.FillTalentsProto(druid.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	druid.EnableManaBar()
 
 	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)

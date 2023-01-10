@@ -18,12 +18,13 @@ func TestArcane(t *testing.T) {
 		Race:  proto.Race_RaceTroll,
 
 		GearSet:     core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
+		Talents:     ArcaneTalents,
+		Glyphs:      ArcaneGlyphs,
+		Consumes:    FullArcaneConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "ArcaneRotation", SpecOptions: PlayerOptionsArcane},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "AOE", SpecOptions: PlayerOptionsArcaneAOE},
 		},
-
-		Consumes: FullArcaneConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -46,12 +47,13 @@ func TestFire(t *testing.T) {
 		Race:  proto.Race_RaceTroll,
 
 		GearSet:     core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
+		Talents:     FireTalents,
+		Glyphs:      FireGlyphs,
+		Consumes:    FullFireConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "FireRotation", SpecOptions: PlayerOptionsFire},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "AOE", SpecOptions: PlayerOptionsFireAOE},
 		},
-
-		Consumes: FullFireConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -74,12 +76,13 @@ func TestFrost(t *testing.T) {
 		Race:  proto.Race_RaceTroll,
 
 		GearSet:     core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
+		Talents:     FrostTalents,
+		Glyphs:      FrostGlyphs,
+		Consumes:    FullFrostConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "FrostRotation", SpecOptions: PlayerOptionsFrost},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "AOE", SpecOptions: PlayerOptionsFrostAOE},
 		},
-
-		Consumes: FullFrostConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

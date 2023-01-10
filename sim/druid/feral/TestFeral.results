@@ -916,85 +916,85 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6920.85926
-  tps: 7831.83258
+  dps: 7367.59999
+  tps: 8414.8072
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6920.85926
-  tps: 7377.62663
+  dps: 7367.59999
+  tps: 7948.89968
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7768.15828
-  tps: 7506.76295
+  dps: 8294.03922
+  tps: 7963.95289
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4295.65576
-  tps: 5169.81153
+  dps: 4627.44868
+  tps: 5582.20955
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4295.65576
-  tps: 4581.40873
+  dps: 4627.44868
+  tps: 4979.8136
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4401.02633
-  tps: 4169.81351
+  dps: 4832.95054
+  tps: 4555.94628
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6603.62613
-  tps: 6089.1708
+  dps: 7114.81019
+  tps: 6256.78502
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6603.62613
-  tps: 4815.34822
+  dps: 7114.81019
+  tps: 5195.30229
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7581.28286
-  tps: 5486.33798
+  dps: 8195.08347
+  tps: 5913.50184
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3982.5336
-  tps: 3605.08471
+  dps: 4397.10765
+  tps: 3906.1222
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3982.5336
-  tps: 2893.73005
+  dps: 4397.10765
+  tps: 3206.3853
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4252.47194
-  tps: 3073.20982
+  dps: 4845.21135
+  tps: 3510.8341
  }
 }
 dps_results: {

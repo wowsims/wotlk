@@ -19,10 +19,10 @@ func TestProtectionWarrior(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     DefaultTalents,
+		Glyphs:      DefaultGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-
-		Glyphs:   DefaultGlyphs,
-		Consumes: FullConsumes,
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -55,12 +55,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassWarrior,
-				Equipment: P1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsBasic,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassWarrior,
+				Equipment:     P1Gear,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsBasic,
+				Buffs:         core.FullIndividualBuffs,
+				TalentsString: DefaultTalents,
+				Glyphs:        DefaultGlyphs,
 
 				InFrontOfTarget: true,
 			},

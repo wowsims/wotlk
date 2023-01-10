@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{28, 27, 26}
+
 type Warlock struct {
 	core.Character
 	Talents  *proto.WarlockTalents
@@ -186,11 +188,12 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 
 	warlock := &Warlock{
 		Character: character,
-		Talents:   warlockOptions.Talents,
+		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
 		Rotation:  warlockOptions.Rotation,
 		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
+	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)

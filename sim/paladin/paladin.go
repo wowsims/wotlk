@@ -11,6 +11,8 @@ const (
 	SpellFlagPrimaryJudgement   = core.SpellFlagAgentReserved2
 )
 
+var TalentTreeSizes = [3]int{26, 26, 26}
+
 type Paladin struct {
 	core.Character
 
@@ -170,11 +172,12 @@ func (paladin *Paladin) Reset(_ *core.Simulation) {
 }
 
 // maybe need to add stat dependencies
-func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladin {
+func NewPaladin(character core.Character, talentsStr string) *Paladin {
 	paladin := &Paladin{
 		Character: character,
-		Talents:   talents,
+		Talents:   &proto.PaladinTalents{},
 	}
+	core.FillTalentsProto(paladin.Talents.ProtoReflect(), talentsStr, TalentTreeSizes)
 
 	// This is used to cache its effect in talents.go
 	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2)

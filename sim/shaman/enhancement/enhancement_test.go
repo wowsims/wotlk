@@ -19,13 +19,14 @@ func TestEnhancement(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental},
 			{Label: "EnhItemSwap", SpecOptions: PlayerOptionsItemSwap},
 		},
-
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -49,12 +50,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassShaman,
-				Equipment: Phase1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsBasic,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassShaman,
+				Equipment:     Phase1Gear,
+				TalentsString: StandardTalents,
+				Glyphs:        StandardGlyphs,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsBasic,
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

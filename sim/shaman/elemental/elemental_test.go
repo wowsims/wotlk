@@ -19,15 +19,13 @@ func TestElemental(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
-			// 	core.SpecOptionsCombo{Label: "Fixed3LBCL", SpecOptions: PlayerOptionsFixed3LBCL},
-			// 	core.SpecOptionsCombo{Label: "CLOnClearcastNoBuffs", SpecOptions: PlayerOptionsCLOnClearcastNoBuffs},
-			// 	core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 		},
-
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -59,12 +57,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceOrc,
-				Class:     proto.Class_ClassShaman,
-				Equipment: P1Gear,
-				Consumes:  FullConsumes,
-				Spec:      PlayerOptionsAdaptive,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceOrc,
+				Class:         proto.Class_ClassShaman,
+				Equipment:     P1Gear,
+				TalentsString: StandardTalents,
+				Glyphs:        StandardGlyphs,
+				Consumes:      FullConsumes,
+				Spec:          PlayerOptionsAdaptive,
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

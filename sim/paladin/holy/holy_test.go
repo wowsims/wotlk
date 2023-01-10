@@ -19,10 +19,11 @@ func TestHoly(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: BasicOptions},
 
-		Consumes:        FullConsumes,
-		Glyphs:          StandardGlyphs,
 		IsHealer:        true,
 		InFrontOfTarget: true,
 
@@ -45,13 +46,14 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceBloodElf,
-				Class:     proto.Class_ClassPaladin,
-				Equipment: P1Gear,
-				Consumes:  FullConsumes,
-				Spec:      BasicOptions,
-				Glyphs:    StandardGlyphs,
-				Buffs:     core.FullIndividualBuffs,
+				Race:          proto.Race_RaceBloodElf,
+				Class:         proto.Class_ClassPaladin,
+				Equipment:     P1Gear,
+				Consumes:      FullConsumes,
+				Spec:          BasicOptions,
+				TalentsString: StandardTalents,
+				Glyphs:        StandardGlyphs,
+				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

@@ -180,10 +180,7 @@ message Warlock {
 		Type type = 8;
 		bool use_infernal = 9;
 	}
-
 	Rotation rotation = 1;
-
-	WarlockTalents talents = 2;
 	
 	message Options {
 		enum Summon {

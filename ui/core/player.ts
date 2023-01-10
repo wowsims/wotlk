@@ -842,7 +842,6 @@ export class Player<SpecType extends Spec> {
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
 			this.getRotation(),
-			forExport ? this.specTypeFunctions.talentsCreate() : this.getTalents(),
 			this.getSpecOptions());
 	}
 

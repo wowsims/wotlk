@@ -152,7 +152,7 @@ func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Si
 // 	}
 // }
 
-func NewAdaptiveRotation(talents *proto.ShamanTalents, options *proto.ElementalShaman_Rotation) *AdaptiveRotation {
+func NewAdaptiveRotation(options *proto.ElementalShaman_Rotation) *AdaptiveRotation {
 	if options.LvbFsWaitMs == 0 {
 		options.LvbFsWaitMs = 175
 	}
@@ -167,7 +167,6 @@ func NewAdaptiveRotation(talents *proto.ShamanTalents, options *proto.ElementalS
 //
 // ################################################################
 type ManualRotation struct {
-	// talents
 	options *proto.ElementalShaman_Rotation
 }
 
@@ -287,9 +286,8 @@ func (rotation *ManualRotation) Reset(eleShaman *ElementalShaman, sim *core.Simu
 // 	}
 // }
 
-func NewManualRotation(talents *proto.ShamanTalents, options *proto.ElementalShaman_Rotation) *ManualRotation {
+func NewManualRotation(options *proto.ElementalShaman_Rotation) *ManualRotation {
 	return &ManualRotation{
-		// talents: talents,
 		options: options,
 	}
 }

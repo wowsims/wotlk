@@ -20,7 +20,7 @@ message WarriorTalents {
 	int32 two_handed_weapon_specialization = 11;
 	int32 taste_for_blood = 12;
 	int32 poleaxe_specialization = 13;
-    bool sweeping_strikes = 14;
+	bool sweeping_strikes = 14;
 	int32 mace_specialization = 15;
 	int32 sword_specialization = 16;
 	int32 weapon_mastery = 17;
@@ -193,8 +193,6 @@ message Warrior {
 	}
 	Rotation rotation = 1;
 
-	WarriorTalents talents = 2;
-
 	message Options {
 		double starting_rage = 1;
 		bool use_recklessness = 2;
@@ -240,8 +238,6 @@ message ProtectionWarrior {
 		bool prio_sslam_on_shield_block = 5;
 	}
 	Rotation rotation = 1;
-
-	WarriorTalents talents = 2;
 
 	message Options {
 		double starting_rage = 1;

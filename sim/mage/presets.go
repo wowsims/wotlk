@@ -5,98 +5,23 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var FireTalents = &proto.MageTalents{
-	ArcaneSubtlety:      2,
-	ArcaneFocus:         3,
-	ArcaneConcentration: 5,
-	SpellImpact:         3,
-	StudentOfTheMind:    1,
-	FocusMagic:          true,
-	TormentTheWeak:      3,
-
-	ImprovedFireball: 5,
-	Ignite:           5,
-	WorldInFlames:    3,
-	Pyroblast:        true,
-	BurningSoul:      1,
-	ImprovedScorch:   3,
-	MasterOfElements: 2,
-	PlayingWithFire:  3,
-	CriticalMass:     3,
-	BlastWave:        true,
-	FirePower:        5,
-	Pyromaniac:       3,
-	Combustion:       true,
-	MoltenFury:       2,
-	EmpoweredFire:    3,
-	DragonsBreath:    true,
-	Firestarter:      2,
-	HotStreak:        3,
-	Burnout:          5,
-	LivingBomb:       true,
+var ArcaneTalents = "23000513310033015032310250532-03-023303001"
+var FireTalents = "23000503110003-0055030012303331053120301351"
+var FrostTalents = "23000503110003--0533030310233100030152231351"
+var ArcaneGlyphs = &proto.Glyphs{
+	Major1: int32(proto.MageMajorGlyph_GlyphOfArcaneBlast),
+	Major2: int32(proto.MageMajorGlyph_GlyphOfArcaneMissiles),
+	Major3: int32(proto.MageMajorGlyph_GlyphOfMoltenArmor),
 }
-
-var FrostTalents = &proto.MageTalents{
-	ArcaneSubtlety:      2,
-	ArcaneFocus:         3,
-	ArcaneConcentration: 5,
-	SpellImpact:         3,
-	StudentOfTheMind:    1,
-	FocusMagic:          true,
-	TormentTheWeak:      3,
-
-	ImprovedFrostbolt:    5,
-	IceFloes:             3,
-	IceShards:            3,
-	Precision:            3,
-	PiercingIce:          3,
-	IcyVeins:             true,
-	ArcticReach:          2,
-	FrostChanneling:      3,
-	Shatter:              3,
-	ColdSnap:             true,
-	WintersChill:         3,
-	IceBarrier:           true,
-	ArcticWinds:          5,
-	EmpoweredFrostbolt:   2,
-	FingersOfFrost:       2,
-	BrainFreeze:          3,
-	SummonWaterElemental: true,
-	EnduringWinter:       3,
-	ChilledToTheBone:     5,
-	DeepFreeze:           true,
+var FireGlyphs = &proto.Glyphs{
+	Major1: int32(proto.MageMajorGlyph_GlyphOfFireball),
+	Major2: int32(proto.MageMajorGlyph_GlyphOfMoltenArmor),
+	Major3: int32(proto.MageMajorGlyph_GlyphOfLivingBomb),
 }
-
-var ArcaneTalents = &proto.MageTalents{
-	ArcaneFocus:         3,
-	ArcaneSubtlety:      2,
-	ArcaneConcentration: 5,
-	SpellImpact:         3,
-	FocusMagic:          true,
-	MagicAttunement:     1,
-	StudentOfTheMind:    3,
-	ArcaneMeditation:    3,
-	TormentTheWeak:      3,
-	PresenceOfMind:      true,
-	ArcaneMind:          5,
-	ArcaneInstability:   3,
-	ArcanePotency:       2,
-	ArcaneEmpowerment:   3,
-	ArcanePower:         true,
-	ArcaneFlows:         2,
-	MindMastery:         5,
-	MissileBarrage:      5,
-	NetherwindPresence:  3,
-	SpellPower:          2,
-	ArcaneBarrage:       true,
-
-	Incineration: 3,
-
-	ImprovedFrostbolt: 2,
-	IceFloes:          3,
-	IceShards:         2,
-	Precision:         3,
-	IcyVeins:          true,
+var FrostGlyphs = &proto.Glyphs{
+	Major1: int32(proto.MageMajorGlyph_GlyphOfFrostbolt),
+	Major3: int32(proto.MageMajorGlyph_GlyphOfEternalWater),
+	Major2: int32(proto.MageMajorGlyph_GlyphOfMoltenArmor),
 }
 
 var fireMageOptions = &proto.Mage_Options{
@@ -106,7 +31,6 @@ var fireMageOptions = &proto.Mage_Options{
 }
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type:                   proto.Mage_Rotation_Fire,
@@ -118,7 +42,6 @@ var PlayerOptionsFire = &proto.Player_Mage{
 }
 var PlayerOptionsFireAOE = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: FireTalents,
 		Options: fireMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type: proto.Mage_Rotation_Aoe,
@@ -133,7 +56,6 @@ var frostMageOptions = &proto.Mage_Options{
 }
 var PlayerOptionsFrost = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type: proto.Mage_Rotation_Frost,
@@ -142,7 +64,6 @@ var PlayerOptionsFrost = &proto.Player_Mage{
 }
 var PlayerOptionsFrostAOE = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: FrostTalents,
 		Options: frostMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type: proto.Mage_Rotation_Aoe,
@@ -157,7 +78,6 @@ var arcaneMageOptions = &proto.Mage_Options{
 }
 var PlayerOptionsArcane = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type:                                       proto.Mage_Rotation_Arcane,
@@ -171,7 +91,6 @@ var PlayerOptionsArcane = &proto.Player_Mage{
 }
 var PlayerOptionsArcaneAOE = &proto.Player_Mage{
 	Mage: &proto.Mage{
-		Talents: ArcaneTalents,
 		Options: arcaneMageOptions,
 		Rotation: &proto.Mage_Rotation{
 			Type: proto.Mage_Rotation_Aoe,
