@@ -159,7 +159,6 @@ var ItemSetDreadnaughtBattlegear = core.NewItemSet(core.ItemSet{
 			warrior.RegisterAura(core.Aura{
 				Label:    "Dreadnaught Battlegear 4pc",
 				Duration: core.NeverExpires,
-				ActionID: core.ActionID{SpellID: 60176},
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
@@ -194,7 +193,6 @@ var ItemSetSiegebreakerBattlegear = core.NewItemSet(core.ItemSet{
 			warrior.RegisterAura(core.Aura{
 				Label:    "Siegebreaker Battlegear 2pc",
 				Duration: core.NeverExpires,
-				ActionID: core.ActionID{SpellID: 64938},
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
@@ -253,7 +251,6 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 			warrior.RegisterAura(core.Aura{
 				Label:    "Ymirjar Lord's Battlegear 2pc",
 				Duration: core.NeverExpires,
-				ActionID: core.ActionID{SpellID: 70854},
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
