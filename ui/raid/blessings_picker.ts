@@ -93,8 +93,7 @@ export class BlessingsPicker extends Component {
 	}
 
 	private updatePickers() {
-		const numPaladins = Math.min(this.simUI.getClassCount(Class.ClassPaladin), MAX_PALADINS);
-		for (let i = numPaladins; i < MAX_PALADINS; i++) {
+		for (let i = 0; i < MAX_PALADINS; i++) {
 			this.pickers[i].forEach(picker => picker.update());
 		}
 	}
