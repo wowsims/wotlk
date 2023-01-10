@@ -70,6 +70,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_UA(sim *co
 		dk.BloodTap.Cast(sim, target)
 		return sim.CurrentTime + waitFor
 	} else if dk.UnbreakableArmor.IsReady(sim) && runeGrace >= waitFor {
+		dk.castAllMajorCooldowns(sim)
 		dk.UnbreakableArmor.Cast(sim, target)
 	}
 
