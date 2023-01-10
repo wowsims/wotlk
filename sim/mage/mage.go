@@ -14,6 +14,8 @@ const (
 	HotStreakSpells = core.SpellFlagAgentReserved3
 )
 
+var TalentTreeSizes = [3]int{30, 28, 28}
+
 func RegisterMage() {
 	core.RegisterAgentFactory(
 		proto.Player_Mage{},
@@ -156,13 +158,15 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 
 	mage := &Mage{
 		Character: character,
-		Talents:   mageOptions.Talents,
+		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
 
 		ReactionTime:     time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
 		PyroblastDelayMs: time.Millisecond * time.Duration(mageOptions.Rotation.PyroblastDelayMs),
 	}
+	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)

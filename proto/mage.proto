@@ -186,8 +186,6 @@ message Mage {
 		AoeRotation aoe = 7;
 	}
 	Rotation rotation = 1;
-
-	MageTalents talents = 2;
 	
 	message Options {
 		enum ArmorType {

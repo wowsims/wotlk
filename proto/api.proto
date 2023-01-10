@@ -52,7 +52,8 @@ message Player {
 		TankDeathknight tank_deathknight = 32;
 	}
 
-	string talentsString = 17;
+	// Talents in wowhead format, e.g. '01102123133-12312312-'
+	string talents_string = 17;
 	Glyphs glyphs = 28;
 	Profession profession1 = 29;
 	Profession profession2 = 30;

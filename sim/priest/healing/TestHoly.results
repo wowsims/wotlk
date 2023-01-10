@@ -895,48 +895,48 @@ dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-FullBuffs-LongMultiTarget"
  value: {
   dps: 104.65635
-  tps: 990.27055
-  hps: 4715.73685
+  tps: 991.27055
+  hps: 4910.26824
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-FullBuffs-LongSingleTarget"
  value: {
   dps: 104.65635
-  tps: 49.51353
-  hps: 4715.73685
+  tps: 49.56353
+  hps: 4910.26824
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-FullBuffs-ShortSingleTarget"
  value: {
   dps: 523.28175
-  tps: 196.38698
-  hps: 9272.06842
+  tps: 194.72965
+  hps: 9494.86134
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongMultiTarget"
  value: {
   dps: 48.815
-  tps: 445.41013
-  hps: 2465.27937
+  tps: 447.41013
+  hps: 2674.33745
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongSingleTarget"
  value: {
   dps: 48.815
-  tps: 22.27051
-  hps: 2465.27937
+  tps: 22.37051
+  hps: 2674.33745
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-ShortSingleTarget"
  value: {
   dps: 244.07498
-  tps: 98.28599
-  hps: 5912.81696
+  tps: 99.07323
+  hps: 6129.29041
  }
 }
 dps_results: {

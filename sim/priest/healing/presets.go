@@ -5,68 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var DiscTalents = &proto.PriestTalents{
-	TwinDisciplines:            5,
-	ImprovedInnerFire:          3,
-	ImprovedPowerWordFortitude: 2,
-	Meditation:                 3,
-	InnerFocus:                 true,
-	ImprovedPowerWordShield:    3,
-	MentalAgility:              3,
-	MentalStrength:             5,
-	SoulWarding:                true,
-	FocusedPower:               2,
-	Enlightenment:              3,
-	PowerInfusion:              true,
-	ImprovedFlashHeal:          3,
-	RenewedHope:                1,
-	Rapture:                    3,
-	Aspiration:                 2,
-	DivineAegis:                3,
-	PainSuppression:            true,
-	Grace:                      2,
-	BorrowedTime:               5,
-	Penance:                    true,
-
-	HealingFocus:       2,
-	ImprovedRenew:      3,
-	HolySpecialization: 5,
-	SpellWarding:       1,
-	DesperatePrayer:    true,
-	Inspiration:        3,
-	ImprovedHealing:    3,
-}
-
-var HolyTalents = &proto.PriestTalents{
-	TwinDisciplines:            5,
-	ImprovedInnerFire:          3,
-	ImprovedPowerWordFortitude: 2,
-	Meditation:                 3,
-	InnerFocus:                 true,
-	ImprovedPowerWordShield:    1,
-	MentalAgility:              3,
-
-	HealingFocus:       2,
-	ImprovedRenew:      3,
-	HolySpecialization: 4,
-	DivineFury:         5,
-	DesperatePrayer:    true,
-	Inspiration:        3,
-	HolyReach:          2,
-	HealingPrayers:     2,
-	SpiritOfRedemption: true,
-	SpiritualGuidance:  5,
-	SurgeOfLight:       2,
-	SpiritualHealing:   5,
-	HolyConcentration:  3,
-	EmpoweredHealing:   4,
-	Serendipity:        3,
-	EmpoweredRenew:     1,
-	CircleOfHealing:    true,
-	DivineProvidence:   5,
-	GuardianSpirit:     true,
-}
-
+var DiscTalents = "0503203130300512301313231251-2351010303"
 var DiscGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfPowerWordShield),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfFlashHeal),
@@ -74,6 +13,7 @@ var DiscGlyphs = &proto.Glyphs{
 	// No interesting minor glyphs.
 }
 
+var HolyTalents = "05032031103-234051032002152530004311051"
 var HolyGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfRenew),
@@ -90,7 +30,6 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsDisc = &proto.Player_HealingPriest{
 	HealingPriest: &proto.HealingPriest{
-		Talents: DiscTalents,
 		Options: &proto.HealingPriest_Options{
 			UseInnerFire:      true,
 			UseShadowfiend:    true,
@@ -102,7 +41,6 @@ var PlayerOptionsDisc = &proto.Player_HealingPriest{
 
 var PlayerOptionsHoly = &proto.Player_HealingPriest{
 	HealingPriest: &proto.HealingPriest{
-		Talents: HolyTalents,
 		Options: &proto.HealingPriest_Options{
 			UseInnerFire:   true,
 			UseShadowfiend: true,

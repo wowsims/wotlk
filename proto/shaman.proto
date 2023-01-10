@@ -235,7 +235,6 @@ message ElementalShaman {
 	}
 
 	Rotation rotation = 1;
-	ShamanTalents talents = 2;
 	Options options = 3;
 }
 
@@ -303,7 +302,6 @@ message EnhancementShaman {
 	}
 
 	Rotation rotation = 1;
-	ShamanTalents talents = 2;
 	Options options = 3;
 }
 
@@ -319,6 +317,5 @@ message RestorationShaman {
 	}
 
 	Rotation rotation = 1;
-	ShamanTalents talents = 2;
 	Options options = 3;
 }

@@ -5,51 +5,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var BasicRaidBuffs = &proto.RaidBuffs{}
-var BasicPartyBuffs = &proto.PartyBuffs{}
-var BasicIndividualBuffs = &proto.IndividualBuffs{}
-
-var StandardTalents = &proto.ShamanTalents{
-	Concussion:           5,
-	CallOfFlame:          3,
-	ElementalDevastation: 3,
-	ElementalFocus:       true,
-	ElementalFury:        5,
-	ImprovedFireNova:     2,
-
-	EnhancingTotems:         3,
-	AncestralKnowledge:      4,
-	ThunderingStrikes:       5,
-	ElementalWeapons:        3,
-	ShamanisticFocus:        true, //1/2 imp stormstrike might be better, yet to be determined
-	Flurry:                  5,
-	ImprovedWindfuryTotem:   2,
-	SpiritWeapons:           true,
-	MentalDexterity:         3,
-	UnleashedRage:           3,
-	WeaponMastery:           3,
-	DualWieldSpecialization: 3,
-	DualWield:               true,
-	Stormstrike:             true,
-	StaticShock:             3,
-	LavaLash:                true,
-	MentalQuickness:         3,
-	ShamanisticRage:         true,
-	MaelstromWeapon:         5,
-	FeralSpirit:             true,
-}
-
-var DefaultGlyphs = &proto.Glyphs{
+var StandardTalents = "053030152-30405003105021333031131031051"
+var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.ShamanMajorGlyph_GlyphOfStormstrike),
 	Major2: int32(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon),
 	Major3: int32(proto.ShamanMajorGlyph_GlyphOfFeralSpirit),
-
-	//minor glyphs are all qol passive stuff
 }
 
 var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Talents:  StandardTalents,
 		Options:  enhShamOptions,
 		Rotation: enhShamRotation,
 	},
@@ -57,7 +21,6 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 
 var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Talents:  StandardTalents,
 		Options:  enhShamOptions,
 		Rotation: enhShamRotationFireElemental,
 	},
@@ -65,7 +28,6 @@ var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
 
 var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Talents:  StandardTalents,
 		Options:  enhShamOptions,
 		Rotation: enhShamRotationItemSwap,
 	},

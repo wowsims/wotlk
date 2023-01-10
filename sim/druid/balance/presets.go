@@ -5,38 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.DruidTalents{
-	StarlightWrath:        5,
-	Moonglow:              1,
-	NaturesMajesty:        2,
-	ImprovedMoonfire:      2,
-	NaturesGrace:          3,
-	NaturesSplendor:       true,
-	NaturesReach:          2,
-	Vengeance:             5,
-	CelestialFocus:        3,
-	LunarGuidance:         3,
-	InsectSwarm:           true,
-	ImprovedInsectSwarm:   2,
-	Moonfury:              3,
-	BalanceOfPower:        2,
-	MoonkinForm:           true,
-	ImprovedMoonkinForm:   3,
-	ImprovedFaerieFire:    3,
-	WrathOfCenarius:       5,
-	Eclipse:               3,
-	Typhoon:               true,
-	ForceOfNature:         true,
-	GaleWinds:             2,
-	EarthAndMoon:          3,
-	Starfall:              true,
-	ImprovedMarkOfTheWild: 2,
-	Furor:                 5,
-	NaturalShapeshifter:   3,
-	MasterShapeshifter:    2,
-	OmenOfClarity:         true,
-}
-
+var StandardTalents = "5032003115331303213305311231--205003012"
 var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DruidMajorGlyph_GlyphOfFocus),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfInsectSwarm),
@@ -54,7 +23,6 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 	BalanceDruid: &proto.BalanceDruid{
-		Talents: StandardTalents,
 		Options: &proto.BalanceDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},
@@ -66,7 +34,6 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 
 var PlayerOptionsAOE = &proto.Player_BalanceDruid{
 	BalanceDruid: &proto.BalanceDruid{
-		Talents: StandardTalents,
 		Options: &proto.BalanceDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},

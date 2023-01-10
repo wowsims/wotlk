@@ -18,13 +18,13 @@ func TestFeral(t *testing.T) {
 		Race:  proto.Race_RaceTauren,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsBearweaveLacerate},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "FlowerWeave", SpecOptions: PlayerOptionsMonoCatFlowerWeave},
 		},
-
-		Consumes: FullConsumes,
-		Glyphs:   StandardGlyphs,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

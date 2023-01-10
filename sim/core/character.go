@@ -8,6 +8,8 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protowire"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 type CharacterBuildPhase uint8
@@ -636,4 +638,28 @@ func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
 	}
 
 	return uint8(bestTree)
+}
+
+// Uses proto reflection to set fields in a talents proto (e.g. MageTalents,
+// WarriorTalents) based on a talentsStr. treeSizes should contain the number
+// of talents in each tree, usually around 30. This is needed because talent
+// strings truncate 0's at the end of each tree so we can't infer the start index
+// of the tree from the string.
+func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3]int) {
+	treeStrs := strings.Split(talentsStr, "-")
+	fieldDescriptors := data.Descriptor().Fields()
+
+	var offset int
+	for treeIdx, treeStr := range treeStrs {
+		for talentIdx, talentValStr := range treeStr {
+			talentVal, _ := strconv.Atoi(string(talentValStr))
+			fd := fieldDescriptors.ByNumber(protowire.Number(offset + talentIdx + 1))
+			if fd.Kind() == protoreflect.BoolKind {
+				data.Set(fd, protoreflect.ValueOfBool(talentVal == 1))
+			} else { // Int32Kind
+				data.Set(fd, protoreflect.ValueOfInt32(int32(talentVal)))
+			}
+		}
+		offset += treeSizes[treeIdx]
+	}
 }

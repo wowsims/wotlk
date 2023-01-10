@@ -18,15 +18,16 @@ func TestShadow(t *testing.T) {
 		Race:       proto.Race_RaceUndead,
 		OtherRaces: []proto.Race{proto.Race_RaceNightElf, proto.Race_RaceDraenei},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:  core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:  DefaultTalents,
+		Glyphs:   DefaultGlyphs,
+		Consumes: FullConsumes,
+
 		SpecOptions: core.SpecOptionsCombo{Label: "Ideal", SpecOptions: PlayerOptionsIdeal},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 			{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
-
-		Glyphs:   DefaultGlyphs,
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

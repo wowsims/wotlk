@@ -5,6 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var FrostTalents = "23050005-32005350352203012300033101351"
 var FrostDefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
 	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
@@ -12,6 +13,7 @@ var FrostDefaultGlyphs = &proto.Glyphs{
 	// No interesting minor glyphs.
 }
 
+var UnholyTalents = "-320043500002-2300303050032152000150013133051"
 var UnholyDefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfTheGhoul),
 	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfDarkDeath),
@@ -21,7 +23,6 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Talents:  UnholyTalents,
 		Options:  deathKnightOptions,
 		Rotation: unholyRotation,
 	},
@@ -29,68 +30,9 @@ var PlayerOptionsUnholy = &proto.Player_Deathknight{
 
 var PlayerOptionsFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
-		Talents:  FrostTalents,
 		Options:  deathKnightOptions,
 		Rotation: frostRotation,
 	},
-}
-
-var UnholyTalents = &proto.DeathknightTalents{
-	ImprovedIcyTouch:  3,
-	RunicPowerMastery: 2,
-	BlackIce:          3,
-	NervesOfColdSteel: 3,
-	IcyTalons:         5,
-	EndlessWinter:     2,
-
-	ViciousStrikes:    2,
-	Virulence:         3,
-	Morbidity:         3,
-	RavenousDead:      3,
-	Outbreak:          0,
-	Necrosis:          5,
-	BloodCakedBlade:   3,
-	NightOfTheDead:    2,
-	Impurity:          5,
-	Dirge:             2,
-	MasterOfGhouls:    true,
-	Desolation:        5,
-	GhoulFrenzy:       true,
-	CryptFever:        3,
-	BoneShield:        true,
-	WanderingPlague:   3,
-	EbonPlaguebringer: 3,
-	ScourgeStrike:     true,
-	RageOfRivendare:   5,
-	SummonGargoyle:    true,
-}
-
-var FrostTalents = &proto.DeathknightTalents{
-	Butchery:       2,
-	Subversion:     3,
-	BladedArmor:    5,
-	DarkConviction: 5,
-
-	ImprovedIcyTouch:   3,
-	RunicPowerMastery:  2,
-	BlackIce:           5,
-	NervesOfColdSteel:  3,
-	IcyTalons:          5,
-	Annihilation:       3,
-	KillingMachine:     5,
-	ChillOfTheGrave:    2,
-	EndlessWinter:      2,
-	GlacierRot:         3,
-	ImprovedIcyTalons:  true,
-	MercilessCombat:    2,
-	Rime:               3,
-	ThreatOfThassarian: 3,
-	BloodOfTheNorth:    3,
-	UnbreakableArmor:   true,
-	FrostStrike:        true,
-	GuileOfGorefiend:   3,
-	TundraStalker:      5,
-	HowlingBlast:       true,
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{

@@ -27,7 +27,7 @@ func NewHolyPaladin(character core.Character, options *proto.Player) *HolyPaladi
 	holyOptions := options.GetHolyPaladin()
 
 	holy := &HolyPaladin{
-		Paladin:  paladin.NewPaladin(character, holyOptions.Talents),
+		Paladin:  paladin.NewPaladin(character, options.TalentsString),
 		Rotation: holyOptions.Rotation,
 		Options:  holyOptions.Options,
 	}

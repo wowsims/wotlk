@@ -5,36 +5,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var defaultRetTalents = &proto.PaladinTalents{
-	SealsOfThePure:                5,
-	DivineIntellect:               5,
-	AuraMastery:                   true,
-	DivineStrength:                5,
-	Benediction:                   5,
-	ImprovedJudgements:            2,
-	HeartOfTheCrusader:            3,
-	ImprovedBlessingOfMight:       2,
-	Conviction:                    5,
-	SealOfCommand:                 true,
-	PursuitOfJustice:              2,
-	SanctityOfBattle:              3,
-	Crusade:                       3,
-	TwoHandedWeaponSpecialization: 3,
-	SanctifiedRetribution:         true,
-	Vengeance:                     3,
-	TheArtOfWar:                   2,
-	Repentance:                    true,
-	JudgementsOfTheWise:           3,
-	Fanaticism:                    3,
-	SanctifiedWrath:               2,
-	SwiftRetribution:              3,
-	CrusaderStrike:                true,
-	SanctifiedLight:               3,
-	RighteousVengeance:            3,
-	DivineStorm:                   true,
-}
-
-var defaultRetGlyphs = &proto.Glyphs{
+var StandardTalents = "050501-05-05232051203331302133231331"
+var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
 	Major2: int32(proto.PaladinMajorGlyph_GlyphOfJudgement),
 	Major3: int32(proto.PaladinMajorGlyph_GlyphOfConsecration),
@@ -60,7 +32,6 @@ var defaultRetOptions = &proto.RetributionPaladin_Options{
 
 var DefaultOptions = &proto.Player_RetributionPaladin{
 	RetributionPaladin: &proto.RetributionPaladin{
-		Talents:  defaultRetTalents,
 		Options:  defaultRetOptions,
 		Rotation: defaultRetRotation,
 	},

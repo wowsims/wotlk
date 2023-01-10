@@ -19,10 +19,10 @@ func TestUnholy(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "Unholy P1 ", GearSet: UnholyDwP1Gear},
+		Talents:     UnholyTalents,
+		Glyphs:      UnholyDefaultGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
-
-		Glyphs:   UnholyDefaultGlyphs,
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -43,10 +43,10 @@ func TestFrost(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
+		Talents:     FrostTalents,
+		Glyphs:      FrostDefaultGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-
-		Glyphs:   FrostDefaultGlyphs,
-		Consumes: FullConsumes,
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,

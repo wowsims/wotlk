@@ -19,9 +19,10 @@ func TestDisc(t *testing.T) {
 		IsHealer: true,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
+		Talents:     DiscTalents,
 		Glyphs:      DiscGlyphs,
 		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -53,9 +54,10 @@ func TestHoly(t *testing.T) {
 		IsHealer: true,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
+		Talents:     HolyTalents,
 		Glyphs:      HolyGlyphs,
 		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

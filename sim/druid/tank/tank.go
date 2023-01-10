@@ -27,15 +27,15 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 	tankOptions := options.GetFeralTankDruid()
 	selfBuffs := druid.SelfBuffs{}
 
-	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
-	if tankOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
-	}
-
 	bear := &FeralTankDruid{
-		Druid:    druid.New(character, druid.Bear, selfBuffs, tankOptions.Talents),
+		Druid:    druid.New(character, druid.Bear, selfBuffs, options.TalentsString),
 		Rotation: tankOptions.Rotation,
 		Options:  tankOptions.Options,
+	}
+
+	bear.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	if tankOptions.Options.InnervateTarget != nil {
+		bear.SelfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
 	}
 
 	rbo := core.RageBarOptions{

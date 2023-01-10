@@ -5,34 +5,23 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var defaultDestroTalents = &proto.WarlockTalents{
-	// destro
-	ImprovedShadowBolt: 5,
-	Bane:               5,
-	Ruin:               5,
-	Intensity:          2,
-	DestructiveReach:   2,
-	Devastation:        true,
-	Aftermath:          2,
-	ImprovedImmolate:   3,
-	Emberstorm:         5,
-	Conflagrate:        true,
-	Backlash:           3,
-	Shadowburn:         true,
-	ShadowAndFlame:     5,
-	Backdraft:          3,
-	EmpoweredImp:       3,
-	FireAndBrimstone:   5,
-	ChaosBolt:          true,
-	Shadowfury:         true,
-	Pyroclasm:          3,
-	DemonicPower:       2,
-	Cataclysm:          3,
-	SoulLeech:          3,
-	ImprovedSoulLeech:  2,
-	// demo
-	FelSynergy:  2,
-	ImprovedImp: 3,
+var AfflictionTalents = "2350002030023510253500331151--550000051"
+var DemonologyTalents = "-203203301035012530135201351-550000052"
+var DestructionTalents = "-03310030003-05203205210331051335230351"
+var AfflictionGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
+}
+var DemonologyGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfFelguard),
+}
+var DestructionGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarlockMajorGlyph_GlyphOfConflagrate),
+	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
+	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
 }
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
@@ -52,7 +41,6 @@ var defaultDestroOptions = &proto.Warlock_Options{
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Talents:  defaultDestroTalents,
 		Options:  defaultDestroOptions,
 		Rotation: defaultDestroRotation,
 	},
@@ -61,37 +49,9 @@ var DefaultDestroWarlock = &proto.Player_Warlock{
 // ---------------------------------------
 var DefaultAfflictionWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Talents:  defaultAfflictionTalents,
 		Options:  defaultAfflictionOptions,
 		Rotation: defaultAfflictionRotation,
 	},
-}
-
-var defaultAfflictionTalents = &proto.WarlockTalents{
-	// Affliction
-	ImprovedCurseOfAgony:  2,
-	Suppression:           3,
-	ImprovedCorruption:    5,
-	SoulSiphon:            2,
-	FelConcentration:      3,
-	Nightfall:             2,
-	EmpoweredCorruption:   3,
-	ShadowEmbrace:         5,
-	SiphonLife:            true,
-	ImprovedFelhunter:     2,
-	ShadowMastery:         5,
-	Eradication:           3,
-	Contagion:             5,
-	DeathsEmbrace:         3,
-	UnstableAffliction:    true,
-	Pandemic:              true,
-	EverlastingAffliction: 5,
-	Haunt:                 true,
-	// Destro
-	ImprovedShadowBolt: 5,
-	Bane:               5,
-	Ruin:               5,
-	Intensity:          1,
 }
 
 var defaultAfflictionOptions = &proto.Warlock_Options{
@@ -110,48 +70,12 @@ var defaultAfflictionRotation = &proto.Warlock_Rotation{
 	DetonateSeed: true,
 }
 
-var defaultAfflictionGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
-	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
-}
-
 // ---------------------------------------
 var DefaultDemonologyWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
-		Talents:  defaultDemonologyTalents,
 		Options:  defaultDemonologyOptions,
 		Rotation: defaultDemonologyRotation,
 	},
-}
-
-var defaultDemonologyTalents = &proto.WarlockTalents{
-	// Demonology
-	ImprovedHealthstone: 2,
-	DemonicEmbrace:      3,
-	FelSynergy:          2,
-	DemonicBrutality:    3,
-	FelVitality:         3,
-	SoulLink:            true,
-	DemonicAegis:        3,
-	UnholyPower:         5,
-	ManaFeed:            true,
-	MasterConjuror:      2,
-	MasterDemonologist:  5,
-	MoltenCore:          3,
-	DemonicEmpowerment:  true,
-	DemonicKnowledge:    3,
-	DemonicTactics:      5,
-	Decimation:          2,
-	SummonFelguard:      true,
-	Nemesis:             3,
-	DemonicPact:         5,
-	Metamorphosis:       true,
-	// Destro
-	ImprovedShadowBolt: 5,
-	Bane:               5,
-	Ruin:               5,
-	Intensity:          2,
 }
 
 var defaultDemonologyOptions = &proto.Warlock_Options{

@@ -33,13 +33,19 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 		UseInnerFire:   shadowOptions.Options.Armor == proto.ShadowPriest_Options_InnerFire,
 	}
 
-	basePriest := priest.New(character, selfBuffs, shadowOptions.Talents)
+	basePriest := priest.New(character, selfBuffs, options.TalentsString)
 	basePriest.Latency = shadowOptions.Rotation.Latency
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: shadowOptions.Rotation,
 		options:  shadowOptions.Options,
 	}
+
+	spriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	if spriest.Talents.PowerInfusion && shadowOptions.Options.PowerInfusionTarget != nil {
+		spriest.SelfBuffs.PowerInfusionTarget = shadowOptions.Options.PowerInfusionTarget
+	}
+
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
 	spriest.CanRolloverSWP = spriest.Talents.MindFlay && spriest.Talents.PainAndSuffering > 0
 

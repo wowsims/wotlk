@@ -18,9 +18,10 @@ func TestSmite(t *testing.T) {
 		Race:  proto.Race_RaceUndead,
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		Talents:     DefaultTalents,
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

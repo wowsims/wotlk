@@ -240,8 +240,6 @@ message Deathknight {
 		bool use_gargoyle = 23;
 	}
 	Rotation rotation = 1;
-
-	DeathknightTalents talents = 2;
 	
 	message Options {
 		double starting_runic_power = 1;
@@ -287,8 +285,6 @@ message TankDeathknight {
 		BloodSpell blood_spell = 3;
 	}
 	Rotation rotation = 1;
-
-	DeathknightTalents talents = 2;
 	
 	message Options {
 		double starting_runic_power = 1;

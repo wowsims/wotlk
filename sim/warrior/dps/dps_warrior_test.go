@@ -18,11 +18,11 @@ func TestFury(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		TalentsString: "32002301233-305053000520310053120500351",
-		GearSet:       core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
-		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
-
-		Consumes: FullConsumes,
+		Talents:     FuryTalents,
+		Glyphs:      FuryGlyphs,
+		GearSet:     core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -44,11 +44,11 @@ func TestArms(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		TalentsString: "3022032023335100102012213231251-305-2033",
-		GearSet:       core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
-		SpecOptions:   core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
-
-		Consumes: FullConsumes,
+		Talents:     ArmsTalents,
+		Glyphs:      ArmsGlyphs,
+		GearSet:     core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,

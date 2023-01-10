@@ -5,38 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var CelestialFocusTalents = &proto.DruidTalents{
-	Genesis:         5,
-	Moonglow:        3,
-	NaturesMajesty:  2,
-	NaturesGrace:    3,
-	NaturesSplendor: true,
-	NaturesReach:    1,
-	CelestialFocus:  3,
-
-	ImprovedMarkOfTheWild: 2,
-	NaturesFocus:          3,
-	Subtlety:              2,
-	NaturalShapeshifter:   3,
-	Intensity:             3,
-	OmenOfClarity:         true,
-	MasterShapeshifter:    2,
-	TranquilSpirit:        1,
-	ImprovedRejuvenation:  3,
-	NaturesSwiftness:      true,
-	GiftOfNature:          5,
-	EmpoweredTouch:        2,
-	NaturesBounty:         3,
-	LivingSpirit:          3,
-	Swiftmend:             true,
-	EmpoweredRejuvenation: 5,
-	Revitalize:            3,
-	TreeOfLife:            true,
-	ImprovedTreeOfLife:    3,
-	GiftOfTheEarthmother:  5,
-	WildGrowth:            true,
-}
-
+var StandardTalents = "05320031103--230023312131502331050313051"
 var StandardGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DruidMajorGlyph_GlyphOfWildGrowth),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfSwiftmend),
@@ -53,7 +22,6 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsStandard = &proto.Player_RestorationDruid{
 	RestorationDruid: &proto.RestorationDruid{
-		Talents: CelestialFocusTalents,
 		Options: &proto.RestorationDruid_Options{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},

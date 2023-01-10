@@ -44,7 +44,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 	warOptions := options.GetWarrior()
 
 	war := &DpsWarrior{
-		Warrior: warrior.NewWarrior(character, warOptions.Talents, warrior.WarriorInputs{
+		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 			Munch:           warOptions.Options.Munch,

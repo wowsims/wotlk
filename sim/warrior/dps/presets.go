@@ -5,9 +5,21 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+var FuryTalents = "32002301233-305053000520310053120500351"
+var FuryGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarriorMajorGlyph_GlyphOfWhirlwind),
+	Major2: int32(proto.WarriorMajorGlyph_GlyphOfHeroicStrike),
+	Major3: int32(proto.WarriorMajorGlyph_GlyphOfExecution),
+}
+var ArmsTalents = "3022032023335100102012213231251-305-2033"
+var ArmsGlyphs = &proto.Glyphs{
+	Major1: int32(proto.WarriorMajorGlyph_GlyphOfRending),
+	Major2: int32(proto.WarriorMajorGlyph_GlyphOfMortalStrike),
+	Major3: int32(proto.WarriorMajorGlyph_GlyphOfExecution),
+}
+
 var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Talents:  ArmsTalents,
 		Options:  warriorOptions,
 		Rotation: armsRotation,
 	},
@@ -15,74 +27,9 @@ var PlayerOptionsArms = &proto.Player_Warrior{
 
 var PlayerOptionsFury = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
-		Talents:  FuryTalents,
 		Options:  warriorOptions,
 		Rotation: furyRotation,
 	},
-}
-
-var ArmsTalents = &proto.WarriorTalents{
-	ImprovedHeroicStrike:          3,
-	ImprovedRend:                  2,
-	TacticalMastery:               3,
-	ImprovedOverpower:             2,
-	AngerManagement:               true,
-	Impale:                        2,
-	DeepWounds:                    3,
-	TwoHandedWeaponSpecialization: 3,
-	TasteForBlood:                 3,
-	PoleaxeSpecialization:         5,
-	SweepingStrikes:               true,
-	WeaponMastery:                 1,
-	MortalStrike:                  true,
-	StrengthOfArms:                2,
-	ImprovedSlam:                  2,
-	ImprovedMortalStrike:          3,
-	UnrelentingAssault:            2,
-	SuddenDeath:                   3,
-	EndlessRage:                   true,
-	BloodFrenzy:                   2,
-	WreckingCrew:                  5,
-	Bladestorm:                    true,
-
-	ArmoredToTheTeeth: 3,
-	Cruelty:           5,
-
-	ImprovedBloodrage:   2,
-	ImprovedThunderClap: 3,
-	Incite:              3,
-}
-
-var FuryTalents = &proto.WarriorTalents{
-	ImprovedHeroicStrike:          3,
-	ImprovedRend:                  2,
-	IronWill:                      2,
-	TacticalMastery:               3,
-	AngerManagement:               true,
-	Impale:                        2,
-	DeepWounds:                    3,
-	TwoHandedWeaponSpecialization: 3,
-
-	ArmoredToTheTeeth:       3,
-	Cruelty:                 5,
-	UnbridledWrath:          2,
-	ImprovedCleave:          3,
-	PiercingHowl:            true,
-	CommandingPresence:      1,
-	DualWieldSpecialization: 5,
-	ImprovedExecute:         2,
-	Precision:               3,
-	DeathWish:               true,
-	ImprovedBerserkerRage:   1,
-	Flurry:                  5,
-	IntensifyRage:           3,
-	Bloodthirst:             true,
-	ImprovedWhirlwind:       2,
-	ImprovedBerserkerStance: 5,
-	Rampage:                 true,
-	Bloodsurge:              3,
-	UnendingFury:            5,
-	TitansGrip:              true,
 }
 
 var armsRotation = &proto.Warrior_Rotation{

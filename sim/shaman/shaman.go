@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{25, 29, 26}
+
 // Start looking to refresh 5 minute totems at 4:55.
 const TotemRefreshTime5M = time.Second * 295
 
@@ -18,19 +20,20 @@ const (
 	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
-func NewShaman(character core.Character, talents *proto.ShamanTalents, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
-	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
-		totems.Fire = proto.FireTotem_FlametongueTotem
-	}
-
+func NewShaman(character core.Character, talents string, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	shaman := &Shaman{
 		Character:           character,
-		Talents:             talents,
+		Talents:             &proto.ShamanTalents{},
 		Totems:              totems,
 		SelfBuffs:           selfBuffs,
 		thunderstormInRange: thunderstormRange,
 	}
+	core.FillTalentsProto(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	shaman.EnableManaBar()
+
+	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath && !shaman.Talents.TotemOfWrath {
+		shaman.Totems.Fire = proto.FireTotem_FlametongueTotem
+	}
 
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)

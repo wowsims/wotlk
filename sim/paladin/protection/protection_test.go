@@ -19,13 +19,15 @@ func TestProtection(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{
 				Label: "Protection Paladin SOC",
 				SpecOptions: &proto.Player_ProtectionPaladin{
 					ProtectionPaladin: &proto.ProtectionPaladin{
-						Talents: defaultProtTalents,
 						Options: &proto.ProtectionPaladin_Options{
 							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:                 proto.PaladinSeal_Command,
@@ -40,7 +42,6 @@ func TestProtection(t *testing.T) {
 				Label: "Protection Paladin SOR",
 				SpecOptions: &proto.Player_ProtectionPaladin{
 					ProtectionPaladin: &proto.ProtectionPaladin{
-						Talents: defaultProtTalents,
 						Options: &proto.ProtectionPaladin_Options{
 							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:                 proto.PaladinSeal_Righteousness,
@@ -53,7 +54,6 @@ func TestProtection(t *testing.T) {
 			},
 		},
 
-		Consumes:        FullConsumes,
 		IsTank:          true,
 		InFrontOfTarget: true,
 

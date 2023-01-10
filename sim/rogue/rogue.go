@@ -30,6 +30,8 @@ const (
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
 )
 
+var TalentTreeSizes = [3]int{27, 28, 28}
+
 const RogueBleedTag = "RogueBleed"
 
 type Rogue struct {
@@ -217,10 +219,11 @@ func NewRogue(character core.Character, options *proto.Player) *Rogue {
 
 	rogue := &Rogue{
 		Character: character,
-		Talents:   rogueOptions.Talents,
+		Talents:   &proto.RogueTalents{},
 		Options:   rogueOptions.Options,
 		Rotation:  rogueOptions.Rotation,
 	}
+	core.FillTalentsProto(rogue.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71

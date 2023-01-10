@@ -5,37 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var StandardTalents = &proto.PriestTalents{
-	TwinDisciplines:            5,
-	ImprovedInnerFire:          3,
-	ImprovedPowerWordFortitude: 2,
-	Meditation:                 3,
-	InnerFocus:                 true,
-
-	SpiritTap:               3,
-	ImprovedSpiritTap:       2,
-	Darkness:                5,
-	ImprovedShadowWordPain:  2,
-	ShadowFocus:             3,
-	ImprovedMindBlast:       5,
-	MindFlay:                true,
-	VeiledShadows:           2,
-	ShadowReach:             2,
-	ShadowWeaving:           3,
-	VampiricEmbrace:         true,
-	FocusedMind:             3,
-	MindMelt:                2,
-	ImprovedDevouringPlague: 3,
-	Shadowform:              true,
-	ShadowPower:             5,
-	ImprovedShadowform:      1,
-	Misery:                  3,
-	VampiricTouch:           true,
-	PainAndSuffering:        3,
-	TwistedFaith:            5,
-	Dispersion:              true,
-}
-
+var DefaultTalents = "05032031--325023051223010323151301351"
 var DefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
 	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
@@ -53,7 +23,6 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
-		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
 			Armor:              proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend:     true,
@@ -68,7 +37,6 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 }
 var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
-		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
 			Armor:              proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend:     true,
@@ -84,7 +52,6 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 }
 var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
-		Talents: StandardTalents,
 		Options: &proto.ShadowPriest_Options{
 			Armor:              proto.ShadowPriest_Options_InnerFire,
 			UseShadowfiend:     true,

@@ -41,13 +41,13 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 
 	switch eleShamOptions.Rotation.Type {
 	case proto.ElementalShaman_Rotation_Adaptive:
-		rotation = NewAdaptiveRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
+		rotation = NewAdaptiveRotation(eleShamOptions.Rotation)
 	case proto.ElementalShaman_Rotation_Manual:
-		rotation = NewManualRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
+		rotation = NewManualRotation(eleShamOptions.Rotation)
 	}
 
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
+		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
 		rotation: rotation,
 		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}
@@ -71,7 +71,6 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 			SpiritWolf1: ele.NewSpiritWolf(1),
 			SpiritWolf2: ele.NewSpiritWolf(2),
 		}
-
 	}
 
 	return ele
