@@ -328,7 +328,7 @@ export type TalentLocation = {
 };
 
 export type TalentConfig<TalentsProto> = {
-	fieldName?: keyof TalentsProto;
+	fieldName?: keyof TalentsProto | string;
 
 	location: TalentLocation;
 
