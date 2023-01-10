@@ -12,18 +12,6 @@
 		grid-gap: $block-spacer;
 	}
 
-	.new-player-picker-root .class-presets-container,
-	.parties-container .player-picker-root {
-		height: 2.5rem;
-	}
-
-	.new-player-picker-root .preset-picker-icon,
-	.parties-container .player-icon {
-		width: 2rem;
-		height: 2rem;
-		border-radius: 100%;
-	}
-
 	.raid-controls {
 		grid-template-columns: repeat(5, 1fr);
 
@@ -73,43 +61,6 @@
 }
 
 .player-picker-root {
-	padding: calc(.25rem - 1px) .25rem;
-	border: 1px solid $border-color;
-	display: flex;
-	justify-content: space-between;
-	overflow-x: hidden;
-
-	&:not([class*="bg-"]) {
-		background: rgba(50,50,50,.5);
-	}
-
-	.player-label {
-		margin-right: map.get($spacers, 2);
-		display: flex;
-		align-items: center;
-		flex-grow: 1;
-		overflow: hidden;
-		line-height: 1rem;
-
-		.player-icon {
-			margin-right: map.get($spacers, 2);
-		}
-
-		.player-details {
-			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-
-			.player-name {
-				height: 1rem;
-				border: none;
-				outline: none;
-				background: transparent;
-				text-overflow: ellipsis;
-			}
-		}
-	}
-
 	.player-options {
 		display: flex;
 		align-items: center;

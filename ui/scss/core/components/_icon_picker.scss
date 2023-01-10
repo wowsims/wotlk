@@ -8,11 +8,11 @@
 
   .icon-picker-button,
   .icon-dropdown-option {
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
+    min-width: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border: 1px solid $border-color;
-    transition: border-color .25s ease-in-out;
+    transition: border-color .15s ease-in-out;
     background-size: cover;
     filter: grayscale(1);
 
@@ -62,7 +62,7 @@
   }
 
   label {
-    margin-left: .5rem;
+    margin-left: map.get($spacers, 1);
   }
 
   .dropdown-menu {

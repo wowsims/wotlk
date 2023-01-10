@@ -1,8 +1,7 @@
 import { Tooltip } from 'bootstrap';
 import { ActionId } from '../proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { TypedEvent } from '../typed_event.js';
 
-import { Component } from './component.js';
 import { Input, InputConfig } from './input.js';
 
 declare var tippy: any;
@@ -61,6 +60,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		if (config.tooltip) {
 			this.rootElem.setAttribute('data-bs-toggle', 'tooltip');
 			this.rootElem.setAttribute('data-bs-title', config.tooltip);
+			this.rootElem.setAttribute('data-bs-html', 'true');
 			Tooltip.getOrCreateInstance(this.rootElem);
 		}
 
@@ -102,10 +102,10 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			}
 
 			if (valueConfig.tooltip) {
-				tippy(option, {
-					'content': valueConfig.tooltip,
-					'allowHTML': true,
-				});
+				option.setAttribute('data-bs-toggle', 'tooltip');
+				option.setAttribute('data-bs-title', valueConfig.tooltip);
+				option.setAttribute('data-bs-html', 'true');
+				Tooltip.getOrCreateInstance(option);
 			}
 
 			if (valueConfig.showWhen) {
@@ -155,6 +155,11 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		}
 	}
 
+	update() {
+		super.update();
+		this.setActive(this.enabled && !this.config.equals(this.currentValue, this.config.zeroValue));
+	}
+
 	getInputElem(): HTMLElement {
 		return this.buttonElem;
 	}
@@ -165,26 +170,29 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 	setInputValue(newValue: T) {
 		this.currentValue = newValue;
-
-		if (!this.config.equals(this.currentValue, this.config.zeroValue)) {
-			this.buttonElem.classList.add('active');
-		} else {
-			this.buttonElem.classList.remove('active');
-		}
+		this.setActive(this.enabled && !this.config.equals(this.currentValue, this.config.zeroValue))
 
 		this.buttonText.textContent = ''
 		this.buttonText.style.display = 'none'
+
 		const valueConfig = this.config.values.find(valueConfig => this.config.equals(valueConfig.value, this.currentValue))!;
 		if (valueConfig) {
 			this.setImage(this.buttonElem, valueConfig);
-			if (valueConfig.text != undefined){
+			if (valueConfig.text != undefined) {
 				this.buttonText.style.display = 'block'
 				this.buttonText.textContent = valueConfig.text
 			}
 		} else if (this.config.backupIconUrl) {
 			const backupId = this.config.backupIconUrl(this.currentValue);
 			this.setActionImage(this.buttonElem, backupId);
-			this.rootElem.classList.remove('active');
+			this.setActive(false);
 		}
+	}
+
+	setActive(active: boolean) {
+		if (active)
+			this.buttonElem.classList.add('active');
+		else
+			this.buttonElem.classList.remove('active');
 	}
 }

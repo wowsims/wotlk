@@ -1,12 +1,15 @@
 @use "sass:map";
 
-@import "./raid_tab";
 @import "./assignments_picker";
 @import "./blessings_picker";
+@import './player';
+@import './player_editor';
 @import "./raid_picker";
 @import "./raid_stats";
 @import "./tanks_picker";
-@import './player_editor';
+
+@import "./raid_tab";
+@import "./settings_tab";
 
 .raid-settings-tab {
 	overflow-y: auto;

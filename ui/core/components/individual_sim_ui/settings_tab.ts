@@ -45,9 +45,9 @@ export class SettingsTab extends SimTab {
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
 
-	readonly column1: HTMLElement = this.buildColumn(1);
-	readonly column2: HTMLElement = this.buildColumn(2);
-	readonly column3: HTMLElement = this.buildColumn(3);
+	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
+	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
+	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
 	readonly column4?: HTMLElement;
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
@@ -63,7 +63,7 @@ export class SettingsTab extends SimTab {
 
 		// The 4th column is only used in the raid sim player editor to spread out player settings
 		if (this.simUI.isWithinRaidSim) {
-			this.column4 = this.buildColumn(4);
+			this.column4 = this.buildColumn(4, 'settings-left-col');
 			this.leftPanel.appendChild(this.column4);
 		}
 
@@ -75,12 +75,6 @@ export class SettingsTab extends SimTab {
 
     this.buildTabContent();
   }
-
-	private buildColumn(index: number): HTMLElement {
-		let column = document.createElement('div');
-		column.classList.add('tab-panel-col', `settings-left-col-${index}`)
-		return column;
-	}
 
   protected buildTabContent() {
 		if (!this.simUI.isWithinRaidSim) {

@@ -340,6 +340,8 @@ export class PlayerPicker extends Component {
 		this.dpsResultElem = null;
 		this.referenceDeltaElem = null;
 
+		this.rootElem.classList.add('player');
+
 		this.partyPicker.party.compChangeEmitter.on(eventID => {
 			const newPlayer = this.partyPicker.party.getPlayer(this.index);
 			if (newPlayer != this.player)
@@ -463,7 +465,7 @@ export class PlayerPicker extends Component {
 
 	private update() {
 		if (this.player == null) {
-			this.rootElem.className = 'player-picker-root';
+			this.rootElem.className = 'player-picker-root player';
 			this.rootElem.innerHTML = '';
 
 			this.labelElem = null;
@@ -475,7 +477,7 @@ export class PlayerPicker extends Component {
 		} else {
 			const classCssClass = cssClassForClass(this.player.getClass());
 
-			this.rootElem.className = `player-picker-root bg-${classCssClass}-dampened`;
+			this.rootElem.className = `player-picker-root player bg-${classCssClass}-dampened`;
 			this.rootElem.setAttribute('draggable', 'true');
 			this.rootElem.innerHTML = `
 				<div class="player-label">
@@ -656,7 +658,7 @@ class NewPlayerPicker extends Component {
 						data-bs-title="${matchingPreset.tooltip}"
 						data-bs-html="true"
 					>
-						<img class="preset-picker-icon" src="${matchingPreset.iconUrl}"/>
+						<img class="preset-picker-icon player-icon" src="${matchingPreset.iconUrl}"/>
 					</a>
 				`
 				const presetElem = presetElemFragment.children[0] as HTMLElement;
