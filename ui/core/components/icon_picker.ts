@@ -1,8 +1,7 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
 
-import { Component } from './component.js';
 import { Input, InputConfig } from './input.js';
 
 // Data for creating an icon-based input component.

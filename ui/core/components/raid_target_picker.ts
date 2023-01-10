@@ -1,92 +1,70 @@
-import { Component } from '../components/component.js';
 import { Input, InputConfig } from '../components/input.js';
 import { Player } from '../player.js';
 import { Raid } from '../raid.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { RaidTarget } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { newRaidTarget, emptyRaidTarget } from '../proto_utils/utils.js';
-
-declare var tippy: any;
+import { emptyRaidTarget, cssClassForClass } from '../proto_utils/utils.js';
 
 export interface RaidTargetPickerConfig<ModObject> extends InputConfig<ModObject, RaidTarget> {
 	noTargetLabel: string,
 	compChangeEmitter: TypedEvent<void>,
 }
 
-export interface RaidTargetElemOption {
-	iconUrl: string,
-	text: string,
-	color: string,
-	isDropdown: boolean,
-};
-
-export interface RaidTargetOption extends RaidTargetElemOption {
-	value: Player<any> | null,
-};
+interface OptionElemOptions {
+	isDropdown?: boolean,
+	player: Player<any>|null,
+}
 
 // Dropdown menu for selecting a player.
 export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 	private readonly config: RaidTargetPickerConfig<ModObject>;
 	private readonly raid: Raid;
-	private readonly noTargetOption: RaidTargetOption;
 
 	private curPlayer: Player<any> | null;
 	private curRaidTarget: RaidTarget;
 
-	private currentOptions: Array<RaidTargetOption>;
+	private currentOptions: Array<OptionElemOptions>;
 
 	private readonly buttonElem: HTMLElement;
 	private readonly dropdownElem: HTMLElement;
 
 	constructor(parent: HTMLElement, raid: Raid, modObj: ModObject, config: RaidTargetPickerConfig<ModObject>) {
 		super(parent, 'raid-target-picker-root', modObj, config);
-		this.rootElem.classList.add('dropdown-root');
+		this.rootElem.classList.add('dropdown');
 		this.config = config;
 		this.raid = raid;
 		this.curPlayer = this.raid.getPlayerFromRaidTarget(config.getValue(modObj));
 		this.curRaidTarget = this.getInputValue();
 
-		this.noTargetOption = {
-			iconUrl: '',
-			text: config.noTargetLabel,
-			color: 'black',
-			value: null,
-			isDropdown: true,
-		};
-
 		this.rootElem.innerHTML = `
-			<div class="dropdown-button raid-target-picker-button"></div>
-			<div class="dropdown-panel raid-target-picker-dropdown"></div>
+			<a
+				class="raid-target-picker-button"
+				href="javascript:void(0)"
+				role="button"
+				data-bs-toggle="dropdown"
+			></a>
+			<div class="dropdown-menu"></div>
     `;
 
-		this.buttonElem = this.rootElem.getElementsByClassName('raid-target-picker-button')[0] as HTMLElement;
-		this.dropdownElem = this.rootElem.getElementsByClassName('raid-target-picker-dropdown')[0] as HTMLElement;
+		this.buttonElem = this.rootElem.querySelector('.raid-target-picker-button') as HTMLElement;
+		this.dropdownElem = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		this.buttonElem.addEventListener('click', event => {
-			event.preventDefault();
-		});
+		this.buttonElem.addEventListener('click', event => event.preventDefault());
 
 		this.currentOptions = [];
 		this.updateOptions(TypedEvent.nextEventID());
-		config.compChangeEmitter.on(eventID => {
-			this.updateOptions(eventID);
-		});
+		config.compChangeEmitter.on(eventID => this.updateOptions(eventID));
 
 		this.init();
 	}
 
-	private makeTargetOptions(): Array<RaidTargetOption> {
+	private makeTargetOptions(): Array<OptionElemOptions> {
+		const unassignedOption = {player: null, isDropdown: true}
 		const playerOptions = this.raid.getPlayers().filter(player => player != null).map(player => {
-			return {
-				iconUrl: player!.getTalentTreeIcon(),
-				text: player!.getLabel(),
-				color: player!.getClassColor(),
-				isDropdown: true,
-				value: player,
-			};
+			return { player: player, isDropdown: true }
 		});
-		return [this.noTargetOption].concat(playerOptions);
+
+		return [unassignedOption, ...playerOptions]
 	}
 
 	private updateOptions(eventID: EventID) {
@@ -104,12 +82,12 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 		}
 	}
 
-	private makeOption(data: RaidTargetOption): HTMLElement {
+	private makeOption(data: OptionElemOptions): HTMLElement {
 		const option = RaidTargetPicker.makeOptionElem(data);
 
 		option.addEventListener('click', event => {
 			event.preventDefault();
-			this.curPlayer = data.value;
+			this.curPlayer = data.player;
 			this.curRaidTarget = this.getInputValue();
 			this.inputChanged(TypedEvent.nextEventID());
 		});
@@ -133,44 +111,63 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 		this.curRaidTarget = RaidTarget.clone(newValue);
 		this.curPlayer = this.raid.getPlayerFromRaidTarget(this.curRaidTarget);
 
-		const optionData = this.currentOptions.find(optionData => optionData.value == this.curPlayer);
-		if (!optionData) {
-			return;
-		}
+		const optionData = this.currentOptions.find(optionData => optionData.player == this.curPlayer);
 
-		this.buttonElem.innerHTML = '';
-		this.buttonElem.appendChild(RaidTargetPicker.makeOptionElem(optionData));
+		if (optionData)
+			this.buttonElem.innerHTML = RaidTargetPicker.makeOptionElem({player: optionData.player}).outerHTML;
 	}
 
-	static makeOptionElem(data: RaidTargetElemOption): HTMLElement {
-		const optionContainer = document.createElement('div');
-		optionContainer.classList.add('dropdown-option-container');
+	// static makeOptionElem(data: RaidTargetElemOption): HTMLElement {
+	// 	const optionContainer = document.createElement('div');
+	// 	optionContainer.classList.add('dropdown-option-container');
 
-		const option = document.createElement('div');
-		option.classList.add('raid-target-picker-option');
-		optionContainer.appendChild(option);
+	// 	const option = document.createElement('div');
+	// 	option.classList.add('raid-target-picker-option');
+	// 	optionContainer.appendChild(option);
+	// 	if (data.isDropdown) {
+	// 		option.classList.add('dropdown-option');
+	// 	}
+
+	// 	if (data.iconUrl) {
+	// 		const icon = document.createElement('img');
+	// 		icon.src = data.iconUrl;
+	// 		icon.classList.add('raid-target-picker-icon');
+	// 		option.appendChild(icon);
+	// 	}
+
+	// 	if (data.text) {
+	// 		const label = document.createElement('span');
+	// 		label.textContent = data.text;
+	// 		label.classList.add('raid-target-picker-label');
+	// 		option.appendChild(label);
+	// 	}
+
+	// 	return optionContainer;
+	// }
+
+	static makeOptionElem(data: OptionElemOptions): HTMLElement {
+		const classCssClass = data.player ? cssClassForClass(data.player.getClass()) : '';
+		let playerFragment = document.createElement('fragment');
+
+		playerFragment.innerHTML = `
+			<div class="player ${classCssClass ? `bg-${classCssClass}-dampened` : ''}">
+				<div class="player-label">
+					${data.player ? `<img class="player-icon" src="${data.player.getSpecIcon()}" draggable="false"/>` : ''}
+					<div class="player-details">
+						<span class="player-name ${classCssClass ? `text-${classCssClass}` : ''}">
+							${data.player ? data.player.getName() : 'Unassigned'}
+						</span>
+					</div>
+				</div>
+			</div>
+		`
+
 		if (data.isDropdown) {
-			option.classList.add('dropdown-option');
+			playerFragment.innerHTML = `
+				<a class="dropdown-option" href="javascript:void(0) role="button">${playerFragment.innerHTML}</a>
+			`
 		}
 
-		if (data.color) {
-			option.style.backgroundColor = data.color;
-		}
-
-		if (data.iconUrl) {
-			const icon = document.createElement('img');
-			icon.src = data.iconUrl;
-			icon.classList.add('raid-target-picker-icon');
-			option.appendChild(icon);
-		}
-
-		if (data.text) {
-			const label = document.createElement('span');
-			label.textContent = data.text;
-			label.classList.add('raid-target-picker-label');
-			option.appendChild(label);
-		}
-
-		return optionContainer;
+		return playerFragment.children[0] as HTMLElement;
 	}
 }

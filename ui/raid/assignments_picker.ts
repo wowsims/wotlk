@@ -1,19 +1,13 @@
 import { Component } from '../core/components/component.js';
-import { Input, InputConfig } from '../core/components/input.js';
 import { RaidTargetPicker } from '../core/components/raid_target_picker.js';
+
 import { Player } from '../core/player.js';
-import { Raid } from '../core/raid.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { Class } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { getEnumValues } from '../core/utils.js';
-import { wait } from '../core/utils.js';
+
+import { Class, RaidTarget, Spec } from '../core/proto/common.js';
 import { emptyRaidTarget } from '../core/proto_utils/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
-
-declare var tippy: any;
 
 export class AssignmentsPicker extends Component {
 	readonly raidSimUI: RaidSimUI;
@@ -28,6 +22,7 @@ export class AssignmentsPicker extends Component {
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
 		this.raidSimUI = raidSimUI;
+
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
 		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
@@ -55,50 +50,43 @@ abstract class AssignedBuffPicker extends Component {
 		this.raidSimUI = raidSimUI;
 		this.targetPickers = [];
 
-		this.playersContainer = document.createElement('fieldset');
-		this.playersContainer.classList.add('assigned-buff-players-container', 'settings-section');
+		this.playersContainer = document.createElement('div');
+		this.playersContainer.classList.add('assigned-buff-container');
 		this.rootElem.appendChild(this.playersContainer);
 
+		this.raidSimUI.changeEmitter.on(eventID => this.update());
 		this.update();
-		this.raidSimUI.changeEmitter.on(eventID => {
-			this.update();
-		});
 	}
 
 	private update() {
 		this.playersContainer.innerHTML = `
-			<legend>${this.getTitle()}</legend>
-		`;
+			<label class="assignmented-buff-label form-label">${this.getTitle()}</label>
+		`
 
 		const sourcePlayers = this.getSourcePlayers();
-		if (sourcePlayers.length == 0) {
-			this.rootElem.style.display = 'none';
-		} else {
-			this.rootElem.style.display = 'initial';
-		}
+		if (sourcePlayers.length == 0)
+			this.rootElem.classList.add('hide');
+		else
+		this.rootElem.classList.remove('hide');
 
 		this.targetPickers = sourcePlayers.map((sourcePlayer, sourcePlayerIndex) => {
 			const row = document.createElement('div');
-			row.classList.add('assigned-buff-player');
+			row.classList.add('assigned-buff-player', 'input-inline');
 			this.playersContainer.appendChild(row);
 
-			const sourceElem = RaidTargetPicker.makeOptionElem({
-				iconUrl: sourcePlayer.getTalentTreeIcon(),
-				text: sourcePlayer.getLabel(),
-				color: sourcePlayer.getClassColor(),
-				isDropdown: false,
-			});
+			let sourceElem = document.createElement('div');
 			sourceElem.classList.add('raid-target-picker-root');
+			sourceElem.appendChild(
+				RaidTargetPicker.makeOptionElem({player: sourcePlayer, isDropdown: false})
+			);
 			row.appendChild(sourceElem);
 
-			const arrow = document.createElement('span');
+			const arrow = document.createElement('i');
 			arrow.classList.add('assigned-buff-arrow', 'fa', 'fa-arrow-right');
 			row.appendChild(arrow);
 
 			const raidTargetPicker: RaidTargetPicker<Player<any>> | null = new RaidTargetPicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
-				extraCssClasses: [
-					'assigned-buff-target-picker',
-				],
+				extraCssClasses: ['assigned-buff-target-picker'],
 				noTargetLabel: 'Unassigned',
 				compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
 

@@ -1,5 +1,4 @@
 import { Tooltip } from 'bootstrap';
-import { Sim } from '../sim.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Component } from './component.js';
@@ -36,6 +35,8 @@ export interface InputConfig<ModObject, T> {
 export abstract class Input<ModObject, T> extends Component {
 	private readonly inputConfig: InputConfig<ModObject, T>;
 	readonly modObject: ModObject;
+
+	protected enabled: boolean = true;
 
 	readonly changeEmitter = new TypedEvent<void>();
 
@@ -76,12 +77,14 @@ export abstract class Input<ModObject, T> extends Component {
 		return label;
 	}
 
-	private update() {
+	update() {
 		const enable = !this.inputConfig.enableWhen || this.inputConfig.enableWhen(this.modObject);
 		if (enable) {
+			this.enabled = true;
 			this.rootElem.classList.remove('disabled');
 			this.getInputElem().removeAttribute('disabled');
 		} else {
+			this.enabled = false;
 			this.rootElem.classList.add('disabled');
 			this.getInputElem().setAttribute('disabled', '');
 		}
