@@ -38,8 +38,9 @@ type Pet struct {
 	statInheritance PetStatInheritance
 
 	// No-op until finalized to prevent owner stats from affecting pet until we're ready.
-	currentStatInheritance PetStatInheritance
-	inheritedStats         stats.Stats
+	currentStatInheritance         PetStatInheritance
+	inheritedStats                 stats.Stats
+	guardianDynamicStatInheritance PetStatInheritance
 
 	// Whether this pet is currently active. Pets which are active throughout a whole
 	// encounter, like Hunter pets, are always enabled. Pets which are instead summoned,
@@ -52,7 +53,7 @@ type Pet struct {
 	timeoutAction *PendingAction
 }
 
-func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritance PetStatInheritance, enabledOnStart bool, isGuardian bool) Pet {
+func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritance PetStatInheritance, guardianDynamicStatInheritance PetStatInheritance, enabledOnStart bool, isGuardian bool) Pet {
 	pet := Pet{
 		Character: Character{
 			Unit: Unit{
@@ -71,10 +72,11 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 			PartyIndex: owner.PartyIndex,
 			baseStats:  baseStats,
 		},
-		Owner:           owner,
-		statInheritance: statInheritance,
-		enabledOnStart:  enabledOnStart,
-		isGuardian:      isGuardian,
+		Owner:                          owner,
+		statInheritance:                statInheritance,
+		guardianDynamicStatInheritance: guardianDynamicStatInheritance,
+		enabledOnStart:                 enabledOnStart,
+		isGuardian:                     isGuardian,
 	}
 	pet.GCD = pet.NewTimer()
 	pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
@@ -95,11 +97,18 @@ func (pet *Pet) OwnerAttackSpeedChanged(sim *Simulation) {}
 // addedStats is the amount of stats added to the owner (will be negative if the
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
-	// Temporary pets dont update stats after summon
-	if pet.isGuardian || !pet.enabled {
+	// Only gargoyle is a guardian that inherits haste dynamically
+	if (pet.guardianDynamicStatInheritance == nil && pet.isGuardian) || !pet.enabled {
 		return
 	}
-	inheritedChange := pet.currentStatInheritance(addedStats)
+
+	inheritedChange := stats.Stats{}
+	if pet.isGuardian {
+		inheritedChange = pet.guardianDynamicStatInheritance(addedStats)
+	} else {
+		inheritedChange = pet.currentStatInheritance(addedStats)
+	}
+
 	pet.inheritedStats = pet.inheritedStats.Add(inheritedChange)
 	pet.AddStatsDynamic(sim, inheritedChange)
 }

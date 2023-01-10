@@ -69,16 +69,9 @@ type TreantPet struct {
 
 func (druid *Druid) NewTreant() *TreantPet {
 	treant := &TreantPet{
-		Pet: core.NewPet(
-			"Treant",
-			&druid.Character,
-			treantBaseStats,
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{}
-			},
-			false,
-			false,
-		),
+		Pet: core.NewPet("Treant", &druid.Character, treantBaseStats, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{}
+		}, nil, false, false),
 		druidOwner: druid,
 	}
 	treant.AddStatDependency(stats.Strength, stats.AttackPower, 2)

@@ -66,8 +66,10 @@ type Deathknight struct {
 	Ghoul     *GhoulPet
 	RaiseDead *RuneSpell
 
-	Gargoyle       *GargoylePet
-	SummonGargoyle *RuneSpell
+	Gargoyle                 *GargoylePet
+	SummonGargoyle           *RuneSpell
+	GargoyleSummonDelay      time.Duration
+	OnGargoyleStartFirstCast func()
 
 	RuneWeapon        *RuneWeaponPet
 	DancingRuneWeapon *RuneSpell
@@ -415,9 +417,8 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)
-	if dk.Talents.SummonGargoyle {
-		dk.Gargoyle = dk.NewGargoyle()
-	}
+	dk.OnGargoyleStartFirstCast = func() {}
+	dk.GargoyleSummonDelay = time.Millisecond * 1000
 
 	dk.ArmyGhoul = make([]*GhoulPet, 8)
 	for i := 0; i < 8; i++ {

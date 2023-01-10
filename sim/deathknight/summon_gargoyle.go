@@ -43,19 +43,24 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.EnableWithTimeout(sim, dk.Gargoyle, time.Second*30)
 			dk.Gargoyle.CancelGCDTimer(sim)
 
-			// Add % atack speed modifiers
-			dk.Gargoyle.PseudoStats.CastSpeedMultiplier = 1.0
-			dk.Gargoyle.MultiplyCastSpeed(dk.PseudoStats.MeleeSpeedMultiplier)
+			snapshottedMeleeSpeedMultipler := dk.PseudoStats.MeleeSpeedMultiplier
+			dk.Gargoyle.meleeSpeedMultiplier = func() float64 {
+				if dk.Gargoyle.isNerfedGargoyle {
+					return dk.PseudoStats.MeleeSpeedMultiplier
+				}
+				return snapshottedMeleeSpeedMultipler
+			}
+			dk.Gargoyle.updateCastSpeed()
 
 			// Add a dummy aura to show in metrics
 			summonGargoyleAura.Activate(sim)
 
-			// Start casting after a short 1 second delay to simulate the summon animation
-			// Might need tweaking after testing the exact possible delay
+			// Start casting after a 2.5s delay to simulate the summon animation
 			pa := core.PendingAction{
-				NextActionAt: sim.CurrentTime + time.Second*1,
+				NextActionAt: sim.CurrentTime + dk.GargoyleSummonDelay,
 				Priority:     core.ActionPriorityAuto,
 				OnAction: func(s *core.Simulation) {
+					dk.OnGargoyleStartFirstCast()
 					dk.Gargoyle.GargoyleStrike.Cast(sim, dk.CurrentTarget)
 				},
 			}
@@ -74,14 +79,27 @@ type GargoylePet struct {
 	dkOwner *Deathknight
 
 	GargoyleStrike *core.Spell
+
+	meleeSpeedMultiplier func() float64
+	isNerfedGargoyle     bool
 }
 
-func (dk *Deathknight) NewGargoyle() *GargoylePet {
+func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
 	nocsHit := 0.0
 	if dk.nervesOfColdSteelActive() {
 		nocsHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
 	}
+
+	var gargoyleDynamicStatInheritance core.PetStatInheritance = nil
+	if nerfedGargoyle {
+		gargoyleDynamicStatInheritance = func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.SpellHaste: (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+			}
+		}
+	}
+
 	gargoyle := &GargoylePet{
 		Pet: core.NewPet(
 			"Gargoyle",
@@ -102,10 +120,12 @@ func (dk *Deathknight) NewGargoyle() *GargoylePet {
 					stats.SpellHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
 				}
 			},
+			gargoyleDynamicStatInheritance,
 			false,
 			true,
 		),
-		dkOwner: dk,
+		dkOwner:          dk,
+		isNerfedGargoyle: nerfedGargoyle,
 	}
 
 	// NightOfTheDead
@@ -133,6 +153,11 @@ func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
 	garg.DoNothing()
 }
 
+func (garg *GargoylePet) updateCastSpeed() {
+	garg.PseudoStats.CastSpeedMultiplier = 1.0
+	garg.MultiplyCastSpeed(garg.meleeSpeedMultiplier())
+}
+
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
 	var outcomeApplier core.OutcomeApplier
@@ -147,6 +172,7 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 				CastTime: time.Millisecond * 2000,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
+				garg.updateCastSpeed()
 				// Gargoyle doesn't use GCD, so we recast the spell over and over
 				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 			},

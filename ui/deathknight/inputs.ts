@@ -202,6 +202,14 @@ export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
+export const NerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'nerfedGargoyle',
+	label: 'Nerfed Gargoyle (no haste snapshot)',
+	labelTooltip: "Use updated PTR Gargoyle that doesn't snapshot haste",
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
 export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodTap>({
 	fieldName: 'bloodTap',
 	label: 'Blood Tap',
@@ -331,5 +339,6 @@ export const DeathKnightRotationConfig = {
 		AvgAMSHitInput,
 		DesyncRotation,
 		FrostCustomRotation,
+		NerfedGargoyleInput,
 	],
 };

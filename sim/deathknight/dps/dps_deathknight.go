@@ -5,6 +5,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
+	"time"
 )
 
 func RegisterDpsDeathknight() {
@@ -55,6 +56,9 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
 		}, player.TalentsString),
 		Rotation: dk.Rotation,
+	}
+	if dpsDk.Talents.SummonGargoyle {
+		dpsDk.Gargoyle = dpsDk.NewGargoyle(dk.Rotation.NerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
@@ -235,53 +239,95 @@ func (dk *DpsDeathknight) setupGargoyleCooldowns() {
 	dk.ur.gargoyleSnapshot.ClearMajorCooldowns()
 
 	// hyperspeed accelerators
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{SpellID: 54758}, false)
 
 	// berserking (troll)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{SpellID: 26297}, false)
 
 	// blood fury (orc)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{SpellID: 33697}, false)
 
 	// potion of speed
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 40211}, true)
 
 	// active ap trinkets
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 35937}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36871}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37166}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37556}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37557}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38080}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38081}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38761}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 39257}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45263}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46086}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 47734}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 35937}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 36871}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37166}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37556}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37557}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38080}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38081}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38761}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 39257}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 45263}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 46086}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 47734}, false)
 
 	// active haste trinkets
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36972}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37558}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37560}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37562}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38070}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38258}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38259}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38764}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40531}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 43836}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45466}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46088}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 48722}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 50260}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 36972}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37558}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37560}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37562}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38070}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38258}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38259}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38764}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 40531}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 43836}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 45466}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 46088}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 48722}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 50260}, false)
 }
 
-func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
+func (dk *DpsDeathknight) gargoyleAPCooldownSync(actionID core.ActionID, isPotion bool) {
 	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+			if dk.ur.activatingGargoyle {
+				return true
+			}
+			if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+				return true
+			}
+			if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+				return true
+			}
+
+			return false
+		}
+
+		dk.ur.gargoyleSnapshot.AddMajorCooldown(majorCd)
+	}
+}
+
+func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPotion bool) {
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
+
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			if dk.Rotation.NerfedGargoyle {
+				aura := dk.GetAura("Summon Gargoyle")
+
+				// Activate if Gargoyle has started casting, or will start soon
+				if aura != nil && aura.IsActive() && sim.CurrentTime-aura.StartedAt() >= dk.GargoyleSummonDelay-500*time.Millisecond {
+					return true
+				}
+
+				return false
+			} else {
+				if dk.ur.activatingGargoyle {
+					return true
+				}
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+					return true
+				}
+				if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+					return true
+				}
+			}
+
+			return false
 		}
 
 		dk.ur.gargoyleSnapshot.AddMajorCooldown(majorCd)
