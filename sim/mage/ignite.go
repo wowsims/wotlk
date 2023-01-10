@@ -36,7 +36,7 @@ func (mage *Mage) applyIgnite() {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-			if spell == mage.LivingBombDot.Spell && result.DidCrit() {
+			if mage.LivingBomb != nil && spell == mage.LivingBombDot.Spell && result.DidCrit() {
 				mage.procIgnite(sim, result)
 			}
 		},
