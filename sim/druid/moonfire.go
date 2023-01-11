@@ -12,22 +12,21 @@ import (
 
 func (druid *Druid) registerMoonfireSpell() {
 	actionID := core.ActionID{SpellID: 48463}
-	baseCost := 0.21 * druid.BaseMana
-
 	numTicks := druid.moonfireTicks()
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48463},
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.21,
+			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -72,7 +71,7 @@ func (druid *Druid) registerMoonfireSpell() {
 
 	druid.MoonfireDot = core.NewDot(core.Dot{
 		Spell: druid.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 48463},
+			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolArcane,
 			ProcMask:    core.ProcMaskSpellDamage,
 

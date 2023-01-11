@@ -20,6 +20,7 @@ type SpellConfig struct {
 	ResourceType stats.Stat
 	BaseCost     float64
 
+	Cost SpellCost
 	Cast CastConfig
 
 	BonusHitRating       float64
@@ -78,6 +79,9 @@ type Spell struct {
 	// Base cost. Many effects in the game which 'reduce mana cost by X%'
 	// are calculated using the base cost.
 	BaseCost float64
+
+	// Cost for the spell.
+	Cost SpellCost
 
 	// Default cast parameters with all static effects applied.
 	DefaultCast Cast
@@ -158,6 +162,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		MissileSpeed: config.MissileSpeed,
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
+		Cost:         config.Cost,
 
 		DefaultCast: config.Cast.DefaultCast,
 		CD:          config.Cast.CD,
@@ -207,6 +212,9 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
+	if spell.Cost != nil {
+		spell.Cost.Init(spell)
+	}
 	switch spell.ResourceType {
 	case stats.Mana:
 		spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)

@@ -120,6 +120,19 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 		}
 	}
 
+	if spell.Cost != nil {
+		return func(sim *Simulation, target *Unit) bool {
+			if !spell.Cost.MeetsRequirement(spell) {
+				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
+					spell.Cost.LogCostFailure(sim, spell)
+				}
+				return false
+			}
+			onCastComplete(sim, target)
+			return true
+		}
+	}
+
 	switch spell.ResourceType {
 	case stats.Mana:
 		return func(sim *Simulation, target *Unit) bool {
@@ -276,8 +289,8 @@ func (spell *Spell) wrapCastFuncSharedCooldown(config CastConfig, onCastComplete
 
 func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc) CastFunc {
 	if !spell.Flags.Matches(SpellFlagNoOnCastComplete) {
-		configOnCastComplete := config.OnCastComplete
 		oldOnCastComplete1 := onCastComplete
+		configOnCastComplete := config.OnCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			oldOnCastComplete1(sim, target)
 			if configOnCastComplete != nil {
@@ -287,7 +300,13 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		}
 	}
 
-	if spell.ResourceType == stats.Mana && config.DefaultCast.Cost != 0 {
+	if spell.Cost != nil {
+		oldOnCastComplete2 := onCastComplete
+		onCastComplete = func(sim *Simulation, target *Unit) {
+			spell.Cost.SpendCost(sim, spell)
+			oldOnCastComplete2(sim, target)
+		}
+	} else if spell.ResourceType == stats.Mana && config.DefaultCast.Cost != 0 {
 		oldOnCastComplete2 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			if spell.CurCast.Cost > 0 {
