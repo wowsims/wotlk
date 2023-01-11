@@ -5,27 +5,25 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
-	baseCost := paladin.BaseMana * 0.06
-
 	numHits := core.MinInt32(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous), 4, 3), paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	paladin.HammerOfTheRighteous = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 53595},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 53595},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.06,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

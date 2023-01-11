@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // const JudgementDuration = time.Second * 20
@@ -17,22 +16,19 @@ func (paladin *Paladin) canJudgement(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
-	// paladin.JudgementOfLightAura = core.JudgementOfLightAura(paladin.CurrentTarget)
-
-	baseCost := paladin.BaseMana * 0.05
-
 	paladin.JudgementOfWisdom = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 53408},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskEmpty,
-		Flags:        SpellFlagPrimaryJudgement,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 53408},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       SpellFlagPrimaryJudgement,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.05,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -58,22 +54,19 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 }
 
 func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
-	// paladin.JudgementOfLightAura = core.JudgementOfLightAura(paladin.CurrentTarget)
-
-	baseCost := paladin.BaseMana * 0.05
-
 	paladin.JudgementOfLight = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 20271},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskEmpty,
-		Flags:        SpellFlagPrimaryJudgement,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 20271},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       SpellFlagPrimaryJudgement,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.05,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

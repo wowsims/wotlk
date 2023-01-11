@@ -13,7 +13,6 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 	// In future maybe expose aura for buff asserting (For prot paladins.)
 
 	actionID := core.ActionID{SpellID: 54428} // Divine plea
-
 	hasGlyph := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfDivinePlea)
 
 	plea := core.NewDot(core.Dot{

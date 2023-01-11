@@ -53,19 +53,16 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 	})
 
-	baseCost := paladin.BaseMana * 0.10
-
 	paladin.HolyShield = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.10,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),

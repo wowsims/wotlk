@@ -3,7 +3,6 @@ package paladin
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
@@ -156,19 +155,18 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	})
 
 	aura := paladin.SealOfCommandAura
-	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Command self buff.
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.14,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

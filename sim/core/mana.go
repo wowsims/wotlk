@@ -306,6 +306,9 @@ type ManaCost struct {
 }
 
 func NewManaCost(options ManaCostOptions) *ManaCost {
+	if options.BaseCost == 0 {
+		return nil
+	}
 	if options.Multiplier == 0 {
 		options.Multiplier = 1
 	}
