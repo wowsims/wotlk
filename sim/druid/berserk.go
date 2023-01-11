@@ -66,16 +66,4 @@ func (druid *Druid) registerBerserkCD() {
 		},
 	})
 
-	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Berserk,
-		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return druid.InForm(Cat | Bear)
-		},
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			// Manually handled in Feral Rotation
-			return false
-		},
-	})
-
 }
