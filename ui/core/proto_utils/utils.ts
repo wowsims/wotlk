@@ -240,7 +240,7 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 		'spell_holy_auraoflight.jpg',
 	],
 	[Class.ClassPriest]: [
-		'spell_holy_wordfortitude.jpg',
+		'spell_holy_powerwordshield.jpg',
 		'spell_holy_guardianspirit.jpg',
 		'spell_shadow_shadowwordpain.jpg',
 		'spell_holy_holysmite.jpg',
