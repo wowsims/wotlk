@@ -108,6 +108,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
 			dk.Rotation.BlPresence = proto.Deathknight_Rotation_Blood
 			dk.Rotation.Presence = proto.Deathknight_Rotation_Blood
+			// TODO: Change this to UP presence if nerfedGargoyle is live
+			dk.Rotation.GargoylePresence = proto.Deathknight_Rotation_Blood
 
 			mh := dk.GetMHWeapon()
 			oh := dk.GetOHWeapon()
