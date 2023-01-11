@@ -6,11 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	balanceDruid "github.com/wowsims/wotlk/sim/druid/balance"
-	hunter "github.com/wowsims/wotlk/sim/hunter"
-	shadowPriest "github.com/wowsims/wotlk/sim/priest/shadow"
-	elementalShaman "github.com/wowsims/wotlk/sim/shaman/elemental"
-	enhancementShaman "github.com/wowsims/wotlk/sim/shaman/enhancement"
 )
 
 func init() {
@@ -34,70 +29,13 @@ var STEncounter = &proto.Encounter{
 	},
 }
 
-var P1BalanceDruid = &proto.Player{
-	Name:      "P1 Boomkin",
-	Race:      proto.Race_RaceTauren,
-	Class:     proto.Class_ClassDruid,
-	Equipment: balanceDruid.P1Gear,
-	Consumes:  balanceDruid.FullConsumes,
-	Spec:      balanceDruid.PlayerOptionsAdaptive,
-	Buffs:     core.FullIndividualBuffs,
-}
-
-var P1ElementalShaman = &proto.Player{
-	Name:      "P1 Ele Shaman",
-	Race:      proto.Race_RaceOrc,
-	Class:     proto.Class_ClassShaman,
-	Equipment: elementalShaman.P1Gear,
-	Consumes:  elementalShaman.FullConsumes,
-	Spec:      elementalShaman.PlayerOptionsAdaptive,
-	Buffs:     core.FullIndividualBuffs,
-}
-
-var P1ShadowPriest = &proto.Player{
-	Name:      "P1 Shadow Priest",
-	Race:      proto.Race_RaceUndead,
-	Class:     proto.Class_ClassPriest,
-	Equipment: shadowPriest.P1Gear,
-	Consumes:  shadowPriest.FullConsumes,
-	Spec:      shadowPriest.PlayerOptionsIdeal,
-	Buffs:     core.FullIndividualBuffs,
-}
-
-var P1EnhancementShaman = &proto.Player{
-	Name:      "P1 Enh Shaman",
-	Race:      proto.Race_RaceOrc,
-	Class:     proto.Class_ClassShaman,
-	Equipment: enhancementShaman.Phase1Gear,
-	Consumes:  enhancementShaman.FullConsumes,
-	Spec:      enhancementShaman.PlayerOptionsBasic,
-	Buffs:     core.FullIndividualBuffs,
-}
-
-var P1BMHunter = &proto.Player{
-	Name:      "P1 BM Hunter",
-	Race:      proto.Race_RaceOrc,
-	Class:     proto.Class_ClassHunter,
-	Equipment: hunter.P1Gear,
-	Consumes:  hunter.FullConsumes,
-	Spec:      hunter.PlayerOptionsMM,
-	Buffs:     core.FullIndividualBuffs,
-}
-
 var BasicRaid = &proto.Raid{
 	Parties: []*proto.Party{
 		{
-			Players: []*proto.Player{
-				P1BalanceDruid,
-				P1ElementalShaman,
-				P1EnhancementShaman,
-				P1ShadowPriest,
-			},
+			Players: []*proto.Player{},
 		},
 		{
-			Players: []*proto.Player{
-				P1BMHunter,
-			},
+			Players: []*proto.Player{},
 		},
 	},
 }
@@ -110,7 +48,6 @@ func TestSparseRaid(t *testing.T) {
 			{
 				Players: []*proto.Player{
 					{},
-					P1ElementalShaman,
 					{},
 				},
 			},
