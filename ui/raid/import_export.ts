@@ -177,23 +177,33 @@ export class RaidWCLImporter extends Importer {
 
 		const urlData = {
 			reportID: match[1],
-			fightID: match[2] ? match[3] : '0',
-		};
+			fightID: '',
+		}
 
-		if (urlData.fightID == 'last') {
-			// Make a separate query to determine # of fights, and replace 'last' with the last fight ID.
+		// If the URL has a Fight ID in it, use it
+		if (match[2] && match[3] && match[3] != 'last') {
+			urlData.fightID = match[3];
+		} else {
+			// Make a separate query to get the corresponding ReportFights
 			const fightDataQuery = `{
 				reportData {
 					report(code: "${urlData.reportID}") {
-						fights(translate: true) {
+						fights(killType: Kills, translate: true) {
 							id, name
 						}
 					}
 				}
 			}`;
+
 			const fightData = await this.queryWCL(fightDataQuery);
 			const fights = fightData.data.reportData.report.fights;
-			urlData.fightID = String(fights.length - 1);
+
+			if (match[3] == 'last') {
+				urlData.fightID = String(fights[fights.length - 1].id)
+			} else {
+				// Default to using the first Fight
+				urlData.fightID = String(fights[0].id);
+			}
 		}
 
 		console.debug(`Importing WCL report: ${JSON.stringify(urlData)}`);
@@ -629,6 +639,7 @@ class WCLSimPlayer {
 const fullTypeToSpec: Record<string, Spec> = {
 	'DeathKnightBlood': Spec.SpecTankDeathknight,
 	'DeathKnightLichborne': Spec.SpecTankDeathknight,
+	'DeathKnightRuneblade': Spec.SpecTankDeathknight,
 	'DeathKnightFrost': Spec.SpecDeathknight,
 	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,
