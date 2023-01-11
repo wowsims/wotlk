@@ -3,24 +3,21 @@ package mage
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerArcaneExplosionSpell() {
-	baseCost := .22 * mage.BaseMana
-
 	mage.ArcaneExplosion = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 42921},
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 42921},
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.22,
+			Multiplier: core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneExplosion), .9, 1),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneExplosion), .9, 1),
 				GCD: core.GCDDefault,
 			},
 		},

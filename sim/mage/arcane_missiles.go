@@ -6,12 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerArcaneMissilesSpell() {
 	actionID := core.ActionID{SpellID: 42846}
-	baseCost := .31 * mage.BaseMana
 	spellCoeff := 1/3.5 + 0.03*float64(mage.Talents.ArcaneEmpowerment)
 
 	t10ProcAura := mage.BloodmagesRegalia2pcAura()
@@ -22,13 +20,13 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | core.SpellFlagChanneled,
 		MissileSpeed: 20,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.31,
+			Multiplier: 1 - .01*float64(mage.Talents.ArcaneFocus),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - .01*float64(mage.Talents.ArcaneFocus)),
-
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 5,
 			},

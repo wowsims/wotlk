@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerPyroblastSpell() {
@@ -14,7 +13,6 @@ func (mage *Mage) registerPyroblastSpell() {
 	}
 
 	actionID := core.ActionID{SpellID: 42891}
-	baseCost := .22 * mage.BaseMana
 	spellCoeff := 1.15 + 0.05*float64(mage.Talents.EmpoweredFire)
 	tickCoeff := 0.05 + 0.05*float64(mage.Talents.EmpoweredFire)
 
@@ -27,13 +25,12 @@ func (mage *Mage) registerPyroblastSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.22,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 5,
 			},

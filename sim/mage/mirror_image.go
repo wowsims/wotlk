@@ -11,7 +11,6 @@ import (
 // The numbers in this file are VERY rough approximations based on logs.
 
 func (mage *Mage) registerMirrorImageCD() {
-	baseCost := mage.BaseMana * 0.1
 	summonDuration := time.Second * 30
 
 	var t10Aura *core.Aura
@@ -30,14 +29,14 @@ func (mage *Mage) registerMirrorImageCD() {
 	}
 
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 55342},
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID: core.ActionID{SpellID: 55342},
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.1,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
@@ -135,7 +134,6 @@ var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
 }
 
 func (mi *MirrorImage) registerFrostboltSpell() {
-	baseCost := 90.0
 	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Frostbolt = mi.RegisterSpell(core.SpellConfig{
@@ -143,12 +141,12 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.01,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,
 			},
@@ -170,20 +168,19 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 }
 
 func (mi *MirrorImage) registerFireblastSpell() {
-	baseCost := 120.0
 	numImages := core.TernaryFloat64(mi.mageOwner.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfMirrorImage), 4, 3)
 
 	mi.Fireblast = mi.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 59637},
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 59637},
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.01,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDMin,
+				GCD: core.GCDMin,
 			},
 			CD: core.Cooldown{
 				Timer:    mi.NewTimer(),

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerDeepFreezeSpell() {
@@ -12,20 +11,18 @@ func (mage *Mage) registerDeepFreezeSpell() {
 		return
 	}
 
-	baseCost := .09 * mage.BaseMana
-
 	mage.DeepFreeze = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 44572},
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 44572},
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.09,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),

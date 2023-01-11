@@ -4,24 +4,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFireBlastSpell() {
-	baseCost := 0.21 * mage.BaseMana
-
 	mage.FireBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 42873},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | HotStreakSpells,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 42873},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage | HotStreakSpells,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.21,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),

@@ -4,12 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerBlizzardSpell() {
 	actionID := core.ActionID{SpellID: 42939}
-	baseCost := .74 * mage.BaseMana
 
 	results := make([]*core.SpellResult, len(mage.Env.Encounter.Targets))
 	blizzardDot := core.NewDot(core.Dot{
@@ -37,17 +35,16 @@ func (mage *Mage) registerBlizzardSpell() {
 	})
 
 	mage.Blizzard = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagChanneled,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage | core.SpellFlagChanneled,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.74,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 8,
 			},

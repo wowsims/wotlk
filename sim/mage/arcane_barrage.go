@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerArcaneBarrageSpell() {
@@ -13,22 +12,21 @@ func (mage *Mage) registerArcaneBarrageSpell() {
 		return
 	}
 
-	baseCost := .18 * mage.BaseMana
-
 	mage.ArcaneBarrage = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 44781},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.18,
+			Multiplier: 1 *
+				(1 - .01*float64(mage.Talents.ArcaneFocus)) *
+				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneBarrage), .8, 1),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - .01*float64(mage.Talents.ArcaneFocus)) *
-					core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneBarrage), .8, 1),
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
