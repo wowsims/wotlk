@@ -4,12 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerHurricaneSpell() {
 	actionID := core.ActionID{SpellID: 48467}
-	baseCost := 0.81 * druid.BaseMana
 
 	hurricaneDot := core.NewDot(core.Dot{
 		Aura: druid.RegisterAura(core.Aura{
@@ -41,12 +39,12 @@ func (druid *Druid) registerHurricaneSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.81,
+			Multiplier: 1,
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        baseCost,
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 10,
 			},

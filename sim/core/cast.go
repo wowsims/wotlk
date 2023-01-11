@@ -93,7 +93,7 @@ func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
 }
 
 func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
-	if config.DefaultCast == emptyCast {
+	if spell.DefaultCast == emptyCast {
 		return onCastComplete
 	}
 
@@ -113,7 +113,7 @@ func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSucce
 }
 
 func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
-	if spell.ResourceType == 0 || config.DefaultCast.Cost == 0 {
+	if spell.ResourceType == 0 || spell.DefaultCast.Cost == 0 {
 		return func(sim *Simulation, target *Unit) bool {
 			onCastComplete(sim, target)
 			return true
@@ -198,7 +198,7 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 }
 
 func (spell *Spell) wrapCastFuncHaste(config CastConfig, onCastComplete CastFunc) CastFunc {
-	if config.IgnoreHaste || (config.DefaultCast.GCD == 0 && config.DefaultCast.CastTime == 0 && config.DefaultCast.ChannelTime == 0) {
+	if config.IgnoreHaste || (spell.DefaultCast.GCD == 0 && spell.DefaultCast.CastTime == 0 && spell.DefaultCast.ChannelTime == 0) {
 		return onCastComplete
 	}
 
@@ -212,11 +212,11 @@ func (spell *Spell) wrapCastFuncHaste(config CastConfig, onCastComplete CastFunc
 }
 
 func (spell *Spell) wrapCastFuncGCD(config CastConfig, onCastComplete CastFunc) CastFunc {
-	if config.DefaultCast == emptyCast { // spells that are not actually cast (e.g. auto attacks, procs)
+	if spell.DefaultCast == emptyCast { // spells that are not actually cast (e.g. auto attacks, procs)
 		return onCastComplete
 	}
 
-	if config.DefaultCast.GCD == 0 { // mostly cooldowns (e.g. nature's swiftness, presence of mind)
+	if spell.DefaultCast.GCD == 0 { // mostly cooldowns (e.g. nature's swiftness, presence of mind)
 		return func(sim *Simulation, target *Unit) {
 			if hc := spell.Unit.Hardcast; hc.Expires > sim.CurrentTime {
 				panic(fmt.Sprintf("Trying to cast %s but casting/channeling %v for %s, curTime = %s", spell.ActionID, hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime))
@@ -306,7 +306,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			spell.Cost.SpendCost(sim, spell)
 			oldOnCastComplete2(sim, target)
 		}
-	} else if spell.ResourceType == stats.Mana && config.DefaultCast.Cost != 0 {
+	} else if spell.ResourceType == stats.Mana && spell.DefaultCast.Cost != 0 {
 		oldOnCastComplete2 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			if spell.CurCast.Cost > 0 {
@@ -317,7 +317,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		}
 	}
 
-	if config.DefaultCast.ChannelTime > 0 {
+	if spell.DefaultCast.ChannelTime > 0 {
 		return func(sim *Simulation, target *Unit) {
 			spell.Unit.Hardcast = Hardcast{Expires: sim.CurrentTime + spell.CurCast.ChannelTime, ActionID: spell.ActionID}
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
@@ -329,7 +329,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		}
 	}
 
-	if config.DefaultCast.CastTime == 0 {
+	if spell.DefaultCast.CastTime == 0 {
 		if spell.Flags.Matches(SpellFlagNoLogs) {
 			return onCastComplete
 		} else {

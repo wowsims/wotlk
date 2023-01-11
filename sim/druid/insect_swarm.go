@@ -4,17 +4,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
-
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 const CryingWind int32 = 45270
 
 func (druid *Druid) registerInsectSwarmSpell() {
 	actionID := core.ActionID{SpellID: 48468}
-	baseCost := 0.08 * druid.BaseMana
 
 	target := druid.CurrentTarget
 	missAura := core.InsectSwarmAura(target)
@@ -22,17 +19,18 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == CryingWind, 396, 0)
 
 	druid.InsectSwarm = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		Flags:        SpellFlagOmenTrigger,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagOmenTrigger,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.08,
+			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
