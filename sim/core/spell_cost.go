@@ -54,7 +54,7 @@ func (mc *ManaCost) Init(spell *Spell) {
 }
 func (mc *ManaCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-	return spell.Unit.CurrentMana() < spell.CurCast.Cost
+	return spell.Unit.CurrentMana() >= spell.CurCast.Cost
 }
 func (mc *ManaCost) LogCostFailure(sim *Simulation, spell *Spell) {
 	spell.Unit.Log(sim,

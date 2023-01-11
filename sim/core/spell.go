@@ -214,24 +214,25 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if spell.Cost != nil {
 		spell.Cost.Init(spell)
-	}
-	switch spell.ResourceType {
-	case stats.Mana:
-		spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
-	case stats.Rage:
-		spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
-	case stats.Energy:
-		spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
-	case stats.RunicPower:
-		spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-	case stats.BloodRune:
-		spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-	case stats.FrostRune:
-		spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-	case stats.UnholyRune:
-		spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-	case stats.DeathRune:
-		spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
+	} else {
+		switch spell.ResourceType {
+		case stats.Mana:
+			spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
+		case stats.Rage:
+			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
+		case stats.Energy:
+			spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
+		case stats.RunicPower:
+			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
+		case stats.BloodRune:
+			spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
+		case stats.FrostRune:
+			spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
+		case stats.UnholyRune:
+			spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
+		case stats.DeathRune:
+			spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
+		}
 	}
 
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
