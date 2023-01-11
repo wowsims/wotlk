@@ -141,7 +141,7 @@ export const GargoylePresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 		{ name: 'Blood', value: StartingPresence.Blood },
 		{ name: 'Unholy', value: StartingPresence.Unholy },
 	],
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && player.getRotation().nerfedGargoyle,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -342,7 +342,6 @@ export const DeathKnightRotationConfig = {
 		FirstDiseaseInput,
 		StartingPresenceInput,
 		BloodlustPresence,
-		GargoylePresence,
 		FightPresence,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
@@ -353,5 +352,6 @@ export const DeathKnightRotationConfig = {
 		DesyncRotation,
 		FrostCustomRotation,
 		NerfedGargoyleInput,
+		GargoylePresence,
 	],
 };

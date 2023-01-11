@@ -122,8 +122,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	blPresence: Deathknight_Rotation_Presence.Blood,
 	presence: Deathknight_Rotation_Presence.Blood,
-	// TODO: Change this to UP if nerfedGargoyle goes live
-	gargoylePresence: Deathknight_Rotation_Presence.Blood,
+	gargoylePresence: Deathknight_Rotation_Presence.Unholy,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	oblitDelayDuration: 1000.0,
