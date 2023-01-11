@@ -5,12 +5,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerVolleySpell() {
 	actionID := core.ActionID{SpellID: 58434}
-	baseCost := 0.17 * hunter.BaseMana
 
 	volleyDot := core.NewDot(core.Dot{
 		Aura: hunter.RegisterAura(core.Aura{
@@ -38,16 +36,17 @@ func (hunter *Hunter) registerVolleySpell() {
 	})
 
 	hunter.Volley = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagChanneled,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagChanneled,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.17,
+			Multiplier: core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfVolley), 0.8, 1),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        baseCost * core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfVolley), 0.8, 1),
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 6,
 			},

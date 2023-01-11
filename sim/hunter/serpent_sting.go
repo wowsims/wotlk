@@ -6,24 +6,23 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerSerpentStingSpell() {
 	actionID := core.ActionID{SpellID: 49001}
-	baseCost := 0.09 * hunter.BaseMana
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskEmpty,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.09,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},

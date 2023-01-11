@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerSteadyShotSpell() {
-	baseCost := 0.05 * hunter.BaseMana
-
 	impSSProcChance := 0.05 * float64(hunter.Talents.ImprovedSteadyShot)
 	if hunter.Talents.ImprovedSteadyShot > 0 {
 		hunter.ImprovedSteadyShotAura = hunter.RegisterAura(core.Aura{
@@ -49,18 +46,19 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 	}
 
 	hunter.SteadyShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 49052},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 49052},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.05,
+			Multiplier: 1 *
+				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
+				(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-					(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
 				GCD:      core.GCDDefault,
 				CastTime: 1, // Dummy value so core doesn't optimize the cast away
 			},

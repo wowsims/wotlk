@@ -5,12 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
-	baseCost := 0.05 * hunter.BaseMana
-
 	hasGlyph := hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfArcaneShot)
 	var manaMetrics *core.ResourceMetrics
 	if hasGlyph {
@@ -18,17 +15,18 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 	}
 
 	hunter.ArcaneShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 49045},
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 49045},
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.05,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

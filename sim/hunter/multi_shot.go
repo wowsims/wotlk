@@ -5,26 +5,23 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
-	baseCost := 0.09 * hunter.BaseMana
 	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 49048},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 49048},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.09,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.03*float64(hunter.Talents.Efficiency)),
-
 				GCD:      core.GCDDefault,
 				CastTime: 1, // Dummy value so core doesn't optimize the cast away
 			},

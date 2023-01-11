@@ -14,20 +14,20 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 	}
 
 	actionID := core.ActionID{SpellID: 63672}
-	baseCost := 0.06 * hunter.BaseMana
 
 	hunter.BlackArrow = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskRangedSpecial,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.06,
+			Multiplier: 1 *
+				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
+				(1 - 0.2*float64(hunter.Talents.Resourcefulness)),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-					(1 - 0.2*float64(hunter.Talents.Resourcefulness)),
 				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s

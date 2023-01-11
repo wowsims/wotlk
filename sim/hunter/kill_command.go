@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerKillCommandCD() {
@@ -39,20 +38,15 @@ func (hunter *Hunter) registerKillCommandCD() {
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana
-
 	hunter.KillCommand = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.03,
+		}),
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Minute - time.Second*10*time.Duration(hunter.Talents.CatlikeReflexes),

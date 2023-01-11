@@ -2,25 +2,23 @@ package hunter
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerScorpidStingSpell() {
 	hunter.ScorpidStingAura = core.ScorpidStingAura(hunter.CurrentTarget)
 
-	baseCost := 0.09 * hunter.BaseMana
-
 	hunter.ScorpidSting = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 3043},
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 3043},
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskRangedSpecial,
 
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost:   0.09,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},

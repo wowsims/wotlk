@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerRapidFireCD() {
@@ -41,17 +40,13 @@ func (hunter *Hunter) registerRapidFireCD() {
 		},
 	})
 
-	baseCost := 0.03 * hunter.BaseMana
 	hunter.RapidFire = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		Cost: core.NewManaCost(core.ManaCostOptions{
+			BaseCost: 0.03,
+		}),
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Minute*5 - time.Minute*time.Duration(hunter.Talents.RapidKilling),
