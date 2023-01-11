@@ -84,7 +84,7 @@ func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
 
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
-	if dk.ur.hasGod {
+	if dk.br.hasGod {
 		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)

@@ -28,6 +28,7 @@ type DpsDeathknight struct {
 	*deathknight.Deathknight
 
 	sr SharedRotation
+	br BloodRotation
 	fr FrostRotation
 	ur UnholyRotation
 
@@ -75,6 +76,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		},
 	})
 
+	dpsDk.br.dk = dpsDk
 	dpsDk.sr.dk = dpsDk
 	dpsDk.ur.dk = dpsDk
 
@@ -135,6 +137,10 @@ func (dk *DpsDeathknight) SetupRotations() {
 			// some weird spec where two trees are equal...
 		}
 	}
+
+	dk.br.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.br.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+
 	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
 	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 
@@ -177,8 +183,11 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
+	dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+
 	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
 	dk.setupProcTrackers()
+
 	dk.fr.Initialize(dk)
 }
 

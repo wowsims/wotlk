@@ -7,6 +7,19 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+type BloodRotation struct {
+	dk *DpsDeathknight
+
+	ffFirst bool
+	hasGod  bool
+
+	syncTimeFF time.Duration
+
+	drwSnapshot *core.SnapshotManager
+
+	activatingDrw bool
+}
+
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
 	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
 }
