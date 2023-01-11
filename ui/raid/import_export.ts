@@ -649,7 +649,7 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'DruidRestoration': Spec.SpecRestorationDruid,
 	'HunterBeastMastery': Spec.SpecHunter,
 	'HunterSurvival': Spec.SpecHunter,
-	'HunterMarksman': Spec.SpecHunter,
+	'HunterMarksmanship': Spec.SpecHunter,
 	'MageArcane': Spec.SpecMage,
 	'MageFire': Spec.SpecMage,
 	'MageFrost': Spec.SpecMage,
