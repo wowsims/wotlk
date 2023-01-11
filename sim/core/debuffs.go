@@ -609,7 +609,7 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 	const armorReduction = 0.2
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",
-		ActionID: ActionID{SpellID: 48669},
+		ActionID: ActionID{SpellID: 8647},
 		Duration: time.Second * TernaryDuration(hasGlyph, 42, 30),
 	})
 
