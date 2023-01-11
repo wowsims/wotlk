@@ -1,27 +1,34 @@
-import { Consumes, Explosive, PetFood, RaidTarget } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
-import { Spec } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
+import {
+	Consumes,
+	CustomRotation,
+	CustomSpell,
+	EquipmentSpec,
+	Explosive,
+	Flask,
+	Food,
+	Glyphs,
+	PetFood,
+	Potions,
+	RaidTarget,
+	Spec
+} from '../core/proto/common.js';
+import {SavedTalents} from '../core/proto/ui.js';
+import {Player} from '../core/player.js';
+import {NO_TARGET} from '../core/proto_utils/utils.js';
 
 import {
-	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
+	Deathknight_Rotation as DeathKnightRotation,
+	Deathknight_Rotation_ArmyOfTheDead,
+	Deathknight_Rotation_BloodRuneFiller,
+	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
+	Deathknight_Rotation_FrostRotationType,
+	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
-  Deathknight_Rotation_FrostRotationType,
-  Deathknight_Rotation_ArmyOfTheDead,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { Deathknight_Rotation_Presence, Deathknight_Rotation_BloodRuneFiller } from '../core/proto/deathknight.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -115,6 +122,8 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	blPresence: Deathknight_Rotation_Presence.Blood,
 	presence: Deathknight_Rotation_Presence.Blood,
+	// TODO: Change this to UP if nerfedGargoyle goes live
+	gargoylePresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	oblitDelayDuration: 1000.0,
