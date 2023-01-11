@@ -133,6 +133,18 @@ export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDea
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const GargoylePresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'gargoylePresence',
+	label: 'Gargoyle Presence',
+	labelTooltip: 'Presence during Gargoyle.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && player.getRotation().nerfedGargoyle,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const BloodTapGhoulFrenzy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'btGhoulFrenzy',
 	label: 'BT Ghoul Frenzy',
@@ -198,6 +210,14 @@ export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.Spec
 		{ name: 'Blood Strike', value: BloodRuneFiller.BloodStrike },
 		{ name: 'Blood Boil', value: BloodRuneFiller.BloodBoil },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const NerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'nerfedGargoyle',
+	label: 'Nerfed Gargoyle (no haste snapshot)',
+	labelTooltip: "Use updated PTR Gargoyle that doesn't snapshot haste",
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
@@ -331,5 +351,7 @@ export const DeathKnightRotationConfig = {
 		AvgAMSHitInput,
 		DesyncRotation,
 		FrostCustomRotation,
+		NerfedGargoyleInput,
+		GargoylePresence,
 	],
 };

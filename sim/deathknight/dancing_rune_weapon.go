@@ -120,14 +120,7 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon := &RuneWeaponPet{
-		Pet: core.NewPet(
-			"Rune Weapon",
-			&dk.Character,
-			runeWeaponBaseStats,
-			runeWeaponStatInheritance,
-			false,
-			true,
-		),
+		Pet:     core.NewPet("Rune Weapon", &dk.Character, runeWeaponBaseStats, runeWeaponStatInheritance, nil, false, true),
 		dkOwner: dk,
 	}
 

@@ -183,7 +183,7 @@ export const RevitalizeWildGrowth = makeMultistateMultiplierIndividualBuffInput(
 // Debuffs
 
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(7386), 'sunderArmor'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(47467), 'sunderArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(8647), 'exposeArmor'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(55754), 'acidSpit'),
 ], 'Major ArP');
