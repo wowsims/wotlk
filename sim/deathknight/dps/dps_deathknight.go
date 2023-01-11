@@ -318,4 +318,8 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 			dk.ChangePresence(sim, deathknight.BloodPresence)
 		}
 	}
+
+	if b > f && b > u {
+		dk.ChangePresence(sim, deathknight.BloodPresence)
+	}
 }
