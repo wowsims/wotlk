@@ -160,7 +160,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 
 	lightningShield := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
-			return !enh.LightningShieldAura.IsActive() && enh.LightningShieldAura != nil
+			return enh.LightningShield != nil && !enh.LightningShieldAura.IsActive()
 		},
 		cast: func(sim *core.Simulation, _ *core.Unit) bool {
 			return enh.LightningShield.Cast(sim, nil)
@@ -348,7 +348,7 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	//Mana guard, our cheapest spell.
 	if enh.CurrentMana() < cheapestSpell {
 		// Lets top off lightning shield stacks before waiting for mana.
-		if enh.LightningShieldAura.GetStacks() < 3 {
+		if enh.LightningShield != nil && enh.LightningShieldAura.GetStacks() < 3 {
 			enh.LightningShield.Cast(sim, nil)
 		}
 		enh.WaitForMana(sim, cheapestSpell)
