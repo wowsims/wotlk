@@ -26,7 +26,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 		Cost: core.NewManaCost(core.ManaCostOptions{
 			BaseCost:   0.08,
-			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+			Multiplier: 1,
 		}),
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
