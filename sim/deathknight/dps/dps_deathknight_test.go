@@ -91,10 +91,12 @@ var PlayerOptionsFrost = &proto.Player_Deathknight{
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
-	UseDeathAndDecay:     true,
-	StartingPresence:     proto.Deathknight_Rotation_Unholy,
-	BlPresence:           proto.Deathknight_Rotation_Blood,
-	Presence:             proto.Deathknight_Rotation_Blood,
+	UseDeathAndDecay: true,
+	StartingPresence: proto.Deathknight_Rotation_Unholy,
+	BlPresence:       proto.Deathknight_Rotation_Blood,
+	Presence:         proto.Deathknight_Rotation_Blood,
+	// TODO: Change this to UP if nerfedGargoyle goes live
+	GargoylePresence:     proto.Deathknight_Rotation_Blood,
 	UseEmpowerRuneWeapon: true,
 	UseGargoyle:          true,
 	BtGhoulFrenzy:        false,
