@@ -16,10 +16,10 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.19,
 			Multiplier: 1 - 0.2*float64(hunter.Talents.Resourcefulness),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

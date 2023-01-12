@@ -385,10 +385,6 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 // Handles computing the cost of spells and checking whether the Unit
 // meets them.
 type SpellCost interface {
-	// For initialization logic that requires a reference to the spell
-	// to which this cost will apply.
-	Init(*Spell)
-
 	// Whether the Unit associated with the spell meets the resource cost
 	// requirements to cast the spell.
 	MeetsRequirement(*Spell) bool

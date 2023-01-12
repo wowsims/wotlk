@@ -174,10 +174,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		ActionID:    auraActionID, // Seal of Vengeance self buff.
 		SpellSchool: core.SpellSchoolHoly,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,
 			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

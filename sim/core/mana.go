@@ -299,32 +299,19 @@ type ManaCostOptions struct {
 	Multiplier float64 // It's OK to leave this at 0, will default to 1.
 }
 type ManaCost struct {
-	BaseCost   float64
-	Multiplier float64
-
 	ResourceMetrics *ResourceMetrics
 }
 
-func NewManaCost(options ManaCostOptions) *ManaCost {
-	if options.BaseCost == 0 {
-		return nil
-	}
-	if options.Multiplier == 0 {
-		options.Multiplier = 1
-	}
+func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
+	spell.ResourceType = stats.Mana
+	spell.BaseCost = options.BaseCost * spell.Unit.BaseMana
+	spell.DefaultCast.Cost = spell.BaseCost * TernaryFloat64(options.Multiplier == 0, 1, options.Multiplier)
+
 	return &ManaCost{
-		BaseCost:   options.BaseCost,
-		Multiplier: options.Multiplier,
+		ResourceMetrics: spell.Unit.NewManaMetrics(spell.ActionID),
 	}
 }
 
-func (mc *ManaCost) Init(spell *Spell) {
-	mc.BaseCost = mc.BaseCost * spell.Unit.BaseMana
-	spell.ResourceType = stats.Mana
-	spell.BaseCost = mc.BaseCost
-	spell.DefaultCast.Cost = mc.BaseCost * mc.Multiplier
-	mc.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
-}
 func (mc *ManaCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentMana() >= spell.CurCast.Cost

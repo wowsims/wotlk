@@ -22,10 +22,10 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       SpellFlagPrimaryJudgement,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.05,
 			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
@@ -60,10 +60,10 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       SpellFlagPrimaryJudgement,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.05,
 			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

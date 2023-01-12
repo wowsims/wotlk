@@ -42,9 +42,9 @@ func (mage *Mage) registerLivingBombSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.22,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

@@ -14,10 +14,10 @@ func (druid *Druid) registerFakeGotw() {
 		ActionID: core.ActionID{SpellID: 48470},
 		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   baseCost,
 			Multiplier: 1,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

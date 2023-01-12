@@ -19,9 +19,9 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 28,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.14,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,

@@ -51,12 +51,12 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.05,
 			Multiplier: 1 *
 				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
 				(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,

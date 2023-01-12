@@ -41,10 +41,10 @@ func (hunter *Hunter) registerVolleySpell() {
 		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagChanneled,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.17,
 			Multiplier: core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfVolley), 0.8, 1),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,

@@ -12,10 +12,10 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.22,
 			Multiplier: core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneExplosion), .9, 1),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

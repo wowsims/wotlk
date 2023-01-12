@@ -19,12 +19,12 @@ func (mage *Mage) registerArcaneBarrageSpell() {
 		Flags:        SpellFlagMage | BarrageSpells,
 		MissileSpeed: 24,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.18,
 			Multiplier: 1 *
 				(1 - .01*float64(mage.Talents.ArcaneFocus)) *
 				core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneBarrage), .8, 1),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

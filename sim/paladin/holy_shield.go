@@ -57,9 +57,9 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.10,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

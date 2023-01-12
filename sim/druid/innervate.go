@@ -46,10 +46,10 @@ func (druid *Druid) registerInnervateCD() {
 		ActionID: actionID,
 		Flags:    SpellFlagOmenTrigger,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.04,
 			Multiplier: 1,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

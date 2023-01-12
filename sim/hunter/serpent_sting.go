@@ -16,10 +16,10 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskEmpty,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
 			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

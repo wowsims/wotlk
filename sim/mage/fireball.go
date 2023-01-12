@@ -21,9 +21,9 @@ func (mage *Mage) registerFireballSpell() {
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 24,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.19,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

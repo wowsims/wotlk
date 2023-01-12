@@ -12,9 +12,9 @@ func (mage *Mage) registerIceLanceSpell() {
 		Flags:        SpellFlagMage,
 		MissileSpeed: 38,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.06,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

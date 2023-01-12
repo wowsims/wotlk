@@ -504,9 +504,9 @@ func (mage *Mage) registerIcyVeinsCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.03,
-		}),
+		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),

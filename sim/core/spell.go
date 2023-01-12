@@ -20,8 +20,8 @@ type SpellConfig struct {
 	ResourceType stats.Stat
 	BaseCost     float64
 
-	Cost SpellCost
-	Cast CastConfig
+	ManaCost ManaCostOptions
+	Cast     CastConfig
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -162,7 +162,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		MissileSpeed: config.MissileSpeed,
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
-		Cost:         config.Cost,
 
 		DefaultCast: config.Cast.DefaultCast,
 		CD:          config.Cast.CD,
@@ -212,9 +211,11 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
-	if spell.Cost != nil {
-		spell.Cost.Init(spell)
-	} else {
+	if config.ManaCost.BaseCost != 0 {
+		spell.Cost = newManaCost(spell, config.ManaCost)
+	}
+
+	if spell.Cost == nil {
 		switch spell.ResourceType {
 		case stats.Mana:
 			spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)

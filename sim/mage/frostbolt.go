@@ -23,9 +23,9 @@ func (mage *Mage) registerFrostboltSpell() {
 		Flags:        SpellFlagMage | BarrageSpells,
 		MissileSpeed: 28,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.11,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,

@@ -37,10 +37,10 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage | BarrageSpells,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.07,
 			Multiplier: 1 - .01*float64(mage.Talents.ArcaneFocus),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,

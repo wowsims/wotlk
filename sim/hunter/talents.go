@@ -446,9 +446,9 @@ func (hunter *Hunter) registerBestialWrathCD() {
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.1,
-		}),
+		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),

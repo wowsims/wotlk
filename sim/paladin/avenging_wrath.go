@@ -33,9 +33,9 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.08,
-		}),
+		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),

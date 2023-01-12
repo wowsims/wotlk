@@ -19,10 +19,10 @@ func (druid *Druid) registerRebirthSpell() {
 		ActionID: core.ActionID{SpellID: 48477},
 		Flags:    SpellFlagOmenTrigger,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   baseCost,
 			Multiplier: 1 - 0.1*float64(druid.Talents.NaturalShapeshifter),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,

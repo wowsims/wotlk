@@ -31,9 +31,9 @@ func (mage *Mage) registerMirrorImageCD() {
 	mage.MirrorImage = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 55342},
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.1,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
@@ -142,9 +142,9 @@ func (mi *MirrorImage) registerFrostboltSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 24,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.01,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
@@ -175,9 +175,9 @@ func (mi *MirrorImage) registerFireblastSpell() {
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.01,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDMin,

@@ -13,10 +13,10 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.04,
 			Multiplier: 1 - 0.2*float64(hunter.Talents.Resourcefulness),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{},
 			CD: core.Cooldown{

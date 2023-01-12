@@ -48,10 +48,10 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.22,
 			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

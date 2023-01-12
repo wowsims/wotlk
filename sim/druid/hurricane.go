@@ -39,10 +39,10 @@ func (druid *Druid) registerHurricaneSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.81,
 			Multiplier: 1,
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,

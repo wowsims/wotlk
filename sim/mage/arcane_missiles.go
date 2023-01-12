@@ -21,10 +21,10 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		Flags:        SpellFlagMage | core.SpellFlagChanneled,
 		MissileSpeed: 20,
 
-		Cost: core.NewManaCost(core.ManaCostOptions{
+		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.31,
 			Multiplier: 1 - .01*float64(mage.Talents.ArcaneFocus),
-		}),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
