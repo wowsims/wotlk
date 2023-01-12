@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var SliceAndDiceActionID = core.ActionID{SpellID: 6774}
@@ -15,20 +14,18 @@ const SliceAndDiceEnergyCost = 25.0
 func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
 	actionID := SliceAndDiceActionID
 	actionID.Tag = comboPoints
-	baseCost := SliceAndDiceEnergyCost
 	duration := rogue.sliceAndDiceDurations[comboPoints]
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    SpellFlagFinisher,
 
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
-
+		EnergyCost: core.EnergyCostOptions{
+			Cost: SliceAndDiceEnergyCost,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},

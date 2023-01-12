@@ -70,22 +70,21 @@ func (druid *Druid) registerMangleCatSpell() {
 	}
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
-
-	cost := 45.0 - (2.0 * float64(druid.Talents.ImprovedMangle)) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5.0, 0)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48566},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 48566},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   45.0 - 2*float64(druid.Talents.ImprovedMangle) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5, 0),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -105,7 +104,7 @@ func (druid *Druid) registerMangleCatSpell() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				mangleAura.Activate(sim)
 			} else {
-				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

@@ -10,25 +10,23 @@ import (
 
 func (druid *Druid) registerRakeSpell() {
 	actionID := core.ActionID{SpellID: 48574}
-	cost := 40.0 - float64(druid.Talents.Ferocity)
-
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
-
 	numTicks := 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0)
 	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 
 	druid.Rake = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
-		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   40 - float64(druid.Talents.Ferocity),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -49,7 +47,7 @@ func (druid *Druid) registerRakeSpell() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				druid.RakeDot.Apply(sim)
 			} else {
-				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 

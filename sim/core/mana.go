@@ -328,3 +328,5 @@ func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = sim.CurrentTime + time.Second*5
 	}
 }
+func (mc *ManaCost) IssueRefund(sim *Simulation, spell *Spell) {
+}

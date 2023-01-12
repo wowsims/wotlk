@@ -20,8 +20,10 @@ type SpellConfig struct {
 	ResourceType stats.Stat
 	BaseCost     float64
 
-	ManaCost ManaCostOptions
-	Cast     CastConfig
+	ManaCost   ManaCostOptions
+	EnergyCost EnergyCostOptions
+
+	Cast CastConfig
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -213,14 +215,14 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if config.ManaCost.BaseCost != 0 || config.ManaCost.FlatCost != 0 {
 		spell.Cost = newManaCost(spell, config.ManaCost)
+	} else if config.EnergyCost.Cost != 0 {
+		spell.Cost = newEnergyCost(spell, config.EnergyCost)
 	}
 
 	if spell.Cost == nil {
 		switch spell.ResourceType {
 		case stats.Rage:
 			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
-		case stats.Energy:
-			spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
 		case stats.RunicPower:
 			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
 		case stats.BloodRune:
@@ -456,4 +458,25 @@ func (spell *Spell) ExpectedDamage(sim *Simulation, target *Unit) float64 {
 }
 func (spell *Spell) ExpectedDamageFromCurrentSnapshot(sim *Simulation, target *Unit) float64 {
 	return spell.expectedDamageHelper(sim, target, true)
+}
+
+// Handles computing the cost of spells and checking whether the Unit
+// meets them.
+type SpellCost interface {
+	// Whether the Unit associated with the spell meets the resource cost
+	// requirements to cast the spell.
+	MeetsRequirement(*Spell) bool
+
+	// Logs a message for when the cast fails due to lack of resources.
+	LogCostFailure(*Simulation, *Spell)
+
+	// Subtracts the resources used from a cast from the Unit.
+	SpendCost(*Simulation, *Spell)
+
+	// Space for handling refund mechanics. Not all spells provide refunds.
+	IssueRefund(*Simulation, *Spell)
+}
+
+func (spell *Spell) IssueRefund(sim *Simulation) {
+	spell.Cost.IssueRefund(sim, spell)
 }

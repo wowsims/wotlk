@@ -5,14 +5,12 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	actionID := core.ActionID{SpellID: 57934, Tag: rogue.Index}
 	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
-	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
 
 	if rogue.Options.TricksOfTheTradeTarget != nil {
@@ -30,13 +28,14 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	}
 
 	rogue.TricksOfTheTrade = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		BaseCost:     energyCost,
-		ResourceType: stats.Energy,
+		ActionID: actionID,
+
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 15 - 5*float64(rogue.Talents.FilthyTricks),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -52,7 +51,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			rogue.TricksOfTheTradeAura.Activate(sim)
 			if hasShadowblades {
-				rogue.AddEnergy(sim, energyCost, energyMetrics)
+				rogue.AddEnergy(sim, spell.DefaultCast.Cost, energyMetrics)
 			}
 		},
 	})
