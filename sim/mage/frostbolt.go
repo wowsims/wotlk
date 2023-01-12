@@ -5,11 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFrostboltSpell() {
-	baseCost := .11 * mage.BaseMana
 	spellCoeff := (3.0 / 3.5) + 0.05*float64(mage.Talents.EmpoweredFrostbolt)
 
 	replProcChance := float64(mage.Talents.EnduringWinter) / 3
@@ -24,13 +22,12 @@ func (mage *Mage) registerFrostboltSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells,
 		MissileSpeed: 28,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.11,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-
 				GCD:      core.GCDDefault,
 				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFrostbolt+mage.Talents.EmpoweredFrostbolt),
 			},

@@ -204,6 +204,7 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 
 		snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
 		snapshotManager.AddProc(59626, "Black Magic Proc", false)
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
 
 		snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
 		snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
@@ -211,9 +212,15 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 		snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
 		snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
 		snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
-	}
 
-	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+	} else {
+		fcEnchantId := int32(3368)
+		// Only worth snapshotting if both are on (might want to re-visit this after P2)
+		if dk.Character.GetMHWeapon().Enchant.EffectID == fcEnchantId && dk.Character.GetOHWeapon().Enchant.EffectID == fcEnchantId {
+			snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+		}
+	}
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 

@@ -5,24 +5,22 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerKillShotSpell() {
-	baseCost := 0.07 * hunter.BaseMana
-
 	hunter.KillShot = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 61006},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 61006},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.07,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

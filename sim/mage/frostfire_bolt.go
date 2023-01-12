@@ -6,12 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFrostfireBoltSpell() {
 	actionID := core.ActionID{SpellID: 47610}
-	baseCost := .14 * mage.BaseMana
 	spellCoeff := 3.0/3.5 + .05*float64(mage.Talents.EmpoweredFire)
 
 	mage.FrostfireBolt = mage.RegisterSpell(core.SpellConfig{
@@ -20,12 +18,12 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 28,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.14,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,
 			},

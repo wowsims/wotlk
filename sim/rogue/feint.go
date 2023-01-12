@@ -5,28 +5,21 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerFeintSpell() {
-	resourceType := stats.Energy
-	baseCost := 20.0
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFeint) {
-		resourceType = 0
-		baseCost = 0
-	}
 	rogue.Feint = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48659},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: resourceType,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48659},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfFeint), 0, 20),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),

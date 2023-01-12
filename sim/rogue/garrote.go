@@ -6,33 +6,31 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const GarroteSpellID = 48676
 
 func (rogue *Rogue) registerGarrote() {
-	refundAmount := 0.8
-	baseCost := rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds))
-
 	numTicks := int32(6)
 	var glyphMultiplier float64
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGarrote) {
 		numTicks = 5
 		glyphMultiplier = 0.44 // cp. https://www.wowhead.com/wotlk/spell=56812/glyph-of-garrote
 	}
-	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: GarroteSpellID},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
 
+	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: GarroteSpellID},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds)),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -50,7 +48,7 @@ func (rogue *Rogue) registerGarrote() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				rogue.garroteDot.Apply(sim)
 			} else {
-				rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

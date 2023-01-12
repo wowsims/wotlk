@@ -52,23 +52,21 @@ func (druid *Druid) registerSwipeBearSpell() {
 }
 
 func (druid *Druid) registerSwipeCatSpell() {
-	cost := 50.0 - float64(druid.Talents.Ferocity)
-
 	weaponMulti := 2.5
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
 
 	druid.SwipeCat = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 62078},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Energy,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 62078},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 50 - float64(druid.Talents.Ferocity),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},

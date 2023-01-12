@@ -191,7 +191,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	if dk.uhGargoyleCanCast(sim, castTime) {
-		if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence != proto.Deathknight_Rotation_Unholy) {
+		if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy) {
 			if dk.CurrentUnholyRunes() == 0 {
 				if dk.BloodTap.IsReady(sim) {
 					dk.BloodTap.Cast(sim, dk.CurrentTarget)

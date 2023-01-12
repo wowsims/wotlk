@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
@@ -104,18 +103,17 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	})
 
 	aura := paladin.SealOfRighteousnessAura
-	baseCost := paladin.BaseMana * 0.14
 	paladin.SealOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Righteousness self buff.
 		SpellSchool: core.SpellSchoolHoly,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.14,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

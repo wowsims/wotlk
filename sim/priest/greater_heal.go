@@ -4,27 +4,25 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerGreaterHealSpell() {
-	baseCost := .32 * priest.BaseMana
 	spellCoeff := 1.6114 + 0.08*float64(priest.Talents.EmpoweredHealing)
 
 	priest.GreaterHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48063},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellHealing,
-		Flags:        core.SpellFlagHelpful,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48063},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.32,
+			Multiplier: 1 *
+				(1 - .05*float64(priest.Talents.ImprovedHealing)) *
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetRegaliaOfFaith, 4), .95, 1),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - .05*float64(priest.Talents.ImprovedHealing)) *
-					core.TernaryFloat64(priest.HasSetBonus(ItemSetRegaliaOfFaith, 4), .95, 1),
-
 				GCD:      core.GCDDefault,
 				CastTime: time.Second*3 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},

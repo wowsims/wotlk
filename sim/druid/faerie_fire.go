@@ -4,13 +4,13 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerFaerieFireSpell() {
 	actionID := core.ActionID{SpellID: 770}
-	resourceType := stats.Mana
-	baseCost := 0.08 * druid.BaseMana
+	manaCostOptions := core.ManaCostOptions{
+		BaseCost: 0.08,
+	}
 	gcd := core.GCDDefault
 	ignoreHaste := false
 	cd := core.Cooldown{}
@@ -19,8 +19,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 	if druid.InForm(Cat | Bear) {
 		actionID = core.ActionID{SpellID: 16857}
-		resourceType = 0
-		baseCost = 0
+		manaCostOptions = core.ManaCostOptions{}
 		gcd = time.Second
 		ignoreHaste = true
 		flags = core.SpellFlagNone
@@ -34,17 +33,15 @@ func (druid *Druid) registerFaerieFireSpell() {
 	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: resourceType,
-		BaseCost:     baseCost,
-		Flags:        flags,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       flags,
 
+		ManaCost: manaCostOptions,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  gcd,
+				GCD: gcd,
 			},
 			IgnoreHaste: ignoreHaste,
 			CD:          cd,

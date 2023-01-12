@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const FanOfKnivesSpellID int32 = 51723
@@ -37,7 +36,6 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) *core.Spell {
 }
 
 func (rogue *Rogue) registerFanOfKnives() {
-	baseCost := 50.0
 	mhSpell := rogue.makeFanOfKnivesWeaponHitSpell(true)
 	ohSpell := rogue.makeFanOfKnivesWeaponHitSpell(false)
 	results := make([]*core.SpellResult, len(rogue.Env.Encounter.Targets))
@@ -47,13 +45,12 @@ func (rogue *Rogue) registerFanOfKnives() {
 		SpellSchool: core.SpellSchoolPhysical,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
-
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 50,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
