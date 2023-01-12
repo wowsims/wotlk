@@ -5,26 +5,25 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
-	baseCost := 25.0 - float64(rogue.Talents.ImprovedExposeArmor)*5
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 	actionID := core.ActionID{SpellID: 8647}
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID.WithTag(comboPoints),
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    actionID.WithTag(comboPoints),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          25.0 - 5*float64(rogue.Talents.ImprovedExposeArmor),
+			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			RefundMetrics: rogue.QuickRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -38,9 +37,7 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 				rogue.ExposeArmorAura.Activate(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
-				if refundAmount > 0 {
-					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-				}
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

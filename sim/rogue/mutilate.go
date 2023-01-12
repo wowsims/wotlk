@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var MHOutcome = core.OutcomeHit
@@ -67,25 +66,19 @@ func (rogue *Rogue) registerMutilateSpell() {
 	mhHitSpell := rogue.newMutilateHitSpell(true)
 	ohHitSpell := rogue.newMutilateHitSpell(false)
 
-	baseCost := 60.0
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate) {
-		baseCost -= 5
-	}
-	baseCost = rogue.costModifier(baseCost)
-	refundAmount := baseCost * 0.8
-
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: MutilateSpellID},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | SpellFlagBuilder,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: MutilateSpellID},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier(60 - core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate), 5, 0)),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -102,7 +95,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 					result.Outcome = core.OutcomeCrit
 				}
 			} else {
-				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

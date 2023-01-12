@@ -6,13 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerRipSpell() {
 	actionID := core.ActionID{SpellID: 49800}
-	baseCost := 30.0 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10.0, 0.0)
-	refundPercent := 0.4 * float64(druid.Talents.PrimalPrecision)
 
 	ripBaseNumTicks := 6 +
 		core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
@@ -26,17 +23,19 @@ func (druid *Druid) registerRipSpell() {
 	}
 
 	druid.Rip = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          30 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10, 0),
+			Refund:        0.4 * float64(druid.Talents.PrimalPrecision),
+			RefundMetrics: druid.PrimalPrecisionRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -52,8 +51,8 @@ func (druid *Druid) registerRipSpell() {
 				druid.RipDot.NumberOfTicks = ripBaseNumTicks
 				druid.RipDot.Apply(sim)
 				druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-			} else if refundPercent > 0 {
-				druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
+			} else {
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

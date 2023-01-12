@@ -144,16 +144,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 			onCastComplete(sim, target)
 			return true
 		}
-	case stats.Energy:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.CurrentEnergy() < spell.CurCast.Cost {
-				return false
-			}
-			spell.Unit.SpendEnergy(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-			onCastComplete(sim, target)
-			return true
-		}
 	case stats.RunicPower:
 		return func(sim *Simulation, target *Unit) bool {
 			// Rune spending is currently handled in DK codebase.
@@ -356,18 +346,4 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			}
 		}
 	}
-}
-
-// Handles computing the cost of spells and checking whether the Unit
-// meets them.
-type SpellCost interface {
-	// Whether the Unit associated with the spell meets the resource cost
-	// requirements to cast the spell.
-	MeetsRequirement(*Spell) bool
-
-	// Logs a message for when the cast fails due to lack of resources.
-	LogCostFailure(*Simulation, *Spell)
-
-	// Subtracts the resources used from a cast from the Unit.
-	SpendCost(*Simulation, *Spell)
 }

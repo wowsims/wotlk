@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Time between energy ticks.
@@ -163,4 +164,51 @@ func (eb *energyBar) reset(sim *Simulation) {
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
 	eb.newTickAction(sim, true)
+}
+
+type EnergyCostOptions struct {
+	Cost float64
+
+	Refund        float64
+	RefundMetrics *ResourceMetrics // Optional, will default to unit.EnergyRefundMetrics if not supplied.
+}
+type EnergyCost struct {
+	Refund          float64
+	RefundMetrics   *ResourceMetrics
+	ResourceMetrics *ResourceMetrics
+}
+
+func newEnergyCost(spell *Spell, options EnergyCostOptions) *EnergyCost {
+	spell.ResourceType = stats.Energy
+	spell.BaseCost = options.Cost
+	spell.DefaultCast.Cost = options.Cost
+	if options.Refund > 0 && options.RefundMetrics == nil {
+		options.RefundMetrics = spell.Unit.EnergyRefundMetrics
+	}
+
+	return &EnergyCost{
+		Refund:          options.Refund,
+		RefundMetrics:   options.RefundMetrics,
+		ResourceMetrics: spell.Unit.NewEnergyMetrics(spell.ActionID),
+	}
+}
+
+func (ec *EnergyCost) MeetsRequirement(spell *Spell) bool {
+	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+	return spell.Unit.CurrentEnergy() >= spell.CurCast.Cost
+}
+func (ec *EnergyCost) LogCostFailure(sim *Simulation, spell *Spell) {
+	spell.Unit.Log(sim,
+		"Failed casting %s, not enough energy. (Current Energy = %0.03f, Energy Cost = %0.03f)",
+		spell.ActionID, spell.Unit.CurrentEnergy(), spell.CurCast.Cost)
+}
+func (ec *EnergyCost) SpendCost(sim *Simulation, spell *Spell) {
+	if spell.CurCast.Cost > 0 {
+		spell.Unit.SpendEnergy(sim, spell.CurCast.Cost, ec.ResourceMetrics)
+	}
+}
+func (ec *EnergyCost) IssueRefund(sim *Simulation, spell *Spell) {
+	if ec.Refund > 0 {
+		spell.Unit.AddEnergy(sim, ec.Refund*spell.CurCast.Cost, ec.RefundMetrics)
+	}
 }
