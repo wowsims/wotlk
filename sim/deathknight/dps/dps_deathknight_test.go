@@ -12,6 +12,30 @@ func init() {
 	RegisterDpsDeathknight()
 }
 
+func TestBlood(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class:      proto.Class_ClassDeathknight,
+		Race:       proto.Race_RaceOrc,
+		OtherRaces: []proto.Race{proto.Race_RaceHuman},
+
+		GearSet:     core.GearSetCombo{Label: "Blood P1 ", GearSet: BloodP1Gear},
+		Talents:     BloodTalents,
+		Glyphs:      BloodDefaultGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
+
+		ItemFilter: core.ItemFilter{
+			ArmorType: proto.ArmorType_ArmorTypePlate,
+
+			WeaponTypes: []proto.WeaponType{
+				proto.WeaponType_WeaponTypeAxe,
+				proto.WeaponType_WeaponTypeSword,
+				proto.WeaponType_WeaponTypeMace,
+			},
+		},
+	}))
+}
+
 func TestUnholy(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:      proto.Class_ClassDeathknight,
@@ -60,6 +84,14 @@ func TestFrost(t *testing.T) {
 	}))
 }
 
+var BloodTalents = "2305120530003303231023001351--230130305003"
+var BloodDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfDancingRuneWeapon),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfDeathStrike),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDarkDeath),
+	// No interesting minor glyphs.
+}
+
 var FrostTalents = "23050005-32005350352203012300033101351"
 var FrostDefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
@@ -76,6 +108,13 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 	// No interesting minor glyphs.
 }
 
+var PlayerOptionsBlood = &proto.Player_Deathknight{
+	Deathknight: &proto.Deathknight{
+		Options:  deathKnightOptions,
+		Rotation: bloodRotation,
+	},
+}
+
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
@@ -88,6 +127,11 @@ var PlayerOptionsFrost = &proto.Player_Deathknight{
 		Options:  deathKnightOptions,
 		Rotation: frostRotation,
 	},
+}
+
+var bloodRotation = &proto.Deathknight_Rotation{
+	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
+	UseEmpowerRuneWeapon: true,
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
@@ -120,6 +164,96 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
 }
+
+var BloodP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
+	{
+		"id": 44006,
+		"enchant": 3817,
+		"gems": [
+		  41398,
+		  42702
+		]
+	  },
+	  {
+		"id": 44664,
+		"gems": [
+		  39996
+		]
+	  },
+	  {
+		"id": 40557,
+		"enchant": 3808,
+		"gems": [
+		  39996
+		]
+	  },
+	  {
+		"id": 40403,
+		"enchant": 3831
+	  },
+	  {
+		"id": 40550,
+		"enchant": 3832,
+		"gems": [
+		  42142,
+		  42142
+		]
+	  },
+	  {
+		"id": 40330,
+		"enchant": 3845,
+		"gems": [
+		  42142,
+		  0
+		]
+	  },
+	  {
+		"id": 40552,
+		"enchant": 3604,
+		"gems": [
+		  39996,
+		  0
+		]
+	  },
+	  {
+		"id": 40317,
+		"gems": [
+		  39996
+		]
+	  },
+	  {
+		"id": 40556,
+		"enchant": 3823,
+		"gems": [
+		  39996,
+		  39996
+		]
+	  },
+	  {
+		"id": 40591,
+		"enchant": 3606
+	  },
+	  {
+		"id": 40075
+	  },
+	  {
+		"id": 39401
+	  },
+	  {
+		"id": 40256
+	  },
+	  {
+		"id": 42987
+	  },
+	  {
+		"id": 40384,
+		"enchant": 3368
+	  },
+	  {},
+	  {
+		"id": 40207
+	  }
+]}`)
 
 var UnholyDwP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{

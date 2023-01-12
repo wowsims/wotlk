@@ -11,9 +11,6 @@ import (
 type UnholyRotation struct {
 	dk *DpsDeathknight
 
-	ffFirst bool
-	hasGod  bool
-
 	syncTimeFF time.Duration
 
 	gargoyleSnapshot *core.SnapshotManager
@@ -29,14 +26,14 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
+	if dk.sr.ffFirst {
 		return dk.RotationActionCallback_IT
 	}
 	return dk.RotationActionCallback_PS
 }
 
 func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
+	if dk.sr.ffFirst {
 		return dk.RotationActionCallback_PS
 	}
 	return dk.RotationActionCallback_IT
@@ -155,7 +152,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 	}
 
 	// Save ERW for best Army Snapshot after Garg
-	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.Rotation.HoldErwArmy && dk.ArmyOfTheDead.IsReady(sim) {
+	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd && dk.Rotation.HoldErwArmy && dk.ArmyOfTheDead.IsReady(sim) {
 		return false
 	}
 

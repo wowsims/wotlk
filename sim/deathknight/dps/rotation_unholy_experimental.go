@@ -23,7 +23,7 @@ func (dk *DpsDeathknight) dndExperimentalOpener() {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_ERW)
 
-		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+		if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_AOTD).
 				NewAction(dk.RotationActionCallback_BP)
@@ -159,7 +159,7 @@ func (dk *DpsDeathknight) RotationAction_UnholyDndRotationGhoulFrenzyCheck(sim *
 	dk.RotationSequence.Clear()
 
 	if dk.Talents.GhoulFrenzy && (!dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < time.Second*10) {
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_IT).
 				NewAction(dk.RotationActionCallback_GF)
 		} else {
