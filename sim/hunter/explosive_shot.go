@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
@@ -19,8 +18,6 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 }
 
 func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (*core.Spell, *core.Dot) {
-	baseCost := 0.07 * hunter.BaseMana
-
 	actionID := core.ActionID{SpellID: 60053}
 	minFlatDamage := 386.0
 	maxFlatDamage := 464.0
@@ -32,17 +29,18 @@ func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (
 
 	var esDot *core.Dot
 	esSpell := hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.07,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type PetAbilityType byte
@@ -57,17 +56,16 @@ func (wp *WarlockPet) newIntercept() *core.Spell {
 }
 
 func (wp *WarlockPet) newFirebolt() *core.Spell {
-	baseCost := 180.0
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47964},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 47964},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 180,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (2500 - time.Duration(250*wp.owner.Talents.DemonicPower)),
 			},
@@ -87,21 +85,20 @@ func (wp *WarlockPet) newFirebolt() *core.Spell {
 }
 
 func (wp *WarlockPet) newCleave() *core.Spell {
-	baseCost := 439.0 // 10% of base
 	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
 
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47994},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 47994},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 439,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -128,18 +125,17 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 }
 
 func (wp *WarlockPet) newLashOfPain() *core.Spell {
-	baseCost := 250.0
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47992},
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 47992},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 250,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -163,7 +159,6 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 
 func (wp *WarlockPet) newShadowBite() *core.Spell {
 	actionID := core.ActionID{SpellID: 54053}
-	baseCost := 131.0 // TODO: should be 3% of BaseMana, but it's unclear what that actually refers to with pets
 
 	var petManaMetrics *core.ResourceMetrics
 	maxManaMult := 0.04 * float64(wp.owner.Talents.ImprovedFelhunter)
@@ -173,16 +168,17 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 	}
 
 	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			// TODO: should be 3% of BaseMana, but it's unclear what that actually refers to with pets
+			FlatCost: 131,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

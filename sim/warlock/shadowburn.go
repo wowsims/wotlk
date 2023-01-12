@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerShadowBurnSpell() {
@@ -13,7 +12,6 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 		return
 	}
 
-	baseCost := 0.2 * warlock.BaseMana
 	spellCoeff := 0.429 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowburn) {
@@ -27,16 +25,17 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	}
 
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47827},
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 47827},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.2,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
-				GCD:  core.GCDDefault, // backdraft procs don't change the GCD of shadowburn
+				GCD: core.GCDDefault, // backdraft procs don't change the GCD of shadowburn
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

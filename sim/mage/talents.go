@@ -487,12 +487,6 @@ func (mage *Mage) registerIcyVeinsCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 12472}
-	manaCost := mage.BaseMana * 0.03
-
-	cooldown := 180.0
-	if mage.Talents.IceFloes > 0 {
-		cooldown *= 1 - []float64{0, .7, .14, .20}[mage.Talents.IceFloes]
-	}
 
 	icyVeinsAura := mage.RegisterAura(core.Aura{
 		Label:    "Icy Veins",
@@ -510,16 +504,13 @@ func (mage *Mage) registerIcyVeinsCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.03,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: manaCost,
-			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
-				Duration: time.Duration(cooldown) * time.Second,
+				Duration: time.Second * time.Duration(180*[]float64{1, .93, .86, .80}[mage.Talents.IceFloes]),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -536,7 +527,7 @@ func (mage *Mage) registerIcyVeinsCD() {
 				return false
 			}
 
-			if character.CurrentMana() < manaCost {
+			if character.CurrentMana() < mage.IcyVeins.DefaultCast.Cost {
 				return false
 			}
 

@@ -28,14 +28,9 @@ func (shaman *Shaman) RegisterMaelstromLightningBoltSpells(minStacks int32) []*c
 }
 
 func (shaman *Shaman) newLightningBoltSpellConfig(isLightningOverload bool) core.SpellConfig {
-	baseCost := 0.1 * shaman.BaseMana
-	if shaman.HasSetBonus(ItemSetEarthShatterGarb, 2) {
-		baseCost -= baseCost * 0.05
-	}
-
 	spellConfig := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: 49238},
-		baseCost,
+		0.1*core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthShatterGarb, 2), 0.95, 1),
 		time.Millisecond*2500,
 		isLightningOverload)
 

@@ -5,12 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerScorchSpell() {
-	baseCost := .08 * mage.BaseMana
-
 	hasImpScorch := mage.Talents.ImprovedScorch > 0
 	procChance := float64(mage.Talents.ImprovedScorch) / 3.0
 	if hasImpScorch {
@@ -18,16 +15,16 @@ func (mage *Mage) registerScorchSpell() {
 	}
 
 	mage.Scorch = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 42859},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | HotStreakSpells,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 42859},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage | HotStreakSpells,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.08,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

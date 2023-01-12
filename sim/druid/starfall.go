@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // We register two spells to apply two different dot effects and get two entries in Damage/Detailed results
@@ -15,23 +14,23 @@ func (druid *Druid) registerStarfallSpell() {
 		return
 	}
 
-	baseCost := druid.BaseMana * 0.35
 	target := druid.CurrentTarget
 	numberOfTicks := core.TernaryInt32(druid.Env.GetNumTargets() > 1, 20, 10)
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
 	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 53201},
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 53201},
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.35,
+			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),

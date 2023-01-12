@@ -5,28 +5,27 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerDivineStormSpell() {
-	baseCost := paladin.BaseMana * 0.12
 	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0) + // Libram of Discord
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0) // Venture Co. Libram of Retribution
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 53385},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 53385},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.12,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // ds is on phys gcd, which cannot be hasted
 			CD: core.Cooldown{

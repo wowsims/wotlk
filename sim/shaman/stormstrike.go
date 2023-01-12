@@ -84,11 +84,6 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	mhHit := shaman.newStormstrikeHitSpell(true)
 	ohHit := shaman.newStormstrikeHitSpell(false)
 
-	baseCost := 0.08 * shaman.BaseMana
-	if shaman.Equip[core.ItemSlotRanged].ID == StormfuryTotem {
-		baseCost -= 22
-	}
-
 	ssDebuffAura := shaman.StormstrikeDebuffAura(shaman.CurrentTarget)
 
 	var skyshatterAura *core.Aura
@@ -107,17 +102,17 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	impSSChance := 0.5 * float64(shaman.Talents.ImprovedStormstrike)
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     StormstrikeActionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    StormstrikeActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.08,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

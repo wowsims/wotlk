@@ -20,7 +20,8 @@ type SpellConfig struct {
 	ResourceType stats.Stat
 	BaseCost     float64
 
-	Cast CastConfig
+	ManaCost ManaCostOptions
+	Cast     CastConfig
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -78,6 +79,9 @@ type Spell struct {
 	// Base cost. Many effects in the game which 'reduce mana cost by X%'
 	// are calculated using the base cost.
 	BaseCost float64
+
+	// Cost for the spell.
+	Cost SpellCost
 
 	// Default cast parameters with all static effects applied.
 	DefaultCast Cast
@@ -207,23 +211,27 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
-	switch spell.ResourceType {
-	case stats.Mana:
-		spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
-	case stats.Rage:
-		spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
-	case stats.Energy:
-		spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
-	case stats.RunicPower:
-		spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-	case stats.BloodRune:
-		spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-	case stats.FrostRune:
-		spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-	case stats.UnholyRune:
-		spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-	case stats.DeathRune:
-		spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
+	if config.ManaCost.BaseCost != 0 || config.ManaCost.FlatCost != 0 {
+		spell.Cost = newManaCost(spell, config.ManaCost)
+	}
+
+	if spell.Cost == nil {
+		switch spell.ResourceType {
+		case stats.Rage:
+			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
+		case stats.Energy:
+			spell.ResourceMetrics = spell.Unit.NewEnergyMetrics(spell.ActionID)
+		case stats.RunicPower:
+			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
+		case stats.BloodRune:
+			spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
+		case stats.FrostRune:
+			spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
+		case stats.UnholyRune:
+			spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
+		case stats.DeathRune:
+			spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
+		}
 	}
 
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {

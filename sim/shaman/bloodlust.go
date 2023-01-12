@@ -2,7 +2,6 @@ package shaman
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) BloodlustActionID() core.ActionID {
@@ -25,17 +24,16 @@ func (shaman *Shaman) registerBloodlustCD() {
 		}
 	}
 
-	baseCost := shaman.BaseMana * 0.26
 	bloodlustSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.26,
+			Multiplier: 1 - 0.02*float64(shaman.Talents.MentalQuickness),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(shaman.Talents.MentalQuickness)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
