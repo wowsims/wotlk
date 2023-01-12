@@ -198,6 +198,7 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 
 		snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
 		snapshotManager.AddProc(59626, "Black Magic Proc", false)
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
 
 		snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
 		snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
@@ -206,8 +207,6 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 		snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
 		snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
 	}
-
-	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 
