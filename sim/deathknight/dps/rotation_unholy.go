@@ -270,7 +270,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		}
 
 		didErw := false
-		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
+		if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
 			// If not enough runes for aotd cast ERW
 			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
@@ -295,7 +295,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		} else {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 		}
-	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
+	} else if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
 		dk.RotationSequence.Clear()
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Haste_Snapshot).

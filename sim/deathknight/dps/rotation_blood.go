@@ -13,6 +13,8 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 	}
 
+	dk.setupDrwCooldowns()
+
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
@@ -20,6 +22,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		NewAction(dk.RotationActionCallback_FU).
 		NewAction(dk.RotationActionCallback_HS).
 		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_DRW).
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
@@ -39,8 +42,9 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 		return sim.CurrentTime
 	}
 
-	if dk.DancingRuneWeapon.CanCast(sim) {
-		casted = dk.DancingRuneWeapon.Cast(sim, target)
+	if dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
+		dk.RaiseDead.Cast(sim, target)
+		return sim.CurrentTime
 	}
 
 	fuStrike := dk.DeathStrike
@@ -87,11 +91,9 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
-	// if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
-	// 	didErw := false
-	// }
-
 	dk.RotationSequence.
+		NewAction(dk.RotationActionBL_IT_Custom).
+		NewAction(dk.RotationActionBL_PS_Custom).
 		NewAction(dk.RotationAction_ResetToBloodMain)
 }
 

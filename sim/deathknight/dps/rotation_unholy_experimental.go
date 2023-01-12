@@ -23,7 +23,7 @@ func (dk *DpsDeathknight) dndExperimentalOpener() {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_ERW)
 
-		if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd {
+		if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_AOTD).
 				NewAction(dk.RotationActionCallback_BP)
