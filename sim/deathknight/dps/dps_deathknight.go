@@ -206,6 +206,14 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 		snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
 		snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
 		snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
+
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+	} else {
+		fcEnchantId := int32(3368)
+		// Only worth snapshotting if both are on (might want to re-visit this after P2)
+		if dk.Character.GetMHWeapon().Enchant.EffectID == fcEnchantId && dk.Character.GetOHWeapon().Enchant.EffectID == fcEnchantId {
+			snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+		}
 	}
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
