@@ -3,6 +3,21 @@
 @import "./filters_menu";
 @import "./popup";
 
+.item-swap-picker-root {
+  .picker-group {
+    align-items: center;
+    justify-content: flex-end;
+
+    &> * {
+      margin-bottom: 0 !important;
+    }
+
+    &> :last-child {
+      margin-right: 0;
+    }
+  }  
+}
+
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;
