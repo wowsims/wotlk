@@ -15,7 +15,6 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 
 	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromRaidTarget(dk.Inputs.UnholyFrenzyTarget)
 	if unholyFrenzyTargetAgent == nil {
-		panic("No unholy frenzy target")
 		return
 	}
 	unholyFrenzyTarget := unholyFrenzyTargetAgent.GetCharacter()
