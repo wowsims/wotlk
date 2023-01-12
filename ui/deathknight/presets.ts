@@ -181,6 +181,8 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	useEmpowerRuneWeapon: true,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
+	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
+	holdErwArmy: false,
 	useAms: false,
 });
 
