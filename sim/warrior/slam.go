@@ -4,25 +4,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerSlamSpell() {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
-
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     cost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*1500 - time.Millisecond*500*time.Duration(warrior.Talents.ImprovedSlam),
 			},
@@ -42,7 +38,7 @@ func (warrior *Warrior) registerSlamSpell() {
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			if !result.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

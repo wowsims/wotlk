@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerSweepingStrikesCD() {
@@ -57,24 +56,14 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		},
 	})
 
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfSweepingStrikes)
-	cost := 30.0
 	ssCD := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfSweepingStrikes), 0, 30),
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: cost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if hasGlyph {
-					cast.Cost = 0
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
 				Duration: time.Second * 30,

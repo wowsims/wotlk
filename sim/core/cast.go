@@ -134,16 +134,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 	}
 
 	switch spell.ResourceType {
-	case stats.Rage:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.CurrentRage() < spell.CurCast.Cost {
-				return false
-			}
-			spell.Unit.SpendRage(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-			onCastComplete(sim, target)
-			return true
-		}
 	case stats.RunicPower:
 		return func(sim *Simulation, target *Unit) bool {
 			// Rune spending is currently handled in DK codebase.

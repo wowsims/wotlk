@@ -3,14 +3,11 @@ package warrior
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO: GlyphOfSunderArmor will require refactoring this a bit
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
-	refundAmount := cost * 0.8
 	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget)
 
 	config := core.SpellConfig{
@@ -19,13 +16,13 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -64,7 +61,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 				}
 			}
 		} else {
-			warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+			spell.IssueRefund(sim)
 		}
 
 		spell.DealOutcome(sim, result)

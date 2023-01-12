@@ -3,18 +3,11 @@ package warrior
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
-
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warrior *Warrior) registerThunderClapSpell() {
-	cost := 20.0 -
-		float64(warrior.Talents.FocusedRage) -
-		[]float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap] -
-		core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0)
-
 	warrior.ThunderClapAuras = make([]*core.Aura, warrior.Env.GetNumTargets())
 	for _, target := range warrior.Env.Encounter.Targets {
 		warrior.ThunderClapAuras[target.Index] = core.ThunderClapAura(&target.Unit, warrior.Talents.ImprovedThunderClap)
@@ -26,13 +19,15 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ProcMask:    core.ProcMaskRangedSpecial,
 		Flags:       core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 20 -
+				float64(warrior.Talents.FocusedRage) -
+				[]float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap] -
+				core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const MaxRage = 100.0
@@ -185,5 +186,52 @@ func (rb *rageBar) doneIteration() {
 
 		rageGainSpell.SpellMetrics[0].Casts += resourceMetrics.EventsForCurrentIteration()
 		rageGainSpell.ApplyAOEThreatIgnoreMultipliers(resourceMetrics.ActualGainForCurrentIteration() * ThreatPerRageGained)
+	}
+}
+
+type RageCostOptions struct {
+	Cost float64
+
+	Refund        float64
+	RefundMetrics *ResourceMetrics // Optional, will default to unit.RageRefundMetrics if not supplied.
+}
+type RageCost struct {
+	Refund          float64
+	RefundMetrics   *ResourceMetrics
+	ResourceMetrics *ResourceMetrics
+}
+
+func newRageCost(spell *Spell, options RageCostOptions) *RageCost {
+	spell.ResourceType = stats.Rage
+	spell.BaseCost = options.Cost
+	spell.DefaultCast.Cost = options.Cost
+	if options.Refund > 0 && options.RefundMetrics == nil {
+		options.RefundMetrics = spell.Unit.RageRefundMetrics
+	}
+
+	return &RageCost{
+		Refund:          options.Refund,
+		RefundMetrics:   options.RefundMetrics,
+		ResourceMetrics: spell.Unit.NewRageMetrics(spell.ActionID),
+	}
+}
+
+func (rc *RageCost) MeetsRequirement(spell *Spell) bool {
+	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+	return spell.Unit.CurrentRage() >= spell.CurCast.Cost
+}
+func (rc *RageCost) LogCostFailure(sim *Simulation, spell *Spell) {
+	spell.Unit.Log(sim,
+		"Failed casting %s, not enough rage. (Current Rage = %0.03f, Rage Cost = %0.03f)",
+		spell.ActionID, spell.Unit.CurrentRage(), spell.CurCast.Cost)
+}
+func (rc *RageCost) SpendCost(sim *Simulation, spell *Spell) {
+	if spell.CurCast.Cost > 0 {
+		spell.Unit.SpendRage(sim, spell.CurCast.Cost, rc.ResourceMetrics)
+	}
+}
+func (rc *RageCost) IssueRefund(sim *Simulation, spell *Spell) {
+	if rc.Refund > 0 {
+		spell.Unit.AddRage(sim, rc.Refund*spell.CurCast.Cost, rc.RefundMetrics)
 	}
 }
