@@ -217,6 +217,7 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 		'spell_deathknight_bloodpresence.jpg',
 		'spell_deathknight_frostpresence.jpg',
 		'spell_deathknight_unholypresence.jpg',
+		'spell_deathknight_darkconviction.jpg',
 	],
 	[Class.ClassDruid]: [
 		'spell_nature_starfall.jpg',
