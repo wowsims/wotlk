@@ -9,8 +9,6 @@ import (
 )
 
 func (druid *Druid) registerShredSpell() {
-	baseCost := 60.0 - 9*float64(druid.Talents.ShreddingAttacks)
-
 	flatDamageBonus := (666 +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 29390, 88, 0) +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40713, 203, 0)) / 2.25
@@ -20,17 +18,18 @@ func (druid *Druid) registerShredSpell() {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48572},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48572},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   60 - 9*float64(druid.Talents.ShreddingAttacks),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -66,7 +65,7 @@ func (druid *Druid) registerShredSpell() {
 					}
 				}
 			} else {
-				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {

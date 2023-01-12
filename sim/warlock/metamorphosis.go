@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerMetamorphosisSpell() {
@@ -56,7 +55,6 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 func (warlock *Warlock) registerImmolationAuraSpell() {
 	// the spellID that deals damage in the combat log is 50590, but we don't use it here
 	actionID := core.ActionID{SpellID: 50589}
-	baseCost := 0.64 * warlock.BaseMana
 
 	warlock.ImmolationAuraDot = core.NewDot(core.Dot{
 		Aura: warlock.RegisterAura(core.Aura{
@@ -75,15 +73,16 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 	})
 
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.64,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

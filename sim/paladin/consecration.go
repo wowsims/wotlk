@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.
@@ -13,7 +12,6 @@ import (
 func (paladin *Paladin) registerConsecrationSpell() {
 	// TODO: Properly implement max rank consecration.
 
-	baseCost := 0.22 * paladin.BaseMana
 	actionID := core.ActionID{SpellID: 48819}
 	bonusSpellPower := 0 +
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
@@ -50,13 +48,13 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.22,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),

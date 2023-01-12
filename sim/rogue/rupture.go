@@ -6,29 +6,28 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const RuptureEnergyCost = 25.0
 const RuptureSpellID = 48672
 
 func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 	numTicks := comboPoints + 3 + core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
-	baseCost := RuptureEnergyCost
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: RuptureSpellID, Tag: comboPoints},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: RuptureSpellID, Tag: comboPoints},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          RuptureEnergyCost,
+			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			RefundMetrics: rogue.QuickRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -51,9 +50,7 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 				rogue.ruptureDot.Apply(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
-				if refundAmount > 0 {
-					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-				}
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

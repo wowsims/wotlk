@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerTyphoonSpell() {
@@ -13,22 +12,19 @@ func (druid *Druid) registerTyphoonSpell() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 61384}
-	baseCost := 0.25 * druid.BaseMana
-	spellCoeff := 0.193
-
 	druid.Typhoon = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-		Flags:        SpellFlagOmenTrigger,
+		ActionID:    core.ActionID{SpellID: 61384},
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagOmenTrigger,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.25,
+			Multiplier: 1,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -43,7 +39,7 @@ func (druid *Druid) registerTyphoonSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
-				baseDamage := 1190 + (spellCoeff * spell.SpellPower())
+				baseDamage := 1190 + 0.193*spell.SpellPower()
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				for _, aoeTarget := range sim.Encounter.Targets {
 					spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)

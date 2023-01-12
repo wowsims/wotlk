@@ -592,6 +592,122 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
   ]}`),
 };
 
+export const P2_UNHOLY_DW_BIS_PRESET = {
+	name: 'P2 DW Unholy',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 45472,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  40041
+			]
+		  },
+		  {
+			"id": 46040,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46117,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45588,
+			"enchant": 3831,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46111,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 45481,
+			"enchant": 3604,
+			"gems": [
+			  0
+			]
+		  },
+		  {
+			"id": 45241,
+			"gems": [
+			  42142,
+			  45862,
+			  39996
+			]
+		  },
+		  {
+			"id": 45134,
+			"enchant": 3823,
+			"gems": [
+			  40041,
+			  39996,
+			  40022
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45250
+		  },
+		  {
+			"id": 45609
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3368,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3790,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45254
+		  }
+  ]}`),
+};
+
 export const P1_FROST_PRE_BIS_PRESET = {
 	name: 'Pre-Raid Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -794,6 +910,127 @@ export const P1_FROST_BIS_PRESET = {
 		{
 			"id": 40207
 		}
+  ]}`),
+};
+
+export const P2_FROST_BIS_PRESET = {
+	name: 'P2 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 46115,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 45459,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46117,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46032,
+			"enchant": 3831,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 46111,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 46113,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 45241,
+			"gems": [
+			  42142,
+			  45862,
+			  39996
+			]
+		  },
+		  {
+			"id": 45134,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45608,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3369,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3368,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 45254
+		  }
   ]}`),
 };
 

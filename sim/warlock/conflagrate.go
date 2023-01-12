@@ -6,30 +6,29 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
 	actionID := core.ActionID{SpellID: 17962}
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
-	baseCost := 0.16 * warlock.BaseMana
 	directFlatDamage := 0.6 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
 	directSpellCoeff := 0.6 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
 	dotFlatDamage := 0.4 / 3 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
 	dotSpellCoeff := 0.4 / 3 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.16,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),

@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
@@ -13,21 +12,20 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 	// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
 	apRatio := 0.07 * float64(comboPoints)
 
-	baseCost := 35.0
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
-
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48668, Tag: comboPoints},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48668, Tag: comboPoints},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          35,
+			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			RefundMetrics: rogue.QuickRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -53,9 +51,7 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				rogue.ApplyFinisher(sim, spell)
 				rogue.ApplyCutToTheChase(sim)
 			} else {
-				if refundAmount > 0 {
-					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-				}
+				spell.IssueRefund(sim)
 			}
 
 			spell.DealDamage(sim, result)

@@ -270,7 +270,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		}
 
 		didErw := false
-		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
+		if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
 			// If not enough runes for aotd cast ERW
 			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
@@ -295,7 +295,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		} else {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 		}
-	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
+	} else if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
 		dk.RotationSequence.Clear()
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Haste_Snapshot).
@@ -322,7 +322,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 			NewAction(dk.RotationActionCallback_GF).
 			NewAction(dk.RotationAction_CancelBT)
 	} else {
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.Clear().
 				NewAction(dk.RotationActionUH_IT_SetSync).
 				NewAction(dk.RotationActionCallback_GF)
@@ -345,7 +345,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
-	if dk.ur.hasGod {
+	if dk.sr.hasGod {
 		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
@@ -354,7 +354,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 
 	// If we did not pesti queue normal dot refresh
 	if !didPesti {
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).
@@ -398,7 +398,7 @@ func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulati
 		// If a disease has dropped do normal reapply
 		dk.RotationSequence.Clear()
 
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).

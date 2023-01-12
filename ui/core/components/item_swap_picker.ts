@@ -35,21 +35,23 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		itemSwapContianer.classList.add('icon-group');
 		this.rootElem.appendChild(itemSwapContianer);
 
-		let swapButton = document.createElement('a')
-		swapButton.classList.add("gear-swap-icon")
-		swapButton.setAttribute('role', 'button')
-		swapButton.setAttribute('href', 'javascript:void(0)')
-		swapButton.innerHTML = '<i class="fas fa-arrows-rotate me-1"></i>'
+		let swapButtonFragment = document.createElement('fragment');
+		swapButtonFragment.innerHTML = `
+			<a
+				href="javascript:void(0)
+				class="gear-swap-icon"
+				role="button"
+				data-bs-toggle="tooltip"
+				databs-title="Swap Items with Main Gear"
+			>
+				<i class="fas fa-arrows-rotate me-1"></i>
+			</a>
+		`
+
+		const swapButton = swapButtonFragment.children[0] as HTMLElement;
 		itemSwapContianer.appendChild(swapButton)
 
-		swapButton.addEventListener('click', event => {
-			this.swapWithGear(player, config)
-		});
-
-		tippy(swapButton, {
-			'content': 'Swap Items with Main Gear',
-			'allowHTML': true,
-		});
+		swapButton.addEventListener('click', event => { this.swapWithGear(player, config) });
 
 		config.changedEvent(player).on(eventID => {
 			const show = !config.showWhen || config.showWhen(player);

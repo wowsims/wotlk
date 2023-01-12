@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerCircleOfHealingSpell() {
@@ -13,22 +12,22 @@ func (priest *Priest) registerCircleOfHealingSpell() {
 		return
 	}
 
-	baseCost := .21 * priest.BaseMana
 	numTargets := 5 + core.TernaryInt32(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfCircleOfHealing), 1, 0)
 	targets := priest.Env.Raid.GetFirstNPlayersOrPets(numTargets)
 
 	priest.CircleOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48089},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellHealing,
-		Flags:        core.SpellFlagHelpful,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48089},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.21,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),

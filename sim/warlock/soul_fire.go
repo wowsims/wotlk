@@ -4,11 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerSoulFireSpell() {
-	baseCost := 0.09 * warlock.BaseMana
 	decimationMod := 1.0 - 0.2*float64(warlock.Talents.Decimation)
 
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
@@ -16,12 +14,13 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.09,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
 			},

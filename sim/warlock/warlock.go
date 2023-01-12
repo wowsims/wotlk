@@ -172,7 +172,7 @@ func (warlock *Warlock) Prepull(sim *core.Simulation) {
 		warlock.SpiritsoftheDamnedAura.UpdateExpires(warlock.SpiritsoftheDamnedAura.Duration - delay)
 	}
 
-	warlock.SpendMana(sim, spellChoice.DefaultCast.Cost, spellChoice.ResourceMetrics)
+	warlock.SpendMana(sim, spellChoice.DefaultCast.Cost, spellChoice.Cost.(*core.ManaCost).ResourceMetrics)
 	spellChoice.CD.UsePrePull(sim, warlock.ApplyCastSpeed(spellChoice.DefaultCast.CastTime))
 	spellChoice.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
 }
