@@ -1016,7 +1016,7 @@ export const P2_FROST_BIS_PRESET = {
 		  },
 		  {
 			"id": 46097,
-			"enchant": 3369,
+			"enchant": 3370,
 			"gems": [
 			  39996
 			]
