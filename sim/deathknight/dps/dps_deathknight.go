@@ -36,6 +36,7 @@ type DpsDeathknight struct {
 
 	CustomRotation *common.CustomRotation
 
+	Player   *proto.Player
 	Rotation *proto.Deathknight_Rotation
 }
 
@@ -57,16 +58,14 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
 		}, player.TalentsString),
+		Player:   player,
 		Rotation: dk.Rotation,
 	}
 	if dpsDk.Talents.SummonGargoyle {
 		dpsDk.Gargoyle = dpsDk.NewGargoyle(dk.Rotation.NerfedGargoyle)
 	}
 
-	dpsDk.Inputs.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
-	if dk.Options.UnholyFrenzyTarget != nil {
-		dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
-	}
+	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
 
 	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
@@ -424,6 +423,9 @@ func (dk *DpsDeathknight) setupDrwProcTrackers() {
 func (dk *DpsDeathknight) setupDrwCooldowns() {
 	dk.br.drwSnapshot.ClearMajorCooldowns()
 
+	// Unholy Frenzy
+	dk.drwCooldownSync(core.ActionID{SpellID: 49016, Tag: dk.Index}, false)
+
 	// hyperspeed accelerators
 	dk.drwCooldownSync(core.ActionID{SpellID: 54758}, false)
 
@@ -471,8 +473,15 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			if character != &dk.Character {
+				return true
+			}
 			// Hyperspeed hack
-			if actionID.SpellID == 54758 && sim.CurrentTime < 1*time.Second {
+			if actionID.SpellID == 54758 && sim.CurrentTime < 2*time.Second {
+				return true
+			}
+			// Unholy Frenzy hack
+			if actionID.SpellID == 49016 && sim.CurrentTime < 2*time.Second && dk.Player.Buffs.UnholyFrenzy == 0 {
 				return true
 			}
 			if dk.br.activatingDrw {

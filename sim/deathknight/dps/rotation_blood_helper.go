@@ -107,32 +107,17 @@ func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
 	if dk.blDrwCanCast(sim, castTime) {
 
-		// Unholy Presence
-		// if !dk.PresenceMatches(deathknight.UnholyPresence) {
-		// 	if dk.CurrentUnholyRunes() == 0 {
-		// 		if dk.BloodTap.IsReady(sim) {
-		// 			dk.BloodTap.Cast(sim, dk.CurrentTarget)
-		// 		} else {
-		// 			return false
-		// 		}
-		// 	}
-		// 	dk.UnholyPresence.Cast(sim, dk.CurrentTarget)
-		// }
-
 		dk.br.activatingDrw = true
 		dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
 		dk.br.activatingDrw = false
 
-		if dk.DancingRuneWeapon.Cast(sim, target) {
-			dk.br.drwSnapshot.ResetProcTrackers()
-			return true
+		if dk.GCD.IsReady(sim) {
+			if dk.DancingRuneWeapon.Cast(sim, target) {
+				dk.br.drwSnapshot.ResetProcTrackers()
+			}
 		}
+		return true
 	}
-
-	// Go back to Blood Presence after Drw
-	// if !dk.DancingRuneWeapon.IsReady(sim) && dk.PresenceMatches(deathknight.UnholyPresence) {
-	// 	return dk.BloodPresence.Cast(sim, target)
-	// }
 
 	return false
 }

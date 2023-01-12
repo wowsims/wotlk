@@ -38,7 +38,21 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 	casted := false
 
 	if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
-		dk.blAfterDrwSequence(sim)
+		if dk.DancingRuneWeapon.IsReady(sim) {
+			dk.RotationSequence.Clear()
+
+			if dk.UnholyFrenzy.IsReady(sim) {
+				dk.RotationSequence.NewAction(dk.RotationActionCallback_UF)
+			}
+
+			dk.RotationSequence.
+				NewAction(dk.RotationActionCallback_DRW).
+				NewAction(dk.RotationActionBL_IT_Custom).
+				NewAction(dk.RotationActionBL_PS_Custom).
+				NewAction(dk.RotationAction_ResetToBloodMain)
+		} else {
+			dk.blAfterDrwSequence(sim)
+		}
 		return sim.CurrentTime
 	}
 
