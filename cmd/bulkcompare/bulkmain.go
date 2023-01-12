@@ -75,6 +75,8 @@ func main() {
 		{ItemSpec: proto.ItemSpec{Id: 45142}, ItemSlot: core.ItemSlotOffHand},
 		{ItemSpec: proto.ItemSpec{Id: 45286}, ItemSlot: core.ItemSlotTrinket1},
 		{ItemSpec: proto.ItemSpec{Id: 45286}, ItemSlot: core.ItemSlotTrinket2},
+		{ItemSpec: proto.ItemSpec{Id: 45263}, ItemSlot: core.ItemSlotTrinket1},
+		{ItemSpec: proto.ItemSpec{Id: 45263}, ItemSlot: core.ItemSlotTrinket2},
 		{ItemSpec: proto.ItemSpec{Id: 45676, Gems: []int32{39996}}, ItemSlot: core.ItemSlotChest},
 		{ItemSpec: proto.ItemSpec{Id: 45675}, ItemSlot: core.ItemSlotFinger1},
 		{ItemSpec: proto.ItemSpec{Id: 45675}, ItemSlot: core.ItemSlotFinger2},
