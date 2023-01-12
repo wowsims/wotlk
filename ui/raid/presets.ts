@@ -149,7 +149,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
 			},
 		},
-		tooltip: 'Blood Death Knight',
+		tooltip: 'Blood Dps Death Knight',
 		iconUrl: getSpecIcon(Class.ClassDeathknight, 3),
 	},
 	{

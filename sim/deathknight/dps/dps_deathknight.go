@@ -36,7 +36,6 @@ type DpsDeathknight struct {
 
 	CustomRotation *common.CustomRotation
 
-	Player   *proto.Player
 	Rotation *proto.Deathknight_Rotation
 }
 
@@ -58,7 +57,6 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
 		}, player.TalentsString),
-		Player:   player,
 		Rotation: dk.Rotation,
 	}
 	if dpsDk.Talents.SummonGargoyle {
@@ -476,12 +474,8 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 			if character != &dk.Character {
 				return true
 			}
-			// Hyperspeed hack
-			if actionID.SpellID == 54758 && sim.CurrentTime < 2*time.Second {
-				return true
-			}
-			// Unholy Frenzy hack
-			if actionID.SpellID == 49016 && sim.CurrentTime < 2*time.Second && dk.Player.Buffs.UnholyFrenzy == 0 {
+			// Opener use everything
+			if sim.CurrentTime < 2*time.Second {
 				return true
 			}
 			if dk.br.activatingDrw {
