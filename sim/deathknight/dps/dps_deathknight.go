@@ -173,7 +173,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				dk.setupFrostSubUnholyERWOpener()
 			} else {
-				panic("you can't unh sub without ERW in the opener...yet")
+				// TODO you can't unh sub without ERW in the opener...yet
+				dk.Rotation.UseEmpowerRuneWeapon = true
 				dk.setupFrostSubUnholyERWOpener()
 			}
 		} else if dk.Talents.SummonGargoyle {
