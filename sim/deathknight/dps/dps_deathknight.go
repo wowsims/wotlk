@@ -142,11 +142,8 @@ func (dk *DpsDeathknight) SetupRotations() {
 		}
 	}
 
-	dk.br.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	dk.br.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-
-	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+	dk.sr.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.sr.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 
 	dk.RotationSequence.Clear()
 
@@ -190,12 +187,12 @@ func (dk *DpsDeathknight) Initialize() {
 	dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
 
 	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupProcTrackers()
+	dk.setupGargProcTrackers()
 
 	dk.fr.Initialize(dk)
 }
 
-func (dk *DpsDeathknight) setupProcTrackers() {
+func (dk *DpsDeathknight) setupGargProcTrackers() {
 	snapshotManager := dk.ur.gargoyleSnapshot
 
 	// Don't need to wait for haste snapshots anymore
@@ -349,6 +346,7 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 
 	dk.sr.Reset(sim)
+	dk.br.Reset(sim)
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
 

@@ -34,6 +34,11 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
+	if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
+		dk.blAfterDrwSequence(sim)
+		return sim.CurrentTime
+	}
+
 	if dk.DancingRuneWeapon.CanCast(sim) {
 		casted = dk.DancingRuneWeapon.Cast(sim, target)
 	}
@@ -79,12 +84,23 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 	return -1
 }
 
+func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
+	dk.RotationSequence.Clear()
+
+	// if dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) {
+	// 	didErw := false
+	// }
+
+	dk.RotationSequence.
+		NewAction(dk.RotationAction_ResetToBloodMain)
+}
+
 func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
-	if dk.br.hasGod {
+	if dk.sr.hasGod {
 		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)

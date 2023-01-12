@@ -11,6 +11,9 @@ type SharedRotation struct {
 	dk         *DpsDeathknight
 	recastedFF bool
 	recastedBP bool
+
+	ffFirst bool
+	hasGod  bool
 }
 
 func (sr *SharedRotation) Reset(sim *core.Simulation) {
