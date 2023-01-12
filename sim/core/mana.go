@@ -296,6 +296,7 @@ func (mb *manaBar) reset() {
 
 type ManaCostOptions struct {
 	BaseCost   float64
+	FlatCost   float64 // Alternative to BaseCost for giving a flat value.
 	Multiplier float64 // It's OK to leave this at 0, will default to 1.
 }
 type ManaCost struct {
@@ -304,7 +305,7 @@ type ManaCost struct {
 
 func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
 	spell.ResourceType = stats.Mana
-	spell.BaseCost = options.BaseCost * spell.Unit.BaseMana
+	spell.BaseCost = TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana)
 	spell.DefaultCast.Cost = spell.BaseCost * TernaryFloat64(options.Multiplier == 0, 1, options.Multiplier)
 
 	return &ManaCost{

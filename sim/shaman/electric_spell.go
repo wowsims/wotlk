@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Totem Item IDs
@@ -24,28 +23,21 @@ const (
 	CastTagLightningOverload int32 = 6
 )
 
-// Mana cost numbers based on in-game testing:
-//
-// With 5/5 convection:
-// Normal: 270, w/ EF: 150
-//
-// With 5/5 convection and TotPE equipped:
-// Normal: 246, w/ EF: 136
-
 // Shared precomputation logic for LB and CL.
 func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost float64, baseCastTime time.Duration, isLightningOverload bool) core.SpellConfig {
 	spell := core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagElectric | SpellFlagFocusable,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagElectric | SpellFlagFocusable,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   core.TernaryFloat64(isLightningOverload, 0, baseCost),
+			Multiplier: 1 - 0.02*float64(shaman.Talents.Convection),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
-				CastTime: baseCastTime,
+				CastTime: baseCastTime - time.Millisecond*100*time.Duration(shaman.Talents.LightningMastery),
 				GCD:      core.GCDDefault,
 			},
 		},
@@ -61,16 +53,11 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 	if isLightningOverload {
 		spell.ActionID.Tag = CastTagLightningOverload
-		spell.ResourceType = 0
 		spell.Cast.DefaultCast.CastTime = 0
 		spell.Cast.DefaultCast.GCD = 0
 		spell.Cast.DefaultCast.Cost = 0
 		spell.DamageMultiplier *= 0.5
 		spell.ThreatMultiplier = 0
-	} else if shaman.Talents.LightningMastery > 0 {
-		// Convection applies against the base cost of the spell.
-		spell.Cast.DefaultCast.Cost -= baseCost * float64(shaman.Talents.Convection) * 0.02
-		spell.Cast.DefaultCast.CastTime -= time.Millisecond * 100 * time.Duration(shaman.Talents.LightningMastery)
 	}
 
 	return spell

@@ -211,7 +211,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
-	if config.ManaCost.BaseCost != 0 {
+	if config.ManaCost.BaseCost != 0 || config.ManaCost.FlatCost != 0 {
 		spell.Cost = newManaCost(spell, config.ManaCost)
 	}
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const fireTotemDuration time.Duration = time.Second * 120
@@ -16,7 +15,6 @@ func (shaman *Shaman) registerFireElementalTotem() {
 	}
 
 	actionID := core.ActionID{SpellID: 2894}
-	manaCost := 0.23 * shaman.BaseMana
 
 	fireElementalAura := shaman.RegisterAura(core.Aura{
 		Label:    "Fire Elemental Totem",
@@ -27,13 +25,12 @@ func (shaman *Shaman) registerFireElementalTotem() {
 	shaman.FireElementalTotem = shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.23,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
