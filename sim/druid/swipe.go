@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerSwipeBearSpell() {
-	cost := 20.0 - float64(druid.Talents.Ferocity)
-
 	flatBaseDamage := 108.0
 	if druid.Equip[core.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		flatBaseDamage += 10
@@ -22,17 +19,17 @@ func (druid *Druid) registerSwipeBearSpell() {
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
 
 	druid.SwipeBear = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48562},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 48562},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		RageCost: core.RageCostOptions{
+			Cost: 20 - float64(druid.Talents.Ferocity),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},

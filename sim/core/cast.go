@@ -303,10 +303,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			oldOnCastComplete3 := onCastComplete
 			onCastComplete = func(sim *Simulation, target *Unit) {
 				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-					// Hunter fake cast has no ID.
-					if !spell.ActionID.SameAction(ActionID{}) {
-						spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
-					}
+					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 				}
 				oldOnCastComplete3(sim, target)
 			}

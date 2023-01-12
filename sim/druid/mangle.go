@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerMangleBearSpell() {
@@ -14,24 +13,22 @@ func (druid *Druid) registerMangleBearSpell() {
 	}
 
 	mangleAura := core.MangleAura(druid.CurrentTarget)
-
-	cost := 20.0 - float64(druid.Talents.Ferocity)
-	refundAmount := cost * 0.8
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleBear = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48564},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 48564},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		RageCost: core.RageCostOptions{
+			Cost:   20 - float64(druid.Talents.Ferocity),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -54,7 +51,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			if result.Landed() {
 				mangleAura.Activate(sim)
 			} else {
-				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 
 			if druid.BerserkAura.IsActive() {
