@@ -78,6 +78,18 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_UA(sim *co
 	return -1
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Detect_Broken_Desync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	frost := dk.FrostRuneReadyAt(sim)
+	unholy := dk.UnholyRuneReadyAt(sim)
+
+	if frost == unholy {
+		s.Clear().NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+	} else {
+		s.Advance()
+	}
+	return sim.CurrentTime
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		// f1 u1
@@ -92,6 +104,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence1(
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Detect_Broken_Desync).
 		// d2 f1
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_Obli).
 		// f2 u1
@@ -101,7 +114,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_UA).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_FS_Dump).
 		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_ERW).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_ERW_Check).
 		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_Sequence1)
 	return sim.CurrentTime
@@ -125,19 +138,42 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_FS_Dump(si
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_ERW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_ERW_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	bothDeath := dk.RuneIsDeath(0) && dk.RuneIsDeath(1)
+	noMoreUAs := sim.Duration-dk.UnbreakableArmor.ReadyAt() < 5*time.Second
+	numRunes := dk.CurrentDeathRunes() + dk.CurrentBloodRunes() + dk.CurrentUnholyRunes() + dk.CurrentFrostRunes()
 
-	if sim.IsExecutePhase35() && dk.UnbreakableArmorAura.IsActive() && dk.Rotation.UseEmpowerRuneWeapon && bothDeath {
-		dk.castAllMajorCooldowns(sim)
+	if sim.IsExecutePhase35() && dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) && numRunes <= 1 && ((dk.UnbreakableArmorAura.IsActive() && bothDeath) || noMoreUAs) {
+		if bothDeath {
+			dk.castAllMajorCooldowns(sim)
 
-		// go to normal rotation!
-		s.Clear().
-			NewAction(dk.RotationActionCallback_ERW).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+			s.Clear().
+				NewAction(dk.RotationActionCallback_ERW).
+				NewAction(dk.RotationActionCallback_Obli).
+				NewAction(dk.RotationActionCallback_Obli).
+				NewAction(dk.RotationActionCallback_Obli).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+				NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+				NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+		} else {
+			dk.castAllMajorCooldowns(sim)
+
+			s.Clear().
+				NewAction(dk.RotationActionCallback_ERW).
+				NewAction(dk.RotationActionCallback_Obli).
+				NewAction(dk.RotationActionCallback_Obli).
+				NewAction(dk.RotationActionCallback_Frost_FS_HB).
+				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionCallback_Pesti).
+				NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+		}
 	} else {
 		s.Advance()
 	}
