@@ -66,6 +66,10 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 
+		DamageMultiplier: .7 *
+			[]float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
+			dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 
@@ -104,6 +108,4 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	}, func(sim *core.Simulation) bool {
 		return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
 	}, nil)
-	dk.ScourgeStrike.DamageMultiplier = .7 * []float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
-		dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike)
 }
