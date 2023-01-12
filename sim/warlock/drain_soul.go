@@ -5,26 +5,25 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerDrainSoulSpell() {
 	actionID := core.ActionID{SpellID: 47855}
 	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
-	baseCost := warlock.BaseMana * 0.14
 
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagChanneled,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagChanneled,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.14,
+			Multiplier: 1 - 0.02*float64(warlock.Talents.Suppression),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 				// ChannelTime: channelTime,
 			},
 		},

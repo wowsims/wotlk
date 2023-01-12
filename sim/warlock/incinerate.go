@@ -5,11 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
-	baseCost := 0.14 * warlock.BaseMana
 	spellCoeff := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	mcCastMod := (1.0 - 0.1*float64(warlock.Talents.MoltenCore))
 
@@ -18,12 +16,13 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.14,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm]),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(2500-50*warlock.Talents.Emberstorm),
 			},

@@ -20,18 +20,17 @@ func (warlock *Warlock) registerInfernoSpell() {
 		Duration: time.Second * 60,
 	})
 
-	baseCost := 0.8 * warlock.BaseMana
 	warlock.Inferno = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 1122},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 1122},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				CastTime: time.Millisecond * 1500,
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -182,10 +181,9 @@ func (infernal *InfernalPet) Initialize() {
 	})
 
 	infernal.immolationAura = infernal.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 20153},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
+		ActionID:    core.ActionID{SpellID: 20153},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
