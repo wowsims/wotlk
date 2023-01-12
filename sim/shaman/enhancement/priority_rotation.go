@@ -338,7 +338,10 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Simulation) {
 	target := enh.CurrentTarget
 
-	cheapestSpell := core.TernaryFloat64(enh.LavaLash == nil, enh.LightningBolt.CurCast.Cost, enh.LavaLash.CurCast.Cost)
+	cheapestSpell := enh.LightningBolt.CurCast.Cost
+	if enh.LavaLash != nil {
+		cheapestSpell = enh.LavaLash.CurCast.Cost
+	}
 
 	// Incase the array is empty
 	if len(rotation.spellPriority) == 0 {

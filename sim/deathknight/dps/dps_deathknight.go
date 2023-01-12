@@ -228,7 +228,7 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 	} else {
 		fcEnchantId := int32(3368)
 		// Only worth snapshotting if both are on (might want to re-visit this after P2)
-		if dk.Character.GetMHWeapon().Enchant.EffectID == fcEnchantId && dk.Character.HasOHWeapon() && dk.Character.GetOHWeapon().Enchant.EffectID == fcEnchantId {
+		if mh, oh := dk.Character.GetMHWeapon(), dk.Character.GetOHWeapon(); mh != nil && oh != nil && mh.Enchant.EffectID == fcEnchantId && oh.Enchant.EffectID == fcEnchantId {
 			snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
 		}
 	}
