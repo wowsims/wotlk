@@ -99,7 +99,7 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305020530003303231023101351--230220305003',
+		talentsString: '2305120530003303231023001351--230130305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
@@ -151,8 +151,8 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 1000.0,
-  frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-  frostCustomRotation: CustomRotation.create({
+  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+  	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
