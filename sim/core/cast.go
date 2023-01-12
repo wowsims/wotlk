@@ -134,21 +134,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 	}
 
 	switch spell.ResourceType {
-	case stats.Mana:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.CurrentMana() < spell.CurCast.Cost {
-				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-					spell.Unit.Log(sim, "Failed casting %s, not enough mana. (Current Mana = %0.03f, Mana Cost = %0.03f)",
-						spell.ActionID, spell.Unit.CurrentMana(), spell.CurCast.Cost)
-				}
-				return false
-			}
-
-			// Mana is subtracted at the end of the cast.
-			onCastComplete(sim, target)
-			return true
-		}
 	case stats.Rage:
 		return func(sim *Simulation, target *Unit) bool {
 			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
@@ -304,15 +289,6 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 		oldOnCastComplete2 := onCastComplete
 		onCastComplete = func(sim *Simulation, target *Unit) {
 			spell.Cost.SpendCost(sim, spell)
-			oldOnCastComplete2(sim, target)
-		}
-	} else if spell.ResourceType == stats.Mana && spell.DefaultCast.Cost != 0 {
-		oldOnCastComplete2 := onCastComplete
-		onCastComplete = func(sim *Simulation, target *Unit) {
-			if spell.CurCast.Cost > 0 {
-				spell.Unit.SpendMana(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-				spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = sim.CurrentTime + time.Second*5
-			}
 			oldOnCastComplete2(sim, target)
 		}
 	}

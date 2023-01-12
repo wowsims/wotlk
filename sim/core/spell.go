@@ -217,8 +217,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if spell.Cost == nil {
 		switch spell.ResourceType {
-		case stats.Mana:
-			spell.ResourceMetrics = spell.Unit.NewManaMetrics(spell.ActionID)
 		case stats.Rage:
 			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
 		case stats.Energy:
