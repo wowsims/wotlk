@@ -696,7 +696,7 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 			]
 		  },
 		  {
-			"id": 46097,
+			"id": 46036,
 			"enchant": 3790,
 			"gems": [
 			  39996
