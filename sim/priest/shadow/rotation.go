@@ -157,7 +157,8 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 			spriest.MindBlast.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
 			spriest.MindBlast.CD.UsePrePull(sim, sim.CurrentTime)
 		} else {
-			spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.ResourceMetrics)
+			spriest.VampiricTouch.Cost.MeetsRequirement(spriest.VampiricTouch)
+			spriest.VampiricTouch.Cost.SpendCost(sim, spriest.VampiricTouch)
 			spriest.VampiricTouch.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
 		}
 	}

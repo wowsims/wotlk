@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerPowerInfusionCD() {
@@ -13,7 +12,6 @@ func (priest *Priest) registerPowerInfusionCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
-	baseCost := priest.BaseMana * 0.16
 
 	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromRaidTarget(priest.SelfBuffs.PowerInfusionTarget)
 	if powerInfusionTargetAgent == nil {
@@ -26,13 +24,10 @@ func (priest *Priest) registerPowerInfusionCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagHelpful,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.16,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
 				Duration: time.Duration(float64(core.PowerInfusionCD) * (1 - .1*float64(priest.Talents.Aspiration))),
@@ -49,7 +44,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 		Priority: core.CooldownPriorityBloodlust,
 		Type:     core.CooldownTypeMana,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentMana() >= baseCost
+			return character.CurrentMana() >= piSpell.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// How can we determine the target will be able to continue casting

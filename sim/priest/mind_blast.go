@@ -5,30 +5,30 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerMindBlastSpell() {
-	baseCost := priest.BaseMana * 0.17 * core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), 0.9, 1)
 	spellCoeff := 0.429 * (1 + 0.05*float64(priest.Talents.Misery))
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	var replSrc core.ReplenishmentSource
 	if priest.Talents.VampiricTouch {
 		replSrc = priest.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 48160})
 	}
 
-	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
-
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48127},
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48127},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.17,
+			Multiplier: 1 *
+				(1 - 0.05*float64(priest.Talents.FocusedMind)) *
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 2), 0.9, 1),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.05*float64(priest.Talents.FocusedMind)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

@@ -5,27 +5,26 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
-	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
 	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagDisease,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagDisease,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.25,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

@@ -5,12 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
-	baseCost := priest.BaseMana * 0.12
-
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfShadowWordDeath) {
 		priest.RegisterResetEffect(func(sim *core.Simulation) {
 			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
@@ -24,16 +21,17 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48158},
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48158},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.12,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),

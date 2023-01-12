@@ -4,25 +4,22 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerBindingHealSpell() {
-	baseCost := .27 * priest.BaseMana
 	spellCoeff := 0.8057 + 0.04*float64(priest.Talents.EmpoweredHealing)
 
 	priest.BindingHeal = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48120},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellHealing,
-		Flags:        core.SpellFlagHelpful,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48120},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.27,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

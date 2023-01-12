@@ -5,23 +5,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerVampiricTouchSpell() {
 	actionID := core.ActionID{SpellID: 48160}
-	baseCost := priest.BaseMana * 0.16
 
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.16,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

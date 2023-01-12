@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
@@ -17,20 +16,20 @@ func (priest *Priest) MindSearActionID(numTicks int32) core.ActionID {
 }
 
 func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
-	baseCost := priest.BaseMana * 0.28
 	channelTime := time.Second * time.Duration(numTicks)
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:     priest.MindSearActionID(numTicks),
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
-		Flags:        core.SpellFlagChanneled,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    priest.MindSearActionID(numTicks),
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagChanneled,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.28,
+			Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        baseCost * (1 - 0.05*float64(priest.Talents.FocusedMind)),
 				GCD:         core.GCDDefault,
 				ChannelTime: channelTime,
 			},
