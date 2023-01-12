@@ -179,7 +179,10 @@ func (dk *DpsDeathknight) SetupRotations() {
 		} else if dk.Talents.SummonGargoyle {
 			dk.setupUnholyRotations()
 		} else if dk.Talents.DancingRuneWeapon {
-			dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
+			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
+				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
+				dk.Rotation.HoldErwArmy = false
+			}
 			dk.setupBloodRotations()
 		}
 	} else {
