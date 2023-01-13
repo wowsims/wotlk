@@ -91,10 +91,10 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 		ActionID:    PlagueStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagIgnoreAttackerModifiers,
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: 0.5 *
+		DamageMultiplier: 0.5 * 0.5 *
 			(1.0 + 0.1*float64(dk.Talents.Outbreak)),
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,

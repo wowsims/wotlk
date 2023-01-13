@@ -209,9 +209,9 @@ func (dk *Deathknight) registerDrwFrostFever() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease,
+		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
 
-		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+		DamageMultiplier: 0.5 * core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -255,11 +255,10 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease,
+		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
 
-		DamageMultiplier: 1,
-		// TODO: Shouldn't this be dk.RuneWeapon?
-		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
+		DamageMultiplier: 0.5,
+		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {

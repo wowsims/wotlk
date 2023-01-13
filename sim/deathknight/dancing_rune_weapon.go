@@ -65,12 +65,9 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			dk.RuneWeapon.EnableWithTimeout(sim, dk.Gargoyle, duration)
 			dk.RuneWeapon.CancelGCDTimer(sim)
 
-			// Scale Damage Multipliers
+			// Auto attacks snapshot damage dealt multipliers at half
 			dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = 0.5 * dk.PseudoStats.DamageDealtMultiplier
-
 			dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
-			dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow]
-			dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost]
 
 			dancingRuneWeaponAura.Activate(sim)
 		},
@@ -124,7 +121,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.OnPetDisable = runeWeapon.disable
 
 	runeWeapon.EnableAutoAttacks(runeWeapon, core.AutoAttackOptions{
-		MainHand:       dk.WeaponFromMainHand(2),
+		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 	})
 
@@ -167,13 +164,12 @@ var runeWeaponBaseStats = stats.Stats{
 
 var runeWeaponStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 	return stats.Stats{
-		stats.AttackPower:      ownerStats[stats.AttackPower],
-		stats.MeleeHaste:       ownerStats[stats.MeleeHaste],
-		stats.MeleeHit:         ownerStats[stats.MeleeHit],
-		stats.MeleeCrit:        ownerStats[stats.MeleeCrit],
-		stats.SpellHit:         ownerStats[stats.SpellHit],
-		stats.SpellCrit:        ownerStats[stats.SpellCrit],
-		stats.Expertise:        ownerStats[stats.Expertise],
-		stats.ArmorPenetration: ownerStats[stats.ArmorPenetration],
+		stats.AttackPower: ownerStats[stats.AttackPower],
+		stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
+		stats.MeleeHit:    ownerStats[stats.MeleeHit],
+		stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
+		stats.SpellHit:    ownerStats[stats.SpellHit],
+		stats.SpellCrit:   ownerStats[stats.SpellCrit],
+		stats.Expertise:   ownerStats[stats.Expertise],
 	}
 }
