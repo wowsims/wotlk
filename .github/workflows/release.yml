@@ -10,7 +10,7 @@ on:
         required: true
       tag:
         description: 'Version Tag'
-        default: 'latest'
+        default: 'v0.0.0'
         required: true
         
 jobs:
@@ -57,9 +57,7 @@ jobs:
           commit: ${{ github.event.inputs.ref }}
           tag: ${{ github.event.inputs.tag }}
           generateReleaseNotes: true
-          makeLatest: ${{ github.event.inputs.tag }} != "latest"
-          allowUpdates: ${{ github.event.inputs.tag }} == "latest"
-          prerelease: ${{ github.event.inputs.tag }} == "latest"
+          makeLatest: true
           artifactErrorsFailBuild: true
           artifacts: |
             wowsimcli-amd64-linux
