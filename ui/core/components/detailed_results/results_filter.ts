@@ -1,7 +1,6 @@
-import { SimResult, SimResultFilter, UnitMetrics } from '../core/proto_utils/sim_result.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { EnumPicker } from '../core/components/enum_picker.js';
-import { Input } from '../core/components/input.js';
+import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { Input } from '../../components/input.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 

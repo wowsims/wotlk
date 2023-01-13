@@ -1,8 +1,7 @@
-import { Spec } from '../core/proto/common.js';
-import { SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
+import { Spec } from '../../proto/common.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
-import { RaidSimResultsManager } from '../core/components/raid_sim_action.js';
+import { RaidSimResultsManager } from '../../components/raid_sim_action.js';
 
 export class ToplineResults extends ResultComponent {
 	constructor(config: ResultComponentConfig) {

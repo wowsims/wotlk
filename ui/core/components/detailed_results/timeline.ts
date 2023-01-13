@@ -1,11 +1,11 @@
-import { ResourceType } from '../core/proto/api.js';
-import { OtherAction } from '../core/proto/common.js';
-import { UnitMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
-import { ActionId, resourceTypeToIcon } from '../core/proto_utils/action_id.js';
-import { resourceColors, resourceNames } from '../core/proto_utils/names.js';
-import { orderedResourceTypes } from '../core/proto_utils/utils.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { bucket, distinct, getEnumValues, maxIndex, stringComparator, sum } from '../core/utils.js';
+import { ResourceType } from '../../proto/api.js';
+import { OtherAction } from '../../proto/common.js';
+import { UnitMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
+import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
+import { resourceColors, resourceNames } from '../../proto_utils/names.js';
+import { orderedResourceTypes } from '../../proto_utils/utils.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
+import { bucket, distinct, getEnumValues, maxIndex, stringComparator, sum } from '../../utils.js';
 
 import {
 	AuraUptimeLog,
@@ -15,7 +15,7 @@ import {
 	DpsLog,
 	SimLog,
 	ThreatLogGroup,
-} from '../core/proto_utils/logs_parser.js';
+} from '../../proto_utils/logs_parser.js';
 
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
