@@ -57,7 +57,9 @@ jobs:
           commit: ${{ github.event.inputs.ref }}
           tag: ${{ github.event.inputs.tag }}
           generateReleaseNotes: true
-          makeLatest: true
+          makeLatest: ${{ github.event.inputs.tag }} != "latest"
+          allowUpdates: ${{ github.event.inputs.tag }} == "latest"
+          prerelease: ${{ github.event.inputs.tag }} == "latest"
           artifactErrorsFailBuild: true
           artifacts: |
             wowsimcli-amd64-linux
