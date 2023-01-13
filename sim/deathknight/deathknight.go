@@ -185,7 +185,6 @@ type Deathknight struct {
 	ButcheryPA          *core.PendingAction
 	RimeAura            *core.Aura
 	BladeBarrierAura    *core.Aura
-	SuddenDoomAura      *core.Aura
 	ScentOfBloodAura    *core.Aura
 	WillOfTheNecropolis *core.Aura
 

@@ -21,14 +21,6 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if dk.SuddenDoomAura.IsActive() {
-					cast.GCD = 0
-					cast.Cost = 0
-				} else {
-					cast.GCD = dk.GetModifiedGCD()
-				}
-			},
 		},
 
 		BonusCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,

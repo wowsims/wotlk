@@ -27,9 +27,6 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,

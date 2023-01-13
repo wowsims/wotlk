@@ -31,9 +31,6 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: time.Minute*3 - time.Second*45*time.Duration(dk.Talents.NightOfTheDead),

@@ -36,9 +36,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
 		},
 
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,

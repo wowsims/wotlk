@@ -295,12 +295,6 @@ func (dk *Deathknight) applySuddenDoom() {
 
 	procChance := 0.05 * float64(dk.Talents.SuddenDoom)
 
-	dk.SuddenDoomAura = dk.RegisterAura(core.Aura{
-		Label:    "Sudden Doom Proc",
-		ActionID: core.ActionID{SpellID: 49530},
-		Duration: core.NeverExpires,
-	})
-
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Sudden Doom",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -313,9 +307,7 @@ func (dk *Deathknight) applySuddenDoom() {
 			}
 
 			if sim.RandomFloat("Sudden Doom Proc") < procChance {
-				dk.SuddenDoomAura.Activate(sim)
-				dk.DeathCoil.Cast(sim, result.Target)
-				dk.SuddenDoomAura.Deactivate(sim)
+				dk.DeathCoil.SkipCastAndApplyEffects(sim, result.Target)
 			}
 		},
 	}))
@@ -336,9 +328,7 @@ func (dk *Deathknight) applySuddenDoom() {
 			}
 
 			if sim.RandomFloat("Sudden Doom Proc") < procChance {
-				dk.SuddenDoomAura.Activate(sim)
-				dk.RuneWeapon.DeathCoil.Cast(sim, result.Target)
-				dk.SuddenDoomAura.Deactivate(sim)
+				dk.RuneWeapon.DeathCoil.SkipCastAndApplyEffects(sim, result.Target)
 			}
 		},
 	}))

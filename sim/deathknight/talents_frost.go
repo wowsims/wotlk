@@ -122,10 +122,16 @@ func (dk *Deathknight) applyRime() {
 		Label:    "Rime",
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if dk.HowlingBlast == nil {
-				return
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.CD.Reset()
+				// No rune cost AND no runic power regen.
+				dk.HowlingBlast.CostMultiplier -= 1
 			}
-			dk.HowlingBlast.CD.Reset()
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if dk.HowlingBlast != nil {
+				dk.HowlingBlast.CostMultiplier += 1
+			}
 		},
 	})
 }

@@ -51,9 +51,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: time.Second * 90,

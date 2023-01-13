@@ -1102,6 +1102,7 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 	spell.ResourceType = stats.RunicPower
 	spell.BaseCost = float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), 0))
 	spell.DefaultCast.Cost = spell.BaseCost
+	spell.CurCast.Cost = spell.BaseCost
 	//if options.Refund > 0 && options.RefundMetrics == nil {
 	//	options.RefundMetrics = spell.Unit.RuneRefundMetrics
 	//}
@@ -1120,6 +1121,7 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 
 func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
 	//rp := &spell.Unit.RunicPowerBar
+	spell.CurCast.Cost *= spell.CostMultiplier
 	cost := RuneCost(spell.CurCast.Cost)
 	if cost == 0 {
 		return true

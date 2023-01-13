@@ -34,13 +34,6 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-				if dk.RimeAura.IsActive() {
-					cast.Cost = 0 // no runes, no regen
-					dk.RimeAura.Deactivate(sim)
-				}
-			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: 8.0 * time.Second,
@@ -78,6 +71,9 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				spell.DealDamage(sim, result)
 			}
 
+			if dk.RimeAura.IsActive() {
+				dk.RimeAura.Deactivate(sim)
+			}
 			if dk.KillingMachineAura.IsActive() {
 				dk.KillingMachineAura.Deactivate(sim)
 			}

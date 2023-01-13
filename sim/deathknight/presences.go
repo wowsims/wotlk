@@ -179,11 +179,42 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	runeCd := 10 * time.Second
 	impUp := 500 * time.Millisecond * time.Duration(dk.Talents.ImprovedUnholyPresence)
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
+	var gcdAffectedSpells []*core.Spell
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			gcdAffectedSpells = core.MapSlice(core.FilterSlice([]*RuneSpell{
+				dk.HowlingBlast,
+				dk.ScourgeStrike,
+				dk.Obliterate,
+				dk.Pestilence,
+				dk.HornOfWinter,
+				dk.DancingRuneWeapon,
+				dk.IcyTouch,
+				dk.BloodBoil,
+				dk.MarkOfBlood,
+				dk.PlagueStrike,
+				dk.HeartStrike,
+				dk.DeathStrike,
+				dk.BoneShield,
+				dk.RaiseDead,
+				dk.GhoulFrenzy,
+				dk.DeathPact,
+				dk.FrostStrike,
+				dk.BloodStrike,
+				dk.DeathAndDecay,
+				dk.DeathCoil,
+				dk.ArmyOfTheDead,
+				dk.SummonGargoyle,
+			}, func(spell *RuneSpell) bool { return spell != nil }),
+				func(spell *RuneSpell) *core.Spell { return spell.Spell })
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range gcdAffectedSpells {
+				spell.DefaultCast.GCD = time.Second
+			}
 			if dk.Talents.ImprovedUnholyPresence > 0 {
 				aura.Unit.SetRuneCd(runeCd - impUp)
 			}
@@ -192,6 +223,9 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 			dk.MultiplyMeleeSpeed(sim, 1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range gcdAffectedSpells {
+				spell.DefaultCast.GCD = core.GCDDefault
+			}
 			if dk.Talents.ImprovedUnholyPresence > 0 {
 				aura.Unit.SetRuneCd(runeCd)
 			}

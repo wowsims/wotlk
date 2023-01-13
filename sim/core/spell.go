@@ -424,8 +424,12 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
-	if spell.Cost != nil && !spell.Cost.MeetsRequirement(spell) {
-		return false
+	if spell.Cost != nil {
+		// temp hack
+		spell.CurCast.Cost = spell.DefaultCast.Cost
+		if !spell.Cost.MeetsRequirement(spell) {
+			return false
+		}
 	}
 
 	return true
