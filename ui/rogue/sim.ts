@@ -245,6 +245,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.PRERAID_PRESET_COMBAT,
 					Presets.P1_PRESET_ASSASSINATION,
 					Presets.P1_PRESET_COMBAT,
+					Presets.P2_PRESET_ASSASSINATION,
+					Presets.P2_PRESET_COMBAT,
 				],
 			},
 		})
