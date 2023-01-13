@@ -70,8 +70,6 @@ func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool 
 		return result
 	}
 
-	rs.dk.LastCast = rs
-
 	rs.DoCost(sim)
 
 	return result

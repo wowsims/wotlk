@@ -297,6 +297,17 @@ func (dk *Deathknight) Initialize() {
 	dk.registerDeathPactSpell()
 
 	dk.registerUnholyFrenzyCD()
+
+	dk.RegisterAura(core.Aura{
+		Label:    "Last Cast Assigner",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			dk.LastCast = spell
+		},
+	})
 }
 
 func (dk *Deathknight) registerMindFreeze() {

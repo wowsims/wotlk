@@ -174,7 +174,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.LastCast == dk.BloodStrike {
+	if dk.LastCast == dk.BloodStrike.Spell {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BS).
 			NewAction(dk.RotationActionCallback_FS).

@@ -73,6 +73,6 @@ type RotationHelper struct {
 	RotationSequence *Sequence
 
 	LastOutcome core.HitOutcome
-	LastCast    *RuneSpell
+	LastCast    *core.Spell
 	NextCast    *RuneSpell
 }

@@ -19,7 +19,7 @@ func (dk *DpsDeathknight) setupCustomRotations() {
 			dk.LastCast = nil
 		}
 
-		if dk.LastCast == dk.EmpowerRuneWeapon || dk.LastCast == dk.BloodTap || dk.LastCast == dk.UnbreakableArmor {
+		if dk.LastCast == dk.EmpowerRuneWeapon.Spell || dk.LastCast == dk.BloodTap.Spell || dk.LastCast == dk.UnbreakableArmor.Spell {
 			return sim.CurrentTime
 		}
 
