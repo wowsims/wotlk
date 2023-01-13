@@ -4,26 +4,22 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFlamestrikeSpell() {
 	actionID := core.ActionID{SpellID: 42926}
-	baseCost := .30 * mage.BaseMana
 
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.30,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.01*float64(mage.Talents.Pyromaniac)),
-
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,
 			},

@@ -5,26 +5,24 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerSinisterStrikeSpell() {
-	baseCost := rogue.costModifier([]float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike])
-	refundAmount := baseCost * 0.8
 	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
 
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48638},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48638},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier([]float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike]),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -56,7 +54,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 				}
 				rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
 			} else {
-				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

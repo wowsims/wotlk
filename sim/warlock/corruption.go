@@ -6,25 +6,25 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerCorruptionSpell() {
 	actionID := core.ActionID{SpellID: 47813}
-	baseCost := 0.14 * warlock.BaseMana
 	spellCoeff := 0.2 + 0.12*float64(warlock.Talents.EmpoweredCorruption)/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	canCrit := warlock.Talents.Pandemic
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.14,
+			Multiplier: 1 - 0.02*float64(warlock.Talents.Suppression),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

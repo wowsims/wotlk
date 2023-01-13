@@ -20,18 +20,16 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 		return
 	}
 
-	baseCost := mage.BaseMana * 0.16
 	summonDuration := time.Second*45 + time.Second*5*time.Duration(mage.Talents.EnduringWinter)
 	mage.SummonWaterElemental = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31687},
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.16,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer: mage.NewTimer(),
@@ -73,14 +71,7 @@ type WaterElemental struct {
 
 func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 	waterElemental := &WaterElemental{
-		Pet: core.NewPet(
-			"Water Elemental",
-			&mage.Character,
-			waterElementalBaseStats,
-			waterElementalStatInheritance,
-			mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater),
-			true,
-		),
+		Pet:           core.NewPet("Water Elemental", &mage.Character, waterElementalBaseStats, waterElementalStatInheritance, nil, mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater), true),
 		disobeyChance: disobeyChance,
 	}
 	waterElemental.EnableManaBarWithModifier(0.333)
@@ -132,18 +123,16 @@ var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 }
 
 func (we *WaterElemental) registerWaterboltSpell() {
-	baseCost := we.BaseMana * 0.01
-
 	we.Waterbolt = we.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 31707},
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 31707},
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.01,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 2500,
 			},

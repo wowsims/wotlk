@@ -4,31 +4,29 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const IdolAvenger int32 = 31025
 const IdolSteadfastRenewal int32 = 40712
 
 func (druid *Druid) registerWrathSpell() {
-	actionID := core.ActionID{SpellID: 48461}
-	baseCost := 0.11 * druid.BaseMana
 	spellCoeff := 0.571 + (0.02 * float64(druid.Talents.WrathOfCenarius))
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
 
 	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
+		ActionID:     core.ActionID{SpellID: 48461},
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 		MissileSpeed: 20,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.11,
+			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Second*2 - time.Millisecond*100*time.Duration(druid.Talents.StarlightWrath),
 			},

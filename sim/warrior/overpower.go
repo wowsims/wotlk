@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
@@ -26,9 +25,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 	})
 
-	cost := 5 - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
-
 	cooldownDur := time.Second * 5
 	gcdDur := core.GCDDefault
 
@@ -44,13 +40,13 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   5 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  gcdDur,
+				GCD: gcdDur,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -73,7 +69,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 			if !result.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

@@ -6,12 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFireballSpell() {
 	actionID := core.ActionID{SpellID: 42833}
-	baseCost := .19 * mage.BaseMana
 	spellCoeff := 1 + 0.05*float64(mage.Talents.EmpoweredFire)
 
 	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
@@ -22,13 +20,13 @@ func (mage *Mage) registerFireballSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
 		MissileSpeed: 24,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.19,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 				CastTime: time.Millisecond*3500 -
 					time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball) -
 					core.TernaryDuration(hasGlyph, time.Millisecond*150, 0),

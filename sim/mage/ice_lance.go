@@ -2,25 +2,22 @@ package mage
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerIceLanceSpell() {
-	baseCost := .06 * mage.BaseMana
-
 	mage.IceLance = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42914},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage,
 		MissileSpeed: 38,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.06,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

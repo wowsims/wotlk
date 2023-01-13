@@ -118,7 +118,7 @@ export const HoldErwArmy = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathk
 	label: 'Hold ERW for AotD',
 	labelTooltip: 'Hold Empower Rune Weapon for after Summon Gargoyle to guarantee maximized snapshot for Army of the Dead.',
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().useEmpowerRuneWeapon && player.getRotation().armyOfTheDead == ArmyOfTheDead.AsMajorCd,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getRotation().useEmpowerRuneWeapon && player.getRotation().armyOfTheDead == ArmyOfTheDead.AsMajorCd && player.getTalentTree() != 0,
 });
 
 export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
@@ -130,6 +130,18 @@ export const BloodlustPresence = InputHelpers.makeRotationEnumInput<Spec.SpecDea
 		{ name: 'Unholy', value: StartingPresence.Unholy },
 	],
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const GargoylePresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
+	fieldName: 'gargoylePresence',
+	label: 'Gargoyle Presence',
+	labelTooltip: 'Presence during Gargoyle.',
+	values: [
+		{ name: 'Blood', value: StartingPresence.Blood },
+		{ name: 'Unholy', value: StartingPresence.Unholy },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && player.getRotation().nerfedGargoyle,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -198,6 +210,14 @@ export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.Spec
 		{ name: 'Blood Strike', value: BloodRuneFiller.BloodStrike },
 		{ name: 'Blood Boil', value: BloodRuneFiller.BloodBoil },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const NerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'nerfedGargoyle',
+	label: 'Nerfed Gargoyle (no haste snapshot)',
+	labelTooltip: "Use updated PTR Gargoyle that doesn't snapshot haste",
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
@@ -331,5 +351,7 @@ export const DeathKnightRotationConfig = {
 		AvgAMSHitInput,
 		DesyncRotation,
 		FrostCustomRotation,
+		NerfedGargoyleInput,
+		GargoylePresence,
 	],
 };

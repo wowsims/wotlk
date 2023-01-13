@@ -49,6 +49,13 @@ func (dk *Deathknight) RotationActionCallback_DRW(sim *core.Simulation, target *
 	return -1
 }
 
+func (dk *Deathknight) RotationActionCallback_UF(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.UnholyFrenzy.Cast(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return -1
+}
+
 func (dk *Deathknight) RotationActionCallback_DS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.DeathStrike.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)

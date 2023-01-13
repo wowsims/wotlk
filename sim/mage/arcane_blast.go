@@ -11,8 +11,6 @@ import (
 const ArcaneBlastBaseCastTime = time.Millisecond * 2500
 
 func (mage *Mage) registerArcaneBlastSpell() {
-	ArcaneBlastBaseManaCost := .07 * mage.BaseMana
-
 	abAuraMultiplierPerStack := core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneBlast), .18, .15)
 	mage.ArcaneBlastAura = mage.GetOrRegisterAura(core.Aura{
 		Label:     "Arcane Blast",
@@ -34,16 +32,17 @@ func (mage *Mage) registerArcaneBlastSpell() {
 	spellCoeff := 2.5/3.5 + .03*float64(mage.Talents.ArcaneEmpowerment)
 
 	mage.ArcaneBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | BarrageSpells,
-		ResourceType: stats.Mana,
-		BaseCost:     ArcaneBlastBaseManaCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage | BarrageSpells,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.07,
+			Multiplier: 1 - .01*float64(mage.Talents.ArcaneFocus),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     ArcaneBlastBaseManaCost * (1 - .01*float64(mage.Talents.ArcaneFocus)),
 				GCD:      core.GCDDefault,
 				CastTime: ArcaneBlastBaseCastTime,
 			},

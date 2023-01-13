@@ -1,6 +1,8 @@
 package dps
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -28,6 +30,7 @@ type DpsDeathknight struct {
 	*deathknight.Deathknight
 
 	sr SharedRotation
+	br BloodRotation
 	fr FrostRotation
 	ur UnholyRotation
 
@@ -56,11 +59,11 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		}, player.TalentsString),
 		Rotation: dk.Rotation,
 	}
-
-	dpsDk.Inputs.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
-	if dk.Options.UnholyFrenzyTarget != nil {
-		dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
+	if dpsDk.Talents.SummonGargoyle {
+		dpsDk.Gargoyle = dpsDk.NewGargoyle(dk.Rotation.NerfedGargoyle)
 	}
+
+	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
 
 	dpsDk.EnableAutoAttacks(dpsDk, core.AutoAttackOptions{
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
@@ -75,6 +78,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		},
 	})
 
+	dpsDk.br.dk = dpsDk
 	dpsDk.sr.dk = dpsDk
 	dpsDk.ur.dk = dpsDk
 
@@ -99,12 +103,13 @@ func (dk *DpsDeathknight) SetupRotations() {
 			dk.Rotation.UseEmpowerRuneWeapon = true
 			dk.Rotation.HoldErwArmy = true
 			dk.Rotation.UseGargoyle = true
-			dk.Rotation.ArmyOfTheDead = proto.Deathknight_Rotation_AsMajorCd
+			dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_AsMajorCd
 			dk.Rotation.BloodTap = proto.Deathknight_Rotation_GhoulFrenzy
 			dk.Rotation.FirstDisease = proto.Deathknight_Rotation_FrostFever
 			dk.Rotation.StartingPresence = proto.Deathknight_Rotation_Unholy
 			dk.Rotation.BlPresence = proto.Deathknight_Rotation_Blood
 			dk.Rotation.Presence = proto.Deathknight_Rotation_Blood
+			dk.Rotation.GargoylePresence = proto.Deathknight_Rotation_Unholy
 
 			mh := dk.GetMHWeapon()
 			oh := dk.GetOHWeapon()
@@ -131,12 +136,19 @@ func (dk *DpsDeathknight) SetupRotations() {
 			// Frost rotations here.
 		} else if bl > fr && bl > uh {
 			// Blood rotations here.
+
+			// AotD not good as Major CD in blood due to DRW confclits
+			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
+				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
+				dk.Rotation.HoldErwArmy = false
+			}
 		} else {
 			// some weird spec where two trees are equal...
 		}
 	}
-	dk.ur.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	dk.ur.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+
+	dk.sr.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.sr.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 
 	dk.RotationSequence.Clear()
 
@@ -158,12 +170,17 @@ func (dk *DpsDeathknight) SetupRotations() {
 			if dk.Rotation.UseEmpowerRuneWeapon {
 				dk.setupFrostSubUnholyERWOpener()
 			} else {
-				panic("you can't unh sub without ERW in the opener...yet")
+				// TODO you can't unh sub without ERW in the opener...yet
+				dk.Rotation.UseEmpowerRuneWeapon = true
 				dk.setupFrostSubUnholyERWOpener()
 			}
 		} else if dk.Talents.SummonGargoyle {
 			dk.setupUnholyRotations()
 		} else if dk.Talents.DancingRuneWeapon {
+			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
+				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
+				dk.Rotation.HoldErwArmy = false
+			}
 			dk.setupBloodRotations()
 		}
 	} else {
@@ -177,24 +194,45 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
+
+	dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+	dk.setupDrwProcTrackers()
+
 	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupProcTrackers()
+	dk.setupGargProcTrackers()
+
 	dk.fr.Initialize(dk)
 }
 
-func (dk *DpsDeathknight) setupProcTrackers() {
+func (dk *DpsDeathknight) setupGargProcTrackers() {
 	snapshotManager := dk.ur.gargoyleSnapshot
 
-	snapshotManager.AddProc(40211, "Potion of Speed", true)
-	snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
-	snapshotManager.AddProc(26297, "Berserking (Troll)", true)
-	snapshotManager.AddProc(33697, "Blood Fury", true)
+	// Don't need to wait for haste snapshots anymore
+	if !dk.Rotation.NerfedGargoyle {
+		snapshotManager.AddProc(40211, "Potion of Speed", true)
+		snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
+		snapshotManager.AddProc(26297, "Berserking (Troll)", true)
+		snapshotManager.AddProc(33697, "Blood Fury", true)
 
-	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
-	snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
-	snapshotManager.AddProc(59620, "Berserking MH Proc", false)
-	snapshotManager.AddProc(59620, "Berserking OH Proc", false)
-	snapshotManager.AddProc(59626, "Black Magic Proc", false)
+		snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
+		snapshotManager.AddProc(59626, "Black Magic Proc", false)
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+
+		snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
+		snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
+		snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
+		snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
+		snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
+		snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
+
+		snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+	} else {
+		fcEnchantId := int32(3368)
+		// Only worth snapshotting if both are on (might want to re-visit this after P2)
+		if mh, oh := dk.Character.GetMHWeapon(), dk.Character.GetOHWeapon(); mh != nil && oh != nil && mh.Enchant.EffectID == fcEnchantId && oh.Enchant.EffectID == fcEnchantId {
+			snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+		}
+	}
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 
@@ -208,17 +246,11 @@ func (dk *DpsDeathknight) setupProcTrackers() {
 	snapshotManager.AddProc(71561, "Deathbringer's Will H Strength Proc", false)
 	snapshotManager.AddProc(71560, "Deathbringer's Will H Haste Proc", false)
 
-	snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
-	snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
 	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)
 	snapshotManager.AddProc(40767, "Sonic Booster Proc", false)
-	snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
-	snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
 	snapshotManager.AddProc(44914, "Anvil of Titans Proc", false)
 	snapshotManager.AddProc(45286, "Pyrite Infuser Proc", false)
 	snapshotManager.AddProc(45522, "Blood of the Old God Proc", false)
-	snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
-	snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
 	snapshotManager.AddProc(47214, "Banner of Victory Proc", false)
 	snapshotManager.AddProc(49074, "Coren's Chromium Coaster Proc", false)
 	snapshotManager.AddProc(50342, "Whispering Fanged Skull Proc", false)
@@ -235,56 +267,231 @@ func (dk *DpsDeathknight) setupGargoyleCooldowns() {
 	dk.ur.gargoyleSnapshot.ClearMajorCooldowns()
 
 	// hyperspeed accelerators
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 54758}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{SpellID: 54758}, false)
 
 	// berserking (troll)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 26297}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{SpellID: 26297}, false)
 
 	// blood fury (orc)
-	dk.gargoyleCooldownSync(core.ActionID{SpellID: 33697}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{SpellID: 33697}, false)
 
 	// potion of speed
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40211}, true)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 40211}, true)
 
 	// active ap trinkets
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 35937}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36871}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37166}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37556}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37557}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38080}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38081}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38761}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 39257}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45263}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46086}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 47734}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 35937}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 36871}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37166}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37556}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 37557}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38080}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38081}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 38761}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 39257}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 45263}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 46086}, false)
+	dk.gargoyleAPCooldownSync(core.ActionID{ItemID: 47734}, false)
 
 	// active haste trinkets
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 36972}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37558}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37560}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 37562}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38070}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38258}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38259}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 38764}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 40531}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 43836}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 45466}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 46088}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 48722}, false)
-	dk.gargoyleCooldownSync(core.ActionID{ItemID: 50260}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 36972}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37558}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37560}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 37562}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38070}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38258}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38259}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 38764}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 40531}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 43836}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 45466}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 46088}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 48722}, false)
+	dk.gargoyleHasteCooldownSync(core.ActionID{ItemID: 50260}, false)
 }
 
-func (dk *DpsDeathknight) gargoyleCooldownSync(actionID core.ActionID, isPotion bool) {
+func (dk *DpsDeathknight) gargoyleAPCooldownSync(actionID core.ActionID, isPotion bool) {
 	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			return dk.ur.activatingGargoyle || (dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion) || dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration
+			if dk.ur.activatingGargoyle {
+				return true
+			}
+			if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+				return true
+			}
+			if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+				return true
+			}
+
+			return false
 		}
 
 		dk.ur.gargoyleSnapshot.AddMajorCooldown(majorCd)
+	}
+}
+
+func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPotion bool) {
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
+
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			if dk.Rotation.NerfedGargoyle {
+				aura := dk.GetAura("Summon Gargoyle")
+
+				if aura != nil && aura.IsActive() {
+					return true
+				}
+
+				return false
+			} else {
+				if dk.ur.activatingGargoyle {
+					return true
+				}
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+					return true
+				}
+				if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+					return true
+				}
+			}
+
+			return false
+		}
+
+		dk.ur.gargoyleSnapshot.AddMajorCooldown(majorCd)
+	}
+}
+
+func (dk *DpsDeathknight) setupDrwProcTrackers() {
+	snapshotManager := dk.br.drwSnapshot
+
+	snapshotManager.AddProc(40211, "Potion of Speed", true)
+	snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
+	snapshotManager.AddProc(26297, "Berserking (Troll)", true)
+	snapshotManager.AddProc(33697, "Blood Fury", true)
+
+	snapshotManager.AddProc(55379, "Thundering Skyflare Diamond Proc", false)
+	snapshotManager.AddProc(59626, "Black Magic Proc", false)
+	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+
+	snapshotManager.AddProc(37390, "Meteorite Whetstone Proc", false)
+	snapshotManager.AddProc(39229, "Embrace of the Spider Proc", false)
+	snapshotManager.AddProc(44308, "Signet of Edward the Odd Proc", false)
+	snapshotManager.AddProc(43573, "Tears of Bitter Anguish Proc", false)
+	snapshotManager.AddProc(45609, "Comet's Trail Proc", false)
+	snapshotManager.AddProc(45866, "Elemental Focus Stone Proc", false)
+
+	snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
+
+	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
+
+	snapshotManager.AddProc(47115, "Deaths Verdict Strength Proc", false)
+	snapshotManager.AddProc(47131, "Deaths Verdict H Strength Proc", false)
+	snapshotManager.AddProc(47303, "Deaths Choice Strength Proc", false)
+	snapshotManager.AddProc(47464, "Deaths Choice H Strength Proc", false)
+
+	snapshotManager.AddProc(71484, "Deathbringer's Will Strength Proc", false)
+	snapshotManager.AddProc(71492, "Deathbringer's Will Haste Proc", false)
+	snapshotManager.AddProc(71491, "Deathbringer's Will Crit Proc", false)
+	snapshotManager.AddProc(71561, "Deathbringer's Will H Strength Proc", false)
+	snapshotManager.AddProc(71560, "Deathbringer's Will H Haste Proc", false)
+	snapshotManager.AddProc(71559, "Deathbringer's Will H Crit Proc", false)
+
+	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)
+	snapshotManager.AddProc(40767, "Sonic Booster Proc", false)
+	snapshotManager.AddProc(44914, "Anvil of Titans Proc", false)
+	snapshotManager.AddProc(45286, "Pyrite Infuser Proc", false)
+	snapshotManager.AddProc(45522, "Blood of the Old God Proc", false)
+	snapshotManager.AddProc(47214, "Banner of Victory Proc", false)
+	snapshotManager.AddProc(49074, "Coren's Chromium Coaster Proc", false)
+	snapshotManager.AddProc(50342, "Whispering Fanged Skull Proc", false)
+	snapshotManager.AddProc(50343, "Whispering Fanged Skull H Proc", false)
+	snapshotManager.AddProc(50401, "Ashen Band of Unmatched Vengeance Proc", false)
+	snapshotManager.AddProc(50402, "Ashen Band of Endless Vengeance Proc", false)
+	snapshotManager.AddProc(52571, "Ashen Band of Unmatched Might Proc", false)
+	snapshotManager.AddProc(52572, "Ashen Band of Endless Might Proc", false)
+	snapshotManager.AddProc(54569, "Sharpened Twilight Scale Proc", false)
+	snapshotManager.AddProc(54590, "Sharpened Twilight Scale H Proc", false)
+
+	snapshotManager.AddProc(40256, "Grim Toll Proc", false)
+	snapshotManager.AddProc(45931, "Mjolnir Runestone Proc", false)
+	snapshotManager.AddProc(46038, "Dark Matter Proc", false)
+	snapshotManager.AddProc(50198, "Needle-Encrusted Scorpion Proc", false)
+}
+
+func (dk *DpsDeathknight) setupDrwCooldowns() {
+	dk.br.drwSnapshot.ClearMajorCooldowns()
+
+	// Unholy Frenzy
+	dk.drwCooldownSync(core.ActionID{SpellID: 49016, Tag: dk.Index}, false)
+
+	// hyperspeed accelerators
+	dk.drwCooldownSync(core.ActionID{SpellID: 54758}, false)
+
+	// berserking (troll)
+	dk.drwCooldownSync(core.ActionID{SpellID: 26297}, false)
+
+	// blood fury (orc)
+	dk.drwCooldownSync(core.ActionID{SpellID: 33697}, false)
+
+	// potion of speed
+	dk.drwCooldownSync(core.ActionID{ItemID: 40211}, true)
+
+	// active ap trinkets
+	dk.drwCooldownSync(core.ActionID{ItemID: 35937}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 36871}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37166}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37556}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37557}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38080}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38081}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38761}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 39257}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 45263}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 46086}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 47734}, false)
+
+	// active haste trinkets
+	dk.drwCooldownSync(core.ActionID{ItemID: 36972}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37558}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37560}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 37562}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38070}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38258}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38259}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 38764}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 40531}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 43836}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 45466}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 46088}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 48722}, false)
+	dk.drwCooldownSync(core.ActionID{ItemID: 50260}, false)
+}
+
+func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool) {
+	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
+
+		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			if character != &dk.Character {
+				return true
+			}
+			// Opener use everything
+			if sim.CurrentTime < 2*time.Second {
+				return true
+			}
+			if dk.br.activatingDrw {
+				return true
+			}
+			if dk.DancingRuneWeapon.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+				return true
+			}
+			if dk.DancingRuneWeapon.CD.ReadyAt() > dk.Env.Encounter.Duration {
+				return true
+			}
+
+			return false
+		}
+
+		dk.br.drwSnapshot.AddMajorCooldown(majorCd)
 	}
 }
 
@@ -292,6 +499,7 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
 
 	dk.sr.Reset(sim)
+	dk.br.Reset(sim)
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
 
@@ -317,5 +525,9 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 		} else if dk.Talents.SummonGargoyle {
 			dk.ChangePresence(sim, deathknight.BloodPresence)
 		}
+	}
+
+	if b > f && b > u {
+		dk.ChangePresence(sim, deathknight.BloodPresence)
 	}
 }

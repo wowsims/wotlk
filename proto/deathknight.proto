@@ -238,6 +238,10 @@ message Deathknight {
 		bool hold_erw_army = 22;
 		
 		bool use_gargoyle = 23;
+
+		bool nerfed_gargoyle = 24;
+
+		Presence gargoyle_presence = 25;
 	}
 	Rotation rotation = 1;
 	

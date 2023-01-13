@@ -693,17 +693,15 @@ func (warrior *Warrior) registerDeathWishCD() {
 		},
 	})
 
-	cost := 10.0
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -721,7 +719,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 		Spell: deathWishSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= cost
+			return warrior.CurrentRage() >= deathWishSpell.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return true
@@ -786,7 +784,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 
 	var bladestormDot *core.Dot
 	actionID := core.ActionID{SpellID: 46924}
-	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
@@ -809,12 +806,11 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 25 - float64(warrior.Talents.FocusedRage),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        cost,
 				ChannelTime: time.Second * 6,
 				GCD:         core.GCDDefault,
 			},
@@ -887,7 +883,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		Spell: warrior.Bladestorm,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= cost
+			return warrior.CurrentRage() >= warrior.Bladestorm.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return true

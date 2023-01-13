@@ -6,7 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"github.com/wowsims/wotlk/sim/shaman/enhancement"
 )
 
 // 1 moonkin, 1 ele shaman, 1 spriest, 2x arcane
@@ -202,10 +201,9 @@ func BenchmarkSimulate(b *testing.B) {
 				{
 					Players: []*proto.Player{
 						{
-							Name:      "Enhancement Shaman 1",
-							Race:      proto.Race_RaceTroll,
-							Class:     proto.Class_ClassShaman,
-							Equipment: enhancement.Phase1Gear,
+							Name:  "Enhancement Shaman 1",
+							Race:  proto.Race_RaceTroll,
+							Class: proto.Class_ClassShaman,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
 									Rotation: &proto.EnhancementShaman_Rotation{

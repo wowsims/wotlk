@@ -5,32 +5,27 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerShockwaveSpell() {
-	cost := 15.0 - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
-	cd := 20*time.Second - core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfShockwave), 3*time.Second, 0)
-
 	warrior.Shockwave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 46968},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskRanged, // TODO: Is this correct?
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: cd,
+				Duration: 20*time.Second - core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfShockwave), 3*time.Second, 0),
 			},
 		},
 
@@ -43,9 +38,9 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.Targets {
 				result := spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-				// TODO: Should this be main target only?
+				// TODO: AOE spells usually don't give refunds, this is probably wrong
 				if !result.Landed() {
-					warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+					spell.IssueRefund(sim)
 				}
 			}
 		},

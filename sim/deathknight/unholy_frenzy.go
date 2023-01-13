@@ -20,10 +20,13 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 	unholyFrenzyTarget := unholyFrenzyTargetAgent.GetCharacter()
 	unholyFrenzyAura := core.UnholyFrenzyAura(unholyFrenzyTarget, actionID.Tag)
 
-	unholyFrenzySpell := dk.Character.RegisterSpell(core.SpellConfig{
+	dk.UnholyFrenzy = dk.Character.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: time.Minute * 3,
@@ -36,7 +39,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 	})
 
 	dk.AddMajorCooldown(core.MajorCooldown{
-		Spell:    unholyFrenzySpell,
+		Spell:    dk.UnholyFrenzy,
 		Priority: core.CooldownPriorityBloodlust,
 		Type:     core.CooldownTypeDPS,
 	})

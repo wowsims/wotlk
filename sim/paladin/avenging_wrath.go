@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) RegisterAvengingWrathCD() {
@@ -30,19 +29,14 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		},
 	})
 
-	baseCost := paladin.BaseMana * 0.08
-
 	paladin.AvengingWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.08,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
 				Duration: time.Minute*3 - (time.Second * time.Duration(30*paladin.Talents.SanctifiedWrath)),

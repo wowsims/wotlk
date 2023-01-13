@@ -11,6 +11,7 @@
 		justify-content: space-between;
 
 		&.add-cooldown-picker {
+			.cooldown-timings-picker,
 			.delete-cooldown {
 				visibility: hidden;
 			}
@@ -20,7 +21,12 @@
 			margin-right: map.get($spacers, 2);
 		}
 
-		.input-root.cooldown-timings-picker {
+		.cooldown-picker-label {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.cooldown-timings-picker {
 			margin-bottom: 0;
 			margin-left: auto;
 
@@ -30,30 +36,3 @@
 		}
 	}
 }
-
-// .cooldown-picker {
-// 	display: flex;
-// 	align-items: center;
-// 	margin: 3px;
-// }
-
-// .cooldown-picker .number-list-picker {
-// 	display: inline-block;
-// }
-
-// .delete-cooldown {
-// 	color: red;
-// 	margin: 3px;
-// 	margin-left: 6px;
-// 	font-size: 20px;
-// 	cursor: pointer;
-// }
-// .add-cooldown-picker .delete-cooldown {
-// 	opacity: 0;
-// }
-
-// .cooldown-picker-label {
-// 	margin-left: 5px;
-// 	font-size: 12px;
-// 	min-width: 115px;
-// }

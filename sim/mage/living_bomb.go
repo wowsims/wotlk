@@ -6,15 +6,12 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerLivingBombSpell() {
 	if !mage.Talents.LivingBomb {
 		return
 	}
-
-	baseCost := .22 * mage.BaseMana
 
 	livingBombExplosionSpell := mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55362},
@@ -40,17 +37,17 @@ func (mage *Mage) registerLivingBombSpell() {
 	})
 
 	mage.LivingBomb = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 55360},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 55360},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.22,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 

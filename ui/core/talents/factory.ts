@@ -103,9 +103,9 @@ export function talentStringToProto<TalentsProto>(proto: TalentsProto, talentStr
 			const points = parseInt(talentString);
 			if (talentConfig.fieldName) {
 				if (talentConfig.maxPoints == 1) {
-					(proto[talentConfig.fieldName] as unknown as boolean) = points == 1;
+					(proto[talentConfig.fieldName as keyof TalentsProto] as unknown as boolean) = points == 1;
 				} else {
-					(proto[talentConfig.fieldName] as unknown as number) = points;
+					(proto[talentConfig.fieldName as keyof TalentsProto] as unknown as number) = points;
 				}
 			}
 		});
@@ -119,7 +119,7 @@ export function talentStringToProto<TalentsProto>(proto: TalentsProto, talentStr
 export function protoToTalentString<TalentsProto>(proto: TalentsProto, talentsConfig: TalentsConfig<TalentsProto>): string {
 	return talentsConfig.map(treeConfig => {
 		return treeConfig.talents
-			.map(talentConfig => String(Number(proto[talentConfig.fieldName!])))
+			.map(talentConfig => String(Number(proto[(talentConfig.fieldName as keyof TalentsProto)!])))
 			.join('').replace(/0+$/g, '');
 	}).join('-').replace(/-+$/g, '');
 }

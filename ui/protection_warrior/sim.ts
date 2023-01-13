@@ -83,26 +83,26 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_BALANCED_PRESET.gear,
+				gear: Presets.P2_SURVIVAL_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatArmor]: 0.05,
-					[Stat.StatStamina]: 1,
-					[Stat.StatStrength]: 3.5,
-					[Stat.StatAgility]: 2.2,
-					[Stat.StatAttackPower]: 0.06,
-					[Stat.StatExpertise]: 3.67,
-					[Stat.StatMeleeHit]: 2.67,
-					[Stat.StatMeleeCrit]: 0.28,
-					[Stat.StatMeleeHaste]: 0.21,
-					[Stat.StatArmorPenetration]: 0.19,
-					[Stat.StatBlock]: 0.35,
-					[Stat.StatBlockValue]: 2.59,
-					[Stat.StatDodge]: 0.7,
-					[Stat.StatParry]: 0.58,
-					[Stat.StatDefense]: 0.8,
+					[Stat.StatArmor]: 0.174,
+					[Stat.StatStamina]: 2.336,
+					[Stat.StatStrength]: 1.555,
+					[Stat.StatAgility]: 2.771,
+					[Stat.StatAttackPower]: 0.32,
+					[Stat.StatExpertise]: 1.44,
+					[Stat.StatMeleeHit]: 1.432,
+					[Stat.StatMeleeCrit]: 0.925,
+					[Stat.StatMeleeHaste]: 0.431,
+					[Stat.StatArmorPenetration]: 1.055,
+					[Stat.StatBlock]: 1.320,
+					[Stat.StatBlockValue]: 1.373,
+					[Stat.StatDodge]: 2.606,
+					[Stat.StatParry]: 2.649,
+					[Stat.StatDefense]: 3.305,
 				}, {
-					[PseudoStat.PseudoStatMainHandDps]: 5.29,
+					[PseudoStat.PseudoStatMainHandDps]: 6.081,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
@@ -192,6 +192,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				gear: [
 					Presets.P1_PRERAID_BALANCED_PRESET,
 					Presets.P1_BALANCED_PRESET,
+					Presets.P2_SURVIVAL_PRESET,
 				],
 			},
 		});

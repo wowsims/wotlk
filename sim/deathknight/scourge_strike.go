@@ -65,9 +65,11 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
+
 		DamageMultiplier: .7 *
 			[]float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
 			dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,
 

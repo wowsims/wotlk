@@ -5,13 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerShieldSlamSpell() {
-	cost := 20.0 - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
-
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBlocking)
 	var glyphOfBlockingAura *core.Aura = nil
 	if hasGlyph {
@@ -34,13 +30,13 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial, // TODO: Is this right?
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   20 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if warrior.SwordAndBoardAura.IsActive() {
@@ -86,7 +82,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 					glyphOfBlockingAura.Activate(sim)
 				}
 			} else {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

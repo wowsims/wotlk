@@ -30,7 +30,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood dps is not implemented.",
+				"Blood DPS is not implemented.",
 				"Frost Rotation logic is not fully tuned yet.",
 				"Army of the Dead scaling needs to be fine-tuned."
 			],
@@ -173,6 +173,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
+					Presets.BloodTalents,
 					Presets.FrostTalents,
 					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
@@ -182,11 +183,13 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				gear: [
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
+					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_FROSTSUBUNH_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 					Presets.P1_UNHOLY_2H_BIS_PRESET,
+					Presets.P2_UNHOLY_DW_BIS_PRESET,
 				],
 			},
 		});

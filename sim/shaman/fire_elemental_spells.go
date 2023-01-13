@@ -5,23 +5,20 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (fireElemental *FireElemental) registerFireBlast() {
-	var manaCost float64 = 276
-
 	fireElemental.FireBlast = fireElemental.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 13339},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 13339},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 276,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -40,22 +37,19 @@ func (fireElemental *FireElemental) registerFireBlast() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
-
 }
 
 func (fireElemental *FireElemental) registerFireNova() {
-	var manaCost float64 = 207
-
 	fireElemental.FireNova = fireElemental.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 12470},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 12470},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 207,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     manaCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 2,
 			},
@@ -81,7 +75,6 @@ func (fireElemental *FireElemental) registerFireNova() {
 			}
 		},
 	})
-
 }
 
 func (fireElemental *FireElemental) registerFireShieldAura() {

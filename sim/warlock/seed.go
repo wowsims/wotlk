@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerSeedSpell() {
@@ -22,7 +21,6 @@ func (warlock *Warlock) registerSeedSpell() {
 }
 
 func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
-	baseCost := 0.34 * warlock.BaseMana
 	actionID := core.ActionID{SpellID: 47836, Tag: 1}
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
@@ -56,15 +54,16 @@ func (warlock *Warlock) makeSeed(targetIdx int, numTargets int) {
 	})
 
 	warlock.Seeds[targetIdx] = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskEmpty,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.34,
+			Multiplier: 1 - 0.02*float64(warlock.Talents.Suppression),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 2000,
 			},

@@ -56,16 +56,15 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 	}
 
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 47193},
-		ResourceType: stats.Mana,
+		ActionID: core.ActionID{SpellID: 47193},
+
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.06,
+		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
 				Duration: time.Second * time.Duration(60.*(1.-0.1*float64(warlock.Talents.Nemesis))),
-			},
-			DefaultCast: core.Cast{
-				Cost: 0.06 * warlock.BaseMana,
-				GCD:  0,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {

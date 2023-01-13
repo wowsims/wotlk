@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
@@ -17,8 +16,6 @@ func (priest *Priest) MindFlayActionID(numTicks int32) core.ActionID {
 }
 
 func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
-	baseCost := priest.BaseMana * 0.09
-
 	channelTime := time.Second * time.Duration(numTicks)
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		channelTime -= time.Duration(numTicks) * (time.Millisecond * 170)
@@ -28,16 +25,17 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:     priest.MindFlayActionID(numTicks),
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagChanneled,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    priest.MindFlayActionID(numTicks),
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagChanneled,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.09,
+			Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        baseCost * (1 - 0.05*float64(priest.Talents.FocusedMind)),
 				GCD:         core.GCDDefault,
 				ChannelTime: channelTime,
 			},
