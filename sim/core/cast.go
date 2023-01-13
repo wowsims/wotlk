@@ -134,16 +134,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 	}
 
 	switch spell.ResourceType {
-	case stats.Rage:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.CurrentRage() < spell.CurCast.Cost {
-				return false
-			}
-			spell.Unit.SpendRage(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-			onCastComplete(sim, target)
-			return true
-		}
 	case stats.RunicPower:
 		return func(sim *Simulation, target *Unit) bool {
 			// Rune spending is currently handled in DK codebase.
@@ -313,10 +303,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			oldOnCastComplete3 := onCastComplete
 			onCastComplete = func(sim *Simulation, target *Unit) {
 				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-					// Hunter fake cast has no ID.
-					if !spell.ActionID.SameAction(ActionID{}) {
-						spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
-					}
+					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 				}
 				oldOnCastComplete3(sim, target)
 			}

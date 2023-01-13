@@ -4,24 +4,20 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) RegisterShatteringThrowCD() {
-	cost := 25 - float64(warrior.Talents.FocusedRage)
-
 	ShatteringThrowSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 64382},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 25 - float64(warrior.Talents.FocusedRage),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     cost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},
@@ -54,7 +50,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 					}
 					warrior.BattleStance.Cast(sim, nil)
 				}
-				if warrior.CurrentRage() < cost {
+				if warrior.CurrentRage() < ShatteringThrowSpell.DefaultCast.Cost {
 					return
 				}
 				if ShatteringThrowSpell.Cast(sim, character.CurrentTarget) {
@@ -67,7 +63,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 			}
 		},
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= cost && (warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim))
+			return warrior.CurrentRage() >= ShatteringThrowSpell.DefaultCast.Cost && (warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim))
 		},
 	})
 }

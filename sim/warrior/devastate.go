@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
@@ -39,8 +38,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 		}))
 	}
 
-	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
-	refundAmount := cost * 0.8
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
@@ -54,13 +51,13 @@ func (warrior *Warrior) registerDevastateSpell() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -92,7 +89,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 					warrior.SunderArmorDevastate.Cast(sim, target)
 				}
 			} else {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

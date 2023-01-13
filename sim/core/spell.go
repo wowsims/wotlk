@@ -22,6 +22,7 @@ type SpellConfig struct {
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
+	RageCost   RageCostOptions
 
 	Cast CastConfig
 
@@ -217,12 +218,12 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newManaCost(spell, config.ManaCost)
 	} else if config.EnergyCost.Cost != 0 {
 		spell.Cost = newEnergyCost(spell, config.EnergyCost)
+	} else if config.RageCost.Cost != 0 {
+		spell.Cost = newRageCost(spell, config.RageCost)
 	}
 
 	if spell.Cost == nil {
 		switch spell.ResourceType {
-		case stats.Rage:
-			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
 		case stats.RunicPower:
 			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
 		case stats.BloodRune:

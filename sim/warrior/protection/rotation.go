@@ -45,7 +45,6 @@ func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
 		war.DoNothing()
 	}
-
 }
 
 func (war *ProtectionWarrior) tryQueueHsCleave(sim *core.Simulation) {

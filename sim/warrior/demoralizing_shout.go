@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
-	cost := 10.0 - float64(warrior.Talents.FocusedRage)
-
 	warrior.DemoralizingShoutAuras = make([]*core.Aura, warrior.Env.GetNumTargets())
 	for _, target := range warrior.Env.Encounter.Targets {
 		warrior.DemoralizingShoutAuras[target.Index] = core.DemoralizingShoutAura(&target.Unit, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
@@ -20,13 +17,12 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 10 - float64(warrior.Talents.FocusedRage),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
