@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerRuneStrikeSpell() {
@@ -13,21 +12,21 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 
 	runeStrikeGlyphCritBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneStrike), 10.0, 0.0)
 
-	baseCost := float64(core.NewRuneCost(20, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 20,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.RuneStrikeAura.IsActive()
 		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
@@ -48,9 +47,6 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 			rs.DoCost(sim)
 			dk.RuneStrikeAura.Deactivate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		runeCost := core.RuneCost(dk.RuneStrike.BaseCost)
-		return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.RuneStrike.IsReady(sim) && dk.RuneStrikeAura.IsActive() && dk.CurrentRunicPower() >= float64(runeCost.RunicPower())
 	})
 
 	dk.RuneStrikeAura = dk.RegisterAura(core.Aura{

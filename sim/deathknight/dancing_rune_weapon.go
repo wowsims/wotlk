@@ -41,17 +41,15 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(60.0, 0, 0, 0, 0))
 	dk.DancingRuneWeapon = dk.RegisterSpell(nil, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49028},
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 60,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -72,8 +70,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 
 			dancingRuneWeaponAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.DancingRuneWeapon.IsReady(sim)
 	})
 }
 

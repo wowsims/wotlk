@@ -5,9 +5,6 @@ import "github.com/wowsims/wotlk/sim/core"
 // RuneSpell is a wrapper around a normal core.Spell that allows for management of spending
 // runes and runic power. Specifically this also allows for "refunding" of missed refundable spells.
 
-type RuneSpellCanCast func(sim *core.Simulation) bool
-type RuneSpellOnCast func(sim *core.Simulation)
-
 type RuneType int8
 
 const (
@@ -23,8 +20,6 @@ type RuneSpell struct {
 	DeathConvertChance float64
 	ConvertType        RuneType
 	dk                 *Deathknight
-
-	canCast RuneSpellCanCast
 }
 
 func (rs *RuneSpell) OnResult(sim *core.Simulation, result *core.SpellResult) {
@@ -78,10 +73,8 @@ func (rs *RuneSpell) castInternal(sim *core.Simulation, target *core.Unit) bool 
 func (rs *RuneSpell) CanCast(sim *core.Simulation) bool {
 	if rs == nil {
 		return false
-	} else if rs.canCast == nil {
-		return true
 	} else {
-		return rs.canCast(sim)
+		return rs.Spell.CanCast(sim, nil)
 	}
 }
 
@@ -95,12 +88,11 @@ func (rs *RuneSpell) Cast(sim *core.Simulation, target *core.Unit) bool {
 // RegisterSpell will connect the underlying spell to the given RuneSpell.
 //
 //	If no RuneSpell is provided, it will be constructed here.
-func (dk *Deathknight) RegisterSpell(rs *RuneSpell, spellConfig core.SpellConfig, canCast func(sim *core.Simulation) bool) *RuneSpell {
+func (dk *Deathknight) RegisterSpell(rs *RuneSpell, spellConfig core.SpellConfig) *RuneSpell {
 	if rs == nil {
 		rs = &RuneSpell{}
 	}
 	rs.dk = dk
-	rs.canCast = canCast
 	rs.Spell = dk.Character.RegisterSpell(spellConfig)
 	return rs
 }

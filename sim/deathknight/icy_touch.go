@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var IcyTouchActionID = core.ActionID{SpellID: 59131}
@@ -19,25 +18,23 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}
 
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
-	amountOfRunicPower := 10.0 + 2.5*float64(dk.Talents.ChillOfTheGrave)
-	baseCost := float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 0, 0))
-
 	sigilOfTheUnfalteringKnight := dk.sigilOfTheUnfalteringKnight()
 
 	rs := &RuneSpell{
 		Refundable: true,
 	}
 	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     IcyTouchActionID,
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID:    IcyTouchActionID,
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost:  1,
+			RunicPowerGain: 10 + 2.5*float64(dk.Talents.ChillOfTheGrave),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -70,8 +67,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 
 			spell.DealDamage(sim, result)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
 	})
 }
 func (dk *Deathknight) registerDrwIcyTouchSpell() {

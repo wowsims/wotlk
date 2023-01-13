@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerDeathPactSpell() {
@@ -15,18 +14,16 @@ func (dk *Deathknight) registerDeathPactSpell() {
 	hpMetrics := dk.NewHealthMetrics(actionID)
 
 	rs := &RuneSpell{}
-	baseCost := float64(core.NewRuneCost(40.0, 0, 0, 0, 0))
 	dk.DeathPact = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 40,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -36,6 +33,9 @@ func (dk *Deathknight) registerDeathPactSpell() {
 				Duration: cd,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.Ghoul.Pet.IsEnabled()
+		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			healthGain := 0.4 * dk.Ghoul.MaxHealth()
 			dk.GainHealth(sim, healthGain, hpMetrics)
@@ -43,8 +43,6 @@ func (dk *Deathknight) registerDeathPactSpell() {
 
 			rs.DoCost(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.Ghoul.Pet.IsEnabled() && dk.DeathPact.IsReady(sim)
 	})
 
 	if !dk.Inputs.IsDps {

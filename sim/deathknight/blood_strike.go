@@ -2,7 +2,6 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
@@ -17,6 +16,11 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.4 *
@@ -63,12 +67,9 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH { // offhand doesn't need GCD
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(10, 1, 0, 0, 0))
 		conf.Cast = core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: conf.BaseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -82,15 +83,11 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
 		}
+	} else {
+		conf.RuneCost = core.RuneCostOptions{}
 	}
 
-	if isMH {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodStrike.IsReady(sim)
-		})
-	} else {
-		return dk.RegisterSpell(rs, conf, nil)
-	}
+	return dk.RegisterSpell(rs, conf)
 }
 
 func (dk *Deathknight) registerBloodStrikeSpell() {

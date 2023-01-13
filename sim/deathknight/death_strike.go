@@ -3,7 +3,6 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO: Cleanup death strike the same way we did for plague strike
@@ -24,6 +23,12 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost:  1,
+			UnholyRuneCost: 1,
+			RunicPowerGain: 15 + 2.5*float64(dk.Talents.Dirge),
+		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 *
@@ -70,12 +75,9 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH {
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(uint8(15.0+2.5*float64(dk.Talents.Dirge)), 0, 1, 1, 0))
 		conf.Cast = core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: conf.BaseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -89,15 +91,11 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
 		}
+	} else {
+		conf.RuneCost = core.RuneCostOptions{}
 	}
 
-	if isMH {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.DeathStrike.IsReady(sim)
-		})
-	} else {
-		return dk.RegisterSpell(rs, conf, nil)
-	}
+	return dk.RegisterSpell(rs, conf)
 }
 
 func (dk *Deathknight) registerDeathStrikeSpell() {

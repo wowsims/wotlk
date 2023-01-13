@@ -3,30 +3,29 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var PestilenceActionID = core.ActionID{SpellID: 50842}
 
 func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
 
 	rs := &RuneSpell{
 		Refundable: true,
 	}
 
 	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     PestilenceActionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 50842},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -78,8 +77,6 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				}
 			}
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
 	})
 	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
 		rs.DeathConvertChance = 1.0

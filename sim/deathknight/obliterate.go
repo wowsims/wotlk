@@ -3,7 +3,6 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO: Cleanup obliterate the same way we did for plague strike
@@ -20,6 +19,21 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost:  1,
+			UnholyRuneCost: 1,
+			RunicPowerGain: 15 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus(),
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.GetModifiedGCD()
+			},
+			IgnoreHaste: true,
+		},
 
 		BonusCritRating: (dk.rimeCritBonus() + dk.subversionCritBonus() + dk.annihilationCritBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .8 *
@@ -69,19 +83,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH {
-		amountOfRunicPower := 15.0 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus()
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(uint8(amountOfRunicPower), 0, 1, 1, 0))
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: conf.BaseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
-			IgnoreHaste: true,
-		}
 		rs.Refundable = true
 		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
 		if dk.Talents.DeathRuneMastery == 3 {
@@ -89,15 +90,12 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 		} else {
 			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
 		}
+	} else {
+		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
-	if isMH {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.Obliterate.IsReady(sim)
-		})
-	} else {
-		return dk.RegisterSpell(rs, conf, nil)
-	}
+	return dk.RegisterSpell(rs, conf)
 }
 
 func (dk *Deathknight) registerObliterateSpell() {

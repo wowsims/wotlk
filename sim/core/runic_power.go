@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type OnRune func(sim *Simulation)
@@ -1080,4 +1081,84 @@ func (rp *RunicPowerBar) SpendDeathRune(sim *Simulation, metrics *ResourceMetric
 	rp.SpendRuneMetrics(sim, metrics, 1)
 	rp.LaunchRuneRegen(sim, slot)
 	return slot
+}
+
+type RuneCostOptions struct {
+	BloodRuneCost  int8
+	FrostRuneCost  int8
+	UnholyRuneCost int8
+	DeathRuneCost  int8
+	RunicPowerCost float64
+	RunicPowerGain float64
+}
+type RuneCostImpl struct {
+	BloodRuneCost  int8
+	FrostRuneCost  int8
+	UnholyRuneCost int8
+	DeathRuneCost  int8
+	RunicPowerCost float64
+}
+
+func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
+	spell.ResourceType = stats.RunicPower
+	spell.BaseCost = float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), uint8(options.DeathRuneCost)))
+	spell.DefaultCast.Cost = spell.BaseCost
+	//if options.Refund > 0 && options.RefundMetrics == nil {
+	//	options.RefundMetrics = spell.Unit.RuneRefundMetrics
+	//}
+
+	return &RuneCostImpl{
+		BloodRuneCost:  options.BloodRuneCost,
+		FrostRuneCost:  options.FrostRuneCost,
+		UnholyRuneCost: options.UnholyRuneCost,
+		DeathRuneCost:  options.DeathRuneCost,
+		RunicPowerCost: options.RunicPowerCost,
+		//Refund:          options.Refund * options.Cost,
+		//RefundMetrics:   options.RefundMetrics,
+		//ResourceMetrics: spell.Unit.NewRuneMetrics(spell.ActionID),
+	}
+}
+
+func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
+	rp := &spell.Unit.RunicPowerBar
+	cost := RuneCost(spell.CurCast.Cost)
+
+	if !cost.HasRune() {
+		if float64(cost.RunicPower()) > rp.CurrentRunicPower() {
+			return false
+		}
+	}
+
+	optCost := spell.Unit.OptimalRuneCost(cost)
+	if optCost == 0 { // no combo of runes to fulfill cost
+		return false
+	}
+	spell.CurCast.Cost = float64(optCost) // assign chosen runes to the cost
+
+	var deficit int8
+	if d := rc.BloodRuneCost - rp.CurrentBloodRunes(); d > 0 {
+		deficit += d
+	}
+	if d := rc.FrostRuneCost - rp.CurrentFrostRunes(); d > 0 {
+		deficit += d
+	}
+	if d := rc.DeathRuneCost - rp.CurrentUnholyRunes(); d > 0 {
+		deficit += d
+	}
+	return deficit <= rp.CurrentDeathRunes()
+}
+func (rc *RuneCostImpl) LogCostFailure(sim *Simulation, spell *Spell) {
+	//spell.Unit.Log(sim,
+	//	"Failed casting %s, not enough rage. (Current Rune = %0.03f, Rune Cost = %0.03f)",
+	//	spell.ActionID, spell.Unit.CurrentRune(), spell.CurCast.Cost)
+}
+func (rc *RuneCostImpl) SpendCost(sim *Simulation, spell *Spell) {
+	//if spell.CurCast.Cost > 0 {
+	//	spell.Unit.SpendRune(sim, spell.CurCast.Cost, rc.ResourceMetrics)
+	//}
+}
+func (rc *RuneCostImpl) IssueRefund(sim *Simulation, spell *Spell) {
+	//if rc.Refund > 0 {
+	//	spell.Unit.AddRune(sim, rc.Refund, rc.RefundMetrics)
+	//}
 }

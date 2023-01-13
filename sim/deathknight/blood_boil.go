@@ -2,7 +2,6 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var BloodBoilActionID = core.ActionID{SpellID: 49941}
@@ -13,18 +12,18 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 	rs := &RuneSpell{
 		Refundable: true,
 	}
-	baseCost := core.NewRuneCost(10, 1, 0, 0, 0)
 	dk.BloodBoil = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     BloodBoilActionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     float64(baseCost),
+		ActionID:    BloodBoilActionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: float64(baseCost),
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -50,7 +49,5 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 				}
 			}
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodBoil.IsReady(sim)
 	})
 }

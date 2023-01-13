@@ -402,7 +402,7 @@ func (dk *Deathknight) applyBloodworms() {
 				dk.Bloodworm[i].CancelGCDTimer(sim)
 			}
 		},
-	}, nil)
+	})
 
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Bloodworms Proc",

@@ -43,8 +43,6 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			raiseDeadAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
 	})
 
 	if !dk.Inputs.IsDps {

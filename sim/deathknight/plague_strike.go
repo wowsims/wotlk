@@ -3,7 +3,6 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
@@ -18,6 +17,20 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+			RunicPowerGain: 10 + 2.5*float64(dk.Talents.Dirge),
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.GetModifiedGCD()
+			},
+			IgnoreHaste: true,
+		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.scourgebornePlateCritBonus() + dk.viciousStrikesCritChanceBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .5 *
@@ -56,29 +69,12 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 			spell.DealDamage(sim, result)
 		},
 	}
-	if isMH { // only MH has cost & gcd
-		rpGen := 10.0 + 2.5*float64(dk.Talents.Dirge)
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(uint8(rpGen), 0, 0, 1, 0))
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: conf.BaseCost,
-				GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
-			IgnoreHaste: true,
-		}
+	if !isMH { // only MH has cost & gcd
+		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
-	if isMH {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.PlagueStrike.IsReady(sim)
-		})
-	} else {
-		return dk.RegisterSpell(rs, conf, nil)
-	}
+	return dk.RegisterSpell(rs, conf)
 }
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {

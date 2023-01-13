@@ -31,19 +31,15 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.IceboundFortitude = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 20,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -54,8 +50,6 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 			dk.IceboundFortitudeAura.Activate(sim)
 			rs.DoCost(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
 	})
 
 	if !dk.Inputs.IsDps {

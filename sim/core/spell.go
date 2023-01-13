@@ -9,6 +9,7 @@ import (
 
 type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
 type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell, useSnapshot bool) *SpellResult
+type CanCastCondition func(sim *Simulation, target *Unit) bool
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -23,8 +24,10 @@ type SpellConfig struct {
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
+	RuneCost   RuneCostOptions
 
-	Cast CastConfig
+	Cast               CastConfig
+	ExtraCastCondition CanCastCondition
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -83,14 +86,11 @@ type Spell struct {
 	// are calculated using the base cost.
 	BaseCost float64
 
-	// Cost for the spell.
-	Cost SpellCost
-
-	// Default cast parameters with all static effects applied.
-	DefaultCast Cast
-
-	CD       Cooldown
-	SharedCD Cooldown
+	Cost               SpellCost // Cost for the spell.
+	DefaultCast        Cast      // Default cast parameters with all static effects applied.
+	CD                 Cooldown
+	SharedCD           Cooldown
+	ExtraCastCondition CanCastCondition
 
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
@@ -166,9 +166,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
 
-		DefaultCast: config.Cast.DefaultCast,
-		CD:          config.Cast.CD,
-		SharedCD:    config.Cast.SharedCD,
+		DefaultCast:        config.Cast.DefaultCast,
+		CD:                 config.Cast.CD,
+		SharedCD:           config.Cast.SharedCD,
+		ExtraCastCondition: config.ExtraCastCondition,
 
 		ApplyEffects: config.ApplyEffects,
 
@@ -220,6 +221,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newEnergyCost(spell, config.EnergyCost)
 	} else if config.RageCost.Cost != 0 {
 		spell.Cost = newRageCost(spell, config.RageCost)
+	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.DeathRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 {
+		spell.Cost = newRuneCost(spell, config.RuneCost)
 	}
 
 	if spell.Cost == nil {
@@ -410,6 +413,10 @@ func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
 // doing a cast.
 func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	if spell == nil {
+		return false
+	}
+
+	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
 		return false
 	}
 

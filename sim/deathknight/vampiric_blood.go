@@ -35,18 +35,17 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.VampiricBlood = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     actionID,
-		Flags:        core.SpellFlagNoOnCastComplete,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-				// TODO: does not invoke the GCD?
-			},
+			// TODO: does not invoke the GCD?
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -57,8 +56,6 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			dk.VampiricBloodAura.Activate(sim)
 			rs.DoCost(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.VampiricBlood.IsReady(sim)
 	})
 
 	if !dk.Inputs.IsDps {

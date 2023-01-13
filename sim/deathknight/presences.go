@@ -51,15 +51,13 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 	damageTakenMult := 1.0 - 0.01*float64(dk.Talents.ImprovedFrostPresence)
 
-	baseCost := float64(core.NewRuneCost(0, 1, 0, 0, 0))
 	dk.BloodPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 50689},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID: core.ActionID{SpellID: 50689},
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -68,8 +66,6 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, BloodPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
 	})
 
 	// TODO: Probably improve this
@@ -116,15 +112,13 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
-	baseCost := float64(core.NewRuneCost(0, 0, 1, 0, 0))
 	dk.FrostPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48263},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID: core.ActionID{SpellID: 48263},
+
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -133,8 +127,6 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, FrostPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
 	})
 
 	threatMult := 2.0735
@@ -167,15 +159,13 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
 
-	baseCost := float64(core.NewRuneCost(0, 0, 0, 1, 0))
 	dk.UnholyPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48265},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID: core.ActionID{SpellID: 48265},
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -184,8 +174,6 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, UnholyPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
 	})
 
 	runeCd := 10 * time.Second

@@ -14,18 +14,14 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Second * 45
 
-	baseCost := float64(core.NewRuneCost(20.0, 0, 0, 0, 0))
 	rs := &RuneSpell{}
 	dk.AntiMagicShell = dk.RegisterSpell(rs, core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 20,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
@@ -35,8 +31,6 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.AntiMagicShellAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.AntiMagicShell.IsReady(sim)
 	})
 
 	rpMetrics := dk.AntiMagicShell.RunicPowerMetrics()

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerGhoulFrenzySpell() {
@@ -17,15 +16,13 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
 
-		Cast: core.CastConfig{},
-
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.SpellMetrics[target.UnitIndex].Hits++
 		},
-	}, nil)
+	})
 
 	gfHealHot := core.NewDot(core.Dot{
 		Spell: gfHeal.Spell,
@@ -44,16 +41,17 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
 	dk.GhoulFrenzy = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 63560},
-		SpellSchool:  core.SpellSchoolShadow,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 63560},
+		SpellSchool: core.SpellSchoolShadow,
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -63,14 +61,15 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 				Duration: time.Second * 10,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.Ghoul.IsEnabled()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.GhoulFrenzyAura.Activate(sim)
 			gfHealHot.Apply(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.Talents.GhoulFrenzy && dk.Ghoul.IsEnabled() && dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.GhoulFrenzy.IsReady(sim)
 	})
 
 	dk.GhoulFrenzyAura = dk.RegisterAura(core.Aura{

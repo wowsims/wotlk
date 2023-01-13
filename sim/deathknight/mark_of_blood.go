@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerMarkOfBloodSpell() {
@@ -16,17 +15,17 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 3
 
-	baseCost := float64(core.NewRuneCost(10, 0, 1, 0, 0))
 	var markOfBloodAura *core.Aura = nil
 	dk.MarkOfBlood = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     actionID,
-		Flags:        core.SpellFlagNoOnCastComplete,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost: 1,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				cast.GCD = dk.GetModifiedGCD()
@@ -43,8 +42,6 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 
 			markOfBloodAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.MarkOfBlood.IsReady(sim)
 	})
 
 	if !dk.Inputs.IsDps {

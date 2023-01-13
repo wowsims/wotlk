@@ -3,7 +3,6 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
@@ -17,6 +16,19 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics,
+
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), 32, 40),
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.GetModifiedGCD()
+			},
+			IgnoreHaste: true,
+		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.darkrunedBattlegearCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .55 *
@@ -56,31 +68,13 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH {
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(
-			core.Ternary(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), uint8(32), 40), 0, 0, 0, 0,
-		))
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: conf.BaseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
-			IgnoreHaste: true,
-		}
 		rs.Refundable = true
+	} else {
+		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
-	if isMH {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			runeCost := core.RuneCost(dk.FrostStrike.BaseCost)
-			return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.FrostStrike.IsReady(sim)
-		})
-	} else {
-		return dk.RegisterSpell(rs, conf, nil)
-	}
+	return dk.RegisterSpell(rs, conf)
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {

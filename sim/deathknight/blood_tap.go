@@ -44,7 +44,5 @@ func (dk *Deathknight) registerBloodTapSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BloodTapAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.BloodTap.IsReady(sim)
 	})
 }

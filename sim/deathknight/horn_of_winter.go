@@ -56,10 +56,8 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 			if dk.Inputs.RefreshHornOfWinter {
 				dk.HornOfWinterAura.Activate(sim)
 			}
-			dk.AddRunicPower(sim, 10.0, dk.HornOfWinter.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 10, dk.HornOfWinter.RunicPowerMetrics())
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.HornOfWinter.IsReady(sim)
 	})
 }
 
