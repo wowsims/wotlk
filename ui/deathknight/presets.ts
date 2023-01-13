@@ -208,6 +208,217 @@ export const DefaultConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
+export const P1_BLOOD_BIS_PRESET = {
+	name: 'P1 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 44006,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 44664,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40557,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40403,
+			"enchant": 3831
+		  },
+		  {
+			"id": 40550,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 40330,
+			"enchant": 3845,
+			"gems": [
+			  42142,
+			  0
+			]
+		  },
+		  {
+			"id": 40552,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 40317,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40556,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 40591,
+			"enchant": 3606
+		  },
+		  {
+			"id": 40075
+		  },
+		  {
+			"id": 39401
+		  },
+		  {
+			"id": 40256
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 40384,
+			"enchant": 3368
+		  },
+		  {},
+		  {
+			"id": 40207
+		  }
+  ]}`),
+};
+
+export const P2_BLOOD_BIS_PRESET = {
+	name: 'P2 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 46115,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 45459,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46117,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46032,
+			"enchant": 3831,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 46111,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  42142,
+			  0
+			]
+		  },
+		  {
+			"id": 46113,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 45241,
+			"gems": [
+			  39996,
+			  45862,
+			  39996
+			]
+		  },
+		  {
+			"id": 45134,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46048,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 45516,
+			"enchant": 3368,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {},
+		  {
+			"id": 45254
+		  }
+  ]}`),
+};
+
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	name: 'Pre-Raid 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -813,101 +1024,6 @@ export const P1_FROST_PRE_BIS_PRESET = {
 		{
 			"id": 40715
 		}
-  ]}`),
-};
-
-export const P1_BLOOD_BIS_PRESET = {
-	name: 'P1 Blood',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 44664,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40403,
-			"enchant": 3831
-		  },
-		  {
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-			  42142,
-			  0
-			]
-		  },
-		  {
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 40317,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 40591,
-			"enchant": 3606
-		  },
-		  {
-			"id": 40075
-		  },
-		  {
-			"id": 39401
-		  },
-		  {
-			"id": 40256
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 40384,
-			"enchant": 3368
-		  },
-		  {},
-		  {
-			"id": 40207
-		  }
   ]}`),
 };
 

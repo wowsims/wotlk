@@ -81,9 +81,10 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers,
 
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
+		DamageMultiplier: 0.5 * (1 + 0.05*float64(dk.Talents.ImprovedIcyTouch)),
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 7,
 

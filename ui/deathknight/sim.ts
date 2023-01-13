@@ -30,7 +30,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood DPS is not implemented.",
+				"Blood DPS is a work in progress.",
 				"Frost Rotation logic is not fully tuned yet.",
 				"Army of the Dead scaling needs to be fine-tuned."
 			],
@@ -73,7 +73,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_UNHOLY_DW_BIS_PRESET.gear,
+				gear: Presets.P2_UNHOLY_DW_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 3.22,
@@ -181,6 +181,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.P1_BLOOD_BIS_PRESET,
+					Presets.P2_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
 					Presets.P2_FROST_BIS_PRESET,

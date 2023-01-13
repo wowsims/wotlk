@@ -12,9 +12,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
 	critMultiplier := dk.bonusCritMultiplier(dk.Talents.MightOfMograine)
-	if isDrw {
-		critMultiplier = dk.RuneWeapon.DefaultMeleeCritMultiplier()
-	}
 
 	rs := &RuneSpell{}
 	conf := core.SpellConfig{
@@ -58,6 +55,10 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 				}
 			}
 		},
+	}
+	if isDrw {
+		conf.DamageMultiplier *= .5
+		conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
 	}
 	if isMainTarget && !isDrw { // off target doesnt need GCD
 		conf.ResourceType = stats.RunicPower
