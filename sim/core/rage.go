@@ -216,7 +216,6 @@ func newRageCost(spell *Spell, options RageCostOptions) *RageCost {
 	}
 
 	return &RageCost{
-		//Refund:          options.Refund,
 		Refund:          options.Refund * options.Cost,
 		RefundMetrics:   options.RefundMetrics,
 		ResourceMetrics: spell.Unit.NewRageMetrics(spell.ActionID),
@@ -239,7 +238,6 @@ func (rc *RageCost) SpendCost(sim *Simulation, spell *Spell) {
 }
 func (rc *RageCost) IssueRefund(sim *Simulation, spell *Spell) {
 	if rc.Refund > 0 {
-		//spell.Unit.AddRage(sim, rc.Refund*spell.CurCast.Cost, rc.RefundMetrics)
 		spell.Unit.AddRage(sim, rc.Refund, rc.RefundMetrics)
 	}
 }

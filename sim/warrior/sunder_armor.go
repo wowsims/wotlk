@@ -33,9 +33,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
-		config.ResourceType = 0
-		config.BaseCost = 0
-		config.Cast.DefaultCast.Cost = 0
+		config.RageCost = core.RageCostOptions{}
 		config.Cast.DefaultCast.GCD = 0
 
 		// In wrath sunder from devastate generates no threat
