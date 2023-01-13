@@ -412,8 +412,8 @@ func (dk *DpsDeathknight) setupDrwProcTrackers() {
 	snapshotManager.AddProc(54569, "Sharpened Twilight Scale Proc", false)
 	snapshotManager.AddProc(54590, "Sharpened Twilight Scale H Proc", false)
 
-	snapshotManager.AddProc(40256, "Grim Toll Proc", false)
-	snapshotManager.AddProc(45931, "Mjolnir Runestone Proc", false)
+	//snapshotManager.AddProc(40256, "Grim Toll Proc", false)
+	//snapshotManager.AddProc(45931, "Mjolnir Runestone Proc", false)
 	snapshotManager.AddProc(46038, "Dark Matter Proc", false)
 	snapshotManager.AddProc(50198, "Needle-Encrusted Scorpion Proc", false)
 }
