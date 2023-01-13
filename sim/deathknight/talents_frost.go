@@ -189,13 +189,14 @@ func (dk *Deathknight) applyKillingMachine() {
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Killing Machine",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
-				return
-			}
-
+			// KM is consumed even if it's a miss
 			if dk.KillingMachineAura.IsActive() && (dk.runeSpellComp(spell, dk.IcyTouch) ||
 				dk.runeSpellComp(spell, dk.FrostStrike)) {
 				dk.KillingMachineAura.Deactivate(sim)
+			}
+
+			if !result.Landed() {
+				return
 			}
 
 			if !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
