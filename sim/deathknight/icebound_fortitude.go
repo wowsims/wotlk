@@ -56,7 +56,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.IceboundFortitude.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{

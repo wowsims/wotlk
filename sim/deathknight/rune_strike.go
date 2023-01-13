@@ -51,7 +51,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 	}, func(sim *core.Simulation) bool {
 		runeCost := core.RuneCost(dk.RuneStrike.BaseCost)
 		return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.RuneStrike.IsReady(sim) && dk.RuneStrikeAura.IsActive() && dk.CurrentRunicPower() >= float64(runeCost.RunicPower())
-	}, nil)
+	})
 
 	dk.RuneStrikeAura = dk.RegisterAura(core.Aura{
 		Label:    "Rune Strike",

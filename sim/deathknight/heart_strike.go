@@ -80,15 +80,9 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 		rs.Spell = dk.RuneWeapon.RegisterSpell(conf)
 		return rs
 	} else {
-		if isMainTarget {
-			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-				return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
-			}, nil)
-		} else {
-			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-				return true
-			}, nil)
-		}
+		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
+		})
 	}
 }
 

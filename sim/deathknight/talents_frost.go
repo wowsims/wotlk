@@ -231,7 +231,7 @@ func (dk *Deathknight) applyDeathchill() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.DeathchillAura.Activate(sim)
 		},
-	}, nil, nil)
+	}, nil)
 
 	dk.DeathchillAura = dk.RegisterAura(core.Aura{
 		Label:    "Deathchill",

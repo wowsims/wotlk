@@ -62,7 +62,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0, 0, 1, 0) && dk.UnbreakableArmor.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{

@@ -37,7 +37,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 20.0, 0, 0, 0) && dk.AntiMagicShell.IsReady(sim)
-	}, nil)
+	})
 
 	rpMetrics := dk.AntiMagicShell.RunicPowerMetrics()
 

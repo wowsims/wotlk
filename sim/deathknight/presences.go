@@ -70,7 +70,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
-	}, nil)
+	})
 
 	// TODO: Probably improve this
 	isDps := dk.Talents.HowlingBlast || dk.Talents.SummonGargoyle
@@ -135,7 +135,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
-	}, nil)
+	})
 
 	threatMult := 2.0735
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
@@ -186,7 +186,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
-	}, nil)
+	})
 
 	runeCd := 10 * time.Second
 	impUp := 500 * time.Millisecond * time.Duration(dk.Talents.ImprovedUnholyPresence)

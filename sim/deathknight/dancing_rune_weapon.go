@@ -74,7 +74,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.DancingRuneWeapon.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (runeWeapon *RuneWeaponPet) getImpurityBonus(spell *core.Spell) float64 {

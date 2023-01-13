@@ -44,7 +44,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.DeathAndDecay.IsReady(sim)
-	}, nil)
+	})
 
 	dk.DeathAndDecayDot = core.NewDot(core.Dot{
 		Aura: dk.RegisterAura(core.Aura{

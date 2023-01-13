@@ -49,7 +49,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.DeathCoil.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (dk *Deathknight) registerDrwDeathCoilSpell() {

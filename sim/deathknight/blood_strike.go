@@ -87,9 +87,9 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 	if isMH {
 		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
 			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodStrike.IsReady(sim)
-		}, nil)
+		})
 	} else {
-		return dk.RegisterSpell(rs, conf, nil, nil)
+		return dk.RegisterSpell(rs, conf, nil)
 	}
 }
 

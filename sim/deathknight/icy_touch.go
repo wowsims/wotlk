@@ -72,7 +72,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.IcyTouch.IsReady(sim)
-	}, nil)
+	})
 }
 func (dk *Deathknight) registerDrwIcyTouchSpell() {
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()

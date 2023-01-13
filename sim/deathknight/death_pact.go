@@ -45,7 +45,7 @@ func (dk *Deathknight) registerDeathPactSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.Ghoul.Pet.IsEnabled() && dk.DeathPact.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{

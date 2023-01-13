@@ -46,5 +46,5 @@ func (dk *Deathknight) registerBloodTapSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.BloodTap.IsReady(sim)
-	}, nil)
+	})
 }

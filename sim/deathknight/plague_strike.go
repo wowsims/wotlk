@@ -75,9 +75,9 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 	if isMH {
 		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
 			return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.PlagueStrike.IsReady(sim)
-		}, nil)
+		})
 	} else {
-		return dk.RegisterSpell(rs, conf, nil, nil)
+		return dk.RegisterSpell(rs, conf, nil)
 	}
 }
 

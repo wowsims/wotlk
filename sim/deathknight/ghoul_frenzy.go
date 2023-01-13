@@ -25,7 +25,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.SpellMetrics[target.UnitIndex].Hits++
 		},
-	}, nil, nil)
+	}, nil)
 
 	gfHealHot := core.NewDot(core.Dot{
 		Spell: gfHeal.Spell,
@@ -71,7 +71,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.Talents.GhoulFrenzy && dk.Ghoul.IsEnabled() && dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.GhoulFrenzy.IsReady(sim)
-	}, nil)
+	})
 
 	dk.GhoulFrenzyAura = dk.RegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 63560},

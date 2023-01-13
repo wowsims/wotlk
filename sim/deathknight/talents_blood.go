@@ -208,7 +208,7 @@ func (dk *Deathknight) applyBladeBarrier() {
 	dk.BladeBarrierAura = dk.RegisterAura(core.Aura{
 		Label:    "Blade Barrier",
 		ActionID: actionID,
-		Duration: time.Second * 10.0,
+		Duration: time.Second * 10,
 
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTakenMult
@@ -402,7 +402,7 @@ func (dk *Deathknight) applyBloodworms() {
 				dk.Bloodworm[i].CancelGCDTimer(sim)
 			}
 		},
-	}, nil, nil)
+	}, nil)
 
 	core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label: "Bloodworms Proc",

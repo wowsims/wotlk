@@ -69,5 +69,5 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.BoneShield.IsReady(sim)
-	}, nil)
+	})
 }

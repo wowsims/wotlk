@@ -435,7 +435,6 @@ func (rp *RunicPowerBar) ConvertFromDeath(sim *Simulation, slot int8) {
 }
 
 // ConvertToDeath converts the given slot to death and sets up the revertion conditions
-// ConvertToDeath converts the given slot to death and sets up the revertion conditions
 func (rp *RunicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertAt time.Duration) {
 	if slot == -1 {
 		return
@@ -729,7 +728,6 @@ func (rp *RunicPowerBar) GainRuneMetrics(sim *Simulation, metrics *ResourceMetri
 		metrics.AddEvent(float64(gainAmount), float64(gainAmount))
 
 		if sim.Log != nil {
-
 			var name string
 			var currRunes int8
 

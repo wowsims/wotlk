@@ -80,7 +80,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
-	}, nil)
+	})
 	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
 		rs.DeathConvertChance = 1.0
 	} else {

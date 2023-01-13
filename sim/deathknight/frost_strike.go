@@ -77,9 +77,9 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
 			runeCost := core.RuneCost(dk.FrostStrike.BaseCost)
 			return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.FrostStrike.IsReady(sim)
-		}, nil)
+		})
 	} else {
-		return dk.RegisterSpell(rs, conf, nil, nil)
+		return dk.RegisterSpell(rs, conf, nil)
 	}
 }
 

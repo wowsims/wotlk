@@ -71,11 +71,10 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			ghoulIndex = 0
 			aotdDot.Apply(sim)
+			dk.UpdateMajorCooldowns()
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 1, 1) && dk.ArmyOfTheDead.IsReady(sim)
-	}, func(sim *core.Simulation) {
-		dk.UpdateMajorCooldowns()
 	})
 
 	aotdDot.Spell = dk.ArmyOfTheDead.Spell

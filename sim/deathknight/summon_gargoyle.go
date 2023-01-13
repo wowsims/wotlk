@@ -65,11 +65,10 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 				},
 			}
 			sim.AddPendingAction(&pa)
+			dk.UpdateMajorCooldowns()
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.SummonGargoyle.IsReady(sim)
-	}, func(sim *core.Simulation) {
-		dk.UpdateMajorCooldowns()
 	})
 }
 

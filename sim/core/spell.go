@@ -406,6 +406,24 @@ func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
 	return MaxTimeToReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
 }
 
+// Returns whether a call to Cast() would be successful, without actually
+// doing a cast.
+func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
+	if spell == nil {
+		return false
+	}
+
+	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
+		return false
+	}
+
+	if spell.Cost != nil && !spell.Cost.MeetsRequirement(spell) {
+		return false
+	}
+
+	return true
+}
+
 func (spell *Spell) Cast(sim *Simulation, target *Unit) bool {
 	if target == nil {
 		target = spell.Unit.CurrentTarget

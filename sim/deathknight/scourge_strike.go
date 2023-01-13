@@ -107,5 +107,5 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
-	}, nil)
+	})
 }

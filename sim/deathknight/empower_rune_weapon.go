@@ -22,13 +22,9 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.RegenAllRunes(sim)
-
-			amountOfRunicPower := 25.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.EmpowerRuneWeapon.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 25, dk.EmpowerRuneWeapon.RunicPowerMetrics())
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.EmpowerRuneWeapon.IsReady(sim)
-	}, func(sim *core.Simulation) {
-		dk.UpdateMajorCooldowns()
 	})
 }

@@ -45,7 +45,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{

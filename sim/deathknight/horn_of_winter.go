@@ -60,7 +60,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.HornOfWinter.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (dk *Deathknight) ShouldHornOfWinter(sim *core.Simulation) bool {

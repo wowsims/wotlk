@@ -52,5 +52,5 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		},
 	}, func(sim *core.Simulation) bool {
 		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodBoil.IsReady(sim)
-	}, nil)
+	})
 }
