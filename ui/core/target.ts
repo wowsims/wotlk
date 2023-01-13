@@ -281,11 +281,11 @@ export class Target {
 	static defaultProto(): TargetProto {
 		return TargetProto.create({
 			level: Mechanics.BOSS_LEVEL,
-			mobType: MobType.MobTypeUndead,
+			mobType: MobType.MobTypeGiant,
 			tankIndex: 0,
 			swingSpeed: 1.5,
-			minBaseDamage: 30000,
-			dualWield: true,
+			minBaseDamage: 65000,
+			dualWield: false,
 			dualWieldPenalty: false,
 			suppressDodge: false,
 			parryHaste: true,
