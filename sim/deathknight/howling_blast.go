@@ -67,7 +67,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 					howlingBlast.OnResult(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
-				if dk.Talents.ChillOfTheGrave > 0 && result.Landed() {
+				if rpBonus > 0 && result.Landed() {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
 				}
 

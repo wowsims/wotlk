@@ -305,7 +305,9 @@ func (dk *Deathknight) Initialize() {
 			aura.Activate(sim)
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			dk.LastCast = spell
+			if spell.DefaultCast.GCD > 0 {
+				dk.LastCast = spell
+			}
 		},
 	})
 }

@@ -1087,7 +1087,6 @@ type RuneCostOptions struct {
 	BloodRuneCost  int8
 	FrostRuneCost  int8
 	UnholyRuneCost int8
-	DeathRuneCost  int8
 	RunicPowerCost float64
 	RunicPowerGain float64
 }
@@ -1095,13 +1094,13 @@ type RuneCostImpl struct {
 	BloodRuneCost  int8
 	FrostRuneCost  int8
 	UnholyRuneCost int8
-	DeathRuneCost  int8
 	RunicPowerCost float64
+	RunicPowerGain float64
 }
 
 func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 	spell.ResourceType = stats.RunicPower
-	spell.BaseCost = float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), uint8(options.DeathRuneCost)))
+	spell.BaseCost = float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), 0))
 	spell.DefaultCast.Cost = spell.BaseCost
 	//if options.Refund > 0 && options.RefundMetrics == nil {
 	//	options.RefundMetrics = spell.Unit.RuneRefundMetrics
@@ -1111,8 +1110,8 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 		BloodRuneCost:  options.BloodRuneCost,
 		FrostRuneCost:  options.FrostRuneCost,
 		UnholyRuneCost: options.UnholyRuneCost,
-		DeathRuneCost:  options.DeathRuneCost,
 		RunicPowerCost: options.RunicPowerCost,
+		RunicPowerGain: options.RunicPowerGain,
 		//Refund:          options.Refund * options.Cost,
 		//RefundMetrics:   options.RefundMetrics,
 		//ResourceMetrics: spell.Unit.NewRuneMetrics(spell.ActionID),
@@ -1120,11 +1119,14 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 }
 
 func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
-	rp := &spell.Unit.RunicPowerBar
+	//rp := &spell.Unit.RunicPowerBar
 	cost := RuneCost(spell.CurCast.Cost)
+	if cost == 0 {
+		return true
+	}
 
 	if !cost.HasRune() {
-		if float64(cost.RunicPower()) > rp.CurrentRunicPower() {
+		if float64(cost.RunicPower()) > spell.Unit.CurrentRunicPower() {
 			return false
 		}
 	}
@@ -1134,18 +1136,19 @@ func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
 		return false
 	}
 	spell.CurCast.Cost = float64(optCost) // assign chosen runes to the cost
+	return true
 
-	var deficit int8
-	if d := rc.BloodRuneCost - rp.CurrentBloodRunes(); d > 0 {
-		deficit += d
-	}
-	if d := rc.FrostRuneCost - rp.CurrentFrostRunes(); d > 0 {
-		deficit += d
-	}
-	if d := rc.DeathRuneCost - rp.CurrentUnholyRunes(); d > 0 {
-		deficit += d
-	}
-	return deficit <= rp.CurrentDeathRunes()
+	//var deficit int8
+	//if d := rc.BloodRuneCost - rp.CurrentBloodRunes(); d > 0 {
+	//	deficit += d
+	//}
+	//if d := rc.FrostRuneCost - rp.CurrentFrostRunes(); d > 0 {
+	//	deficit += d
+	//}
+	//if d := rc.DeathRuneCost - rp.CurrentUnholyRunes(); d > 0 {
+	//	deficit += d
+	//}
+	//return deficit <= rp.CurrentDeathRunes()
 }
 func (rc *RuneCostImpl) LogCostFailure(sim *Simulation, spell *Spell) {
 	//spell.Unit.Log(sim,
@@ -1156,6 +1159,9 @@ func (rc *RuneCostImpl) SpendCost(sim *Simulation, spell *Spell) {
 	//if spell.CurCast.Cost > 0 {
 	//	spell.Unit.SpendRune(sim, spell.CurCast.Cost, rc.ResourceMetrics)
 	//}
+	if rc.RunicPowerGain > 0 && spell.CurCast.Cost > 0 {
+		spell.Unit.AddRunicPower(sim, rc.RunicPowerGain, spell.RunicPowerMetrics())
+	}
 }
 func (rc *RuneCostImpl) IssueRefund(sim *Simulation, spell *Spell) {
 	//if rc.Refund > 0 {

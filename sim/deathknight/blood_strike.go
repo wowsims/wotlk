@@ -21,6 +21,15 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 			BloodRuneCost:  1,
 			RunicPowerGain: 10,
 		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				cast.GCD = dk.GetModifiedGCD()
+			},
+			IgnoreHaste: true,
+		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: 0.4 *
@@ -67,15 +76,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH { // offhand doesn't need GCD
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
-			IgnoreHaste: true,
-		}
 		rs.Refundable = true
 		rs.ConvertType = RuneTypeBlood
 		if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
@@ -85,6 +85,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 		}
 	} else {
 		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
 	return dk.RegisterSpell(rs, conf)

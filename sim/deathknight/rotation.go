@@ -243,6 +243,9 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	} else {
 		waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt())
 	}
+	if sim.Log != nil {
+		dk.Log(sim, "DK Wait: %s, any at: %s, any spent at: %s", waitUntil, anyRuneAt, dk.AnySpentRuneReadyAt())
+	}
 
 	if dk.ButcheryPA != nil {
 		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
@@ -272,11 +275,20 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 
 	optWait := time.Duration(-1)
 	if dk.RotationSequence.IsOngoing() {
+		if sim.Log != nil {
+			dk.Log(sim, "DoSequenceAction")
+		}
 		optWait = dk.RotationSequence.DoAction(sim, target, dk)
 	}
 
 	if dk.GCD.IsReady(sim) {
+		if sim.Log != nil {
+			dk.Log(sim, "DoGCD")
+		}
 		for optWait == 0 && dk.GCD.IsReady(sim) {
+			if sim.Log != nil {
+				dk.Log(sim, "DoAction")
+			}
 			optWait = dk.RotationSequence.DoAction(sim, target, dk)
 		}
 
