@@ -99,7 +99,7 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305020530003303231023101351--230220305003',
+		talentsString: '2305120530003303231023001351--230130305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
@@ -151,8 +151,8 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 1000.0,
-  frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-  frostCustomRotation: CustomRotation.create({
+  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+  	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
@@ -181,6 +181,8 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	useEmpowerRuneWeapon: true,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
+	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
+	holdErwArmy: false,
 	useAms: false,
 });
 
@@ -811,6 +813,101 @@ export const P1_FROST_PRE_BIS_PRESET = {
 		{
 			"id": 40715
 		}
+  ]}`),
+};
+
+export const P1_BLOOD_BIS_PRESET = {
+	name: 'P1 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 44006,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 44664,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40557,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40403,
+			"enchant": 3831
+		  },
+		  {
+			"id": 40550,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 40330,
+			"enchant": 3845,
+			"gems": [
+			  42142,
+			  0
+			]
+		  },
+		  {
+			"id": 40552,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 40317,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40556,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 40591,
+			"enchant": 3606
+		  },
+		  {
+			"id": 40075
+		  },
+		  {
+			"id": 39401
+		  },
+		  {
+			"id": 40256
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 40384,
+			"enchant": 3368
+		  },
+		  {},
+		  {
+			"id": 40207
+		  }
   ]}`),
 };
 

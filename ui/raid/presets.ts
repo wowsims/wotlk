@@ -110,7 +110,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: TankDeathknightPresets.BloodTalents.data,
 		specOptions: TankDeathknightPresets.DefaultOptions,
 		consumes: TankDeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood',
+		defaultName: 'Blood Tank',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -127,6 +127,30 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: 'Blood Tank Death Knight',
 		iconUrl: getSpecIcon(Class.ClassDeathknight, 0),
+	},
+	{
+		spec: Spec.SpecDeathknight,
+		rotation: DeathknightPresets.DefaultBloodRotation,
+		talents: DeathknightPresets.BloodTalents.data,
+		specOptions: DeathknightPresets.DefaultBloodOptions,
+		consumes: DeathknightPresets.DefaultConsumes,
+		defaultName: 'Blood DPS',
+		defaultFactionRaces: {
+			[Faction.Unknown]: Race.RaceUnknown,
+			[Faction.Alliance]: Race.RaceHuman,
+			[Faction.Horde]: Race.RaceOrc,
+		},
+		defaultGear: {
+			[Faction.Unknown]: {},
+			[Faction.Alliance]: {
+				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+			},
+			[Faction.Horde]: {
+				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+			},
+		},
+		tooltip: 'Blood DPS Death Knight',
+		iconUrl: getSpecIcon(Class.ClassDeathknight, 3),
 	},
 	{
 		spec: Spec.SpecDeathknight,
@@ -178,31 +202,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		tooltip: 'Dual-Wield Unholy DK',
 		iconUrl: getSpecIcon(Class.ClassDeathknight, 2),
 	},
-	//{
-	//	spec: Spec.SpecDeathknight,
-	//	rotation: DeathknightPresets.DefaultBloodRotation,
-	//	talents: DeathknightPresets.BloodTalents.data,
-	//	specOptions: DeathknightPresets.DefaultBloodOptions,
-	//	consumes: DeathknightPresets.DefaultConsumes,
-	//	defaultName: 'Blood Dps DK',
-	//	defaultFactionRaces: {
-	//		[Faction.Unknown]: Race.RaceUnknown,
-	//		[Faction.Alliance]: Race.RaceHuman,
-	//		[Faction.Horde]: Race.RaceTroll,
-	//	},
-	//	defaultGear: {
-	//		[Faction.Unknown]: {},
-	//		[Faction.Alliance]: {
-	//			1: DeathknightPresets.P1_UNHOLY_2H_BIS_PRESET.gear,
-	//		},
-	//		[Faction.Horde]: {
-	//			1: DeathknightPresets.P1_UNHOLY_2H_BIS_PRESET.gear,
-	//		},
-	//	},
-	//	otherDefaults: DeathknightPresets.OtherDefaults,
-	//	tooltip: 'Blood Dps DK',
-	//	iconUrl: talentTreeIcons[Class.ClassDeathknight][0],
-	//},
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
