@@ -30,7 +30,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood dps is not implemented.",
+				"Blood DPS is not implemented.",
 				"Frost Rotation logic is not fully tuned yet.",
 				"Army of the Dead scaling needs to be fine-tuned."
 			],

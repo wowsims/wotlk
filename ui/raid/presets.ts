@@ -134,7 +134,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: DeathknightPresets.BloodTalents.data,
 		specOptions: DeathknightPresets.DefaultBloodOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood Dps',
+		defaultName: 'Blood DPS',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
@@ -149,7 +149,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
 			},
 		},
-		tooltip: 'Blood Dps Death Knight',
+		tooltip: 'Blood DPS Death Knight',
 		iconUrl: getSpecIcon(Class.ClassDeathknight, 3),
 	},
 	{

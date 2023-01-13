@@ -328,6 +328,10 @@ export function getSpecIcon(klass: Class, specNumber: number, size: IconSizes = 
 export function getTalentTreeIcon(spec: Spec, talentsString: string, size: IconSizes = IconSizes.Medium): string {
 	let specNumber = getTalentTree(talentsString);
 
+	// Blood DPS DK
+	if (spec == Spec.SpecDeathknight && specNumber == 0)
+		specNumber += 3;
+
 	// Cat Druid and Smite Priest are being considered a "4th spec"
 	if (spec == Spec.SpecFeralDruid)
 		specNumber += 2;
