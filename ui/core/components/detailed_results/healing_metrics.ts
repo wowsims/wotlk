@@ -1,6 +1,4 @@
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { ActionMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
-import { bucket } from '../core/utils.js';
+import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';

@@ -1,6 +1,6 @@
-import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { ActionMetrics, UnitMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
+import { ActionId } from '../../proto_utils/action_id.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 

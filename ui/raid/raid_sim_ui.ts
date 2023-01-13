@@ -1,4 +1,4 @@
-import { DetailedResults } from "../core/components/detailed_results.js";
+import { EmbeddedDetailedResults } from "../core/components/detailed_results.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 
@@ -130,7 +130,7 @@ export class RaidSimUI extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new DetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addLogTab() {
