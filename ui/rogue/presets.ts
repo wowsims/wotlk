@@ -5,6 +5,7 @@ import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -70,9 +71,260 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodMegaMammothMeal,
 });
 
+export const P2_PRESET_ASSASSINATION = {
+	name: 'P2 Assassination',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 46125,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  39999
+			]
+		  },
+		  {
+			"id": 45517,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 45245,
+			"enchant": 3808,
+			"gems": [
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45461,
+			"enchant": 3605,
+			"gems": [
+			  40053
+			]
+		  },
+		  {
+			"id": 45473,
+			"enchant": 3832,
+			"gems": [
+			  40053,
+			  42702,
+			  39999
+			]
+		  },
+		  {
+			"id": 45611,
+			"enchant": 3845,
+			"gems": [
+			  40053,
+			  0
+			]
+		  },
+		  {
+			"id": 46124,
+			"enchant": 3604,
+			"gems": [
+			  40003,
+			  0
+			]
+		  },
+		  {
+			"id": 46095,
+			"enchant": 3599,
+			"gems": [
+			  39999,
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45536,
+			"enchant": 3823,
+			"gems": [
+			  39999,
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45564,
+			"enchant": 3606,
+			"gems": [
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45608,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 45456,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 45609
+		  },
+		  {
+			"id": 46038
+		  },
+		  {
+			"id": 45484,
+			"enchant": 3789,
+			"gems": [
+			  40003
+			]
+		  },
+		  {
+			"id": 45484,
+			"enchant": 3789,
+			"gems": [
+			  40003
+			]
+		  },
+		  {
+			"id": 45570,
+			"enchant": 3608
+		  }
+	]}`),
+};
+
+export const P2_PRESET_COMBAT = {
+	name: 'P2 Combat',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 46125,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  39999
+			]
+		  },
+		  {
+			"id": 45517,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 46127,
+			"enchant": 3808,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 45461,
+			"enchant": 3605,
+			"gems": [
+			  40053
+			]
+		  },
+		  {
+			"id": 45473,
+			"enchant": 3832,
+			"gems": [
+			  40053,
+			  42702,
+			  39999
+			]
+		  },
+		  {
+			"id": 45611,
+			"enchant": 3845,
+			"gems": [
+			  40044,
+			  0
+			]
+		  },
+		  {
+			"id": 46043,
+			"enchant": 3604,
+			"gems": [
+			  39999,
+			  40053,
+			  0
+			]
+		  },
+		  {
+			"id": 46095,
+			"enchant": 3599,
+			"gems": [
+			  39999,
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45536,
+			"enchant": 3823,
+			"gems": [
+			  39999,
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45564,
+			"enchant": 3606,
+			"gems": [
+			  39999,
+			  39999
+			]
+		  },
+		  {
+			"id": 45608,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 46048,
+			"gems": [
+			  39999
+			]
+		  },
+		  {
+			"id": 45609
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 45132,
+			"enchant": 3789,
+			"gems": [
+			  40053
+			]
+		  },
+		  {
+			"id": 45484,
+			"enchant": 3789,
+			"gems": [
+			  40003
+			]
+		  },
+		  {
+			"id": 45296,
+			"gems": [
+			  40053
+			]
+		  }
+	]}`),
+};
+
 export const PRERAID_PRESET_ASSASSINATION = {
 	name: 'Pre-Raid Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42550,
@@ -162,9 +414,10 @@ export const PRERAID_PRESET_ASSASSINATION = {
 };
 
 export const PRERAID_PRESET_COMBAT = {
-  name: 'Pre-Raid Combat',
-  tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-  gear: EquipmentSpec.fromJsonString(`{"items": [
+	name: 'Pre-Raid Combat',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 42550,
 			"enchant": 3817,
@@ -264,6 +517,7 @@ export const PRERAID_PRESET_COMBAT = {
 export const P1_PRESET_ASSASSINATION = {
 	name: 'P1 Assassination',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
 			"id": 40499,
@@ -360,6 +614,7 @@ export const P1_PRESET_ASSASSINATION = {
 export const P1_PRESET_COMBAT = {
 	name: 'P1 Combat',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40499,
