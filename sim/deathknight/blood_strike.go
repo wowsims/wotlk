@@ -9,6 +9,7 @@ var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
+	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
 	rs := &RuneSpell{}
 	conf := core.SpellConfig{
@@ -57,7 +58,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.OnResult(sim, result)
+				spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 				dk.threatOfThassarianProc(sim, result, dk.BloodStrikeOhHit)
 				dk.LastOutcome = result.Outcome
 
@@ -74,12 +75,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 
 	if isMH { // offhand doesn't need GCD
 		rs.Refundable = true
-		rs.ConvertType = RuneTypeBlood
-		if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
-			rs.DeathConvertChance = 1.0
-		} else {
-			rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
-		}
 	} else {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}

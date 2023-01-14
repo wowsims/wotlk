@@ -55,7 +55,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.OnResult(sim, result)
+				spell.SpendRefundableCost(sim, result)
 				dk.LastOutcome = result.Outcome
 				dk.threatOfThassarianProc(sim, result, dk.FrostStrikeOhHit)
 			}

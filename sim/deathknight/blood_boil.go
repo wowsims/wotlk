@@ -41,7 +41,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 				result := spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 				if aoeUnit == dk.CurrentTarget {
-					rs.OnResult(sim, result)
+					rs.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
 			}

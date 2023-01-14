@@ -225,21 +225,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
 	}
 
-	if spell.Cost == nil {
-		switch spell.ResourceType {
-		case stats.RunicPower:
-			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-		case stats.BloodRune:
-			spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-		case stats.FrostRune:
-			spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-		case stats.UnholyRune:
-			spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-		case stats.DeathRune:
-			spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-		}
-	}
-
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
 		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}

@@ -237,14 +237,6 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	dk.UnholyPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
 }
 
-func (dk *Deathknight) GetModifiedGCD() time.Duration {
-	if dk.UnholyPresenceAura.IsActive() {
-		return time.Second
-	} else {
-		return core.GCDDefault
-	}
-}
-
 func (dk *Deathknight) registerPresences() {
 	presenceTimer := dk.NewTimer()
 	dk.registerBloodPresenceAura(presenceTimer)

@@ -11,6 +11,7 @@ var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
+	deathConvertChance := float64(dk.Talents.DeathRuneMastery) / 3
 
 	var healthMetrics *core.ResourceMetrics
 	if isMH {
@@ -28,6 +29,12 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 			FrostRuneCost:  1,
 			UnholyRuneCost: 1,
 			RunicPowerGain: 15 + 2.5*float64(dk.Talents.Dirge),
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			IgnoreHaste: true,
 		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
@@ -58,7 +65,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.OnResult(sim, result)
+				spell.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
 				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
@@ -75,21 +82,10 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 	}
 
 	if isMH {
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
-			IgnoreHaste: true,
-		}
 		rs.Refundable = true
-		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
-		if dk.Talents.DeathRuneMastery == 3 {
-			rs.DeathConvertChance = 1.0
-		} else {
-			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
-		}
 	} else {
 		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
 	return dk.RegisterSpell(rs, conf)

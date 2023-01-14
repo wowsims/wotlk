@@ -54,7 +54,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.OnResult(sim, result)
+				spell.SpendRefundableCost(sim, result)
 				dk.threatOfThassarianProc(sim, result, dk.PlagueStrikeOhHit)
 				dk.LastOutcome = result.Outcome
 				if result.Landed() {

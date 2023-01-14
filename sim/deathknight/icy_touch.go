@@ -50,7 +50,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 				dk.mercilessCombatBonus(sim)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			rs.OnResult(sim, result)
+			spell.SpendRefundableCost(sim, result)
 
 			dk.LastOutcome = result.Outcome
 			if result.Landed() {

@@ -12,6 +12,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
 	diseaseConsumptionChance := []float64{1.0, 0.67, 0.34, 0.0}[dk.Talents.Annihilation]
+	deathConvertChance := float64(dk.Talents.DeathRuneMastery) / 3
 
 	rs := &RuneSpell{}
 	conf := core.SpellConfig{
@@ -61,7 +62,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.OnResult(sim, result)
+				rs.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
 				dk.LastOutcome = result.Outcome
 				dk.threatOfThassarianProc(sim, result, dk.ObliterateOhHit)
 
@@ -81,12 +82,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 
 	if isMH {
 		rs.Refundable = true
-		rs.ConvertType = RuneTypeFrost | RuneTypeUnholy
-		if dk.Talents.DeathRuneMastery == 3 {
-			rs.DeathConvertChance = 1.0
-		} else {
-			rs.DeathConvertChance = float64(dk.Talents.DeathRuneMastery) * 0.33
-		}
 	} else {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}

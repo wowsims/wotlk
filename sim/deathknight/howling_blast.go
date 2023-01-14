@@ -57,7 +57,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				result := spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 				if aoeUnit == dk.CurrentTarget {
-					howlingBlast.OnResult(sim, result)
+					howlingBlast.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
 				if rpBonus > 0 && result.Landed() {

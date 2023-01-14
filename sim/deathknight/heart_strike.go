@@ -56,7 +56,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 						dk.RuneWeapon.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
 					}
 				} else {
-					rs.OnResult(sim, result)
+					spell.SpendRefundableCost(sim, result)
 
 					if dk.Env.GetNumTargets() > 1 {
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))

@@ -9,6 +9,7 @@ var PestilenceActionID = core.ActionID{SpellID: 50842}
 
 func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
 	rs := &RuneSpell{
 		Refundable: true,
@@ -40,7 +41,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
 
 				if aoeUnit == dk.CurrentTarget {
-					rs.OnResult(sim, result)
+					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
@@ -75,12 +76,6 @@ func (dk *Deathknight) registerPestilenceSpell() {
 			}
 		},
 	})
-	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
-		rs.DeathConvertChance = 1.0
-	} else {
-		rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
-	}
-	rs.ConvertType = RuneTypeBlood
 }
 func (dk *Deathknight) registerDrwPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
