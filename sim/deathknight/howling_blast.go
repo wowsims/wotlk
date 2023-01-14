@@ -34,7 +34,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
-				Duration: 8.0 * time.Second,
+				Duration: 8 * time.Second,
 			},
 		},
 
