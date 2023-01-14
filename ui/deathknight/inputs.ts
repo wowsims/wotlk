@@ -310,7 +310,7 @@ export const Presence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight,
 export const DrwDiseasesInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DrwDiseases>({
 	fieldName: 'drwDiseases',
 	label: 'DRW Disease',
-	labelTooltip: 'Chose how to apply diseases for Dancing Rune Weapon.<br><ul><li>Do not apply: Dont apply any diseases with DRW</li><li>IT + PS: Always follow up DRW with an IT + PS</li><li>Pestilence: Follow up DRW with a Pestilence (only worth with glyph of disease)</li></ul>',
+	labelTooltip: 'Chose how to apply diseases for Dancing Rune Weapon.',
 	values: [
 		{ name: 'Do not apply', value: DrwDiseases.DoNotApply },
 		{ name: 'IT + PS', value: DrwDiseases.Normal },
