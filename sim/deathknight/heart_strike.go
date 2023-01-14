@@ -49,9 +49,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 					rs.OnResult(sim, result)
 
 					if dk.Env.GetNumTargets() > 1 {
-						if sim.Log != nil {
-							sim.Log("Should strike off target with Heart Strike")
-						}
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
 					}
 					dk.LastOutcome = result.Outcome
