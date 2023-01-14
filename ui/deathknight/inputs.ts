@@ -4,6 +4,7 @@ import { ActionId } from '../core/proto_utils/action_id.js';
 import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
+	Deathknight_Rotation_DrwDiseases as DrwDiseases,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation_Presence as StartingPresence,
@@ -13,6 +14,7 @@ import {
 	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
 	Deathknight_Rotation as DeathKnightRotation,
 	Deathknight_Options as DeathKnightOptions,
+	DeathknightMajorGlyph,
 } from '../core/proto/deathknight.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -68,6 +70,14 @@ export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec
 	fieldName: 'precastHornOfWinter',
 	label: 'Pre-Cast Horn of Winter',
 	labelTooltip: 'Precast Horn of Winter for 10 extra runic power before fight.',
+});
+
+export const DrwPestiApply = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'drwPestiApply',
+	label: 'DRW Pestilence Add',
+	labelTooltip: 'There is currently an interaction with DRW and pestilence where you can use pestilence to force DRW to apply diseases if they are already applied by the DK. It only works with Glyph of Disease and if there is an off target. This toggle forces the sim to assume there is an off target.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0 && (player.getGlyphs().major1 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major2 == DeathknightMajorGlyph.GlyphOfDisease|| player.getGlyphs().major3 == DeathknightMajorGlyph.GlyphOfDisease),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const DiseaseRefreshDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
@@ -297,6 +307,19 @@ export const Presence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const DrwDiseasesInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DrwDiseases>({
+	fieldName: 'drwDiseases',
+	label: 'DRW Disease',
+	labelTooltip: 'Chose how to apply diseases for Dancing Rune Weapon.<br><ul><li>Do not apply: Dont apply any diseases with DRW</li><li>IT + PS: Always follow up DRW with an IT + PS</li><li>Pestilence: Follow up DRW with a Pestilence (only worth with glyph of disease)</li></ul>',
+	values: [
+		{ name: 'Do not apply', value: DrwDiseases.DoNotApply },
+		{ name: 'IT + PS', value: DrwDiseases.Normal },
+		{ name: 'Pestilence', value: DrwDiseases.Pestilence },
+	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.SpecDeathknight, CustomSpellOption>({
 	fieldName: 'frostCustomRotation',
 	numColumns: 4,
@@ -336,6 +359,7 @@ export const DeathKnightRotationConfig = {
 		BloodTapGhoulFrenzy,
 		UseGargoyle,
 		UseEmpowerRuneWeapon,
+		DrwDiseasesInput,
 		HoldErwArmy,
 		BloodTapInput,
 		ArmyOfTheDeadInput,

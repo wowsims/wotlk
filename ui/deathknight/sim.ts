@@ -154,6 +154,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.DrwPestiApply,
 					DeathKnightInputs.SelfUnholyFrenzy,
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,

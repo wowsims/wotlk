@@ -143,6 +143,12 @@ enum DeathknightMinorGlyph {
 
 message Deathknight {
 	message Rotation {
+		enum DrwDiseases {
+			DoNotApply = 0;
+			Normal = 1;
+			Pestilence = 2;
+		}
+
 		enum ArmyOfTheDead {
 			DoNotUse = 0;
 			PreCast = 1;
@@ -242,6 +248,8 @@ message Deathknight {
 		bool nerfed_gargoyle = 24;
 
 		Presence gargoyle_presence = 25;
+
+		DrwDiseases drw_diseases = 26;
 	}
 	Rotation rotation = 1;
 	
@@ -253,6 +261,8 @@ message Deathknight {
 		bool precast_horn_of_winter = 4;
 
 		RaidTarget unholy_frenzy_target = 5;
+
+		bool drw_pesti_apply = 6;
 	}
 	Options options = 3;
 }

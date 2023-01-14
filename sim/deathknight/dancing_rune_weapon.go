@@ -35,7 +35,8 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil.Spell:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
-				// TODO: Pestilence
+			case dk.Pestilence.Spell:
+				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
 			}
 		},
 	})
@@ -94,6 +95,8 @@ type RuneWeaponPet struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
+	Pestilence *core.Spell
+
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
@@ -103,6 +106,7 @@ type RuneWeaponPet struct {
 
 func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwDiseaseDots()
+	runeWeapon.dkOwner.registerDrwPestilenceSpell()
 
 	runeWeapon.dkOwner.registerDrwIcyTouchSpell()
 	runeWeapon.dkOwner.registerDrwPlagueStrikeSpell()
