@@ -8,12 +8,12 @@ This project is licensed with MIT license. We request that anyone using this sof
 
 [Support our devs via Patreon.](https://www.patreon.com/wowsims)
 
-# Installation
+# Downloading Sim
 
-Links for latest:
-- [Windows](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-windows.exe.zip)
-- [MacOS](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-darwin.zip)
-- [Linux](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-linux.zip)
+Links for latest Sim build:
+- [Windows Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-windows.exe.zip)
+- [MacOS Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-darwin.zip)
+- [Linux Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-linux.zip)
 
 Alternatively, you can choose from a specific relase on the [Releases](https://github.com/wowsims/wotlk/releases) page and click the suitable link under "Assets"
 # Local Dev Installation
