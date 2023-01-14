@@ -49,6 +49,9 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 					rs.OnResult(sim, result)
 
 					if dk.Env.GetNumTargets() > 1 {
+						if sim.Log != nil {
+							sim.Log("Should strike off target with Heart Strike")
+						}
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
 					}
 					dk.LastOutcome = result.Outcome
@@ -80,9 +83,15 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 		rs.Spell = dk.RuneWeapon.RegisterSpell(conf)
 		return rs
 	} else {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
-		}, nil)
+		if isMainTarget {
+			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+				return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
+			}, nil)
+		} else {
+			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+				return true
+			}, nil)
+		}
 	}
 }
 
@@ -96,6 +105,10 @@ func (dk *Deathknight) registerHeartStrikeSpell() {
 }
 
 func (dk *Deathknight) registerDrwHeartStrikeSpell() {
+	if !dk.Talents.HeartStrike {
+		return
+	}
+
 	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true).Spell
 	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true).Spell
 }

@@ -102,7 +102,7 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 			// DRW and Pestilence have a weird interaction where the drws Dots can be applied
 			// with the spread effect from pestilence if the target has the Dks dots up but it
 			// only works if there is a valid target for spread mechanic to happen (2+ mobs)
-			shouldApplyDrwDots := len(sim.Encounter.Targets) > 1 || dk.Inputs.DrwPestiApply
+			shouldApplyDrwDots := dk.Env.GetNumTargets() > 1 || dk.Inputs.DrwPestiApply
 			for _, aoeTarget := range sim.Encounter.Targets {
 				aoeUnit := &aoeTarget.Unit
 
