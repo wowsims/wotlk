@@ -8,7 +8,18 @@ This project is licensed with MIT license. We request that anyone using this sof
 
 [Support our devs via Patreon.](https://www.patreon.com/wowsims)
 
-# Installation
+# Downloading Sim
+
+Links for latest Sim build:
+- [Windows Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-windows.exe.zip)
+- [MacOS Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-darwin.zip)
+- [Linux Sim](https://github.com/wowsims/wotlk/releases/latest/download/wowsimwotlk-amd64-linux.zip)
+
+Then unzip the downloaded file, then open the unzipped file to open the sim in your browser!
+
+Alternatively, you can choose from a specific relase on the [Releases](https://github.com/wowsims/wotlk/releases) page and click the suitable link under "Assets"
+# Local Dev Installation
+
 This project has dependencies on Go >=1.18, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
 
 ## Ubuntu
