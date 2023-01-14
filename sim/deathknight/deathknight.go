@@ -29,6 +29,7 @@ type DeathknightInputs struct {
 	PrecastGhoulFrenzy  bool
 	PrecastHornOfWinter bool
 	PetUptime           float64
+	DrwPestiApply       bool
 
 	// Rotation Vars
 	RefreshHornOfWinter bool

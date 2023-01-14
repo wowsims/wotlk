@@ -133,7 +133,10 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 	if sim.GetRemainingDuration() < 20*time.Second {
 		return true
 	}
-	if dk.NormalCurrentFrostRunes() < 1 || dk.NormalCurrentUnholyRunes() < 1 {
+	if !dk.sr.hasGod && dk.NormalCurrentFrostRunes() < 1 || dk.NormalCurrentUnholyRunes() < 1 {
+		return false
+	}
+	if dk.sr.hasGod && dk.CurrentBloodRunes() < 1 {
 		return false
 	}
 	if !dk.br.drwSnapshot.CanSnapShot(sim, castTime) {

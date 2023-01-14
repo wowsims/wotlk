@@ -15,7 +15,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 
 	rs := &RuneSpell{}
 	conf := core.SpellConfig{
-		ActionID:    HeartStrikeActionID,
+		ActionID:    HeartStrikeActionID.WithTag(core.TernaryInt32(isMainTarget, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
@@ -80,9 +80,15 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 		rs.Spell = dk.RuneWeapon.RegisterSpell(conf)
 		return rs
 	} else {
-		return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-			return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
-		}, nil)
+		if isMainTarget {
+			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+				return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
+			}, nil)
+		} else {
+			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
+				return true
+			}, nil)
+		}
 	}
 }
 
@@ -96,6 +102,10 @@ func (dk *Deathknight) registerHeartStrikeSpell() {
 }
 
 func (dk *Deathknight) registerDrwHeartStrikeSpell() {
+	if !dk.Talents.HeartStrike {
+		return
+	}
+
 	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true).Spell
 	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true).Spell
 }

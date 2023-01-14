@@ -26,6 +26,7 @@ import {
 	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
+	Deathknight_Rotation_DrwDiseases,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -99,11 +100,11 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305120530003303231023001351--230130305003',
+		talentsString: '2305120530003303231023001351--230220305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
-			major3: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -126,10 +127,11 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	oblitDelayDuration: 1000.0,
-	//oblitdelay is here as a temporary fix
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: false,
@@ -151,6 +153,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 1000.0,
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   	frostCustomRotation: CustomRotation.create({
 		spells: [
@@ -168,6 +171,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
@@ -184,9 +188,11 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
 	holdErwArmy: false,
 	useAms: false,
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,

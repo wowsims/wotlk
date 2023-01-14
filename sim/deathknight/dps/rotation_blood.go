@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -23,13 +24,31 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		NewAction(dk.RotationActionCallback_HS).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_DRW).
-		NewAction(dk.RotationActionCallback_IT).
-		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_HS)
+		NewAction(dk.RotationActionCallback_DRW)
+
+	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_Pesti).
+			NewAction(dk.RotationActionCallback_DS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS)
+	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_IT).
+			NewAction(dk.RotationActionCallback_PS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS)
+	} else {
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_DS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS)
+	}
 
 	dk.RotationSequence.NewAction(dk.RotationActionCallback_BloodRotation)
 }
@@ -37,7 +56,10 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
-	if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
+	if !dk.blDiseaseCheck(sim, target, dk.RaiseDead, true, 1) {
+		dk.blRecastDiseasesSequence(sim)
+		return sim.CurrentTime
+	} else if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
 		if dk.DancingRuneWeapon.IsReady(sim) {
 			dk.RotationSequence.Clear()
 
@@ -45,11 +67,17 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_UF)
 			}
 
-			dk.RotationSequence.
-				NewAction(dk.RotationActionCallback_DRW).
-				NewAction(dk.RotationActionBL_IT_Custom).
-				NewAction(dk.RotationActionBL_PS_Custom).
-				NewAction(dk.RotationAction_ResetToBloodMain)
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_DRW)
+
+			if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
+				dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti)
+			} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
+				dk.RotationSequence.
+					NewAction(dk.RotationActionBL_IT_Custom).
+					NewAction(dk.RotationActionBL_PS_Custom)
+			}
+
+			dk.RotationSequence.NewAction(dk.RotationAction_ResetToBloodMain)
 		} else {
 			dk.blAfterDrwSequence(sim)
 		}
@@ -105,9 +133,15 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
+	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
+		dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti)
+	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
+		dk.RotationSequence.
+			NewAction(dk.RotationActionBL_IT_Custom).
+			NewAction(dk.RotationActionBL_PS_Custom)
+	}
+
 	dk.RotationSequence.
-		NewAction(dk.RotationActionBL_IT_Custom).
-		NewAction(dk.RotationActionBL_PS_Custom).
 		NewAction(dk.RotationAction_ResetToBloodMain)
 }
 

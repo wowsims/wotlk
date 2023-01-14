@@ -6,6 +6,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var PestilenceActionID = core.ActionID{SpellID: 50842}
+
 func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
@@ -15,7 +17,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 	}
 
 	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 50842},
+		ActionID:     PestilenceActionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
 		ResourceType: stats.RunicPower,
@@ -85,4 +87,68 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
 	}
 	rs.ConvertType = RuneTypeBlood
+}
+func (dk *Deathknight) registerDrwPestilenceSpell() {
+	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
+	dk.RuneWeapon.Pestilence = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    PestilenceActionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+
+		DamageMultiplier: 0,
+		ThreatMultiplier: 0,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// DRW and Pestilence have a weird interaction where the drws Dots can be applied
+			// with the spread effect from pestilence if the target has the Dks dots up but it
+			// only works if there is a valid target for spread mechanic to happen (2+ mobs)
+			shouldApplyDrwDots := dk.Env.GetNumTargets() > 1 || dk.Inputs.DrwPestiApply
+			for _, aoeTarget := range sim.Encounter.Targets {
+				aoeUnit := &aoeTarget.Unit
+
+				// Zero damage spell with a Hit mechanic, thanks blizz!
+				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
+
+				if result.Landed() {
+					// Main target
+					if aoeUnit == dk.CurrentTarget {
+						if hasGlyphOfDisease {
+							// Update expire instead of Apply to keep old snapshotted value
+							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
+								if dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].IsActive() {
+									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
+								} else if shouldApplyDrwDots {
+									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+								}
+							}
+
+							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
+								if dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].IsActive() {
+									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
+								} else if shouldApplyDrwDots {
+									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+								}
+							}
+						} else if shouldApplyDrwDots {
+							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
+								dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+							}
+
+							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
+								dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+							}
+						}
+					} else {
+						// Apply diseases on every other target
+						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+						}
+						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+							dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+						}
+					}
+				}
+			}
+		},
+	})
 }

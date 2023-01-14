@@ -306,6 +306,13 @@ export class ActionId {
 					name += ' (Shadow)';
 				}
 				break;
+			case 'Heart Strike':
+				/*if (this.tag == 1) {
+					name += ' (Physical)';
+				} else */if (this.tag == 2) {
+					name += ' (Off-target)';
+				}
+				break;
 			case 'Frost Strike':
 			case 'Plague Strike':
 			case 'Blood Strike':
