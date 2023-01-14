@@ -33,12 +33,12 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 	rime := dk.Rime()
 	if canCastSpell && dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
 		return dk.RaiseDead
+	} else if canCastSpell && dk.HowlingBlast.CanCast(sim) && rime && dk.CurrentRunicPower() <= 100 {
+		return dk.HowlingBlast
 	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && km {
 		return dk.FrostStrike
 	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
 		return dk.FrostStrike
-	} else if canCastSpell && dk.HowlingBlast.CanCast(sim) && rime {
-		return dk.HowlingBlast
 	} else if canCastAbility && dk.FrostStrike.CanCast(sim) {
 		return dk.FrostStrike
 	} else if canCastSpell && dk.HornOfWinter.CanCast(sim) {
