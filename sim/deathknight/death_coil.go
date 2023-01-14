@@ -9,7 +9,7 @@ var DeathCoilActionID = core.ActionID{SpellID: 49895}
 
 func (dk *Deathknight) registerDeathCoilSpell() {
 	bonusFlatDamage := 443 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
-	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,

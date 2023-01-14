@@ -11,11 +11,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
-	rs := &RuneSpell{
-		Refundable: true,
-	}
-
-	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50842},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -23,6 +19,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
 			RunicPowerGain: 10,
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

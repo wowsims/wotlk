@@ -51,7 +51,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 	damageTakenMult := 1.0 - 0.01*float64(dk.Talents.ImprovedFrostPresence)
 
-	dk.BloodPresence = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.BloodPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 50689},
 
 		RuneCost: core.RuneCostOptions{
@@ -112,7 +112,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
-	dk.FrostPresence = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.FrostPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48263},
 
 		RuneCost: core.RuneCostOptions{
@@ -159,7 +159,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
 
-	dk.UnholyPresence = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.UnholyPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48265},
 
 		RuneCost: core.RuneCostOptions{
@@ -185,7 +185,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			gcdAffectedSpells = core.MapSlice(core.FilterSlice([]*RuneSpell{
+			gcdAffectedSpells = core.FilterSlice([]*core.Spell{
 				dk.HowlingBlast,
 				dk.ScourgeStrike,
 				dk.Obliterate,
@@ -208,8 +208,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 				dk.DeathCoil,
 				dk.ArmyOfTheDead,
 				dk.SummonGargoyle,
-			}, func(spell *RuneSpell) bool { return spell != nil }),
-				func(spell *RuneSpell) *core.Spell { return spell.Spell })
+			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range gcdAffectedSpells {

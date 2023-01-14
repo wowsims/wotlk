@@ -28,8 +28,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 
 	glyphHealBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneTap), 0.01, 0.0)
 
-	rs := &RuneSpell{}
-	dk.RuneTap = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.RuneTap = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -47,17 +46,16 @@ func (dk *Deathknight) registerRuneTapSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			maxHealth := dk.MaxHealth()
 			dk.GainHealth(sim, (maxHealth*(0.1+glyphHealBonus))*(1.0+healthGainMult)*(1.0+core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0)), healthMetrics)
-			rs.DoCost(sim)
 		},
 	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.RuneTap.Spell,
+			Spell:    dk.RuneTap,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityDefault,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.RuneTap.CanCast(sim)
+				return dk.RuneTap.CanCast(sim, nil)
 			},
 		})
 	}

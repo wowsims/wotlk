@@ -148,12 +148,8 @@ func (dk *Deathknight) annihilationCritBonus() float64 {
 	return 1.0 * float64(dk.Talents.Annihilation)
 }
 
-func (dk *Deathknight) runeSpellComp(spell *core.Spell, hitSpell *RuneSpell) bool {
-	if hitSpell == nil {
-		return false
-	}
-
-	return hitSpell.Spell == spell
+func (dk *Deathknight) runeSpellComp(spell *core.Spell, hitSpell *core.Spell) bool {
+	return hitSpell == spell
 }
 
 func (dk *Deathknight) applyKillingMachine() {
@@ -175,19 +171,19 @@ func (dk *Deathknight) applyKillingMachine() {
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.IcyTouch.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.IcyTouch.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
 			if dk.HowlingBlast != nil {
-				dk.HowlingBlast.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+				dk.HowlingBlast.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.IcyTouch.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.IcyTouch.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			if dk.HowlingBlast != nil {
-				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				dk.HowlingBlast.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
 	})
@@ -223,8 +219,7 @@ func (dk *Deathknight) applyDeathchill() {
 
 	actionID := core.ActionID{SpellID: 49796}
 
-	rs := &RuneSpell{}
-	dk.Deathchill = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.Deathchill = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -244,23 +239,23 @@ func (dk *Deathknight) applyDeathchill() {
 		ActionID: actionID,
 		Duration: time.Second * 30.0,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.IcyTouch.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.ObliterateMhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.ObliterateOhHit.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.IcyTouch.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.ObliterateMhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			dk.ObliterateOhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
 			if dk.HowlingBlast != nil {
-				dk.HowlingBlast.Spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+				dk.HowlingBlast.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.IcyTouch.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.ObliterateMhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.ObliterateOhHit.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.IcyTouch.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeMhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.FrostStrikeOhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.ObliterateMhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			dk.ObliterateOhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			if dk.HowlingBlast != nil {
-				dk.HowlingBlast.Spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				dk.HowlingBlast.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -338,7 +333,7 @@ func (dk *Deathknight) threatOfThassarianOutcomeApplier(spell *core.Spell) core.
 	}
 }
 
-func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, result *core.SpellResult, ohSpell *RuneSpell) {
+func (dk *Deathknight) threatOfThassarianProc(sim *core.Simulation, result *core.SpellResult, ohSpell *core.Spell) {
 	if dk.threatOfThassarianWillProc(sim) && dk.GetOHWeapon() != nil {
 		ohSpell.Cast(sim, result.Target)
 	}

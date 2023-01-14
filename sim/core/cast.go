@@ -73,12 +73,13 @@ type CastSuccessFunc func(*Simulation, *Unit) bool
 func (spell *Spell) makeCastFunc(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
 	return spell.wrapCastFuncInit(config,
 		spell.wrapCastFuncExtraCond(config,
-			spell.wrapCastFuncResources(config,
-				spell.wrapCastFuncHaste(config,
-					spell.wrapCastFuncGCD(config,
-						spell.wrapCastFuncCooldown(config,
-							spell.wrapCastFuncSharedCooldown(config,
-								spell.makeCastFuncWait(config, onCastComplete))))))))
+			spell.wrapCastFuncCDsReady(config,
+				spell.wrapCastFuncResources(config,
+					spell.wrapCastFuncHaste(config,
+						spell.wrapCastFuncGCD(config,
+							spell.wrapCastFuncCooldown(config,
+								spell.wrapCastFuncSharedCooldown(config,
+									spell.makeCastFuncWait(config, onCastComplete)))))))))
 }
 
 func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
@@ -122,6 +123,20 @@ func (spell *Spell) wrapCastFuncExtraCond(config CastConfig, onCastComplete Cast
 				return false
 			}
 		}
+	}
+}
+
+func (spell *Spell) wrapCastFuncCDsReady(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
+	if spell.Unit.PseudoStats.GracefulCastCDFailures {
+		return func(sim *Simulation, target *Unit) bool {
+			if spell.IsReady(sim) {
+				return onCastComplete(sim, target)
+			} else {
+				return false
+			}
+		}
+	} else {
+		return onCastComplete
 	}
 }
 

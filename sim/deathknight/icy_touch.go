@@ -20,10 +20,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
 	sigilOfTheUnfalteringKnight := dk.sigilOfTheUnfalteringKnight()
 
-	rs := &RuneSpell{
-		Refundable: true,
-	}
-	dk.IcyTouch = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.IcyTouch = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -31,6 +28,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		RuneCost: core.RuneCostOptions{
 			FrostRuneCost:  1,
 			RunicPowerGain: 10 + 2.5*float64(dk.Talents.ChillOfTheGrave),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

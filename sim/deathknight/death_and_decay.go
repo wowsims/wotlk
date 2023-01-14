@@ -11,7 +11,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 	actionID := core.ActionID{SpellID: 49938}
 	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
 
-	dk.DeathAndDecay = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -62,5 +62,5 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			}
 		},
 	})
-	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay.Spell
+	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay
 }

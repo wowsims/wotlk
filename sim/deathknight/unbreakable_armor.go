@@ -35,15 +35,14 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 	})
 
-	rs := &RuneSpell{}
-	dk.UnbreakableArmor = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.UnbreakableArmor = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		RuneCost: core.RuneCostOptions{
+		RuneCost: core.Ternary(dk.Inputs.IsDps, core.RuneCostOptions{}, core.RuneCostOptions{
 			FrostRuneCost:  1,
 			RunicPowerGain: 10,
-		},
+		}),
 		Cast: core.CastConfig{
 			// No GCD
 			CD: core.Cooldown{
@@ -54,20 +53,16 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.UnbreakableArmorAura.Activate(sim)
-
-			if !dk.Inputs.IsDps {
-				rs.DoCost(sim)
-			}
 		},
 	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.UnbreakableArmor.Spell,
+			Spell:    dk.UnbreakableArmor,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityDefault,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.UnbreakableArmor.CanCast(sim)
+				return dk.UnbreakableArmor.CanCast(sim, nil)
 			},
 		})
 	}

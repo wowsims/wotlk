@@ -169,7 +169,7 @@ func (dk *Deathknight) applyScentOfBlood() {
 	}))
 }
 
-func (dk *Deathknight) bloodyStrikesBonus(spell *RuneSpell) float64 {
+func (dk *Deathknight) bloodyStrikesBonus(spell *core.Spell) float64 {
 	if spell == dk.BloodStrike {
 		return []float64{1.0, 1.05, 1.1, 1.15}[dk.Talents.BloodyStrikes]
 	} else if spell == dk.HeartStrike {
@@ -382,7 +382,7 @@ func (dk *Deathknight) applyBloodworms() {
 	}
 
 	// For tracking purposes
-	procSpell := dk.RegisterSpell(nil, core.SpellConfig{
+	procSpell := dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49543},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			// Summon Bloodworms

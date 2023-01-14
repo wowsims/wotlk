@@ -66,107 +66,107 @@ type Deathknight struct {
 	RotationHelper
 
 	Ghoul     *GhoulPet
-	RaiseDead *RuneSpell
+	RaiseDead *core.Spell
 
 	Gargoyle                 *GargoylePet
-	SummonGargoyle           *RuneSpell
+	SummonGargoyle           *core.Spell
 	GargoyleSummonDelay      time.Duration
 	OnGargoyleStartFirstCast func()
 
 	RuneWeapon        *RuneWeaponPet
-	DancingRuneWeapon *RuneSpell
+	DancingRuneWeapon *core.Spell
 
-	ArmyOfTheDead *RuneSpell
+	ArmyOfTheDead *core.Spell
 	ArmyGhoul     []*GhoulPet
 
 	Bloodworm []*BloodwormPet
 
 	Presence Presence
 
-	IcyTouch   *RuneSpell
-	BloodBoil  *RuneSpell
-	Pestilence *RuneSpell
+	IcyTouch   *core.Spell
+	BloodBoil  *core.Spell
+	Pestilence *core.Spell
 
-	PlagueStrike      *RuneSpell
-	PlagueStrikeMhHit *RuneSpell
-	PlagueStrikeOhHit *RuneSpell
+	PlagueStrike      *core.Spell
+	PlagueStrikeMhHit *core.Spell
+	PlagueStrikeOhHit *core.Spell
 
-	DeathStrike      *RuneSpell
-	DeathStrikeMhHit *RuneSpell
-	DeathStrikeOhHit *RuneSpell
+	DeathStrike      *core.Spell
+	DeathStrikeMhHit *core.Spell
+	DeathStrikeOhHit *core.Spell
 	DeathStrikeHeals []float64
 
-	Obliterate      *RuneSpell
-	ObliterateMhHit *RuneSpell
-	ObliterateOhHit *RuneSpell
+	Obliterate      *core.Spell
+	ObliterateMhHit *core.Spell
+	ObliterateOhHit *core.Spell
 
-	BloodStrike      *RuneSpell
-	BloodStrikeMhHit *RuneSpell
-	BloodStrikeOhHit *RuneSpell
+	BloodStrike      *core.Spell
+	BloodStrikeMhHit *core.Spell
+	BloodStrikeOhHit *core.Spell
 
-	FrostStrike      *RuneSpell
-	FrostStrikeMhHit *RuneSpell
-	FrostStrikeOhHit *RuneSpell
+	FrostStrike      *core.Spell
+	FrostStrikeMhHit *core.Spell
+	FrostStrikeOhHit *core.Spell
 
-	HeartStrike       *RuneSpell
-	HeartStrikeOffHit *RuneSpell
+	HeartStrike       *core.Spell
+	HeartStrikeOffHit *core.Spell
 
-	RuneStrike     *RuneSpell
+	RuneStrike     *core.Spell
 	RuneStrikeAura *core.Aura
 
-	GhoulFrenzy *RuneSpell
+	GhoulFrenzy *core.Spell
 	// Dummy aura for timeline metrics
 	GhoulFrenzyAura *core.Aura
 
 	LastScourgeStrikeDamage float64
-	ScourgeStrike           *RuneSpell
+	ScourgeStrike           *core.Spell
 
-	DeathCoil *RuneSpell
+	DeathCoil *core.Spell
 
-	DeathAndDecay    *RuneSpell
+	DeathAndDecay    *core.Spell
 	DeathAndDecayDot *core.Dot
 
-	HowlingBlast *RuneSpell
+	HowlingBlast *core.Spell
 
 	OtherRelevantStrAgiActive bool
-	HornOfWinter              *RuneSpell
+	HornOfWinter              *core.Spell
 	HornOfWinterAura          *core.Aura
 
 	// "CDs"
-	RuneTap     *RuneSpell
-	MarkOfBlood *RuneSpell
+	RuneTap     *core.Spell
+	MarkOfBlood *core.Spell
 
-	BloodTap     *RuneSpell
+	BloodTap     *core.Spell
 	BloodTapAura *core.Aura
 
-	AntiMagicShell     *RuneSpell
+	AntiMagicShell     *core.Spell
 	AntiMagicShellAura *core.Aura
 
-	EmpowerRuneWeapon *RuneSpell
+	EmpowerRuneWeapon *core.Spell
 
-	UnbreakableArmor     *RuneSpell
+	UnbreakableArmor     *core.Spell
 	UnbreakableArmorAura *core.Aura
 
-	VampiricBlood     *RuneSpell
+	VampiricBlood     *core.Spell
 	VampiricBloodAura *core.Aura
 
-	BoneShield     *RuneSpell
+	BoneShield     *core.Spell
 	BoneShieldAura *core.Aura
 
 	UnholyFrenzy     *core.Spell
 	UnholyFrenzyAura *core.Aura
 
-	IceboundFortitude     *RuneSpell
+	IceboundFortitude     *core.Spell
 	IceboundFortitudeAura *core.Aura
 
-	DeathPact *RuneSpell
+	DeathPact *core.Spell
 
 	// Used only to proc stuff as its free GCD
 	MindFreezeSpell *core.Spell
 
 	// Diseases
-	FrostFeverSpell     *RuneSpell
-	BloodPlagueSpell    *RuneSpell
+	FrostFeverSpell     *core.Spell
+	BloodPlagueSpell    *core.Spell
 	FrostFeverDisease   []*core.Dot
 	BloodPlagueDisease  []*core.Dot
 	FrostFeverExtended  []int
@@ -193,15 +193,15 @@ type Deathknight struct {
 	LastTickTime      time.Duration
 	WanderingPlague   *core.Spell
 
-	Deathchill     *RuneSpell
+	Deathchill     *core.Spell
 	DeathchillAura *core.Aura
 
 	// Presences
-	BloodPresence      *RuneSpell
+	BloodPresence      *core.Spell
 	BloodPresenceAura  *core.Aura
-	FrostPresence      *RuneSpell
+	FrostPresence      *core.Spell
 	FrostPresenceAura  *core.Aura
-	UnholyPresence     *RuneSpell
+	UnholyPresence     *core.Spell
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
@@ -369,7 +369,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
-	return spell == dk.Obliterate.Spell || spell == dk.ScourgeStrike.Spell || spell == dk.DeathStrike.Spell
+	return spell == dk.Obliterate || spell == dk.ScourgeStrike || spell == dk.DeathStrike
 }
 
 func (dk *Deathknight) HasMajorGlyph(glyph proto.DeathknightMajorGlyph) bool {
@@ -426,6 +426,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
 
 	dk.PseudoStats.CanParry = true
+	dk.PseudoStats.GracefulCastCDFailures = true
 
 	// Base dodge unaffected by Diminishing Returns
 	dk.PseudoStats.BaseDodge += 0.03664

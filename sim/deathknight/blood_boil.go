@@ -9,10 +9,7 @@ var BloodBoilActionID = core.ActionID{SpellID: 49941}
 func (dk *Deathknight) registerBloodBoilSpell() {
 	// TODO: Handle blood boil correctly -
 	//  There is no refund and you only get RP on at least one of the effects hitting.
-	rs := &RuneSpell{
-		Refundable: true,
-	}
-	dk.BloodBoil = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.BloodBoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    BloodBoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -20,6 +17,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
 			RunicPowerGain: 10,
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -41,7 +39,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 				result := spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 				if aoeUnit == dk.CurrentTarget {
-					rs.SpendRefundableCost(sim, result)
+					spell.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
 			}

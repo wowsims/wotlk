@@ -24,7 +24,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	})
 
-	dk.RaiseDead = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
 
 		Cast: core.CastConfig{
@@ -44,11 +44,11 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.RaiseDead.Spell,
+			Spell:    dk.RaiseDead,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityLow,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.RaiseDead.CanCast(sim) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDurationPercent() > 0.15
+				return dk.RaiseDead.CanCast(sim, nil) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDurationPercent() > 0.15
 			},
 		})
 	}

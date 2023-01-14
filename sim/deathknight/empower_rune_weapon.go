@@ -11,7 +11,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 5
 
-	dk.EmpowerRuneWeapon = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.EmpowerRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{

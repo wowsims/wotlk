@@ -8,7 +8,7 @@ import (
 // TODO: Cleanup death strike the same way we did for plague strike
 var DeathStrikeActionID = core.ActionID{SpellID: 49924}
 
-func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
+func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 	deathConvertChance := float64(dk.Talents.DeathRuneMastery) / 3
@@ -18,7 +18,6 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 		healthMetrics = dk.NewHealthMetrics(DeathStrikeActionID)
 	}
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -29,6 +28,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 			FrostRuneCost:  1,
 			UnholyRuneCost: 1,
 			RunicPowerGain: 15 + 2.5*float64(dk.Talents.Dirge),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -81,14 +81,12 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *RuneSpell {
 		},
 	}
 
-	if isMH {
-		rs.Refundable = true
-	} else {
+	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerDeathStrikeSpell() {

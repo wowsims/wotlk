@@ -11,7 +11,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		return
 	}
 
-	gfHeal := dk.RegisterSpell(nil, core.SpellConfig{
+	gfHeal := dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 63560},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
@@ -25,7 +25,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 	})
 
 	gfHealHot := core.NewDot(core.Dot{
-		Spell: gfHeal.Spell,
+		Spell: gfHeal,
 		Aura: dk.Ghoul.RegisterAura(core.Aura{
 			Label:    "Ghoul Frenzy Hot",
 			ActionID: gfHeal.ActionID,
@@ -41,7 +41,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		},
 	})
 
-	dk.GhoulFrenzy = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.GhoulFrenzy = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 63560},
 		SpellSchool: core.SpellSchoolShadow,
 

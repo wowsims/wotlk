@@ -31,8 +31,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 	})
 
-	rs := &RuneSpell{}
-	dk.IceboundFortitude = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.IceboundFortitude = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -48,17 +47,16 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.IceboundFortitudeAura.Activate(sim)
-			rs.DoCost(sim)
 		},
 	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.IceboundFortitude.Spell,
+			Spell:    dk.IceboundFortitude,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityDefault,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.IceboundFortitude.CanCast(sim)
+				return dk.IceboundFortitude.CanCast(sim, nil)
 			},
 		})
 	}

@@ -25,15 +25,15 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		// Casts
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			switch spell {
-			case dk.IcyTouch.Spell:
+			case dk.IcyTouch:
 				dk.RuneWeapon.IcyTouch.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.PlagueStrike.Spell:
+			case dk.PlagueStrike:
 				dk.RuneWeapon.PlagueStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.DeathStrike.Spell:
+			case dk.DeathStrike:
 				dk.RuneWeapon.DeathStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.HeartStrike.Spell:
+			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.DeathCoil.Spell:
+			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.Pestilence.Spell:
 				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
@@ -41,7 +41,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		},
 	})
 
-	dk.DancingRuneWeapon = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.DancingRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49028},
 
 		RuneCost: core.RuneCostOptions{

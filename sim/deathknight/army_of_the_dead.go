@@ -47,7 +47,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 	})
 
-	dk.ArmyOfTheDead = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.ArmyOfTheDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 42650},
 
 		RuneCost: core.RuneCostOptions{
@@ -74,5 +74,5 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 	})
 
-	aotdDot.Spell = dk.ArmyOfTheDead.Spell
+	aotdDot.Spell = dk.ArmyOfTheDead
 }

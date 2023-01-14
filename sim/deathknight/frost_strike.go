@@ -7,10 +7,9 @@ import (
 
 var FrostStrikeActionID = core.ActionID{SpellID: 55268}
 
-func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
+func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolFrost,
@@ -19,6 +18,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfFrostStrike), 32, 40),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -64,14 +64,12 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *RuneSpell {
 		},
 	}
 
-	if isMH {
-		rs.Refundable = true
-	} else {
+	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {

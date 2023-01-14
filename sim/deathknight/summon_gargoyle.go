@@ -18,7 +18,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Duration: time.Second * 30,
 	})
 
-	dk.SummonGargoyle = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.SummonGargoyle = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49206},
 
 		RuneCost: core.RuneCostOptions{

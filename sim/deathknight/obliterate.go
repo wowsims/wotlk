@@ -8,13 +8,12 @@ import (
 // TODO: Cleanup obliterate the same way we did for plague strike
 var ObliterateActionID = core.ActionID{SpellID: 51425}
 
-func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
+func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
 	diseaseConsumptionChance := []float64{1.0, 0.67, 0.34, 0.0}[dk.Talents.Annihilation]
 	deathConvertChance := float64(dk.Talents.DeathRuneMastery) / 3
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    ObliterateActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -25,6 +24,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 			FrostRuneCost:  1,
 			UnholyRuneCost: 1,
 			RunicPowerGain: 15 + 2.5*float64(dk.Talents.ChillOfTheGrave) + dk.scourgeborneBattlegearRunicPowerBonus(),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -62,7 +62,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 
 			if isMH {
-				rs.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
+				spell.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
 				dk.LastOutcome = result.Outcome
 				dk.threatOfThassarianProc(sim, result, dk.ObliterateOhHit)
 
@@ -80,14 +80,12 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *RuneSpell {
 		},
 	}
 
-	if isMH {
-		rs.Refundable = true
-	} else {
+	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerObliterateSpell() {

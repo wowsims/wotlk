@@ -12,7 +12,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim
 	casted := false
 	advance := true
 	waitTime := time.Duration(-1)
-	if dk.Obliterate.CanCast(sim) {
+	if dk.Obliterate.CanCast(sim, nil) {
 		if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 			dk.Deathchill.Cast(sim, target)
 		}
@@ -23,7 +23,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim
 	return core.TernaryDuration(casted, -1, waitTime)
 }
 
-func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *deathknight.RuneSpell {
+func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *core.Spell {
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
 	canCastAbility := sim.CurrentTime+abGcd <= untilTime
@@ -31,17 +31,17 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 
 	km := dk.KM()
 	rime := dk.Rime()
-	if canCastSpell && dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
+	if canCastSpell && dk.RaiseDead.CanCast(sim, nil) && sim.GetRemainingDuration() >= time.Second*30 {
 		return dk.RaiseDead
-	} else if canCastSpell && dk.HowlingBlast.CanCast(sim) && rime {
+	} else if canCastSpell && dk.HowlingBlast.CanCast(sim, nil) && rime {
 		return dk.HowlingBlast
-	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && km {
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim, nil) && km {
 		return dk.FrostStrike
-	} else if canCastAbility && dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim, nil) && dk.CurrentRunicPower() >= 100.0 {
 		return dk.FrostStrike
-	} else if canCastAbility && dk.FrostStrike.CanCast(sim) {
+	} else if canCastAbility && dk.FrostStrike.CanCast(sim, nil) {
 		return dk.FrostStrike
-	} else if canCastSpell && dk.HornOfWinter.CanCast(sim) {
+	} else if canCastSpell && dk.HornOfWinter.CanCast(sim, nil) {
 		return dk.HornOfWinter
 	} else {
 		return nil

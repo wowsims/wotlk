@@ -16,7 +16,7 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 	cd := time.Minute * 3
 
 	var markOfBloodAura *core.Aura = nil
-	dk.MarkOfBlood = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.MarkOfBlood = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -43,11 +43,11 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.MarkOfBlood.Spell,
+			Spell:    dk.MarkOfBlood,
 			Priority: core.CooldownPriorityDefault,
 			Type:     core.CooldownTypeSurvival,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.MarkOfBlood.CanCast(sim)
+				return dk.MarkOfBlood.CanCast(sim, nil)
 			},
 		})
 	}

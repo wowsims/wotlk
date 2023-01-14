@@ -1152,9 +1152,11 @@ func (rc *RuneCostImpl) LogCostFailure(sim *Simulation, spell *Spell) {
 	//	spell.ActionID, spell.Unit.CurrentRune(), spell.CurCast.Cost)
 }
 func (rc *RuneCostImpl) SpendCost(sim *Simulation, spell *Spell) {
-	//if spell.CurCast.Cost > 0 {
-	//	spell.Unit.SpendRune(sim, spell.CurCast.Cost, rc.ResourceMetrics)
-	//}
+	// Spend now if there is no way to refund the spell
+	if !rc.Refundable {
+		cost := RuneCost(spell.CurCast.Cost)
+		spell.Unit.SpendRuneCost(sim, spell, cost)
+	}
 	if rc.RunicPowerGain > 0 && spell.CurCast.Cost > 0 {
 		spell.Unit.AddRunicPower(sim, rc.RunicPowerGain, spell.RunicPowerMetrics())
 	}

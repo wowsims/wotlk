@@ -45,7 +45,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
-		if dk.Obliterate.CanCast(sim) {
+		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
@@ -55,7 +55,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 
 		s.ConditionalAdvance(casted && advance)
 	} else {
-		if dk.Obliterate.CanCast(sim) {
+		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
@@ -108,7 +108,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Dump_Until_Death
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.UnbreakableArmor.CanCast(sim) && dk.BloodTap.CanCast(sim) {
+	if dk.UnbreakableArmor.CanCast(sim, nil) && dk.BloodTap.CanCast(sim, nil) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths).
 			NewAction(dk.RotationActionCallback_UA_Frost).
@@ -122,7 +122,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *c
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.UnbreakableArmor.CanCast(sim) && dk.BloodTap.CanCast(sim) {
+	if dk.UnbreakableArmor.CanCast(sim, nil) && dk.BloodTap.CanCast(sim, nil) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_UA_Frost).
 			NewAction(dk.RotationActionCallback_BT).
@@ -174,7 +174,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.LastCast == dk.BloodStrike.Spell {
+	if dk.LastCast == dk.BloodStrike {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BS).
 			NewAction(dk.RotationActionCallback_FS).
@@ -245,17 +245,17 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence_Pesti(s
 	km := dk.KM()
 	rime := dk.Rime()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
-		if dk.FrostStrike.CanCast(sim) && km {
+		if dk.FrostStrike.CanCast(sim, nil) && km {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && km && rime {
+		} else if dk.FrostStrike.CanCast(sim, nil) && km && rime {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 100.0 {
+		} else if dk.FrostStrike.CanCast(sim, nil) && dk.CurrentRunicPower() >= 100.0 {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) && rime {
+		} else if dk.HowlingBlast.CanCast(sim, nil) && rime {
 			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
+		} else if dk.FrostStrike.CanCast(sim, nil) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim) {
+		} else if dk.HornOfWinter.CanCast(sim, nil) {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		} else {
 			waitUntil = -1

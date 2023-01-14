@@ -13,8 +13,7 @@ func (dk *Deathknight) registerDeathPactSpell() {
 
 	hpMetrics := dk.NewHealthMetrics(actionID)
 
-	rs := &RuneSpell{}
-	dk.DeathPact = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.DeathPact = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
@@ -37,18 +36,16 @@ func (dk *Deathknight) registerDeathPactSpell() {
 			healthGain := 0.4 * dk.Ghoul.MaxHealth()
 			dk.GainHealth(sim, healthGain, hpMetrics)
 			dk.Ghoul.Pet.Disable(sim)
-
-			rs.DoCost(sim)
 		},
 	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.DeathPact.Spell,
+			Spell:    dk.DeathPact,
 			Type:     core.CooldownTypeDPS,
 			Priority: core.CooldownPriorityLow,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.DeathPact.CanCast(sim)
+				return dk.DeathPact.CanCast(sim, nil)
 			},
 		})
 	}

@@ -39,10 +39,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
 
-	rs := &RuneSpell{
-		Refundable: true,
-	}
-	dk.ScourgeStrike = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -52,6 +49,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			FrostRuneCost:  1,
 			UnholyRuneCost: 1,
 			RunicPowerGain: 15 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus(),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

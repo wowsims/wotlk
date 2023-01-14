@@ -14,8 +14,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Second * 45
 
-	rs := &RuneSpell{}
-	dk.AntiMagicShell = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.AntiMagicShell = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
 		RuneCost: core.RuneCostOptions{
@@ -82,8 +81,6 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= spellDmgTakenMult
 			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= spellDmgTakenMult
 			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= spellDmgTakenMult
-
-			rs.DoCost(sim)
 		},
 
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -110,13 +107,13 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.AntiMagicShell.Spell,
+			Spell:    dk.AntiMagicShell,
 			Type:     core.CooldownTypeSurvival,
 			Priority: core.CooldownPriorityLow,
 		})
 	} else if dk.Inputs.UseAMS {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.AntiMagicShell.Spell,
+			Spell:    dk.AntiMagicShell,
 			Type:     core.CooldownTypeDPS,
 			Priority: core.CooldownPriorityLow,
 		})

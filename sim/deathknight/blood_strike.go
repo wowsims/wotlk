@@ -6,12 +6,11 @@ import (
 
 var BloodStrikeActionID = core.ActionID{SpellID: 49930}
 
-func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
+func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
 	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    BloodStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -21,6 +20,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
 			RunicPowerGain: 10,
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -73,14 +73,12 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *RuneSpell {
 		},
 	}
 
-	if isMH { // offhand doesn't need GCD
-		rs.Refundable = true
-	} else {
+	if !isMH { // offhand doesn't need GCD
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerBloodStrikeSpell() {

@@ -17,10 +17,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 	rpBonus := 2.5 * float64(dk.Talents.ChillOfTheGrave)
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfHowlingBlast)
 
-	howlingBlast := &RuneSpell{
-		Refundable: true,
-	}
-	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
+	dk.HowlingBlast = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    HowlingBlastActionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -29,6 +26,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			FrostRuneCost:  1,
 			UnholyRuneCost: 1,
 			RunicPowerGain: 15,
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -57,7 +55,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				result := spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 				if aoeUnit == dk.CurrentTarget {
-					howlingBlast.SpendRefundableCost(sim, result)
+					spell.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
 				if rpBonus > 0 && result.Landed() {

@@ -6,13 +6,12 @@ import (
 
 var HeartStrikeActionID = core.ActionID{SpellID: 55262}
 
-func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneSpell {
+func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
 	critMultiplier := dk.bonusCritMultiplier(dk.Talents.MightOfMograine)
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    HeartStrikeActionID.WithTag(core.TernaryInt32(isMainTarget, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -22,6 +21,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
 			RunicPowerGain: 10,
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -66,22 +66,15 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 			}
 		},
 	}
-	if isDrw {
-		conf.DamageMultiplier *= .5
-		conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
-	if isMainTarget && !isDrw { // off target doesnt need GCD
-		rs.Refundable = true
-	} else {
+	if !isMainTarget || isDrw { // off target doesnt need GCD
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 	}
 
 	if isDrw {
-		rs.Spell = dk.RuneWeapon.RegisterSpell(conf)
-		return rs
+		return dk.RuneWeapon.RegisterSpell(conf)
 	} else {
-		return dk.RegisterSpell(rs, conf)
+		return dk.RegisterSpell(conf)
 	}
 }
 
@@ -99,6 +92,6 @@ func (dk *Deathknight) registerDrwHeartStrikeSpell() {
 		return
 	}
 
-	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true).Spell
-	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true).Spell
+	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true)
+	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true)
 }

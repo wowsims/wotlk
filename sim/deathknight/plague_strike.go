@@ -7,11 +7,7 @@ import (
 
 var PlagueStrikeActionID = core.ActionID{SpellID: 49921}
 
-func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
-	rs := &RuneSpell{
-		Refundable: isMH,
-	}
-
+func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	conf := core.SpellConfig{
 		ActionID:    PlagueStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
@@ -21,6 +17,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 		RuneCost: core.RuneCostOptions{
 			UnholyRuneCost: 1,
 			RunicPowerGain: 10 + 2.5*float64(dk.Talents.Dirge),
+			Refundable:     true,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -71,7 +68,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *RuneSpell {
 		conf.Cast = core.CastConfig{}
 	}
 
-	return dk.RegisterSpell(rs, conf)
+	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerPlagueStrikeSpell() {

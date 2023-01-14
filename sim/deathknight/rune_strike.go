@@ -12,8 +12,7 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 
 	runeStrikeGlyphCritBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneStrike), 10.0, 0.0)
 
-	rs := &RuneSpell{}
-	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.RuneStrike = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
@@ -44,7 +43,6 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 
-			rs.DoCost(sim)
 			dk.RuneStrikeAura.Deactivate(sim)
 		},
 	})

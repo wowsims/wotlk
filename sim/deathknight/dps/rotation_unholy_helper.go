@@ -56,7 +56,7 @@ func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
 		dk.Rotation.BloodRuneFiller == proto.Deathknight_Rotation_BloodStrike
 }
 
-func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
 }
 
@@ -88,7 +88,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim, nil) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
 				dk.uhGhoulFrenzySequence(sim, true)
 				return true
@@ -96,7 +96,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 				dk.uhRecastDiseasesSequence(sim)
 				return true
 			}
-		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim) && dk.IcyTouch.CanCast(sim) {
+		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim, nil) && dk.IcyTouch.CanCast(sim, nil) {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return true
@@ -271,7 +271,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
-	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim) && dk.CurrentUnholyRunes() == 0) {
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim, nil) && dk.CurrentUnholyRunes() == 0) {
 		return false
 	}
 	if !dk.ur.gargoyleSnapshot.CanSnapShot(sim, castTime) {

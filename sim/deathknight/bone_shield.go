@@ -44,7 +44,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 	})
 
-	dk.BoneShield = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.BoneShield = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
