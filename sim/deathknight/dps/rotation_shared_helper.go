@@ -69,10 +69,10 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
 	if spellCost > 0 && currentRunes == 0 {
-		if expiresAt < nextRuneAt {
+		if expiresAt <= nextRuneAt {
 			return true
 		}
-	} else if afterCastTime > expiresAt {
+	} else if afterCastTime >= expiresAt {
 		return true
 	}
 	return false
