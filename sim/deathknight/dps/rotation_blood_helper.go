@@ -113,11 +113,9 @@ func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, ca
 		dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
 		dk.br.activatingDrw = false
 
-		if dk.GCD.IsReady(sim) {
-			if dk.DancingRuneWeapon.Cast(sim, target) {
-				dk.br.drwSnapshot.ResetProcTrackers()
-				dk.br.drwMaxDelay = -1
-			}
+		if dk.DancingRuneWeapon.Cast(sim, target) {
+			dk.br.drwSnapshot.ResetProcTrackers()
+			dk.br.drwMaxDelay = -1
 		}
 		return true
 	}

@@ -25,9 +25,6 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: time.Minute * 3,

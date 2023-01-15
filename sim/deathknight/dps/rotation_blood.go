@@ -60,27 +60,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 		dk.blRecastDiseasesSequence(sim)
 		return sim.CurrentTime
 	} else if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
-		if dk.DancingRuneWeapon.IsReady(sim) {
-			dk.RotationSequence.Clear()
-
-			if dk.UnholyFrenzy.IsReady(sim) {
-				dk.RotationSequence.NewAction(dk.RotationActionCallback_UF)
-			}
-
-			dk.RotationSequence.NewAction(dk.RotationActionCallback_DRW_Custom)
-
-			if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
-				dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_DRW)
-			} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
-				dk.RotationSequence.
-					NewAction(dk.RotationActionBL_IT_Custom).
-					NewAction(dk.RotationActionBL_PS_Custom)
-			}
-
-			dk.RotationSequence.NewAction(dk.RotationAction_ResetToBloodMain)
-		} else {
-			dk.blAfterDrwSequence(sim)
-		}
+		dk.blAfterDrwSequence(sim)
 		return sim.CurrentTime
 	}
 
@@ -137,8 +117,8 @@ func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 		dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_DRW)
 	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
 		dk.RotationSequence.
-			NewAction(dk.RotationActionBL_IT_Custom).
-			NewAction(dk.RotationActionBL_PS_Custom)
+			NewAction(dk.RotationActionBL_IT_DRW).
+			NewAction(dk.RotationActionBL_PS_DRW)
 	}
 
 	dk.RotationSequence.
@@ -221,6 +201,14 @@ func (dk *DpsDeathknight) RotationActionBL_PS_DRW(sim *core.Simulation, target *
 	casted := dk.PlagueStrike.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
+	if !casted {
+		if dk.Talents.HeartStrike {
+			dk.HeartStrike.Cast(sim, target)
+		} else {
+			dk.BloodStrike.Cast(sim, target)
+		}
+	}
+
 	dk.sr.recastedBP = casted && advance
 	s.ConditionalAdvance(casted && advance)
 	return -1
@@ -230,6 +218,15 @@ func (dk *DpsDeathknight) RotationActionBL_PS_DRW(sim *core.Simulation, target *
 func (dk *DpsDeathknight) RotationActionBL_IT_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := dk.IcyTouch.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	if !casted {
+		if dk.Talents.HeartStrike {
+			dk.HeartStrike.Cast(sim, target)
+		} else {
+			dk.BloodStrike.Cast(sim, target)
+		}
+	}
+
 	dk.sr.recastedFF = casted && advance
 	s.ConditionalAdvance(casted && advance)
 	return -1
