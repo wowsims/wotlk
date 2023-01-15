@@ -18,7 +18,8 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 		return
 	}
 	unholyFrenzyTarget := unholyFrenzyTargetAgent.GetCharacter()
-	unholyFrenzyAura := core.UnholyFrenzyAura(unholyFrenzyTarget, actionID.Tag)
+
+	dk.UnholyFrenzyAura = core.UnholyFrenzyAura(unholyFrenzyTarget, actionID.Tag)
 
 	dk.UnholyFrenzy = dk.Character.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -34,7 +35,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			unholyFrenzyAura.Activate(sim)
+			dk.UnholyFrenzyAura.Activate(sim)
 		},
 	})
 

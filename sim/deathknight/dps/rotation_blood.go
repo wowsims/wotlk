@@ -24,12 +24,12 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		NewAction(dk.RotationActionCallback_HS).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_DRW)
+		NewAction(dk.RotationActionCallback_DRW_Custom)
 
 	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Pesti).
-			NewAction(dk.RotationActionCallback_DS).
+			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
@@ -43,7 +43,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_HS)
 	} else {
 		dk.RotationSequence.
-			NewAction(dk.RotationActionCallback_DS).
+			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
@@ -67,7 +67,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_UF)
 			}
 
-			dk.RotationSequence.NewAction(dk.RotationActionCallback_DRW)
+			dk.RotationSequence.NewAction(dk.RotationActionCallback_DRW_Custom)
 
 			if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti)

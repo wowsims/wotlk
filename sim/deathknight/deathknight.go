@@ -152,7 +152,8 @@ type Deathknight struct {
 	BoneShield     *RuneSpell
 	BoneShieldAura *core.Aura
 
-	UnholyFrenzy *core.Spell
+	UnholyFrenzy     *core.Spell
+	UnholyFrenzyAura *core.Aura
 
 	IceboundFortitude     *RuneSpell
 	IceboundFortitudeAura *core.Aura

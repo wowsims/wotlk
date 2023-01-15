@@ -11,6 +11,7 @@ type BloodRotation struct {
 	dk *DpsDeathknight
 
 	drwSnapshot *core.SnapshotManager
+	drwMaxDelay time.Duration
 
 	activatingDrw bool
 }
@@ -18,6 +19,7 @@ type BloodRotation struct {
 func (br *BloodRotation) Reset(sim *core.Simulation) {
 	br.activatingDrw = false
 	br.drwSnapshot.ResetProcTrackers()
+	br.drwMaxDelay = -1
 }
 
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
@@ -128,6 +130,20 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 	}
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
+	}
+	// Setup max delay possible
+	if dk.br.drwMaxDelay == -1 {
+		drwCd := dk.DancingRuneWeapon.CD.Duration
+		timeLeft := sim.GetRemainingDuration()
+		for timeLeft > drwCd {
+			// code block
+			timeLeft = timeLeft - (drwCd + 2*time.Second)
+		}
+		dk.br.drwMaxDelay = timeLeft - 2*time.Second
+	}
+	// Cast it if holding will result in less total DRWs for the encounter
+	if sim.CurrentTime > dk.br.drwMaxDelay {
+		return true
 	}
 	// Cast it if holding will take from its duration
 	if sim.GetRemainingDuration() < 20*time.Second {

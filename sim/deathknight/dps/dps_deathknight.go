@@ -320,7 +320,7 @@ func (dk *DpsDeathknight) gargoyleAPCooldownSync(actionID core.ActionID, isPotio
 			if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+			if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 
@@ -350,7 +350,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 					return true
 				}
-				if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+				if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
 					return true
 				}
 			}
@@ -479,13 +479,20 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 			if sim.CurrentTime < 2*time.Second {
 				return true
 			}
+			// If the fight is long enough for Unholy Frenzy we use potion with it
+			if isPotion && dk.br.activatingDrw && sim.Duration > 200*time.Second {
+				if dk.UnholyFrenzy.IsReady(sim) || dk.UnholyFrenzyAura.IsActive() {
+					return true
+				}
+				return false
+			}
 			if dk.br.activatingDrw {
 				return true
 			}
 			if dk.DancingRuneWeapon.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.DancingRuneWeapon.CD.ReadyAt() > dk.Env.Encounter.Duration {
+			if dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 
