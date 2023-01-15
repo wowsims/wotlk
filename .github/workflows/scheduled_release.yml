@@ -22,15 +22,10 @@ jobs:
       - name: 'Get Commit Hashes'
         id: getcommithashes
         run: |
-          git fetch origin master:refs/remotes/origin/master
-          git rev-parse master
+          git rev-parse HEAD
           git rev-parse ${{ steps.previoustag.outputs.tag }}
-          echo $(git rev-parse origin/master)
+          echo $(git rev-parse HEAD)
           echo $(git rev-parse ${{ steps.previoustag.outputs.tag }})
-          # echo "current=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
-          # echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
-          # echo "::set-output name=current::$(git rev-parse master)"
-          # echo "::set-output name=last::$(git rev-parse ${{ steps.previoustag.outputs.tag }})"
           
       - name: 'Has changes'
         id: haschanges
