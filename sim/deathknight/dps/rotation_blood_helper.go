@@ -136,7 +136,6 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 		drwCd := dk.DancingRuneWeapon.CD.Duration
 		timeLeft := sim.GetRemainingDuration()
 		for timeLeft > drwCd {
-			// code block
 			timeLeft = timeLeft - (drwCd + 2*time.Second)
 		}
 		dk.br.drwMaxDelay = timeLeft - 2*time.Second
