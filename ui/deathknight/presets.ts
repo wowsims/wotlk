@@ -269,8 +269,9 @@ export const P1_BLOOD_BIS_PRESET = {
 			]
 		  },
 		  {
-			"id": 40317,
+			"id": 40278,
 			"gems": [
+			  39996,
 			  39996
 			]
 		  },
@@ -279,7 +280,7 @@ export const P1_BLOOD_BIS_PRESET = {
 			"enchant": 3823,
 			"gems": [
 			  39996,
-			  39996
+			  40037
 			]
 		  },
 		  {
