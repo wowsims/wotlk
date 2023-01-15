@@ -70,7 +70,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_DRW_Custom)
 
 			if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
-				dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti)
+				dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_DRW)
 			} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
 				dk.RotationSequence.
 					NewAction(dk.RotationActionBL_IT_Custom).
@@ -134,7 +134,7 @@ func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
 	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti)
+		dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_DRW)
 	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionBL_IT_Custom).
@@ -181,6 +181,7 @@ func (dk *DpsDeathknight) RotationActionCallback_DRW_Custom(sim *core.Simulation
 	casted := dk.DancingRuneWeapon.Cast(sim, target)
 	if casted {
 		dk.br.drwSnapshot.ResetProcTrackers()
+		dk.br.drwMaxDelay = -1
 	}
 	s.ConditionalAdvance(casted)
 	return -1
@@ -195,6 +196,41 @@ func (dk *DpsDeathknight) RotationActionCallback_FU(sim *core.Simulation, target
 	}
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_Pesti_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.Pestilence.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	if !casted {
+		if dk.Inputs.FuStrike == deathknight.FuStrike_DeathStrike {
+			dk.DeathStrike.Cast(sim, target)
+		} else if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
+			dk.Obliterate.Cast(sim, target)
+		}
+	}
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+// Custom PS callback for tracking recasts for pestilence disease sync
+func (dk *DpsDeathknight) RotationActionBL_PS_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.PlagueStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	dk.sr.recastedBP = casted && advance
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+// Custom IT callback for tracking recasts for pestilence disease sync
+func (dk *DpsDeathknight) RotationActionBL_IT_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.IcyTouch.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+	dk.sr.recastedFF = casted && advance
 	s.ConditionalAdvance(casted && advance)
 	return -1
 }

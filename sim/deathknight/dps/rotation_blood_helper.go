@@ -116,6 +116,7 @@ func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, ca
 		if dk.GCD.IsReady(sim) {
 			if dk.DancingRuneWeapon.Cast(sim, target) {
 				dk.br.drwSnapshot.ResetProcTrackers()
+				dk.br.drwMaxDelay = -1
 			}
 		}
 		return true
@@ -148,7 +149,8 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 	if sim.GetRemainingDuration() < 20*time.Second {
 		return true
 	}
-	if !dk.sr.hasGod && dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
+	// Make sure we can instantly put diseases up with the rune weapon
+	if !dk.sr.hasGod && (dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1) {
 		return false
 	}
 	if dk.sr.hasGod && dk.CurrentBloodRunes() < 1 {
