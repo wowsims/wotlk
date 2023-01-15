@@ -36,7 +36,7 @@ jobs:
           
       - name: 'Print version'
         if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
-        id: createmilestone
+        id: printversion
         run: echo ${{ steps.semvers.outputs.v_patch }}
         
       - name: Trigger Release
