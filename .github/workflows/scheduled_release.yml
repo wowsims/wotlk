@@ -9,7 +9,9 @@ jobs:
   schedule:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: 'Get Previous tag'
         id: previoustag
@@ -20,12 +22,12 @@ jobs:
       - name: 'Get Commit Hashes'
         id: getcommithashes
         run: |
-          # echo "current=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
-          # echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
-          git rev-parse origin/master
+          git rev-parse master
           git rev-parse ${{ steps.previoustag.outputs.tag }}
           echo $(git rev-parse origin/master)
           echo $(git rev-parse ${{ steps.previoustag.outputs.tag }})
+          # echo "current=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
+          # echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
           # echo "::set-output name=current::$(git rev-parse master)"
           # echo "::set-output name=last::$(git rev-parse ${{ steps.previoustag.outputs.tag }})"
           
