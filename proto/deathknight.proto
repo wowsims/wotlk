@@ -189,6 +189,12 @@ message Deathknight {
 			Custom = 2;
 		}
 		FrostRotationType frost_rotation_type = 19;
+
+		enum BloodOpener {
+			Standard = 0;
+			Experimental_1 = 1;
+			Experimental_2 = 2;
+		}
 		
 		enum CustomSpellOption {
 			CustomNoSpell = 0;
@@ -250,6 +256,7 @@ message Deathknight {
 		Presence gargoyle_presence = 25;
 
 		DrwDiseases drw_diseases = 26;
+		BloodOpener blood_opener = 27;
 	}
 	Rotation rotation = 1;
 	

@@ -5,6 +5,7 @@ import {
 	DeathknightTalents as DeathKnightTalents,
 	Deathknight_Rotation_ArmyOfTheDead as ArmyOfTheDead,
 	Deathknight_Rotation_DrwDiseases as DrwDiseases,
+	Deathknight_Rotation_BloodOpener as BloodOpener,
 	Deathknight_Rotation_FirstDisease as FirstDisease,
 	Deathknight_Rotation_DeathAndDecayPrio as DeathAndDecayPrio,
 	Deathknight_Rotation_Presence as StartingPresence,
@@ -316,6 +317,18 @@ export const DrwDiseasesInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 		{ name: 'IT + PS', value: DrwDiseases.Normal },
 		{ name: 'Pestilence', value: DrwDiseases.Pestilence },
 	],
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0 && player.getRotation().bloodOpener == BloodOpener.Standard,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const BloodOpenerInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodOpener>({
+	fieldName: 'bloodOpener',
+	label: 'Opener',
+	labelTooltip: 'Chose which opener to use.',
+	values: [
+		{ name: 'Standard', value: BloodOpener.Standard },
+		{ name: 'Incan', value: BloodOpener.Experimental_1 },
+	],
 	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
@@ -359,10 +372,11 @@ export const DeathKnightRotationConfig = {
 		BloodTapGhoulFrenzy,
 		UseGargoyle,
 		UseEmpowerRuneWeapon,
-		DrwDiseasesInput,
 		HoldErwArmy,
 		BloodTapInput,
 		ArmyOfTheDeadInput,
+		//BloodOpenerInput,
+		DrwDiseasesInput,
 		FirstDiseaseInput,
 		StartingPresenceInput,
 		BloodlustPresence,

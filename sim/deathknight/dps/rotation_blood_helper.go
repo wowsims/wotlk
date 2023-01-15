@@ -25,7 +25,7 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
-	castGcd := dk.SpellGCD() * time.Duration(casts)
+	castGcd := core.GCDDefault * time.Duration(casts)
 
 	// FF is not active or will drop before Gcd is ready after this cast
 	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
@@ -42,12 +42,15 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
+		afterCastTime := sim.CurrentTime + castGcd + 50*time.Millisecond
+		if ffExpiresAt <= afterCastTime || bpExpiresAt <= afterCastTime {
+			return false
+		}
+
 		crpb := dk.CopyRunicPowerBar()
 		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
 		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
-
-		afterCastTime := sim.CurrentTime + castGcd
 
 		if dk.sr.hasGod {
 			currentBloodRunes := crpb.CurrentBloodRunes()
@@ -103,6 +106,18 @@ func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	canCastDrw := dk.DancingRuneWeapon != nil && dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second
 	currentRP := dk.CurrentRunicPower()
 	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 100)
+}
+
+func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CurrentBloodRunes() > 0 {
+		return false
+	}
+
+	if dk.RuneWeapon.IsEnabled() && dk.BloodTap.IsReady(sim) {
+		return dk.BloodTap.Cast(sim, target)
+	}
+
+	return false
 }
 
 // Combined checks for casting gargoyle sequence & going back to blood presence after

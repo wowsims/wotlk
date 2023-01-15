@@ -30,6 +30,7 @@ type DeathknightInputs struct {
 	PrecastHornOfWinter bool
 	PetUptime           float64
 	DrwPestiApply       bool
+	BloodOpener         proto.Deathknight_Rotation_BloodOpener
 
 	// Rotation Vars
 	RefreshHornOfWinter bool
