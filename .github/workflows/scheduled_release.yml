@@ -24,8 +24,8 @@ jobs:
         run: |
           git rev-parse HEAD
           git rev-parse ${{ steps.previoustag.outputs.tag }}
-          echo $(git rev-parse HEAD)
-          echo $(git rev-parse ${{ steps.previoustag.outputs.tag }})
+          echo "current=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
           
       - name: 'Has changes'
         id: haschanges
