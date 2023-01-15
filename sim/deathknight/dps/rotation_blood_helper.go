@@ -42,7 +42,7 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
-		afterCastTime := sim.CurrentTime + castGcd + 50*time.Millisecond
+		afterCastTime := sim.CurrentTime + castGcd
 		if ffExpiresAt <= afterCastTime || bpExpiresAt <= afterCastTime {
 			return false
 		}

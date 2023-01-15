@@ -30,10 +30,10 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Pesti).
-			NewAction(dk.RotationActionCallback_FU).
-			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
@@ -41,18 +41,18 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_IT).
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	} else {
 		dk.RotationSequence.
-			NewAction(dk.RotationActionCallback_FU).
-			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	}
