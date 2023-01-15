@@ -1,23 +1,34 @@
 name: Scheduled Release
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  schedule:
+      - cron: '0 10 * * 1'
 
 jobs:
   schedule:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      
       - name: 'Get Previous tag'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          
       - name: 'Get next version'
         id: semvers
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
           version: ${{ steps.previoustag.outputs.tag }}
+          
       - name: 'Print version'
         id: createmilestone
         run: echo ${{ steps.semvers.outputs.v_patch }}
+        
+      - name: Trigger Release
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Release
+          inputs: '{ "ref": "master", "tag": ${{ steps.semvers.outputs.v_patch }} }'
