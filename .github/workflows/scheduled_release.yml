@@ -27,14 +27,21 @@ jobs:
           echo "current=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
           
-      - name: 'Has changes'
-        id: haschanges
+      - name: 'Get next version'
         if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
-        run: |
-          echo "Has changes!"
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
           
-      - name: 'No changes'
-        id: nochanges
-        if: steps.getcommithashes.outputs.current == steps.getcommithashes.outputs.last
-        run: |
-          echo "No changes!"
+      - name: 'Print version'
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        id: createmilestone
+        run: echo ${{ steps.semvers.outputs.v_patch }}
+        
+      - name: Trigger Release
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Release
+          inputs: '{ "ref": "master", "tag": ${{ steps.semvers.outputs.v_patch }} }'
