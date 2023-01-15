@@ -16,6 +16,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 
 	dk.setupDrwCooldowns()
 
+	//if dk.Inputs.BloodOpener == proto.Deathknight_Rotation_Standard {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
@@ -31,6 +32,8 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_Pesti).
 			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
@@ -39,6 +42,8 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	} else {
@@ -46,9 +51,13 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_FU).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	}
+	// } else if dk.Inputs.BloodOpener == proto.Deathknight_Rotation_Experimental_1 {
+	// }
 
 	dk.RotationSequence.NewAction(dk.RotationActionCallback_BloodRotation)
 }
@@ -61,6 +70,10 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 		return sim.CurrentTime
 	} else if dk.blDrwCheck(sim, target, 100*time.Millisecond) {
 		dk.blAfterDrwSequence(sim)
+		return sim.CurrentTime
+	}
+
+	if dk.blBloodTapCheck(sim, target) {
 		return sim.CurrentTime
 	}
 
@@ -154,6 +167,14 @@ func (dk *DpsDeathknight) RotationAction_ResetToBloodMain(sim *core.Simulation, 
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_BloodRotation)
 
+	return sim.CurrentTime
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_DRW_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	dk.br.activatingDrw = true
+	dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
+	dk.br.activatingDrw = false
+	s.Advance()
 	return sim.CurrentTime
 }
 

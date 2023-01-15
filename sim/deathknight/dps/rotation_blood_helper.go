@@ -105,6 +105,18 @@ func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 100)
 }
 
+func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CurrentBloodRunes() > 0 {
+		return false
+	}
+
+	if dk.RuneWeapon.IsEnabled() && dk.BloodTap.IsReady(sim) {
+		return dk.BloodTap.Cast(sim, target)
+	}
+
+	return false
+}
+
 // Combined checks for casting gargoyle sequence & going back to blood presence after
 func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
 	if dk.blDrwCanCast(sim, castTime) {

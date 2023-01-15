@@ -49,6 +49,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
 			PetUptime:           dk.Options.PetUptime,
 			DrwPestiApply:       dk.Options.DrwPestiApply,
+			BloodOpener:         dk.Rotation.BloodOpener,
 			IsDps:               true,
 
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
