@@ -22,6 +22,7 @@ jobs:
       - name: 'Get Commit Hashes'
         id: getcommithashes
         run: |
+          git fetch origin master:refs/remotes/origin/master
           git rev-parse master
           git rev-parse ${{ steps.previoustag.outputs.tag }}
           echo $(git rev-parse origin/master)
