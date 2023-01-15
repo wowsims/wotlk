@@ -23,6 +23,11 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
+	// Early exit at end of fight
+	if sim.GetRemainingDuration() < 10*time.Second {
+		return true
+	}
+
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 	castGcd := core.GCDDefault * time.Duration(casts)
