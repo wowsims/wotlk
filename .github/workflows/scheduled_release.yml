@@ -17,17 +17,38 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           
+      - name: 'Get Commit Hashes'
+        id: getcommithashes
+        run: |
+          echo "::set-output name=current::$(git rev-parse master)"
+          echo "::set-output name=last::$(git rev-parse ${{ steps.previoustag.outputs.tag }})"
+          
+      - name: 'Has changes'
+        id: haschanges
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        run: |
+          echo "Has changes!"
+          
+      - name: 'No changes'
+        id: nochanges
+        if: steps.getcommithashes.outputs.current == steps.getcommithashes.outputs.last
+        run: |
+          echo "No changes!"
+          
       - name: 'Get next version'
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
         id: semvers
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
           version: ${{ steps.previoustag.outputs.tag }}
           
       - name: 'Print version'
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
         id: createmilestone
         run: echo ${{ steps.semvers.outputs.v_patch }}
         
       - name: Trigger Release
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Release
