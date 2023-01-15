@@ -108,7 +108,6 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 
 func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
-	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(1),
@@ -126,9 +125,6 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 				bonusBaseDamage +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
-			if hasGlyph {
-				baseDamage *= 1 + core.MinFloat(0.25, dk.CurrentRunicPower()/100.0)
-			}
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},

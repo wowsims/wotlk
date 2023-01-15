@@ -177,6 +177,15 @@ func (dk *DpsDeathknight) RotationAction_ResetToBloodMain(sim *core.Simulation, 
 	return sim.CurrentTime
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_DRW_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.DancingRuneWeapon.Cast(sim, target)
+	if casted {
+		dk.br.drwSnapshot.ResetProcTrackers()
+	}
+	s.ConditionalAdvance(casted)
+	return -1
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FU(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 	if dk.Inputs.FuStrike == deathknight.FuStrike_DeathStrike {
