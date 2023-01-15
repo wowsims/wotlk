@@ -7,6 +7,7 @@ on:
 
 jobs:
   schedule:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -44,4 +45,4 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Release
-          inputs: '{ "ref": "master", "tag": ${{ steps.semvers.outputs.v_patch }} }'
+          inputs: '{ "ref": "master", "tag": "${{ steps.semvers.outputs.v_patch }}" }'
