@@ -20,11 +20,12 @@ jobs:
       - name: 'Get Commit Hashes'
         id: getcommithashes
         run: |
-          echo "current=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
-          echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
+          # echo "current=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
+          # echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
+          git rev-parse origin/master
+          git rev-parse ${{ steps.previoustag.outputs.tag }}
           echo $(git rev-parse origin/master)
-          echo $(${{ steps.previoustag.outputs.tag }})
-          
+          echo $(git rev-parse ${{ steps.previoustag.outputs.tag }})
           # echo "::set-output name=current::$(git rev-parse master)"
           # echo "::set-output name=last::$(git rev-parse ${{ steps.previoustag.outputs.tag }})"
           
