@@ -1,5 +1,3 @@
-import { SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
-
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 declare var Chart: any;
@@ -37,6 +35,8 @@ export class DpsHistogram extends ResultComponent {
 		});
 
 		const ctx = chartCanvas.getContext('2d');
+		this.rootElem.appendChild(chartCanvas);
+		
 		const chart = new Chart(ctx, {
 			type: 'bar',
 			data: {
@@ -67,6 +67,5 @@ export class DpsHistogram extends ResultComponent {
 				},
 			},
 		});
-		this.rootElem.appendChild(chartCanvas);
 	}
 }

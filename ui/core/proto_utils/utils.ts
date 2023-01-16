@@ -217,6 +217,7 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 		'spell_deathknight_bloodpresence.jpg',
 		'spell_deathknight_frostpresence.jpg',
 		'spell_deathknight_unholypresence.jpg',
+		'spell_deathknight_darkconviction.jpg',
 	],
 	[Class.ClassDruid]: [
 		'spell_nature_starfall.jpg',
@@ -326,6 +327,10 @@ export function getSpecIcon(klass: Class, specNumber: number, size: IconSizes = 
 // Returns the icon for a given spec based on talent point allocation.
 export function getTalentTreeIcon(spec: Spec, talentsString: string, size: IconSizes = IconSizes.Medium): string {
 	let specNumber = getTalentTree(talentsString);
+
+	// Blood DPS DK
+	if (spec == Spec.SpecDeathknight && specNumber == 0)
+		specNumber += 3;
 
 	// Cat Druid and Smite Priest are being considered a "4th spec"
 	if (spec == Spec.SpecFeralDruid)

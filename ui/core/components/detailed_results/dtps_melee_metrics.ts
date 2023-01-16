@@ -1,6 +1,4 @@
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { ActionMetrics, SimResult, SimResultFilter } from '../core/proto_utils/sim_result.js';
-import { bucket } from '../core/utils.js';
+import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
 
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
@@ -8,9 +6,9 @@ import { ResultComponent, ResultComponentConfig, SimResultData } from './result_
 declare var $: any;
 declare var tippy: any;
 
-export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
+export class DtpsMeleeMetricsTable extends MetricsTable<ActionMetrics> {
 	constructor(config: ResultComponentConfig) {
-		config.rootCssClass = 'spell-metrics-root';
+		config.rootCssClass = 'dtps-melee-metrics-root';
 		super(config, [
 			MetricsTable.nameCellConfig((metric: ActionMetrics) => {
 				return {
@@ -33,30 +31,9 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 			},
 			{
 				name: 'Avg Hit',
-				tooltip: 'Damage / Hits',
+				tooltip: 'Damage / (Hits + Crits + Glances + Blocks)',
 				getValue: (metric: ActionMetrics) => metric.avgHit,
 				getDisplayString: (metric: ActionMetrics) => metric.avgHit.toFixed(1),
-			},
-			{
-				name: 'TPS',
-				tooltip: 'Threat / Encounter Duration',
-				columnClass: 'threat-metrics',
-				getValue: (metric: ActionMetrics) => metric.tps,
-				getDisplayString: (metric: ActionMetrics) => metric.tps.toFixed(1),
-			},
-			{
-				name: 'Avg Cast',
-				tooltip: 'Threat / Casts',
-				columnClass: 'threat-metrics',
-				getValue: (metric: ActionMetrics) => metric.avgCastThreat,
-				getDisplayString: (metric: ActionMetrics) => metric.avgCastThreat.toFixed(1),
-			},
-			{
-				name: 'Avg Hit',
-				tooltip: 'Threat / Hits',
-				columnClass: 'threat-metrics',
-				getValue: (metric: ActionMetrics) => metric.avgHitThreat,
-				getDisplayString: (metric: ActionMetrics) => metric.avgHitThreat.toFixed(1),
 			},
 			{
 				name: 'Casts',
@@ -66,29 +43,41 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 			},
 			{
 				name: 'Hits',
-				tooltip: 'Hits',
+				tooltip: 'Hits + Crits + Glances + Blocks',
 				getValue: (metric: ActionMetrics) => metric.landedHits,
 				getDisplayString: (metric: ActionMetrics) => metric.landedHits.toFixed(1),
 			},
 			{
 				name: 'Miss %',
-				tooltip: 'Misses / (Hits + Misses)',
+				tooltip: 'Misses / Swings',
 				getValue: (metric: ActionMetrics) => metric.missPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.missPercent.toFixed(2) + '%',
 			},
 			{
+				name: 'Dodge %',
+				tooltip: 'Dodges / Swings',
+				getValue: (metric: ActionMetrics) => metric.dodgePercent,
+				getDisplayString: (metric: ActionMetrics) => metric.dodgePercent.toFixed(2) + '%',
+			},
+			{
+				name: 'Parry %',
+				tooltip: 'Parries / Swings',
+				getValue: (metric: ActionMetrics) => metric.parryPercent,
+				getDisplayString: (metric: ActionMetrics) => metric.parryPercent.toFixed(2) + '%',
+			},
+			{
+				name: 'Block %',
+				tooltip: 'Blocks / Swings',
+				getValue: (metric: ActionMetrics) => metric.blockPercent,
+				getDisplayString: (metric: ActionMetrics) => metric.blockPercent.toFixed(2) + '%',
+			},
+			{
 				name: 'Crit %',
-				tooltip: 'Crits / Hits',
+				tooltip: 'Crits / Swings',
 				getValue: (metric: ActionMetrics) => metric.critPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.critPercent.toFixed(2) + '%',
 			},
 		]);
-	}
-
-	customizeRowElem(action: ActionMetrics, rowElem: HTMLElement) {
-		if (action.hitAttempts == 0 && action.dps == 0) {
-			rowElem.classList.add('threat-metrics');
-		}
 	}
 
 	getGroupedMetrics(resultData: SimResultData): Array<Array<ActionMetrics>> {
@@ -98,20 +87,15 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 		}
 		const player = players[0];
 
-		const actions = player.getSpellActions().map(action => action.forTarget(resultData.filter));
-		const actionGroups = ActionMetrics.groupById(actions);
+		const targets = resultData.result.getTargets(resultData.filter);
+		const targetActions = targets.map(target => target.getMeleeActions().map(action => action.forTarget(resultData.filter))).flat();
+		const actionGroups = ActionMetrics.groupById(targetActions);
 
-		const petsByName = bucket(player.pets, pet => pet.name);
-		const petGroups = Object.values(petsByName).map(pets => ActionMetrics.joinById(pets.map(pet => pet.getSpellActions().map(action => action.forTarget(resultData.filter))).flat(), true));
-
-		return actionGroups.concat(petGroups);
+		return actionGroups;
 	}
 
 	mergeMetrics(metrics: Array<ActionMetrics>): ActionMetrics {
+		// TODO: Use NPC ID here instead of pet ID.
 		return ActionMetrics.merge(metrics, true, metrics[0].unit?.petActionId || undefined);
-	}
-
-	shouldCollapse(metric: ActionMetrics): boolean {
-		return !metric.unit?.isPet;
 	}
 }

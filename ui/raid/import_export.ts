@@ -639,7 +639,7 @@ class WCLSimPlayer {
 const fullTypeToSpec: Record<string, Spec> = {
 	'DeathKnightBlood': Spec.SpecTankDeathknight,
 	'DeathKnightLichborne': Spec.SpecTankDeathknight,
-	'DeathKnightRuneblade': Spec.SpecTankDeathknight,
+	'DeathKnightRuneblade': Spec.SpecDeathknight,
 	'DeathKnightFrost': Spec.SpecDeathknight,
 	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,

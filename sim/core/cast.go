@@ -3,8 +3,6 @@ package core
 import (
 	"fmt"
 	"time"
-
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // A cast corresponds to any action which causes the in-game castbar to be
@@ -74,12 +72,14 @@ type CastSuccessFunc func(*Simulation, *Unit) bool
 
 func (spell *Spell) makeCastFunc(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
 	return spell.wrapCastFuncInit(config,
-		spell.wrapCastFuncResources(config,
-			spell.wrapCastFuncHaste(config,
-				spell.wrapCastFuncGCD(config,
-					spell.wrapCastFuncCooldown(config,
-						spell.wrapCastFuncSharedCooldown(config,
-							spell.makeCastFuncWait(config, onCastComplete)))))))
+		spell.wrapCastFuncExtraCond(config,
+			spell.wrapCastFuncCDsReady(config,
+				spell.wrapCastFuncResources(config,
+					spell.wrapCastFuncHaste(config,
+						spell.wrapCastFuncGCD(config,
+							spell.wrapCastFuncCooldown(config,
+								spell.wrapCastFuncSharedCooldown(config,
+									spell.makeCastFuncWait(config, onCastComplete)))))))))
 }
 
 func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
@@ -112,6 +112,40 @@ func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSucce
 	}
 }
 
+func (spell *Spell) wrapCastFuncExtraCond(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
+	if spell.ExtraCastCondition == nil {
+		return onCastComplete
+	} else {
+		return func(sim *Simulation, target *Unit) bool {
+			if spell.ExtraCastCondition(sim, target) {
+				return onCastComplete(sim, target)
+			} else {
+				if sim.Log != nil {
+					sim.Log("Failed cast because of extra condition")
+				}
+				return false
+			}
+		}
+	}
+}
+
+func (spell *Spell) wrapCastFuncCDsReady(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
+	if spell.Unit.PseudoStats.GracefulCastCDFailures {
+		return func(sim *Simulation, target *Unit) bool {
+			if spell.IsReady(sim) {
+				return onCastComplete(sim, target)
+			} else {
+				if sim.Log != nil {
+					sim.Log("Failed cast because of CDs")
+				}
+				return false
+			}
+		}
+	} else {
+		return onCastComplete
+	}
+}
+
 func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
 	if spell.ResourceType == 0 || spell.DefaultCast.Cost == 0 {
 		return func(sim *Simulation, target *Unit) bool {
@@ -127,42 +161,6 @@ func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete Cast
 					spell.Cost.LogCostFailure(sim, spell)
 				}
 				return false
-			}
-			onCastComplete(sim, target)
-			return true
-		}
-	}
-
-	switch spell.ResourceType {
-	case stats.Rage:
-		return func(sim *Simulation, target *Unit) bool {
-			spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
-			if spell.Unit.CurrentRage() < spell.CurCast.Cost {
-				return false
-			}
-			spell.Unit.SpendRage(sim, spell.CurCast.Cost, spell.ResourceMetrics)
-			onCastComplete(sim, target)
-			return true
-		}
-	case stats.RunicPower:
-		return func(sim *Simulation, target *Unit) bool {
-			// Rune spending is currently handled in DK codebase.
-			// This verifies that the user has the resources but does not spend.
-			if spell.CurCast.Cost != 0 {
-				cost := RuneCost(spell.CurCast.Cost)
-				if !cost.HasRune() {
-					if float64(cost.RunicPower()) > spell.Unit.CurrentRunicPower() {
-						return false
-					}
-				} else {
-					// Given cost might not be what is actually paid.
-					//  Calculate what combination of runes can actually pay for this spell.
-					optCost := spell.Unit.OptimalRuneCost(cost)
-					if optCost == 0 { // no combo of runes to fulfill cost
-						return false
-					}
-					spell.CurCast.Cost = float64(optCost) // assign chosen runes to the cost
-				}
 			}
 			onCastComplete(sim, target)
 			return true
@@ -313,10 +311,7 @@ func (spell *Spell) makeCastFuncWait(config CastConfig, onCastComplete CastFunc)
 			oldOnCastComplete3 := onCastComplete
 			onCastComplete = func(sim *Simulation, target *Unit) {
 				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-					// Hunter fake cast has no ID.
-					if !spell.ActionID.SameAction(ActionID{}) {
-						spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
-					}
+					spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 				}
 				oldOnCastComplete3(sim, target)
 			}

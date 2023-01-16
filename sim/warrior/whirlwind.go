@@ -5,12 +5,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerWhirlwindSpell() {
 	actionID := core.ActionID{SpellID: 1680}
-	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
@@ -36,13 +34,12 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 25 - float64(warrior.Talents.FocusedRage),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

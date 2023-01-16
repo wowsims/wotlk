@@ -9,6 +9,7 @@ import (
 
 type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
 type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell, useSnapshot bool) *SpellResult
+type CanCastCondition func(sim *Simulation, target *Unit) bool
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -22,8 +23,11 @@ type SpellConfig struct {
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
+	RageCost   RageCostOptions
+	RuneCost   RuneCostOptions
 
-	Cast CastConfig
+	Cast               CastConfig
+	ExtraCastCondition CanCastCondition
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -82,14 +86,11 @@ type Spell struct {
 	// are calculated using the base cost.
 	BaseCost float64
 
-	// Cost for the spell.
-	Cost SpellCost
-
-	// Default cast parameters with all static effects applied.
-	DefaultCast Cast
-
-	CD       Cooldown
-	SharedCD Cooldown
+	Cost               SpellCost // Cost for the spell.
+	DefaultCast        Cast      // Default cast parameters with all static effects applied.
+	CD                 Cooldown
+	SharedCD           Cooldown
+	ExtraCastCondition CanCastCondition
 
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
@@ -165,9 +166,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
 
-		DefaultCast: config.Cast.DefaultCast,
-		CD:          config.Cast.CD,
-		SharedCD:    config.Cast.SharedCD,
+		DefaultCast:        config.Cast.DefaultCast,
+		CD:                 config.Cast.CD,
+		SharedCD:           config.Cast.SharedCD,
+		ExtraCastCondition: config.ExtraCastCondition,
 
 		ApplyEffects: config.ApplyEffects,
 
@@ -217,23 +219,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newManaCost(spell, config.ManaCost)
 	} else if config.EnergyCost.Cost != 0 {
 		spell.Cost = newEnergyCost(spell, config.EnergyCost)
-	}
-
-	if spell.Cost == nil {
-		switch spell.ResourceType {
-		case stats.Rage:
-			spell.ResourceMetrics = spell.Unit.NewRageMetrics(spell.ActionID)
-		case stats.RunicPower:
-			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-		case stats.BloodRune:
-			spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-		case stats.FrostRune:
-			spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-		case stats.UnholyRune:
-			spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-		case stats.DeathRune:
-			spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-		}
+	} else if config.RageCost.Cost != 0 {
+		spell.Cost = newRageCost(spell, config.RageCost)
+	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
+		spell.Cost = newRuneCost(spell, config.RuneCost)
 	}
 
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
@@ -403,6 +392,41 @@ func (spell *Spell) IsReady(sim *Simulation) bool {
 
 func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
 	return MaxTimeToReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
+}
+
+// Returns whether a call to Cast() would be successful, without actually
+// doing a cast.
+func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
+	if spell == nil {
+		return false
+	}
+
+	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of extra condition")
+		}
+		return false
+	}
+
+	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of CDs")
+		}
+		return false
+	}
+
+	if spell.Cost != nil {
+		// temp hack
+		spell.CurCast.Cost = spell.DefaultCast.Cost
+		if !spell.Cost.MeetsRequirement(spell) {
+			if sim.Log != nil {
+				sim.Log("Cant cast because of resource cost")
+			}
+			return false
+		}
+	}
+
+	return true
 }
 
 func (spell *Spell) Cast(sim *Simulation, target *Unit) bool {

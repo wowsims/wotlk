@@ -179,7 +179,11 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		}
 		mbDamage = spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget) + float64(impDamage)
 	}
-
+	if sim.Log != nil {
+		spriest.Log(sim, "MBoption [%d]", spriest.options.UseMindBlast)
+		spriest.Log(sim, "MB dmg [%d]", mbDamage)
+		//spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+	}
 	// DP dmg
 	dpTickDamage := spriest.DevouringPlague.ExpectedDamage(sim, spriest.CurrentTarget)
 	dpInit := dpTickDamage * spriest.DpInitMultiplier
@@ -479,7 +483,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		}
 	}
 
-	if bestIdx == vtIdx && spriest.AllCDs[mbIdx].Seconds() < currentWait.Seconds() && currentWait.Seconds() > 0.4 {
+	if bestIdx == vtIdx && spriest.AllCDs[mbIdx].Seconds() < currentWait.Seconds() && currentWait.Seconds() > 0.4 && spriest.options.UseMindBlast {
 		bestIdx = mbIdx
 		currentWait = spriest.AllCDs[mbIdx]
 	}
@@ -570,7 +574,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		spriest.PrevTicks = 0
 	}
 
-	if castMf2 == 1 && spriest.AllCDs[mbIdx].Seconds() == 0 {
+	if castMf2 == 1 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
 		return spriest.MindBlast, 0
 	}
 
@@ -612,7 +616,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 				}
 			}
 			return nil, nextCD
-		} else if numTicks == 2 && spriest.AllCDs[mbIdx].Seconds() == 0 {
+		} else if numTicks == 2 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
 			return spriest.MindBlast, 0
 		} else {
 			return spriest.MindFlay[numTicks], 0

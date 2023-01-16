@@ -26,6 +26,7 @@ import {
 	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
+	Deathknight_Rotation_DrwDiseases,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -99,11 +100,11 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305020530003303231023101351--230220305003',
+		talentsString: '2305120530003303231023001351--230220305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
-			major3: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -126,10 +127,11 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	oblitDelayDuration: 1000.0,
-	//oblitdelay is here as a temporary fix
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: false,
@@ -151,8 +153,9 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 1000.0,
-  frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-  frostCustomRotation: CustomRotation.create({
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
+  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+  	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
@@ -168,6 +171,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
@@ -181,10 +185,14 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	useEmpowerRuneWeapon: true,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
+	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
+	holdErwArmy: false,
 	useAms: false,
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
@@ -205,6 +213,218 @@ export const DefaultConsumes = Consumes.create({
 	thermalSapper: true,
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
+
+export const P1_BLOOD_BIS_PRESET = {
+	name: 'P1 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 44006,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 44664,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40557,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 40403,
+			"enchant": 3831
+		  },
+		  {
+			"id": 40550,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 40330,
+			"enchant": 3845,
+			"gems": [
+			  42142,
+			  0
+			]
+		  },
+		  {
+			"id": 40552,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 40278,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 40556,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  40037
+			]
+		  },
+		  {
+			"id": 40591,
+			"enchant": 3606
+		  },
+		  {
+			"id": 40075
+		  },
+		  {
+			"id": 39401
+		  },
+		  {
+			"id": 40256
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 40384,
+			"enchant": 3368
+		  },
+		  {},
+		  {
+			"id": 40207
+		  }
+  ]}`),
+};
+
+export const P2_BLOOD_BIS_PRESET = {
+	name: 'P2 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 46115,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  42702
+			]
+		  },
+		  {
+			"id": 45459,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46117,
+			"enchant": 3808,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46032,
+			"enchant": 3831,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 46111,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  42142,
+			  0
+			]
+		  },
+		  {
+			"id": 46113,
+			"enchant": 3604,
+			"gems": [
+			  39996,
+			  0
+			]
+		  },
+		  {
+			"id": 45241,
+			"gems": [
+			  39996,
+			  45862,
+			  39996
+			]
+		  },
+		  {
+			"id": 45134,
+			"enchant": 3823,
+			"gems": [
+			  39996,
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 46048,
+			"gems": [
+			  39996
+			]
+		  },
+		  {
+			"id": 42987
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 45516,
+			"enchant": 3368,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {},
+		  {
+			"id": 45254
+		  }
+  ]}`),
+};
 
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	name: 'Pre-Raid 2H Unholy',
@@ -696,7 +916,7 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 			]
 		  },
 		  {
-			"id": 46097,
+			"id": 46036,
 			"enchant": 3790,
 			"gems": [
 			  39996
@@ -1016,7 +1236,7 @@ export const P2_FROST_BIS_PRESET = {
 		  },
 		  {
 			"id": 46097,
-			"enchant": 3369,
+			"enchant": 3370,
 			"gems": [
 			  39996
 			]
@@ -1029,7 +1249,7 @@ export const P2_FROST_BIS_PRESET = {
 			]
 		  },
 		  {
-			"id": 45254
+			"id": 40207
 		  }
   ]}`),
 };

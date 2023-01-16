@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerGhoulFrenzySpell() {
@@ -12,12 +11,10 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		return
 	}
 
-	gfHeal := dk.RegisterSpell(nil, core.SpellConfig{
+	gfHeal := dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 63560},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
-
-		Cast: core.CastConfig{},
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -25,10 +22,10 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.SpellMetrics[target.UnitIndex].Hits++
 		},
-	}, nil, nil)
+	})
 
 	gfHealHot := core.NewDot(core.Dot{
-		Spell: gfHeal.Spell,
+		Spell: gfHeal,
 		Aura: dk.Ghoul.RegisterAura(core.Aura{
 			Label:    "Ghoul Frenzy Hot",
 			ActionID: gfHeal.ActionID,
@@ -44,24 +41,25 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
-	dk.GhoulFrenzy = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 63560},
-		SpellSchool:  core.SpellSchoolShadow,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.GhoulFrenzy = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 63560},
+		SpellSchool: core.SpellSchoolShadow,
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
 				Duration: time.Second * 10,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.Ghoul.IsEnabled()
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -69,9 +67,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 			gfHealHot.Apply(sim)
 			dk.Ghoul.GhoulFrenzyAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.Talents.GhoulFrenzy && dk.Ghoul.IsEnabled() && dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.GhoulFrenzy.IsReady(sim)
-	}, nil)
+	})
 
 	dk.GhoulFrenzyAura = dk.RegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 63560},

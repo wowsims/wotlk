@@ -57,7 +57,7 @@ func (dk *Deathknight) registerFrostFever() {
 	flagTs := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.FrostFeverSpell = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -74,7 +74,7 @@ func (dk *Deathknight) registerFrostFever() {
 			isRefreshing[unit.Index] = false
 			dk.FrostFeverDebuffAura[unit.Index].Activate(sim)
 		},
-	}, nil, nil)
+	})
 
 	dk.FrostFeverDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
@@ -82,7 +82,7 @@ func (dk *Deathknight) registerFrostFever() {
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 		dk.FrostFeverDisease[target.Index] = core.NewDot(core.Dot{
-			Spell: dk.FrostFeverSpell.Spell,
+			Spell: dk.FrostFeverSpell,
 			Aura: target.RegisterAura(core.Aura{
 				Label:    "FrostFever-" + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
@@ -127,7 +127,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	flagRor := make([]bool, dk.Env.GetNumTargets())
 	isRefreshing := make([]bool, dk.Env.GetNumTargets())
 
-	dk.BloodPlagueSpell = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.BloodPlagueSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -144,7 +144,7 @@ func (dk *Deathknight) registerBloodPlague() {
 			dk.BloodPlagueDisease[unit.Index].Apply(sim)
 			isRefreshing[unit.Index] = false
 		},
-	}, nil, nil)
+	})
 
 	dk.BloodPlagueDisease = make([]*core.Dot, dk.Env.GetNumTargets())
 	dk.BloodPlagueExtended = make([]int, dk.Env.GetNumTargets())
@@ -155,7 +155,7 @@ func (dk *Deathknight) registerBloodPlague() {
 	for _, encounterTarget := range dk.Env.Encounter.Targets {
 		target := &encounterTarget.Unit
 		dk.BloodPlagueDisease[target.Index] = core.NewDot(core.Dot{
-			Spell: dk.BloodPlagueSpell.Spell,
+			Spell: dk.BloodPlagueSpell,
 			Aura: target.RegisterAura(core.Aura{
 				Label:    "BloodPlague-" + strconv.Itoa(int(dk.Index)),
 				ActionID: actionID,
@@ -209,9 +209,9 @@ func (dk *Deathknight) registerDrwFrostFever() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease,
+		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
 
-		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+		DamageMultiplier: 0.5 * core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -255,11 +255,10 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease,
+		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
 
-		DamageMultiplier: 1,
-		// TODO: Shouldn't this be dk.RuneWeapon?
-		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
+		DamageMultiplier: 0.5,
+		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {

@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerBoneShieldSpell() {
@@ -45,19 +44,17 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(10, 0, 0, 1, 0))
-	dk.BoneShield = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     actionID,
-		Flags:        core.SpellFlagNoOnCastComplete,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.BoneShield = dk.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+			RunicPowerGain: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
@@ -67,7 +64,5 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BoneShieldAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.BoneShield.IsReady(sim)
-	}, nil)
+	})
 }

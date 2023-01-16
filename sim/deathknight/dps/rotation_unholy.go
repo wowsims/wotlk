@@ -93,7 +93,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						return sim.CurrentTime
 					}
 					casted = dk.ScourgeStrike.Cast(sim, target)
-				} else if dk.IcyTouch.CanCast(sim) && dk.PlagueStrike.CanCast(sim) {
+				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
@@ -142,7 +142,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						return sim.CurrentTime
 					}
 
-					if dk.HornOfWinter.CanCast(sim) {
+					if dk.HornOfWinter.CanCast(sim, nil) {
 						dk.HornOfWinter.Cast(sim, target)
 					}
 				}
@@ -246,7 +246,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 					return sim.CurrentTime
 				}
 
-				if dk.HornOfWinter.CanCast(sim) {
+				if dk.HornOfWinter.CanCast(sim, nil) {
 					dk.HornOfWinter.Cast(sim, target)
 				}
 			}

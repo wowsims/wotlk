@@ -95,6 +95,8 @@ type Mage struct {
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
 
+	CritDebuffCategory *core.ExclusiveCategory
+
 	IgniteDots []*core.Dot
 }
 

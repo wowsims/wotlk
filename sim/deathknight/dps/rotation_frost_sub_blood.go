@@ -40,7 +40,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli(sim *core.Si
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
-		if dk.Obliterate.CanCast(sim) {
+		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
@@ -65,25 +65,25 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 
-	km := dk.KM()
+	km := dk.KillingMachineAura.IsActive()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
-		if dk.Obliterate.CanCast(sim) && ffActive && bpActive {
+		if dk.Obliterate.CanCast(sim, nil) && ffActive && bpActive {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
 			casted = dk.Obliterate.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) && km {
+		} else if dk.FrostStrike.CanCast(sim, nil) && km {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim) {
+		} else if dk.FrostStrike.CanCast(sim, nil) {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.Obliterate.CanCast(sim) {
+		} else if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
 			casted = dk.Obliterate.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim) {
+		} else if dk.HowlingBlast.CanCast(sim, nil) {
 			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim) {
+		} else if dk.HornOfWinter.CanCast(sim, nil) {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
 	}
@@ -99,9 +99,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		km := dk.KM()
+		km := dk.KillingMachineAura.IsActive()
 		if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
-			if dk.FrostStrike.CanCast(sim) {
+			if dk.FrostStrike.CanCast(sim, nil) {
 				dk.FrostStrike.Cast(sim, target)
 			}
 		}
@@ -140,10 +140,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 		} else if br == 2 {
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			km := dk.KM()
+			km := dk.KillingMachineAura.IsActive()
 			if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
 				dk.DeathRuneRevertAt() > sim.CurrentTime+1500*time.Millisecond {
-				if dk.FrostStrike.CanCast(sim) {
+				if dk.FrostStrike.CanCast(sim, nil) {
 					casted = dk.FrostStrike.Cast(sim, target)
 				}
 			}
@@ -206,7 +206,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 			if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
-				if dk.Obliterate.CanCast(sim) {
+				if dk.Obliterate.CanCast(sim, nil) {
 					if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 						dk.Deathchill.Cast(sim, target)
 					}
@@ -225,11 +225,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			casted := false
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			km := dk.KM()
-			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) && dk.getOblitDrift(sim, abGCD) <= allowedObDrift {
+			km := dk.KillingMachineAura.IsActive()
+			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim, nil) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) && dk.getOblitDrift(sim, abGCD) <= allowedObDrift {
 				casted = dk.FrostStrike.Cast(sim, target)
 			} else {
-				if dk.Obliterate.CanCast(sim) {
+				if dk.Obliterate.CanCast(sim, nil) {
 					if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 						dk.Deathchill.Cast(sim, target)
 					}
@@ -320,6 +320,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *c
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
+		NewAction(dk.RotationActionCallback_FrostSubBlood_ERW_Check).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump)
 
 	if dk.UnbreakableArmor != nil {
@@ -441,4 +442,27 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Sequence_Pesti(si
 			return core.TernaryDuration(casted, -1, waitUntil)
 		}
 	}
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_ERW_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	/*
+		This ERW should only ever happen from the desync rotation when it falls back to this normal sub blood rotation
+	*/
+	bothDeath := dk.RuneIsDeath(0) && dk.RuneIsDeath(1)
+	noMoreUAs := sim.Duration-dk.UnbreakableArmor.ReadyAt() < 5*time.Second
+	numRunes := dk.CurrentDeathRunes() + dk.CurrentBloodRunes() + dk.CurrentUnholyRunes() + dk.CurrentFrostRunes()
+
+	if sim.IsExecutePhase35() && dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) && numRunes <= 2 && bothDeath && (dk.UnbreakableArmorAura.IsActive() || noMoreUAs) {
+		dk.castAllMajorCooldowns(sim)
+
+		s.Clear().
+			NewAction(dk.RotationActionCallback_ERW).
+			NewAction(dk.RotationActionCallback_Obli).
+			NewAction(dk.RotationActionCallback_Obli).
+			NewAction(dk.RotationActionCallback_Obli).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
+	} else {
+		s.Advance()
+	}
+	return sim.CurrentTime
 }
