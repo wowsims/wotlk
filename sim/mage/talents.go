@@ -119,27 +119,29 @@ func (mage *Mage) applyArcaneConcentration() {
 	var proccedAt time.Duration
 	var proccedSpell *core.Spell
 
-	mage.ArcanePotencyAura = mage.RegisterAura(core.Aura{
-		Label:    "Arcane Potency",
-		ActionID: core.ActionID{SpellID: 31572},
-		Duration: time.Second * 15,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagMage) {
-				return
-			}
-			if proccedAt == sim.CurrentTime && proccedSpell == spell {
-				// Means this is another hit from the same cast that procced CC.
-				return
-			}
-			aura.Deactivate(sim)
-		},
-	})
+	if mage.Talents.ArcanePotency > 0 {
+		mage.ArcanePotencyAura = mage.RegisterAura(core.Aura{
+			Label:    "Arcane Potency",
+			ActionID: core.ActionID{SpellID: 31572},
+			Duration: time.Second * 15,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
+			},
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !spell.Flags.Matches(SpellFlagMage) {
+					return
+				}
+				if proccedAt == sim.CurrentTime && proccedSpell == spell {
+					// Means this is another hit from the same cast that procced CC.
+					return
+				}
+				aura.Deactivate(sim)
+			},
+		})
+	}
 
 	mage.ClearcastingAura = mage.RegisterAura(core.Aura{
 		Label:    "Clearcasting",
@@ -188,7 +190,9 @@ func (mage *Mage) applyArcaneConcentration() {
 			proccedAt = sim.CurrentTime
 			proccedSpell = spell
 			mage.ClearcastingAura.Activate(sim)
-			mage.ArcanePotencyAura.Activate(sim)
+			if mage.ArcanePotencyAura != nil {
+				mage.ArcanePotencyAura.Activate(sim)
+			}
 		},
 	})
 }
