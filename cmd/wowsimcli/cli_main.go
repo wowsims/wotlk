@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/wowsims/wotlk/cmd/wowsimcli/bulk"
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -22,6 +23,7 @@ var (
 
 func main() {
 	infile := flag.String("input", "input.json", "location of input file")
+	replacefile := flag.String("replace", "replace.json", "location of replacement items file")
 	outfile := flag.String("output", "output.json", "location of output file")
 	verbose := flag.Bool("verbose", false, "print information during runtime")
 	printVersion := flag.Bool("version", false, "print version number and exit")
@@ -44,6 +46,11 @@ func main() {
 	err = protojson.Unmarshal(data, input)
 	if err != nil {
 		log.Fatalf("failed to load input json file: %s", err)
+	}
+
+	if *replacefile != "" {
+		bulk.Sim(input, *replacefile)
+		return
 	}
 
 	reporter := make(chan *proto.ProgressMetrics, 10)
