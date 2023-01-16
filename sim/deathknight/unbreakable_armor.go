@@ -39,10 +39,10 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		RuneCost: core.Ternary(dk.Inputs.IsDps, core.RuneCostOptions{}, core.RuneCostOptions{
+		RuneCost: core.RuneCostOptions{
 			FrostRuneCost:  1,
 			RunicPowerGain: 10,
-		}),
+		},
 		Cast: core.CastConfig{
 			// No GCD
 			CD: core.Cooldown{
