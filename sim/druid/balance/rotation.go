@@ -62,7 +62,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 
 	shouldHoldIs := false
-	if lunarIsActive {
+	if lunarIsActive && moonkin.MoonkinT84PCAura == nil {
 		shouldHoldIs = lunarUptime.Seconds() < (moonkin.InsectSwarm.DamageMultiplier-1)/0.042
 	}
 	shouldRefreshMf := moonfireUptime <= 0 && useMf
@@ -106,7 +106,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		// Eclipse
 		if solarIsActive || lunarIsActive {
 			if lunarIsActive {
-				if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+				if (rotation.UseSmartCooldowns && lunarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellHaste, sim, target)
@@ -117,7 +117,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					if moonkin.MoonkinT84PCAura.IsActive() && moonkin.LunarICD.TimeToReady(sim)+playerLatency > moonkin.MoonkinT84PCAura.RemainingDuration(sim) {
 						return moonkin.Starfire
 					}
-					if (rotation.UseSmartCooldowns && solarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+					if (rotation.UseSmartCooldowns && solarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
 						moonkin.useTrinkets(stats.SpellCrit, sim, target)
 					}
