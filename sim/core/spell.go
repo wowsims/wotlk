@@ -402,10 +402,16 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	}
 
 	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of extra condition")
+		}
 		return false
 	}
 
 	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of CDs")
+		}
 		return false
 	}
 
@@ -413,6 +419,9 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		// temp hack
 		spell.CurCast.Cost = spell.DefaultCast.Cost
 		if !spell.Cost.MeetsRequirement(spell) {
+			if sim.Log != nil {
+				sim.Log("Cant cast because of resource cost")
+			}
 			return false
 		}
 	}

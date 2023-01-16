@@ -65,7 +65,7 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 
-	km := dk.KM()
+	km := dk.KillingMachineAura.IsActive()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
 		if dk.Obliterate.CanCast(sim, nil) && ffActive && bpActive {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
@@ -99,7 +99,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		km := dk.KM()
+		km := dk.KillingMachineAura.IsActive()
 		if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
 			if dk.FrostStrike.CanCast(sim, nil) {
 				dk.FrostStrike.Cast(sim, target)
@@ -140,7 +140,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(s
 		} else if br == 2 {
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			km := dk.KM()
+			km := dk.KillingMachineAura.IsActive()
 			if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
 				dk.DeathRuneRevertAt() > sim.CurrentTime+1500*time.Millisecond {
 				if dk.FrostStrike.CanCast(sim, nil) {
@@ -225,7 +225,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			casted := false
 			ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
-			km := dk.KM()
+			km := dk.KillingMachineAura.IsActive()
 			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim, nil) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) && dk.getOblitDrift(sim, abGCD) <= allowedObDrift {
 				casted = dk.FrostStrike.Cast(sim, target)
 			} else {

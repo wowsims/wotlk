@@ -106,7 +106,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.HowlingBlast.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.HowlingBlast.CanCast(sim, nil) && dk.Rime()
+				return dk.HowlingBlast.CanCast(sim, nil) && dk.RimeAura.IsActive()
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodBoil): {

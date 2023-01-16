@@ -242,8 +242,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence_Pesti(s
 	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
-	km := dk.KM()
-	rime := dk.Rime()
+	km := dk.KillingMachineAura.IsActive()
+	rime := dk.RimeAura.IsActive()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
 		if dk.FrostStrike.CanCast(sim, nil) && km {
 			casted = dk.FrostStrike.Cast(sim, target)

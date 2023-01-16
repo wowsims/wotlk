@@ -469,22 +469,6 @@ func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {
 	return dk.MeleeCritMultiplier(1, 0.15*float64(bonusTalentPoints))
 }
 
-func (dk *Deathknight) KM() bool {
-	if dk.KillingMachineAura != nil {
-		return dk.KillingMachineAura.IsActive()
-	} else {
-		return false
-	}
-}
-
-func (dk *Deathknight) Rime() bool {
-	if dk.RimeAura != nil {
-		return dk.RimeAura.IsActive()
-	} else {
-		return false
-	}
-}
-
 func (dk *Deathknight) AverageDSHeal() float64 {
 	count := len(dk.DeathStrikeHeals)
 	if count >= 5 {

@@ -120,6 +120,9 @@ func (spell *Spell) wrapCastFuncExtraCond(config CastConfig, onCastComplete Cast
 			if spell.ExtraCastCondition(sim, target) {
 				return onCastComplete(sim, target)
 			} else {
+				if sim.Log != nil {
+					sim.Log("Failed cast because of extra condition")
+				}
 				return false
 			}
 		}
@@ -132,6 +135,9 @@ func (spell *Spell) wrapCastFuncCDsReady(config CastConfig, onCastComplete CastS
 			if spell.IsReady(sim) {
 				return onCastComplete(sim, target)
 			} else {
+				if sim.Log != nil {
+					sim.Log("Failed cast because of CDs")
+				}
 				return false
 			}
 		}

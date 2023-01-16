@@ -1147,9 +1147,7 @@ func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
 	return true
 }
 func (rc *RuneCostImpl) LogCostFailure(sim *Simulation, spell *Spell) {
-	//spell.Unit.Log(sim,
-	//	"Failed casting %s, not enough rage. (Current Rune = %0.03f, Rune Cost = %0.03f)",
-	//	spell.ActionID, spell.Unit.CurrentRune(), spell.CurCast.Cost)
+	spell.Unit.Log(sim, "Failed casting %s, not enough RP or runes.", spell.ActionID)
 }
 func (rc *RuneCostImpl) SpendCost(sim *Simulation, spell *Spell) {
 	// Spend now if there is no way to refund the spell
