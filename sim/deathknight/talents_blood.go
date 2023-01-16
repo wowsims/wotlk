@@ -216,6 +216,11 @@ func (dk *Deathknight) applyBladeBarrier() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTakenMult
 		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.DefaultCast.GCD > 0 {
+				aura.Refresh(sim)
+			}
+		},
 	})
 
 	dk.onRuneSpendBladeBarrier = func(sim *core.Simulation) {
