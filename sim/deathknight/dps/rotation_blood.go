@@ -77,7 +77,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 		return sim.CurrentTime
 	}
 
-	if dk.RaiseDead.CanCast(sim) && sim.GetRemainingDuration() >= time.Second*30 {
+	if dk.RaiseDead.CanCast(sim, nil) && sim.GetRemainingDuration() >= time.Second*30 {
 		dk.RaiseDead.Cast(sim, target)
 		return sim.CurrentTime
 	}
@@ -113,7 +113,7 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 				if dk.blDeathCoilCheck(sim) {
 					casted = dk.DeathCoil.Cast(sim, target)
 				}
-				if !casted && dk.HornOfWinter.CanCast(sim) {
+				if !casted && dk.HornOfWinter.CanCast(sim, nil) {
 					dk.HornOfWinter.Cast(sim, target)
 				}
 			}

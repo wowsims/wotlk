@@ -39,7 +39,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *
 	bp := dk.BloodPlagueDisease[target.Index].IsActive()
 
 	if ff && bp {
-		if dk.Obliterate.CanCast(sim) {
+		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}

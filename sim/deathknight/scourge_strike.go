@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var ScourgeStrikeActionID = core.ActionID{SpellID: 55271}
@@ -38,30 +37,28 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 func (dk *Deathknight) registerScourgeStrikeSpell() {
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
-	rpGain := 15.0 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
 
-	baseCost := float64(core.NewRuneCost(uint8(rpGain), 0, 1, 1, 0))
-	rs := &RuneSpell{
-		Refundable: true,
-	}
-	dk.ScourgeStrike = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     ScourgeStrikeActionID.WithTag(1),
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.ScourgeStrike = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    ScourgeStrikeActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost:  1,
+			UnholyRuneCost: 1,
+			RunicPowerGain: 15 + 2.5*float64(dk.Talents.Dirge) + dk.scourgeborneBattlegearRunicPowerBonus(),
+			Refundable:     true,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.Talents.ScourgeStrike
 		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
@@ -82,7 +79,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			rs.OnResult(sim, result)
+			spell.SpendRefundableCost(sim, result)
 
 			dk.LastOutcome = result.Outcome
 			if result.Landed() && dk.DiseasesAreActive(target) {
@@ -105,7 +102,5 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			spell.DealDamage(sim, result)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.Talents.ScourgeStrike && dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.ScourgeStrike.IsReady(sim)
-	}, nil)
+	})
 }

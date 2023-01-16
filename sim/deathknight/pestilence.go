@@ -3,33 +3,27 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var PestilenceActionID = core.ActionID{SpellID: 50842}
 
 func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
+	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
-	rs := &RuneSpell{
-		Refundable: true,
-	}
+	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50842},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
-	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     PestilenceActionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+			Refundable:     true,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -44,7 +38,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
 
 				if aoeUnit == dk.CurrentTarget {
-					rs.OnResult(sim, result)
+					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
@@ -78,15 +72,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				}
 			}
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
-	}, nil)
-	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
-		rs.DeathConvertChance = 1.0
-	} else {
-		rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
-	}
-	rs.ConvertType = RuneTypeBlood
+	})
 }
 func (dk *Deathknight) registerDrwPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)

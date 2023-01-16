@@ -22,7 +22,7 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 	br.drwMaxDelay = -1
 }
 
-func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	// Early exit at end of fight
 	if sim.GetRemainingDuration() < 10*time.Second {
 		return true
@@ -43,7 +43,7 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 
 	// If the ability we want to cast spends runes we check for possible disease drops
 	// in the time we won't have runes to recast the disease
-	if spell.CanCast(sim) && costRunes {
+	if spell.CanCast(sim, nil) && costRunes {
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
@@ -55,7 +55,7 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 		crpb := dk.CopyRunicPowerBar()
 		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
+		crpb.SpendRuneCost(sim, spell, spellCost)
 
 		if dk.sr.hasGod {
 			currentBloodRunes := crpb.CurrentBloodRunes()
