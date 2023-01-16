@@ -35,7 +35,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.Pestilence.Spell:
+			case dk.Pestilence:
 				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
 			}
 		},
