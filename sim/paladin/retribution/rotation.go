@@ -11,29 +11,30 @@ import (
 func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	if ret.SealOfVengeanceAura.IsActive() && core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()) > 1 {
 		minVengeanceDotDuration := time.Second * 15
-		minVengeanceDotDurationTargetIndex := int32(0)
+		var minVengeanceDotDurationTarget *core.Unit
 		minVengeanceDotStacks := int32(5)
-		minVengeanceDotStacksTargetIndex := int32(0)
+		var minVengeanceDotStacksTarget *core.Unit
 		for i := int32(0); i < core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()); i++ {
-			dot := ret.SealOfVengeanceDots[i]
+			target := ret.Env.GetTargetUnit(i)
+			dot := ret.SovDotSpell.Dot(target)
 			remainingDuration := dot.RemainingDuration(sim)
 			stackCount := dot.GetStacks()
 
 			if remainingDuration < minVengeanceDotDuration && remainingDuration > 0 {
 				minVengeanceDotDuration = remainingDuration
-				minVengeanceDotDurationTargetIndex = i
+				minVengeanceDotDurationTarget = target
 			}
 
 			if stackCount < minVengeanceDotStacks {
 				minVengeanceDotStacks = stackCount
-				minVengeanceDotStacksTargetIndex = i
+				minVengeanceDotStacksTarget = target
 			}
 		}
 
 		if minVengeanceDotDuration < ret.WeaponFromMainHand(0).SwingDuration*2 {
-			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotDurationTargetIndex].Unit
-		} else if ret.SealOfVengeanceDots[ret.CurrentTarget.Index].GetStacks() == 5 && minVengeanceDotStacks < 5 {
-			ret.CurrentTarget = &ret.Env.Encounter.Targets[minVengeanceDotStacksTargetIndex].Unit
+			ret.CurrentTarget = minVengeanceDotDurationTarget
+		} else if ret.SovDotSpell.Dot(ret.CurrentTarget).GetStacks() == 5 && minVengeanceDotStacks < 5 {
+			ret.CurrentTarget = minVengeanceDotStacksTarget
 		} else {
 			ret.CurrentTarget = &ret.Env.Encounter.Targets[0].Unit
 		}
@@ -259,7 +260,8 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 func (ret *RetributionPaladin) checkConsecrationClipping(sim *core.Simulation) bool {
 	if ret.AvoidClippingConsecration {
-		return ((ret.ConsecrationDot.TickLength * 4) + sim.CurrentTime) <= sim.Duration
+		// TODO: sim.Duration is the wrong value to check
+		return sim.CurrentTime+ret.Consecration.AOEDot().TickLength*4 <= sim.Duration
 	} else {
 		// If we're not configured to check, always return success.
 		return true

@@ -11,39 +11,12 @@ import (
 // Prot guys do whatever you want here I guess
 func (paladin *Paladin) registerConsecrationSpell() {
 	// TODO: Properly implement max rank consecration.
-
-	actionID := core.ActionID{SpellID: 48819}
 	bonusSpellPower := 0 +
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
 
-	paladin.ConsecrationDot = core.NewDot(core.Dot{
-		Aura: paladin.RegisterAura(core.Aura{
-			Label:    "Consecration",
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 8 + core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
-		TickLength:    time.Second * 1,
-
-		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
-			target := paladin.CurrentTarget
-
-			// i = 113 + 0.04*HolP + 0.04*AP
-			dot.SnapshotBaseDamage = 113 +
-				.04*dot.Spell.MeleeAttackPower() +
-				.04*(dot.Spell.SpellPower()+bonusSpellPower)
-
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.Spell.OutcomeMagicHit)
-			}
-		},
-	})
-
 	paladin.Consecration = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 48819},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -65,10 +38,33 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "Consecration",
+			},
+			NumberOfTicks: 8 + core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
+			TickLength:    time.Second * 1,
+
+			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+				target := paladin.CurrentTarget
+
+				// i = 113 + 0.04*HolP + 0.04*AP
+				dot.SnapshotBaseDamage = 113 +
+					.04*dot.Spell.MeleeAttackPower() +
+					.04*(dot.Spell.SpellPower()+bonusSpellPower)
+
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				for _, aoeTarget := range sim.Encounter.Targets {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.Spell.OutcomeMagicHit)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			paladin.ConsecrationDot.Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	})
-
-	paladin.ConsecrationDot.Spell = paladin.Consecration
 }
