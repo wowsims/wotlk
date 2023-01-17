@@ -1,11 +1,31 @@
 package core
 
 import (
+	"strconv"
 	"time"
 )
 
 type OnSnapshot func(sim *Simulation, target *Unit, dot *Dot, isRollover bool)
 type OnTick func(sim *Simulation, target *Unit, dot *Dot)
+
+type DotConfig struct {
+	// Set to true for AOE dots (Blizzard, Hurricane, Consecrate, etc)
+	IsAOE bool
+
+	// Optional, will default to the corresponding spell.
+	Spell *Spell
+
+	Aura Aura
+
+	NumberOfTicks int32         // number of ticks over the whole duration
+	TickLength    time.Duration // time between each tick
+
+	// If true, tick length will be shortened based on casting speed.
+	AffectedByCastSpeed bool
+
+	OnSnapshot OnSnapshot
+	OnTick     OnTick
+}
 
 type Dot struct {
 	Spell *Spell
@@ -205,6 +225,52 @@ func NewDot(config Dot) *Dot {
 	})
 
 	return dot
+}
+
+type DotArray []*Dot
+
+func (dots DotArray) Get(target *Unit) *Dot {
+	return dots[target.UnitIndex]
+}
+
+func (spell *Spell) createDots(config DotConfig) {
+	if config.NumberOfTicks == 0 && config.TickLength == 0 {
+		return
+	}
+
+	if config.Spell == nil {
+		config.Spell = spell
+	}
+	dot := Dot{
+		Spell: config.Spell,
+
+		NumberOfTicks:       config.NumberOfTicks,
+		TickLength:          config.TickLength,
+		AffectedByCastSpeed: config.AffectedByCastSpeed,
+
+		OnSnapshot: config.OnSnapshot,
+		OnTick:     config.OnTick,
+	}
+
+	auraConfig := config.Aura
+	if auraConfig.ActionID.IsEmptyAction() {
+		auraConfig.ActionID = dot.Spell.ActionID
+	}
+
+	caster := dot.Spell.Unit
+	if config.IsAOE {
+		dot.Aura = caster.GetOrRegisterAura(auraConfig)
+		spell.aoeDot = NewDot(dot)
+	} else {
+		auraConfig.Label += "-" + strconv.Itoa(int(caster.Index))
+		spell.dots = make([]*Dot, len(caster.Env.AllUnits))
+		for _, target := range caster.Env.AllUnits {
+			if caster.IsOpponent(target) {
+				dot.Aura = target.GetOrRegisterAura(auraConfig)
+				spell.dots[target.UnitIndex] = NewDot(dot)
+			}
+		}
+	}
 }
 
 // Creates HoTs for all allied units.
