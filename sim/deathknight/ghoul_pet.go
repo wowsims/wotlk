@@ -30,6 +30,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	}
 
 	armyGhoulPetBaseStats := stats.Stats{
+		stats.Stamina:     159,
 		stats.Agility:     856,
 		stats.Strength:    0,
 		stats.AttackPower: -20,
@@ -51,8 +52,8 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:              70,
-			BaseDamageMax:              110,
+			BaseDamageMin:              30,
+			BaseDamageMax:              74,
 			SwingSpeed:                 2,
 			SwingDuration:              time.Second * 2,
 			CritMultiplier:             2,
@@ -64,6 +65,11 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+
+	// command doesn't apply to army ghoul
+	if dk.Race == proto.Race_RaceOrc {
+		ghoulPet.PseudoStats.DamageDealtMultiplier /= 1.05
+	}
 
 	return ghoulPet
 }
@@ -239,18 +245,12 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 }
 
 func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
-	glyphBonus := 0.0
-	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
-		glyphBonus = 0.4
-	}
-
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead) * 0.05,
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.2,
+			stats.AttackPower: ownerStats[stats.AttackPower] * 0.065,
 
 			stats.MeleeHit:  ownerHitChance * core.MeleeHitRatingPerHitChance,
 			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
