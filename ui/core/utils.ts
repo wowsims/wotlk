@@ -20,6 +20,28 @@ export function stringComparator(a: string, b: string): number {
 	}
 }
 
+// Sorts an objectArray by a property. Returns a new array.
+// Can be called recursively.
+export function sortByProperty(objArray: any[], prop: string) {
+	if (!Array.isArray(objArray)) throw new Error('FIRST ARGUMENT NOT AN ARRAY');
+	const clone = objArray.slice(0);
+	const direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
+	const propPath = (prop.constructor === Array) ? prop : prop.split('.');
+	clone.sort(function(a, b) {
+		for (let p in propPath) {
+			if (a[propPath[p]] && b[propPath[p]]) {
+				a = a[propPath[p]];
+				b = b[propPath[p]];
+			}
+		}
+		// convert numeric strings to integers
+		a = a.toString().match(/^\d+$/) ? +a : a;
+		b = b.toString().match(/^\d+$/) ? +b : b;
+		return ((a < b) ? -1 * direct : ((a > b) ? 1 * direct : 0));
+	});
+	return clone;
+}
+
 export function sum(arr: Array<number>): number {
 	return arr.reduce((total, cur) => total + cur, 0);
 }
@@ -134,10 +156,10 @@ export function formatDeltaTextElem(elem: HTMLElement, before: number, after: nu
 	}
 	elem.textContent = deltaStr;
 
-	if (noColor) {
+	if (noColor || delta == 0) {
 		elem.classList.remove('positive');
 		elem.classList.remove('negative');
-	} else if (delta >= 0 != Boolean(lowerIsBetter)) {
+	} else if (delta > 0 != Boolean(lowerIsBetter)) {
 		elem.classList.remove('negative');
 		elem.classList.add('positive');
 	} else {

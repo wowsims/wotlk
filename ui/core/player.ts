@@ -9,6 +9,7 @@ import {
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
+	ItemSwap,
 	Profession,
 	PseudoStat,
 	Race,
@@ -32,7 +33,7 @@ import { StatWeightsResult } from './proto/api.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
 
 import { playerTalentStringToProto } from './talents/factory.js';
-import { Gear } from './proto_utils/gear.js';
+import { Gear, ItemSwapGear } from './proto_utils/gear.js';
 import {
 	isUnrestrictedGem,
 	gemEligibleForSocket,
@@ -41,6 +42,7 @@ import {
 import { Stats } from './proto_utils/stats.js';
 
 import {
+	ClassSpecs,
 	SpecRotation,
 	SpecTalents,
 	SpecTypeFunctions,
@@ -74,6 +76,7 @@ import { Sim } from './sim.js';
 import { sum } from './utils.js';
 import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
+import { EnhancementShaman_Options } from './proto/shaman.js';
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -87,6 +90,7 @@ export class Player<SpecType extends Spec> {
 	private consumes: Consumes = Consumes.create();
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
+	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
@@ -173,6 +177,13 @@ export class Player<SpecType extends Spec> {
 
 	getClassColor(): string {
 		return classColors[this.getClass()];
+	}
+
+	isSpec<T extends Spec>(spec: T): this is Player<T> {
+		return this.spec == spec;
+	}
+	isClass<T extends Class>(clazz: T): this is Player<ClassSpecs<T>> {
+		return this.getClass() == clazz;
 	}
 
 	getParty(): Party | null {
@@ -397,6 +408,10 @@ export class Player<SpecType extends Spec> {
 
 	getGear(): Gear {
 		return this.gear;
+	}
+
+	getItemSwapGear(): ItemSwapGear {
+		return this.itemSwapGear;
 	}
 
 	setGear(eventID: EventID, newGear: Gear) {
@@ -794,6 +809,16 @@ export class Player<SpecType extends Spec> {
 		}
 	}
 
+	private toDatabase(): SimDatabase {
+		const dbGear =  this.getGear().toDatabase()
+		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
+		return SimDatabase.create({
+			items: dbGear.items.concat(dbItemSwapGear.items),
+			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants),
+			gems: dbGear.gems.concat(dbItemSwapGear.gems),
+		})
+	}
+
 	toProto(forExport?: boolean): PlayerProto {
 		const gear = this.getGear();
 		return withSpecProto(
@@ -814,10 +839,9 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
-				database: forExport ? SimDatabase.create() : gear.toDatabase(),
+				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
 			this.getRotation(),
-			forExport ? this.specTypeFunctions.talentsCreate() : this.getTalents(),
 			this.getSpecOptions());
 	}
 
@@ -859,15 +883,5 @@ export class Player<SpecType extends Spec> {
 			}));
 			this.setBonusStats(eventID, new Stats());
 		});
-	}
-
-	static applySharedDefaultsToProto(proto: PlayerProto) {
-		const spec = playerToSpec(proto);
-		proto.inFrontOfTarget = isTankSpec(spec);
-		proto.healingModel = HealingModel.create();
-		proto.cooldowns = Cooldowns.create({
-			hpPercentForDefensives: isTankSpec(spec) ? 0.35 : 0,
-		});
-		proto.bonusStats = new Stats().toProto();
 	}
 }

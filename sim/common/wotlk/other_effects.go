@@ -329,7 +329,7 @@ func init() {
 				}),
 			},
 			core.Aura{
-				Label:    "Power Word Shield",
+				Label:    "Val'anyr Shield",
 				ActionID: shieldID,
 				Duration: time.Second * 30,
 			})
@@ -515,9 +515,6 @@ func init() {
 						NumTicks:        10,
 						Period:          time.Second * 2,
 						TickImmediately: true,
-						CleanUp: func(s *core.Simulation) {
-							procAura.Deactivate(sim)
-						},
 						OnAction: func(sim *core.Simulation) {
 							if procAura.IsActive() {
 								procAura.AddStack(sim)

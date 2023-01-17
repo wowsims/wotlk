@@ -76,6 +76,11 @@ type GearSetCombo struct {
 	Label   string
 	GearSet *proto.EquipmentSpec
 }
+type TalentsCombo struct {
+	Label   string
+	Talents string
+	Glyphs  *proto.Glyphs
+}
 type SpecOptionsCombo struct {
 	Label       string
 	SpecOptions interface{}
@@ -96,6 +101,7 @@ type SettingsCombos struct {
 	Class       proto.Class
 	Races       []proto.Race
 	GearSets    []GearSetCombo
+	TalentSets  []TalentsCombo
 	SpecOptions []SpecOptionsCombo
 	Buffs       []BuffsCombo
 	Encounters  []EncounterCombo
@@ -104,7 +110,7 @@ type SettingsCombos struct {
 }
 
 func (combos *SettingsCombos) NumTests() int {
-	return len(combos.Races) * len(combos.GearSets) * len(combos.SpecOptions) * len(combos.Buffs) * len(combos.Encounters)
+	return len(combos.Races) * len(combos.GearSets) * len(combos.TalentSets) * len(combos.SpecOptions) * len(combos.Buffs) * len(combos.Encounters)
 }
 
 func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
@@ -119,6 +125,12 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	testIdx /= len(combos.GearSets)
 	gearSetCombo := combos.GearSets[gearSetIdx]
 	testNameParts = append(testNameParts, gearSetCombo.Label)
+
+	talentSetIdx := testIdx % len(combos.TalentSets)
+	testIdx /= len(combos.TalentSets)
+	talentSetCombo := combos.TalentSets[talentSetIdx]
+	// We never use more than 1 talent combo, so it just makes the names longer.
+	//testNameParts = append(testNameParts, talentSetCombo.Label)
 
 	specOptionsIdx := testIdx % len(combos.SpecOptions)
 	testIdx /= len(combos.SpecOptions)
@@ -137,27 +149,14 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	rsr := &proto.RaidSimRequest{
 		Raid: SinglePlayerRaidProto(
 			WithSpec(&proto.Player{
-				Race:        race,
-				Class:       combos.Class,
-				Equipment:   gearSetCombo.GearSet,
-				Consumes:    buffsCombo.Consumes,
-				Buffs:       buffsCombo.Player,
-				Profession1: proto.Profession_Engineering,
-				// TODO: Allow cooldowns in tests
-				//Cooldowns: &proto.Cooldowns{
-				//	Cooldowns: []*proto.Cooldown{
-				//		&proto.Cooldown{
-				//			Id: &proto.ActionID{
-				//				RawId: &proto.ActionID_SpellId{
-				//					SpellId: 12043,
-				//				},
-				//			},
-				//			Timings: []float64{
-				//				5,
-				//			},
-				//		},
-				//	},
-				//},
+				Race:          race,
+				Class:         combos.Class,
+				Equipment:     gearSetCombo.GearSet,
+				TalentsString: talentSetCombo.Talents,
+				Glyphs:        talentSetCombo.Glyphs,
+				Consumes:      buffsCombo.Consumes,
+				Buffs:         buffsCombo.Player,
+				Profession1:   proto.Profession_Engineering,
 			}, specOptionsCombo.SpecOptions),
 			buffsCombo.Party,
 			buffsCombo.Raid,
@@ -439,11 +438,11 @@ func (generator *CombinedTestGenerator) GetTest(testIdx int) (string, *proto.Com
 type CharacterSuiteConfig struct {
 	Class proto.Class
 
-	Race          proto.Race
-	GearSet       GearSetCombo
-	SpecOptions   SpecOptionsCombo
-	Glyphs        *proto.Glyphs
-	TalentsString string
+	Race        proto.Race
+	GearSet     GearSetCombo
+	SpecOptions SpecOptionsCombo
+	Glyphs      *proto.Glyphs
+	Talents     string
 
 	Consumes *proto.Consumes
 
@@ -464,6 +463,11 @@ type CharacterSuiteConfig struct {
 func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 	allRaces := append(config.OtherRaces, config.Race)
 	allGearSets := append(config.OtherGearSets, config.GearSet)
+	allTalentSets := []TalentsCombo{TalentsCombo{
+		Label:   "Talents",
+		Talents: config.Talents,
+		Glyphs:  config.Glyphs,
+	}}
 	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
 
 	defaultPlayer := WithSpec(
@@ -473,11 +477,12 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Equipment:     config.GearSet.GearSet,
 			Consumes:      config.Consumes,
 			Buffs:         FullIndividualBuffs,
-			TalentsString: config.TalentsString,
+			TalentsString: config.Talents,
 			Glyphs:        config.Glyphs,
 			Profession1:   proto.Profession_Engineering,
 
-			InFrontOfTarget: config.InFrontOfTarget,
+			InFrontOfTarget:    config.InFrontOfTarget,
+			DistanceFromTarget: 30,
 		},
 		config.SpecOptions.SpecOptions)
 
@@ -506,6 +511,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					Class:       config.Class,
 					Races:       allRaces,
 					GearSets:    allGearSets,
+					TalentSets:  allTalentSets,
 					SpecOptions: allSpecOptions,
 					Buffs: []BuffsCombo{
 						{
@@ -614,14 +620,16 @@ func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
 
 	defaultPlayer := &proto.Player{
-		Class:           config.Class,
-		Race:            config.Race,
-		Equipment:       config.GearSet.GearSet,
-		Consumes:        config.Consumes,
-		Buffs:           FullIndividualBuffs,
-		Glyphs:          config.Glyphs,
-		Profession1:     proto.Profession_Engineering,
-		InFrontOfTarget: config.InFrontOfTarget,
+		Class:       config.Class,
+		Race:        config.Race,
+		Equipment:   config.GearSet.GearSet,
+		Consumes:    config.Consumes,
+		Buffs:       FullIndividualBuffs,
+		Glyphs:      config.Glyphs,
+		Profession1: proto.Profession_Engineering,
+
+		InFrontOfTarget:    config.InFrontOfTarget,
+		DistanceFromTarget: 30,
 	}
 
 	generator := &CombinedTestGenerator{

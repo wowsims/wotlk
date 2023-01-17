@@ -8,20 +8,23 @@ import (
 )
 
 func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
-	baseCost := paladin.BaseMana * 0.06
+	var aegisPlateProcAura *core.Aura
+	if paladin.HasSetBonus(ItemSetAegisPlate, 4) {
+		aegisPlateProcAura = paladin.NewTemporaryStatsAura("Aegis", core.ActionID{SpellID: 64883}, stats.Stats{stats.BlockValue: 225}, time.Second*6)
+	}
 
 	paladin.ShieldOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 61411},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 61411},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.06,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - 0.02*float64(paladin.Talents.Benediction)),
 				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
@@ -36,6 +39,10 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if aegisPlateProcAura != nil {
+				aegisPlateProcAura.Activate(sim)
+			}
+
 			var baseDamage float64
 			// TODO: Derive or find accurate source for DR curve
 			bv := paladin.BlockValue()

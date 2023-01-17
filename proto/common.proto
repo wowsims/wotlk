@@ -5,12 +5,15 @@ option go_package = "./proto";
 
 enum Spec {
 	SpecBalanceDruid = 0;
-	SpecElementalShaman = 1;
-	SpecEnhancementShaman = 9;
 	SpecFeralDruid = 12;
 	SpecFeralTankDruid = 14;
+	SpecRestorationDruid = 18;
+	SpecElementalShaman = 1;
+	SpecEnhancementShaman = 9;
+	SpecRestorationShaman = 19;
 	SpecHunter = 8;
 	SpecMage = 2;
+	SpecHolyPaladin = 20;
 	SpecProtectionPaladin = 13;
 	SpecRetributionPaladin = 3;
 	SpecRogue = 7;
@@ -122,6 +125,8 @@ enum PseudoStat {
 	PseudoStatOffHandDps = 1;
 	PseudoStatRangedDps = 2;
 	PseudoStatBlockValueMultiplier = 3;
+	PseudoStatDodge = 4;
+	PseudoStatParry = 5;
 }
 
 message UnitStats {
@@ -500,11 +505,13 @@ message IndividualBuffs {
 	// Technically a debuff, but only used by individual sims.
 	int32 shattering_throws = 20;
 
+	// Replenishment
 	bool vampiric_touch = 14;
 	bool hunting_party = 15;
 	bool judgements_of_the_wise = 16;
 	bool improved_soul_leech = 17;
 	bool enduring_winter = 18;
+
 	bool focus_magic = 22;
 }
 

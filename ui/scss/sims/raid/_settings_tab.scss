@@ -1,0 +1,15 @@
+@use "sass:map";
+
+.raid-settings-tab {
+  .consumes-settings {
+    .content-block-body {
+      align-items: flex-start;
+    }
+
+    .consumes-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: map.get($spacers, 1);
+    }
+  }
+}

@@ -12,5 +12,9 @@
 
   .dropdown-menu {
     grid-auto-flow: column;
+
+    .icon-picker {
+      margin-bottom: 0;
+    }
   }
 }

@@ -35,6 +35,18 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
+export const IgniteMunching = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecMage>({
+	fieldName: 'igniteMunching',
+	label: 'Ignite Munching',
+	labelTooltip: `
+		<p>When two spells crit at the same time, only the latter spell will count towards ignite.</p>
+		<p>For example when an instant pyroblast lands right after a fireball, or when Living Bomb explodes at the same time as another spell lands on the target.</p>
+		<p>However, this does not affect Hot Streak with Frostfire Bolt due to Frostfire Bolt having a faster travel time. </p>
+	`,
+	showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	changeEmitter: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
+});
+
 export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'evocationTicks',
 	label: '# Evocation Ticks',
@@ -45,6 +57,13 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
 	labelTooltip: 'Percent of uptime for Focus Magic Buddy',
+	extraCssClasses: ['within-raid-sim-hide'],
+});
+
+export const ReactionTime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
+	fieldName: 'reactionTimeMs',
+	label: 'Reaction Time (ms)',
+	labelTooltip: 'Duration, in milliseconds, for player reaction time. Only used for a few effects (Missile Barrage / Hot Streak / Brain Freeze).',
 });
 
 export const MageRotationConfig = {
@@ -99,31 +118,30 @@ export const MageRotationConfig = {
 			label: 'Primary Spell',
 			values: [
 				{ name: 'Fireball', value: PrimaryFireSpell.Fireball },
-				{ name: 'FrostfireBolt', value: PrimaryFireSpell.FrostfireBolt },
+				{ name: 'Frostfire Bolt', value: PrimaryFireSpell.FrostfireBolt },
+				{ name: 'Scorch', value: PrimaryFireSpell.Scorch },
 			],
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'optimizeCdsForExecute',
-			label: 'Optimize CDs for execute time',
-			labelTooltip: 'Automatically save cooldowns that only have 1 use remaining for execute time',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'maintainImprovedScorch',
-			label: 'Maintain Imp. Scorch',
-			labelTooltip: 'Always use Scorch when below 5 stacks, or < 5.5s remaining on debuff.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'lbBeforeHotstreak',
-			label: 'Living Bomb Over Hot Streak',
-			labelTooltip: 'Choose to reapply living bomb before consuming hot streak',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'pyroblastDelayMs',
+			label: 'Pyroblast Delay (ms)',
+			labelTooltip: `
+				<p>Adds a delay to Pyroblast after a Hot Streak to prevent ignite munching. 50ms is a good default for this.</p>
+				<p>There is no way to do this perfectly in-game, but a cqs macro can do this with about 70-90% reliability.</p>
+			`,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.Fireball && player.getSpecOptions().igniteMunching,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.specOptionsChangeEmitter]),
 		}),
 		// ********************************************************
 		//                       FROST INPUTS
 		// ********************************************************
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'useIceLance',
+			label: 'Use Ice Lance',
+			labelTooltip: 'Casts Ice Lance at the end of Fingers of Frost, after using Deep Freeze.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'waterElementalDisobeyChance',
 			percent: true,
@@ -137,28 +155,45 @@ export const MageRotationConfig = {
 		//                      ARCANE INPUTS
 		// ********************************************************
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'minBlastBeforeMissiles',
-			label: 'Min ABs before missiles',
-			labelTooltip: 'Minimum arcane blasts to cast before using a missile barrage proc',
+			fieldName: 'only3ArcaneBlastStacksBelowManaPercent',
+			percent: true,
+			label: 'Stack Arcane Blast to 3 below mana %',
+			labelTooltip: 'When below this mana %, AM/ABarr will be used at 3 stacks of AB instead of 4.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'num4StackBlastsToMissilesGamble',
-			label: 'Switch to AM Gamble At',
-			labelTooltip: 'Number of times mage has cast a 4 stacked arcane blast over the whole fight before gambling on AM when you dont have missile barrage',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'num4StackBlastsToEarlyMissiles',
-			label: 'Switch to ASAP missiles barrage At',
-			labelTooltip: 'Switch to using missiles barrage ASAP after this many 4 cost ABs',
+			fieldName: 'blastWithoutMissileBarrageAboveManaPercent',
+			percent: true,
+			label: 'AB without Missile Barrage above mana %',
+			labelTooltip: 'When above this mana %, spam AB until a Missile Barrage proc occurs.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'extraBlastsDuringFirstAp',
-			label: 'Extra blasts during first AP',
-			labelTooltip: 'Number of extra arcane blasts to use during your first cooldown phase with AP',
+			label: 'Extra ABs during first AP',
+			labelTooltip: 'Extend AB streak by this mana casts, during the first Arcane Power CD duration.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'missileBarrageBelowArcaneBlastStacks',
+			label: 'Use Missile Barrage below n AB stacks',
+			labelTooltip: 'Setting this to 1 or 2 can potentially be a DPS increase with Arcane Barrage rotation or T8 4pc set bonus.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
+			fieldName: 'missileBarrageBelowManaPercent',
+			percent: true,
+			label: 'Use Missile Barrage ASAP below mana %',
+			labelTooltip: 'When below this mana %, use Missile Barrage proc as soon as possible. Can be useful to conserve mana.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+		}),
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'maintainImprovedScorch',
+			label: 'Maintain Imp. Scorch',
+			labelTooltip: 'Always use Scorch when below 5 stacks, or < 4s remaining on debuff.',
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalents().improvedScorch > 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 	],
 };

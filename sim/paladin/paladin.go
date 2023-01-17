@@ -11,6 +11,8 @@ const (
 	SpellFlagPrimaryJudgement   = core.SpellFlagAgentReserved2
 )
 
+var TalentTreeSizes = [3]int{26, 26, 26}
+
 type Paladin struct {
 	core.Character
 
@@ -39,11 +41,9 @@ type Paladin struct {
 	SealOfCommand         *core.Spell
 	AvengingWrath         *core.Spell
 	DivineProtection      *core.Spell
+	SovDotSpell           *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
-
-	ConsecrationDot     *core.Dot
-	SealOfVengeanceDots []*core.Dot
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
@@ -151,11 +151,6 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivineProtectionSpell()
 	paladin.registerForbearanceDebuff()
 
-	paladin.SealOfVengeanceDots = make([]*core.Dot, paladin.Env.GetNumTargets())
-	for i := range paladin.SealOfVengeanceDots {
-		paladin.SealOfVengeanceDots[i] = paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(int32(i)))
-	}
-
 	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 		unit := paladin.Env.GetTargetUnit(i)
 		if unit.MobType == proto.MobType_MobTypeDemon || unit.MobType == proto.MobType_MobTypeUndead {
@@ -170,11 +165,12 @@ func (paladin *Paladin) Reset(_ *core.Simulation) {
 }
 
 // maybe need to add stat dependencies
-func NewPaladin(character core.Character, talents *proto.PaladinTalents) *Paladin {
+func NewPaladin(character core.Character, talentsStr string) *Paladin {
 	paladin := &Paladin{
 		Character: character,
-		Talents:   talents,
+		Talents:   &proto.PaladinTalents{},
 	}
+	core.FillTalentsProto(paladin.Talents.ProtoReflect(), talentsStr, TalentTreeSizes)
 
 	// This is used to cache its effect in talents.go
 	paladin.HasTuralyonsOrLiadrinsBattlegear2Pc = paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 2)

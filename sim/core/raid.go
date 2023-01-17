@@ -129,10 +129,15 @@ type Raid struct {
 
 // Makes a new raid.
 func NewRaid(raidConfig *proto.Raid) *Raid {
+	numParties := int(raidConfig.NumActiveParties)
+	if numParties == 0 {
+		numParties = len(raidConfig.Parties)
+	}
+
 	raid := &Raid{
 		dpsMetrics:   NewDistributionMetrics(),
 		hpsMetrics:   NewDistributionMetrics(),
-		nextPetIndex: 25,
+		nextPetIndex: int32(numParties) * 5,
 	}
 
 	// If there is at least 1 Shaman in the raid, disable Bloodlust on all other
@@ -165,6 +170,18 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 				enh.EnhancementShaman.Options.Bloodlust = false
 			}
 		}
+		if resto, ok := sham.Spec.(*proto.Player_RestorationShaman); ok {
+			if resto.RestorationShaman == nil || resto.RestorationShaman.Options == nil {
+				continue
+			}
+			if luster == nil {
+				if resto.RestorationShaman.Options.Bloodlust {
+					luster = sham
+				}
+			} else {
+				resto.RestorationShaman.Options.Bloodlust = false
+			}
+		}
 	}
 	if luster != nil {
 		if raidConfig.Buffs != nil {
@@ -173,7 +190,7 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 	}
 
 	for partyIndex, partyConfig := range raidConfig.Parties {
-		if partyConfig != nil {
+		if partyConfig != nil && partyIndex < numParties {
 			raid.Parties = append(raid.Parties, NewParty(raid, partyIndex, partyConfig))
 		}
 	}
@@ -194,10 +211,6 @@ func (raid *Raid) Size() int {
 		totalPlayers += party.Size()
 	}
 	return totalPlayers
-}
-
-func (raid *Raid) IsFull() bool {
-	return raid.Size() >= 25
 }
 
 // Returns (party, index within party)
@@ -388,6 +401,14 @@ func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {
 		}
 	}
 	return nil
+}
+
+func (raid *Raid) Prepull(sim *Simulation) {
+	for _, party := range raid.Parties {
+		for _, agent := range party.Players {
+			agent.Prepull(sim)
+		}
+	}
 }
 
 func (raid *Raid) reset(sim *Simulation) {

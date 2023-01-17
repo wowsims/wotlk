@@ -2,7 +2,6 @@ import { Component } from '../components/component.js';
 import { Input, InputConfig } from '../components/input.js';
 import { Spec } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
-import { SpecTalents } from '../proto_utils/utils.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
@@ -329,7 +328,7 @@ export type TalentLocation = {
 };
 
 export type TalentConfig<TalentsProto> = {
-	fieldName?: keyof TalentsProto;
+	fieldName?: keyof TalentsProto | string;
 
 	location: TalentLocation;
 

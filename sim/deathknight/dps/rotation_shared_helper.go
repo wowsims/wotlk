@@ -11,6 +11,9 @@ type SharedRotation struct {
 	dk         *DpsDeathknight
 	recastedFF bool
 	recastedBP bool
+
+	ffFirst bool
+	hasGod  bool
 }
 
 func (sr *SharedRotation) Reset(sim *core.Simulation) {
@@ -18,7 +21,7 @@ func (sr *SharedRotation) Reset(sim *core.Simulation) {
 	sr.recastedBP = false
 }
 
-func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
+func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
 	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
 	castGcd := dk.SpellGCD() * time.Duration(casts)
@@ -34,14 +37,14 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 
 	// If the ability we want to cast spends runes we check for possible disease drops
 	// in the time we won't have runes to recast the disease
-	if spell.CanCast(sim) && costRunes {
+	if spell.CanCast(sim, nil) && costRunes {
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
 		crpb := dk.CopyRunicPowerBar()
 		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
+		crpb.SpendRuneCost(sim, spell, spellCost)
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentFrostRunes := crpb.CurrentFrostRunes()
@@ -66,10 +69,10 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
 	if spellCost > 0 && currentRunes == 0 {
-		if expiresAt < nextRuneAt {
+		if expiresAt <= nextRuneAt {
 			return true
 		}
-	} else if afterCastTime > expiresAt {
+	} else if afterCastTime >= expiresAt {
 		return true
 	}
 	return false

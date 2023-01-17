@@ -226,8 +226,6 @@ message Hunter {
 		bool allow_explosive_shot_downrank = 10;
 	}
 	Rotation rotation = 1;
-
-	HunterTalents talents = 2;
 	
 	message Options {
 		enum Ammo {

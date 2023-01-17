@@ -18,7 +18,7 @@ import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/fact
 import { GlyphConfig } from '../talents/glyphs_picker';
 
 export abstract class Importer extends Popup {
-	private readonly textElem: HTMLTextAreaElement;
+	protected readonly textElem: HTMLTextAreaElement;
 	protected readonly descriptionElem: HTMLElement;
 	protected readonly importButton: HTMLButtonElement;
 	private readonly includeFile: boolean;
@@ -137,7 +137,7 @@ export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 	}
 
 	async onImport(data: string) {
-		const proto = IndividualSimSettings.fromJsonString(data);
+		const proto = IndividualSimSettings.fromJsonString(data, { ignoreUnknownFields: true });
 		if (proto.player?.equipment) {
 			await Database.loadLeftoversIfNecessary(proto.player.equipment);
 		}

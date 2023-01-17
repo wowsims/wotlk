@@ -32,16 +32,19 @@ message Player {
 		BalanceDruid balance_druid = 6;
 		FeralDruid feral_druid = 22;
 		FeralTankDruid feral_tank_druid = 26;
+		RestorationDruid restoration_druid = 37;
 		Hunter hunter = 7;
 		Mage mage = 8;
 		RetributionPaladin retribution_paladin = 9;
 		ProtectionPaladin protection_paladin = 25;
+		HolyPaladin holy_paladin = 38;
 		HealingPriest healing_priest = 34;
 		ShadowPriest shadow_priest = 10;
 		SmitePriest smite_priest = 20;
 		Rogue rogue = 11;
 		ElementalShaman elemental_shaman = 12;
 		EnhancementShaman enhancement_shaman = 18;
+		RestorationShaman restoration_shaman = 39;
 		Warlock warlock = 13;
 		Warrior warrior = 14;
 		ProtectionWarrior protection_warrior = 21;
@@ -49,7 +52,8 @@ message Player {
 		TankDeathknight tank_deathknight = 32;
 	}
 
-	string talentsString = 17;
+	// Talents in wowhead format, e.g. '01102123133-12312312-'
+	string talents_string = 17;
 	Glyphs glyphs = 28;
 	Profession profession1 = 29;
 	Profession profession2 = 30;
@@ -73,7 +77,14 @@ message Party {
 message Raid {
 	repeated Party parties = 1; 
 
-	RaidBuffs buffs = 2;
+	// The number of parties in the raid who participate in the sim, e.g.
+	// 10-man vs 25-man raids. The remaining parties are unused but can hold
+	// bench players.
+	//
+	// If this value is 0, all parties are included.
+	int32 num_active_parties = 2;
+
+	RaidBuffs buffs = 7;
 
 	// Extra debuffs provided by buff bots in this raid.
 	// This is also used for debuffs in the individual sims.

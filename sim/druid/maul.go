@@ -3,13 +3,9 @@ package druid
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerMaulSpell(rageThreshold float64) {
-	cost := 15.0 - float64(druid.Talents.Ferocity)
-	refundAmount := cost * 0.8
-
 	flatBaseDamage := 578.0
 	if druid.Equip[core.ItemSlotRanged].ID == 23198 { // Idol of Brutality
 		flatBaseDamage += 50
@@ -21,17 +17,14 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 26996},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 26996},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: cost,
-			},
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(druid.Talents.Ferocity),
+			Refund: 0.8,
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
@@ -40,6 +33,11 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		FlatThreatBonus:  424,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Need to specially deactivate CC here in case maul is cast simultaneously with another spell.
+			if druid.ClearcastingAura != nil {
+				druid.ClearcastingAura.Deactivate(sim)
+			}
+
 			modifier := 1.0
 			if bleedCategory.AnyActive() {
 				modifier += .3
@@ -58,7 +56,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 				result := spell.CalcAndDealDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 				if !result.Landed() {
-					druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+					spell.IssueRefund(sim)
 				}
 
 				curTarget = sim.Environment.NextTargetUnit(curTarget)

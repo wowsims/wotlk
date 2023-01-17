@@ -63,10 +63,6 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		Priority:     options.Priority,
 	}
 
-	if options.TickImmediately {
-		pa.NextActionAt = sim.CurrentTime
-	}
-
 	tickIndex := 0
 
 	pa.OnAction = func(sim *Simulation) {
@@ -84,6 +80,20 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 	pa.CleanUp = func(sim *Simulation) {
 		if options.CleanUp != nil {
 			options.CleanUp(sim)
+		}
+	}
+
+	if options.TickImmediately {
+		// t = 0 might be during reset, so put it in the actions queue instead of
+		// invoking the callback directly.
+		if sim.CurrentTime == 0 {
+			pa.NextActionAt = 0
+		} else {
+			options.OnAction(sim)
+			tickIndex++
+			if options.NumTicks == 1 {
+				pa.Cancel(sim)
+			}
 		}
 	}
 

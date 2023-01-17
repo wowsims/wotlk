@@ -5,27 +5,26 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
-	baseCost := priest.BaseMana * 0.25
 	target := priest.CurrentTarget
-	initialMultiplier := 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
+	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagDisease,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagDisease,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.25,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -34,25 +33,42 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
 		DamageMultiplier: 1 +
-			float64(priest.Talents.Darkness)*0.02 +
-			float64(priest.Talents.TwinDisciplines)*0.01 +
-			float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
+			0.02*float64(priest.Talents.Darkness) +
+			0.01*float64(priest.Talents.TwinDisciplines) +
+			0.05*float64(priest.Talents.ImprovedDevouringPlague) +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			var result *core.SpellResult
-			if initialMultiplier == 0 {
+			if priest.DpInitMultiplier == 0 {
 				result = spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			} else {
-				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * initialMultiplier
+				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * priest.DpInitMultiplier
 				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				priest.DevouringPlagueDot.Apply(sim)
+			}
+		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				dot := priest.DevouringPlagueDot
+				if priest.Talents.Shadowform {
+					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
+				} else {
+					return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
+				}
+			} else {
+				baseDamage := 1376/8 + 0.1849*spell.SpellPower()
+				if priest.Talents.Shadowform {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+				} else {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				}
 			}
 		},
 	})

@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{28, 27, 26}
+
 type Warlock struct {
 	core.Character
 	Talents  *proto.WarlockTalents
@@ -84,16 +86,6 @@ type Warlock struct {
 	petStmBonusSP                float64
 	masterDemonologistFireCrit   float64
 	masterDemonologistShadowCrit float64
-
-	// set bonus cache
-	T7TwoSetBonus   bool
-	T7FourSetBonus  bool
-	T8TwoSetBonus   bool
-	T8FourSetBonus  bool
-	T9TwoSetBonus   bool
-	T9FourSetBonus  bool
-	T10TwoSetBonus  bool
-	T10FourSetBonus bool
 }
 
 type SpellRotation struct {
@@ -121,7 +113,6 @@ func (warlock *Warlock) GrandFirestoneBonus() float64 {
 
 func (warlock *Warlock) Initialize() {
 
-	warlock.registerSetBonuses()
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
 	warlock.registerImmolateSpell()
@@ -164,7 +155,26 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	))
 }
 
-func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (warlock *Warlock) Prepull(sim *core.Simulation) {
+	spellChoice := warlock.ShadowBolt
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
+		spellChoice = warlock.SoulFire
+	}
+
+	delay := (warlock.ApplyCastSpeed(core.GCDDefault) + warlock.ApplyCastSpeed(spellChoice.DefaultCast.CastTime))
+	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
+		warlock.GlyphOfLifeTapAura.Activate(sim)
+		warlock.GlyphOfLifeTapAura.UpdateExpires(warlock.GlyphOfLifeTapAura.Duration - delay)
+	}
+
+	if warlock.SpiritsoftheDamnedAura != nil {
+		warlock.SpiritsoftheDamnedAura.Activate(sim)
+		warlock.SpiritsoftheDamnedAura.UpdateExpires(warlock.SpiritsoftheDamnedAura.Duration - delay)
+	}
+
+	warlock.SpendMana(sim, spellChoice.DefaultCast.Cost, spellChoice.Cost.(*core.ManaCost).ResourceMetrics)
+	spellChoice.CD.UsePrePull(sim, warlock.ApplyCastSpeed(spellChoice.DefaultCast.CastTime))
+	spellChoice.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {
@@ -178,11 +188,12 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 
 	warlock := &Warlock{
 		Character: character,
-		Talents:   warlockOptions.Talents,
+		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
 		Rotation:  warlockOptions.Rotation,
 		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
+	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, 1)

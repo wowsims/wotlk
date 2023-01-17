@@ -93,7 +93,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						return sim.CurrentTime
 					}
 					casted = dk.ScourgeStrike.Cast(sim, target)
-				} else if dk.IcyTouch.CanCast(sim) && dk.PlagueStrike.CanCast(sim) {
+				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
@@ -142,7 +142,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						return sim.CurrentTime
 					}
 
-					if dk.HornOfWinter.CanCast(sim) {
+					if dk.HornOfWinter.CanCast(sim, nil) {
 						dk.HornOfWinter.Cast(sim, target)
 					}
 				}
@@ -246,7 +246,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 					return sim.CurrentTime
 				}
 
-				if dk.HornOfWinter.CanCast(sim) {
+				if dk.HornOfWinter.CanCast(sim, nil) {
 					dk.HornOfWinter.Cast(sim, target)
 				}
 			}
@@ -270,7 +270,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		}
 
 		didErw := false
-		if dk.Rotation.ArmyOfTheDead != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
+		if dk.Inputs.ArmyOfTheDeadType != proto.Deathknight_Rotation_DoNotUse && dk.ArmyOfTheDead.IsReady(sim) {
 			// If not enough runes for aotd cast ERW
 			if dk.CurrentBloodRunes() < 1 || dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_ERW)
@@ -279,7 +279,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
 		}
 
-		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) {
+		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood) {
 			if didErw || dk.CurrentBloodRunes() > 0 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
 			} else if !didErw && !dk.Rotation.BtGhoulFrenzy && dk.BloodTap.IsReady(sim) {
@@ -295,9 +295,11 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 		} else {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
 		}
-	} else if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
+	} else if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd && dk.ArmyOfTheDead.IsReady(sim) {
 		dk.RotationSequence.Clear()
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_Haste_Snapshot).
+			NewAction(dk.RotationActionCallback_AOTD)
 
 		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
 			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
@@ -307,6 +309,12 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 	}
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_Haste_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+	s.Advance()
+	return sim.CurrentTime
+}
+
 func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap bool) {
 	if bloodTap {
 		dk.RotationSequence.Clear().
@@ -314,7 +322,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 			NewAction(dk.RotationActionCallback_GF).
 			NewAction(dk.RotationAction_CancelBT)
 	} else {
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.Clear().
 				NewAction(dk.RotationActionUH_IT_SetSync).
 				NewAction(dk.RotationActionCallback_GF)
@@ -337,7 +345,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
-	if dk.ur.hasGod {
+	if dk.sr.hasGod {
 		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
@@ -346,7 +354,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 
 	// If we did not pesti queue normal dot refresh
 	if !didPesti {
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).
@@ -390,7 +398,7 @@ func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulati
 		// If a disease has dropped do normal reapply
 		dk.RotationSequence.Clear()
 
-		if dk.ur.ffFirst {
+		if dk.sr.ffFirst {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).

@@ -263,9 +263,6 @@ func (warlock *Warlock) defineRotation() {
 
 // Regen Spells: Casts the regen spell that will give you the most mana, includes a error whenever we cast pact on full mana.
 func (warlock *Warlock) LifeTapOrDarkPact(sim *core.Simulation) {
-	if warlock.CurrentManaPercent() == 1 {
-		panic("Life Tap or Dark Pact while full mana")
-	}
 	if warlock.Talents.DarkPact && warlock.Pet.CurrentMana() > warlock.GetStat(stats.SpellPower)+1200+131 { //Evaluates based on your SP, if DP or LT will give you the highest mana.
 		warlock.DarkPact.Cast(sim, warlock.CurrentTarget)
 	} else {
@@ -460,33 +457,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) && // This glyph gives you a buff to SP when you cast Life Tap, and we want this on at all times.
 		(!warlock.GlyphOfLifeTapAura.IsActive() || warlock.GlyphOfLifeTapAura.RemainingDuration(sim) < time.Second) {
-		if sim.CurrentTime < time.Second {
 
-			if warlock.Talents.ChaosBolt { // probably want to add a ui selection for precast later. Doing soul fire because nets the highets dps for destro
-				//warlock.SpendMana(sim, warlock.ChaosBolt.DefaultCast.Cost, warlock.ChaosBolt.ResourceMetrics)
-				//warlock.ChaosBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-				warlock.SpendMana(sim, warlock.SoulFire.DefaultCast.Cost, warlock.SoulFire.ResourceMetrics)
-				warlock.SoulFire.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-				//warlock.SpendMana(sim, warlock.Incinerate.DefaultCast.Cost, warlock.Incinerate.ResourceMetrics)
-				//warlock.Incinerate.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-			} else {
-				// Pre-Pull Cast Shadow Bolt
-				warlock.SpendMana(sim, warlock.ShadowBolt.DefaultCast.Cost, warlock.ShadowBolt.ResourceMetrics)
-				warlock.ShadowBolt.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
-			}
-			// Pre-pull Life Tap
-			warlock.GlyphOfLifeTapAura.Activate(sim)
-			if warlock.T7FourSetBonus {
-				warlock.SpiritsoftheDamnedAura.Activate(sim)
-			}
-			//These lines emulate you pre-casting a shadowbolt and having Life Tap on
-			//TODO: Illustration of Dragon Soul stacking to 10 with Life Funnel.
-		} else {
-			if sim.GetRemainingDuration() > time.Second*30 {
-				// More dps to not waste gcd on life tap for buff during execute unless execute is > 30 seconds
-				warlock.LifeTapOrDarkPact(sim)
-				return
-			}
+		if sim.GetRemainingDuration() > time.Second*30 {
+			// More dps to not waste gcd on life tap for buff during execute unless execute is > 30 seconds
+			warlock.LifeTapOrDarkPact(sim)
+			return
 		}
 	}
 

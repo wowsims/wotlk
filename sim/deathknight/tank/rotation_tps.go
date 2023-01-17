@@ -17,22 +17,22 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
 	b, _, _ := dk.NormalCurrentRunes()
 
-	if ff <= 0 && dk.IcyTouch.CanCast(sim) {
+	if ff <= 0 && dk.IcyTouch.CanCast(sim, nil) {
 		dk.IcyTouch.Cast(sim, target)
 		return -1
 	}
 
-	if bp <= 0 && dk.PlagueStrike.CanCast(sim) {
+	if bp <= 0 && dk.PlagueStrike.CanCast(sim, nil) {
 		dk.PlagueStrike.Cast(sim, target)
 		return -1
 	}
 
-	if ff <= 2*time.Second || bp <= 2*time.Second && dk.Pestilence.CanCast(sim) {
+	if ff <= 2*time.Second || bp <= 2*time.Second && dk.Pestilence.CanCast(sim, nil) {
 		dk.Pestilence.Cast(sim, target)
 		return -1
 	}
 
-	if dk.switchIT && dk.IcyTouch.CanCast(sim) {
+	if dk.switchIT && dk.IcyTouch.CanCast(sim, nil) {
 		dk.IcyTouch.Cast(sim, target)
 
 		if dk.DeathRunesInFU() == 0 {
@@ -42,7 +42,7 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if !dk.switchIT && dk.DeathStrike.CanCast(sim) {
+	if !dk.switchIT && dk.DeathStrike.CanCast(sim, nil) {
 		dk.DeathStrike.Cast(sim, target)
 
 		if dk.DeathRunesInFU() == 4 {
@@ -52,14 +52,14 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if dk.BloodTap.CanCast(sim) {
+	if dk.BloodTap.CanCast(sim, nil) {
 		dk.BloodTap.Cast(sim, target)
 		dk.IcyTouch.Cast(sim, target)
 		dk.CancelBloodTap(sim)
 		return -1
 	}
 
-	if b >= 1 && dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second && dk.BloodSpell.CanCast(sim) {
+	if b >= 1 && dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second && dk.BloodSpell.CanCast(sim, nil) {
 		dk.BloodSpell.Cast(sim, target)
 		return -1
 	}

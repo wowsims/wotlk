@@ -6,15 +6,11 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // TODO (maybe) https://github.com/magey/wotlk-warrior/issues/23 - Rend is not benefitting from Two-Handed Weapon Specialization
 func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
 	actionID := core.ActionID{SpellID: 47465}
-
-	cost := 10.0
-	refundAmount := cost * 0.8
 
 	dotDuration := time.Second * 15
 	dotTicks := int32(5)
@@ -29,13 +25,13 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   10 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -50,7 +46,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 				warrior.procBloodFrenzy(sim, result, dotDuration)
 				warrior.rendValidUntil = sim.CurrentTime + dotDuration
 			} else {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

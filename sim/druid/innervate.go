@@ -2,7 +2,6 @@ package druid
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Returns the time to wait before the next action, or 0 if innervate is on CD
@@ -15,8 +14,8 @@ func (druid *Druid) registerInnervateCD() {
 	innervateTarget := innervateTargetAgent.GetCharacter()
 
 	actionID := core.ActionID{SpellID: 29166, Tag: druid.Index}
+	var innervateSpell *core.Spell
 
-	baseCost := druid.BaseMana * 0.04
 	innervateCD := core.InnervateCD
 
 	var innervateAura *core.Aura
@@ -29,7 +28,7 @@ func (druid *Druid) registerInnervateCD() {
 			if druid.StartingForm.Matches(Cat) {
 				// double shift + innervate cost.
 				// Prevents not having enough mana to shift back into form if more powershift are executed
-				innervateManaThreshold = druid.CatForm.DefaultCast.Cost*2 + baseCost
+				innervateManaThreshold = druid.CatForm.DefaultCast.Cost*2 + innervateSpell.DefaultCast.Cost
 			} else {
 				// Threshold can be lower when casting on self because its never mid-cast.
 				innervateManaThreshold = 500
@@ -43,16 +42,17 @@ func (druid *Druid) registerInnervateCD() {
 		innervateTarget.ExpectedBonusMana += expectedManaPerInnervate * float64(remainingInnervateUsages)
 	})
 
-	innervateSpell := druid.RegisterSpell(core.SpellConfig{
+	innervateSpell = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    SpellFlagOmenTrigger,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.04,
+			Multiplier: 1,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -74,7 +74,7 @@ func (druid *Druid) registerInnervateCD() {
 		Spell: innervateSpell,
 		Type:  core.CooldownTypeMana,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if character.CurrentMana() < baseCost {
+			if character.CurrentMana() < innervateSpell.DefaultCast.Cost {
 				return false
 			}
 			// Technically this shouldn't be allowed in bear form either, but bear

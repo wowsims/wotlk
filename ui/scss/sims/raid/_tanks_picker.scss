@@ -1,24 +1,13 @@
-.tank-picker-row {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin: 3px 3px 3px 0;
-}
+.tanks-picker-root {
+	.tank-picker-row {
+		display: flex;
+	
+		&:not(:last-child) {
+			margin-bottom: $block-spacer;
+		}
 
-.tank-picker-label {
-	white-space: nowrap;
-}
-
-.tank-picker-row > * {
-	margin: 3px 3px 3px 0;
-}
-
-.tank-picker {
-	width: unset;
-}
-
-.tank-picker-row .raid-target-picker-option {
-	display: flex;
-	align-items: center;
-	min-width: 200px;
+		.tank-picker {
+			width: unset;
+		}
+	}
 }

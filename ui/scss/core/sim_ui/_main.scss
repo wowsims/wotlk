@@ -12,6 +12,7 @@
     flex-grow: 1;
 
     .tab-pane {
+      max-width: 100%;
       flex-grow: 1;
       padding-top: $gap-width;
       padding-bottom: $gap-width;

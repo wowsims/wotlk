@@ -20,18 +20,16 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 		return
 	}
 
-	baseCost := mage.BaseMana * 0.16
 	summonDuration := time.Second*45 + time.Second*5*time.Duration(mage.Talents.EnduringWinter)
 	mage.SummonWaterElemental = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31687},
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.16,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer: mage.NewTimer(),
@@ -73,17 +71,10 @@ type WaterElemental struct {
 
 func (mage *Mage) NewWaterElemental(disobeyChance float64) *WaterElemental {
 	waterElemental := &WaterElemental{
-		Pet: core.NewPet(
-			"Water Elemental",
-			&mage.Character,
-			waterElementalBaseStats,
-			waterElementalStatInheritance,
-			mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater),
-			true,
-		),
+		Pet:           core.NewPet("Water Elemental", &mage.Character, waterElementalBaseStats, waterElementalStatInheritance, nil, mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfEternalWater), true),
 		disobeyChance: disobeyChance,
 	}
-	waterElemental.EnableManaBar()
+	waterElemental.EnableManaBarWithModifier(0.333)
 
 	mage.AddPet(waterElemental)
 
@@ -118,41 +109,32 @@ func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
 
 // These numbers are just rough guesses based on looking at some logs.
 var waterElementalBaseStats = stats.Stats{
-	stats.Intellect:  100,
-	stats.SpellPower: 300,
-	stats.Mana:       4000,
-	stats.SpellHit:   3 * core.SpellHitRatingPerHitChance,
-	stats.SpellCrit:  8 * core.CritRatingPerCritChance,
+	stats.Mana:      1082,
+	stats.Intellect: 369,
 }
 
 var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 	// These numbers are just rough guesses based on looking at some logs.
 	return ownerStats.DotProduct(stats.Stats{
-		// Computed based on my lvl 65 mage, need to ask someone with a 70 to check these
-		stats.Stamina:   0.2238,
-		stats.Intellect: 0.01,
-
+		stats.Stamina:    0.2,
+		stats.Intellect:  0.3,
 		stats.SpellPower: 0.333,
-		stats.SpellHit:   0.01,
-		stats.SpellCrit:  0.01,
 	})
 }
 
 func (we *WaterElemental) registerWaterboltSpell() {
-	baseCost := we.BaseMana * 0.1
-
 	we.Waterbolt = we.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 31707},
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 31707},
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.01,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
-				CastTime: time.Second * 3,
+				CastTime: time.Millisecond * 2500,
 			},
 		},
 
@@ -161,7 +143,7 @@ func (we *WaterElemental) registerWaterboltSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(256, 328) + (3.0/3.5)*spell.SpellPower()
+			baseDamage := sim.Roll(601, 673) + (2.5/3.0)*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})

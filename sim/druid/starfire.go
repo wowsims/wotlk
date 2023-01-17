@@ -5,36 +5,31 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-// Idol IDs
-const IvoryMoongoddess int32 = 27518
-const ShootingStar int32 = 40321
-
 func (druid *Druid) registerStarfireSpell() {
-	actionID := core.ActionID{SpellID: 48465}
-	baseCost := 0.16 * druid.BaseMana
 	spellCoeff := 1.0
 	bonusCoeff := 0.04 * float64(druid.Talents.WrathOfCenarius)
 
-	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IvoryMoongoddess, 55, 0) +
-		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == ShootingStar, 165, 0)
+	idolSpellPower := 0 +
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 27518, 55, 0) + // Ivory Moongoddess
+		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40321, 165, 0) // Shooting Star
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 	maxMoonfireTicks := druid.moonfireTicks() + core.TernaryInt32(hasGlyph, 3, 0)
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolArcane,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48465},
+		SpellSchool: core.SpellSchoolArcane,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.16,
+			Multiplier: 1 - 0.03*float64(druid.Talents.Moonglow),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.03*float64(druid.Talents.Moonglow)),
 				GCD:      core.GCDDefault,
 				CastTime: druid.starfireCastTime(),
 			},

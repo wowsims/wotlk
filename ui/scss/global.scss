@@ -1,16 +1,12 @@
 @use "sass:map";
 
-$gap-width: 1.5rem;
-$gap-width-sm: .5rem;
-$link-danger-color: #ef9eaa;
-$wrath-blue: #7FCBD8;
-
 * {
   letter-spacing: 1px;
 }
 
 html {
   height: 100%;
+  color-scheme: dark;
 }
 
 body {
@@ -50,6 +46,20 @@ hr {
   border-bottom: 1px solid;
 }
 
+.dragto:not(.dragfrom) {
+  filter: brightness(.75);
+}
+
 .hide {
   display: none !important;
+}
+
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus {
+  border:none;
+  outline:none;
+}
+
+[draggable="true"] {
+  cursor: pointer;
 }

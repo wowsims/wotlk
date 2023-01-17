@@ -297,6 +297,8 @@ type PseudoStats struct {
 	CostMultiplier float64 // Multiplies spell cost.
 	CostReduction  float64 // Reduces spell cost.
 
+	GracefulCastCDFailures bool
+
 	CastSpeedMultiplier   float64
 	MeleeSpeedMultiplier  float64
 	RangedSpeedMultiplier float64
@@ -333,8 +335,6 @@ type PseudoStats struct {
 
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
-
-	HealingDealtMultiplier float64
 
 	// Important when unit is attacker or target
 	BlockValueMultiplier float64
@@ -399,8 +399,7 @@ func NewPseudoStats() PseudoStats {
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 
-		HealingDealtMultiplier: 1,
-		BlockValueMultiplier:   1,
+		BlockValueMultiplier: 1,
 
 		// Target effects.
 		DamageTakenMultiplier:       1,

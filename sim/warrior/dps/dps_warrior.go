@@ -44,7 +44,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 	warOptions := options.GetWarrior()
 
 	war := &DpsWarrior{
-		Warrior: warrior.NewWarrior(character, warOptions.Talents, warrior.WarriorInputs{
+		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 			Munch:           warOptions.Options.Munch,
@@ -119,6 +119,12 @@ func (war *DpsWarrior) Initialize() {
 		} else {
 			war.Rotation.StanceOption = proto.Warrior_Rotation_BattleStance
 		}
+	}
+
+	if war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
+		war.BerserkerStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
+	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
+		war.BattleStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
 	}
 
 	war.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)

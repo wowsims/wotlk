@@ -20,18 +20,17 @@ func (warlock *Warlock) registerInfernoSpell() {
 		Duration: time.Second * 60,
 	})
 
-	baseCost := 0.8 * warlock.BaseMana
 	warlock.Inferno = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 1122},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 1122},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				CastTime: time.Millisecond * 1500,
-				Cost:     baseCost,
 				GCD:      core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -51,7 +50,9 @@ func (warlock *Warlock) registerInfernoSpell() {
 				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 
-			warlock.Pet.Disable(sim)
+			if warlock.Pet != nil {
+				warlock.Pet.Disable(sim)
+			}
 			warlock.Infernal.EnableWithTimeout(sim, warlock.Infernal, time.Second*60)
 
 			// fake aura to show duration
@@ -95,22 +96,15 @@ func (warlock *Warlock) NewInfernal() *InfernalPet {
 		}
 
 	infernal := &InfernalPet{
-		Pet: core.NewPet(
-			"Infernal",
-			&warlock.Character,
-			stats.Stats{
-				stats.Strength:  331,
-				stats.Agility:   113,
-				stats.Stamina:   361,
-				stats.Intellect: 65,
-				stats.Spirit:    109,
-				stats.Mana:      0,
-				stats.MeleeCrit: 3.192 * core.CritRatingPerCritChance,
-			},
-			statInheritance,
-			false,
-			false,
-		),
+		Pet: core.NewPet("Infernal", &warlock.Character, stats.Stats{
+			stats.Strength:  331,
+			stats.Agility:   113,
+			stats.Stamina:   361,
+			stats.Intellect: 65,
+			stats.Spirit:    109,
+			stats.Mana:      0,
+			stats.MeleeCrit: 3.192 * core.CritRatingPerCritChance,
+		}, statInheritance, nil, false, false),
 		owner: warlock,
 	}
 
@@ -180,10 +174,9 @@ func (infernal *InfernalPet) Initialize() {
 	})
 
 	infernal.immolationAura = infernal.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 20153},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Mana,
+		ActionID:    core.ActionID{SpellID: 20153},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

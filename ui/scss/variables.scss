@@ -1,0 +1,154 @@
+@use "sass:map";
+
+// Define and overwrite Bootstrap Variables
+// See bootstrap/scss/_variables.scss for a complete list of definitions, or
+// individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
+
+// Custom theme color mapping
+$brand-color: #e0a335;
+
+$death-knight: rgb(194, 46, 70);
+$druid:        rgb(255, 125, 10);
+$hunter:       rgb(171, 212, 115);
+$mage:         rgb(105, 204, 240);
+$paladin:      rgb(245, 140, 186);
+$priest:       rgb(255, 255, 255);
+$rogue:        rgb(255, 245, 105);
+$shaman:       rgb(36, 89, 255);
+$warlock:      rgb(148, 130, 201);
+$warrior:      rgb(199, 156, 110);
+
+$class-colors: (
+  "death-knight": $death-knight,
+  "druid":        $druid,
+  "hunter":       $hunter,
+  "mage":         $mage,
+  "paladin":      $paladin,
+  "priest":       $priest,
+  "raid":         $brand-color,
+  "rogue":        $rogue,
+  "shaman":       $shaman,
+  "warlock":      $warlock,
+  "warrior":      $warrior,
+);
+
+$theme-colors: map-merge($theme-colors, $class-colors);
+
+// Theme variable overrides
+@if variable-exists(theme) {
+  $primary: map.get($class-colors, $theme);
+}
+
+@if not variable-exists(theme) {
+  $primary: $brand-color;
+}
+
+$success: #1eff00;
+$quality-uncommon: $success;
+$quality-rare: #0070dd;
+$quality-epic: #a335ee;
+
+$custom-colors: (
+  "brand": $brand-color,
+  "primary": $primary,
+  "quality-epic": $quality-epic,
+  "quality-rare": $quality-rare,
+  "quality-uncommon": $quality-uncommon,
+  "success": $success,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// Custom variables
+$block-spacer: .75rem;
+$content-font-size: .75rem;
+$gap-width: 1.5rem;
+$gap-width-sm: .5rem;
+$link-danger-color: #ef9eaa;
+$link-warning-color: #faf07f;
+$wrath-blue: #7FCBD8;
+
+// Global Bootstrap variable overrides
+$body-bg: #15171e;
+$body-color: white;
+
+$border-color: dimgrey;
+
+// This option doesn't seem to be working for some reason. Carets hidden manually instead
+// $enable-caret: false;
+$enable-negative-margins: true;
+$enable-rounded: false;
+
+$link-color: #a5b1d6;
+$link-decoration: none;
+$link-hover-color: white;
+$link-transition: color .15s ease-in-out;
+
+// Component variable overrides
+$btn-hover-bg-shade-amount: 30%;
+$btn-font-size: .875rem;
+$btn-padding-y: .5rem;
+
+$dropdown-bg: $body-bg;
+$dropdown-border-width: 0;
+$dropdown-color: white;
+$dropdown-link-active-bg: $dropdown-bg;
+$dropdown-link-hover-bg: darken($dropdown-bg, 3);
+$dropdown-padding-y: 0;
+
+$form-check-input-bg: $link-color;
+$form-check-input-border: 1px solid lighten($body-bg, 20);
+$form-check-input-width: 2rem;
+$form-check-input-focus-border: lighten($body-bg, 20);
+$form-check-input-focus-box-shadow: 0 0 .25rem $primary;
+$form-check-input-checked-bg-color: $primary;
+$form-check-input-checked-bg-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{color-contrast($primary)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>");
+$form-check-input-checked-border-color: lighten($body-bg, 20);
+
+$form-label-margin-bottom: .25rem;
+$form-label-font-size: $content-font-size;
+$form-label-font-weight: normal;
+
+$form-select-bg: lighten($body-bg, 12);
+$form-select-border-color: lighten($body-bg, 20);
+$form-select-color: white;
+$form-select-disabled-bg: lighten($body-bg, 20);
+$form-select-focus-border-color: lighten($body-bg, 20);
+$form-select-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$form-select-font-size: $content-font-size;
+$form-select-indicator: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+
+$input-bg: lighten($body-bg, 12);
+$input-border-color: lighten($body-bg, 20);
+$input-color: white;
+$input-disabled-bg: lighten($body-bg, 20);
+$input-focus-bg: lighten($body-bg, 12);
+$input-focus-border-color: lighten($body-bg, 20);
+$input-focus-box-shadow: 0 0 .25rem lighten($body-bg, 20);
+$input-focus-color: white;
+$input-font-size: $content-font-size;
+
+$modal-content-bg: $body-bg;
+$modal-content-border-color: $link-color;
+$modal-header-border-color: $border-color;
+
+$navbar-dark-color: white;
+$navbar-dark-hover-color: $primary;
+$navbar-dark-active-color: $primary;
+$navbar-padding-y: 0;
+
+$nav-link-font-size: .875rem;
+$nav-link-padding-y: map.get($spacers, 3);
+$nav-link-transition: $link-transition;
+$nav-tabs-link-active-bg: transparent;
+$nav-tabs-link-active-color: white;
+
+$popover-bg: #424557;
+$popover-body-color: white;
+$popover-body-padding-x: map.get($spacers, 2);
+$popover-body-padding-y: map.get($spacers, 2);
+
+$tooltip-bg: $popover-bg;
+$tooltip-max-width: 15vw;
+$tooltip-max-width-lg: 25vw;
+$tooltip-max-width-sm: 75vw;

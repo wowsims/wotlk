@@ -25,34 +25,31 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		// Casts
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			switch spell {
-			case dk.IcyTouch.Spell:
+			case dk.IcyTouch:
 				dk.RuneWeapon.IcyTouch.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.PlagueStrike.Spell:
+			case dk.PlagueStrike:
 				dk.RuneWeapon.PlagueStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.DeathStrike.Spell:
+			case dk.DeathStrike:
 				dk.RuneWeapon.DeathStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.HeartStrike.Spell:
+			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
-			case dk.DeathCoil.Spell:
+			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.Pestilence:
+				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
 			}
 		},
 	})
 
-	baseCost := float64(core.NewRuneCost(60.0, 0, 0, 0, 0))
-	dk.DancingRuneWeapon = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.DancingRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49028},
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 60,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
@@ -64,23 +61,13 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			dk.RuneWeapon.EnableWithTimeout(sim, dk.Gargoyle, duration)
 			dk.RuneWeapon.CancelGCDTimer(sim)
 
-			dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = 0.5
-
-			// What if?
-			//dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = 0.5 * dk.PseudoStats.DamageDealtMultiplier
-
-			//dk.RuneWeapon.PseudoStats.BonusSpellCritRating = dk.PseudoStats.BonusSpellCritRating
-
-			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
-			// dk.RuneWeapon.PseudoStats.DiseaseDamageDealtMultiplier = dk.PseudoStats.DiseaseDamageDealtMultiplier
-			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow]
-			// dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost]
+			// Auto attacks snapshot damage dealt multipliers at half
+			dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = 0.5 * dk.PseudoStats.DamageDealtMultiplier
+			dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 
 			dancingRuneWeaponAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 60.0, 0, 0, 0) && dk.DancingRuneWeapon.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (runeWeapon *RuneWeaponPet) getImpurityBonus(spell *core.Spell) float64 {
@@ -101,6 +88,8 @@ type RuneWeaponPet struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
+	Pestilence *core.Spell
+
 	// Diseases
 	FrostFeverSpell    *core.Spell
 	BloodPlagueSpell   *core.Spell
@@ -110,6 +99,7 @@ type RuneWeaponPet struct {
 
 func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwDiseaseDots()
+	runeWeapon.dkOwner.registerDrwPestilenceSpell()
 
 	runeWeapon.dkOwner.registerDrwIcyTouchSpell()
 	runeWeapon.dkOwner.registerDrwPlagueStrikeSpell()
@@ -120,14 +110,7 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon := &RuneWeaponPet{
-		Pet: core.NewPet(
-			"Rune Weapon",
-			&dk.Character,
-			runeWeaponBaseStats,
-			runeWeaponStatInheritance,
-			false,
-			true,
-		),
+		Pet:     core.NewPet("Rune Weapon", &dk.Character, runeWeaponBaseStats, runeWeaponStatInheritance, nil, false, true),
 		dkOwner: dk,
 	}
 
@@ -135,7 +118,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.OnPetDisable = runeWeapon.disable
 
 	runeWeapon.EnableAutoAttacks(runeWeapon, core.AutoAttackOptions{
-		MainHand:       dk.WeaponFromMainHand(2),
+		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 	})
 
@@ -178,12 +161,12 @@ var runeWeaponBaseStats = stats.Stats{
 
 var runeWeaponStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 	return stats.Stats{
-		stats.AttackPower:      ownerStats[stats.AttackPower],
-		stats.MeleeHit:         ownerStats[stats.MeleeHit],
-		stats.MeleeCrit:        ownerStats[stats.MeleeCrit],
-		stats.SpellHit:         ownerStats[stats.SpellHit],
-		stats.SpellCrit:        ownerStats[stats.SpellCrit],
-		stats.Expertise:        ownerStats[stats.Expertise],
-		stats.ArmorPenetration: ownerStats[stats.ArmorPenetration],
+		stats.AttackPower: ownerStats[stats.AttackPower],
+		stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
+		stats.MeleeHit:    ownerStats[stats.MeleeHit],
+		stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
+		stats.SpellHit:    ownerStats[stats.SpellHit],
+		stats.SpellCrit:   ownerStats[stats.SpellCrit],
+		stats.Expertise:   ownerStats[stats.Expertise],
 	}
 }

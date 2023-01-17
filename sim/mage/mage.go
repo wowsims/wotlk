@@ -3,7 +3,6 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -14,6 +13,8 @@ const (
 	BarrageSpells   = core.SpellFlagAgentReserved2
 	HotStreakSpells = core.SpellFlagAgentReserved3
 )
+
+var TalentTreeSizes = [3]int{30, 28, 28}
 
 func RegisterMage() {
 	core.RegisterAgentFactory(
@@ -34,28 +35,28 @@ func RegisterMage() {
 
 type Mage struct {
 	core.Character
-	Talents *proto.MageTalents
 
+	Talents  *proto.MageTalents
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	isMissilesBarrage        bool
-	isMissilesBarrageVisible bool
-	numCastsDone             int32
-	num4CostAB               int32
-	extraABsAP               int32
-	disabledMCDs             []*core.MajorCooldown
+	ReactionTime     time.Duration
+	PyroblastDelayMs time.Duration
+
+	arcaneBlastStreak int32
+	arcanePowerMCD    *core.MajorCooldown
+	heatingUp         bool
+	igniteMunchDmg    float64
+	igniteMunchTime   time.Duration
+	delayedPyroAt     time.Duration
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
 
 	// Cached values for a few mechanics.
-	spellDamageMultiplier float64
-
-	// Current bonus crit from AM+CC interaction.
-	bonusAMCCCrit   float64
 	bonusCritDamage float64
 
+	ArcaneBarrage   *core.Spell
 	ArcaneBlast     *core.Spell
 	ArcaneExplosion *core.Spell
 	ArcaneMissiles  *core.Spell
@@ -68,22 +69,19 @@ type Mage struct {
 	Flamestrike     *core.Spell
 	Frostbolt       *core.Spell
 	FrostfireBolt   *core.Spell
+	IceLance        *core.Spell
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
-	WintersChill    *core.Spell
 	MirrorImage     *core.Spell
 
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
 
-	ArcaneMissilesDot *core.Dot
-	LivingBombDot     *core.Dot // living bomb is used for single-target only, currently
-	FireballDot       *core.Dot
-	FlamestrikeDot    *core.Dot
-	FrostfireDot      *core.Dot
-	PyroblastDot      *core.Dot
+	FrostfireDot *core.Dot
 
 	ArcaneBlastAura    *core.Aura
+	ArcanePotencyAura  *core.Aura
+	ArcanePowerAura    *core.Aura
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
 	ScorchAura         *core.Aura
@@ -92,12 +90,7 @@ type Mage struct {
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
 
-	// Used to prevent utilising Brain Freeze immediately after proccing it.
-	BrainFreezeActivatedAt time.Duration
-
-	IgniteDots []*core.Dot
-
-	manaTracker common.ManaSpendingRateTracker
+	CritDebuffCategory *core.ExclusiveCategory
 }
 
 func (mage *Mage) GetCharacter() *core.Character {
@@ -126,6 +119,7 @@ func (mage *Mage) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (mage *Mage) Initialize() {
+	mage.registerArcaneBarrageSpell()
 	mage.registerArcaneBlastSpell()
 	mage.registerArcaneExplosionSpell()
 	mage.registerArcaneMissilesSpell()
@@ -135,72 +129,23 @@ func (mage *Mage) Initialize() {
 	mage.registerFireBlastSpell()
 	mage.registerFlamestrikeSpell()
 	mage.registerFrostboltSpell()
+	mage.registerIceLanceSpell()
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
-	mage.registerWintersChillSpell()
 	mage.registerLivingBombSpell()
 	mage.registerFrostfireBoltSpell()
 
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
-
-	mage.num4CostAB = 0
-	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
-}
-
-func (mage *Mage) launchExecuteCDOptimizer(sim *core.Simulation) {
-
-	pa := &core.PendingAction{
-		Priority: core.ActionPriorityRegen,
-	}
-	pa.OnAction = func(sim *core.Simulation) {
-		if sim.IsExecutePhase35() {
-			for _, mcd := range mage.disabledMCDs {
-				mcd.Enable()
-			}
-			// TODO looks fishy, since disabledMCDs isn't emptied; also, this could use an executePhaseCallback instead
-		} else {
-			for _, mcd := range mage.GetMajorCooldowns() {
-				isBloodLust := mcd.Spell.ActionID == core.ActionID{SpellID: 2825, Tag: -1} //ignore blood lust as it shouldn't be saved
-				isFlameCap := mcd.Spell.ActionID == core.ActionID{ItemID: 22788}           //ignore flame cap because it's so long
-				isPotionOfSpeed := mcd.Spell.ActionID == core.ActionID{ItemID: 40211}
-				if mcd.Spell.CD.Duration > (sim.Duration-sim.CurrentTime) && mcd.Type.Matches(core.CooldownTypeDPS) &&
-					!isBloodLust && !isFlameCap || isPotionOfSpeed {
-					mcd.Disable()
-					mage.disabledMCDs = append(mage.disabledMCDs, mcd)
-				}
-			}
-
-			pa.NextActionAt = sim.CurrentTime + core.MinDuration(40*time.Second, time.Duration(.35*float64(sim.Duration)))
-
-			executeTime := time.Duration(.7 * float64(sim.Duration))
-
-			if pa.NextActionAt > executeTime {
-				pa.NextActionAt = executeTime
-			}
-			if pa.NextActionAt < sim.Duration {
-				sim.AddPendingAction(pa)
-			}
-
-		}
-
-	}
-
-	pa.OnAction(sim) // immediately activate first pending action
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
-	mage.numCastsDone = 0
-	mage.num4CostAB = 0
-	mage.extraABsAP = mage.Rotation.ExtraBlastsDuringFirstAp
-	mage.manaTracker.Reset()
-	mage.bonusAMCCCrit = 0
-
-	if mage.Rotation.Type == proto.Mage_Rotation_Fire && mage.Rotation.OptimizeCdsForExecute { // make this an option
-		mage.disabledMCDs = make([]*core.MajorCooldown, 0, 10)
-		mage.launchExecuteCDOptimizer(sim)
-	}
+	mage.arcaneBlastStreak = 0
+	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
+	mage.igniteMunchDmg = 0
+	mage.igniteMunchTime = 0
+	mage.delayedPyroAt = 0
 }
 
 func NewMage(character core.Character, options *proto.Player) *Mage {
@@ -208,16 +153,25 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 
 	mage := &Mage{
 		Character: character,
-		Talents:   mageOptions.Talents,
+		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
 
-		spellDamageMultiplier: 1.0,
-		manaTracker:           common.NewManaSpendingRateTracker(),
+		ReactionTime:     time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
+		PyroblastDelayMs: time.Millisecond * time.Duration(mageOptions.Rotation.PyroblastDelayMs),
 	}
+	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+
 	mage.bonusCritDamage = .25*float64(mage.Talents.SpellPower) + .1*float64(mage.Talents.Burnout)
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
+
+	if mage.Talents.ImprovedScorch == 0 {
+		mage.Rotation.MaintainImprovedScorch = false
+	}
+	if !mage.Options.IgniteMunching || mage.Rotation.PrimaryFireSpell != proto.Mage_Rotation_Fireball {
+		mage.PyroblastDelayMs = 0
+	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
 		mage.PseudoStats.SpiritRegenRateCasting += .5

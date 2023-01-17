@@ -6,26 +6,25 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) registerSearingTotemSpell() {
 	actionID := core.ActionID{SpellID: 58704}
-	baseCost := baseMana * 0.07
 
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		Flags:        SpellFlagTotem,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       SpellFlagTotem,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.07,
+			Multiplier: 1 -
+				0.05*float64(shaman.Talents.TotemicFocus) -
+				0.02*float64(shaman.Talents.MentalQuickness),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost -
-					baseCost*float64(shaman.Talents.TotemicFocus)*0.05 -
-					baseCost*float64(shaman.Talents.MentalQuickness)*0.02,
 				GCD: time.Second,
 			},
 		},
@@ -87,21 +86,21 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
 	actionID := core.ActionID{SpellID: 58734}
-	baseCost := baseMana * 0.27
 
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskEmpty,
-		Flags:        SpellFlagTotem,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       SpellFlagTotem,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.27,
+			Multiplier: 1 -
+				0.05*float64(shaman.Talents.TotemicFocus) -
+				0.02*float64(shaman.Talents.MentalQuickness),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost -
-					baseCost*float64(shaman.Talents.TotemicFocus)*0.05 -
-					baseCost*float64(shaman.Talents.MentalQuickness)*0.02,
 				GCD: time.Second,
 			},
 		},

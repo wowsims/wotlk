@@ -56,6 +56,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
@@ -78,7 +79,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_ARCANE_PRESET.gear,
+				gear: Presets.ARCANE_P1_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.48,
@@ -97,6 +98,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				talents: Presets.ArcaneTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultArcaneOptions,
+				other: Presets.OtherDefaults,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
@@ -143,10 +145,11 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					MageInputs.IgniteMunching,
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
+					MageInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
-
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -165,15 +168,11 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRERAID_ARCANE_PRESET,
-					Presets.P1_PRERAID_FIRE_PRESET,
-					Presets.P1_ARCANE_PRESET,
-					Presets.P1_FIRE_PRESET,
-					Presets.P1_FROST_PRESET,
-					Presets.P2_Arcane_Preset,
-					Presets.P2_Fire_Preset,
-					Presets.ICC_FFB_Preset,
-					Presets.ICC_Fireball_Preset,
+					Presets.ARCANE_PRERAID_PRESET,
+					Presets.ARCANE_P1_PRESET,
+					Presets.FIRE_PRERAID_PRESET,
+					Presets.FIRE_P1_PRESET,
+					Presets.FROST_P1_PRESET,
 				],
 			},
 		});

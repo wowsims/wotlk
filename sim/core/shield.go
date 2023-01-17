@@ -11,10 +11,11 @@ type Shield struct {
 func (shield *Shield) Apply(sim *Simulation, shieldAmount float64) {
 	caster := shield.Spell.Unit
 	target := shield.Aura.Unit
-	attackTable := caster.AttackTables[target.UnitIndex]
+	//attackTable := caster.AttackTables[target.UnitIndex]
 
-	shieldAmount *= shield.Spell.DamageMultiplier * caster.PseudoStats.HealingDealtMultiplier
-	shieldAmount *= target.PseudoStats.HealingTakenMultiplier * attackTable.HealingDealtMultiplier
+	// Shields are not affected by healing pseudostats the same way heals are.
+	// So we only apply the spell-specific multiplier.
+	shieldAmount *= shield.Spell.DamageMultiplier
 
 	shield.Aura.Deactivate(sim)
 	shield.Aura.Activate(sim)

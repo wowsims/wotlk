@@ -5,14 +5,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerLacerateSpell() {
 	actionID := core.ActionID{SpellID: 48568}
-
-	cost := 15.0 - float64(druid.Talents.ShreddingAttacks)
-	refundAmount := cost * 0.8
 
 	tickDamage := 320.0 / 5
 	initialDamage := 88.0
@@ -24,17 +20,18 @@ func (druid *Druid) registerLacerateSpell() {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(druid.Talents.ShreddingAttacks),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -65,7 +62,7 @@ func (druid *Druid) registerLacerateSpell() {
 					druid.LacerateDot.TakeSnapshot(sim, true)
 				}
 			} else {
-				druid.AddRage(sim, refundAmount, druid.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 
 			spell.DealDamage(sim, result)

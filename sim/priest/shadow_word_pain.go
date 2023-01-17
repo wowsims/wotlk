@@ -6,12 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	actionID := core.ActionID{SpellID: 48125}
-	baseCost := priest.BaseMana * 0.22
 
 	var glyphManaMetrics *core.ResourceMetrics
 	if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordPain)) {
@@ -23,13 +21,13 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.22,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -50,13 +48,49 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				dot := priest.ShadowWordPainDot
+				if priest.Talents.Shadowform {
+					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
+				} else {
+					return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
+				}
+			} else {
+				baseDamage := 1380/6 + 0.1833*spell.SpellPower()
+				if priest.Talents.Shadowform {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
+				} else {
+					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+				}
+			}
+		},
 	})
 
+	twistedFaithMultiplier := 1 + 0.02*float64(priest.Talents.TwistedFaith)
+	mindFlayMod := twistedFaithMultiplier +
+		core.TernaryFloat64(priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)), 0.1, 0)
 	priest.ShadowWordPainDot = core.NewDot(core.Dot{
 		Spell: priest.ShadowWordPain,
 		Aura: priest.CurrentTarget.RegisterAura(core.Aura{
 			Label:    "ShadowWordPain-" + strconv.Itoa(int(priest.Index)),
 			ActionID: actionID,
+			OnGain: func(_ *core.Aura, _ *core.Simulation) {
+				priest.MindBlast.DamageMultiplier *= twistedFaithMultiplier
+				for _, dot := range priest.MindFlayDot {
+					if dot != nil {
+						dot.Spell.DamageMultiplier *= mindFlayMod
+					}
+				}
+			},
+			OnExpire: func(_ *core.Aura, _ *core.Simulation) {
+				priest.MindBlast.DamageMultiplier /= twistedFaithMultiplier
+				for _, dot := range priest.MindFlayDot {
+					if dot != nil {
+						dot.Spell.DamageMultiplier /= mindFlayMod
+					}
+				}
+			},
 		}),
 
 		NumberOfTicks: 6 +

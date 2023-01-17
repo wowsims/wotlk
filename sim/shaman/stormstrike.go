@@ -84,11 +84,6 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	mhHit := shaman.newStormstrikeHitSpell(true)
 	ohHit := shaman.newStormstrikeHitSpell(false)
 
-	baseCost := baseMana * 0.08
-	if shaman.Equip[core.ItemSlotRanged].ID == StormfuryTotem {
-		baseCost -= 22
-	}
-
 	ssDebuffAura := shaman.StormstrikeDebuffAura(shaman.CurrentTarget)
 
 	var skyshatterAura *core.Aura
@@ -104,19 +99,20 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: 51522})
 
 	cooldownTime := time.Duration(core.TernaryFloat64(shaman.HasSetBonus(ItemSetGladiatorsEarthshaker, 4), 6, 8))
+	impSSChance := 0.5 * float64(shaman.Talents.ImprovedStormstrike)
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     StormstrikeActionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    StormstrikeActionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.08,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -130,10 +126,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				if shaman.Talents.ImprovedStormstrike > 0 {
-					if sim.RandomFloat("Improved Stormstrike") < 0.5*float64(shaman.Talents.ImprovedStormstrike) {
-						shaman.AddMana(sim, baseMana*0.2, manaMetrics, true)
-					}
+				if impSSChance > 0 && sim.RandomFloat("Improved Stormstrike") < impSSChance {
+					shaman.AddMana(sim, 0.2*shaman.BaseMana, manaMetrics, true)
 				}
 				ssDebuffAura.Activate(sim)
 				ssDebuffAura.SetStacks(sim, 4)
@@ -146,8 +140,14 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 				}
 
 				mhHit.Cast(sim, target)
-				ohHit.Cast(sim, target)
-				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Casts -= 2
+				casts := int32(1)
+
+				if shaman.AutoAttacks.IsDualWielding {
+					ohHit.Cast(sim, target)
+					casts++
+				}
+
+				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Casts -= casts
 				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Hits--
 			}
 			spell.DealOutcome(sim, result)

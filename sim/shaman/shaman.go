@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-const baseMana = 4396.0
+var TalentTreeSizes = [3]int{25, 29, 26}
 
 // Start looking to refresh 5 minute totems at 4:55.
 const TotemRefreshTime5M = time.Second * 295
@@ -20,19 +20,20 @@ const (
 	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
-func NewShaman(character core.Character, talents *proto.ShamanTalents, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
-	if totems.Fire == proto.FireTotem_TotemOfWrath && !talents.TotemOfWrath {
-		totems.Fire = proto.FireTotem_NoFireTotem
-	}
-
+func NewShaman(character core.Character, talents string, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	shaman := &Shaman{
 		Character:           character,
-		Talents:             talents,
+		Talents:             &proto.ShamanTalents{},
 		Totems:              totems,
 		SelfBuffs:           selfBuffs,
 		thunderstormInRange: thunderstormRange,
 	}
+	core.FillTalentsProto(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	shaman.EnableManaBar()
+
+	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath && !shaman.Talents.TotemOfWrath {
+		shaman.Totems.Fire = proto.FireTotem_FlametongueTotem
+	}
 
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)
@@ -117,13 +118,15 @@ type Shaman struct {
 	StrengthOfEarthTotem *core.Spell
 	TotemOfWrath         *core.Spell
 	TremorTotem          *core.Spell
+	StoneskinTotem       *core.Spell
 	WindfuryTotem        *core.Spell
 	WrathOfAirTotem      *core.Spell
 	FlametongueTotem     *core.Spell
 
-	FlameShockDot   *core.Dot
-	SearingTotemDot *core.Dot
-	MagmaTotemDot   *core.Dot
+	FlameShockDot    *core.Dot
+	SearingTotemDot  *core.Dot
+	MagmaTotemDot    *core.Dot
+	LightningBoltDot *core.Dot
 
 	ClearcastingAura         *core.Aura
 	ElementalMasteryAura     *core.Aura
@@ -185,6 +188,11 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 			totem = proto.TristateEffect_TristateEffectImproved
 		}
 		raidBuffs.StrengthOfEarthTotem = core.MaxTristate(raidBuffs.StrengthOfEarthTotem, totem)
+	case proto.EarthTotem_StoneskinTotem:
+		raidBuffs.StoneskinTotem = core.MaxTristate(raidBuffs.StoneskinTotem, core.MakeTristateValue(
+			true,
+			shaman.Talents.GuardianTotems == 2,
+		))
 	}
 
 	if shaman.Talents.UnleashedRage > 0 {
@@ -220,6 +228,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerTotemOfWrathSpell()
 	shaman.registerFlametongueTotemSpell()
 	shaman.registerTremorTotemSpell()
+	shaman.registerStoneskinTotemSpell()
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
 
@@ -378,7 +387,7 @@ func init() {
 		stats.Stamina:     135,
 		stats.Intellect:   126,
 		stats.Spirit:      145,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -390,7 +399,7 @@ func init() {
 		stats.Stamina:     138,
 		stats.Intellect:   122,
 		stats.Spirit:      146,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -402,7 +411,7 @@ func init() {
 		stats.Stamina:     138,
 		stats.Intellect:   120,
 		stats.Spirit:      145,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
@@ -414,7 +423,7 @@ func init() {
 		stats.Stamina:     137,
 		stats.Intellect:   122,
 		stats.Spirit:      144,
-		stats.Mana:        baseMana,
+		stats.Mana:        4396,
 		stats.SpellCrit:   2.2 * core.CritRatingPerCritChance,
 		stats.AttackPower: 95, // TODO: confirm this.
 		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,

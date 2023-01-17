@@ -9,6 +9,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{26, 27, 28}
+
 const ThoridalTheStarsFuryItemID = 34334
 
 func RegisterHunter() {
@@ -156,15 +158,17 @@ func (hunter *Hunter) Initialize() {
 	}
 }
 
-func (hunter *Hunter) Reset(sim *core.Simulation) {
-	hunter.mayMoveAt = 0
-	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
-	hunter.permaHawk = false
-
+func (hunter *Hunter) Prepull(sim *core.Simulation) {
 	if hunter.Options.UseHuntersMark {
 		huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
 		huntersMarkAura.Activate(sim)
 	}
+}
+
+func (hunter *Hunter) Reset(sim *core.Simulation) {
+	hunter.mayMoveAt = 0
+	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
+	hunter.permaHawk = false
 }
 
 func NewHunter(character core.Character, options *proto.Player) *Hunter {
@@ -172,10 +176,11 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 
 	hunter := &Hunter{
 		Character: character,
-		Talents:   hunterOptions.Talents,
+		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
 		Rotation:  hunterOptions.Rotation,
 	}
+	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()
 
 	hunter.PseudoStats.CanParry = true

@@ -97,6 +97,15 @@ func (mcd *MajorCooldown) TimeToReady(sim *Simulation) time.Duration {
 	return mcd.Spell.TimeToReady(sim)
 }
 
+// Roughly how long until the next cast will happen, accounting for both spell CD and user-specified timings.
+func (mcd *MajorCooldown) TimeToNextCast(sim *Simulation) time.Duration {
+	timeToReady := mcd.TimeToReady(sim)
+	if mcd.numUsages < len(mcd.timings) {
+		timeToReady = MaxDuration(timeToReady, mcd.timings[mcd.numUsages]-sim.CurrentTime)
+	}
+	return timeToReady
+}
+
 func (mcd *MajorCooldown) IsEnabled() bool {
 	return !mcd.disabled
 }
@@ -345,6 +354,14 @@ func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) Maj
 func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCooldown {
 	for _, mcd := range mcdm.majorCooldowns {
 		if mcd.Spell.SameAction(actionID) {
+			return mcd
+		}
+	}
+	return nil
+}
+func (mcdm *majorCooldownManager) GetMajorCooldownIgnoreTag(actionID ActionID) *MajorCooldown {
+	for _, mcd := range mcdm.majorCooldowns {
+		if mcd.Spell.SameActionIgnoreTag(actionID) {
 			return mcd
 		}
 	}

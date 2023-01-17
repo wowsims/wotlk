@@ -6,12 +6,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) registerLavaBurstSpell() {
 	actionID := core.ActionID{SpellID: 60043}
-	baseCost := baseMana * 0.1
 	dmgBonus := core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == VentureCoLightningRod, 121, 0) +
 		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == ThunderfallTotem, 215, 0)
 	spellCoeff := 0.5714 +
@@ -52,16 +50,17 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 	}
 
 	shaman.LavaBurst = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagFocusable,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagFocusable,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.1,
+			Multiplier: 1 - 0.02*float64(shaman.Talents.Convection),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - float64(shaman.Talents.Convection)*0.02),
 				CastTime: time.Second*2 - time.Millisecond*100*time.Duration(shaman.Talents.LightningMastery),
 				GCD:      core.GCDDefault,
 			},

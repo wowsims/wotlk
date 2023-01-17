@@ -1,9 +1,6 @@
 package hunter
 
 import (
-	"math"
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -37,14 +34,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	petConfig := PetConfigs[hunter.Options.PetType]
 
 	hp := &HunterPet{
-		Pet: core.NewPet(
-			petConfig.Name,
-			&hunter.Character,
-			hunterPetBaseStats,
-			hunter.makeStatInheritance(),
-			true,
-			false,
-		),
+		Pet:         core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, hunter.makeStatInheritance(), nil, true, false),
 		config:      petConfig,
 		hunterOwner: hunter,
 
@@ -57,12 +47,13 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		}
 	})
 
+	atkSpd := 2 / (1 + 0.15*float64(hp.Talents().CobraReflexes))
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  50,
 			BaseDamageMax:  78,
-			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
+			SwingSpeed:     atkSpd,
+			SwingDuration:  core.DurationFromSeconds(atkSpd),
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
@@ -189,8 +180,11 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	}
 
 	return func(ownerStats stats.Stats) stats.Stats {
+		// EJ posts claim this value is passed through math.Floor, but in-game testing
+		// shows pets benefit from each point of owner hit rating in WotLK Classic.
+		// https://web.archive.org/web/20120112003252/http://elitistjerks.com/f80/t100099-demonology_releasing_demon_you
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
-		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
+		hitRatingFromOwner := ownerHitChance * core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.3 * (1 + 0.2*float64(wildHunt)),
@@ -199,7 +193,7 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 
 			stats.MeleeHit:  hitRatingFromOwner,
 			stats.SpellHit:  hitRatingFromOwner * 2,
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

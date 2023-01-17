@@ -34,9 +34,7 @@ func (dk *Deathknight) RotationActionCallback_PS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	if dk.HornOfWinter.CanCast(sim) {
-		dk.HornOfWinter.Cast(sim, target)
-	}
+	dk.HornOfWinter.Cast(sim, target)
 
 	s.Advance()
 	return -1
@@ -44,6 +42,13 @@ func (dk *Deathknight) RotationActionCallback_HW(sim *core.Simulation, target *c
 
 func (dk *Deathknight) RotationActionCallback_DRW(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
 	casted := dk.DancingRuneWeapon.Cast(sim, target)
+
+	s.ConditionalAdvance(casted)
+	return -1
+}
+
+func (dk *Deathknight) RotationActionCallback_UF(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
+	casted := dk.UnholyFrenzy.Cast(sim, target)
 
 	s.ConditionalAdvance(casted)
 	return -1
@@ -236,6 +241,9 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	} else {
 		waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt())
 	}
+	if sim.Log != nil {
+		dk.Log(sim, "DK Wait: %s, any at: %s, any spent at: %s", waitUntil, anyRuneAt, dk.AnySpentRuneReadyAt())
+	}
 
 	if dk.ButcheryPA != nil {
 		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
@@ -265,11 +273,20 @@ func (dk *Deathknight) DoRotation(sim *core.Simulation) {
 
 	optWait := time.Duration(-1)
 	if dk.RotationSequence.IsOngoing() {
+		if sim.Log != nil {
+			dk.Log(sim, "DoSequenceAction")
+		}
 		optWait = dk.RotationSequence.DoAction(sim, target, dk)
 	}
 
 	if dk.GCD.IsReady(sim) {
+		if sim.Log != nil {
+			dk.Log(sim, "DoGCD")
+		}
 		for optWait == 0 && dk.GCD.IsReady(sim) {
+			if sim.Log != nil {
+				dk.Log(sim, "DoAction")
+			}
 			optWait = dk.RotationSequence.DoAction(sim, target, dk)
 		}
 

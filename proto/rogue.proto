@@ -202,8 +202,6 @@ message Rogue {
 		int32 envenom_energy_threshold = 19;
 	}
 	Rotation rotation = 1;
-
-	RogueTalents talents = 2;
 	
 	message Options {
 		RaidTarget tricks_of_the_trade_target = 1;

@@ -92,7 +92,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private makeSavedData(config: SavedDataConfig<ModObject, T>): SavedData<ModObject, T> {
 		const dataElemFragment = document.createElement('fragment');
 		dataElemFragment.innerHTML = `
-			<div class="saved-data-set-chip badge rounded-pill">
+			<div class="saved-data-set-chip-${this.simUI.cssScheme} badge rounded-pill">
 				<a href="javascript:void(0)" class="saved-data-set-name" role="button">${config.name}</a>
 			</div>
 		`;
@@ -132,7 +132,6 @@ export class SavedDataManager<ModObject, T> extends Component {
 		if (config.tooltip) {
 			dataElem.setAttribute('data-bs-toggle', 'tooltip');
 			dataElem.setAttribute('data-bs-title', config.tooltip);
-			dataElem.setAttribute('data-bs-trigger', 'hover');
 			dataElem.setAttribute('data-bs-placement', 'bottom');
 			dataElem.setAttribute('data-bs-html', 'true');
 			Tooltip.getOrCreateInstance(dataElem);

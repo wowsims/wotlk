@@ -10,15 +10,12 @@ import (
 func (hp *HunterPet) ApplyTalents() {
 	talents := hp.Talents()
 	// TODO:
-	// Wolverine bite
 	// Thunderstomp
 
 	hp.AddStat(stats.MeleeCrit, 3*core.CritRatingPerCritChance*float64(talents.SpidersBite))
 	hp.AddStat(stats.SpellCrit, 3*core.CritRatingPerCritChance*float64(talents.SpidersBite))
-	hp.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.15*float64(talents.CobraReflexes)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SpikedCollar)
 	hp.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(talents.SharkAttack)
-	hp.AutoAttacks.MHConfig.DamageMultiplier *= 1 - 0.075*float64(talents.CobraReflexes)
 
 	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= 1 - 0.05*float64(talents.GreatResistance)
 	hp.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 1 - 0.05*float64(talents.GreatResistance)

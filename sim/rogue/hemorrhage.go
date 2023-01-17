@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerHemorrhageSpell() {
@@ -38,21 +37,20 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		},
 	})
 
-	baseCost := rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows))
-	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows)),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -79,7 +77,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 				hemoAura.Activate(sim)
 				hemoAura.SetStacks(sim, 10)
 			} else {
-				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

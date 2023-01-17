@@ -1,5 +1,5 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { CustomRotation, ItemSpec, ItemSwap } from '../proto/common.js';
+import { CustomRotation, ItemSwap, ItemSlot } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { TristateEffect } from '../proto/common.js';
 import { Party } from '../party.js';
@@ -10,7 +10,7 @@ import { Target } from '../target.js';
 import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-import { ItemSwapIconInputConfig, ItemSwapPickerConfig } from './item_swap.js'
+import { ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { InputConfig } from './input.js'
 import { IconPickerConfig } from './icon_picker.js';
@@ -19,6 +19,7 @@ import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
 import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
+import { playerTalentStringToProto } from '../talents/factory.js';
 
 export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number): MultiIconPickerConfig<ModObject> {
 	return {
@@ -489,20 +490,27 @@ export interface TypedItemSwapPickerConfig<SpecType extends Spec, T> extends Ite
 	type: 'itemSwap',
 }
 
-interface WrappedItemSwapInputConfig<SpecType extends Spec, T> {
-	fieldName: keyof SpecOptions<SpecType>,
-	values: Array<ItemSwapIconInputConfig<Player<SpecType>, T>>
+interface WrappedItemSwapInputConfig<SpecType extends Spec> {
+	fieldName: keyof SpecRotation<SpecType>,
+	values: Array<ItemSlot>,
+	labelTooltip?: string,
+	getValue?: (player: Player<SpecType>) => ItemSwap,
+	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => void,
+	showWhen?: (player: Player<SpecType>) => boolean
 }
 
-export function MakeItemSwapInput<SpecType extends Spec, T>(config: WrappedItemSwapInputConfig<SpecType, T>): TypedItemSwapPickerConfig<SpecType, T> {
+export function MakeItemSwapInput<SpecType extends Spec>(config: WrappedItemSwapInputConfig<SpecType>): TypedItemSwapPickerConfig<SpecType, ItemSwap> {
 	return {
 		type: 'itemSwap',
-		getValue: (player: Player<SpecType>) =>  (player.getSpecOptions()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create(),
-		setValue: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => {
-			const options = player.getSpecOptions();
+		getValue: config.getValue || ((player: Player<SpecType>) =>  (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create()),
+		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => {
+			const options = player.getRotation();
 			(options[config.fieldName] as unknown as ItemSwap) = newValue;
-			player.setSpecOptions(eventID, options);
-		},
-		values: config.values,
+			player.setRotation(eventID, options);
+		}),
+		itemSlots: config.values,
+		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
+		labelTooltip: config.labelTooltip,
+		showWhen: config.showWhen,
 	}
 }

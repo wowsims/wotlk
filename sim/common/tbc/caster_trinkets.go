@@ -39,7 +39,7 @@ func init() {
 				}),
 			},
 			core.Aura{
-				Label:    "Power Word Shield",
+				Label:    "Scarab Brooch Shield",
 				ActionID: shieldID,
 				Duration: time.Second * 30,
 			})
@@ -47,7 +47,7 @@ func init() {
 		activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:     "Persistent Shield",
 			ActionID: core.ActionID{SpellID: 26467},
-			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
+			Callback: core.CallbackOnHealDealt,
 			Duration: time.Second * 30,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 				shield := shields[result.Target.UnitIndex]

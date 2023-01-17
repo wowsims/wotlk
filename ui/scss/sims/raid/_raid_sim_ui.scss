@@ -2,8 +2,14 @@
 
 @import "./assignments_picker";
 @import "./blessings_picker";
+@import './player';
+@import './player_editor';
 @import "./raid_picker";
+@import "./raid_stats";
 @import "./tanks_picker";
+
+@import "./raid_tab";
+@import "./settings_tab";
 
 .raid-settings-tab {
 	overflow-y: auto;
@@ -26,5 +32,14 @@
         }
       }
     }
+
+		.consumes-section {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+
+			.icon-picker-root {
+				margin: 3px;
+			}
+		}
   }
 }

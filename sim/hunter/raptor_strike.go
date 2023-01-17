@@ -4,25 +4,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	//"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerRaptorStrikeSpell() {
-	baseCost := 0.04 * hunter.BaseMana
-
 	hunter.RaptorStrike = hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48996},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48996},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.04,
+			Multiplier: 1 - 0.2*float64(hunter.Talents.Resourcefulness),
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.2*float64(hunter.Talents.Resourcefulness)),
-			},
+			DefaultCast: core.Cast{},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second * 6,

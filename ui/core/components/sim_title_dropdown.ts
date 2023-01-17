@@ -2,7 +2,6 @@ import { Component } from './component.js';
 import {
   getLaunchedSimsForClass,
   LaunchStatus,
-  raidSimLaunched,
   raidSimStatus,
   simLaunchStatuses
 } from '../launched_sims.js';
@@ -16,6 +15,8 @@ import {
   raidSimLabel,
   specNames,
   specToClass,
+	textCssClassForClass,
+	textCssClassForSpec,
 	titleIcons,
 } from '../proto_utils/utils.js';
 
@@ -33,22 +34,28 @@ interface RaidOptions {
   type: 'Raid'
 }
 
+type SimTitleDropdownConfig = {
+  noDropdown?: boolean,
+}
+
 // Dropdown menu for selecting a player.
 export class SimTitleDropdown extends Component {
-
-  private readonly dropdownMenu: HTMLElement;
+  private readonly dropdownMenu: HTMLElement | undefined;
 
   private readonly specLabels: Record<Spec, string> = {
     [Spec.SpecBalanceDruid]:       'Balance',
-    [Spec.SpecElementalShaman]:    'Elemental',
-    [Spec.SpecEnhancementShaman]:  'Enhancement',
     [Spec.SpecFeralDruid]:         'Feral DPS',
     [Spec.SpecFeralTankDruid]:     'Feral Tank',
+    [Spec.SpecRestorationDruid]:   'Restoration',
+    [Spec.SpecElementalShaman]:    'Elemental',
+    [Spec.SpecEnhancementShaman]:  'Enhancement',
+    [Spec.SpecRestorationShaman]:  'Restoration',
     [Spec.SpecHunter]:             'Hunter',
     [Spec.SpecMage]:               'Mage',
     [Spec.SpecRogue]:              'Rogue',
-    [Spec.SpecRetributionPaladin]: 'Retribution',
+    [Spec.SpecHolyPaladin]:        'Holy',
     [Spec.SpecProtectionPaladin]:  'Protection',
+    [Spec.SpecRetributionPaladin]: 'Retribution',
     [Spec.SpecHealingPriest]:      'Healing',
     [Spec.SpecShadowPriest]:       'Shadow',
     [Spec.SpecSmitePriest]:        'Smite',
@@ -59,11 +66,16 @@ export class SimTitleDropdown extends Component {
     [Spec.SpecTankDeathknight]:    'Tank',
   }
 
-  constructor(parent: HTMLElement, currentSpecIndex: Spec | null) {
+  constructor(parent: HTMLElement, currentSpecIndex: Spec | null, config: SimTitleDropdownConfig = {}) {
     super(parent, 'sim-title-dropdown-root');
 
     let rootLinkArgs: SpecOptions|RaidOptions = currentSpecIndex === null ? {type: 'Raid'} : {type: 'Spec', index: currentSpecIndex}
     let rootLink = this.buildRootSimLink(rootLinkArgs);
+
+    if (config.noDropdown) {
+      this.rootElem.innerHTML = rootLink.outerHTML;
+      return
+    }
 
     this.rootElem.innerHTML = `
       <div class="dropdown sim-link-dropdown">
@@ -88,11 +100,11 @@ export class SimTitleDropdown extends Component {
   }
   
   private buildDropdown() {
-    if (raidSimLaunched) {
+    if (raidSimStatus >= LaunchStatus.Alpha) {
       // Add the raid sim to the top of the dropdown
       let raidListItem = document.createElement('li');
       raidListItem.appendChild(this.buildRaidLink());
-      this.dropdownMenu.appendChild(raidListItem);
+      this.dropdownMenu?.appendChild(raidListItem);
     }
 
     naturalClassOrder.forEach( classIndex => {
@@ -102,11 +114,11 @@ export class SimTitleDropdown extends Component {
       if (sims.length == 1) {
         // The class only has one listed sim so make a direct link to the sim
         listItem.appendChild(this.buildClassLink(classIndex));
-        this.dropdownMenu.appendChild(listItem);
+        this.dropdownMenu?.appendChild(listItem);
       } else if (sims.length > 1) {
         // Add the class to the dropdown with an additional spec dropdown
         listItem.appendChild(this.buildClassDropdown(classIndex));
-        this.dropdownMenu.appendChild(listItem);
+        this.dropdownMenu?.appendChild(listItem);
       }
     });
   }
@@ -272,18 +284,13 @@ export class SimTitleDropdown extends Component {
   }
 
   private getContextualKlass(data: ClassOptions | SpecOptions | RaidOptions): string {
-    let klass: string;
-
     if (data.type == 'Raid')
       // Raid link
-      klass = 'text-white';
+      return 'text-white';
     else if (data.type == 'Class')
       // Class links
-      klass = `text-${classNames[data.index].toLowerCase().replace(/\s/g, '-')}`;
+      return textCssClassForClass(data.index);
     else
-      // Spec links
-      klass = `text-${classNames[specToClass[data.index]].toLowerCase().replace(/\s/g, '-')}`;
-    
-    return klass;
+      return textCssClassForSpec(data.index);
   }
 }

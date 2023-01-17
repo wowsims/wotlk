@@ -435,26 +435,21 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.CostMultiplier *= 0.5
+			aura.Unit.PseudoStats.CostMultiplier -= 0.5
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.CostMultiplier /= 0.5
+			aura.Unit.PseudoStats.CostMultiplier += 0.5
 		},
 	})
-
-	manaCost := hunter.BaseMana * 0.1
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: manaCost,
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: hunter.applyLongevity(time.Minute*2 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfBestialWrath), time.Second*20, 0)),
@@ -474,7 +469,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		Spell: bwSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hunter.CurrentMana() >= manaCost
+			return hunter.CurrentMana() >= bwSpell.DefaultCast.Cost
 		},
 	})
 }

@@ -135,13 +135,14 @@ func (rogue *Rogue) registerHungerForBlood() {
 	})
 
 	rogue.HungerForBlood = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		ResourceType: stats.Energy,
-		BaseCost:     15,
+		ActionID: actionID,
+
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 15,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: 15,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -458,7 +459,6 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 	const hasteBonus = 1.2
 	const inverseHasteBonus = 1 / 1.2
-	const energyCost = 25.0
 
 	dur := time.Second * 15
 
@@ -496,13 +496,12 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	rogue.BladeFlurry = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: BladeFlurryActionID,
 
-		ResourceType: stats.Energy,
-		BaseCost:     energyCost,
-
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 25,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -526,7 +525,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return rogue.CurrentEnergy() >= energyCost
+			return rogue.CurrentEnergy() >= rogue.BladeFlurry.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			if sim.GetRemainingDuration() > cooldownDur+dur {

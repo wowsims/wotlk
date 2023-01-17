@@ -373,20 +373,19 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 
 // Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
-	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
-	multiplier := spell.DamageMultiplier * spell.DamageMultiplierAdditive
-
+	return spell.attackerDamageMultiplierInternal(attackTable) *
+		spell.DamageMultiplier *
+		spell.DamageMultiplierAdditive
+}
+func (spell *Spell) attackerDamageMultiplierInternal(attackTable *AttackTable) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		return multiplier
+		return 1
 	}
 
 	ps := spell.Unit.PseudoStats
-
-	multiplier *= ps.DamageDealtMultiplier *
+	return ps.DamageDealtMultiplier *
 		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
 		attackTable.DamageDealtMultiplier
-
-	return multiplier
 }
 
 func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *AttackTable, isPeriodic bool) {
@@ -434,9 +433,7 @@ func (spell *Spell) CasterHealingMultiplier() float64 {
 		return 1
 	}
 
-	return spell.Unit.PseudoStats.HealingDealtMultiplier *
-		spell.DamageMultiplier *
-		spell.DamageMultiplierAdditive
+	return spell.DamageMultiplier * spell.DamageMultiplierAdditive
 }
 func (spell *Spell) applyTargetHealingModifiers(damage float64, attackTable *AttackTable) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {

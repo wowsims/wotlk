@@ -1,17 +1,13 @@
-import { Component } from '../core/components/component.js';
-import { Input, InputConfig } from '../core/components/input.js';
-import { RaidTargetPicker } from '../core/components/raid_target_picker.js';
-import { Player } from '../core/player.js';
-import { Raid } from '../core/raid.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { Class } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { emptyRaidTarget } from '../core/proto_utils/utils.js';
+import { Component } from '../core/components/component';
+import { RaidTargetPicker } from '../core/components/raid_target_picker';
 
-import { RaidSimUI } from './raid_sim_ui.js';
+import { Raid } from '../core/raid';
+import { EventID } from '../core/typed_event';
 
-declare var tippy: any;
+import { RaidTarget } from '../core/proto/common';
+import { emptyRaidTarget } from '../core/proto_utils/utils';
+
+import { RaidSimUI } from './raid_sim_ui';
 
 const MAX_TANKS = 4;
 
@@ -22,47 +18,33 @@ export class TanksPicker extends Component {
 		super(parentElem, 'tanks-picker-root');
 		this.raidSimUI = raidSimUI;
 
-		this.rootElem.innerHTML = `
-			<fieldset class="tanks-picker-container settings-section">
-				<legend>TANKS</legend>
-			</fieldset>
-		`;
-
-		const tanksContainer = this.rootElem.getElementsByClassName('tanks-picker-container')[0] as HTMLElement;
 		const raid = this.raidSimUI.sim.raid;
 
 		for (let i = 0; i < MAX_TANKS; i++) {
 			const row = document.createElement('div');
-			row.classList.add('tank-picker-row');
-			tanksContainer.appendChild(row);
+			row.classList.add('tank-picker-row', 'input-inline');
+			this.rootElem.appendChild(row);
 
-			const sourceElem = document.createElement('span');
-			sourceElem.textContent = i == 0 ? 'MAIN TANK' : `TANK ${i + 1}`;
-			sourceElem.classList.add('tank-picker-label');
-			row.appendChild(sourceElem);
+			const labelElem = document.createElement('label');
+			labelElem.textContent = i == 0 ? 'Main Tank' : `Tank ${i + 1}`;
+			labelElem.classList.add('tank-picker-label', 'form-label');
+			row.appendChild(labelElem);
 
-			const arrow = document.createElement('span');
-			arrow.classList.add('fa', 'fa-arrow-right');
-			row.appendChild(arrow);
-
-			const tankIndex = i;
-			const raidTargetPicker = new RaidTargetPicker<Raid>(row, raid, raid, {
-				extraCssClasses: [
-					'tank-picker',
-				],
+			new RaidTargetPicker<Raid>(row, raid, raid, {
+				extraCssClasses: ['tank-picker'],
 				noTargetLabel: 'Unassigned',
 				compChangeEmitter: raid.compChangeEmitter,
 
 				changedEvent: (raid: Raid) => raid.tanksChangeEmitter,
-				getValue: (raid: Raid) => raid.getTanks()[tankIndex] || emptyRaidTarget(),
+				getValue: (raid: Raid) => raid.getTanks()[i] || emptyRaidTarget(),
 				setValue: (eventID: EventID, raid: Raid, newValue: RaidTarget) => {
 					const tanks = raid.getTanks();
-					for (let i = 0; i < tankIndex; i++) {
-						if (!tanks[i]) {
+					for (let j = 0; j < i; j++) {
+						if (!tanks[j]) {
 							tanks.push(emptyRaidTarget());
 						}
 					}
-					tanks[tankIndex] = newValue;
+					tanks[i] = newValue;
 					raid.setTanks(eventID, tanks);
 				},
 			});

@@ -13,21 +13,32 @@ func (druid *Druid) registerBerserkCD() {
 	}
 
 	actionId := core.ActionID{SpellID: 50334}
-
 	glyphBonus := core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), time.Second*5.0, 0.0)
+	var affectedSpells []*core.Spell
 
 	druid.BerserkAura = druid.RegisterAura(core.Aura{
 		Label:    "Berserk",
 		ActionID: actionId,
 		Duration: (time.Second * 15) + glyphBonus,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = core.FilterSlice([]*core.Spell{
+				druid.MangleCat,
+				druid.FerociousBite,
+				druid.Rake,
+				druid.Rip,
+				druid.SavageRoar,
+				druid.SwipeCat,
+				druid.Shred,
+			}, func(spell *core.Spell) bool { return spell != nil })
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.InForm(Cat) {
-				druid.PseudoStats.CostMultiplier /= 2.0
+			for _, spell := range affectedSpells {
+				spell.CostMultiplier -= 0.5
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.InForm(Cat) {
-				druid.PseudoStats.CostMultiplier *= 2.0
+			for _, spell := range affectedSpells {
+				spell.CostMultiplier += 0.5
 			}
 		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -52,18 +63,6 @@ func (druid *Druid) registerBerserkCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			druid.BerserkAura.Activate(sim)
-		},
-	})
-
-	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Berserk,
-		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return druid.InForm(Cat | Bear)
-		},
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			// Manually handled in Feral Rotation
-			return false
 		},
 	})
 

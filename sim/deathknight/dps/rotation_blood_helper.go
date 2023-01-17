@@ -7,8 +7,88 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
-	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
+type BloodRotation struct {
+	dk *DpsDeathknight
+
+	drwSnapshot *core.SnapshotManager
+	drwMaxDelay time.Duration
+
+	activatingDrw bool
+}
+
+func (br *BloodRotation) Reset(sim *core.Simulation) {
+	br.activatingDrw = false
+	br.drwSnapshot.ResetProcTrackers()
+	br.drwMaxDelay = -1
+}
+
+func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
+	// Early exit at end of fight
+	if sim.GetRemainingDuration() < 10*time.Second {
+		return true
+	}
+
+	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
+	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
+	castGcd := core.GCDDefault * time.Duration(casts)
+
+	// FF is not active or will drop before Gcd is ready after this cast
+	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
+		return false
+	}
+	// BP is not active or will drop before Gcd is ready after this cast
+	if !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
+		return false
+	}
+
+	// If the ability we want to cast spends runes we check for possible disease drops
+	// in the time we won't have runes to recast the disease
+	if spell.CanCast(sim, nil) && costRunes {
+		ffExpiresAt := ffRemaining + sim.CurrentTime
+		bpExpiresAt := bpRemaining + sim.CurrentTime
+
+		afterCastTime := sim.CurrentTime + castGcd
+		if ffExpiresAt <= afterCastTime || bpExpiresAt <= afterCastTime {
+			return false
+		}
+
+		crpb := dk.CopyRunicPowerBar()
+		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
+
+		crpb.SpendRuneCost(sim, spell, spellCost)
+
+		if dk.sr.hasGod {
+			currentBloodRunes := crpb.CurrentBloodRunes()
+			nextBloodRuneAt := crpb.BloodRuneReadyAt(sim)
+
+			// If FF is gonna drop while our runes are on CD
+			if dk.shRecastAvailableCheck(ffExpiresAt, afterCastTime, int(spellCost.Blood()), int32(currentBloodRunes), nextBloodRuneAt) {
+				return false
+			}
+
+			// If BP is gonna drop while our runes are on CD
+			if dk.shRecastAvailableCheck(bpExpiresAt, afterCastTime, int(spellCost.Blood()), int32(currentBloodRunes), nextBloodRuneAt) {
+				return false
+			}
+		} else {
+			currentFrostRunes := crpb.CurrentFrostRunes()
+			currentUnholyRunes := crpb.CurrentUnholyRunes()
+			nextFrostRuneAt := crpb.FrostRuneReadyAt(sim)
+			nextUnholyRuneAt := crpb.UnholyRuneReadyAt(sim)
+
+			// If FF is gonna drop while our runes are on CD
+			if dk.shRecastAvailableCheck(ffExpiresAt, afterCastTime, int(spellCost.Frost()), int32(currentFrostRunes), nextFrostRuneAt) {
+				return false
+			}
+
+			// If BP is gonna drop while our runes are on CD
+			if dk.shRecastAvailableCheck(bpExpiresAt, afterCastTime, int(spellCost.Unholy()), int32(currentUnholyRunes), nextUnholyRuneAt) {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -30,5 +110,73 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	canCastDrw := dk.DancingRuneWeapon != nil && dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second
 	currentRP := dk.CurrentRunicPower()
-	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 90)
+	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 100)
+}
+
+func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Unit) bool {
+	if dk.CurrentBloodRunes() > 0 {
+		return false
+	}
+
+	if dk.RuneWeapon.IsEnabled() && dk.BloodTap.IsReady(sim) {
+		return dk.BloodTap.Cast(sim, target)
+	}
+
+	return false
+}
+
+// Combined checks for casting gargoyle sequence & going back to blood presence after
+func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, castTime time.Duration) bool {
+	if dk.blDrwCanCast(sim, castTime) {
+
+		dk.br.activatingDrw = true
+		dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
+		dk.br.activatingDrw = false
+
+		if dk.DancingRuneWeapon.Cast(sim, target) {
+			dk.br.drwSnapshot.ResetProcTrackers()
+			dk.br.drwMaxDelay = -1
+		}
+		return true
+	}
+
+	return false
+}
+
+func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Duration) bool {
+	if !dk.DancingRuneWeapon.IsReady(sim) {
+		return false
+	}
+	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
+		return false
+	}
+	// Setup max delay possible
+	if dk.br.drwMaxDelay == -1 {
+		drwCd := dk.DancingRuneWeapon.CD.Duration
+		timeLeft := sim.GetRemainingDuration()
+		for timeLeft > drwCd {
+			timeLeft = timeLeft - (drwCd + 2*time.Second)
+		}
+		dk.br.drwMaxDelay = timeLeft - 2*time.Second
+	}
+	// Cast it if holding will result in less total DRWs for the encounter
+	if sim.CurrentTime > dk.br.drwMaxDelay {
+		return true
+	}
+	// Cast it if holding will take from its duration
+	if sim.GetRemainingDuration() < 20*time.Second {
+		return true
+	}
+	// Make sure we can instantly put diseases up with the rune weapon
+	if !dk.sr.hasGod && (dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1) {
+		return false
+	}
+	if dk.sr.hasGod && dk.CurrentBloodRunes() < 1 {
+		return false
+	}
+	if !dk.br.drwSnapshot.CanSnapShot(sim, castTime) {
+		return false
+	}
+
+	return true
 }

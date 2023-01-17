@@ -14,7 +14,6 @@ func (druid *Druid) getSavageRoarMultiplier() float64 {
 
 func (druid *Druid) registerSavageRoarSpell() {
 	actionID := core.ActionID{SpellID: 52610}
-	baseCost := 25.0
 
 	srm := druid.getSavageRoarMultiplier()
 	durBonus := core.TernaryDuration(druid.HasSetBonus(ItemSetNightsongBattlegear, 4), time.Second*8, 0)
@@ -44,13 +43,12 @@ func (druid *Druid) registerSavageRoarSpell() {
 	srSpell := druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
-
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 25,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},

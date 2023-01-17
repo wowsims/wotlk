@@ -22,8 +22,6 @@ func (shaman *Shaman) registerLavaLashSpell() {
 		return
 	}
 
-	manaCost := 0.04 * shaman.BaseMana
-
 	flatDamageBonus := core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == VentureCoFlameSlicer, 25, 0)
 
 	imbueMultiplier := 1.0
@@ -47,17 +45,17 @@ func (shaman *Shaman) registerLavaLashSpell() {
 	}
 
 	shaman.LavaLash = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 60103},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskMeleeOHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 60103},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskMeleeOHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.04,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

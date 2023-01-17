@@ -41,14 +41,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet: core.NewPet(
-			"Army of the Dead", //+strconv.Itoa(index),
-			&dk.Character,
-			armyGhoulPetBaseStats,
-			dk.armyGhoulStatInheritance(),
-			false,
-			true,
-		),
+		Pet:     core.NewPet("Army of the Dead", &dk.Character, armyGhoulPetBaseStats, dk.armyGhoulStatInheritance(), nil, false, true),
 		dkOwner: dk,
 	}
 
@@ -94,14 +87,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet: core.NewPet(
-			"Ghoul",
-			&dk.Character,
-			ghoulPetBaseStats,
-			dk.ghoulStatInheritance(),
-			permanent,
-			!permanent,
-		),
+		Pet:     core.NewPet("Ghoul", &dk.Character, ghoulPetBaseStats, dk.ghoulStatInheritance(), nil, permanent, !permanent),
 		dkOwner: dk,
 	}
 

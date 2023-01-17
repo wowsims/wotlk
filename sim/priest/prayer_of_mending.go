@@ -5,12 +5,10 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerPrayerOfMendingSpell() {
 	actionID := core.ActionID{SpellID: 48113}
-	baseCost := 0.15 * priest.BaseMana
 
 	pomAuras := make([]*core.Aura, len(priest.Env.AllUnits))
 	for _, unit := range priest.Env.AllUnits {
@@ -55,18 +53,19 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 	}
 
 	priest.PrayerOfMending = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellHealing,
-		Flags:        core.SpellFlagHelpful,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.15,
+			Multiplier: 1 *
+				(1 - .1*float64(priest.Talents.HealingPrayers)) *
+				(1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost *
-					(1 - .1*float64(priest.Talents.HealingPrayers)) *
-					(1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
@@ -77,6 +76,9 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 
 		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.SpiritualHealing)) *
+			(1 + .01*float64(priest.Talents.BlessedResilience)) *
+			(1 + .02*float64(priest.Talents.FocusedPower)) *
 			(1 + .02*float64(priest.Talents.DivineProvidence)) *
 			(1 + .01*float64(priest.Talents.TwinDisciplines)) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 2), 1.2, 1),

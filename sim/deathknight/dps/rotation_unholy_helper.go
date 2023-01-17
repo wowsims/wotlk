@@ -11,9 +11,6 @@ import (
 type UnholyRotation struct {
 	dk *DpsDeathknight
 
-	ffFirst bool
-	hasGod  bool
-
 	syncTimeFF time.Duration
 
 	gargoyleSnapshot *core.SnapshotManager
@@ -29,14 +26,14 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 }
 
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
+	if dk.sr.ffFirst {
 		return dk.RotationActionCallback_IT
 	}
 	return dk.RotationActionCallback_PS
 }
 
 func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
-	if dk.ur.ffFirst {
+	if dk.sr.ffFirst {
 		return dk.RotationActionCallback_PS
 	}
 	return dk.RotationActionCallback_IT
@@ -59,7 +56,7 @@ func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
 		dk.Rotation.BloodRuneFiller == proto.Deathknight_Rotation_BloodStrike
 }
 
-func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
 }
 
@@ -84,10 +81,14 @@ func (dk *DpsDeathknight) uhShouldWaitForDnD(sim *core.Simulation, blood bool, f
 }
 
 func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.Unit) bool {
+	if !dk.Ghoul.Pet.IsEnabled() {
+		return false
+	}
+
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim, nil) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
 				dk.uhGhoulFrenzySequence(sim, true)
 				return true
@@ -95,7 +96,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 				dk.uhRecastDiseasesSequence(sim)
 				return true
 			}
-		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim) && dk.IcyTouch.CanCast(sim) {
+		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim, nil) && dk.IcyTouch.CanCast(sim, nil) {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return true
@@ -151,7 +152,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 	}
 
 	// Save ERW for best Army Snapshot after Garg
-	if dk.Rotation.ArmyOfTheDead == proto.Deathknight_Rotation_AsMajorCd && dk.Rotation.HoldErwArmy && dk.ArmyOfTheDead.IsReady(sim) {
+	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd && dk.Rotation.HoldErwArmy && dk.ArmyOfTheDead.IsReady(sim) {
 		return false
 	}
 
@@ -190,7 +191,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	if dk.uhGargoyleCanCast(sim, castTime) {
-		if !dk.PresenceMatches(deathknight.UnholyPresence) {
+		if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy) {
 			if dk.CurrentUnholyRunes() == 0 {
 				if dk.BloodTap.IsReady(sim) {
 					dk.BloodTap.Cast(sim, dk.CurrentTarget)
@@ -202,6 +203,9 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		}
 
 		dk.ur.activatingGargoyle = true
+		dk.OnGargoyleStartFirstCast = func() {
+			dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+		}
 		dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
 		dk.ur.activatingGargoyle = false
 
@@ -209,6 +213,27 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 			dk.ur.gargoyleSnapshot.ResetProcTrackers()
 			return true
 		}
+	}
+
+	// Go back to Blood Presence after Gargoyle
+	if dk.Rotation.NerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Blood && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAura("Summon Gargoyle") {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		return dk.BloodPresence.Cast(sim, target)
+	}
+
+	// Go back to Unholy Presence after Gargoyle
+	if dk.Rotation.NerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.BloodPresence) && !dk.HasActiveAura("Summon Gargoyle") {
+		if dk.BloodTapAura.IsActive() {
+			dk.BloodTapAura.Deactivate(sim)
+		}
+		return dk.UnholyPresence.Cast(sim, target)
+	}
+
+	// Do not switch presences if gargoyle is still up if it's nerfed gargoyle
+	if dk.Rotation.NerfedGargoyle && dk.HasActiveAura("Summon Gargoyle") {
+		return false
 	}
 
 	// Go back to Blood Presence after Bloodlust
@@ -246,7 +271,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
-	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim) && dk.CurrentUnholyRunes() == 0) {
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim, nil) && dk.CurrentUnholyRunes() == 0) {
 		return false
 	}
 	if !dk.ur.gargoyleSnapshot.CanSnapShot(sim, castTime) {

@@ -106,35 +106,19 @@ export class RaidSimResultsManager {
 	}
 
 	setSimProgress(progress: ProgressMetrics) {
-		if (progress.presimRunning) {
-			this.simUI.resultsViewer.setContent(`
-				<div class="results-sim">
-						<div class="results-sim-dps damage-metrics">
-							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
-						</div>
-						<div class="results-sim-hps healing-metrics">
-							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
-						</div>
-						<div class="">
-							presimulations running
-						</div>
+		this.simUI.resultsViewer.setContent(`
+			<div class="results-sim">
+				<div class="results-sim-dps damage-metrics">
+					<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
 				</div>
-			`);
-		} else {
-			this.simUI.resultsViewer.setContent(`
-				<div class="results-sim">
-						<div class="results-sim-dps damage-metrics">
-							<span class="topline-result-avg">${progress.dps.toFixed(2)}</span>
-						</div>
-						<div class="results-sim-hps healing-metrics">
-							<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
-						</div>
-						<div class="">
-							${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
-						</div>
+				${!this.simUI.isIndividualSim() ? '' : `<div class="results-sim-hps healing-metrics">
+					<span class="topline-result-avg">${progress.hps.toFixed(2)}</span>
+				</div>`}
+				<div class="">
+					${progress.presimRunning ? 'presimulations running' : `${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete`}
 				</div>
-			`);
-		}
+			</div>
+		`);
 	}
 
 	setSimResult(eventID: EventID, simResult: SimResult) {
@@ -204,11 +188,13 @@ export class RaidSimResultsManager {
 
 		if (!this.simUI.isIndividualSim()) {
 			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-diff-separator')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dpasp-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tps-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-dtps-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-tmi-diff')).forEach(e => e.remove());
-			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-cod-diff')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-dpasp')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tto')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-hps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-dtps')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-tmi')).forEach(e => e.remove());
+			Array.from(this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-cod')).forEach(e => e.remove());
 		}
 
 		const simReferenceElem = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference')[0] as HTMLDivElement;
@@ -272,8 +258,8 @@ export class RaidSimResultsManager {
 		}
 
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
-		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 		if (this.simUI.isIndividualSim()) {
+			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dpasp']} .results-reference-diff`, res => res.getPlayers()[0]!.dpasp, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tto']} .results-reference-diff`, res => res.getPlayers()[0]!.tto, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['tps']} .results-reference-diff`, res => res.getPlayers()[0]!.tps, 2);
@@ -285,6 +271,10 @@ export class RaidSimResultsManager {
 
 	private formatToplineResult(querySelector: string, getMetrics: (result: SimResult) => DistributionMetricsProto|number, precision: number, lowerIsBetter?: boolean) {
 		const elem = this.simUI.resultsViewer.contentElem.querySelector(querySelector) as HTMLSpanElement;
+		if (!elem) {
+			return;
+		}
+
 		const cur = this.currentData!.simResult;
 		const ref = this.referenceData!.simResult;
 		const curMetricsTemp = getMetrics(cur);

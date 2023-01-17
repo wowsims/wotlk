@@ -6,27 +6,25 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerPrayerOfHealingSpell() {
-	baseCost := .48 * priest.BaseMana
-
 	var glyphHots []*core.Dot
 
 	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48072},
-		SpellSchool:  core.SpellSchoolHoly,
-		ProcMask:     core.ProcMaskSpellHealing,
-		Flags:        core.SpellFlagHelpful,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48072},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.48,
+			Multiplier: 1 -
+				.1*float64(priest.Talents.HealingPrayers) -
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetVestmentsOfAbsolution, 2), 0.1, 0),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 -
-					.1*float64(priest.Talents.HealingPrayers) -
-					core.TernaryFloat64(priest.HasSetBonus(ItemSetVestmentsOfAbsolution, 2), 0.1, 0)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 3,
 			},
@@ -36,6 +34,9 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 			1*float64(priest.Talents.HolySpecialization)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetSanctificationRegalia, 2), 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplier: 1 *
+			(1 + .02*float64(priest.Talents.SpiritualHealing)) *
+			(1 + .01*float64(priest.Talents.BlessedResilience)) *
+			(1 + .02*float64(priest.Talents.FocusedPower)) *
 			(1 + .02*float64(priest.Talents.DivineProvidence)),
 		CritMultiplier:   priest.DefaultHealingCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],

@@ -34,6 +34,8 @@ const ResilienceRatingPerCritDamageReductionPercent = 39.4231 / 2.2
 // Assuming 574 AP debuffs go to exactly zero and achieve -14.2%
 const EnemyAutoAttackAPCoefficient = 0.0002883296
 
+const AverageMagicPartialResistMultiplier = 0.94
+
 // IDs for items used in core
 const (
 	ItemIDAtieshMage            = 22589

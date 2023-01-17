@@ -11,20 +11,6 @@
     filter: opacity(0.5);
   }
 
-  &.input-inline {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    label {
-      margin-right: map.get($spacers, 1);
-    }
-
-    input, select {
-      width: 5rem;
-    }
-  }
-
   &:not(.input-inline) {
     label {
       white-space: nowrap;
@@ -32,7 +18,22 @@
   }
 }
 
+.input-inline {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  label {
+    margin-right: map.get($spacers, 1);
+  }
+
+  input, select {
+    width: 5rem;
+  }
+}
+
 .picker-group {
+  width: 100%;
   display: flex;
 
   &> * {
