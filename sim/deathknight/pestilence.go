@@ -3,33 +3,27 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var PestilenceActionID = core.ActionID{SpellID: 50842}
 
 func (dk *Deathknight) registerPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-	baseCost := float64(core.NewRuneCost(10, 1, 0, 0, 0))
+	deathConvertChance := float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) / 3
 
-	rs := &RuneSpell{
-		Refundable: true,
-	}
+	dk.Pestilence = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 50842},
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
-	dk.Pestilence = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     PestilenceActionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+			Refundable:     true,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -44,7 +38,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
 
 				if aoeUnit == dk.CurrentTarget {
-					rs.OnResult(sim, result)
+					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
@@ -52,41 +46,33 @@ func (dk *Deathknight) registerPestilenceSpell() {
 					if aoeUnit == dk.CurrentTarget {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								dk.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
 								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
 								dk.FrostFeverDebuffAura[aoeUnit.Index].Activate(sim)
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								dk.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
 							dk.FrostFeverExtended[aoeUnit.Index] = 0
-							dk.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+							dk.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
 							dk.BloodPlagueExtended[aoeUnit.Index] = 0
-							dk.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+							dk.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
 					}
 				}
 			}
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.Pestilence.IsReady(sim)
-	}, nil)
-	if dk.Talents.BloodOfTheNorth+dk.Talents.Reaping >= 3 {
-		rs.DeathConvertChance = 1.0
-	} else {
-		rs.DeathConvertChance = float64(dk.Talents.BloodOfTheNorth+dk.Talents.Reaping) * 0.33
-	}
-	rs.ConvertType = RuneTypeBlood
+	})
 }
 func (dk *Deathknight) registerDrwPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
@@ -114,37 +100,37 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 					if aoeUnit == dk.CurrentTarget {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								if dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].IsActive() {
-									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								if dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
 								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 								}
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								if dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
 								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 								}
 							}
 						} else if shouldApplyDrwDots {
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
+							dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
+							dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
 					}
 				}

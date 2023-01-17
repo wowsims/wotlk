@@ -77,12 +77,7 @@ type Mage struct {
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
 
-	ArcaneMissilesDot *core.Dot
-	LivingBombDot     *core.Dot // living bomb is used for single-target only, currently
-	FireballDot       *core.Dot
-	FlamestrikeDot    *core.Dot
-	FrostfireDot      *core.Dot
-	PyroblastDot      *core.Dot
+	FrostfireDot *core.Dot
 
 	ArcaneBlastAura    *core.Aura
 	ArcanePotencyAura  *core.Aura
@@ -95,7 +90,7 @@ type Mage struct {
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
 
-	IgniteDots []*core.Dot
+	CritDebuffCategory *core.ExclusiveCategory
 }
 
 func (mage *Mage) GetCharacter() *core.Character {

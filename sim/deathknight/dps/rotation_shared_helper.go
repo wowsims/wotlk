@@ -21,30 +21,30 @@ func (sr *SharedRotation) Reset(sim *core.Simulation) {
 	sr.recastedBP = false
 }
 
-func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
-	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
+func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
+	ffRemaining := dk.FrostFeverSpell.Dot(target).RemainingDuration(sim)
+	bpRemaining := dk.BloodPlagueSpell.Dot(target).RemainingDuration(sim)
 	castGcd := dk.SpellGCD() * time.Duration(casts)
 
 	// FF is not active or will drop before Gcd is ready after this cast
-	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
+	if !dk.FrostFeverSpell.Dot(target).IsActive() || ffRemaining < castGcd {
 		return false
 	}
 	// BP is not active or will drop before Gcd is ready after this cast
-	if !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
+	if !dk.BloodPlagueSpell.Dot(target).IsActive() || bpRemaining < castGcd {
 		return false
 	}
 
 	// If the ability we want to cast spends runes we check for possible disease drops
 	// in the time we won't have runes to recast the disease
-	if spell.CanCast(sim) && costRunes {
+	if spell.CanCast(sim, nil) && costRunes {
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
 		crpb := dk.CopyRunicPowerBar()
 		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.SpendRuneCost(sim, spell.Spell, spellCost)
+		crpb.SpendRuneCost(sim, spell, spellCost)
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentFrostRunes := crpb.CurrentFrostRunes()

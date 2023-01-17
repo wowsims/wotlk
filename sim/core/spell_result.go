@@ -373,20 +373,19 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 
 // Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
-	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
-	multiplier := spell.DamageMultiplier * spell.DamageMultiplierAdditive
-
+	return spell.attackerDamageMultiplierInternal(attackTable) *
+		spell.DamageMultiplier *
+		spell.DamageMultiplierAdditive
+}
+func (spell *Spell) attackerDamageMultiplierInternal(attackTable *AttackTable) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		return multiplier
+		return 1
 	}
 
 	ps := spell.Unit.PseudoStats
-
-	multiplier *= ps.DamageDealtMultiplier *
+	return ps.DamageDealtMultiplier *
 		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
 		attackTable.DamageDealtMultiplier
-
-	return multiplier
 }
 
 func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *AttackTable, isPeriodic bool) {
@@ -405,14 +404,12 @@ func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic 
 		return 1
 	}
 
-	ps := attackTable.Defender.PseudoStats
-
-	multiplier := ps.DamageTakenMultiplier *
-		ps.SchoolDamageTakenMultiplier[spell.SchoolIndex] *
+	multiplier := attackTable.Defender.PseudoStats.DamageTakenMultiplier *
+		attackTable.Defender.PseudoStats.SchoolDamageTakenMultiplier[spell.SchoolIndex] *
 		attackTable.DamageTakenMultiplier
 
 	if spell.Flags.Matches(SpellFlagDisease) {
-		multiplier *= ps.DiseaseDamageTakenMultiplier
+		multiplier *= attackTable.Defender.PseudoStats.DiseaseDamageTakenMultiplier
 	}
 
 	if spell.SpellSchool.Matches(SpellSchoolNature) {
@@ -420,7 +417,7 @@ func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic 
 	} else if isPeriodic {
 		switch {
 		case spell.SpellSchool.Matches(SpellSchoolPhysical):
-			multiplier *= ps.PeriodicPhysicalDamageTakenMultiplier
+			multiplier *= attackTable.Defender.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 		case spell.SpellSchool.Matches(SpellSchoolShadow):
 			multiplier *= attackTable.PeriodicShadowDamageTakenMultiplier
 		}

@@ -1,7 +1,6 @@
 package mage
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -12,7 +11,6 @@ func (mage *Mage) registerPyroblastSpell() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 42891}
 	spellCoeff := 1.15 + 0.05*float64(mage.Talents.EmpoweredFire)
 	tickCoeff := 0.05 + 0.05*float64(mage.Talents.EmpoweredFire)
 
@@ -20,7 +18,7 @@ func (mage *Mage) registerPyroblastSpell() {
 	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
+		ActionID:     core.ActionID{SpellID: 42891},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage,
@@ -58,42 +56,30 @@ func (mage *Mage) registerPyroblastSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Pyroblast",
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 3,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 113.0 + tickCoeff*dot.Spell.SpellPower()
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1210, 1531) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				if result.Landed() {
-					mage.PyroblastDot.Apply(sim)
+					spell.Dot(target).Apply(sim)
 				}
 				spell.DealDamage(sim, result)
 			})
-		},
-	})
-
-	target := mage.CurrentTarget
-	mage.PyroblastDot = core.NewDot(core.Dot{
-		Spell: mage.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskSpellDamage,
-			Flags:       SpellFlagMage,
-
-			DamageMultiplier:         mage.Pyroblast.DamageMultiplier,
-			DamageMultiplierAdditive: mage.Pyroblast.DamageMultiplierAdditive,
-			ThreatMultiplier:         mage.Pyroblast.ThreatMultiplier,
-		}),
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "Pyroblast-" + strconv.Itoa(int(mage.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 4,
-		TickLength:    time.Second * 3,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 113.0 + tickCoeff*dot.Spell.SpellPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 }

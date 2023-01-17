@@ -1,7 +1,6 @@
 package mage
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,13 +8,11 @@ import (
 )
 
 func (mage *Mage) registerFireballSpell() {
-	actionID := core.ActionID{SpellID: 42833}
 	spellCoeff := 1 + 0.05*float64(mage.Talents.EmpoweredFire)
-
 	hasGlyph := mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfFireball)
 
 	mage.Fireball = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
+		ActionID:     core.ActionID{SpellID: 42833},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagMage | BarrageSpells | HotStreakSpells,
@@ -46,42 +43,30 @@ func (mage *Mage) registerFireballSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Fireball",
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 2,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 116.0 / 4.0
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(898, 1143) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				if result.Landed() && !hasGlyph {
-					mage.FireballDot.Apply(sim)
+					spell.Dot(target).Apply(sim)
 				}
 				spell.DealDamage(sim, result)
 			})
-		},
-	})
-
-	target := mage.CurrentTarget
-	mage.FireballDot = core.NewDot(core.Dot{
-		Spell: mage.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskSpellDamage,
-			Flags:       SpellFlagMage | BarrageSpells | HotStreakSpells,
-
-			DamageMultiplier:         mage.Fireball.DamageMultiplier,
-			DamageMultiplierAdditive: mage.Fireball.DamageMultiplierAdditive,
-			ThreatMultiplier:         mage.Fireball.ThreatMultiplier,
-		}),
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "Fireball-" + strconv.Itoa(int(mage.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 4,
-		TickLength:    time.Second * 2,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 116.0 / 4.0
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 }

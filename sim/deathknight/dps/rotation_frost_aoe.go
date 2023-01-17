@@ -35,7 +35,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.IcyTouch.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return !dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.IcyTouch.CanCast(sim)
+				return !dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() && dk.IcyTouch.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomPlagueStrike): {
@@ -44,7 +44,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.PlagueStrike.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return !dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() && dk.PlagueStrike.CanCast(sim)
+				return !dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() && dk.PlagueStrike.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomPestilence): {
@@ -53,14 +53,14 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.Pestilence.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				if !dk.Pestilence.CanCast(sim) {
+				if !dk.Pestilence.CanCast(sim, nil) {
 					return false
 				}
 
-				ff := dk.FrostFeverDisease[dk.CurrentTarget.Index].ExpiresAt() - sim.CurrentTime
-				bp := dk.BloodPlagueDisease[dk.CurrentTarget.Index].ExpiresAt() - sim.CurrentTime
-				ffHalfDuration := time.Duration(0.5 * float64(dk.FrostFeverDisease[dk.CurrentTarget.Index].Duration))
-				bpHalfDuration := time.Duration(0.5 * float64(dk.BloodPlagueDisease[dk.CurrentTarget.Index].Duration))
+				ff := dk.FrostFeverSpell.Dot(dk.CurrentTarget).ExpiresAt() - sim.CurrentTime
+				bp := dk.BloodPlagueSpell.Dot(dk.CurrentTarget).ExpiresAt() - sim.CurrentTime
+				ffHalfDuration := time.Duration(0.5 * float64(dk.FrostFeverSpell.Dot(dk.CurrentTarget).Duration))
+				bpHalfDuration := time.Duration(0.5 * float64(dk.BloodPlagueSpell.Dot(dk.CurrentTarget).Duration))
 				if ff <= 2*time.Second && bp <= 2*time.Second && sim.GetRemainingDuration() >= ffHalfDuration && sim.GetRemainingDuration() >= bpHalfDuration {
 					return true
 				}
@@ -69,7 +69,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				numDiseased := numHits
 				for i := int32(0); i < numHits; i++ {
 					target := &dk.Env.GetTarget(i).Unit
-					diseases := dk.FrostFeverDisease[target.Index].IsActive() && dk.BloodPlagueDisease[target.Index].IsActive()
+					diseases := dk.FrostFeverSpell.Dot(target).IsActive() && dk.BloodPlagueSpell.Dot(target).IsActive()
 
 					if !diseases {
 						numDiseased--
@@ -88,7 +88,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.Obliterate.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.Obliterate.CanCast(sim)
+				return dk.Obliterate.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHowlingBlast): {
@@ -97,7 +97,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.HowlingBlast.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.HowlingBlast.CanCast(sim)
+				return dk.HowlingBlast.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHowlingBlastRime): {
@@ -106,7 +106,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.HowlingBlast.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.HowlingBlast.CanCast(sim) && dk.Rime()
+				return dk.HowlingBlast.CanCast(sim, nil) && dk.RimeAura.IsActive()
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodBoil): {
@@ -115,7 +115,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.BloodBoil.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.BloodBoil.CanCast(sim)
+				return dk.BloodBoil.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodStrike): {
@@ -124,7 +124,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.BloodStrike.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.BloodStrike.CanCast(sim)
+				return dk.BloodStrike.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomDeathAndDecay): {
@@ -133,7 +133,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.DeathAndDecay.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.DeathAndDecay.CanCast(sim)
+				return dk.DeathAndDecay.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomHornOfWinter): {
@@ -142,7 +142,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.HornOfWinter.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.HornOfWinter.CanCast(sim)
+				return dk.HornOfWinter.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomUnbreakableArmor): {
@@ -151,7 +151,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.UnbreakableArmor.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.UnbreakableArmor.CanCast(sim)
+				return dk.UnbreakableArmor.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomBloodTap): {
@@ -160,7 +160,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.BloodTap.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.BloodTap.CanCast(sim)
+				return dk.BloodTap.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomEmpoweredRuneWeapon): {
@@ -169,7 +169,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.EmpowerRuneWeapon.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.EmpowerRuneWeapon.CanCast(sim)
+				return dk.EmpowerRuneWeapon.CanCast(sim, nil)
 			},
 		},
 		int32(proto.Deathknight_Rotation_CustomFrostStrike): {
@@ -178,7 +178,7 @@ func (dk *DpsDeathknight) makeCustomRotation() *common.CustomRotation {
 				return dk.FrostStrike.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return dk.FrostStrike.CanCast(sim)
+				return dk.FrostStrike.CanCast(sim, nil)
 			},
 		},
 	})

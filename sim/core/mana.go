@@ -24,7 +24,6 @@ type manaBar struct {
 	JowManaMetrics        *ResourceMetrics
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
-	PleaManaMetrics       *ResourceMetrics
 
 	ReplenishmentAura *Aura
 }

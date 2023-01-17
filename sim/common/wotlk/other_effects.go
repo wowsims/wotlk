@@ -2,7 +2,6 @@ package wotlk
 
 import (
 	"math"
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -198,19 +197,20 @@ func init() {
 
 	core.NewItemEffect(40258, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		actionID := core.ActionID{ItemID: 40258}
-		hots := core.NewAllyHotArray(
-			&character.Unit,
-			core.Dot{
-				Spell: character.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    actionID,
-					SpellSchool: core.SpellSchoolPhysical,
-					ProcMask:    core.ProcMaskSpellHealing,
-					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-				}),
+		healSpell := character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: 40258},
+			SpellSchool: core.SpellSchoolPhysical,
+			ProcMask:    core.ProcMaskSpellHealing,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Hot: core.DotConfig{
+				Aura: core.Aura{
+					Label: "Forethought Talisman",
+				},
 				NumberOfTicks: 4,
 				TickLength:    time.Second * 3,
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
@@ -221,10 +221,7 @@ func init() {
 					dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
 				},
 			},
-			core.Aura{
-				Label:    "Forethought Talisman" + strconv.Itoa(int(character.Index)),
-				ActionID: actionID,
-			})
+		})
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Forethought Talisman",
@@ -233,8 +230,7 @@ func init() {
 			ProcChance: 0.2,
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-				hot := hots[result.Target.UnitIndex]
-				hot.Apply(sim)
+				healSpell.Hot(result.Target).Apply(sim)
 			},
 		})
 	})
@@ -793,18 +789,19 @@ func init() {
 			character := agent.GetCharacter()
 			actionID := core.ActionID{ItemID: itemID}
 
-			hots := core.NewAllyHotArray(
-				&character.Unit,
-				core.Dot{
-					Spell: character.GetOrRegisterSpell(core.SpellConfig{
-						ActionID:    actionID,
-						SpellSchool: core.SpellSchoolHoly,
-						ProcMask:    core.ProcMaskSpellHealing,
-						Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+			healSpell := character.GetOrRegisterSpell(core.SpellConfig{
+				ActionID:    actionID,
+				SpellSchool: core.SpellSchoolHoly,
+				ProcMask:    core.ProcMaskSpellHealing,
+				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
-						DamageMultiplier: 1,
-						ThreatMultiplier: 1,
-					}),
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+
+				Hot: core.DotConfig{
+					Aura: core.Aura{
+						Label: "Glowing Twilight Scale",
+					},
 					NumberOfTicks: 6,
 					TickLength:    time.Second * 1,
 					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
@@ -815,10 +812,7 @@ func init() {
 						dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
 					},
 				},
-				core.Aura{
-					Label:    "Glowing Twilight Scale" + strconv.Itoa(int(character.Index)),
-					ActionID: actionID,
-				})
+			})
 
 			activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
@@ -826,8 +820,7 @@ func init() {
 				Callback: core.CallbackOnHealDealt,
 				Duration: time.Second * 15,
 				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-					hot := hots[result.Target.UnitIndex]
-					hot.Apply(sim)
+					healSpell.Hot(result.Target).Apply(sim)
 				},
 			})
 

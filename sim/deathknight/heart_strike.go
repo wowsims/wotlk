@@ -2,23 +2,33 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var HeartStrikeActionID = core.ActionID{SpellID: 55262}
 
-func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneSpell {
+func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
 	diseaseMulti := dk.dkDiseaseMultiplier(0.1)
 
 	critMultiplier := dk.bonusCritMultiplier(dk.Talents.MightOfMograine)
 
-	rs := &RuneSpell{}
 	conf := core.SpellConfig{
 		ActionID:    HeartStrikeActionID.WithTag(core.TernaryInt32(isMainTarget, 1, 2)),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost:  1,
+			RunicPowerGain: 10,
+			Refundable:     true,
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			IgnoreHaste: true,
+		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .5 *
@@ -46,7 +56,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 						dk.RuneWeapon.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
 					}
 				} else {
-					rs.OnResult(sim, result)
+					spell.SpendRefundableCost(sim, result)
 
 					if dk.Env.GetNumTargets() > 1 {
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(dk.CurrentTarget))
@@ -56,39 +66,17 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *RuneS
 			}
 		},
 	}
-	if isDrw {
-		conf.DamageMultiplier *= .5
-		conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
-	if isMainTarget && !isDrw { // off target doesnt need GCD
-		conf.ResourceType = stats.RunicPower
-		conf.BaseCost = float64(core.NewRuneCost(10, 1, 0, 0, 0))
-		conf.Cast = core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: conf.BaseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-			},
-			IgnoreHaste: true,
-		}
-		rs.Refundable = true
+	if !isMainTarget || isDrw { // off target doesnt need GCD
+		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
 	}
 
 	if isDrw {
-		rs.Spell = dk.RuneWeapon.RegisterSpell(conf)
-		return rs
+		conf.DamageMultiplier *= .5
+		conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
+		return dk.RuneWeapon.RegisterSpell(conf)
 	} else {
-		if isMainTarget {
-			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-				return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.HeartStrike.IsReady(sim)
-			}, nil)
-		} else {
-			return dk.RegisterSpell(rs, conf, func(sim *core.Simulation) bool {
-				return true
-			}, nil)
-		}
+		return dk.RegisterSpell(conf)
 	}
 }
 
@@ -106,6 +94,6 @@ func (dk *Deathknight) registerDrwHeartStrikeSpell() {
 		return
 	}
 
-	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true).Spell
-	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true).Spell
+	dk.RuneWeapon.HeartStrike = dk.newHeartStrikeSpell(true, true)
+	dk.RuneWeapon.HeartStrikeOffHit = dk.newHeartStrikeSpell(false, true)
 }

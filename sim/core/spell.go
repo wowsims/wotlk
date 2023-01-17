@@ -9,6 +9,7 @@ import (
 
 type ApplySpellResults func(sim *Simulation, target *Unit, spell *Spell)
 type ExpectedDamageCalculator func(sim *Simulation, target *Unit, spell *Spell, useSnapshot bool) *SpellResult
+type CanCastCondition func(sim *Simulation, target *Unit) bool
 
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
@@ -23,8 +24,10 @@ type SpellConfig struct {
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
+	RuneCost   RuneCostOptions
 
-	Cast CastConfig
+	Cast               CastConfig
+	ExtraCastCondition CanCastCondition
 
 	BonusHitRating       float64
 	BonusCritRating      float64
@@ -45,6 +48,9 @@ type SpellConfig struct {
 
 	// Optional field. Calculates expected average damage.
 	ExpectedDamage ExpectedDamageCalculator
+
+	Dot DotConfig
+	Hot DotConfig
 }
 
 type Spell struct {
@@ -83,14 +89,11 @@ type Spell struct {
 	// are calculated using the base cost.
 	BaseCost float64
 
-	// Cost for the spell.
-	Cost SpellCost
-
-	// Default cast parameters with all static effects applied.
-	DefaultCast Cast
-
-	CD       Cooldown
-	SharedCD Cooldown
+	Cost               SpellCost // Cost for the spell.
+	DefaultCast        Cast      // Default cast parameters with all static effects applied.
+	CD                 Cooldown
+	SharedCD           Cooldown
+	ExtraCastCondition CanCastCondition
 
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
@@ -133,6 +136,9 @@ type Spell struct {
 	// Note that bonus expertise and armor pen are static, so we don't bother resetting them.
 
 	resultCache SpellResult
+
+	dots   DotArray
+	aoeDot *Dot
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -166,9 +172,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ResourceType: config.ResourceType,
 		BaseCost:     config.BaseCost,
 
-		DefaultCast: config.Cast.DefaultCast,
-		CD:          config.Cast.CD,
-		SharedCD:    config.Cast.SharedCD,
+		DefaultCast:        config.Cast.DefaultCast,
+		CD:                 config.Cast.CD,
+		SharedCD:           config.Cast.SharedCD,
+		ExtraCastCondition: config.ExtraCastCondition,
 
 		ApplyEffects: config.ApplyEffects,
 
@@ -220,26 +227,16 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newEnergyCost(spell, config.EnergyCost)
 	} else if config.RageCost.Cost != 0 {
 		spell.Cost = newRageCost(spell, config.RageCost)
-	}
-
-	if spell.Cost == nil {
-		switch spell.ResourceType {
-		case stats.RunicPower:
-			spell.ResourceMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-		case stats.BloodRune:
-			spell.ResourceMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-		case stats.FrostRune:
-			spell.ResourceMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-		case stats.UnholyRune:
-			spell.ResourceMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-		case stats.DeathRune:
-			spell.ResourceMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-		}
+	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
+		spell.Cost = newRuneCost(spell, config.RuneCost)
 	}
 
 	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
 		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
+
+	spell.createDots(config.Dot, false)
+	spell.createDots(config.Hot, true)
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
 
@@ -278,6 +275,28 @@ func (unit *Unit) GetOrRegisterSpell(config SpellConfig) *Spell {
 	} else {
 		return registered
 	}
+}
+
+func (spell *Spell) Dot(target *Unit) *Dot {
+	return spell.dots.Get(target)
+}
+func (spell *Spell) CurDot() *Dot {
+	return spell.dots.Get(spell.Unit.CurrentTarget)
+}
+func (spell *Spell) AOEDot() *Dot {
+	return spell.aoeDot
+}
+func (spell *Spell) Hot(target *Unit) *Dot {
+	return spell.dots.Get(target)
+}
+func (spell *Spell) CurHot() *Dot {
+	return spell.dots.Get(spell.Unit.CurrentTarget)
+}
+func (spell *Spell) AOEHot() *Dot {
+	return spell.aoeDot
+}
+func (spell *Spell) SelfHot() *Dot {
+	return spell.aoeDot
 }
 
 // Metrics for the current iteration
@@ -404,6 +423,41 @@ func (spell *Spell) IsReady(sim *Simulation) bool {
 
 func (spell *Spell) TimeToReady(sim *Simulation) time.Duration {
 	return MaxTimeToReady(spell.CD.Timer, spell.SharedCD.Timer, sim)
+}
+
+// Returns whether a call to Cast() would be successful, without actually
+// doing a cast.
+func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
+	if spell == nil {
+		return false
+	}
+
+	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of extra condition")
+		}
+		return false
+	}
+
+	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of CDs")
+		}
+		return false
+	}
+
+	if spell.Cost != nil {
+		// temp hack
+		spell.CurCast.Cost = spell.DefaultCast.Cost
+		if !spell.Cost.MeetsRequirement(spell) {
+			if sim.Log != nil {
+				sim.Log("Cant cast because of resource cost")
+			}
+			return false
+		}
+	}
+
+	return true
 }
 
 func (spell *Spell) Cast(sim *Simulation, target *Unit) bool {
