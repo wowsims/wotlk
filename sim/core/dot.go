@@ -263,20 +263,14 @@ func (spell *Spell) createDots(config DotConfig) {
 		spell.aoeDot = NewDot(dot)
 	} else {
 		auraConfig.Label += "-" + strconv.Itoa(int(caster.Index))
-		spell.dots = newOpponentDotArray(caster, dot, auraConfig)
-	}
-}
-
-// Creates DoTs for all opponent units.
-func newOpponentDotArray(caster *Unit, config Dot, auraConfig Aura) DotArray {
-	dots := make([]*Dot, len(caster.Env.AllUnits))
-	for _, target := range caster.Env.AllUnits {
-		if caster.IsOpponent(target) {
-			config.Aura = target.GetOrRegisterAura(auraConfig)
-			dots[target.UnitIndex] = NewDot(config)
+		spell.dots = make([]*Dot, len(caster.Env.AllUnits))
+		for _, target := range caster.Env.AllUnits {
+			if caster.IsOpponent(target) {
+				dot.Aura = target.GetOrRegisterAura(auraConfig)
+				spell.dots[target.UnitIndex] = NewDot(dot)
+			}
 		}
 	}
-	return dots
 }
 
 // Creates HoTs for all allied units.
