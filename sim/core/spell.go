@@ -50,6 +50,7 @@ type SpellConfig struct {
 	ExpectedDamage ExpectedDamageCalculator
 
 	Dot DotConfig
+	Hot DotConfig
 }
 
 type Spell struct {
@@ -234,7 +235,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
 
-	spell.createDots(config.Dot)
+	spell.createDots(config.Dot, false)
+	spell.createDots(config.Hot, true)
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
 
@@ -278,7 +280,19 @@ func (unit *Unit) GetOrRegisterSpell(config SpellConfig) *Spell {
 func (spell *Spell) Dot(target *Unit) *Dot {
 	return spell.dots.Get(target)
 }
+func (spell *Spell) CurDot() *Dot {
+	return spell.dots.Get(spell.Unit.CurrentTarget)
+}
 func (spell *Spell) AOEDot() *Dot {
+	return spell.aoeDot
+}
+func (spell *Spell) Hot(target *Unit) *Dot {
+	return spell.dots.Get(target)
+}
+func (spell *Spell) CurHot() *Dot {
+	return spell.dots.Get(spell.Unit.CurrentTarget)
+}
+func (spell *Spell) AOEHot() *Dot {
 	return spell.aoeDot
 }
 
