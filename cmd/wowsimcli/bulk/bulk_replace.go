@@ -200,9 +200,13 @@ func runComboReplacements(baseInput *proto.RaidSimRequest, replaceBySlot [][]pro
 		if len(v) == 0 {
 			continue
 		}
-		totalCombo *= len(v)
+		totalCombo *= len(v) + 1
 	}
 	fmt.Printf("\nTotal Combinations: %d\n", totalCombo)
+
+	if totalCombo > 1000000 {
+		panic("over a million combinations. Unlikely this will even be able to run.")
+	}
 
 	combos := generateCombos(0, ReplaceIter{}, replaceBySlot)
 
