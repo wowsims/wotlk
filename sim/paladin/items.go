@@ -417,13 +417,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				isVengeanceDot := false
-				for _, vengeanceDot := range paladin.SealOfVengeanceDots {
-					if spell == vengeanceDot.Spell {
-						isVengeanceDot = true
-					}
-				}
-				if isVengeanceDot {
+				if spell == paladin.SovDotSpell {
 					if !icd.IsReady(sim) || sim.RandomFloat("Libram of Valiance") > 0.70 {
 						return
 					}

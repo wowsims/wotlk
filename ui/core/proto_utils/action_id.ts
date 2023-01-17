@@ -258,13 +258,6 @@ export class ActionId {
 					name += ` (${this.tag} MW)`;
 				}
 				break;
-			case 'Holy Vengeance':
-				if (this.tag == 1) {
-					name += ' (Swing Roll)'
-				} else if (this.tag == 2) {
-					name += ' (DoT)'
-				}
-				break;
 			case 'Righteous Vengeance':
 				if (this.tag == 1) {
 					name += ' (Application)'
