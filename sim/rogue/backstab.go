@@ -8,8 +8,7 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
-	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
-	refundAmount := baseCost * 0.8
+	// FIXME: Require a dagger MH
 	//daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{

@@ -612,38 +612,22 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
 
-	rogue.HonorAmongThievesDot = core.NewDot(core.Dot{
-		Spell: rogue.HonorAmongThieves,
-		Aura: rogue.RegisterAura(core.Aura{
-			Label:    "Honor Among Thieves",
-			ActionID: honorAmongThievesID,
-		}),
-		NumberOfTicks: 0, // Set dynamically
-		TickLength:    time.Second,
-
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			// Tick effect here
-			if sim.Proc(procChance, "Honor Among Thieves") {
-				rogue.AddComboPoints(sim, 1, comboMetrics)
-			}
-		},
-	})
-
-	rogue.HonorAmongThieves = rogue.RegisterSpell(core.SpellConfig{
+	rogue.HonorAmongThieves = rogue.RegisterAura(core.Aura{
+		Label:    "Honor Among Thieves",
 		ActionID: honorAmongThievesID,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: 0,
-			},
-			IgnoreHaste: true,
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
 		},
-
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rogue.HonorAmongThievesDot.Spell = spell
-			rogue.HonorAmongThievesDot.NumberOfTicks = int32(sim.Duration + sim.DurationVariation)
-			rogue.HonorAmongThievesDot.RecomputeAuraDuration()
-			rogue.HonorAmongThievesDot.Apply(sim)
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: time.Second,
+				OnAction: func(s *core.Simulation) {
+					if sim.Proc(procChance, "Honor Among Thieves") {
+						rogue.AddComboPoints(sim, 1, comboMetrics)
+					}
+				},
+			})
 		},
 	})
 }

@@ -54,32 +54,31 @@ type Rogue struct {
 
 	maxEnergy float64
 
-	BuilderPoints     int32
-	Builder           *core.Spell
-	Backstab          *core.Spell
-	BladeFlurry       *core.Spell
-	DeadlyPoison      *core.Spell
-	FanOfKnives       *core.Spell
-	Feint             *core.Spell
-	Garrote           *core.Spell
-	Ambush            *core.Spell
-	Hemorrhage        *core.Spell
-	GhostlyStrike     *core.Spell
-	HungerForBlood    *core.Spell
-	InstantPoison     [3]*core.Spell
-	WoundPoison       [3]*core.Spell
-	Mutilate          *core.Spell
-	Shiv              *core.Spell
-	SinisterStrike    *core.Spell
-	TricksOfTheTrade  *core.Spell
-	Shadowstep        *core.Spell
-	Preparation       *core.Spell
-	Premeditation     *core.Spell
-	ShadowDance       *core.Spell
-	ColdBlood         *core.Spell
-	MasterOfSubtlety  *core.Spell
-	Overkill          *core.Spell
-	HonorAmongThieves *core.Spell
+	BuilderPoints    int32
+	Builder          *core.Spell
+	Backstab         *core.Spell
+	BladeFlurry      *core.Spell
+	DeadlyPoison     *core.Spell
+	FanOfKnives      *core.Spell
+	Feint            *core.Spell
+	Garrote          *core.Spell
+	Ambush           *core.Spell
+	Hemorrhage       *core.Spell
+	GhostlyStrike    *core.Spell
+	HungerForBlood   *core.Spell
+	InstantPoison    [3]*core.Spell
+	WoundPoison      [3]*core.Spell
+	Mutilate         *core.Spell
+	Shiv             *core.Spell
+	SinisterStrike   *core.Spell
+	TricksOfTheTrade *core.Spell
+	Shadowstep       *core.Spell
+	Preparation      *core.Spell
+	Premeditation    *core.Spell
+	ShadowDance      *core.Spell
+	ColdBlood        *core.Spell
+	MasterOfSubtlety *core.Spell
+	Overkill         *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -109,6 +108,7 @@ type Rogue struct {
 	ShadowstepAura       *core.Aura
 	ShadowDanceAura      *core.Aura
 	DirtyDeedsAura       *core.Aura
+	HonorAmongThieves    *core.Aura
 
 	masterPoisonerDebuffAuras []*core.Aura
 	savageCombatDebuffAuras   []*core.Aura
@@ -218,10 +218,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
 	if rogue.HonorAmongThieves != nil {
-		rogue.HonorAmongThievesDot.Deactivate(sim)
-		rogue.HonorAmongThievesDot.NumberOfTicks = int32(sim.Duration + sim.DurationVariation)
-		rogue.HonorAmongThievesDot.RecomputeAuraDuration()
-		rogue.HonorAmongThievesDot.Activate(sim)
+		rogue.Reset(sim)
 	}
 	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
 	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {

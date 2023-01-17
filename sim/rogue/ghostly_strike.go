@@ -16,7 +16,6 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 	actionID := core.ActionID{SpellID: 14278}
 	// FIXME: Add Ghostly Strike Glyph
 	baseCost := 40.0
-	refundAmount := baseCost * 0.8
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
@@ -51,8 +50,6 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-			} else {
-				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
 			}
 		},
 	})

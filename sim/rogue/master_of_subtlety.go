@@ -7,11 +7,11 @@ import (
 )
 
 // Each rank is a different ID. 31223 is 3/3
-func getMasterofSubtletySpellID(talentPoints int32) int32 {
+func getMasterOfSubtletySpellID(talentPoints int32) int32 {
 	if talentPoints == 1 {
 		return 31221
 	}
-	return 31220 + talentPoints
+	return []int32{31221, 31221, 31222, 31223}[talentPoints]
 }
 
 func (rogue *Rogue) registerMasterOfSubtletyCD() {
@@ -19,7 +19,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 		return
 	}
 
-	var MasterOfSubtletyID = core.ActionID{SpellID: getMasterofSubtletySpellID(rogue.Talents.MasterOfSubtlety)}
+	var MasterOfSubtletyID = core.ActionID{SpellID: getMasterOfSubtletySpellID(rogue.Talents.MasterOfSubtlety)}
 
 	percent := 0.04
 
@@ -47,7 +47,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second*180 - time.Duration(30*rogue.Talents.MasterOfSubtlety),
+				Duration: time.Second * time.Duration(180-30*rogue.Talents.MasterOfSubtlety),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
