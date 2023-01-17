@@ -295,6 +295,9 @@ func (spell *Spell) CurHot() *Dot {
 func (spell *Spell) AOEHot() *Dot {
 	return spell.aoeDot
 }
+func (spell *Spell) SelfHot() *Dot {
+	return spell.aoeDot
+}
 
 // Metrics for the current iteration
 func (spell *Spell) CurDamagePerCast() float64 {

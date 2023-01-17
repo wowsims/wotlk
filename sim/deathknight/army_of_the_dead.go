@@ -21,29 +21,31 @@ func (dk *Deathknight) PrecastArmyOfTheDead(sim *core.Simulation) {
 }
 
 func (dk *Deathknight) registerArmyOfTheDeadCD() {
+	var ghoulIndex = 0
 	aotdAura := dk.RegisterAura(core.Aura{
 		Label:    "Army of the Dead",
 		ActionID: core.ActionID{SpellID: 42650},
-		Duration: core.NeverExpires,
+		Duration: time.Millisecond * 500 * 8,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.CancelAutoSwing(sim)
 			dk.CancelGCDTimer(sim)
+
+			ghoulIndex = 0
+			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				NumTicks: 8,
+				Period:   time.Millisecond * 500,
+				OnAction: func(sim *core.Simulation) {
+					dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
+					ghoulIndex++
+				},
+				CleanUp: func(sim *core.Simulation) {
+					aura.Deactivate(sim)
+				},
+			})
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AutoAttacks.EnableAutoSwing(sim)
 			dk.SetGCDTimer(sim, sim.CurrentTime)
-		},
-	})
-
-	var ghoulIndex = 0
-	aotdDot := core.NewDot(core.Dot{
-		Aura:                aotdAura,
-		NumberOfTicks:       8,
-		TickLength:          time.Millisecond * 500,
-		AffectedByCastSpeed: false,
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dk.ArmyGhoul[ghoulIndex].EnableWithTimeout(sim, dk.ArmyGhoul[ghoulIndex], time.Second*40)
-			ghoulIndex++
 		},
 	})
 
@@ -68,11 +70,7 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			ghoulIndex = 0
-			aotdDot.Apply(sim)
-			dk.UpdateMajorCooldowns()
+			aotdAura.Activate(sim)
 		},
 	})
-
-	aotdDot.Spell = dk.ArmyOfTheDead
 }

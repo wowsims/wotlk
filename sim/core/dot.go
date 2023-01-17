@@ -9,8 +9,8 @@ type OnSnapshot func(sim *Simulation, target *Unit, dot *Dot, isRollover bool)
 type OnTick func(sim *Simulation, target *Unit, dot *Dot)
 
 type DotConfig struct {
-	// Set to true for AOE dots (Blizzard, Hurricane, Consecrate, etc)
-	IsAOE bool
+	IsAOE    bool // Set to true for AOE dots (Blizzard, Hurricane, Consecrate, etc)
+	SelfOnly bool // Set to true to only create the self-hot.
 
 	// Optional, will default to the corresponding spell.
 	Spell *Spell
@@ -258,7 +258,7 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 	}
 
 	caster := dot.Spell.Unit
-	if config.IsAOE {
+	if config.IsAOE || config.SelfOnly {
 		dot.Aura = caster.GetOrRegisterAura(auraConfig)
 		spell.aoeDot = NewDot(dot)
 	} else {
