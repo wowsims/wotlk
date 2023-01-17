@@ -1,7 +1,6 @@
 package paladin
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,56 +8,50 @@ import (
 )
 
 func (paladin *Paladin) registerDivinePleaSpell() {
-	// Currently implemented as a self-targeted DoT that restores mana.
-	// In future maybe expose aura for buff asserting (For prot paladins.)
-
-	actionID := core.ActionID{SpellID: 54428} // Divine plea
+	actionID := core.ActionID{SpellID: 54428}
 	hasGlyph := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfDivinePlea)
+	manaMetrics := paladin.NewManaMetrics(actionID)
+	var manaPA *core.PendingAction
 
-	plea := core.NewDot(core.Dot{
-		Spell: paladin.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolHoly,
-			Cast: core.CastConfig{
-				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+	paladin.DivinePleaAura = paladin.RegisterAura(core.Aura{
+		Label:    "Divine Plea",
+		ActionID: actionID,
+		Duration: time.Second*15 + 1, // Add 1 to make sure the last tick takes effect
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			manaPA = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: time.Second * 3,
+				OnAction: func(sim *core.Simulation) {
+					paladin.AddMana(sim, 0.05*paladin.MaxMana(), manaMetrics, false)
 				},
-				CD: core.Cooldown{
-					Timer:    paladin.NewTimer(),
-					Duration: time.Minute * 1,
-				},
-			},
-		}),
-		Aura: paladin.RegisterAura(core.Aura{
-			Label:    "Divine Plea-" + strconv.Itoa(int(paladin.Index)),
-			ActionID: actionID,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				if hasGlyph {
-					aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.97
-				}
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				if hasGlyph {
-					aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.97
-				}
-			},
-		}),
-
-		NumberOfTicks: 5,
-		TickLength:    time.Second * 3,
-
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			if paladin.PleaManaMetrics == nil {
-				paladin.PleaManaMetrics = paladin.NewManaMetrics(actionID)
+			})
+			if hasGlyph {
+				aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.97
 			}
-			paladin.AddMana(sim, paladin.MaxMana()*0.05, paladin.PleaManaMetrics, false)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			manaPA.Cancel(sim)
+			if hasGlyph {
+				aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.97
+			}
 		},
 	})
 
-	plea.Spell.ApplyEffects = func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
-		plea.Activate(sim)
-	}
+	paladin.DivinePlea = paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolHoly,
 
-	paladin.DivinePleaAura = plea.Aura
-	paladin.DivinePlea = plea.Spell
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    paladin.NewTimer(),
+				Duration: time.Minute * 1,
+			},
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			paladin.DivinePleaAura.Activate(sim)
+		},
+	})
 }

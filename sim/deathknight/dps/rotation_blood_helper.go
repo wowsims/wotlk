@@ -28,16 +28,16 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 		return true
 	}
 
-	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
-	bpRemaining := dk.BloodPlagueDisease[target.Index].RemainingDuration(sim)
+	ffRemaining := dk.FrostFeverSpell.Dot(target).RemainingDuration(sim)
+	bpRemaining := dk.BloodPlagueSpell.Dot(target).RemainingDuration(sim)
 	castGcd := core.GCDDefault * time.Duration(casts)
 
 	// FF is not active or will drop before Gcd is ready after this cast
-	if !dk.FrostFeverDisease[target.Index].IsActive() || ffRemaining < castGcd {
+	if !dk.FrostFeverSpell.Dot(target).IsActive() || ffRemaining < castGcd {
 		return false
 	}
 	// BP is not active or will drop before Gcd is ready after this cast
-	if !dk.BloodPlagueDisease[target.Index].IsActive() || bpRemaining < castGcd {
+	if !dk.BloodPlagueSpell.Dot(target).IsActive() || bpRemaining < castGcd {
 		return false
 	}
 

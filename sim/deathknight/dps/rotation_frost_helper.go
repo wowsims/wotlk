@@ -67,8 +67,8 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 
 	simDur := sim.CurrentTime + sim.GetRemainingDuration()
 	simTimeLeft := sim.GetRemainingDuration()
-	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
-	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
 	diseaseExpiresAt := core.MinDuration(ffExpiresAt, bpExpiresAt)
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()

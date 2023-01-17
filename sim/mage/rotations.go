@@ -119,7 +119,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 		return mage.Pyroblast
 	}
 
-	noBomb := mage.LivingBomb != nil && !mage.LivingBombDot.IsActive() && sim.GetRemainingDuration() > time.Second*12
+	noBomb := mage.LivingBomb != nil && !mage.LivingBomb.Dot(mage.CurrentTarget).IsActive() && sim.GetRemainingDuration() > time.Second*12
 	if noBomb && !mage.heatingUp {
 		return mage.LivingBomb
 	}

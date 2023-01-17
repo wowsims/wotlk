@@ -88,14 +88,14 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 				if hasGlyph {
 					// Extend FF by 3
-					if dk.FrostFeverDisease[target.Index].IsActive() && dk.FrostFeverExtended[target.Index] < 3 {
+					if dk.FrostFeverSpell.Dot(target).IsActive() && dk.FrostFeverExtended[target.Index] < 3 {
 						dk.FrostFeverExtended[target.Index]++
-						dk.FrostFeverDisease[target.Index].UpdateExpires(dk.FrostFeverDisease[target.Index].ExpiresAt() + 3*time.Second)
+						dk.FrostFeverSpell.Dot(target).UpdateExpires(dk.FrostFeverSpell.Dot(target).ExpiresAt() + 3*time.Second)
 					}
 					// Extend BP by 3
-					if dk.BloodPlagueDisease[target.Index].IsActive() && dk.BloodPlagueExtended[target.Index] < 3 {
+					if dk.BloodPlagueSpell.Dot(target).IsActive() && dk.BloodPlagueExtended[target.Index] < 3 {
 						dk.BloodPlagueExtended[target.Index]++
-						dk.BloodPlagueDisease[target.Index].UpdateExpires(dk.BloodPlagueDisease[target.Index].ExpiresAt() + 3*time.Second)
+						dk.BloodPlagueSpell.Dot(target).UpdateExpires(dk.BloodPlagueSpell.Dot(target).ExpiresAt() + 3*time.Second)
 					}
 				}
 			}

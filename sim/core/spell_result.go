@@ -373,20 +373,19 @@ func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) 
 
 // Returns the combined attacker modifiers.
 func (spell *Spell) AttackerDamageMultiplier(attackTable *AttackTable) float64 {
-	// Even when ignoring attacker multipliers we still apply this one, because its specific to the spell.
-	multiplier := spell.DamageMultiplier * spell.DamageMultiplierAdditive
-
+	return spell.attackerDamageMultiplierInternal(attackTable) *
+		spell.DamageMultiplier *
+		spell.DamageMultiplierAdditive
+}
+func (spell *Spell) attackerDamageMultiplierInternal(attackTable *AttackTable) float64 {
 	if spell.Flags.Matches(SpellFlagIgnoreAttackerModifiers) {
-		return multiplier
+		return 1
 	}
 
 	ps := spell.Unit.PseudoStats
-
-	multiplier *= ps.DamageDealtMultiplier *
+	return ps.DamageDealtMultiplier *
 		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
 		attackTable.DamageDealtMultiplier
-
-	return multiplier
 }
 
 func (result *SpellResult) applyTargetModifiers(spell *Spell, attackTable *AttackTable, isPeriodic bool) {

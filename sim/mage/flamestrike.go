@@ -7,10 +7,8 @@ import (
 )
 
 func (mage *Mage) registerFlamestrikeSpell() {
-	actionID := core.ActionID{SpellID: 42926}
-
 	mage.Flamestrike = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 42926},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage,
@@ -34,6 +32,25 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.05*float64(mage.Talents.BurningSoul),
 
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "Flamestrike",
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 2,
+			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+				target := mage.CurrentTarget
+				dot.SnapshotBaseDamage = 780.0/4 + 0.122*dot.Spell.SpellPower()
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				for _, aoeTarget := range sim.Encounter.Targets {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dmgFromSP := 0.2357 * spell.SpellPower()
 			for _, aoeTarget := range sim.Encounter.Targets {
@@ -41,27 +58,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
-			mage.FlamestrikeDot.Apply(sim)
-		},
-	})
-
-	mage.FlamestrikeDot = core.NewDot(core.Dot{
-		Spell: mage.Flamestrike,
-		Aura: mage.RegisterAura(core.Aura{
-			Label:    "Flamestrike",
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 4,
-		TickLength:    time.Second * 2,
-		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
-			target := mage.CurrentTarget
-			dot.SnapshotBaseDamage = 780.0/4 + 0.122*dot.Spell.SpellPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
-			}
+			mage.Flamestrike.AOEDot().Apply(sim)
 		},
 	})
 }

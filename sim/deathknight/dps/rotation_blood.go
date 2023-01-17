@@ -144,7 +144,7 @@ func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
 	if dk.sr.hasGod {
-		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+		if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() && dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
 		}
@@ -273,13 +273,13 @@ func (dk *DpsDeathknight) RotationActionBL_IT_Custom(sim *core.Simulation, targe
 }
 
 func (dk *DpsDeathknight) RotationActionBL_FF_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	dot := dk.FrostFeverDisease[target.Index]
+	dot := dk.FrostFeverSpell.Dot(target)
 	gracePeriod := dk.CurrentFrostRuneGrace(sim)
 	return dk.RotationActionBL_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }
 
 func (dk *DpsDeathknight) RotationActionBL_BP_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	dot := dk.BloodPlagueDisease[target.Index]
+	dot := dk.BloodPlagueSpell.Dot(target)
 	gracePeriod := dk.CurrentUnholyRuneGrace(sim)
 	return dk.RotationActionBL_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }

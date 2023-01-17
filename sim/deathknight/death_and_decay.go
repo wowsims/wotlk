@@ -8,11 +8,10 @@ import (
 )
 
 func (dk *Deathknight) registerDeathAndDecaySpell() {
-	actionID := core.ActionID{SpellID: 49938}
 	glyphBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathAndDecay), 1.2, 1.0)
 
 	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 49938},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -36,31 +35,31 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 		ThreatMultiplier: 1.9,
 		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
 
-		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			dk.DeathAndDecayDot.Apply(sim)
-			dk.DeathAndDecayDot.TickOnce(sim)
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "Death and Decay",
+			},
+			NumberOfTicks: 10,
+			TickLength:    time.Second * 1,
+			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
+				target := dk.CurrentTarget
+				dot.SnapshotBaseDamage = 62 + 0.0475*dk.getImpurityBonus(dot.Spell)
+				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				for _, aoeTarget := range sim.Encounter.Targets {
+					// DnD recalculates attack multipliers dynamically on every tick so this is here on purpose
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[aoeTarget.UnitIndex]) * dk.RoRTSBonus(&aoeTarget.Unit)
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
+				}
+			},
 		},
-	})
 
-	dk.DeathAndDecayDot = core.NewDot(core.Dot{
-		Aura: dk.RegisterAura(core.Aura{
-			Label:    "Death and Decay",
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 10,
-		TickLength:    time.Second * 1,
-		OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
-			target := dk.CurrentTarget
-			dot.SnapshotBaseDamage = 62 + 0.0475*dk.getImpurityBonus(dot.Spell)
-			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				// DnD recalculates attack multipliers dynamically on every tick so this is here on purpose
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[aoeTarget.UnitIndex]) * dk.RoRTSBonus(&aoeTarget.Unit)
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
-			}
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dot := spell.AOEDot()
+			dot.Apply(sim)
+			dot.TickOnce(sim)
 		},
 	})
-	dk.DeathAndDecayDot.Spell = dk.DeathAndDecay
 }

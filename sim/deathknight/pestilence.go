@@ -46,27 +46,27 @@ func (dk *Deathknight) registerPestilenceSpell() {
 					if aoeUnit == dk.CurrentTarget {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								dk.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
 								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
 								dk.FrostFeverDebuffAura[aoeUnit.Index].Activate(sim)
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								dk.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
+						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
 							dk.FrostFeverExtended[aoeUnit.Index] = 0
-							dk.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+							dk.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
 							dk.BloodPlagueExtended[aoeUnit.Index] = 0
-							dk.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+							dk.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
 					}
 				}
@@ -100,37 +100,37 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 					if aoeUnit == dk.CurrentTarget {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								if dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].IsActive() {
-									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Rollover(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								if dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
 								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 								}
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								if dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Rollover(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
 								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 								}
 							}
 						} else if shouldApplyDrwDots {
-							if dk.FrostFeverDisease[aoeUnit.Index].IsActive() {
-								dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 							}
 
-							if dk.BloodPlagueDisease[aoeUnit.Index].IsActive() {
-								dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.RuneWeapon.FrostFeverDisease[aoeUnit.Index].Apply(sim)
+						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
+							dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
-							dk.RuneWeapon.BloodPlagueDisease[aoeUnit.Index].Apply(sim)
+						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
+							dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
 					}
 				}
