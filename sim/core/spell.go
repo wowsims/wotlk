@@ -48,6 +48,8 @@ type SpellConfig struct {
 
 	// Optional field. Calculates expected average damage.
 	ExpectedDamage ExpectedDamageCalculator
+
+	Dot DotConfig
 }
 
 type Spell struct {
@@ -133,6 +135,9 @@ type Spell struct {
 	// Note that bonus expertise and armor pen are static, so we don't bother resetting them.
 
 	resultCache SpellResult
+
+	dots   DotArray
+	aoeDot *Dot
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -229,6 +234,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
 
+	spell.createDots(config.Dot)
+
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
 
 	if spell.ApplyEffects == nil {
@@ -266,6 +273,13 @@ func (unit *Unit) GetOrRegisterSpell(config SpellConfig) *Spell {
 	} else {
 		return registered
 	}
+}
+
+func (spell *Spell) Dot(target *Unit) *Dot {
+	return spell.dots.Get(target)
+}
+func (spell *Spell) AOEDot() *Dot {
+	return spell.aoeDot
 }
 
 // Metrics for the current iteration
