@@ -58,15 +58,6 @@ type Priest struct {
 	VampiricTouch   *core.Spell
 	Dispersion      *core.Spell
 
-	ShadowWordPainDot  *core.Dot
-	DevouringPlagueDot *core.Dot
-	HolyFireDot        *core.Dot
-	MindFlayDot        []*core.Dot
-	MindSearDot        []*core.Dot
-	StarshardsDot      *core.Dot
-	VampiricTouchDot   *core.Dot
-
-	RenewHots     []*core.Dot
 	PWSShields    []*core.Shield
 	WeakenedSouls []*core.Aura
 
@@ -151,12 +142,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlaySpell(2),
 		priest.newMindFlaySpell(3),
 	}
-	priest.MindFlayDot = []*core.Dot{
-		nil, // So we can use # of ticks as the index
-		priest.newMindFlayDot(1),
-		priest.newMindFlayDot(2),
-		priest.newMindFlayDot(3),
-	}
 	priest.MindSear = []*core.Spell{
 		nil, // So we can use # of ticks as the index
 		priest.newMindSearSpell(1),
@@ -164,14 +149,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindSearSpell(3),
 		priest.newMindSearSpell(4),
 		priest.newMindSearSpell(5),
-	}
-	priest.MindSearDot = []*core.Dot{
-		nil, // So we can use # of ticks as the index
-		priest.newMindSearDot(1),
-		priest.newMindSearDot(2),
-		priest.newMindSearDot(3),
-		priest.newMindSearDot(4),
-		priest.newMindSearDot(5),
 	}
 }
 
