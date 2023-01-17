@@ -40,32 +40,23 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	// TODO: Test whether T8 Prot 2pc also affects Judgement, once available
 	// TODO: Verify whether these bonuses should indeed be additive with similar
 
-	dotActionID := core.ActionID{SpellID: 31803} // Holy Vengeance
 	dotSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31803}, // Holy Vengeance.
+		ActionID:    core.ActionID{SpellID: 31803},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
+		Flags:       core.SpellFlagMeleeMetrics,
+
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),
+		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
-			Spell: paladin.RegisterSpell(core.SpellConfig{
-				ActionID:    dotActionID,
-				SpellSchool: core.SpellSchoolHoly,
-				ProcMask:    core.ProcMaskSpellDamage,
-				Flags:       core.SpellFlagMeleeMetrics,
-
-				DamageMultiplier: 1 *
-					(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),
-				ThreatMultiplier: 1,
-			}),
 			Aura: core.Aura{
-				Label:     "Holy Vengeance (DoT)",
-				ActionID:  dotActionID,
+				Label:     "Holy Vengeance",
 				MaxStacks: 5,
 			},
-
 			NumberOfTicks: 5,
 			TickLength:    time.Second * 3, // ticking every three seconds for a grand total of 15s of duration
-
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				tickValue := 0 +
 					.013*dot.Spell.SpellPower() +

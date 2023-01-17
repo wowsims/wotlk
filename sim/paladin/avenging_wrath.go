@@ -1,7 +1,6 @@
 package paladin
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -68,7 +67,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			}
 
 			if paladin.CurrentSeal == paladin.SealOfVengeanceAura {
-				if paladin.CurrentTarget.GetAura("Holy Vengeance (DoT) -"+strconv.Itoa(int(paladin.Index))).GetStacks() < 5 {
+				if paladin.SovDotSpell.Dot(paladin.CurrentTarget).GetStacks() < 5 {
 					return false
 				}
 			}

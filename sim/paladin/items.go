@@ -1,7 +1,6 @@
 package paladin
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -485,32 +484,28 @@ func init() {
 
 	core.NewItemEffect(32489, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		actionID := core.ActionID{ItemID: 32489}
 
 		// The spell effect is https://www.wowhead.com/wotlk/spell=40472/enduring-judgement, most likely
 		dotSpell := paladin.RegisterSpell(core.SpellConfig{
-			ActionID:         actionID,
+			ActionID:         core.ActionID{ItemID: 32489},
 			SpellSchool:      core.SpellSchoolHoly,
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-		})
 
-		target := paladin.CurrentTarget
-		judgementDot := core.NewDot(core.Dot{
-			Spell: dotSpell,
-			Aura: target.RegisterAura(core.Aura{
-				Label:    "AshtongueTalismanOfZeal-" + strconv.Itoa(int(paladin.Index)),
-				ActionID: actionID,
-			}),
-			NumberOfTicks: 4,
-			TickLength:    time.Second * 2,
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = 480 / 4
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-			},
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			Dot: core.DotConfig{
+				Aura: core.Aura{
+					Label: "AshtongueTalismanOfZeal",
+				},
+				NumberOfTicks: 4,
+				TickLength:    time.Second * 2,
+				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+					dot.SnapshotBaseDamage = 480 / 4
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				},
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				},
 			},
 		})
 
@@ -522,7 +517,7 @@ func init() {
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.Flags.Matches(SpellFlagPrimaryJudgement) && sim.RandomFloat("AshtongueTalismanOfZeal") < 0.5 {
-					judgementDot.Apply(sim)
+					dotSpell.Dot(result.Target).Apply(sim)
 				}
 			},
 		})
