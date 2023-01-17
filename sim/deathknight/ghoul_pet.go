@@ -30,6 +30,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	}
 
 	armyGhoulPetBaseStats := stats.Stats{
+		stats.Stamina:     159,
 		stats.Agility:     856,
 		stats.Strength:    0,
 		stats.AttackPower: -20,
@@ -243,7 +244,7 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:     ownerStats[stats.Stamina] * 0.7,
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.2,
 			stats.AttackPower: ownerStats[stats.AttackPower] * 0.065,
 
 			stats.MeleeHit:  ownerHitChance * core.MeleeHitRatingPerHitChance,
