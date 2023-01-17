@@ -13,8 +13,8 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 	}
 
 	t := sim.CurrentTime
-	ff := dk.FrostFeverDisease[target.Index].ExpiresAt() - t
-	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
+	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
+	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
 	b, _, _ := dk.NormalCurrentRunes()
 
 	if ff <= 0 && dk.IcyTouch.CanCast(sim, nil) {

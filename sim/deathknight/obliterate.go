@@ -67,8 +67,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 				dk.threatOfThassarianProc(sim, result, dk.ObliterateOhHit)
 
 				if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {
-					dk.FrostFeverDisease[target.Index].Deactivate(sim)
-					dk.BloodPlagueDisease[target.Index].Deactivate(sim)
+					dk.FrostFeverSpell.Dot(target).Deactivate(sim)
+					dk.BloodPlagueSpell.Dot(target).Deactivate(sim)
 				}
 
 				if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {

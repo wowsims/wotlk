@@ -346,7 +346,7 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 	// If we have glyph of Disease and both dots active try to refresh with pesti
 	didPesti := false
 	if dk.sr.hasGod {
-		if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+		if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() && dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
 			didPesti = true
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_Custom)
 		}
@@ -389,7 +389,7 @@ func (dk *DpsDeathknight) RotationActionCallback_MindFreezeFiller(sim *core.Simu
 
 func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	// If we have both dots active try to refresh with pesti and move to normal rotation
-	if dk.FrostFeverDisease[dk.CurrentTarget.Index].IsActive() && dk.BloodPlagueDisease[dk.CurrentTarget.Index].IsActive() {
+	if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() && dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
 		dk.Pestilence.Cast(sim, target)
 		s.Advance()
 
@@ -459,24 +459,24 @@ func (dk *DpsDeathknight) RotationActionUH_IT_Custom(sim *core.Simulation, targe
 
 // Custom IT callback for ghoul frenzy frost rune sync
 func (dk *DpsDeathknight) RotationActionUH_IT_SetSync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	ffRemaining := dk.FrostFeverDisease[target.Index].RemainingDuration(sim)
+	ffRemaining := dk.FrostFeverSpell.Dot(target).RemainingDuration(sim)
 	dk.RotationActionCallback_IT(sim, target, s)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	if !dk.GCD.IsReady(sim) && advance {
-		dk.ur.syncTimeFF = dk.FrostFeverDisease[target.Index].Duration - ffRemaining
+		dk.ur.syncTimeFF = dk.FrostFeverSpell.Dot(target).Duration - ffRemaining
 	}
 
 	return -1
 }
 
 func (dk *DpsDeathknight) RotationActionUH_FF_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	dot := dk.FrostFeverDisease[target.Index]
+	dot := dk.FrostFeverSpell.Dot(target)
 	gracePeriod := dk.CurrentFrostRuneGrace(sim)
 	return dk.RotationActionUH_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }
 
 func (dk *DpsDeathknight) RotationActionUH_BP_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	dot := dk.BloodPlagueDisease[target.Index]
+	dot := dk.BloodPlagueSpell.Dot(target)
 	gracePeriod := dk.CurrentUnholyRuneGrace(sim)
 	return dk.RotationActionUH_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }

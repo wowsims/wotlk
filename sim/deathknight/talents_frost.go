@@ -106,7 +106,7 @@ func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 func (dk *Deathknight) applyTundaStalker() {
 	bonus := 1.0 + 0.03*float64(dk.Talents.TundraStalker)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.FrostFeverDisease[target.Index].IsActive(), bonus, 1.0)
+		return core.TernaryFloat64(dk.FrostFeverSpell.Dot(target).IsActive(), bonus, 1.0)
 	}
 }
 

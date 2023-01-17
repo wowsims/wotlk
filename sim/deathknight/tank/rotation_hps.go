@@ -13,8 +13,8 @@ func (dk *TankDeathknight) TankRA_Hps(sim *core.Simulation, target *core.Unit, s
 	}
 
 	t := sim.CurrentTime
-	ff := dk.FrostFeverDisease[target.Index].ExpiresAt() - t
-	bp := dk.BloodPlagueDisease[target.Index].ExpiresAt() - t
+	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
+	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
 	fd := dk.CurrentFrostRunes() + dk.CurrentDeathRunes()
 	ud := dk.CurrentUnholyRunes() + dk.CurrentDeathRunes()
 	b, _, _ := dk.NormalCurrentRunes()
