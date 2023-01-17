@@ -91,10 +91,8 @@ type RuneWeaponPet struct {
 	Pestilence *core.Spell
 
 	// Diseases
-	FrostFeverSpell    *core.Spell
-	BloodPlagueSpell   *core.Spell
-	FrostFeverDisease  []*core.Dot
-	BloodPlagueDisease []*core.Dot
+	FrostFeverSpell  *core.Spell
+	BloodPlagueSpell *core.Spell
 }
 
 func (runeWeapon *RuneWeaponPet) Initialize() {

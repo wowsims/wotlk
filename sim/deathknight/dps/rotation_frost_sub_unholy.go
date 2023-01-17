@@ -42,8 +42,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	advance := true
 	waitTime := time.Duration(-1)
 
-	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
-	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
 	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
 		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
@@ -236,10 +236,10 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence_Pesti(s
 	casted := false
 	waitUntil := time.Duration(-1)
 
-	ffActive := dk.FrostFeverDisease[target.Index].IsActive()
-	bpActive := dk.BloodPlagueDisease[target.Index].IsActive()
-	ffExpiresAt := dk.FrostFeverDisease[target.Index].ExpiresAt()
-	bpExpiresAt := dk.BloodPlagueDisease[target.Index].ExpiresAt()
+	ffActive := dk.FrostFeverSpell.Dot(target).IsActive()
+	bpActive := dk.BloodPlagueSpell.Dot(target).IsActive()
+	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 	km := dk.KillingMachineAura.IsActive()
