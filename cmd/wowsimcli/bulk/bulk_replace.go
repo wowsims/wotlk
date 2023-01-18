@@ -27,6 +27,7 @@ type ReplaceIter struct {
 }
 
 func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
+	// 1. Load up all the sim data we need
 	replaceData, err := os.ReadFile(replaceFile)
 	if err != nil {
 		log.Fatalf("failed to load input json file: %s", err)
@@ -38,6 +39,8 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 	}
 	replaceInput.replaceSlots = make([]core.ItemSlot, len(replaceInput.Items))
 
+	// Now iterate all replacement items, figure out slot needed.
+	//  Duplicate rings/trinkets/1H to the other valid slot.
 	numInput := len(replaceInput.Items)
 	for i := 0; i < numInput; i++ {
 		repl := replaceInput.Items[i]
@@ -71,7 +74,9 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 		}
 	}
 
+	// Now run the actual simulations
 	if replaceInput.Combinations {
+		// Filter replacements by slots to generate all combos
 		replaceBySlots := make([][]proto.ItemSpec, 17)
 		for i, repl := range replaceInput.Items {
 			slot := replaceInput.replaceSlots[i]
@@ -260,6 +265,8 @@ func runComboControl(baseInput *proto.RaidSimRequest, replaceBySlot [][]proto.It
 		if len(combos) <= maxResults {
 			break
 		}
+
+		// If we have more than max results, refine by running more iterations on the best results.
 		if verbose {
 			fmt.Printf("Refining results...\n")
 		}
@@ -288,10 +295,8 @@ func runComboControl(baseInput *proto.RaidSimRequest, replaceBySlot [][]proto.It
 
 func printCombos(baseResult *proto.RaidSimResult, combos []ReplaceIter, results []*proto.RaidSimResult) string {
 	result := fmt.Sprintf("[BASE RESULT],%0.1f\n", baseResult.RaidMetrics.Dps.Avg)
-
 	for i := 1; i < len(results); i++ {
-		combo := combos[i]
-		result += printCombo(combo, results[i])
+		result += printCombo(combos[i], results[i])
 	}
 	return result
 }
@@ -302,8 +307,7 @@ func printCombo(combo ReplaceIter, result *proto.RaidSimResult) string {
 		if j != 0 {
 			itemtext += ";"
 		}
-		slot := combo.Slots[j]
-		itemtext += fmt.Sprintf("%s@%s", core.ItemsByID[item.Id].Name, slot.String())
+		itemtext += fmt.Sprintf("%s@%s", core.ItemsByID[item.Id].Name, combo.Slots[j].String())
 	}
 	itemtext += "]"
 	return fmt.Sprintf("%s,%0.1f\n", itemtext, result.RaidMetrics.Dps.Avg)
@@ -340,6 +344,7 @@ func runComboReplacements(baseInput *proto.RaidSimRequest, combos []ReplaceIter,
 			go func(iter int) {
 				newInput := *baseInput
 
+				// Replace all the items in this combo sim.
 				if len(combos[iter].Items) > 0 {
 					newRaid := *baseInput.Raid
 					newParty := *newRaid.Parties[0]
