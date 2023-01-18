@@ -22,19 +22,33 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_Pesti).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_HB(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if !dk.canCastAbilityBeforeDiseasesExpire(sim, target) {
+		s.Advance()
+		return sim.CurrentTime
+	}
+	return dk.RotationActionCallback_Frost_FS_HB(sim, target, s)
+}
+
+func (dk *DpsDeathknight) canCastAbilityBeforeDiseasesExpire(sim *core.Simulation, target *core.Unit) bool {
+	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
+	return sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt)
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -42,9 +56,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	advance := true
 	waitTime := time.Duration(-1)
 
-	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
-	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
-	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
+	if dk.canCastAbilityBeforeDiseasesExpire(sim, target) {
 		if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
@@ -71,11 +83,15 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	return core.TernaryDuration(casted, -1, waitTime)
 }
 
-// TODO: Improve this
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := dk.RotationActionCallback_LastSecondsCast(sim, target)
 
 	if !casted {
+		if !dk.canCastAbilityBeforeDiseasesExpire(sim, target) {
+			s.Advance()
+			return sim.CurrentTime
+		}
+
 		spell := dk.RegularPrioPickSpell(sim, target, core.NeverExpires)
 		if spell != nil {
 			casted = spell.Cast(sim, target)
@@ -89,16 +105,15 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_KM(sim *core.
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	/*
-		We need two deaths (or at least, have the first on up) before we UA + BT + Oblit, since if only the 2nd
+		We need to have the first death up before we UA + BT + Oblit, since if only the 2nd
 		death rune is up, UA then Blood Tap will convert and refresh the first and the second will have a 10s CD from UA
 	*/
-	if dk.CurrentDeathRunes() == 2 {
+	if dk.LeftBloodRuneReady() {
 		s.Advance()
 		return sim.CurrentTime
 	}
 
-	timeUntilDeaths := core.MinDuration(dk.DeathRuneRegenAt(0), dk.DeathRuneRegenAt(1))
-	spell := dk.RegularPrioPickSpell(sim, target, timeUntilDeaths)
+	spell := dk.RegularPrioPickSpell(sim, target, dk.DeathRuneRegenAt(1))
 
 	if spell != nil {
 		spell.Cast(sim, target)
@@ -148,6 +163,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *c
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
+		NewAction(dk.RotationActionCallback_EndOfFightCheck).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
@@ -158,15 +174,35 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *c
 	return sim.CurrentTime
 }
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Pesti(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	desiredGrace := 10 * time.Millisecond
+	currentGrace := dk.RuneGraceAt(0, sim.CurrentTime)
+	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
+	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
+	diseaseExpiresAt := core.MinDuration(ffExpiresAt, bpExpiresAt)
+	waitUntil := sim.CurrentTime + (desiredGrace - currentGrace)
+
+	if diseaseExpiresAt <= sim.CurrentTime {
+		return dk.RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim, target, s)
+	}
+	if currentGrace < desiredGrace && diseaseExpiresAt > waitUntil {
+		return waitUntil
+	}
+	casted := dk.Pestilence.Cast(sim, target)
+	s.ConditionalAdvance(casted && dk.LastOutcome.Matches(core.OutcomeLanded))
+	return -1
+}
+
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationAction_CancelBT).
+		NewAction(dk.RotationActionCallback_EndOfFightCheck).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
 		NewAction(dk.RotationActionCallback_EndOfFightCheck).
-		NewAction(dk.RotationActionCallback_Pesti).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_Pesti).
 		//NewAction(dk.RotationActionCallback_FrostSubUnholy_UA_Check3).
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
@@ -182,7 +218,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPesti
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-			NewAction(dk.RotationActionCallback_FS).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
 	} else {
@@ -194,7 +230,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPesti
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-			NewAction(dk.RotationActionCallback_FS).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_KM).
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Sequence1)
 	}
@@ -230,56 +266,4 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Dump(sim *cor
 	}
 
 	return core.TernaryDuration(casted, -1, waitUntil)
-}
-
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence_Pesti(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := false
-	waitUntil := time.Duration(-1)
-
-	ffActive := dk.FrostFeverSpell.Dot(target).IsActive()
-	bpActive := dk.BloodPlagueSpell.Dot(target).IsActive()
-	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
-	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
-	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-
-	km := dk.KillingMachineAura.IsActive()
-	rime := dk.RimeAura.IsActive()
-	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
-		if dk.FrostStrike.CanCast(sim, nil) && km {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim, nil) && km && rime {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim, nil) && dk.CurrentRunicPower() >= 100.0 {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HowlingBlast.CanCast(sim, nil) && rime {
-			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim, nil) && dk.CurrentRunicPower() >= 2.0*(fsCost-dk.fr.oblitRPRegen) {
-			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim, nil) {
-			casted = dk.HornOfWinter.Cast(sim, target)
-		} else {
-			waitUntil = -1
-		}
-
-		return core.TernaryDuration(casted, -1, waitUntil)
-	}
-
-	if !ffActive || !bpActive {
-		return dk.RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim, target, s)
-	} else {
-		casted = dk.Pestilence.Cast(sim, target)
-		advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-		if !casted || (casted && !dk.LastOutcome.Matches(core.OutcomeLanded)) {
-
-			if sim.CurrentTime+dk.SpellGCD() > ffExpiresAt || sim.CurrentTime+dk.SpellGCD() > bpExpiresAt {
-				return dk.RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim, target, s)
-			} else {
-				s.ConditionalAdvance(casted && advance)
-				return core.TernaryDuration(casted, -1, waitUntil)
-			}
-		} else {
-			s.ConditionalAdvance(casted && advance)
-			return core.TernaryDuration(casted, -1, waitUntil)
-		}
-	}
 }

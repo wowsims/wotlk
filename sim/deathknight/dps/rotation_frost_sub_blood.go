@@ -83,7 +83,7 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 			casted = dk.Obliterate.Cast(sim, target)
 		} else if dk.HowlingBlast.CanCast(sim, nil) {
 			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim, nil) {
+		} else if dk.HornOfWinter.CanCast(sim, nil) && sim.GetRemainingDuration() > dk.SpellGCD() {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
 	}
