@@ -109,8 +109,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6482.95325
-  tps: 3792.80846
+  dps: 6483.80798
+  tps: 3793.3213
  }
 }
 dps_results: {
@@ -222,8 +222,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 8124.77463
-  tps: 4766.39136
+  dps: 8126.2756
+  tps: 4767.29194
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7774.9841
-  tps: 4556.85297
+  dps: 7775.70118
+  tps: 4557.28322
  }
 }
 dps_results: {
@@ -461,8 +461,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 7784.0174
-  tps: 4559.47235
+  dps: 7784.94986
+  tps: 4560.03183
  }
 }
 dps_results: {
@@ -699,8 +699,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-StormshroudArmor"
  value: {
-  dps: 6167.40834
-  tps: 3605.55565
+  dps: 6167.7786
+  tps: 3605.7778
  }
 }
 dps_results: {
@@ -748,8 +748,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6611.55957
-  tps: 3859.59376
+  dps: 6612.23812
+  tps: 3860.00089
  }
 }
 dps_results: {
@@ -853,22 +853,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 8006.10081
-  tps: 4687.22502
+  dps: 8006.05278
+  tps: 4687.19136
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15934.23236
-  tps: 9448.4257
+  dps: 15934.84984
+  tps: 9448.79618
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 8019.94556
-  tps: 4699.90306
+  dps: 8020.72253
+  tps: 4700.36924
  }
 }
 dps_results: {
@@ -881,22 +881,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9843.22116
-  tps: 5834.61969
+  dps: 9843.53765
+  tps: 5834.80959
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4785.76746
-  tps: 2799.81983
+  dps: 4786.2103
+  tps: 2800.08553
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4995.22353
-  tps: 2830.15984
+  dps: 4998.87588
+  tps: 2832.25789
  }
 }
 dps_results: {
@@ -916,8 +916,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8902.33959
-  tps: 5029.78216
+  dps: 8905.85275
+  tps: 5031.89006
  }
 }
 dps_results: {
