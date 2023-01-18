@@ -1,14 +1,11 @@
 package rogue
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
-
-const GarroteSpellID = 48676
 
 func (rogue *Rogue) registerGarrote() {
 	numTicks := int32(6)
@@ -19,7 +16,7 @@ func (rogue *Rogue) registerGarrote() {
 	}
 
 	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: GarroteSpellID},
+		ActionID:    core.ActionID{SpellID: 48676},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
@@ -42,34 +39,32 @@ func (rogue *Rogue) registerGarrote() {
 			0.02*float64(rogue.Talents.FindWeakness),
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Garrote",
+				Tag:   RogueBleedTag,
+			},
+			NumberOfTicks: numTicks,
+			TickLength:    time.Second * 3,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 119 + dot.Spell.MeleeAttackPower()*0.07
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				rogue.garroteDot.Apply(sim)
+				spell.Dot(target).Apply(sim)
 			} else {
 				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
-		},
-	})
-
-	rogue.garroteDot = core.NewDot(core.Dot{
-		Spell: rogue.Garrote,
-		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Garrote-" + strconv.Itoa(int(rogue.Index)),
-			Tag:      RogueBleedTag,
-			ActionID: rogue.Garrote.ActionID,
-		}),
-		NumberOfTicks: numTicks,
-		TickLength:    time.Second * 3,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 119 + dot.Spell.MeleeAttackPower()*0.07
-			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 }

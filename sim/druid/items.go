@@ -91,27 +91,31 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
 			druid := agent.(DruidAgent).GetDruid()
 
-			lasherweaveDot := core.NewDot(core.Dot{
-				Spell: druid.RegisterSpell(core.SpellConfig{
-					ActionID:         core.ActionID{SpellID: 71023},
-					SpellSchool:      core.SpellSchoolNature,
-					ProcMask:         core.ProcMaskEmpty,
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-				}),
-				Aura: druid.CurrentTarget.RegisterAura(core.Aura{
-					Label:    "Languish",
-					ActionID: core.ActionID{SpellID: 71023},
-				}),
-				NumberOfTicks: 2,
-				TickLength:    time.Second * 2,
+			lasherweaveSpell := druid.RegisterSpell(core.SpellConfig{
+				ActionID:         core.ActionID{SpellID: 71023},
+				SpellSchool:      core.SpellSchoolNature,
+				ProcMask:         core.ProcMaskEmpty,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
 
-				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-					dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
-					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				Dot: core.DotConfig{
+					Aura: core.Aura{
+						Label: "Languish",
+					},
+					NumberOfTicks: 2,
+					TickLength:    time.Second * 2,
+
+					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+						dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
+						dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+					},
+					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+						dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+					},
 				},
-				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.Dot(target).ApplyOrRefresh(sim)
 				},
 			})
 
@@ -128,12 +132,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					if !result.DidCrit() {
 						return
 					}
-
-					if lasherweaveDot.IsActive() {
-						lasherweaveDot.Refresh(sim)
-					} else {
-						lasherweaveDot.Apply(sim)
-					}
+					lasherweaveSpell.Cast(sim, result.Target)
 				},
 			})
 		},
