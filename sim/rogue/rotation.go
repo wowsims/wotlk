@@ -345,7 +345,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rupture := roguePriorityItem{
 		MinimumComboPoints: 3,
 		MaximumComboPoints: 5,
-		Aura:               rogue.ruptureDot.Aura,
+		Aura:               rogue.Rupture[0].CurDot().Aura,
 		EnergyCost:         rogue.Rupture[1].DefaultCast.Cost,
 		GetDuration: func(r *Rogue, cp int32) time.Duration {
 			return r.RuptureDuration(cp)

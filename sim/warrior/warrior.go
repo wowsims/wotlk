@@ -80,9 +80,6 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	RendDots       *core.Dot
-	DeepWoundsDots []*core.Dot
-
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
 	HSRageThreshold          float64
@@ -164,10 +161,6 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	warrior.DeepWoundsDots = make([]*core.Dot, warrior.Env.GetNumTargets())
-	for i := range warrior.DeepWoundsDots {
-		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(int32(i)))
-	}
 	warrior.munchedDeepWoundsProcs = make([]*core.PendingAction, warrior.Env.GetNumTargets())
 }
 
