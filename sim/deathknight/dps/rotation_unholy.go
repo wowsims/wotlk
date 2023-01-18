@@ -279,7 +279,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 			dk.RotationSequence.NewAction(dk.RotationActionCallback_AOTD)
 		}
 
-		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood) {
+		if dk.Rotation.BlPresence == proto.Deathknight_Rotation_Blood && !dk.PresenceMatches(deathknight.BloodPresence) && (dk.Rotation.PreNerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood) {
 			if didErw || dk.CurrentBloodRunes() > 0 {
 				dk.RotationSequence.NewAction(dk.RotationActionCallback_BP)
 			} else if !didErw && !dk.Rotation.BtGhoulFrenzy && dk.BloodTap.IsReady(sim) {

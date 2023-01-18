@@ -133,6 +133,7 @@ var bloodRotation = &proto.Deathknight_Rotation{
 	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
 	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
 	UseEmpowerRuneWeapon: true,
+	PreNerfedGargoyle:    false,
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
@@ -145,6 +146,7 @@ var unholyRotation = &proto.Deathknight_Rotation{
 	UseGargoyle:          true,
 	BtGhoulFrenzy:        false,
 	HoldErwArmy:          false,
+	PreNerfedGargoyle:    false,
 	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
 	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
