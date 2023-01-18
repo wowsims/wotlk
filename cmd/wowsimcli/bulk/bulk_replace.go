@@ -227,9 +227,14 @@ func runComboControl(baseInput *proto.RaidSimRequest, replaceBySlot [][]proto.It
 			for _, v := range repl {
 				replStr += "\thttps://wowhead.com/wotlk/item=" + strconv.Itoa(int(v.Id)) + "\n"
 			}
-			fmt.Printf("Slot: %s -> Replacements:\n%s", core.ItemSlot(i).String(), replStr)
+			if verbose {
+				fmt.Printf("Slot: %s -> Replacements:\n%s", core.ItemSlot(i).String(), replStr)
+			}
+
 		}
-		fmt.Printf("\nReplacements: %d, Total Combinations: %d\n", totalReplace, totalCombo)
+		if verbose {
+			fmt.Printf("\nReplacements: %d, Total Combinations: %d\n", totalReplace, totalCombo)
+		}
 	}
 	if totalCombo > 10000000 {
 		panic("over a 10 million combinations. Unlikely this will even be able to run.")
@@ -239,6 +244,7 @@ func runComboControl(baseInput *proto.RaidSimRequest, replaceBySlot [][]proto.It
 	// Add base case (no replacements.)
 	combos = append([]ReplaceIter{{}}, combos...)
 	baseInput.SimOptions.Iterations = 50 // TODO: allow config of base iterations
+	maxResults := 50                     // maximum number of combos to display. TODO: make configurable
 
 	if verbose {
 		fmt.Printf("Generated %d combos\n", len(combos))
@@ -251,7 +257,7 @@ func runComboControl(baseInput *proto.RaidSimRequest, replaceBySlot [][]proto.It
 			// First result of first combo run is the base one.
 			baseResult = results[0]
 		}
-		if len(combos) <= 1000 {
+		if len(combos) <= maxResults {
 			break
 		}
 		if verbose {
