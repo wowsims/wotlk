@@ -66,13 +66,7 @@ type Druid struct {
 	CatForm  *core.Spell
 	BearForm *core.Spell
 
-	InsectSwarmDot    *core.Dot
-	LacerateDot       *core.Dot
-	MoonfireDot       *core.Dot
-	RakeDot           *core.Dot
-	RipDot            *core.Dot
-	StarfallDot       *core.Dot
-	StarfallDotSplash *core.Dot
+	MoonfireDot *core.Dot
 
 	BarkskinAura             *core.Aura
 	BearFormAura             *core.Aura

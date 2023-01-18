@@ -47,7 +47,9 @@ func (druid *Druid) registerShredSpell() {
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+
+			ripDot := druid.Rip.Dot(target)
+			if druid.AssumeBleedActive || ripDot.IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 			baseDamage *= modifier
@@ -57,11 +59,11 @@ func (druid *Druid) registerShredSpell() {
 			if result.Landed() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
-				if hasGlyphofShred && druid.RipDot.IsActive() {
-					if druid.RipDot.NumberOfTicks < maxRipTicks {
-						druid.RipDot.NumberOfTicks += 1
-						druid.RipDot.RecomputeAuraDuration()
-						druid.RipDot.UpdateExpires(druid.RipDot.ExpiresAt() + time.Second*2)
+				if hasGlyphofShred && ripDot.IsActive() {
+					if ripDot.NumberOfTicks < maxRipTicks {
+						ripDot.NumberOfTicks += 1
+						ripDot.RecomputeAuraDuration()
+						ripDot.UpdateExpires(ripDot.ExpiresAt() + time.Second*2)
 					}
 				}
 			} else {
@@ -75,7 +77,7 @@ func (druid *Druid) registerShredSpell() {
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 			baseDamage *= modifier

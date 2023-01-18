@@ -147,32 +147,6 @@ func (infernal *InfernalPet) Initialize() {
 	felarmor_coef := core.TernaryFloat64(infernal.owner.Options.Armor == proto.Warlock_Options_FelArmor,
 		0.3*(1+float64(infernal.owner.Talents.DemonicAegis)*0.1), 0)
 
-	immolationAuraDot := core.NewDot(core.Dot{
-		Aura: infernal.RegisterAura(core.Aura{
-			Label:    "Immolation",
-			ActionID: core.ActionID{SpellID: 19483},
-		}),
-		NumberOfTicks:       31,
-		TickLength:          time.Second * 2,
-		AffectedByCastSpeed: false,
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			// TODO: use highest SP amount of all schools
-			// base formula is 25 + (lvl-50)*0.5 * Warlock_SP*0.2
-			// note this scales with the warlocks SP, NOT with the pets
-
-			// we remove all the spirit based sp since immolation aura doesn't benefit from it, see
-			// JamminL/wotlk-classic-bugs#329
-			coef := core.TernaryFloat64(infernal.owner.GlyphOfLifeTapAura.IsActive(), 0.2, 0) + felarmor_coef
-
-			warlockSP := infernal.owner.Unit.GetStat(stats.SpellPower) - infernal.owner.Unit.GetStat(stats.Spirit)*coef
-			baseDmg := (40 + warlockSP*0.2) * sim.Encounter.AOECapMultiplier()
-
-			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
-			}
-		},
-	})
-
 	infernal.immolationAura = infernal.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20153},
 		SpellSchool: core.SpellSchoolFire,
@@ -181,11 +155,37 @@ func (infernal *InfernalPet) Initialize() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label:    "Immolation",
+				ActionID: core.ActionID{SpellID: 19483},
+			},
+			NumberOfTicks:       31,
+			TickLength:          time.Second * 2,
+			AffectedByCastSpeed: false,
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// TODO: use highest SP amount of all schools
+				// base formula is 25 + (lvl-50)*0.5 * Warlock_SP*0.2
+				// note this scales with the warlocks SP, NOT with the pets
+
+				// we remove all the spirit based sp since immolation aura doesn't benefit from it, see
+				// JamminL/wotlk-classic-bugs#329
+				coef := core.TernaryFloat64(infernal.owner.GlyphOfLifeTapAura.IsActive(), 0.2, 0) + felarmor_coef
+
+				warlockSP := infernal.owner.Unit.GetStat(stats.SpellPower) - infernal.owner.Unit.GetStat(stats.Spirit)*coef
+				baseDmg := (40 + warlockSP*0.2) * sim.Encounter.AOECapMultiplier()
+
+				for _, aoeTarget := range sim.Encounter.Targets {
+					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			immolationAuraDot.Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	})
-	immolationAuraDot.Spell = infernal.immolationAura
 }
 
 func (infernal *InfernalPet) Reset(sim *core.Simulation) {
