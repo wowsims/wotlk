@@ -228,7 +228,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 					}
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell != druid.Rake && spell != druid.Rip && !druid.IsLacerateSpell(spell) {
+					if spell != druid.Rake && spell != druid.Rip && spell != druid.Lacerate {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -498,7 +498,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Crying Moon",
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if druid.Rake != spell && !druid.IsLacerateSpell(spell) {
+				if spell != druid.Rake && spell != druid.Lacerate {
 					return
 				}
 				procAura.Activate(sim)

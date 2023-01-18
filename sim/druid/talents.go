@@ -550,14 +550,14 @@ func (druid *Druid) applyPredatoryInstincts() {
 		Label:    "Predatory Instincts",
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			druid.LacerateDot.Spell.CritMultiplier = onGainMod
-			druid.RipDot.Spell.CritMultiplier = onGainMod
-			druid.RakeDot.Spell.CritMultiplier = onGainMod
+			druid.Lacerate.CritMultiplier = onGainMod
+			druid.Rip.CritMultiplier = onGainMod
+			druid.Rake.CritMultiplier = onGainMod
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			druid.LacerateDot.Spell.CritMultiplier = onExpireMod
-			druid.RipDot.Spell.CritMultiplier = onExpireMod
-			druid.RakeDot.Spell.CritMultiplier = onExpireMod
+			druid.Lacerate.CritMultiplier = onExpireMod
+			druid.Rip.CritMultiplier = onExpireMod
+			druid.Rake.CritMultiplier = onExpireMod
 		},
 	})
 }
