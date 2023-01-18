@@ -251,7 +251,7 @@ message Deathknight {
 		
 		bool use_gargoyle = 23;
 
-		bool nerfed_gargoyle = 24;
+		bool pre_nerfed_gargoyle = 24;
 
 		Presence gargoyle_presence = 25;
 
