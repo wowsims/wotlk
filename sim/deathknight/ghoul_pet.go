@@ -47,6 +47,7 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	}
 
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= 0.1
+	ghoulPet.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.SetupGhoul(ghoulPet)
 
@@ -104,6 +105,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	// NightOfTheDead
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
+	ghoulPet.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.SetupGhoul(ghoulPet)
 
