@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -41,13 +40,37 @@ func (rogue *Rogue) makeRupture(comboPoints int32) *core.Spell {
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,
 
+		Dot: core.Ternary(comboPoints == 0, core.DotConfig{
+			Aura: core.Aura{
+				Label: "Rupture",
+				Tag:   RogueBleedTag,
+			},
+			NumberOfTicks: 0, // Set dynamically
+			TickLength:    time.Second * 2,
+
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				comboPoints := rogue.ComboPoints()
+				dot.SnapshotBaseDamage = 127 +
+					18*float64(comboPoints) +
+					[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*dot.Spell.MeleeAttackPower()
+
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			},
+		}, core.DotConfig{}),
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				rogue.ruptureDot.Spell = spell
-				rogue.ruptureDot.NumberOfTicks = numTicks
-				rogue.ruptureDot.RecomputeAuraDuration()
-				rogue.ruptureDot.Apply(sim)
+				dot := rogue.Rupture[0].Dot(target)
+				dot.Spell = spell
+				dot.NumberOfTicks = numTicks
+				dot.RecomputeAuraDuration()
+				dot.Apply(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
 				spell.IssueRefund(sim)
@@ -72,29 +95,4 @@ func (rogue *Rogue) registerRupture() {
 		rogue.makeRupture(4),
 		rogue.makeRupture(5),
 	}
-
-	rogue.ruptureDot = core.NewDot(core.Dot{
-		Spell: rogue.Rupture[0],
-		Aura: rogue.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Rupture-" + strconv.Itoa(int(rogue.Index)),
-			Tag:      RogueBleedTag,
-			ActionID: rogue.Rupture[0].ActionID,
-		}),
-		NumberOfTicks: 0, // Set dynamically
-		TickLength:    time.Second * 2,
-
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			comboPoints := rogue.ComboPoints()
-			dot.SnapshotBaseDamage = 127 +
-				18*float64(comboPoints) +
-				[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*dot.Spell.MeleeAttackPower()
-
-			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
-		},
-	})
 }

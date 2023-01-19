@@ -262,7 +262,7 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 		dot.Aura = caster.GetOrRegisterAura(auraConfig)
 		spell.aoeDot = NewDot(dot)
 	} else {
-		auraConfig.Label += "-" + strconv.Itoa(int(caster.Index))
+		auraConfig.Label += "-" + strconv.Itoa(int(caster.UnitIndex))
 		if spell.dots == nil {
 			spell.dots = make([]*Dot, len(caster.Env.AllUnits))
 		}

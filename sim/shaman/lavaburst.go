@@ -1,7 +1,6 @@
 package shaman
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -16,9 +15,9 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		0.05*float64(shaman.Talents.Shamanism) +
 		core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLava), 0.1, 0)
 
-	var lvbDot *core.Dot
+	var lvbDotSpell *core.Spell
 	if shaman.HasSetBonus(ItemSetThrallsRegalia, 4) {
-		dotSpell := shaman.RegisterSpell(core.SpellConfig{
+		lvbDotSpell = shaman.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 71824},
 			SpellSchool: core.SpellSchoolFire,
 			ProcMask:    core.ProcMaskEmpty,
@@ -27,24 +26,21 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				lvbDot.Apply(sim)
-				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+			Dot: core.DotConfig{
+				Aura: core.Aura{
+					Label: "LavaBursted",
+				},
+				TickLength:    time.Second * 2,
+				NumberOfTicks: 3,
+
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				},
 			},
-		})
-		lvbDot = core.NewDot(core.Dot{
-			Spell: dotSpell,
-			Aura: shaman.CurrentTarget.RegisterAura(core.Aura{
-				Label:    "LavaBursted-" + strconv.Itoa(int(shaman.Index)),
-				ActionID: dotSpell.ActionID,
-			}),
-			TickLength:    time.Second * 2,
-			NumberOfTicks: 3,
 
-			SnapshotAttackerMultiplier: 1,
-
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+				spell.Dot(target).Apply(sim)
 			},
 		})
 	}
@@ -86,9 +82,11 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := dmgBonus + sim.Roll(1192, 1518) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			if lvbDot != nil && result.Landed() {
-				lvbDot.SnapshotBaseDamage = result.Damage * 0.1 / float64(lvbDot.NumberOfTicks)
-				lvbDot.Spell.Cast(sim, target)
+			if lvbDotSpell != nil && result.Landed() {
+				dot := lvbDotSpell.Dot(target)
+				dot.SnapshotBaseDamage = result.Damage * 0.1 / float64(dot.NumberOfTicks)
+				dot.SnapshotAttackerMultiplier = 1
+				dot.Spell.Cast(sim, target)
 			}
 			spell.DealDamage(sim, result)
 		},

@@ -62,7 +62,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		Rotation: dk.Rotation,
 	}
 	if dpsDk.Talents.SummonGargoyle {
-		dpsDk.Gargoyle = dpsDk.NewGargoyle(dk.Rotation.NerfedGargoyle)
+		dpsDk.Gargoyle = dpsDk.NewGargoyle(!dk.Rotation.PreNerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
@@ -210,7 +210,7 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 	snapshotManager := dk.ur.gargoyleSnapshot
 
 	// Don't need to wait for haste snapshots anymore
-	if !dk.Rotation.NerfedGargoyle {
+	if dk.Rotation.PreNerfedGargoyle {
 		snapshotManager.AddProc(40211, "Potion of Speed", true)
 		snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
 		snapshotManager.AddProc(26297, "Berserking (Troll)", true)
@@ -336,7 +336,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			if dk.Rotation.NerfedGargoyle {
+			if !dk.Rotation.PreNerfedGargoyle {
 				aura := dk.GetAura("Summon Gargoyle")
 
 				if aura != nil && aura.IsActive() {

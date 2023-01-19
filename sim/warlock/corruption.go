@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,12 +8,11 @@ import (
 )
 
 func (warlock *Warlock) registerCorruptionSpell() {
-	actionID := core.ActionID{SpellID: 47813}
 	spellCoeff := 0.2 + 0.12*float64(warlock.Talents.EmpoweredCorruption)/6 + 0.01*float64(warlock.Talents.EverlastingAffliction)
 	canCrit := warlock.Talents.Pandemic
 
 	warlock.Corruption = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 47813},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -42,38 +40,36 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		CritMultiplier:   warlock.SpellCritMultiplier(1, 1),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Corruption",
+			},
+			NumberOfTicks:       6,
+			TickLength:          time.Second * 3,
+			AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
+
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = 1080/6 + spellCoeff*dot.Spell.SpellPower()
+				if !isRollover {
+					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				if canCrit {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+				} else {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.SpellMetrics[target.UnitIndex].Hits--
-				warlock.CorruptionDot.Apply(sim)
-			}
-		},
-	})
-
-	warlock.CorruptionDot = core.NewDot(core.Dot{
-		Spell: warlock.Corruption,
-		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Corruption-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks:       6,
-		TickLength:          time.Second * 3,
-		AffectedByCastSpeed: warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = 1080/6 + spellCoeff*dot.Spell.SpellPower()
-			if !isRollover {
-				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-			}
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			if canCrit {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
-			} else {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				spell.Dot(target).Apply(sim)
 			}
 		},
 	})

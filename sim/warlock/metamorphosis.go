@@ -8,7 +8,6 @@ import (
 )
 
 func (warlock *Warlock) registerMetamorphosisSpell() {
-
 	warlock.MetamorphosisAura = warlock.RegisterAura(core.Aura{
 		Label:    "Metamorphosis Aura",
 		ActionID: core.ActionID{SpellID: 47241},
@@ -18,7 +17,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.2
-			warlock.ImmolationAuraDot.Deactivate(sim)
+			warlock.ImmolationAura.AOEDot().Deactivate(sim)
 		},
 	})
 
@@ -53,27 +52,9 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 }
 
 func (warlock *Warlock) registerImmolationAuraSpell() {
-	// the spellID that deals damage in the combat log is 50590, but we don't use it here
-	actionID := core.ActionID{SpellID: 50589}
-
-	warlock.ImmolationAuraDot = core.NewDot(core.Dot{
-		Aura: warlock.RegisterAura(core.Aura{
-			Label:    "Immolation Aura",
-			ActionID: actionID,
-		}),
-		NumberOfTicks:       15,
-		TickLength:          time.Second * 1,
-		AffectedByCastSpeed: true,
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			baseDmg := (251 + 20*11.5 + 0.143*dot.Spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
-			for _, aoeTarget := range sim.Encounter.Targets {
-				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
-			}
-		},
-	})
-
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		// the spellID that deals damage in the combat log is 50590, but we don't use it here
+		ActionID:    core.ActionID{SpellID: 50589},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
 
@@ -93,9 +74,24 @@ func (warlock *Warlock) registerImmolationAuraSpell() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "Immolation Aura",
+			},
+			NumberOfTicks:       15,
+			TickLength:          time.Second * 1,
+			AffectedByCastSpeed: true,
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				baseDmg := (251 + 20*11.5 + 0.143*dot.Spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
+				for _, aoeTarget := range sim.Encounter.Targets {
+					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			warlock.ImmolationAuraDot.Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	})
-	warlock.ImmolationAuraDot.Spell = warlock.ImmolationAura
 }

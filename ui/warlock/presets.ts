@@ -402,7 +402,7 @@ export const P1_PreBiS_11 = {
   ]}`),
 }
 export const P1_Preset_Demo_Destro = {
-	name: 'P1 Preset Demo / Destro',
+	name: 'P1 Demo / Destro',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -500,7 +500,7 @@ export const P1_Preset_Demo_Destro = {
 
 // will have only rare gems, but a Lightweave Embroidery on cloak.
 export const P1_Preset_Affliction = {
-	name: 'P1 Affliction Preset',
+	name: 'P1 Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -597,7 +597,7 @@ export const P1_Preset_Affliction = {
 
 
 export const P1_PreBiS_14 = {
-	name: 'Pre-Raid Preset',
+	name: 'Pre-Raid',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -701,6 +701,248 @@ export const P1_PreBiS_14 = {
 			]
 		}
   ]}`),
+}
+
+export const P2_Preset_Affliction = {
+	name: 'P2 Affliction',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45133,
+			"gems": [
+				40051
+			]
+		},
+		{
+			"id": 46068,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40049
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46137,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				45987
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45665,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"enchant": 3601,
+			"gems": [
+				40051,
+				40051,
+				39998
+			]
+		},
+		{
+			"id": 46139,
+			"enchant": 3872,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46046,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40051
+			]
+		}
+	]}`),
+}
+
+export const P2_Preset_Demo_Destro = {
+	name: 'P2 Demo / Destro',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45243,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46068,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46137,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45520,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"enchant": 3601,
+			"gems": [
+				39998,
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 46139,
+			"enchant": 3872,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 45297,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45148
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
+	]}`),
 }
 
 export const Naked = {

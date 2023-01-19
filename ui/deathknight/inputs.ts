@@ -152,7 +152,7 @@ export const GargoylePresence = InputHelpers.makeRotationEnumInput<Spec.SpecDeat
 		{ name: 'Blood', value: StartingPresence.Blood },
 		{ name: 'Unholy', value: StartingPresence.Unholy },
 	],
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && player.getRotation().nerfedGargoyle,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && !player.getRotation().preNerfedGargoyle,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -225,11 +225,11 @@ export const BloodRuneFillerInput = InputHelpers.makeRotationEnumInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
-export const NerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'nerfedGargoyle',
-	label: 'Nerfed Gargoyle (no haste snapshot)',
-	labelTooltip: "Use updated PTR Gargoyle that doesn't snapshot haste",
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
+export const PreNerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'preNerfedGargoyle',
+	label: 'Pre-Nerfed Gargoyle (haste snapshot)',
+	labelTooltip: "Use old Gargoyle that snapshots haste",
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation && player.sim.getShowExperimental(),
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
 
@@ -379,6 +379,7 @@ export const DeathKnightRotationConfig = {
 		DrwDiseasesInput,
 		FirstDiseaseInput,
 		StartingPresenceInput,
+		GargoylePresence,
 		BloodlustPresence,
 		FightPresence,
 		BloodRuneFillerInput,
@@ -389,7 +390,6 @@ export const DeathKnightRotationConfig = {
 		AvgAMSHitInput,
 		DesyncRotation,
 		FrostCustomRotation,
-		NerfedGargoyleInput,
-		GargoylePresence,
+		PreNerfedGargoyleInput,
 	],
 };

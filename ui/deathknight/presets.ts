@@ -119,6 +119,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useGargoyle: true,
 	useEmpowerRuneWeapon: true,
 	holdErwArmy: false,
+	preNerfedGargoyle: false,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
 	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	blPresence: Deathknight_Rotation_Presence.Blood,
@@ -146,6 +147,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
+	preNerfedGargoyle: false,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
@@ -183,6 +185,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 export const DefaultBloodRotation = DeathKnightRotation.create({
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
+	preNerfedGargoyle: false,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,

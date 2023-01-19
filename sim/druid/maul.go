@@ -42,7 +42,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 
