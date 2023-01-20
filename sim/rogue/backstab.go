@@ -52,7 +52,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				if rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfBackstab)) {
+				if rogue.HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfBackstab)) && rogue.ruptureDot != nil {
 					if rogue.ruptureDot.IsActive() {
 						rogue.ruptureDot.Duration += time.Second * 2
 						rogue.ruptureDot.RecomputeAuraDuration()

@@ -16,7 +16,7 @@ type subtletyPrio struct {
 func (rogue *Rogue) setSubtletyBuilder() {
 	mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	// Garrote
-	if !rogue.garroteDot.IsActive() && rogue.ShadowDanceAura.IsActive() {
+	if (rogue.garroteDot != nil && !rogue.garroteDot.IsActive()) && rogue.ShadowDanceAura.IsActive() {
 		rogue.Builder = rogue.Garrote
 		rogue.BuilderPoints = 1
 	} else
