@@ -8,9 +8,6 @@ import (
 
 // Each rank is a different ID. 31223 is 3/3
 func getMasterOfSubtletySpellID(talentPoints int32) int32 {
-	if talentPoints == 1 {
-		return 31221
-	}
 	return []int32{31221, 31221, 31222, 31223}[talentPoints]
 }
 
@@ -21,11 +18,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 
 	var MasterOfSubtletyID = core.ActionID{SpellID: getMasterOfSubtletySpellID(rogue.Talents.MasterOfSubtlety)}
 
-	percent := 0.04
-
-	if rogue.Talents.MasterOfSubtlety > 1 {
-		percent += 0.03 * float64(rogue.Talents.MasterOfSubtlety)
-	}
+	percent := []float64{0, 0.04, 0.07, 0.1}[rogue.Talents.MasterOfSubtlety]
 
 	rogue.MasterOfSubtletyAura = rogue.RegisterAura(core.Aura{
 		Label:    "Master of Subtlety",
@@ -38,6 +31,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 			rogue.PseudoStats.DamageDealtMultiplier *= 1 / (1 + percent)
 		},
 	})
+
 	rogue.MasterOfSubtlety = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: MasterOfSubtletyID,
 		Cast: core.CastConfig{

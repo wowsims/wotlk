@@ -69,9 +69,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, rogue.CurrentTarget, spell.OutcomeAlwaysHit)
 			rogue.ShadowstepAura.Activate(sim)
-			spell.DealOutcome(sim, result)
 		},
 	})
 }

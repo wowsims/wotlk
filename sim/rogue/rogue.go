@@ -93,7 +93,6 @@ type Rogue struct {
 	instantPoisonPPMM           core.PPMManager
 	ruptureDot                  *core.Dot
 	woundPoisonPPMM             core.PPMManager
-	HonorAmongThievesDot        *core.Dot
 
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
