@@ -278,7 +278,7 @@ export class RaidWCLImporter extends Importer {
 
 					divineStorm: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Paladin", abilityID: 54172, limit: 50) { data }
 					healingStreamTotem: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Shaman", abilityID: 52042, limit: 50) { data }
-					holyNova: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 48078, limit: 100) { data }
+					holyNova: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 48076, limit: 100) { data }
 					prayerOfHealing: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 48072) { data }
 					tranquility: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Druid", abilityID: 48445, limit: 50) { data }
 					vampiricEmbrace: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 15290, limit: 50) { data }
