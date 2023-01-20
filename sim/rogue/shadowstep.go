@@ -52,7 +52,10 @@ func (rogue *Rogue) registerShadowstepCD() {
 	rogue.Shadowstep = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
 		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   baseCost,
+			Refund: 0,
+		},
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -66,7 +69,9 @@ func (rogue *Rogue) registerShadowstepCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			result := spell.CalcOutcome(sim, rogue.CurrentTarget, spell.OutcomeAlwaysHit)
 			rogue.ShadowstepAura.Activate(sim)
+			spell.DealOutcome(sim, result)
 		},
 	})
 }

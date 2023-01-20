@@ -217,9 +217,6 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	if rogue.HonorAmongThieves != nil {
-		rogue.Reset(sim)
-	}
 	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
 	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
 		rogue.OverkillAura.Activate(sim)

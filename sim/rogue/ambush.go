@@ -8,20 +8,20 @@ import (
 )
 
 func (rogue *Rogue) registerAmbushSpell() {
-	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
-
 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48691},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows)),
+			Refund: 0,
+		},
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -41,7 +41,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.AOEDot().Spell.AOEDot().Spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())

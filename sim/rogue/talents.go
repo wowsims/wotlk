@@ -17,7 +17,6 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyCombatPotency()
 	rogue.applyFocusedAttacks()
 	rogue.applyInitiative()
-	// FIXME: add Honor Among Thieves
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
 	rogue.PseudoStats.MeleeSpeedMultiplier *= []float64{1, 1.03, 1.06, 1.10}[rogue.Talents.LightningReflexes]

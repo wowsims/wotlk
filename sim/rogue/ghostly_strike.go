@@ -15,7 +15,6 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 	actionID := core.ActionID{SpellID: 14278}
 	// FIXME: Add Ghostly Strike Glyph
-	baseCost := 40.0
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
@@ -24,12 +23,14 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
 		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   40.0,
+			Refund: 0,
+		},
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
