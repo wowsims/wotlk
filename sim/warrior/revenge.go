@@ -8,7 +8,7 @@ import (
 )
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
-	actionID := core.ActionID{SpellID: 30357}
+	actionID := core.ActionID{SpellID: 57823}
 
 	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
 		Label:    "Revenge",
