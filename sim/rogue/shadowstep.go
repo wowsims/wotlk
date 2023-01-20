@@ -22,7 +22,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 		Duration: time.Second * 10,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range rogue.Spellbook {
-				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
 					affectedSpells = append(affectedSpells, spell)
 				}
 			}

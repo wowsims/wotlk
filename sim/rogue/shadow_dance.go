@@ -26,9 +26,6 @@ func (rogue *Rogue) registerShadowDanceCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: time.Second * 0,
-			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
@@ -45,7 +42,7 @@ func (rogue *Rogue) registerShadowDanceCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() > float64(90)
+			return rogue.CurrentEnergy() > 90
 		},
 	})
 }

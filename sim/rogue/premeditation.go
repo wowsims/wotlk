@@ -39,7 +39,7 @@ func (rogue *Rogue) registerPremeditation() {
 		Priority: core.CooldownPriorityLow,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			thresh := 2
-			return rogue.ComboPoints() <= int32(thresh)
+			return rogue.ComboPoints() <= int32(thresh) && rogue.ShadowDanceAura.IsActive()
 		},
 	})
 }

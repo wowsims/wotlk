@@ -8,7 +8,7 @@ import (
 
 // Each rank is a different ID. 31223 is 3/3
 func getMasterOfSubtletySpellID(talentPoints int32) int32 {
-	return []int32{31221, 31221, 31222, 31223}[talentPoints]
+	return []int32{0, 31221, 31222, 31223}[talentPoints]
 }
 
 func (rogue *Rogue) registerMasterOfSubtletyCD() {
@@ -41,7 +41,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second * time.Duration(180-30*rogue.Talents.MasterOfSubtlety),
+				Duration: time.Second * time.Duration(180-30*rogue.Talents.Elusiveness),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
