@@ -308,12 +308,10 @@ func (rogue *Rogue) applyInitiative() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			for _, affectedSpell := range affectedSpells {
 				if spell == affectedSpell {
-					if !result.Outcome.Matches(core.OutcomeLanded) {
-						return
-					}
-
-					if sim.Proc(procChance, "Initiative") {
-						rogue.AddComboPoints(sim, 1, cpMetrics)
+					if result.Landed() {
+						if sim.Proc(procChance, "Initiative") {
+							rogue.AddComboPoints(sim, 1, cpMetrics)
+						}
 					}
 				}
 			}

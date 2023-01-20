@@ -25,7 +25,7 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		ResourceType: stats.Energy,
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   40.0,
-			Refund: 0,
+			Refund: 0.8,
 		},
 
 		Cast: core.CastConfig{
@@ -51,6 +51,8 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+			} else {
+				spell.IssueRefund(sim)
 			}
 		},
 	})
