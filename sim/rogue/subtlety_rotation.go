@@ -16,7 +16,7 @@ type subtletyPrio struct {
 func (rogue *Rogue) setSubtletyBuilder() {
 	mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	// Garrote
-	if rogue.garroteDot.IsActive() && rogue.ShadowDanceAura.IsActive() {
+	if rogue.Garrote.Dot(rogue.CurrentTarget).Aura == nil && rogue.ShadowDanceAura.IsActive() {
 		rogue.Builder = rogue.Garrote
 		rogue.BuilderPoints = 1
 	} else
@@ -218,7 +218,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			func(s *core.Simulation, r *Rogue) PriorityAction {
 				if r.Shadowstep.IsReady(s) {
 					// Can we cast Rupture now?
-					if !r.ruptureDot.IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
+					if r.Rupture[0].Dot(r.CurrentTarget).Aura == nil && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
 						return Cast
 					} else {
 						return Skip
@@ -237,7 +237,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_Rupture {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.ruptureDot.IsActive() || s.GetRemainingDuration() < time.Second*22 {
+				if r.Rupture[0].Dot(r.CurrentTarget).Aura == nil || s.GetRemainingDuration() < time.Second*22 {
 					return Skip
 				}
 				if rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {
