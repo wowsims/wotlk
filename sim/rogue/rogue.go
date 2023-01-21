@@ -217,13 +217,22 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
 	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
-	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
-		rogue.OverkillAura.Activate(sim)
-		rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
-	}
-	if rogue.MasterOfSubtletyAura != nil && rogue.Options.StartingOverkillDuration > 0 {
-		rogue.MasterOfSubtletyAura.Activate(sim)
-		rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
+	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
+		length := rogue.Options.StartingOverkillDuration
+		if rogue.OverkillAura != nil {
+			if rogue.Rotation.OpenWithGarrote {
+				length = 20
+			}
+			rogue.OverkillAura.Activate(sim)
+			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+		}
+		if rogue.MasterOfSubtletyAura != nil {
+			if rogue.Rotation.OpenWithGarrote {
+				length = 6
+			}
+			rogue.MasterOfSubtletyAura.Activate(sim)
+			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+		}
 	}
 	rogue.setPriorityItems(sim)
 }
