@@ -218,7 +218,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			func(s *core.Simulation, r *Rogue) PriorityAction {
 				if r.Shadowstep.IsReady(s) {
 					// Can we cast Rupture now?
-					if r.ruptureDot.IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
+					if !r.ruptureDot.IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
 						return Cast
 					} else {
 						return Skip
