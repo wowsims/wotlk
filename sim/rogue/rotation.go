@@ -259,7 +259,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	ohDagger := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Builder = rogue.SinisterStrike
 	rogue.BuilderPoints = 1
-	if rogue.Talents.Mutilate {
+	if rogue.PrimaryTalentTree == AssassinTree {
 
 		if mhDagger && ohDagger {
 			rogue.Builder = rogue.Mutilate
@@ -267,7 +267,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		}
 		rogue.setupAssassinationRotation(sim)
 	}
-	if rogue.Talents.Shadowstep {
+	if rogue.PrimaryTalentTree == SubtletyTree {
 		rogue.setSubtletyBuilder()
 		rogue.setupSubtletyRotation(sim)
 	}

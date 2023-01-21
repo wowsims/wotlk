@@ -28,6 +28,9 @@ func RegisterRogue() {
 const (
 	SpellFlagBuilder  = core.SpellFlagAgentReserved2
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
+	AssassinTree      = 0
+	CombatTree        = 1
+	SubtletyTree      = 2
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}

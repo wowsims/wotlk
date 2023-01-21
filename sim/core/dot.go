@@ -230,9 +230,6 @@ func NewDot(config Dot) *Dot {
 type DotArray []*Dot
 
 func (dots DotArray) Get(target *Unit) *Dot {
-	if len(dots) < 1 {
-		return nil
-	}
 	return dots[target.UnitIndex]
 }
 
