@@ -168,27 +168,38 @@ message Rogue {
 		}
 		AssassinationPriority assassination_finisher_priority = 5;
 
-		int32 minimum_combo_points_primary_finisher = 6;
+		enum SubtletyPriority {
+			Rupture = 0;
+			Eviscerate = 1;
+			SubtletyPriorityUnknown = 2;
+		}
+		SubtletyPriority subtlety_finisher_priority = 6;
 
-		int32 minimum_combo_points_secondary_finisher = 7;
+		int32 minimum_combo_points_primary_finisher = 7;
 
-		Frequency MultiTargetSliceFrequency = 8;
+		int32 minimum_combo_points_secondary_finisher = 8;
 
-		int32 minimum_combo_points_multi_target_slice = 9;
+		Frequency MultiTargetSliceFrequency = 9;
 
-		int32 envenom_pool_amount = 10;
+		int32 minimum_combo_points_multi_target_slice = 10;
 
-		bool use_feint = 11;
+		int32 envenom_pool_amount = 11;
 
-		bool allow_cp_overcap = 12;
+		bool use_feint = 12;
 
-		bool allow_cp_undercap = 13;
+		bool allow_cp_overcap = 13;
 
-		bool open_with_garrote = 14;
+		bool allow_cp_undercap = 14;
 
-		bool rupture_for_bleed = 15;
+		bool open_with_garrote = 15;
 
-		int32 envenom_energy_threshold = 16;
+		bool open_with_premeditation = 16;
+
+		bool open_with_shadowstep = 17;
+
+		bool rupture_for_bleed = 18;
+
+		int32 envenom_energy_threshold = 19;
 	}
 	Rotation rotation = 1;
 	

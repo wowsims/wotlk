@@ -7,6 +7,9 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
+	// FIXME: Require a dagger MH
+	//daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26863},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -40,7 +43,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 330 +
+			baseDamage := 310 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
