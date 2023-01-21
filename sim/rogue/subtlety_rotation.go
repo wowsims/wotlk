@@ -41,11 +41,6 @@ func (rogue *Rogue) setSubtletyBuilder() {
 func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	rogue.subtletyPrios = make([]subtletyPrio, 0)
 
-	// FIXME: Remove once added to UI
-	rogue.Rotation.OpenWithGarrote = true
-	rogue.Rotation.OpenWithPremeditation = true
-	rogue.Rotation.OpenWithShadowstep = true
-
 	if rogue.Rotation.OpenWithPremeditation {
 		hasCastPremeditation := false
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
