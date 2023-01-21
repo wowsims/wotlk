@@ -234,14 +234,6 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
 		}
 	}
-	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
-		rogue.OverkillAura.Activate(sim)
-		rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
-	}
-	if rogue.MasterOfSubtletyAura != nil && rogue.Options.StartingOverkillDuration > 0 {
-		rogue.MasterOfSubtletyAura.Activate(sim)
-		rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
-	}
 	rogue.setPriorityItems(sim)
 }
 
