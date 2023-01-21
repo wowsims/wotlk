@@ -17,13 +17,14 @@ import {
 	Spec,
 	Target as TargetProto,
 } from '../core/proto/common';
-import { nameToClass } from '../core/proto_utils/names';
+import { nameToClass, professionNames, raceNames } from '../core/proto_utils/names';
 import {
 	DruidSpecs,
 	DeathknightSpecs,
 	MageSpecs,
 	PriestSpecs,
 	RogueSpecs,
+	SpecOptions,
 	getTalentTreePoints,
 	makeDefaultBlessings,
 	specTypeFunctions,
@@ -171,7 +172,7 @@ export class RaidWCLImporter extends Importer {
 	}
 
 	private async parseURL(url: string): Promise<wclUrlData> {
-		const match = url.match(/classic\.warcraftlogs\.com\/reports\/([a-zA-Z0-9:]+)(#.*fight=((\d+)|(last)))?/);
+		const match = url.match(/classic\.warcraftlogs\.com\/reports\/([a-zA-Z0-9:]+)\/?(#.*fight=((\d+)|(last)))?/);
 		if (!match) {
 			throw new Error(`Invalid WCL URL ${url}, must look like "classic.warcraftlogs.com/reports/XXXX"`);
 		}
@@ -243,6 +244,9 @@ export class RaidWCLImporter extends Importer {
 		const rateLimit = await this.getRateLimit();
 
 		// Schema for WCL API here: https://www.warcraftlogs.com/v2-api-docs/warcraft/
+		// WCL charges us 1 'point' for each subquery we issue within the request. So
+		// by using filter expressions we can combine our queries together, to spend
+		// fewer points.
 		const reportDataQuery = `{
 			reportData {
 				report(code: "${urlData.reportID}") {
@@ -255,33 +259,20 @@ export class RaidWCLImporter extends Importer {
 						startTime, endTime, id, name
 					}
 
-					arcaneTorrentEnergy: table(dataType:Casts, endTime: 99999999, abilityID: 25046)
-					arcaneTorrentMana: table(dataType:Casts, endTime: 99999999, abilityID: 28730)
-					arcaneTorrentRunicPower: table(dataType:Casts, endTime: 99999999, abilityID: 50613)
-					berserking: table(dataType:Casts, endTime: 99999999, abilityID: 26297)
-					bloodFuryAp: table(dataType:Casts, endTime: 99999999, abilityID: 20572)
-					bloodFuryApSp: table(dataType:Casts, endTime: 99999999, abilityID: 33697)
-					bloodFurySp: table(dataType:Casts, endTime: 99999999, abilityID: 33702)
-					escapeArtist: table(dataType:Casts, endTime: 99999999, abilityID: 20589)
-					stoneform: table(dataType:Casts, endTime: 99999999, abilityID: 20594)
-					warStomp: table(dataType:Casts, endTime: 99999999, abilityID: 20549)
-					willOfTheForsaken: table(dataType:Casts, endTime: 99999999, abilityID: 7744)
-					willToSurvive: table(dataType:Casts, endTime: 99999999, abilityID: 59752)
+					reportCastEvents: events(dataType:Casts, endTime: 99999999, filterExpression: "${
+						[racialSpells, professionSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-					lifeblood: table(dataType:Casts, endTime: 99999999, abilityID: 55503)
-					skinning: table(dataType:Casts, endTime: 99999999, abilityID: 50305)
+					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, filterExpression: "${
+						[externalCDSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-					innervates: table(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Druid", abilityID: 29166),
-					powerInfusion: table(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Priest", abilityID: 10060)
-					tricksOfTheTrade: table(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Rogue", abilityID: 57933)
-					unholyFrenzy: table(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, sourceClass: "DeathKnight", abilityID: 49016)
+					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, filterExpression: "${
+						[samePartyHealingSpells, otherPartyHealingSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-					divineStorm: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Paladin", abilityID: 54172, limit: 50) { data }
-					healingStreamTotem: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Shaman", abilityID: 52042, limit: 50) { data }
-					holyNova: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 48076, limit: 100) { data }
-					prayerOfHealing: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 48072) { data }
-					tranquility: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Druid", abilityID: 48445, limit: 50) { data }
-					vampiricEmbrace: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, sourceClass: "Priest", abilityID: 15290, limit: 50) { data }
+
+					manaTideTotem: events(fightIDs: [${urlData.fightID}], dataType:Resources, endTime: 99999999, filterExpression: "ability.id = 39609", limit: 100) { data }
 				}
 			}
 		}`;
@@ -329,54 +320,34 @@ export class RaidWCLImporter extends Importer {
 				});
 		});
 
-		this.parseCastData(wclPlayers, wclData.arcaneTorrentMana.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceBloodElf);
-		});
-		this.parseCastData(wclPlayers, wclData.arcaneTorrentEnergy.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceBloodElf);
-		});
-		this.parseCastData(wclPlayers, wclData.arcaneTorrentRunicPower.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceBloodElf);
-		});
-		this.parseCastData(wclPlayers, wclData.berserking.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceTroll);
-		});
-		this.parseCastData(wclPlayers, wclData.bloodFuryAp.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceOrc);
-		});
-		this.parseCastData(wclPlayers, wclData.bloodFuryApSp.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceOrc);
-		});
-		this.parseCastData(wclPlayers, wclData.bloodFurySp.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceOrc);
-		});
-		this.parseCastData(wclPlayers, wclData.escapeArtist.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceGnome);
-		});
-		this.parseCastData(wclPlayers, wclData.stoneform.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceDwarf);
-		});
-		this.parseCastData(wclPlayers, wclData.warStomp.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceTauren);
-		});
-		this.parseCastData(wclPlayers, wclData.willOfTheForsaken.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceUndead);
-		});
-		this.parseCastData(wclPlayers, wclData.willToSurvive.data.entries).forEach(cast => {
-			cast.player.player.setRace(eventID, Race.RaceHuman);
+		const castEventsBySpellId = bucket(wclData.reportCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		racialSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				if (sourcePlayer) {
+					console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[spell.race]} from ${spell.name} event`);
+					sourcePlayer.player.setRace(eventID, spell.race);
+				}
+			});
 		});
 	}
 
 	private inferProfessions(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
-		this.parseCastData(wclPlayers, wclData.lifeblood.data.entries).forEach(cast => {
-			cast.player.inferredProfessions.push(Profession.Herbalism);
-		});
-		this.parseCastData(wclPlayers, wclData.skinning.data.entries).forEach(cast => {
-			cast.player.inferredProfessions.push(Profession.Skinning);
+		const castEventsBySpellId = bucket(wclData.reportCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		professionSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				if (sourcePlayer && !sourcePlayer.inferredProfessions.includes(spell.profession)) {
+					console.log(`Inferring player ${sourcePlayer.name} has profession ${professionNames[spell.profession]} from ${spell.name} event`);
+					sourcePlayer.inferredProfessions.push(spell.profession);
+				}
+			});
 		});
 
 		wclPlayers.forEach(player => {
-			let professions = player.inferredProfessions.concat(player.player.getGear().getProfessionRequirements());
+			let professions = distinct(player.inferredProfessions.concat(player.player.getGear().getProfessionRequirements()));
 			if (professions.length == 0) {
 				professions = [Profession.Engineering, Profession.Jewelcrafting];
 			} else if (professions.length == 1) {
@@ -391,93 +362,58 @@ export class RaidWCLImporter extends Importer {
 	}
 
 	private inferAssignments(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
-		this.parseCastData(wclPlayers, wclData.innervates.data.entries).forEach(cast => {
-			if (cast.target && cast.player.player.getClass() == Class.ClassDruid) {
-				const player = cast.player.player as Player<DruidSpecs>;
-				const options = player.getSpecOptions();
-				options.innervateTarget = cast.target.toRaidTarget();
-				player.setSpecOptions(eventID, options);
-			}
-		});
-		this.parseCastData(wclPlayers, wclData.powerInfusion.data.entries).forEach(cast => {
-			if (cast.target && cast.player.player.getClass() == Class.ClassPriest) {
-				const player = cast.player.player as Player<PriestSpecs>;
-				const options = player.getSpecOptions();
-				options.powerInfusionTarget = cast.target.toRaidTarget();
-				player.setSpecOptions(eventID, options);
-			}
-		});
-		this.parseCastData(wclPlayers, wclData.tricksOfTheTrade.data.entries).forEach(cast => {
-			if (cast.target && cast.player.player.getClass() == Class.ClassRogue) {
-				const player = cast.player.player as Player<RogueSpecs>;
-				const options = player.getSpecOptions();
-				options.tricksOfTheTradeTarget = cast.target.toRaidTarget();
-				player.setSpecOptions(eventID, options);
-			}
-		});
-		this.parseCastData(wclPlayers, wclData.unholyFrenzy.data.entries).forEach(cast => {
-			if (cast.target && cast.player.player.getClass() == Class.ClassDeathknight) {
-				const player = cast.player.player as Player<DeathknightSpecs>;
-				const options = player.getSpecOptions();
-				options.unholyFrenzyTarget = cast.target.toRaidTarget();
-				player.setSpecOptions(eventID, options);
-			}
-		});
-	}
-
-	private parseCastData(wclPlayers: WCLSimPlayer[], castData: wclBuffCastsData[]): { player: WCLSimPlayer, target: WCLSimPlayer|null }[] {
-		const playerCasts: { player: WCLSimPlayer, target: WCLSimPlayer|null }[] = [];
-		if (castData.length) {
-			castData.forEach(cast => {
-				const sourcePlayer = wclPlayers.find((player) => player.name == cast.name);
-				const targetPlayer = wclPlayers.find((player) => player.name == cast.targets[0].name) || null;
-
-				if (sourcePlayer) {
-					playerCasts.push({ player: sourcePlayer, target: targetPlayer });
+		const castEventsBySpellId = bucket(wclData.fightCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		externalCDSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
+				if (sourcePlayer && targetPlayer && sourcePlayer.player.getClass() == spell.class) {
+					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toRaidTarget());
+					sourcePlayer.player.setSpecOptions(eventID, specOptions);
+					console.log(`Inferring player ${sourcePlayer.name} is targeting ${targetPlayer.name} with ${spell.name} from cast event`);
 				}
 			});
-		}
-		return playerCasts;
+		});
 	}
 
 	// Assigns the raidIndex field for all players.
 	private inferPartyComposition(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
-		const parseHealEventData = (healEventData: wclHealEventData[]) => {
-			return healEventData.map(event => {
+		const setPlayersInParty = (player1: WCLSimPlayer, player2: WCLSimPlayer, reason: string) => {
+			if (player1.addPlayerInParty(player2) || player2.addPlayerInParty(player1)) {
+				console.log(`Inferring players ${player1.name} and ${player2.name} in same party from ${reason} event`);
+			}
+		};
+
+		const healEventsBySpellId = bucket(wclData.fightHealEvents.data as Array<wclHealEvent>, event => String(event.abilityGameID));
+
+		// These spells only affect players in the same party as the caster.
+		samePartyHealingSpells.forEach(spell => {
+			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
 				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
 				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
 				if (sourcePlayer && targetPlayer) {
-					return { source: sourcePlayer, target: targetPlayer, timestamp: event.timestamp };
-				} else {
-					return null;
-				}
-			}).filter(data => data != null) as Array<{source: WCLSimPlayer, target: WCLSimPlayer, timestamp: number}>;
-		};
-
-		const inferPartyFromGroupHealData = (healEventData: wclHealEventData[], spellName: string) => {
-			parseHealEventData(healEventData).forEach(event => {
-				if (event.source.addPlayerInParty(event.target) || event.target.addPlayerInParty(event.source)) {
-					console.log(`Inferring players ${event.source.name} and ${event.target.name} in same party from ${spellName} healing event`);
+					setPlayersInParty(sourcePlayer, targetPlayer, spell.name);
 				}
 			});
-		};
-		inferPartyFromGroupHealData(wclData.divineStorm.data, 'Divine Storm');
-		inferPartyFromGroupHealData(wclData.healingStreamTotem.data, 'Healing Stream Totem');
-		inferPartyFromGroupHealData(wclData.tranquility.data, 'Tranquility');
-		inferPartyFromGroupHealData(wclData.vampiricEmbrace.data, 'Vampiric Embrace');
+		});
 
 		// Prayer of Healing is a bit different, we can infer that players who are targeted at the same time are in a group.
-		const pohByTimestamp = bucket(parseHealEventData(wclData.prayerOfHealing.data), event => String(event.timestamp));
-		for (const [k, pohEvents] of Object.entries(pohByTimestamp)) {
-			const pohTargets = pohEvents.map(ev => ev.target);
-			for (let i = 0; i < pohTargets.length; i++) {
-				for (let j = 0; j < pohTargets.length; j++) {
-					if (i != j && pohTargets[i].addPlayerInParty(pohTargets[j]) || pohTargets[j].addPlayerInParty(pohTargets[i])) {
-						console.log(`Inferring players ${pohTargets[i].name} and ${pohTargets[j].name} in same party from Prayer of Healing event`);
+		otherPartyHealingSpells.forEach(spell => {
+			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
+			const spellEventsByTimestamp = bucket(spellEvents, event => String(event.timestamp) + String(event.sourceID));
+			for (const [timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
+				const spellTargets = eventsAtTime.map(event => wclPlayers.find(player => player.id == event.targetID));
+				for (let i = 0; i < spellTargets.length; i++) {
+					for (let j = 0; j < spellTargets.length; j++) {
+						if (i != j && spellTargets[i] && spellTargets[j]) {
+							setPlayersInParty(spellTargets[i]!, spellTargets[j]!, spell.name);
+						}
 					}
 				}
 			}
-		}
+		});
 
 		wclData.allEvents.data.filter((ev: any) => ev.type == 'combatantinfo').forEach((combatantInfo: wclCombatantInfoEventData) => {
 			const targetPlayer = wclPlayers.find(player => player.id == combatantInfo.sourceID);
@@ -595,7 +531,6 @@ class WCLSimPlayer {
 	inferredProfessions: Array<Profession> = [];
 
 	readonly playersInParty: Array<WCLSimPlayer> = [];
-	readonly playersNotInParty: Array<WCLSimPlayer> = [];
 
 	constructor(data: wclPlayer, simUI: RaidSimUI, faction: Faction = Faction.Unknown, eventID: EventID) {
 		this.simUI = simUI;
@@ -676,16 +611,8 @@ class WCLSimPlayer {
 	}
 
 	public addPlayerInParty(other: WCLSimPlayer): boolean {
-		if (!this.playersInParty.includes(other)) {
+		if (other != this && !this.playersInParty.includes(other)) {
 			this.playersInParty.push(other);
-			return true;
-		}
-		return false;
-	}
-
-	public addPlayerNotInParty(other: WCLSimPlayer): boolean {
-		if (!this.playersNotInParty.includes(other)) {
-			this.playersNotInParty.push(other);
 			return true;
 		}
 		return false;
@@ -734,23 +661,91 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'WarriorProtection': Spec.SpecProtectionWarrior,
 };
 
+interface QuerySpell {
+	id: number,
+	name: string,
+}
+
+// Spells which imply a specific Race.
+const racialSpells: Array<{id: number, name: string, race: Race}> = [
+	{id: 25046, name: 'Arcane Torrent (Energy)', race: Race.RaceBloodElf},
+	{id: 28730, name: 'Arcane Torrent (Mana)', race: Race.RaceBloodElf},
+	{id: 50613, name: 'Arcane Torrent (Runic Power)', race: Race.RaceBloodElf},
+	{id: 26297, name: 'Berserking', race: Race.RaceTroll},
+	{id: 20572, name: 'Blood Fury (AP)', race: Race.RaceOrc},
+	{id: 33697, name: 'Blood Fury (AP+SP)', race: Race.RaceOrc},
+	{id: 33702, name: 'Blood Fury (SP)', race: Race.RaceOrc},
+	{id: 20589, name: 'Escape Artist', race: Race.RaceGnome},
+	{id: 20594, name: 'Stoneform', race: Race.RaceDwarf},
+	{id: 20549, name: 'War Stomp', race: Race.RaceTauren},
+	{id: 7744, name: 'Will of the Forsaken', race: Race.RaceUndead},
+	{id: 59752, name: 'Will to Survive', race: Race.RaceHuman},
+];
+
+// Spells which imply a specific Profession.
+const professionSpells: Array<{id: number, name: string, profession: Profession}> = [
+	{id: 55503, name: 'Lifeblood', profession: Profession.Herbalism},
+	{id: 50305, name: 'Skinning', profession: Profession.Skinning},
+];
+
+const externalCDSpells: Array<{id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => SpecOptions<any>}> = [
+	{id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<DruidSpecs>;
+		options.innervateTarget = raidTarget;
+		return options;
+	}},
+	{id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<PriestSpecs>;
+		options.powerInfusionTarget = raidTarget;
+		return options;
+	}},
+	{id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
+		options.tricksOfTheTradeTarget = raidTarget;
+		return options;
+	}},
+	{id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
+		options.unholyFrenzyTarget = raidTarget;
+		return options;
+	}},
+];
+
+// Healing spells which only affect the caster's party.
+const samePartyHealingSpells: Array<{id: number, name: string}> = [
+	{id: 54172, name: 'Divine Storm'},
+	{id: 52042, name: 'Healing Stream Totem'},
+	{id: 48076, name: 'Holy Nova'},
+	{id: 48445, name: 'Tranquility'},
+	{id: 15290, name: 'Vampiric Embrace'},
+];
+
+// Healing spells which only affect a single party, but not necessarily the caster's party.
+const otherPartyHealingSpells: Array<{id: number, name: string}> = [
+	{id: 48072, name: 'Prayer of Healing'},
+];
+
 interface wclUrlData {
 	reportID: string,
 	fightID: string,
 }
 
-interface wclBuffCastsData {
-	name: string;
-	targets: {
-		name: string;
-		type: string;
-	}[];
-}
-
-interface wclHealEventData {
+interface wclCastEvent {
+	type: 'cast',
 	timestamp: number;
 	sourceID: number;
 	targetID: number;
+	abilityGameID: number;
+	fight: number;
+}
+
+interface wclHealEvent {
+	type: 'heal',
+	timestamp: number;
+	sourceID: number;
+	targetID: number;
+	abilityGameID: number;
+	fight: number;
 	amount: number;
 }
 
