@@ -51,7 +51,7 @@ export const AssassinationTalents = {
 export const SubtletyTalents = {
 	name: 'Subtlety',
 	data: SavedTalents.create({
-		talentsString: '00502300523--5020032130320121350115031151',
+		talentsString: '30522300014--5020032030321121350115031151',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfBackstab,
 			major2: RogueMajorGlyph.GlyphOfGarrote,
