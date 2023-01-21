@@ -9,8 +9,8 @@ type OnSnapshot func(sim *Simulation, target *Unit, dot *Dot, isRollover bool)
 type OnTick func(sim *Simulation, target *Unit, dot *Dot)
 
 type DotConfig struct {
-	// Set to true for AOE dots (Blizzard, Hurricane, Consecrate, etc)
-	IsAOE bool
+	IsAOE    bool // Set to true for AOE dots (Blizzard, Hurricane, Consecrate, etc)
+	SelfOnly bool // Set to true to only create the self-hot.
 
 	// Optional, will default to the corresponding spell.
 	Spell *Spell
@@ -233,7 +233,7 @@ func (dots DotArray) Get(target *Unit) *Dot {
 	return dots[target.UnitIndex]
 }
 
-func (spell *Spell) createDots(config DotConfig) {
+func (spell *Spell) createDots(config DotConfig, isHot bool) {
 	if config.NumberOfTicks == 0 && config.TickLength == 0 {
 		return
 	}
@@ -258,29 +258,19 @@ func (spell *Spell) createDots(config DotConfig) {
 	}
 
 	caster := dot.Spell.Unit
-	if config.IsAOE {
+	if config.IsAOE || config.SelfOnly {
 		dot.Aura = caster.GetOrRegisterAura(auraConfig)
 		spell.aoeDot = NewDot(dot)
 	} else {
-		auraConfig.Label += "-" + strconv.Itoa(int(caster.Index))
-		spell.dots = make([]*Dot, len(caster.Env.AllUnits))
+		auraConfig.Label += "-" + strconv.Itoa(int(caster.UnitIndex))
+		if spell.dots == nil {
+			spell.dots = make([]*Dot, len(caster.Env.AllUnits))
+		}
 		for _, target := range caster.Env.AllUnits {
-			if caster.IsOpponent(target) {
+			if isHot != caster.IsOpponent(target) {
 				dot.Aura = target.GetOrRegisterAura(auraConfig)
 				spell.dots[target.UnitIndex] = NewDot(dot)
 			}
 		}
 	}
-}
-
-// Creates HoTs for all allied units.
-func NewAllyHotArray(caster *Unit, config Dot, auraConfig Aura) []*Dot {
-	hots := make([]*Dot, len(caster.Env.AllUnits))
-	for _, target := range caster.Env.AllUnits {
-		if !caster.IsOpponent(target) {
-			config.Aura = target.GetOrRegisterAura(auraConfig)
-			hots[target.UnitIndex] = NewDot(config)
-		}
-	}
-	return hots
 }

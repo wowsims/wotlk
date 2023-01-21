@@ -54,7 +54,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	}
 
 	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
-	insectSwarmUptime := moonkin.InsectSwarmDot.RemainingDuration(sim)
+	insectSwarmUptime := moonkin.InsectSwarm.CurDot().RemainingDuration(sim)
 	useMf := moonkin.Rotation.MfUsage != proto.BalanceDruid_Rotation_NoMf
 	useIs := moonkin.Rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs
 	maximizeMfUptime := moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf

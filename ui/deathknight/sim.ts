@@ -31,8 +31,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				"Blood DPS is a work in progress.",
-				"Frost Rotation logic is not fully tuned yet.",
-				"Army of the Dead scaling needs to be fine-tuned."
 			],
 
 			// All stats for which EP should be calculated.

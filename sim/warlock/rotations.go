@@ -111,16 +111,16 @@ func (warlock *Warlock) defineRotation() {
 
 		// Affliction spec check
 		if warlock.Talents.EverlastingAffliction > 0 {
-			if (!warlock.CorruptionDot.IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
+			if (!warlock.Corruption.CurDot().IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
 				// Wait for SM to be applied to cast first Corruption
-				warlock.CorruptionDot.IsActive() && (warlock.corruptionTracker() > warlock.CorruptionRolloverPower) {
+				warlock.Corruption.CurDot().IsActive() && (warlock.corruptionTracker() > warlock.CorruptionRolloverPower) {
 				// If the active corruption multipliers are lower than the ones for a potential new corruption, then reapply corruption
 				return 0
 			} else {
 				return core.NeverExpires //Never will be cast
 			}
 		} else {
-			return core.MaxDuration(0, warlock.CorruptionDot.RemainingDuration(sim)) // Will be "ready to cast in this many seconds"
+			return core.MaxDuration(0, warlock.Corruption.CurDot().RemainingDuration(sim)) // Will be "ready to cast in this many seconds"
 		} //This is due to not having EA on, you will have to manually reapply Corr.
 	}
 	//Immolate
@@ -137,7 +137,7 @@ func (warlock *Warlock) defineRotation() {
 		if !warlock.Talents.UnstableAffliction || !(secondaryDot == proto.Warlock_Rotation_UnstableAffliction) {
 			return core.NeverExpires
 		}
-		return core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime))
+		return core.MaxDuration(0, warlock.UnstableAffliction.CurDot().RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.UnstableAffliction.DefaultCast.CastTime))
 	}
 	/*Haunt
 	Haunt is different than all your other DoT's, reason being, it dynamicly amplifies other DoT's for it's duration.
@@ -152,7 +152,7 @@ func (warlock *Warlock) defineRotation() {
 		hauntCastTime := warlock.ApplyCastSpeed(warlock.Haunt.DefaultCast.CastTime)
 		spellCastTime := warlock.ApplyCastSpeed(core.GCDDefault)
 		if sim.IsExecutePhase25() {
-			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength) + time.Millisecond*1000
+			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickLength) + time.Millisecond*1000
 		}
 		return core.MaxDuration(0, warlock.HauntDebuffAura.RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
@@ -160,17 +160,17 @@ func (warlock *Warlock) defineRotation() {
 	}
 	//Curse of Agony
 	warlock.SpellsRotation[4].CastIn = func(sim *core.Simulation) time.Duration {
-		if !(curse == proto.Warlock_Rotation_Doom || curse == proto.Warlock_Rotation_Agony) || warlock.CurseOfDoomDot.IsActive() || sim.GetRemainingDuration() < warlock.CurseOfAgonyDot.Duration/2 {
+		if !(curse == proto.Warlock_Rotation_Doom || curse == proto.Warlock_Rotation_Agony) || warlock.CurseOfDoom.CurDot().IsActive() || sim.GetRemainingDuration() < warlock.CurseOfAgony.CurDot().Duration/2 {
 			return core.NeverExpires
 		}
-		return core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim))
+		return core.MaxDuration(0, warlock.CurseOfAgony.CurDot().RemainingDuration(sim))
 	}
 	//Curse of Doom
 	warlock.SpellsRotation[5].CastIn = func(sim *core.Simulation) time.Duration {
 		if curse != proto.Warlock_Rotation_Doom || !warlock.CurseOfDoom.IsReady(sim) || sim.GetRemainingDuration() < time.Minute {
 			return core.NeverExpires
 		}
-		return core.MaxDuration(0, warlock.CurseOfDoomDot.RemainingDuration(sim))
+		return core.MaxDuration(0, warlock.CurseOfDoom.CurDot().RemainingDuration(sim))
 	}
 	//Conflagrate
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
@@ -308,31 +308,31 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	hauntcasttime := warlock.ApplyCastSpeed(time.Millisecond * 1500)
 
-	tickLength := warlock.DrainSoulDot.TickPeriod()
-	previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+	tickLength := warlock.DrainSoul.CurDot().TickPeriod()
+	previousTickAt := warlock.DrainSoul.CurDot().StartedAt() + (tickLength * time.Duration(warlock.DrainSoul.CurDot().TickCount))
 	humanReactionTime := time.Millisecond * 150
 	nextTick := previousTickAt + tickLength + humanReactionTime
 
 	allCDs := []time.Duration{
 		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura.RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
-		core.MaxDuration(0, warlock.UnstableAfflictionDot.RemainingDuration(sim)-hauntcasttime),
-		core.MaxDuration(0, warlock.CurseOfAgonyDot.RemainingDuration(sim)),
+		core.MaxDuration(0, warlock.UnstableAffliction.CurDot().RemainingDuration(sim)-hauntcasttime),
+		core.MaxDuration(0, warlock.CurseOfAgony.CurDot().RemainingDuration(sim)),
 	}
 
-	if warlock.DrainSoulDot.IsActive() {
+	if warlock.DrainSoul.CurDot().IsActive() {
 		if !warlock.GCD.IsReady(sim) {
 			return
 		}
 		// This means we are continuing to soul drain.
 		shouldClip := false
-		NumberOfPotentialClips1 := core.MinDuration(allCDs[0]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()), allCDs[1]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
-		NumberOfPotentialClips := core.MinDuration(NumberOfPotentialClips1, allCDs[2]/warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		NumberOfPotentialClips1 := core.MinDuration(allCDs[0]/warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickPeriod()), allCDs[1]/warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickPeriod()))
+		NumberOfPotentialClips := core.MinDuration(NumberOfPotentialClips1, allCDs[2]/warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickPeriod()))
 
 		if sim.Log != nil {
 			warlock.Log(sim, "Number of Ticks until next clip [%d]", NumberOfPotentialClips)
 		}
 
-		warlock.DSProcCheck(sim, warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickPeriod()))
+		warlock.DSProcCheck(sim, warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickPeriod()))
 		Tracker := []float64{
 			0,
 			0,
@@ -363,7 +363,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		newTickSpeed := 3 / (warlock.PseudoStats.CastSpeedMultiplier * (1 + warlock.GetStat(stats.SpellHaste)/32.79/100))
 		newDrainSoulRolloverPower := newDmg / newTickSpeed
 
-		if allCDs[0]-warlock.ApplyCastSpeed(warlock.DrainSoulDot.TickLength)-humanReactionTime < time.Millisecond*1000 && sim.GetRemainingDuration().Seconds()-8 > 0 {
+		if allCDs[0]-warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickLength)-humanReactionTime < time.Millisecond*1000 && sim.GetRemainingDuration().Seconds()-8 > 0 {
 			shouldClip = true
 		} else if allCDs[2].Seconds() == 0 && sim.GetRemainingDuration().Seconds() > 18 {
 			shouldClip = true
@@ -371,12 +371,12 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 			shouldClip = true
 		} else if newDrainSoulRolloverPower > warlock.DrainSoulRolloverPower {
 			shouldClip = true
-		} else if warlock.CorruptionDot.RemainingDuration(sim) < 2*warlock.DrainSoulDot.TickPeriod() {
+		} else if warlock.Corruption.CurDot().RemainingDuration(sim) < 2*warlock.DrainSoul.CurDot().TickPeriod() {
 			shouldClip = true
 		}
 
-		if shouldClip && warlock.DrainSoulDot.TickCount != 0 {
-			warlock.DrainSoulDot.Cancel(sim)
+		if shouldClip && warlock.DrainSoul.CurDot().TickCount != 0 {
+			warlock.DrainSoul.CurDot().Cancel(sim)
 		} else {
 			warlock.WaitUntil(sim, previousTickAt+tickLength+humanReactionTime)
 			return
@@ -403,15 +403,15 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	//This is currently a WIP.
 	if mainSpell == proto.Warlock_Rotation_Seed {
 		if warlock.Rotation.DetonateSeed {
-			if success := warlock.Seeds[0].Cast(sim, target); !success {
+			if success := warlock.Seed.Cast(sim, target); !success {
 				warlock.LifeTapOrDarkPact(sim)
 			}
 			return
 		}
 
 		// If we aren't "auto popping" just put seed on and shadowbolt it.
-		if !warlock.SeedDots[0].IsActive() {
-			if success := warlock.Seeds[0].Cast(sim, target); success {
+		if !warlock.Seed.Dot(target).IsActive() {
+			if success := warlock.Seed.Cast(sim, target); success {
 				return
 			} else {
 				warlock.LifeTapOrDarkPact(sim)
@@ -634,13 +634,13 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	if filler == warlock.DrainSoul {
 		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura.Duration/3 {
 			spell = filler
-		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAfflictionDot.Duration/2 {
+		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAffliction.CurDot().Duration/2 {
 			spell = filler
 		}
 
 		currentWait := warlock.Haunt.TimeToReady(sim)
 		if spell == warlock.CurseOfAgony && currentWait < 1 {
-			if warlock.CorruptionDot.RemainingDuration(sim)-hauntcasttime-allCDs[0] < 0 {
+			if warlock.Corruption.CurDot().RemainingDuration(sim)-hauntcasttime-allCDs[0] < 0 {
 				spell = warlock.Haunt
 
 				if currentWait > 0 {
@@ -651,10 +651,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 		}
 	}
 
-	if warlock.DrainSoulDot.IsActive() {
+	if warlock.DrainSoul.CurDot().IsActive() {
 		// This means we are continuing to soul drain.
-		tickLength := warlock.DrainSoulDot.TickPeriod()
-		previousTickAt := warlock.DrainSoulDot.StartedAt() + (tickLength * time.Duration(warlock.DrainSoulDot.TickCount))
+		tickLength := warlock.DrainSoul.CurDot().TickPeriod()
+		previousTickAt := warlock.DrainSoul.CurDot().StartedAt() + (tickLength * time.Duration(warlock.DrainSoul.CurDot().TickCount))
 		humanReactionTime := time.Millisecond * 150
 		if sim.Log != nil {
 			//warlock.Log(sim, "tickLength[%d]", tickLength.Seconds())

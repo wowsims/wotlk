@@ -91,10 +91,7 @@ type Rogue struct {
 
 	lastDeadlyPoisonProcMask    core.ProcMask
 	deadlyPoisonProcChanceBonus float64
-	deadlyPoisonDots            []*core.Dot
-	garroteDot                  *core.Dot
 	instantPoisonPPMM           core.PPMManager
-	ruptureDot                  *core.Dot
 	woundPoisonPPMM             core.PPMManager
 
 	AdrenalineRushAura   *core.Aura

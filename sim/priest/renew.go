@@ -1,7 +1,6 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -54,20 +53,10 @@ func (priest *Priest) registerRenewSpell() {
 		DamageMultiplier: priest.renewHealingMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.SpellMetrics[target.UnitIndex].Hits++
-			priest.RenewHots[target.UnitIndex].Apply(sim)
-
-			if priest.EmpoweredRenew != nil {
-				priest.EmpoweredRenew.Cast(sim, target)
-			}
-		},
-	})
-
-	priest.RenewHots = core.NewAllyHotArray(
-		&priest.Unit,
-		core.Dot{
-			Spell:         priest.Renew,
+		Hot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Renew",
+			},
 			NumberOfTicks: priest.renewTicks(),
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
@@ -78,10 +67,16 @@ func (priest *Priest) registerRenewSpell() {
 				dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
 			},
 		},
-		core.Aura{
-			Label:    "Renew" + strconv.Itoa(int(priest.Index)),
-			ActionID: priest.Renew.ActionID,
-		})
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.SpellMetrics[target.UnitIndex].Hits++
+			spell.Hot(target).Apply(sim)
+
+			if priest.EmpoweredRenew != nil {
+				priest.EmpoweredRenew.Cast(sim, target)
+			}
+		},
+	})
 }
 
 func (priest *Priest) renewTicks() int32 {

@@ -1,7 +1,6 @@
 package warrior
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -10,8 +9,6 @@ import (
 
 // TODO (maybe) https://github.com/magey/wotlk-warrior/issues/23 - Rend is not benefitting from Two-Handed Weapon Specialization
 func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
-	actionID := core.ActionID{SpellID: 47465}
-
 	dotDuration := time.Second * 15
 	dotTicks := int32(5)
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRending) {
@@ -20,7 +17,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 	}
 
 	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 47465},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete,
@@ -39,37 +36,35 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Rends",
+			},
+			NumberOfTicks: dotTicks,
+			TickLength:    time.Second * 3,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
+				// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
+				if sim.GetRemainingDurationPercent() > 0.75 {
+					dot.SnapshotBaseDamage *= 1.35
+				}
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				warrior.RendDots.Apply(sim)
+				spell.Dot(target).Apply(sim)
 				warrior.procBloodFrenzy(sim, result, dotDuration)
 				warrior.rendValidUntil = sim.CurrentTime + dotDuration
 			} else {
 				spell.IssueRefund(sim)
 			}
 			spell.DealOutcome(sim, result)
-		},
-	})
-
-	warrior.RendDots = core.NewDot(core.Dot{
-		Spell: warrior.Rend,
-		Aura: warrior.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "Rends-" + strconv.Itoa(int(warrior.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: dotTicks,
-		TickLength:    time.Second * 3,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = (380 + warrior.AutoAttacks.MH.CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower())) / 5
-			// 135% damage multiplier is applied at the beginning of the fight and removed when target is at 75% health
-			if sim.GetRemainingDurationPercent() > 0.75 {
-				dot.SnapshotBaseDamage *= 1.35
-			}
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 

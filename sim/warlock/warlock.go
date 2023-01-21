@@ -21,24 +21,21 @@ type Warlock struct {
 
 	Pet *WarlockPet
 
-	ShadowBolt            *core.Spell
-	Incinerate            *core.Spell
-	Immolate              *core.Spell
-	ImmolateDot           *core.Dot
-	UnstableAffliction    *core.Spell
-	UnstableAfflictionDot *core.Dot
-	Corruption            *core.Spell
-	CorruptionDot         *core.Dot
-	Haunt                 *core.Spell
-	LifeTap               *core.Spell
-	DarkPact              *core.Spell
-	ChaosBolt             *core.Spell
-	SoulFire              *core.Spell
-	Conflagrate           *core.Spell
-	ConflagrateDot        *core.Dot
-	DrainSoul             *core.Spell
-	DrainSoulDot          *core.Dot
-	Shadowburn            *core.Spell
+	ShadowBolt         *core.Spell
+	Incinerate         *core.Spell
+	Immolate           *core.Spell
+	ImmolateDot        *core.Dot
+	UnstableAffliction *core.Spell
+	Corruption         *core.Spell
+	Haunt              *core.Spell
+	LifeTap            *core.Spell
+	DarkPact           *core.Spell
+	ChaosBolt          *core.Spell
+	SoulFire           *core.Spell
+	Conflagrate        *core.Spell
+	ConflagrateDot     *core.Dot
+	DrainSoul          *core.Spell
+	Shadowburn         *core.Spell
 
 	CurseOfElements     *core.Spell
 	CurseOfElementsAura *core.Aura
@@ -47,11 +44,9 @@ type Warlock struct {
 	CurseOfTongues      *core.Spell
 	CurseOfTonguesAura  *core.Aura
 	CurseOfAgony        *core.Spell
-	CurseOfAgonyDot     *core.Dot
 	CurseOfDoom         *core.Spell
-	CurseOfDoomDot      *core.Dot
-	Seeds               []*core.Spell
-	SeedDots            []*core.Dot
+	Seed                *core.Spell
+	SeedDamageTracker   []float64
 
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
@@ -62,7 +57,6 @@ type Warlock struct {
 	Metamorphosis          *core.Spell
 	MetamorphosisAura      *core.Aura
 	ImmolationAura         *core.Spell
-	ImmolationAuraDot      *core.Dot
 	HauntDebuffAura        *core.Aura
 	MoltenCoreAura         *core.Aura
 	DecimationAura         *core.Aura

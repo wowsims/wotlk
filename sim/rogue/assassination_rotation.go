@@ -235,7 +235,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	if rogue.Rotation.AssassinationFinisherPriority == proto.Rogue_Rotation_RuptureEnvenom {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.ruptureDot.IsActive() || s.GetRemainingDuration() < time.Second*18 {
+				if r.Rupture[0].CurDot().IsActive() || s.GetRemainingDuration() < time.Second*18 {
 					return Skip
 				}
 				if rogue.ComboPoints() > 3 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {

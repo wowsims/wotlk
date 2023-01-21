@@ -123,8 +123,7 @@ type Deathknight struct {
 
 	DeathCoil *core.Spell
 
-	DeathAndDecay    *core.Spell
-	DeathAndDecayDot *core.Dot
+	DeathAndDecay *core.Spell
 
 	HowlingBlast *core.Spell
 
@@ -167,13 +166,10 @@ type Deathknight struct {
 	// Diseases
 	FrostFeverSpell     *core.Spell
 	BloodPlagueSpell    *core.Spell
-	FrostFeverDisease   []*core.Dot
-	BloodPlagueDisease  []*core.Dot
 	FrostFeverExtended  []int
 	BloodPlagueExtended []int
 
 	UnholyBlightSpell *core.Spell
-	UnholyBlightDots  []*core.Dot
 
 	// Talent Auras
 	KillingMachineAura  *core.Aura
@@ -458,11 +454,11 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 }
 
 func (dk *Deathknight) AllDiseasesAreActive(target *core.Unit) bool {
-	return dk.FrostFeverDisease[target.Index].IsActive() && dk.BloodPlagueDisease[target.Index].IsActive()
+	return dk.FrostFeverSpell.Dot(target).IsActive() && dk.BloodPlagueSpell.Dot(target).IsActive()
 }
 
 func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
-	return dk.FrostFeverDisease[target.Index].IsActive() || dk.BloodPlagueDisease[target.Index].IsActive()
+	return dk.FrostFeverSpell.Dot(target).IsActive() || dk.BloodPlagueSpell.Dot(target).IsActive()
 }
 
 func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {

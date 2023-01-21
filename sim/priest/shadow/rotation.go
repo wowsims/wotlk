@@ -32,8 +32,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	spriest.VTCastTime = spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	spriest.AllCDs = []time.Duration{
 		core.MaxDuration(0, spriest.MindBlast.TimeToReady(sim)),
-		core.MaxDuration(0, spriest.DevouringPlagueDot.RemainingDuration(sim)),
-		core.MaxDuration(0, spriest.VampiricTouchDot.RemainingDuration(sim)-spriest.VTCastTime),
+		core.MaxDuration(0, spriest.DevouringPlague.CurDot().RemainingDuration(sim)),
+		core.MaxDuration(0, spriest.VampiricTouch.CurDot().RemainingDuration(sim)-spriest.VTCastTime),
 		core.MaxDuration(0, spriest.ShadowWordDeath.TimeToReady(sim)),
 		0,
 	}
@@ -74,11 +74,11 @@ func (spriest *ShadowPriest) chooseSpellAOE(sim *core.Simulation) *core.Spell {
 }
 
 func (spriest *ShadowPriest) chooseSpellBasicOrClipping(sim *core.Simulation, isClipping bool) *core.Spell {
-	if spriest.DevouringPlagueDot.RemainingDuration(sim) <= 0 {
+	if spriest.DevouringPlague.CurDot().RemainingDuration(sim) <= 0 {
 		return spriest.DevouringPlague
-	} else if spriest.Talents.VampiricTouch && spriest.VampiricTouchDot.RemainingDuration(sim) <= spriest.VTCastTime {
+	} else if spriest.Talents.VampiricTouch && spriest.VampiricTouch.CurDot().RemainingDuration(sim) <= spriest.VTCastTime {
 		return spriest.VampiricTouch
-	} else if !spriest.ShadowWordPainDot.IsActive() && spriest.ShadowWeavingAura.GetStacks() >= 5 {
+	} else if !spriest.ShadowWordPain.CurDot().IsActive() && spriest.ShadowWeavingAura.GetStacks() >= 5 {
 		return spriest.ShadowWordPain
 	} else if spriest.MindBlast.TimeToReady(sim) == 0 {
 		return spriest.MindBlast
@@ -165,8 +165,8 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
 
 	// Reduce number of DP/VT ticks based on remaining duration
-	num_DP_ticks = core.MinFloat(float64(spriest.DevouringPlagueDot.NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
-	num_VT_ticks = core.MinFloat(float64(spriest.VampiricTouchDot.NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+	num_DP_ticks = core.MinFloat(float64(spriest.DevouringPlague.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+	num_VT_ticks = core.MinFloat(float64(spriest.VampiricTouch.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
 
 	// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
 	// This is needed throughout the code to determine the optimal spell(s) to cast next
@@ -217,7 +217,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 
 	// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 	castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
-	if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPainDot.IsActive() {
+	if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
 		addedDmg := mbDamage*0.12 + mfDamage*0.22*2/3 + swpTickDamage*2*gcd.Seconds()/3
 		numswptickstime = addedDmg / (swpTickDamage * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
 		//
@@ -233,9 +233,9 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	var currDPS2 float64
 	var overwriteDPS2 float64
 
-	if spriest.DevouringPlagueDot.IsActive() {
-		currDotTickSpeed = spriest.DevouringPlagueDot.TickPeriod().Seconds()
-		nextTickWait = spriest.DevouringPlagueDot.TimeUntilNextTick(sim)
+	if spriest.DevouringPlague.CurDot().IsActive() {
+		currDotTickSpeed = spriest.DevouringPlague.CurDot().TickPeriod().Seconds()
+		nextTickWait = spriest.DevouringPlague.CurDot().TimeUntilNextTick(sim)
 
 		dpDotCurr := spriest.DevouringPlague.ExpectedDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
 		dpInitCurr := dpDotCurr * spriest.DpInitMultiplier
@@ -252,7 +252,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		if blAura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag); blAura != nil {
 			blRemainingDur := blAura.RemainingDuration(sim)
 			if blRemainingDur < time.Second*2 && blRemainingDur > time.Millisecond*100 {
-				dpRemainTicks := 8 - float64(spriest.DevouringPlagueDot.NumTicksRemaining(sim))
+				dpRemainTicks := 8 - float64(spriest.DevouringPlague.CurDot().NumTicksRemaining(sim))
 				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotCurr*(1-spriest.CastSpeed)
 				currDPS2 = cdDamage
 
@@ -521,19 +521,19 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 
 	// if MF2 is chosen in order to get to 5 weaving stacks, then make sure that VT/DP are already up first
 	if castMf2 > 0 {
-		if !spriest.DevouringPlagueDot.IsActive() && swStacks >= 4 && dpDamage != 0 {
+		if !spriest.DevouringPlague.CurDot().IsActive() && swStacks >= 4 && dpDamage != 0 {
 			bestIdx = dpIdx
-		} else if !spriest.VampiricTouchDot.IsActive() && swStacks >= 4 && spriest.DevouringPlagueDot.IsActive() && vtDamage != 0 {
+		} else if !spriest.VampiricTouch.CurDot().IsActive() && swStacks >= 4 && spriest.DevouringPlague.CurDot().IsActive() && vtDamage != 0 {
 			bestIdx = vtIdx
 		} else {
 			bestIdx = mfIdx
 		}
 	}
 	// if at 5 SW stacks and SWP is not up, then cast unless VT/DP are down
-	if swStacks == 5 && !spriest.ShadowWordPainDot.IsActive() {
-		if !spriest.DevouringPlagueDot.IsActive() && swStacks >= 4 && dpDamage != 0 {
+	if swStacks == 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
+		if !spriest.DevouringPlague.CurDot().IsActive() && swStacks >= 4 && dpDamage != 0 {
 			bestIdx = dpIdx
-		} else if !spriest.VampiricTouchDot.IsActive() && swStacks >= 4 && spriest.DevouringPlagueDot.IsActive() && vtDamage != 0 {
+		} else if !spriest.VampiricTouch.CurDot().IsActive() && swStacks >= 4 && spriest.DevouringPlague.CurDot().IsActive() && vtDamage != 0 {
 			bestIdx = vtIdx
 		} else {
 			bestIdx = swpIdx
@@ -554,7 +554,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	//	castMf2 = 1
 	//}
 	// If BL is almost up and VT is not active, then use VT
-	if timeUntilBLStarts <= gcd.Seconds() && !spriest.VampiricTouchDot.IsActive() && timeUntilBLStarts > 0 {
+	if timeUntilBLStarts <= gcd.Seconds() && !spriest.VampiricTouch.CurDot().IsActive() && timeUntilBLStarts > 0 {
 		bestIdx = vtIdx
 	}
 	// If BL is up in <0.3 seconds and greater than 10ms, then wait for it to be active
@@ -597,7 +597,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 
 		if chosenMfs == 1 {
 			numTicks = 1 // determiend above that it's more dps to add MF1, need if it's not better to enter ideal rotation instead
-		} else if (castMf2 == 1 && spriest.DevouringPlagueDot.IsActive() && spriest.VampiricTouchDot.IsActive()) || (timeUntilBLStarts < (time.Duration(3)*tickLength).Seconds() && timeUntilBLStarts > 0.2) {
+		} else if (castMf2 == 1 && spriest.DevouringPlague.CurDot().IsActive() && spriest.VampiricTouch.CurDot().IsActive()) || (timeUntilBLStarts < (time.Duration(3)*tickLength).Seconds() && timeUntilBLStarts > 0.2) {
 			if spriest.MindFlayTickDuration()*3 < gcd {
 				numTicks = 3
 			} else {
@@ -624,9 +624,9 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	} else {
 		mbcd := spriest.MindBlast.TimeToReady(sim)
 		swdcd := spriest.ShadowWordDeath.TimeToReady(sim)
-		vtidx := spriest.VampiricTouchDot.RemainingDuration(sim) - spriest.VTCastTime
-		swpidx := spriest.ShadowWordPainDot.RemainingDuration(sim)
-		dpidx := spriest.DevouringPlagueDot.RemainingDuration(sim)
+		vtidx := spriest.VampiricTouch.CurDot().RemainingDuration(sim) - spriest.VTCastTime
+		swpidx := spriest.ShadowWordPain.CurDot().RemainingDuration(sim)
+		dpidx := spriest.DevouringPlague.CurDot().RemainingDuration(sim)
 		wait1 = core.MinDuration(mbcd, swdcd)
 		wait2 = core.MinDuration(dpidx, wait1)
 		wait3 = core.MinDuration(vtidx, swpidx)

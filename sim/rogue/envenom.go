@@ -45,7 +45,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dp := rogue.deadlyPoisonDots[target.Index]
+			dp := rogue.DeadlyPoison.Dot(target)
 			// - 215 base is scaled by consumed doses (<= comboPoints)
 			// - apRatio is independent of consumed doses (== comboPoints)
 			consumed := core.MinInt32(dp.GetStacks(), comboPoints)

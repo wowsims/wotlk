@@ -17,7 +17,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26996},
+		ActionID:    core.ActionID{SpellID: 48480},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
@@ -42,7 +42,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 
