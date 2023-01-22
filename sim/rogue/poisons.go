@@ -70,7 +70,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 
 			// TODO: MAP part snapshots
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDmg := (74 + 0.03*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
+				baseDmg := (74 + 0.027*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
 				result := dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
 				if energyMetrics != nil && result.Landed() {
 					rogue.AddEnergy(sim, 1, energyMetrics)
@@ -199,7 +199,7 @@ func (rogue *Rogue) makeInstantPoison(procSource PoisonProcSource) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 300 + 0.1*spell.MeleeAttackPower()
+			baseDamage := sim.Roll(300, 400) + 0.09*spell.MeleeAttackPower()
 			if isShivProc {
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
 			} else {
@@ -222,7 +222,7 @@ func (rogue *Rogue) makeWoundPoison(procSource PoisonProcSource) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 231 + 0.04*spell.MeleeAttackPower()
+			baseDamage := 231 + 0.036*spell.MeleeAttackPower()
 
 			var result *core.SpellResult
 			if isShivProc {
