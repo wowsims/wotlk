@@ -61,7 +61,7 @@ func (priest *Priest) registerMindBlastSpell() {
 			}
 			spell.DealDamage(sim, result)
 
-			if priest.VampiricTouch != nil && priest.VampiricTouch.CurDot().IsActive() {
+			if priest.Talents.VampiricTouch && priest.VampiricTouch.CurDot().IsActive() {
 				priest.Env.Raid.ProcReplenishment(sim, replSrc)
 			}
 		},
