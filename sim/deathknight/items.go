@@ -3,7 +3,6 @@ package deathknight
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -447,7 +446,7 @@ func init() {
 		character := agent.GetCharacter()
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 
-		procAura := wotlk.MakeStackingAura(character, wotlk.StackingProcAura{
+		procAura := core.MakeStackingAura(character, core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Sigil of the Hanged Man Proc",
 				ActionID:  core.ActionID{ItemID: 50459},
