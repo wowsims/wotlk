@@ -145,6 +145,19 @@ func MakeProcTriggerAura(unit *Unit, config ProcTrigger) *Aura {
 	return unit.GetOrRegisterAura(aura)
 }
 
+type StackingStatAura struct {
+	Aura          Aura
+	BonusPerStack stats.Stats
+}
+
+func MakeStackingAura(character *Character, config StackingStatAura) *Aura {
+	bonusPerStack := config.BonusPerStack
+	config.Aura.OnStacksChange = func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
+		character.AddStatsDynamic(sim, bonusPerStack.Multiply(float64(newStacks-oldStacks)))
+	}
+	return character.RegisterAura(config.Aura)
+}
+
 // Returns the same Aura for chaining.
 func MakePermanent(aura *Aura) *Aura {
 	aura.Duration = NeverExpires
