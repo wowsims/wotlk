@@ -315,9 +315,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HunterPresets.MM_P1_PRESET.gear,
+				2: HunterPresets.MM_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HunterPresets.MM_P1_PRESET.gear,
+				2: HunterPresets.MM_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Beast Mastery Hunter',
@@ -339,9 +341,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HunterPresets.MM_P1_PRESET.gear,
+				2: HunterPresets.MM_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HunterPresets.MM_P1_PRESET.gear,
+				2: HunterPresets.MM_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Marksmanship Hunter',
@@ -363,9 +367,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HunterPresets.SV_P1_PRESET.gear,
+				2: HunterPresets.SV_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HunterPresets.SV_P1_PRESET.gear,
+				2: HunterPresets.SV_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Survival Hunter',
