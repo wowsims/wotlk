@@ -27,6 +27,7 @@ import {
 	SpecOptions,
 	getTalentTreePoints,
 	makeDefaultBlessings,
+	raceToFaction,
 	specTypeFunctions,
 	withSpecProto,
 	isTankSpec,
@@ -253,8 +254,8 @@ export class RaidWCLImporter extends Importer {
 					guild {
 						name faction {id}
 					}
-					playerDetails: table(fightIDs: [${urlData.fightID}], endTime: 99999999, dataType: Casts, killType: All, viewBy: Default)
-					allEvents: events(fightIDs: [${urlData.fightID}], dataType:All, endTime: 99999999, abilityID: 54172, limit: 50) { data }
+					playerDetails: table(fightIDs: [${urlData.fightID}], dataType: Casts, killType: All, viewBy: Default)
+					combatantInfoEvents: events(fightIDs: [${urlData.fightID}], dataType:CombatantInfo, limit: 50) { data }
 					fights(fightIDs: [${urlData.fightID}]) {
 						startTime, endTime, id, name
 					}
@@ -263,16 +264,15 @@ export class RaidWCLImporter extends Importer {
 						[racialSpells, professionSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
 					}", limit: 10000) { data }
 
-					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, endTime: 99999999, filterExpression: "${
+					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, filterExpression: "${
 						[externalCDSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
 					}", limit: 10000) { data }
 
-					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, endTime: 99999999, filterExpression: "${
+					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, filterExpression: "${
 						[samePartyHealingSpells, otherPartyHealingSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
 					}", limit: 10000) { data }
 
-
-					manaTideTotem: events(fightIDs: [${urlData.fightID}], dataType:Resources, endTime: 99999999, filterExpression: "ability.id = 39609", limit: 100) { data }
+					manaTideTotem: events(fightIDs: [${urlData.fightID}], dataType:Resources, filterExpression: "ability.id = 39609", limit: 100) { data }
 				}
 			}
 		}`;
@@ -282,17 +282,14 @@ export class RaidWCLImporter extends Importer {
 		const wclData = reportData.data.reportData.report; // TODO: Typings?
 		const playerData: wclPlayer[] = wclData.playerDetails.data.entries;
 
-		// If defined in log, use that faction. Otherwise default to UI setting.
-		const faction = (wclData.guild?.faction?.id || this.simUI.raidPicker?.getCurrentFaction() || Faction.Horde) as Faction;
-
 		TypedEvent.freezeAllAndDo(() => {
 			const eventID = TypedEvent.nextEventID();
-			const wclPlayers = playerData.map(wclPlayer => new WCLSimPlayer(wclPlayer, this.simUI, faction, eventID));
+			const wclPlayers = playerData.map(wclPlayer => new WCLSimPlayer(wclPlayer, this.simUI, eventID));
 			this.inferRace(eventID, wclData, wclPlayers);
 			this.inferProfessions(eventID, wclData, wclPlayers);
 			this.inferAssignments(eventID, wclData, wclPlayers);
 			this.inferPartyComposition(eventID, wclData, wclPlayers);
-			const numPaladins = playerData.filter(player => player.type == 'Paladin').length;
+			const numPaladins = wclPlayers.filter(player => player.player.getClass() == Class.ClassPaladin).length;
 			const settings = RaidSimSettings.create({
 				encounter: this.getEncounterProto(wclData),
 				raid: this.getRaidProto(wclPlayers),
@@ -308,14 +305,20 @@ export class RaidWCLImporter extends Importer {
 	}
 
 	private inferRace(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
-		wclData.allEvents.data.filter((ev: any) => ev.type == 'combatantinfo').forEach((combatantInfo: wclCombatantInfoEventData) => {
-			const targetPlayer = wclPlayers.find(player => player.id == combatantInfo.sourceID);
+		wclPlayers.forEach(p => p.player.setRace(eventID, Race.RaceUnknown));
+
+		// If defined in log, use that faction. Otherwise default to UI setting.
+		let faction = (wclData.guild?.faction?.id || this.simUI.raidPicker?.getCurrentFaction() || Faction.Horde) as Faction;
+
+		wclData.combatantInfoEvents.data.forEach((combatantInfo: wclCombatantInfoEvent) => {
 			combatantInfo.auras
 				.filter(aura => aura.ability == 28878)
 				.forEach(aura => {
 					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
-					if (sourcePlayer && targetPlayer) {
+					if (sourcePlayer && sourcePlayer.player.getRace() != Race.RaceDraenei) {
+						console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[Race.RaceDraenei]} from Heroic Presence aura event`);
 						sourcePlayer.player.setRace(eventID, Race.RaceDraenei);
+						faction = Faction.Alliance;
 					}
 				});
 		});
@@ -328,8 +331,15 @@ export class RaidWCLImporter extends Importer {
 				if (sourcePlayer) {
 					console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[spell.race]} from ${spell.name} event`);
 					sourcePlayer.player.setRace(eventID, spell.race);
+					faction = raceToFaction[spell.race];
 				}
 			});
+		});
+
+		wclPlayers.forEach(p => {
+			if (p.player.getRace() == Race.RaceUnknown) {
+				p.player.setRace(eventID, p.preset.defaultFactionRaces[faction]);
+			}
 		});
 	}
 
@@ -415,16 +425,14 @@ export class RaidWCLImporter extends Importer {
 			}
 		});
 
-		wclData.allEvents.data.filter((ev: any) => ev.type == 'combatantinfo').forEach((combatantInfo: wclCombatantInfoEventData) => {
+		wclData.combatantInfoEvents.data.forEach((combatantInfo: wclCombatantInfoEvent) => {
 			const targetPlayer = wclPlayers.find(player => player.id == combatantInfo.sourceID);
 			combatantInfo.auras
 				.filter(aura => aura.ability == 28878)
 				.forEach(aura => {
 					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
 					if (sourcePlayer && targetPlayer) {
-						sourcePlayer.addPlayerInParty(targetPlayer);
-						targetPlayer.addPlayerInParty(sourcePlayer);
-						console.log(`Inferring players ${sourcePlayer.name} and ${targetPlayer.name} in same party from Heroic Presence`);
+						setPlayersInParty(sourcePlayer, targetPlayer, 'Heroic Presence');
 					}
 				});
 		});
@@ -523,7 +531,6 @@ class WCLSimPlayer {
 	private readonly simUI: RaidSimUI;
 	private readonly fullType: string;
 	private readonly spec: Spec|null;
-	private readonly faction: Faction;
 
 	readonly player: Player<any>;
 	readonly preset: PresetSpecSettings<any>;
@@ -532,14 +539,13 @@ class WCLSimPlayer {
 
 	readonly playersInParty: Array<WCLSimPlayer> = [];
 
-	constructor(data: wclPlayer, simUI: RaidSimUI, faction: Faction = Faction.Unknown, eventID: EventID) {
+	constructor(data: wclPlayer, simUI: RaidSimUI, eventID: EventID) {
 		this.simUI = simUI;
 		this.data = data;
 
 		this.name = data.name;
 		this.id = data.id;
 		this.type = data.type;
-		this.faction = faction;
 
 		const wclSpec = data.icon.split('-')[1];
 		this.fullType = this.type + wclSpec;
@@ -563,7 +569,6 @@ class WCLSimPlayer {
 
 		// Apply preset defaults.
 		this.player.applySharedDefaults(eventID);
-		this.player.setRace(eventID, this.preset.defaultFactionRaces[this.faction]);
 		this.player.setTalentsString(eventID, this.preset.talents.talentsString);
 		this.player.setGlyphs(eventID, this.preset.talents.glyphs!);
 		this.player.setConsumes(eventID, this.preset.consumes);
@@ -749,9 +754,9 @@ interface wclHealEvent {
 	amount: number;
 }
 
-interface wclCombatantInfoEventData {
+interface wclCombatantInfoEvent {
+	type: 'combatantinfo';
 	sourceID: number;
-	type: string;
 	auras: {
 		source: number;
 		ability: number;
