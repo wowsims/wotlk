@@ -182,10 +182,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
 	rogue.registerAmbushSpell()
-
-	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
-		rogue.registerEnvenom()
-	}
+	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
