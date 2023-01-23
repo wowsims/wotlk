@@ -5,6 +5,7 @@ import { TypedEvent } from '../typed_event';
 import {
 	Class,
 	EquipmentSpec,
+	ItemSlot,
 	Glyphs,
 	ItemSpec,
 	Profession,
@@ -16,6 +17,7 @@ import { Database } from '../proto_utils/database';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
 import { GlyphConfig } from '../talents/glyphs_picker';
+import { buf2hex } from '../utils';
 
 export abstract class Importer extends Popup {
 	protected readonly textElem: HTMLTextAreaElement;
@@ -97,7 +99,7 @@ export abstract class Importer extends Popup {
 		TypedEvent.freezeAllAndDo(() => {
 			simUI.player.setRace(eventID, race);
 			simUI.player.setGear(eventID, gear);
-			if (talentsStr) {
+			if (talentsStr && talentsStr != '--') {
 				simUI.player.setTalentsString(eventID, talentsStr);
 			}
 			if (glyphs) {
@@ -208,6 +210,159 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
 	}
+}
+
+export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends Importer {
+	private readonly simUI: IndividualSimUI<SpecType>;
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+		super(parent, simUI, 'WoWHead Import', true);
+		this.simUI = simUI;
+
+		this.descriptionElem.innerHTML = `
+			<p>
+				Import settings from <a href="https://www.wowhead.com/wotlk/gear-planner" target="_blank">WoWHead Gear Planner</a>.
+			</p>
+			<p>
+				This feature imports gear, race, and (optionally) talents. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
+			</p>
+			<p>
+				To import, paste the gear planner link below and click, 'Import'.
+			</p>
+		`;
+	}
+
+	onImport(url: string) {
+		const match = url.match(/www\.wowhead\.com\/wotlk\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
+		if (!match) {
+			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/wotlk/gear-planner/CLASS/RACE/XXXX"`);
+		}
+
+		// Parse all the settings.
+		const charClass = nameToClass(match[1].replaceAll('-', ' '));
+		if (charClass == Class.ClassUnknown) {
+			throw new Error('Could not parse Class: ' + match[1]);
+		}
+
+		const race = nameToRace(match[2].replaceAll('-', ' '));
+		if (race == Race.RaceUnknown) {
+			throw new Error('Could not parse Race: ' + match[2]);
+		}
+
+		const base64Data = match[3].replaceAll('_', '/').replaceAll('-', '+');
+		//console.log('Base64: ' + base64Data);
+		const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0))
+		//console.log('Hex: ' + buf2hex(data));
+
+		// Binary schema
+		// Byte 00: ??
+		// Byte 01: ?? Seems related to aesthetics (e.g. body type)
+		// Byte 02: 8-bit Player Level
+		// Byte 03: 8-bit length of talents bytes
+		// Next N Bytes: Talents in hex string format
+
+		// Talent hex string looks like '230005232100330150323102505321f03f023203001f'
+		// Just like regular wowhead talents string except 'f' instead of '-'.
+		const numTalentBytes = data[3];
+		const talentBytes = data.subarray(4, 4 + numTalentBytes);
+		const talentsHexStr = buf2hex(talentBytes);
+		const talentsStr = talentsHexStr.split('f').slice(0, 3).join('-');
+		//console.log('Talents: ' + talentsStr);
+
+		let cur = 4 + numTalentBytes;
+		const numGlyphsBytes = data[cur];
+		cur++;
+		const glyphsBytes = data.subarray(cur, cur + numGlyphsBytes);
+		const gearBytes = data.subarray(cur + numGlyphsBytes);
+		//console.log(`Next ${numGlyphsBytes} bytes: ${buf2hex(glyphsBytes)}`);
+		//console.log(`Remaining ${gearBytes.length} bytes: ${buf2hex(gearBytes)}`);
+
+		// First byte in glyphs section seems to always be 0x30
+		cur++;
+		// TODO: Figure out glyphs format
+
+		// Binary schema for each item:
+		// 8-bit slotNumber, high bit = is enchanted
+		// 8-bit upper 3 bits for gem count
+		// 16-bit item id
+		// if enchant bit is set:
+		//   8-bit ??, possibly enchant position for multiple enchants?
+		//   16-bit enchant id
+		// for each gem:
+		//   8-bit upper 3 bits for gem position
+		//   16-bit gem item id
+		const equipmentSpec = EquipmentSpec.create();
+		cur = 0;
+		while (cur < gearBytes.length) {
+			const itemSpec = ItemSpec.create();
+			const slotId = gearBytes[cur] & 0b01111111;
+			const isEnchanted = Boolean(gearBytes[cur] & 0b10000000);
+			cur++;
+
+			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
+			cur++;
+
+			itemSpec.id = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+			cur += 2;
+			//console.log(`Slot ID: ${slotId}, isEnchanted: ${isEnchanted}, numGems: ${numGems}, itemID: ${itemSpec.id}`);
+
+			if (isEnchanted) {
+				// Ignore first byte, seems to always be 0?
+				cur++;
+
+				// Note: this is the enchant SPELL id, not the effect ID.
+				const enchantSpellId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				itemSpec.enchant = this.simUI.sim.db.enchantSpellIdToEffectId(enchantSpellId);
+				cur += 2;
+				//console.log(`Enchant ID: ${itemSpec.enchant}`);
+			}
+
+			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
+				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
+				cur++;
+
+				const gemId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				cur += 2;
+				//console.log(`Gem position: ${gemPosition}, gemID: ${gemId}`);
+
+				if (!itemSpec.gems) {
+					itemSpec.gems = [];
+				}
+				while (itemSpec.gems.length < gemPosition) {
+					itemSpec.gems.push(0);
+				}
+				itemSpec.gems[gemPosition] = gemId;
+			}
+
+			// Ignore tabard / shirt slots
+			const itemSlotEntry = Object.entries(IndividualWowheadGearPlannerImporter.slotIDs).find(e => e[1] == slotId);
+			if (itemSlotEntry != null) {
+				equipmentSpec.items.push(itemSpec);
+			}
+		}
+		const gear = this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
+
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
+	}
+
+	static slotIDs: Record<ItemSlot, number> = {
+		[ItemSlot.ItemSlotHead]: 1,
+		[ItemSlot.ItemSlotNeck]: 2,
+		[ItemSlot.ItemSlotShoulder]: 3,
+		[ItemSlot.ItemSlotBack]: 15,
+		[ItemSlot.ItemSlotChest]: 5,
+		[ItemSlot.ItemSlotWrist]: 9,
+		[ItemSlot.ItemSlotHands]: 10,
+		[ItemSlot.ItemSlotWaist]: 6,
+		[ItemSlot.ItemSlotLegs]: 7,
+		[ItemSlot.ItemSlotFeet]: 8,
+		[ItemSlot.ItemSlotFinger1]: 11,
+		[ItemSlot.ItemSlotFinger2]: 12,
+		[ItemSlot.ItemSlotTrinket1]: 13,
+		[ItemSlot.ItemSlotTrinket2]: 14,
+		[ItemSlot.ItemSlotMainHand]: 16,
+		[ItemSlot.ItemSlotOffHand]: 17,
+		[ItemSlot.ItemSlotRanged]: 18,
+	};
 }
 
 export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
