@@ -80,6 +80,10 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		},
 	})
 
+	if dpsDk.Talents.SummonGargoyle && dpsDk.Rotation.UseGargoyle && dpsDk.Rotation.EnableWeaponSwap {
+		dpsDk.EnableItemSwap(dpsDk.Rotation.WeaponSwap, dpsDk.DefaultMeleeCritMultiplier(), dpsDk.DefaultMeleeCritMultiplier(), 0)
+	}
+
 	dpsDk.br.dk = dpsDk
 	dpsDk.sr.dk = dpsDk
 	dpsDk.ur.dk = dpsDk
@@ -149,9 +153,6 @@ func (dk *DpsDeathknight) SetupRotations() {
 		}
 	}
 
-	dk.sr.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	dk.sr.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-
 	dk.RotationSequence.Clear()
 
 	dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
@@ -203,7 +204,10 @@ func (dk *DpsDeathknight) Initialize() {
 	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
 	dk.setupGargProcTrackers()
 
+	dk.sr.Initialize(dk)
+	dk.br.Initialize(dk)
 	dk.fr.Initialize(dk)
+	dk.ur.Initialize(dk)
 }
 
 func (dk *DpsDeathknight) setupGargProcTrackers() {
@@ -342,13 +346,19 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 				if aura != nil && aura.IsActive() {
 					return true
 				}
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration-10*time.Second && !isPotion {
+					return true
+				}
+				if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
+					return true
+				}
 
 				return false
 			} else {
 				if dk.ur.activatingGargoyle {
 					return true
 				}
-				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration-10*time.Second && !isPotion {
 					return true
 				}
 				if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {

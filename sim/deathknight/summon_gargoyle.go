@@ -82,6 +82,9 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 	if dk.nervesOfColdSteelActive() {
 		nocsHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
 	}
+	if dk.HasDraeneiHitAura {
+		nocsHit = nocsHit + 1.0
+	}
 
 	var gargoyleDynamicStatInheritance core.PetStatInheritance = nil
 	if nerfedGargoyle {

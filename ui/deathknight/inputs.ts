@@ -1,4 +1,4 @@
-import { RaidTarget, Spec } from '../core/proto/common.js';
+import { ItemSlot, RaidTarget, Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
@@ -355,6 +355,23 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().frostRotationType == FrostRotationType.Custom,
 });
 
+export const EnableWeaponSwap = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'enableWeaponSwap',
+	label: 'Enable Weapon Swapping',
+	showWhen: (player: Player<Spec.SpecDeathknight>) =>  player.getRotation().useGargoyle,
+})
+
+export const WeaponSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecDeathknight>({
+	fieldName: 'weaponSwap',
+	values: [
+		ItemSlot.ItemSlotMainHand,
+		ItemSlot.ItemSlotOffHand,
+		//ItemSlot.ItemSlotRanged, Not support yet
+	],
+	labelTooltip: '<b>Berserking</b> will be equipped when FC has procced and Berserking has not.<br><br><b>Black Magic</br> will be prioed to swap during gargoyle or if gargoyle will be on CD for full BM Icd.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useGargoyle && player.getRotation().enableWeaponSwap,
+})
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FrostRotationType>({
@@ -371,6 +388,8 @@ export const DeathKnightRotationConfig = {
 		UseAutoRotation,
 		BloodTapGhoulFrenzy,
 		UseGargoyle,
+		EnableWeaponSwap,
+		WeaponSwapInputs,
 		UseEmpowerRuneWeapon,
 		HoldErwArmy,
 		BloodTapInput,

@@ -22,6 +22,9 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 	br.drwMaxDelay = -1
 }
 
+func (br *BloodRotation) Initialize(dk *DpsDeathknight) {
+}
+
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	// Early exit at end of fight
 	if sim.GetRemainingDuration() < 10*time.Second {

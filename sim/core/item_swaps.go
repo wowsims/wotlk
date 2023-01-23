@@ -137,7 +137,8 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	}
 
 	if character.AutoAttacks.IsEnabled() && meeleWeaponSwapped && sim.CurrentTime > 0 {
-		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
+		character.AutoAttacks.CancelAutoSwing(sim)
+		character.AutoAttacks.restartMelee(sim)
 	}
 
 	if useGCD {
