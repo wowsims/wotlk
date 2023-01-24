@@ -2,7 +2,6 @@ package rogue
 
 import (
 	"math"
-	"reflect"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -429,7 +428,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		eviscerate.MinimumComboPoints = 1
 		rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 	} else {
-		if reflect.TypeOf(rogue.Rotation) == reflect.TypeOf(rogue.Rotation.CombatFinisherPriority) {
+		if rogue.PrimaryTalentTree == CombatTree {
 			switch rogue.Rotation.CombatFinisherPriority {
 			case proto.Rogue_Rotation_RuptureEviscerate:
 				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
