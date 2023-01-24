@@ -643,3 +643,362 @@ export const FROST_P1_PRESET = {
 		}
 	]}`),
 };
+
+export const ARCANE_P2_PRESET = {
+	name: 'Arcane P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45243,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46134,
+			"enchant": 3810,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46130,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45665,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"gems": [
+				39998,
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45488,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				40051,
+				40026
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 46046,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
+	]}`),
+};
+
+export const FIRE_P2_PRESET = {
+	name: 'Fire P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 46129,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45133,
+			"gems": [
+				40048
+			]
+		},
+		{
+			"id": 46134,
+			"enchant": 3810,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45242,
+			"enchant": 3722,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46130,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45665,
+			"enchant": 3604,
+			"gems": [
+				40026,
+				40048,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"gems": [
+				40048,
+				40048,
+				39998
+			]
+		},
+		{
+			"id": 46133,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45537,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				40026
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46046,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
+	]}`),
+};
+
+export const FROST_P2_PRESET = {
+	name: 'Frost P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45133,
+			"gems": [
+				40051
+			]
+		},
+		{
+			"id": 46134,
+			"enchant": 3810,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46130,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45665,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"gems": [
+				40049,
+				40049,
+				39998
+			]
+		},
+		{
+			"id": 45488,
+			"enchant": 3719,
+			"gems": [
+				39998,
+				40051,
+				40026
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				40049
+			]
+		},
+		{
+			"id": 46046,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
+	]}`),
+};
