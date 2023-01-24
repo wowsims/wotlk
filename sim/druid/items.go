@@ -3,8 +3,6 @@ package druid
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common/wotlk"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -324,8 +322,7 @@ func init() {
 	core.NewItemEffect(32257, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 
-		actionID := core.ActionID{ItemID: 32257}
-		procAura := druid.NewTemporaryStatsAura("Idol of the White Stag Proc", actionID, stats.Stats{stats.AttackPower: 94}, time.Second*20)
+		procAura := druid.NewTemporaryStatsAura("Idol of the White Stag Proc", core.ActionID{ItemID: 32257}, stats.Stats{stats.AttackPower: 94}, time.Second*20)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the White Stag",
@@ -340,8 +337,7 @@ func init() {
 	core.NewItemEffect(33510, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 
-		actionID := core.ActionID{ItemID: 33510}
-		procAura := druid.NewTemporaryStatsAura("Idol of the Unseen Moon Proc", actionID, stats.Stats{stats.SpellPower: 140}, time.Second*10)
+		procAura := druid.NewTemporaryStatsAura("Idol of the Unseen Moon Proc", core.ActionID{ItemID: 33510}, stats.Stats{stats.SpellPower: 140}, time.Second*10)
 
 		druid.RegisterAura(core.Aura{
 			Label:    "Idol of the Unseen Moon",
@@ -368,12 +364,10 @@ func init() {
 	core.NewItemEffect(50457, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 
-		actionID := core.ActionID{ItemID: 50457}
-
-		procAura := wotlk.MakeStackingAura(agent.GetCharacter(), wotlk.StackingProcAura{
+		procAura := core.MakeStackingAura(agent.GetCharacter(), core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Idol of the Lunar Eclipse proc",
-				ActionID:  actionID,
+				ActionID:  core.ActionID{ItemID: 50457},
 				Duration:  time.Second * 15,
 				MaxStacks: 5,
 			},
@@ -414,8 +408,7 @@ func init() {
 
 	core.NewItemEffect(45509, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 45509}
-		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", actionID, stats.Stats{stats.Agility: 162}, time.Second*12)
+		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", core.ActionID{ItemID: 45509}, stats.Stats{stats.Agility: 162}, time.Second*12)
 
 		// This proc chance may need confirmation, going off of 'Idol of Terror' values currently
 		procChanceBear := 0.50
@@ -483,11 +476,10 @@ func init() {
 
 	core.NewItemEffect(50456, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 50456}
-		procAura := wotlk.MakeStackingAura(agent.GetCharacter(), wotlk.StackingProcAura{
+		procAura := core.MakeStackingAura(agent.GetCharacter(), core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Idol of the Crying Moon Proc",
-				ActionID:  actionID,
+				ActionID:  core.ActionID{ItemID: 50456},
 				Duration:  time.Second * 15,
 				MaxStacks: 5,
 			},
@@ -508,8 +500,7 @@ func init() {
 
 	core.NewItemEffect(33947, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 33947}
-		procAura := druid.NewTemporaryStatsAura("Vengeful Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.Resilience: 34}, time.Second*6)
+		procAura := druid.NewTemporaryStatsAura("Vengeful Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 33947}, stats.Stats{stats.Resilience: 34}, time.Second*6)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Vengeful Gladiator's Idol of Resolve",
@@ -524,8 +515,7 @@ func init() {
 
 	core.NewItemEffect(35019, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 35019}
-		procAura := druid.NewTemporaryStatsAura("Brutal Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.Resilience: 39}, time.Second*6)
+		procAura := druid.NewTemporaryStatsAura("Brutal Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 35019}, stats.Stats{stats.Resilience: 39}, time.Second*6)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Brutal Gladiator's Idol of Resolve",
@@ -540,8 +530,7 @@ func init() {
 
 	core.NewItemEffect(42574, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 42574}
-		procAura := druid.NewTemporaryStatsAura("Savage Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 94}, time.Second*6)
+		procAura := druid.NewTemporaryStatsAura("Savage Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42574}, stats.Stats{stats.AttackPower: 94}, time.Second*6)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Savage Gladiator's Idol of Resolve",
@@ -556,8 +545,7 @@ func init() {
 
 	core.NewItemEffect(42587, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 42587}
-		procAura := druid.NewTemporaryStatsAura("Hateful Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 106}, time.Second*6)
+		procAura := druid.NewTemporaryStatsAura("Hateful Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42587}, stats.Stats{stats.AttackPower: 106}, time.Second*6)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Hateful Gladiator's Idol of Resolve",
@@ -572,8 +560,7 @@ func init() {
 
 	core.NewItemEffect(42588, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 42588}
-		procAura := druid.NewTemporaryStatsAura("Deadly Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 120}, time.Second*10)
+		procAura := druid.NewTemporaryStatsAura("Deadly Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42588}, stats.Stats{stats.AttackPower: 120}, time.Second*10)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Deadly Gladiator's Idol of Resolve",
@@ -588,8 +575,7 @@ func init() {
 
 	core.NewItemEffect(42589, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 42589}
-		procAura := druid.NewTemporaryStatsAura("Furious Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 152}, time.Second*10)
+		procAura := druid.NewTemporaryStatsAura("Furious Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42589}, stats.Stats{stats.AttackPower: 152}, time.Second*10)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Furious Gladiator's Idol of Resolve",
@@ -604,8 +590,7 @@ func init() {
 
 	core.NewItemEffect(42591, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 42591}
-		procAura := druid.NewTemporaryStatsAura("Relentless Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 172}, time.Second*10)
+		procAura := druid.NewTemporaryStatsAura("Relentless Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42591}, stats.Stats{stats.AttackPower: 172}, time.Second*10)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Relentless Gladiator's Idol of Resolve",
@@ -620,8 +605,7 @@ func init() {
 
 	core.NewItemEffect(51429, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
-		actionID := core.ActionID{ItemID: 51429}
-		procAura := druid.NewTemporaryStatsAura("Wrathful Gladiator's Idol of Resolve Proc", actionID, stats.Stats{stats.AttackPower: 204}, time.Second*10)
+		procAura := druid.NewTemporaryStatsAura("Wrathful Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 51429}, stats.Stats{stats.AttackPower: 204}, time.Second*10)
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Wrathful Gladiator's Idol of Resolve",

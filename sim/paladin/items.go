@@ -382,8 +382,16 @@ func init() {
 
 	core.NewItemEffect(50455, func(agent core.Agent) {
 		paladin := agent.(PaladinAgent).GetPaladin()
-		procAura := paladin.NewTemporaryStatsAura("Libram Of Three Truths Proc", core.ActionID{SpellID: 71186}, stats.Stats{stats.Strength: 44}, time.Second*15)
-		procAura.MaxStacks = 5
+
+		procAura := core.MakeStackingAura(paladin.GetCharacter(), core.StackingStatAura{
+			Aura: core.Aura{
+				Label:     "Libram of Three Truths Proc",
+				ActionID:  core.ActionID{SpellID: 71186},
+				Duration:  time.Second * 15,
+				MaxStacks: 5,
+			},
+			BonusPerStack: stats.Stats{stats.Strength: 44},
+		})
 
 		paladin.RegisterAura(core.Aura{
 			Label:    "Libram Of Three Truths",

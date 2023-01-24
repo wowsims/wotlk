@@ -28,6 +28,9 @@ func RegisterRogue() {
 const (
 	SpellFlagBuilder  = core.SpellFlagAgentReserved2
 	SpellFlagFinisher = core.SpellFlagAgentReserved3
+	AssassinTree      = 0
+	CombatTree        = 1
+	SubtletyTree      = 2
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}
@@ -44,6 +47,7 @@ type Rogue struct {
 	priorityItems      []roguePriorityItem
 	rotationItems      []rogueRotationItem
 	assassinationPrios []assassinationPrio
+	subtletyPrios      []subtletyPrio
 	bleedCategory      *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
@@ -61,7 +65,9 @@ type Rogue struct {
 	FanOfKnives      *core.Spell
 	Feint            *core.Spell
 	Garrote          *core.Spell
+	Ambush           *core.Spell
 	Hemorrhage       *core.Spell
+	GhostlyStrike    *core.Spell
 	HungerForBlood   *core.Spell
 	InstantPoison    [3]*core.Spell
 	WoundPoison      [3]*core.Spell
@@ -69,6 +75,13 @@ type Rogue struct {
 	Shiv             *core.Spell
 	SinisterStrike   *core.Spell
 	TricksOfTheTrade *core.Spell
+	Shadowstep       *core.Spell
+	Preparation      *core.Spell
+	Premeditation    *core.Spell
+	ShadowDance      *core.Spell
+	ColdBlood        *core.Spell
+	MasterOfSubtlety *core.Spell
+	Overkill         *core.Spell
 
 	Envenom      [6]*core.Spell
 	Eviscerate   [6]*core.Spell
@@ -90,6 +103,11 @@ type Rogue struct {
 	OverkillAura         *core.Aura
 	SliceAndDiceAura     *core.Aura
 	TricksOfTheTradeAura *core.Aura
+	MasterOfSubtletyAura *core.Aura
+	ShadowstepAura       *core.Aura
+	ShadowDanceAura      *core.Aura
+	DirtyDeedsAura       *core.Aura
+	HonorAmongThieves    *core.Aura
 
 	masterPoisonerDebuffAuras []*core.Aura
 	savageCombatDebuffAuras   []*core.Aura
@@ -163,10 +181,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSliceAndDice()
 	rogue.registerThistleTeaCD()
 	rogue.registerTricksOfTheTradeSpell()
-
-	if rogue.Talents.MasterPoisoner > 0 || rogue.Talents.CutToTheChase > 0 || rogue.Talents.Mutilate {
-		rogue.registerEnvenom()
-	}
+	rogue.registerAmbushSpell()
+	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
@@ -185,15 +201,35 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier += multiplier
 }
 
+func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
+	const criticalPerSecond = 1
+	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
+	return criticalPerSecond * honorAmongThievesChance
+}
+
 func (rogue *Rogue) Reset(sim *core.Simulation) {
 	for _, mcd := range rogue.GetMajorCooldowns() {
 		mcd.Disable()
 	}
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	if rogue.OverkillAura != nil && rogue.Options.StartingOverkillDuration > 0 {
-		rogue.OverkillAura.Activate(sim)
-		rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(rogue.Options.StartingOverkillDuration))
+	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
+	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
+		length := rogue.Options.StartingOverkillDuration
+		if rogue.OverkillAura != nil {
+			if rogue.Rotation.OpenWithGarrote {
+				length = 20
+			}
+			rogue.OverkillAura.Activate(sim)
+			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+		}
+		if rogue.MasterOfSubtletyAura != nil {
+			if rogue.Rotation.OpenWithGarrote {
+				length = 6
+			}
+			rogue.MasterOfSubtletyAura.Activate(sim)
+			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+		}
 	}
 	rogue.setPriorityItems(sim)
 }

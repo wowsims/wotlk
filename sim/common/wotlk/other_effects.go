@@ -358,7 +358,7 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 50259}
 
-		activeAura := MakeStackingAura(character, StackingProcAura{
+		activeAura := core.MakeStackingAura(character, core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Nevermelting Ice Crystal",
 				ActionID:  actionID,
@@ -488,7 +488,7 @@ func init() {
 			character := agent.GetCharacter()
 			actionID := core.ActionID{ItemID: itemID}
 
-			procAura := MakeStackingAura(character, StackingProcAura{
+			procAura := core.MakeStackingAura(character, core.StackingStatAura{
 				Aura: core.Aura{
 					Label:     name,
 					ActionID:  actionID,

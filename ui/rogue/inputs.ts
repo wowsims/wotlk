@@ -7,6 +7,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
 } from '../core/proto/rogue.js';
@@ -112,7 +113,18 @@ export const RogueRotationConfig = {
 			fieldName: 'openWithGarrote',
 			label: 'Open with Garrote',
 			labelTooltip: 'Open the encounter by casting Garrote.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'openWithShadowstep',
+			label: 'Open with Shadowstep',
+			labelTooltip: 'Open the encounter by casting Shadowstep.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().shadowstep
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'openWithPremeditation',
+			label: 'Open with Premeditation',
+			labelTooltip: 'Open the encounter by casting Premeditation.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().premeditation
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'useFeint',

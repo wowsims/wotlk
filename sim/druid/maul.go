@@ -17,7 +17,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Maul = druid.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26996},
+		ActionID:    core.ActionID{SpellID: 48480},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,

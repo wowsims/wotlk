@@ -7,10 +7,13 @@ import {
 	Stat
 } from '../proto/common';
 import { IndividualSimSettings } from '../proto/ui';
-import { classNames } from '../proto_utils/names';
+import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
 import { downloadString } from '../utils';
+import { IndividualWowheadGearPlannerImporter } from './importers';
+
+import * as Mechanics from '../constants/mechanics';
 
 export abstract class Exporter extends Popup {
 	private readonly textElem: HTMLElement;
@@ -87,6 +90,88 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 
 	getData(): string {
 		return JSON.stringify(IndividualSimSettings.toJson(this.simUI.toProto()), null, 2);
+	}
+}
+
+export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends Exporter {
+	private readonly simUI: IndividualSimUI<SpecType>;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+		super(parent, simUI, 'WoWHead Export', true);
+		this.simUI = simUI;
+		this.init();
+	}
+
+	getData(): string {
+		const player = this.simUI.player;
+
+		const classStr = classNames[player.getClass()].replace(' ', '-').toLowerCase();
+		const raceStr = raceNames[player.getRace()].replace(' ', '-').toLowerCase();
+		let url = `https://www.wowhead.com/wotlk/gear-planner/${classStr}/${raceStr}/`;
+
+		// See comments on the importer for how the binary formatting is structured.
+		let bytes: Array<number> = [];
+		bytes.push(6);
+		bytes.push(0);
+		bytes.push(Mechanics.CHARACTER_LEVEL);
+
+		let talentsStr = player.getTalentsString().replace('-', 'f');
+		if (talentsStr.length % 2 == 1) {
+			talentsStr += '0';
+		}
+		bytes.push(talentsStr.length / 2);
+		for (let i = 0; i < talentsStr.length; i += 2) {
+			bytes.push(parseInt(talentsStr.substring(i, i + 2), 16));
+		}
+
+		bytes.push(0); // Number of glyph bytes. TODO: Export glyphs.
+
+		const to2Bytes = (val: number): Array<number> => {
+			const lowBits = val % 256;
+			return [
+				(val - lowBits) >> 8,
+				lowBits,
+			];
+		};
+
+		const gear = player.getGear();
+		let gearBytes: Array<number> = [];
+		const isBlacksmithing = player.isBlacksmithing();
+		gear.getItemSlots().forEach(itemSlot => {
+			const item = gear.getEquippedItem(itemSlot);
+			if (!item) {
+				return;
+			}
+
+			let slotId = IndividualWowheadGearPlannerImporter.slotIDs[itemSlot];
+			if (item.enchant) {
+				slotId = slotId | 0b10000000;
+			}
+			gearBytes.push(slotId);
+			gearBytes.push(item.curGems(isBlacksmithing).length);
+			gearBytes = gearBytes.concat(to2Bytes(item.item.id));
+
+			if (item.enchant) {
+				gearBytes.push(0);
+				gearBytes = gearBytes.concat(to2Bytes(item.enchant.spellId));
+			}
+
+			item.gems.slice(0, item.numSockets(isBlacksmithing)).forEach((gem, i) => {
+				if (gem) {
+					gearBytes.push(i << 5);
+					gearBytes = gearBytes.concat(to2Bytes(gem.id));
+				}
+			});
+		});
+
+		bytes = bytes.concat(to2Bytes(gearBytes.length));
+		bytes = bytes.concat(gearBytes)
+
+		const binaryString = bytes.map(byte => byte.toString(16)).join('');
+		const b64encoded = btoa(binaryString);
+		const b64converted = b64encoded.replaceAll('/', '_').replaceAll('+', '-');
+
+		return url + b64converted;
 	}
 }
 

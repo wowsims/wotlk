@@ -17,6 +17,7 @@ import {
 	Rogue_Rotation_Frequency,
 	Rogue_Rotation_AssassinationPriority,
 	Rogue_Rotation_CombatPriority,
+	Rogue_Rotation_SubtletyPriority,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -47,12 +48,25 @@ export const AssassinationTalents = {
 	}),
 };
 
+export const SubtletyTalents = {
+	name: 'Subtlety',
+	data: SavedTalents.create({
+		talentsString: '30522300014--5020032030321121350115031151',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfBackstab,
+			major2: RogueMajorGlyph.GlyphOfGarrote,
+			major3: RogueMajorGlyph.GlyphOfShadowDance,
+		})
+	}),
+}
+
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
 	minimumComboPointsExposeArmor: 4,
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
 	envenomEnergyThreshold: 60,
