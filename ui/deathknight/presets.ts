@@ -712,7 +712,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 		},
 		{
 			"id": 40703,
-			"enchant": 3790
+			"enchant": 3368
 		},
 		{
 			"id": 40867
@@ -920,7 +920,7 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 		  },
 		  {
 			"id": 46036,
-			"enchant": 3790,
+			"enchant": 3368,
 			"gems": [
 			  39996
 			]
