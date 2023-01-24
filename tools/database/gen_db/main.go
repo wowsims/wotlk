@@ -33,6 +33,7 @@ func main() {
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
+	db.GlyphIDs = getGlyphIDsFromJson(fmt.Sprintf("%s/glyph_id_map.json", inputsDir))
 
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {
@@ -270,4 +271,36 @@ func GetAllTalentSpellIds(inputsDir *string) map[string][]int32 {
 
 	return ret_db
 
+}
+
+type GlyphID struct {
+	ItemID  int32 `json:"itemId"`
+	SpellID int32 `json:"spellId"`
+}
+
+func getGlyphIDsFromJson(infile string) []*proto.GlyphID {
+	data, err := os.ReadFile(infile)
+	if err != nil {
+		log.Fatalf("failed to load glyph json file: %s", err)
+	}
+
+	var buf bytes.Buffer
+	err = json.Compact(&buf, []byte(data))
+	if err != nil {
+		log.Fatalf("failed to compact json: %s", err)
+	}
+
+	var glyphIDs []GlyphID
+
+	err = json.Unmarshal(buf.Bytes(), &glyphIDs)
+	if err != nil {
+		log.Fatalf("failed to parse glyph IDs to json %s", err)
+	}
+
+	return core.MapSlice(glyphIDs, func(gid GlyphID) *proto.GlyphID {
+		return &proto.GlyphID{
+			ItemId:  gid.ItemID,
+			SpellId: gid.SpellID,
+		}
+	})
 }

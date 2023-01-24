@@ -7,6 +7,7 @@ import {
 	PresetTarget,
 } from '../proto/common.js';
 import {
+	GlyphID,
 	IconData,
 	UIDatabase,
 	UIEnchant as Enchant,
@@ -78,13 +79,12 @@ export class Database {
 	private readonly gems: Record<number, Gem> = {};
 	private readonly presetEncounters: Record<string, PresetEncounter> = {};
 	private readonly presetTargets: Record<string, PresetTarget> = {};
-	private readonly itemIcons: Record<number, Promise<IconData>>;
-	private readonly spellIcons: Record<number, Promise<IconData>>;
+	private readonly itemIcons: Record<number, Promise<IconData>> = {};
+	private readonly spellIcons: Record<number, Promise<IconData>> = {};
+	private readonly glyphIds: Array<GlyphID> = [];
 	private loadedLeftovers: boolean = false;
 
 	private constructor(db: UIDatabase) {
-		this.itemIcons = {};
-		this.spellIcons = {};
 		this.loadProto(db);
 	}
 
@@ -105,18 +105,19 @@ export class Database {
 		db.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
 
-		db.items.forEach(item => this.itemIcons[item.id] = new Promise((resolve, _) => resolve(IconData.create({
+		db.items.forEach(item => this.itemIcons[item.id] = Promise.resolve(IconData.create({
 			id: item.id,
 			name: item.name,
 			icon: item.icon,
-		}))));
-		db.gems.forEach(gem => this.itemIcons[gem.id] = new Promise((resolve, _) => resolve(IconData.create({
+		})));
+		db.gems.forEach(gem => this.itemIcons[gem.id] = Promise.resolve(IconData.create({
 			id: gem.id,
 			name: gem.name,
 			icon: gem.icon,
-		}))));
-		db.itemIcons.forEach(data => this.itemIcons[data.id] = new Promise((resolve, _) => resolve(data)));
-		db.spellIcons.forEach(data => this.spellIcons[data.id] = new Promise((resolve, _) => resolve(data)));
+		})));
+		db.itemIcons.forEach(data => this.itemIcons[data.id] = Promise.resolve(data));
+		db.spellIcons.forEach(data => this.spellIcons[data.id] = Promise.resolve(data));
+		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
 	getItems(slot: ItemSlot): Array<Item> {
@@ -188,6 +189,13 @@ export class Database {
 	enchantSpellIdToEffectId(enchantSpellId: number): number {
 		const enchant = Object.values(this.enchantsBySlot).flat().find(enchant => enchant.spellId == enchantSpellId);
 		return enchant ? enchant.effectId : 0;
+	}
+
+	glyphItemToSpellId(itemId: number): number {
+		return this.glyphIds.find(gid => gid.itemId == itemId)?.spellId || 0;
+	}
+	glyphSpellToItemId(spellId: number): number {
+		return this.glyphIds.find(gid => gid.spellId == spellId)?.itemId || 0;
 	}
 
 	getPresetEncounter(path: string): PresetEncounter | null {
