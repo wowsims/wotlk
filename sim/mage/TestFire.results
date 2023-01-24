@@ -432,8 +432,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-KirinTorGarb"
  value: {
-  dps: 6374.82619
-  tps: 5098.24219
+  dps: 6274.65264
+  tps: 5019.6335
  }
 }
 dps_results: {

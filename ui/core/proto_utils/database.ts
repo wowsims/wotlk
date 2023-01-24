@@ -185,6 +185,11 @@ export class Database {
 		return new Gear(gearMap);
 	}
 
+	enchantSpellIdToEffectId(enchantSpellId: number): number {
+		const enchant = Object.values(this.enchantsBySlot).flat().find(enchant => enchant.spellId == enchantSpellId);
+		return enchant ? enchant.effectId : 0;
+	}
+
 	getPresetEncounter(path: string): PresetEncounter | null {
 		return this.presetEncounters[path] || null;
 	}

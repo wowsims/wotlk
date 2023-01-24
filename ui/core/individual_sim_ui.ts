@@ -508,11 +508,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addTopbarComponents() {
 		this.simHeader.addImportLink('JSON', parent => new Importers.IndividualJsonImporter(parent, this), true);
-		this.simHeader.addImportLink('80U', parent => new Importers.Individual80UImporter(parent, this), true);
-		this.simHeader.addImportLink('Addon', parent => new Importers.IndividualAddonImporter(parent, this), true);
+		this.simHeader.addImportLink('80U', parent => new Importers.Individual80UImporter(parent, this), false);
+		this.simHeader.addImportLink('WoWHead', parent => new Importers.IndividualWowheadGearPlannerImporter(parent, this), false);
+		this.simHeader.addImportLink('Addon', parent => new Importers.IndividualAddonImporter(parent, this), false);
 
 		this.simHeader.addExportLink('Link', parent => new Exporters.IndividualLinkExporter(parent, this), false);
 		this.simHeader.addExportLink('JSON', parent => new Exporters.IndividualJsonExporter(parent, this), true);
+		this.simHeader.addExportLink('WoWHead', parent => new Exporters.IndividualWowheadGearPlannerExporter(parent, this), false);
 		this.simHeader.addExportLink('80U EP', parent => new Exporters.Individual80UEPExporter(parent, this), false);
 		this.simHeader.addExportLink('Pawn EP', parent => new Exporters.IndividualPawnEPExporter(parent, this), false);
 	}

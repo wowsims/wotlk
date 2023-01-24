@@ -394,9 +394,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: MagePresets.ARCANE_P1_PRESET.gear,
+				2: MagePresets.ARCANE_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.ARCANE_P1_PRESET.gear,
+				2: MagePresets.ARCANE_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -419,9 +421,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
+				2: MagePresets.FIRE_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
+				2: MagePresets.FIRE_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Fire Mage',
@@ -444,9 +448,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: MagePresets.FROST_P1_PRESET.gear,
+				2: MagePresets.FROST_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.FROST_P1_PRESET.gear,
+				2: MagePresets.FROST_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Frost Mage',
