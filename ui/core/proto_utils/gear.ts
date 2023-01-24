@@ -100,11 +100,11 @@ abstract class BaseGear {
 export class Gear extends BaseGear {
 
 	constructor(gear: Partial<InternalGear>) {
-		super(gear)
+		super(gear);
 	}
 
 	getItemSlots(): ItemSlot[] {
-		return getEnumValues(ItemSlot)
+		return getEnumValues(ItemSlot);
 	}
 
 	equals(other: Gear): boolean {
@@ -121,14 +121,14 @@ export class Gear extends BaseGear {
 		const newInternalGear = this.asMap();
 
 		if (newItem) {
-			this.removeUniqueGems(newInternalGear, newItem)
-			this.removeUniqueItems(newInternalGear, newItem)
+			this.removeUniqueGems(newInternalGear, newItem);
+			this.removeUniqueItems(newInternalGear, newItem);
 		}
 
 		// Actually assign the new item.
 		newInternalGear[newSlot] = newItem;
 
-		this.validateWeaponCombo(newInternalGear, newSlot, canDualWield2H)
+		this.validateWeaponCombo(newInternalGear, newSlot, canDualWield2H);
 
 		return new Gear(newInternalGear);
 	}
@@ -299,21 +299,21 @@ export class Gear extends BaseGear {
 export class ItemSwapGear extends BaseGear {
 
 	constructor() {
-		super({})
+		super({});
 	}
 
 	getItemSlots(): ItemSlot[] {
-		return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged]
+		return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged];
 	}
 
 	equipItem(slot: ItemSlot, equippedItem: EquippedItem | null, canDualWield2H: boolean) {
 		if (equippedItem) {
-			this.removeUniqueGems(this.gear, equippedItem)
-			this.removeUniqueItems(this.gear, equippedItem)
+			this.removeUniqueGems(this.gear, equippedItem);
+			this.removeUniqueItems(this.gear, equippedItem);
 		}
 		
 		this.gear[slot] = equippedItem;
-		this.validateWeaponCombo(this.gear, slot, canDualWield2H)
+		this.validateWeaponCombo(this.gear, slot, canDualWield2H);
 	}
 
 	toProto(): ItemSwap {
