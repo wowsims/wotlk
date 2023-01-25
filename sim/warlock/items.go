@@ -105,7 +105,8 @@ var ItemSetDeathbringerGarb = core.NewItemSet(core.ItemSet{
 
 // T9
 var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Gul'dan's Regalia",
+	Name:            "Gul'dan's Regalia",
+	AlternativeName: "Kel'Thuzad's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// TODO: probably doesn't apply to infernal
