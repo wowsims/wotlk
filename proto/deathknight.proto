@@ -257,6 +257,9 @@ message Deathknight {
 
 		DrwDiseases drw_diseases = 26;
 		BloodOpener blood_opener = 27;
+
+		bool enable_weapon_swap = 28;
+		ItemSwap weapon_swap = 29;
 	}
 	Rotation rotation = 1;
 	

@@ -14,7 +14,9 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 	}
 
-	dk.setupDrwCooldowns()
+	if dk.Talents.DancingRuneWeapon {
+		dk.setupDrwCooldowns()
+	}
 
 	//if dk.Inputs.BloodOpener == proto.Deathknight_Rotation_Standard {
 	dk.RotationSequence.Clear().
