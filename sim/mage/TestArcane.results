@@ -740,8 +740,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Average-Default"
  value: {
-  dps: 7310.07813
-  tps: 4421.88422
+  dps: 7310.13079
+  tps: 4421.91567
  }
 }
 dps_results: {
@@ -810,15 +810,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3493.32779
-  tps: 3465.24345
+  dps: 3493.81325
+  tps: 3444.36853
  }
 }
 dps_results: {
  key: "TestArcane-Settings-Troll-P1Arcane-ArcaneRotation-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3493.32779
-  tps: 2119.10113
+  dps: 3493.81325
+  tps: 2118.3341
  }
 }
 dps_results: {

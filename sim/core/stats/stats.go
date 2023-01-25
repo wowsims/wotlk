@@ -293,7 +293,6 @@ type PseudoStats struct {
 	// Effects that apply when this unit is the attacker.
 	///////////////////////////////////////////////////
 
-	NoCost         bool    // If set, spells cost no mana/energy/rage.
 	CostMultiplier float64 // Multiplies spell cost.
 	CostReduction  float64 // Reduces spell cost.
 
