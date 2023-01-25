@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -19,6 +20,11 @@ type SharedRotation struct {
 func (sr *SharedRotation) Reset(sim *core.Simulation) {
 	sr.recastedFF = false
 	sr.recastedBP = false
+}
+
+func (sr *SharedRotation) Initialize(dk *DpsDeathknight) {
+	dk.sr.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
+	dk.sr.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 }
 
 func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int, ffSyncTime time.Duration) bool {
