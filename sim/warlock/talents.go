@@ -182,10 +182,9 @@ func (warlock *Warlock) setupDecimation() {
 			warlock.SoulFire.CastTimeMultiplier += decimationMod
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			// TODO: Decimation wasn't being deactivated anywhere
-			//if spell == warlock.SoulFire {
-			//	aura.Deactivate(sim)
-			//}
+			if spell == warlock.SoulFire {
+				aura.Deactivate(sim)
+			}
 		},
 	})
 
