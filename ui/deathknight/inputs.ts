@@ -368,7 +368,7 @@ export const WeaponSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecDeathkni
 		ItemSlot.ItemSlotOffHand,
 		//ItemSlot.ItemSlotRanged, Not support yet
 	],
-	labelTooltip: '<b>Berserking</b> will be equipped when FC has procced and Berserking has not.<br><br><b>Black Magic</br> will be prioed to swap during gargoyle or if gargoyle will be on CD for full BM Icd.',
+	labelTooltip: '<b>Berserking</b> will be equipped when FC has procced and Berserking is not active.<br><br><b>Black Magic</b> will be prioed to swap during gargoyle or if gargoyle will be on CD for full BM Icd.',
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useGargoyle && player.getRotation().enableWeaponSwap,
 })
 
