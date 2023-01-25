@@ -273,28 +273,31 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		cur++;
 		const glyphBytes = data.subarray(cur, cur + numGlyphBytes);
 		const gearBytes = data.subarray(cur + numGlyphBytes);
-		console.log(`Glyphs have ${numGlyphBytes} bytes: ${buf2hex(glyphBytes)}`);
+		//console.log(`Glyphs have ${numGlyphBytes} bytes: ${buf2hex(glyphBytes)}`);
 		//console.log(`Remaining ${gearBytes.length} bytes: ${buf2hex(gearBytes)}`);
 
 		// First byte in glyphs section seems to always be 0x30
 		cur = 1;
 		let hasGlyphs = false;
+		const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		const glyphStr = String.fromCharCode(...glyphBytes);
 		const glyphIds = [0, 0, 0, 0, 0, 0];
 		while (cur < glyphBytes.length) {
+
 			// First byte for each glyph is 0x3z, where z is the glyph position.
 			// 0, 1, 2 are major glyphs, 3, 4, 5 are minor glyphs.
-			const glyphPosition = glyphBytes[cur] & 0x0f;
+			const glyphPosition = d.indexOf(glyphStr[cur]);
 			cur++;
 
-			// For whatever reason, wowhead uses the spell IDs for the glyphs and
-			// splits them across 4 bytes.
+			// For some reason, wowhead uses the spell IDs for the glyphs and
+			// applies a ridiculous hashing scheme.
 			const spellId = 0 +
-				(glyphBytes[cur + 0] << 15) +
-				(glyphBytes[cur + 1] << 10) +
-				(glyphBytes[cur + 2] <<  5) +
-				(glyphBytes[cur + 3] <<  0);
+				(d.indexOf(glyphStr[cur + 0]) << 15) +
+				(d.indexOf(glyphStr[cur + 1]) << 10) +
+				(d.indexOf(glyphStr[cur + 2]) <<  5) +
+				(d.indexOf(glyphStr[cur + 3]) <<  0);
 			const itemId = this.simUI.sim.db.glyphSpellToItemId(spellId);
-			console.log(`Glyph position: ${glyphPosition}, spellID: ${spellId}`);
+			//console.log(`Glyph position: ${glyphPosition}, spellID: ${spellId}`);
 
 			hasGlyphs = true;
 			glyphIds[glyphPosition] = itemId;
@@ -336,6 +339,9 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			if (isEnchanted) {
 				// Ignore first byte, seems to always be 0?
+				if (gearBytes[cur] != 0) {
+					throw new Error('other ench byte: ' + gearBytes[cur]);
+				}
 				cur++;
 
 				// Note: this is the enchant SPELL id, not the effect ID.

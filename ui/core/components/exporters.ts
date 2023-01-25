@@ -115,7 +115,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 		bytes.push(0);
 		bytes.push(Mechanics.CHARACTER_LEVEL);
 
-		let talentsStr = player.getTalentsString().replace('-', 'f');
+		let talentsStr = player.getTalentsString().replace('-', 'f') + 'f';
 		if (talentsStr.length % 2 == 1) {
 			talentsStr += '0';
 		}
@@ -124,20 +124,51 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 			bytes.push(parseInt(talentsStr.substring(i, i + 2), 16));
 		}
 
-		bytes.push(0); // Number of glyph bytes. TODO: Export glyphs.
+		//console.log('With talents: ' + btoa(String.fromCharCode(...bytes)).replaceAll('/', '_').replaceAll('+', '-'));
+
+		//let glyphBytes: Array<number> = [];
+		//let glyphStr = '';
+		//const glyphs = player.getGlyphs();
+		//const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		//const addGlyph = (glyphItemId: number, glyphPosition: number) => {
+		//	const spellId = this.simUI.sim.db.glyphItemToSpellId(glyphItemId);
+		//	if (!spellId) {
+		//		return;
+		//	}
+		//	glyphStr += d[glyphPosition];
+		//	glyphStr += d[(spellId >> 15) & 0b00011111];
+		//	glyphStr += d[(spellId >> 10) & 0b00011111];
+		//	glyphStr += d[(spellId >>  5) & 0b00011111];
+		//	glyphStr += d[(spellId >>  0) & 0b00011111];
+		//};
+		//addGlyph(glyphs.major1, 0);
+		//addGlyph(glyphs.major2, 1);
+		//addGlyph(glyphs.major3, 2);
+		//addGlyph(glyphs.minor1, 3);
+		//addGlyph(glyphs.minor2, 4);
+		//addGlyph(glyphs.minor3, 5);
+		//if (glyphStr) {
+		//	glyphBytes.push(0x30);
+		//	for (let i = 0; i < glyphStr.length; i++) {
+		//		glyphBytes.push(glyphStr.charCodeAt(i));
+		//	}
+		//}
+		//bytes.push(glyphBytes.length);
+		//bytes = bytes.concat(glyphBytes)
+		bytes.push(0);
 
 		const to2Bytes = (val: number): Array<number> => {
-			const lowBits = val % 256;
 			return [
-				(val - lowBits) >> 8,
-				lowBits,
+				(val & 0xff00) >> 8,
+				val & 0x00ff,
 			];
 		};
 
 		const gear = player.getGear();
-		let gearBytes: Array<number> = [];
 		const isBlacksmithing = player.isBlacksmithing();
-		gear.getItemSlots().forEach(itemSlot => {
+		gear.getItemSlots()
+				.sort((slot1, slot2) => IndividualWowheadGearPlannerImporter.slotIDs[slot1] - IndividualWowheadGearPlannerImporter.slotIDs[slot2])
+				.forEach(itemSlot => {
 			const item = gear.getEquippedItem(itemSlot);
 			if (!item) {
 				return;
@@ -147,27 +178,24 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 			if (item.enchant) {
 				slotId = slotId | 0b10000000;
 			}
-			gearBytes.push(slotId);
-			gearBytes.push(item.curGems(isBlacksmithing).length);
-			gearBytes = gearBytes.concat(to2Bytes(item.item.id));
+			bytes.push(slotId);
+			bytes.push(item.curGems(isBlacksmithing).length << 5);
+			bytes = bytes.concat(to2Bytes(item.item.id));
 
 			if (item.enchant) {
-				gearBytes.push(0);
-				gearBytes = gearBytes.concat(to2Bytes(item.enchant.spellId));
+				bytes.push(0);
+				bytes = bytes.concat(to2Bytes(item.enchant.spellId));
 			}
 
 			item.gems.slice(0, item.numSockets(isBlacksmithing)).forEach((gem, i) => {
 				if (gem) {
-					gearBytes.push(i << 5);
-					gearBytes = gearBytes.concat(to2Bytes(gem.id));
+					bytes.push(i << 5);
+					bytes = bytes.concat(to2Bytes(gem.id));
 				}
 			});
 		});
 
-		bytes = bytes.concat(to2Bytes(gearBytes.length));
-		bytes = bytes.concat(gearBytes)
-
-		const binaryString = bytes.map(byte => byte.toString(16)).join('');
+		const binaryString = String.fromCharCode(...bytes);
 		const b64encoded = btoa(binaryString);
 		const b64converted = b64encoded.replaceAll('/', '_').replaceAll('+', '-');
 
