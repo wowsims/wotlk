@@ -83,13 +83,9 @@ func (spell *Spell) makeCastFunc(config CastConfig, onCastComplete CastFunc) Cas
 }
 
 func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
-	if spell.Unit.PseudoStats.NoCost {
-		return 0
-	} else {
-		cost -= spell.Unit.PseudoStats.CostReduction
-		cost *= spell.Unit.PseudoStats.CostMultiplier
-		return MaxFloat(0, cost*spell.CostMultiplier)
-	}
+	cost -= spell.Unit.PseudoStats.CostReduction
+	cost = MaxFloat(0, cost*spell.Unit.PseudoStats.CostMultiplier)
+	return MaxFloat(0, cost*spell.CostMultiplier)
 }
 
 func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSuccessFunc) CastSuccessFunc {
