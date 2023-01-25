@@ -170,10 +170,23 @@ func (warlock *Warlock) setupEmpoweredImp() {
 }
 
 func (warlock *Warlock) setupDecimation() {
+	decimationMod := 0.2*float64(warlock.Talents.Decimation)
 	warlock.DecimationAura = warlock.RegisterAura(core.Aura{
 		Label:    "Decimation Proc Aura",
 		ActionID: core.ActionID{SpellID: 63167},
 		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.SoulFire.CastTimeMultiplier -= decimationMod
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.SoulFire.CastTimeMultiplier += decimationMod
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			// TODO: Decimation wasn't being deactivated anywhere
+			//if spell == warlock.SoulFire {
+			//	aura.Deactivate(sim)
+			//}
+		},
 	})
 
 	decimation := warlock.RegisterAura(core.Aura{
@@ -305,9 +318,14 @@ func (warlock *Warlock) setupNightfall() {
 		Label:    "Nightfall Shadow Trance",
 		ActionID: core.ActionID{SpellID: 17941},
 		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.ShadowBolt.CastTimeMultiplier -= 1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.ShadowBolt.CastTimeMultiplier += 1
+		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			// Check for an instant cast shadowbolt to disable aura
-			if spell == warlock.ShadowBolt && spell.CurCast.CastTime == 0 {
+			if spell == warlock.ShadowBolt {
 				aura.Deactivate(sim)
 			}
 		},
@@ -329,13 +347,8 @@ func (warlock *Warlock) setupNightfall() {
 	})
 }
 
-func (warlock *Warlock) applyNightfall(cast *core.Cast) {
-	if warlock.NightfallProcAura.IsActive() {
-		cast.CastTime = 0
-	}
-}
-
 func (warlock *Warlock) setupMoltenCore() {
+	incinerateCastTimeReduction := 0.1 * float64(warlock.Talents.MoltenCore)
 	moltenCoreDamageBonus := 1 + 0.06*float64(warlock.Talents.MoltenCore)
 	moltenCoreCritBonus := 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
 
@@ -346,13 +359,20 @@ func (warlock *Warlock) setupMoltenCore() {
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier *= moltenCoreDamageBonus
+			warlock.Incinerate.CastTimeMultiplier -= incinerateCastTimeReduction
 			warlock.SoulFire.DamageMultiplier *= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating += moltenCoreCritBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier /= moltenCoreDamageBonus
+			warlock.Incinerate.CastTimeMultiplier += incinerateCastTimeReduction
 			warlock.SoulFire.DamageMultiplier /= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating -= moltenCoreCritBonus
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire {
+				aura.RemoveStack(sim)
+			}
 		},
 	})
 
@@ -375,15 +395,41 @@ func (warlock *Warlock) setupMoltenCore() {
 }
 
 func (warlock *Warlock) setupBackdraft() {
+	castTimeModifier := 0.1 * float64(warlock.Talents.Backdraft)
+	var affectedSpells []*core.Spell
+
 	warlock.BackdraftAura = warlock.RegisterAura(core.Aura{
 		Label:     "Backdraft Proc Aura",
 		ActionID:  core.ActionID{SpellID: 54277},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = core.FilterSlice([]*core.Spell{
+				warlock.Incinerate,
+				warlock.SoulFire,
+				warlock.ShadowBolt,
+				warlock.ChaosBolt,
+				warlock.Immolate,
+			}, func(spell *core.Spell) bool { return spell != nil })
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, destroSpell := range affectedSpells {
+				destroSpell.CastTimeMultiplier -= castTimeModifier
+				destroSpell.DefaultCast.GCD = time.Duration(float64(destroSpell.DefaultCast.GCD) * (1 - castTimeModifier))
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, destroSpell := range affectedSpells {
+				destroSpell.CastTimeMultiplier += castTimeModifier
+				destroSpell.DefaultCast.GCD = time.Duration(float64(destroSpell.DefaultCast.GCD) / (1 - castTimeModifier))
+			}
+		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.Incinerate || spell == warlock.SoulFire || spell == warlock.ShadowBolt ||
-				spell == warlock.ChaosBolt || spell == warlock.Immolate {
-				aura.RemoveStack(sim)
+			for _, destroSpell := range affectedSpells {
+				if spell == destroSpell {
+					aura.RemoveStack(sim)
+					return
+				}
 			}
 		},
 	})

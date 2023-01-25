@@ -27,10 +27,6 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond*2500 - (time.Millisecond * 100 * time.Duration(warlock.Talents.Bane)),
 			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
-			},
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
 				Duration: time.Second * (12 - 2*core.TernaryDuration(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfChaosBolt), 1, 0)),

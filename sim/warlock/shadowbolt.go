@@ -33,13 +33,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
 			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
-				if warlock.Talents.Nightfall > 0 {
-					warlock.applyNightfall(cast)
-				}
-			},
 		},
 
 		BonusCritRating: 0 +
