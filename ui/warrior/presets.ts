@@ -311,7 +311,7 @@ export const P1_FURY_PRESET = {
 export const P2_FURY_PRESET = {
 	name: 'P2 Fury Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 0,
+	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() != 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
 			"id": 46151,
@@ -622,96 +622,116 @@ export const P2_ARMS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 41386,
+		  {
+			"id": 46151,
 			"enchant": 3817,
 			"gems": [
-				41285,
-				42702
+			  41398,
+			  42153
 			]
-		},
-		{
-			"id": 42645,
+		  },
+		  {
+			"id": 45459,
 			"gems": [
-				40002
+			  40002
 			]
-		},
-		{
-			"id": 44195,
-			"enchant": 3808
-		},
-		{
-			"id": 37647,
-			"enchant": 3605
-		},
-		{
-			"id": 39606,
+		  },
+		  {
+			"id": 46149,
+			"enchant": 3808,
+			"gems": [
+			  42153
+			]
+		  },
+		  {
+			"id": 46032,
+			"enchant": 3605,
+			"gems": [
+			  39996,
+			  40037
+			]
+		  },
+		  {
+			"id": 46146,
 			"enchant": 3832,
 			"gems": [
-				40002,
-				40002
+			  42153,
+			  39996
 			]
-		},
-		{
-			"id": 41355,
+		  },
+		  {
+			"id": 45663,
 			"enchant": 3845,
 			"gems": [
-				0
+			  39996,
+			  0
 			]
-		},
-		{
-			"id": 39609,
+		  },
+		  {
+			"id": 46148,
 			"enchant": 3604,
 			"gems": [
-				40037,
-				0
+			  40037,
+			  0
 			]
-		},
-		{
-			"id": 40694,
+		  },
+		  {
+			"id": 45241,
 			"gems": [
-				42149,
-				42149
+			  49110,
+			  40037,
+			  40002
 			]
-		},
-		{
-			"id": 37193,
+		  },
+		  {
+			"id": 45536,
 			"enchant": 3823,
 			"gems": [
-				40002,
-				40037
+			  39996,
+			  39996,
+			  39996
 			]
-		},
-		{
-			"id": 44306,
+		  },
+		  {
+			"id": 45599,
 			"enchant": 3606,
 			"gems": [
-				40086,
-				40002
+			  40002,
+			  40002
 			]
-		},
-		{
-			"id": 42642,
+		  },
+		  {
+			"id": 45608,
 			"gems": [
-				42149
+			  40002
 			]
-		},
-		{
-			"id": 37642
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 37852,
-			"enchant": 3789
-		},
-		{},
-		{
-			"id": 37191
-		}
-      ]}`),
+		  },
+		  {
+			"id": 46322,
+			"gems": [
+			  40002
+			]
+		  },
+		  {
+			"id": 46038
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 45533,
+			"enchant": 3789,
+			"gems": [
+			  39996,
+			  39996
+			]
+		  },
+		  {},
+		  {
+			"id": 45296,
+			"gems": [
+			  40002
+			]
+		  }
+	]}`),
 };
