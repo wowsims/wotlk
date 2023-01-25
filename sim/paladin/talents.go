@@ -416,10 +416,22 @@ func (paladin *Paladin) applyArtOfWar() {
 		return
 	}
 
+	castTimeReduction := 0.5 * float64(paladin.Talents.TheArtOfWar)
 	paladin.ArtOfWarInstantCast = paladin.RegisterAura(core.Aura{
 		Label:    "Art Of War",
 		ActionID: core.ActionID{SpellID: 53488},
 		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.Exorcism.CastTimeMultiplier -= castTimeReduction
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.Exorcism.CastTimeMultiplier += castTimeReduction
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == paladin.Exorcism {
+				aura.Deactivate(sim)
+			}
+		},
 	})
 
 	paladin.RegisterAura(core.Aura{

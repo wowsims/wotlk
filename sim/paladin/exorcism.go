@@ -28,13 +28,11 @@ func (paladin *Paladin) registerExorcismSpell() {
 				Duration: time.Second * 15,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if paladin.ArtOfWarInstantCast.IsActive() {
-					paladin.ArtOfWarInstantCast.Deactivate(sim)
-					cast.CastTime = 0
-					return
-				}
 				if paladin.CurrentMana() >= cast.Cost {
-					paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)
+					castTime := time.Duration(float64(cast.CastTime) * spell.CastTimeMultiplier)
+					if castTime > 0 {
+						paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
+					}
 				}
 			},
 		},
@@ -52,14 +50,14 @@ func (paladin *Paladin) registerExorcismSpell() {
 				.15*spell.SpellPower() +
 				.15*spell.MeleeAttackPower()
 
-			isDemonOrUndead := target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead
-			if isDemonOrUndead {
-				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-			}
+			bonusCrit := core.TernaryFloat64(
+				target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead,
+				100 * core.CritRatingPerCritChance,
+				0)
+
+			spell.BonusCritRating += bonusCrit
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			if isDemonOrUndead {
-				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			}
+			spell.BonusCritRating -= bonusCrit
 		},
 	})
 }
