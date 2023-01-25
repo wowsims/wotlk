@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -24,6 +25,10 @@ func (rogue *Rogue) registerAmbushSpell() {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+		},
+
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +

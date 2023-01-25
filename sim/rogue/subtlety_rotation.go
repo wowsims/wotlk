@@ -224,7 +224,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			func(s *core.Simulation, r *Rogue) bool {
 				return r.Shadowstep.Cast(s, r.CurrentTarget)
 			},
-			rogue.ShadowDance.DefaultCast.Cost,
+			rogue.Shadowstep.DefaultCast.Cost,
 		})
 	}
 
