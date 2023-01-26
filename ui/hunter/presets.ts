@@ -33,7 +33,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const BeastMasteryTalents = {
 	name: 'Beast Mastery',
 	data: SavedTalents.create({
-		talentsString: '51200201515012233110531351-005305-5',
+		talentsString: '51200201505112243120531251-025305101',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfBestialWrath,
 			major2: MajorGlyph.GlyphOfSteadyShot,
