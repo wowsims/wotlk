@@ -21,7 +21,7 @@ func (rogue *Rogue) setSubtletyBuilder() {
 		rogue.BuilderPoints = 1
 	} else
 	// Ambush
-	if rogue.ShadowDanceAura.IsActive() {
+	if rogue.ShadowDanceAura.IsActive() && !mhDagger {
 		rogue.Builder = rogue.Ambush
 		rogue.BuilderPoints = 2
 	} else
@@ -41,7 +41,7 @@ func (rogue *Rogue) setSubtletyBuilder() {
 func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	rogue.subtletyPrios = make([]subtletyPrio, 0)
 
-	if rogue.Rotation.OpenWithPremeditation {
+	if rogue.Rotation.OpenWithPremeditation && rogue.Talents.Premeditation {
 		hasCastPremeditation := false
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
@@ -64,7 +64,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		})
 	}
 
-	if rogue.Rotation.OpenWithShadowstep {
+	if rogue.Rotation.OpenWithShadowstep && rogue.Talents.Shadowstep {
 		hasCastShadowstep := false
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
@@ -209,23 +209,25 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 
 	//Shadowstep
 	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_Rupture {
-		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.Shadowstep.IsReady(s) {
-					// Can we cast Rupture now?
-					if !r.Rupture[0].Dot(r.CurrentTarget).Aura.IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
-						return Cast
-					} else {
-						return Skip
+		if rogue.Talents.Shadowstep {
+			rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
+				func(s *core.Simulation, r *Rogue) PriorityAction {
+					if r.Shadowstep.IsReady(s) {
+						// Can we cast Rupture now?
+						if !r.Rupture[0].Dot(r.CurrentTarget).Aura.IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
+							return Cast
+						} else {
+							return Skip
+						}
 					}
-				}
-				return Skip
-			},
-			func(s *core.Simulation, r *Rogue) bool {
-				return r.Shadowstep.Cast(s, r.CurrentTarget)
-			},
-			rogue.Shadowstep.DefaultCast.Cost,
-		})
+					return Skip
+				},
+				func(s *core.Simulation, r *Rogue) bool {
+					return r.Shadowstep.Cast(s, r.CurrentTarget)
+				},
+				rogue.Shadowstep.DefaultCast.Cost,
+			})
+		}
 	}
 
 	// Rupture
