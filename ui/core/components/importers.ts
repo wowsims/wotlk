@@ -215,12 +215,12 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends Importer {
 	private readonly simUI: IndividualSimUI<SpecType>;
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, simUI, 'WoWHead Import', true);
+		super(parent, simUI, 'Wowhead Import', true);
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
 			<p>
-				Import settings from <a href="https://www.wowhead.com/wotlk/gear-planner" target="_blank">WoWHead Gear Planner</a>.
+				Import settings from <a href="https://www.wowhead.com/wotlk/gear-planner" target="_blank">Wowhead Gear Planner</a>.
 			</p>
 			<p>
 				This feature imports gear, race, and (optionally) talents. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.

@@ -97,7 +97,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 	private readonly simUI: IndividualSimUI<SpecType>;
 
 	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, simUI, 'WoWHead Export', true);
+		super(parent, simUI, 'Wowhead Export', true);
 		this.simUI = simUI;
 		this.init();
 	}
