@@ -102,7 +102,14 @@ func (spell *Spell) wrapCastFuncInit(config CastConfig, onCastComplete CastSucce
 		modifyCast := config.ModifyCast
 		return func(sim *Simulation, target *Unit) bool {
 			spell.CurCast = spell.DefaultCast
+			cost := spell.CurCast.Cost
 			modifyCast(sim, spell, &spell.CurCast)
+			if cost != spell.CurCast.Cost {
+				// Costs need to be modified using the unit and spell multipliers, so that
+				// their affects are also visible in the spell.CanCast() function, which
+				// does not invoke ModifyCast.
+				panic("May not modify cost in ModifyCast!")
+			}
 			return onCastComplete(sim, target)
 		}
 	}

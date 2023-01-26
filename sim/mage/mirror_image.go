@@ -45,8 +45,6 @@ func (mage *Mage) registerMirrorImageCD() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if sim.CurrentTime == 0 {
 					// Assume this is a pre-cast, so disable the GCD.
-					// Probably should keep the mana cost but this matches the other mage sim.
-					cast.Cost = 0
 					cast.GCD = 0
 				}
 			},

@@ -75,6 +75,17 @@ func (mage *Mage) applyHotStreak() {
 		Label:    "HotStreak",
 		ActionID: core.ActionID{SpellID: 44448},
 		Duration: time.Second * 10,
+		// This is handled in Pyroblast.ModifyCast instead.
+		//OnGain: func(aura *core.Aura, sim *core.Simulation) {
+		//	if mage.Pyroblast != nil {
+		//		mage.Pyroblast.CastTimeMultiplier -= 1
+		//	}
+		//},
+		//OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+		//	if mage.Pyroblast != nil {
+		//		mage.Pyroblast.CastTimeMultiplier += 1
+		//	}
+		//},
 	})
 
 	mage.RegisterAura(core.Aura{
