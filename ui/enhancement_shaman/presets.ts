@@ -313,3 +313,242 @@ export const P1_PRESET = {
 		}
 	]}`),
 };
+
+export const P2_PRESET_FT = {
+	name: 'P2 Preset FT',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+        {
+          "id": 45610,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            42702
+          ]
+        },
+        {
+          "id": 45517,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 46203,
+          "enchant": 3808,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 45461,
+          "enchant": 3831,
+          "gems": [
+            40014
+          ]
+        },
+        {
+          "id": 46205,
+          "enchant": 3832,
+          "gems": [
+            40058,
+            40053
+          ]
+        },
+        {
+          "id": 45460,
+          "enchant": 3845,
+          "gems": [
+            39999,
+            0
+          ]
+        },
+        {
+          "id": 46200,
+          "enchant": 3604,
+          "gems": [
+            40014,
+            0
+          ]
+        },
+        {
+          "id": 45553,
+          "gems": [
+            36766,
+            36766,
+            36766
+          ]
+        },
+        {
+          "id": 46208,
+          "enchant": 3823,
+          "gems": [
+            39999,
+            39999
+          ]
+        },
+        {
+          "id": 45989,
+          "enchant": 3606,
+          "gems": [
+            40053,
+            39999
+          ]
+        },
+        {
+          "id": 45456,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40053
+          ]
+        },
+        {
+          "id": 45609
+        },
+        {
+          "id": 46038
+        },
+        {
+          "id": 45612,
+          "enchant": 3789,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 46097,
+          "enchant": 3789,
+          "gems": [
+            40003
+          ]
+        },
+        {
+          "id": 40322
+        }
+      ]
+    }`),
+};
+
+export const P2_PRESET_WF = {
+	name: 'P2 Preset WF',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
+        {
+          "id": 45610,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            42702
+          ]
+        },
+        {
+          "id": 45517,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 46203,
+          "enchant": 3808,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 45461,
+          "enchant": 3831,
+          "gems": [
+            40052
+          ]
+        },
+        {
+          "id": 46205,
+          "enchant": 3832,
+          "gems": [
+            40052,
+            40052
+          ]
+        },
+        {
+          "id": 45460,
+          "enchant": 3845,
+          "gems": [
+            39999,
+            0
+          ]
+        },
+        {
+          "id": 46200,
+          "enchant": 3604,
+          "gems": [
+            40053,
+            0
+          ]
+        },
+        {
+          "id": 45553,
+          "gems": [
+            36766,
+            36766,
+            36766
+          ]
+        },
+        {
+          "id": 46208,
+          "enchant": 3823,
+          "gems": [
+            39999,
+            39999
+          ]
+        },
+        {
+          "id": 45989,
+          "enchant": 3606,
+          "gems": [
+            40053,
+            39999
+          ]
+        },
+        {
+          "id": 45456,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 45608,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 45609
+        },
+        {
+          "id": 46038
+        },
+        {
+          "id": 45132,
+          "enchant": 3789,
+          "gems": [
+            40052
+          ]
+        },
+        {
+          "id": 46097,
+          "enchant": 3789,
+          "gems": [
+            39999
+          ]
+        },
+        {
+          "id": 40322
+        }
+      ]
+    }`),
+};
+
