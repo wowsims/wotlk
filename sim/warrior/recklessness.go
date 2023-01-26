@@ -68,8 +68,15 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				Duration: warrior.intensifyRageCooldown(time.Minute * 5),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(BerserkerStance) || warrior.BerserkerStance.IsReady(sim)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			if !warrior.StanceMatches(BerserkerStance) {
+				warrior.BerserkerStance.Cast(sim, nil)
+			}
+
 			reckAura.Activate(sim)
 			reckAura.SetStacks(sim, 3)
 		},
@@ -78,19 +85,5 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: reckSpell,
 		Type:  core.CooldownTypeDPS,
-		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
-			return func(sim *core.Simulation, character *core.Character) {
-				if !warrior.StanceMatches(BerserkerStance) {
-					if !warrior.BerserkerStance.IsReady(sim) {
-						return
-					}
-					warrior.BerserkerStance.Cast(sim, nil)
-				}
-				reckSpell.Cast(sim, character.CurrentTarget)
-			}
-		},
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return true
-		},
 	})
 }

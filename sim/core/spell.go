@@ -439,6 +439,21 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
+	// While casting or channeling, no other action is possible
+	if spell.Unit.Hardcast.Expires > sim.CurrentTime {
+		if sim.Log != nil {
+			sim.Log("Cant cast because already casting/channeling")
+		}
+		return false
+	}
+
+	if spell.DefaultCast.GCD > 0 && !spell.Unit.GCD.IsReady(sim) {
+		if sim.Log != nil {
+			sim.Log("Cant cast because of GCD")
+		}
+		return false
+	}
+
 	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
 		if sim.Log != nil {
 			sim.Log("Cant cast because of CDs")

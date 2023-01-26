@@ -40,6 +40,10 @@ func (shaman *Shaman) registerFeralSpirit() {
 
 			// Add a dummy aura to show in metrics
 			spiritWolvesActiveAura.Activate(sim)
+
+			// https://github.com/JamminL/wotlk-classic-bugs/issues/280
+			// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
+			shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 		},
 	})
 
@@ -47,14 +51,5 @@ func (shaman *Shaman) registerFeralSpirit() {
 		Spell:    shaman.FeralSpirit,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
 		Type:     core.CooldownTypeDPS,
-		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
-			return func(sim *core.Simulation, unit *core.Character) {
-				if shaman.FeralSpirit.Cast(sim, unit.CurrentTarget) {
-					// https://github.com/JamminL/wotlk-classic-bugs/issues/280
-					// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
-					shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
-				}
-			}
-		},
 	})
 }
