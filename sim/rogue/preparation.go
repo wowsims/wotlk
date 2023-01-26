@@ -24,7 +24,7 @@ func (rogue *Rogue) registerPreparationCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second*8*60 - time.Second*time.Duration(90*rogue.Talents.FilthyTricks),
+				Duration: time.Minute*8 - time.Second*time.Duration(90*rogue.Talents.FilthyTricks),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
