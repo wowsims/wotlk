@@ -165,7 +165,7 @@ func runSingleReplacements(input *proto.RaidSimRequest, replaceInput *ItemReplac
 		}
 		slot := replaceInput.replaceSlots[i-1]
 		oldItemID := input.Raid.Parties[0].Players[0].Equipment.Items[slot].Id
-		resultText += fmt.Sprintf("%s,%s,%s,%0.1f\n", slot.String(), core.ItemsByID[oldItemID].Name, core.ItemsByID[replaceInput.Items[i-1].Id].Name, results[i].RaidMetrics.Dps.Avg)
+		resultText += fmt.Sprintf("%s,\"%s\",\"%s\",%0.1f\n", slot.String(), core.ItemsByID[oldItemID].Name, core.ItemsByID[replaceInput.Items[i-1].Id].Name, results[i].RaidMetrics.Dps.Avg)
 	}
 	return resultText
 }
