@@ -28,13 +28,6 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			DefaultCast: core.Cast{
 				GCD: time.Second,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				// - the aura is active even if the attack fails to land
-				// - the aura is applied before the hit effect
-				// See: https://github.com/where-fore/rogue-wotlk/issues/32
-				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
-				rogue.EnvenomAura.Activate(sim)
-			},
 			IgnoreHaste: true,
 		},
 
@@ -45,6 +38,12 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// - the aura is active even if the attack fails to land
+			// - the aura is applied before the hit effect
+			// See: https://github.com/where-fore/rogue-wotlk/issues/32
+			rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
+			rogue.EnvenomAura.Activate(sim)
+
 			dp := rogue.DeadlyPoison.Dot(target)
 			// - 215 base is scaled by consumed doses (<= comboPoints)
 			// - apRatio is independent of consumed doses (== comboPoints)

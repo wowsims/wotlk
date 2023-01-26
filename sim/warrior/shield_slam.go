@@ -38,13 +38,6 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.SwordAndBoardAura.IsActive() {
-					cast.Cost = 0
-
-					warrior.SwordAndBoardAura.Deactivate(sim)
-				}
-			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
@@ -89,13 +82,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 }
 
 func (warrior *Warrior) HasEnoughRageForShieldSlam() bool {
-	if warrior.SwordAndBoardAura != nil {
-		if warrior.SwordAndBoardAura.IsActive() {
-			return true
-		}
-	}
-
-	return warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost
+	return warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost*warrior.ShieldSlam.CostMultiplier
 }
 
 func (warrior *Warrior) CanShieldSlam(sim *core.Simulation) bool {

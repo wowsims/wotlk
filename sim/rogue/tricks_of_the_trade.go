@@ -8,21 +8,22 @@ import (
 )
 
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
-	actionID := core.ActionID{SpellID: 57934, Tag: rogue.Index}
-	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
+	actionID := core.ActionID{SpellID: 57934}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
-	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
+	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
+	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
 
+	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
 	if rogue.Options.TricksOfTheTradeTarget != nil {
 		targetAgent := rogue.Env.Raid.GetPlayerFromRaidTarget(rogue.Options.TricksOfTheTradeTarget)
 		if targetAgent != nil {
 			target := targetAgent.GetCharacter()
-			rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, actionID.Tag, hasGlyph)
+			rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, rogue.Index, hasGlyph)
 		}
 	}
 	if rogue.TricksOfTheTradeAura == nil {
 		target := rogue.GetCharacter()
-		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, actionID.Tag, hasGlyph)
+		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, rogue.Index, hasGlyph)
 		rogue.TricksOfTheTradeAura.OnGain = func(aura *core.Aura, sim *core.Simulation) {}
 		rogue.TricksOfTheTradeAura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {}
 	}
@@ -31,7 +32,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		ActionID: actionID,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost: 15 - 5*float64(rogue.Talents.FilthyTricks),
+			Cost: core.TernaryFloat64(hasShadowblades, 0, energyCost),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -42,16 +43,11 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 				Timer:    rogue.NewTimer(),
 				Duration: time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks),
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if hasShadowblades {
-					cast.Cost = 0
-				}
-			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			rogue.TricksOfTheTradeAura.Activate(sim)
 			if hasShadowblades {
-				rogue.AddEnergy(sim, spell.DefaultCast.Cost, energyMetrics)
+				rogue.AddEnergy(sim, energyCost, energyMetrics)
 			}
 		},
 	})

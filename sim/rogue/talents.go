@@ -494,7 +494,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		ActionID: BladeFlurryActionID,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost: 25,
+			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry), 0, 25),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -504,11 +504,6 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
 				Duration: cooldownDur,
-			},
-			ModifyCast: func(s1 *core.Simulation, s2 *core.Spell, c *core.Cast) {
-				if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry) {
-					c.Cost = 0
-				}
 			},
 		},
 
