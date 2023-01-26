@@ -100,7 +100,6 @@ type EnhancementShaman struct {
 	*shaman.Shaman
 
 	rotation                Rotation
-	LightningBolts          []*core.Spell
 	maelstromweaponMinStack int32
 
 	scheduler common.GCDScheduler
@@ -129,7 +128,6 @@ func (enh *EnhancementShaman) Initialize() {
 			}
 		})
 	}
-	enh.LightningBolts = enh.RegisterMaelstromLightningBoltSpells(enh.maelstromweaponMinStack)
 	enh.DelayDPSCooldowns(3 * time.Second)
 
 }
@@ -154,20 +152,16 @@ func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, react
 
 			enh.HardcastWaitUntil(sim, reactionTime, func(_ *core.Simulation, _ *core.Unit) {
 				enh.GCD.Reset()
-				enh.CastLightningBolt(sim, enh.CurrentTarget)
+				enh.LightningBolt.Cast(sim, enh.CurrentTarget)
 			})
 
 			enh.WaitUntil(sim, reactionTime)
 			return true
 		}
-		return enh.CastLightningBolt(sim, enh.CurrentTarget)
+		return enh.LightningBolt.Cast(sim, enh.CurrentTarget)
 	}
 
 	return false
-}
-
-func (enh *EnhancementShaman) CastLightningBolt(sim *core.Simulation, target *core.Unit) bool {
-	return enh.LightningBolts[enh.MaelstromWeaponAura.GetStacks()-enh.maelstromweaponMinStack].Cast(sim, target)
 }
 
 func (enh *EnhancementShaman) CastLavaBurstWeave(sim *core.Simulation, reactionTime time.Duration) bool {

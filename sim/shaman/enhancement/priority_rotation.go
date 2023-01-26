@@ -71,7 +71,7 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 			return enh.MaelstromWeaponAura.GetStacks() == 5
 		},
 		cast: func(sim *core.Simulation, target *core.Unit) bool {
-			return enh.CastLightningBolt(sim, enh.CurrentTarget)
+			return enh.LightningBolt.Cast(sim, enh.CurrentTarget)
 		},
 		readyAt: func() time.Duration {
 			return 0
