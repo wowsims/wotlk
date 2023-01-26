@@ -143,12 +143,7 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 // Activates this MCD, if all the conditions pass.
 // Returns whether the MCD was activated.
 func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
-	if mcd.Spell.DefaultCast.GCD > 0 && !character.GCD.IsReady(sim) {
-		return false
-	}
-
-	// while casting or channeling, no other action is possible
-	if character.Hardcast.Expires > sim.CurrentTime {
+	if !mcd.Spell.CanCast(sim, character.CurrentTarget) {
 		return false
 	}
 
