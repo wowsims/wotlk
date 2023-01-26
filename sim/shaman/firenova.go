@@ -29,9 +29,6 @@ func (shaman *Shaman) registerFireNovaSpell() {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Second * time.Duration(fireNovaCooldown),
 			},
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				shaman.modifyCastClearcasting(spell, cast)
-			},
 		},
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,

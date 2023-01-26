@@ -64,14 +64,6 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Second * 8,
 			},
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				shaman.modifyCastClearcasting(spell, cast)
-				if shaman.ElementalMasteryAura.IsActive() {
-					cast.CastTime = 0
-				} else if shaman.NaturesSwiftnessAura.IsActive() {
-					cast.CastTime = 0
-				}
-			},
 		},
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,

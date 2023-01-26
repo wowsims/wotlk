@@ -34,9 +34,6 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				shaman.modifyCastClearcasting(spell, cast)
-			},
 			CD: core.Cooldown{
 				Timer:    shockTimer,
 				Duration: shaman.ShockCD(),

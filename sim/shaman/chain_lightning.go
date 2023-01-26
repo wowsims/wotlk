@@ -30,15 +30,6 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		}
 	}
 
-	spellConfig.Cast.ModifyCast = func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		shaman.applyElectricSpellCastInitModifiers(spell, cast)
-		if shaman.NaturesSwiftnessAura.IsActive() {
-			cast.CastTime = 0
-		} else {
-			shaman.modifyCastMaelstrom(spell, cast)
-		}
-	}
-
 	numHits := core.MinInt32(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
 	dmgReductionPerBounce := core.TernaryFloat64(shaman.HasSetBonus(ItemSetTidefury, 2), 0.83, 0.7)
 	dmgBonus := shaman.electricSpellBonusDamage(0.5714)

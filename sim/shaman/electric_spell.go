@@ -72,11 +72,3 @@ func (shaman *Shaman) electricSpellBonusDamage(spellCoeff float64) float64 {
 
 	return bonusDamage * spellCoeff // These items do not benefit from the bonus coeff from shamanism.
 }
-
-// Shared LB/CL logic that is dynamic, i.e. can't be precomputed.
-func (shaman *Shaman) applyElectricSpellCastInitModifiers(spell *core.Spell, cast *core.Cast) {
-	shaman.modifyCastClearcasting(spell, cast)
-	if shaman.ElementalMasteryAura.IsActive() {
-		cast.CastTime = 0
-	}
-}
