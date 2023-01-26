@@ -45,6 +45,7 @@ import { getMetaGemConditionDescription } from './proto_utils/gems';
 import { professionNames } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
 import {
+	resetExperimentalRotationSettings,
 	getTalentPoints,
 	isHealingSpec,
 	isTankSpec,
@@ -618,6 +619,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		TypedEvent.freezeAllAndDo(() => {
 			if (!settings.player) {
 				return;
+			}
+			if (!this.sim.getShowExperimental()) {
+				const rotation = this.player.specTypeFunctions.rotationFromPlayer(settings.player)
+				resetExperimentalRotationSettings(rotation, this.individualConfig.defaults.rotation)
 			}
 			this.player.fromProto(eventID, settings.player);
 			if (settings.epWeights?.length > 0) {

@@ -159,6 +159,26 @@ export const naturalClassOrder: Array<Class> = [
 	Class.ClassWarrior,
 ]
 
+export const ExperimentalRotationSettings = new Set([
+	'preNerfedGargoyle',
+	'desyncRotation',
+])
+
+export const ShouldShowExperimentalRotationField = (isExperimental: boolean, fieldName: string) => {
+	if (ExperimentalRotationSettings.has(fieldName)) {
+		return isExperimental
+	}
+	return true
+}
+
+export const resetExperimentalRotationSettings = (rotation: any, defaultRotation: any) => {
+	ExperimentalRotationSettings.forEach(k => {
+		if (k in rotation) {
+			rotation[k] = defaultRotation[k]
+		}
+	})
+}
+
 export const specNames: Record<Spec, string> = {
 	[Spec.SpecBalanceDruid]: 'Balance Druid',
 	[Spec.SpecFeralDruid]: 'Feral DPS Druid',
