@@ -41,6 +41,11 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 					warlock.ShadowBolt.BonusCritRating -= bonusCrit
 					warlock.Incinerate.BonusCritRating -= bonusCrit
 				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
+						warlock.DemonicSoulAura.Deactivate(sim)
+					}
+				},
 			})
 
 			warlock.RegisterAura(core.Aura{

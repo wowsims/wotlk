@@ -368,6 +368,11 @@ func (warlock *Warlock) setupMoltenCore() {
 			warlock.SoulFire.DamageMultiplier /= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating -= moltenCoreCritBonus
 		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == warlock.Incinerate || spell == warlock.SoulFire {
+				aura.RemoveStack(sim)
+			}
+		},
 	})
 
 	warlock.RegisterAura(core.Aura{
