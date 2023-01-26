@@ -21,7 +21,7 @@ func (rogue *Rogue) setSubtletyBuilder() {
 		rogue.BuilderPoints = 1
 	} else
 	// Ambush
-	if rogue.ShadowDanceAura.IsActive() && !mhDagger {
+	if rogue.ShadowDanceAura.IsActive() && mhDagger {
 		rogue.Builder = rogue.Ambush
 		rogue.BuilderPoints = 2
 	} else
