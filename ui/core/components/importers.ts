@@ -265,6 +265,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		const numTalentBytes = data[3];
 		const talentBytes = data.subarray(4, 4 + numTalentBytes);
 		const talentsHexStr = buf2hex(talentBytes);
+		//console.log('Talents hex: ' + talentsHexStr);
 		const talentsStr = talentsHexStr.split('f').slice(0, 3).join('-');
 		//console.log('Talents: ' + talentsStr);
 

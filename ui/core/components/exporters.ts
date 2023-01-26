@@ -10,7 +10,7 @@ import { IndividualSimSettings } from '../proto/ui';
 import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
-import { downloadString } from '../utils';
+import { buf2hex, downloadString } from '../utils';
 import { IndividualWowheadGearPlannerImporter } from './importers';
 
 import * as Mechanics from '../constants/mechanics';
@@ -105,8 +105,8 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 	getData(): string {
 		const player = this.simUI.player;
 
-		const classStr = classNames[player.getClass()].replace(' ', '-').toLowerCase();
-		const raceStr = raceNames[player.getRace()].replace(' ', '-').toLowerCase();
+		const classStr = classNames[player.getClass()].replaceAll(' ', '-').toLowerCase();
+		const raceStr = raceNames[player.getRace()].replaceAll(' ', '-').toLowerCase();
 		let url = `https://www.wowhead.com/wotlk/gear-planner/${classStr}/${raceStr}/`;
 
 		// See comments on the importer for how the binary formatting is structured.
@@ -115,47 +115,45 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 		bytes.push(0);
 		bytes.push(Mechanics.CHARACTER_LEVEL);
 
-		let talentsStr = player.getTalentsString().replace('-', 'f') + 'f';
+		let talentsStr = player.getTalentsString().replaceAll('-', 'f') + 'f';
 		if (talentsStr.length % 2 == 1) {
 			talentsStr += '0';
 		}
+		//console.log('Talents str: ' + talentsStr);
 		bytes.push(talentsStr.length / 2);
 		for (let i = 0; i < talentsStr.length; i += 2) {
 			bytes.push(parseInt(talentsStr.substring(i, i + 2), 16));
 		}
 
-		//console.log('With talents: ' + btoa(String.fromCharCode(...bytes)).replaceAll('/', '_').replaceAll('+', '-'));
-
-		//let glyphBytes: Array<number> = [];
-		//let glyphStr = '';
-		//const glyphs = player.getGlyphs();
-		//const d = "0123456789abcdefghjkmnpqrstvwxyz";
-		//const addGlyph = (glyphItemId: number, glyphPosition: number) => {
-		//	const spellId = this.simUI.sim.db.glyphItemToSpellId(glyphItemId);
-		//	if (!spellId) {
-		//		return;
-		//	}
-		//	glyphStr += d[glyphPosition];
-		//	glyphStr += d[(spellId >> 15) & 0b00011111];
-		//	glyphStr += d[(spellId >> 10) & 0b00011111];
-		//	glyphStr += d[(spellId >>  5) & 0b00011111];
-		//	glyphStr += d[(spellId >>  0) & 0b00011111];
-		//};
-		//addGlyph(glyphs.major1, 0);
-		//addGlyph(glyphs.major2, 1);
-		//addGlyph(glyphs.major3, 2);
-		//addGlyph(glyphs.minor1, 3);
-		//addGlyph(glyphs.minor2, 4);
-		//addGlyph(glyphs.minor3, 5);
-		//if (glyphStr) {
-		//	glyphBytes.push(0x30);
-		//	for (let i = 0; i < glyphStr.length; i++) {
-		//		glyphBytes.push(glyphStr.charCodeAt(i));
-		//	}
-		//}
-		//bytes.push(glyphBytes.length);
-		//bytes = bytes.concat(glyphBytes)
-		bytes.push(0);
+		let glyphBytes: Array<number> = [];
+		let glyphStr = '';
+		const glyphs = player.getGlyphs();
+		const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		const addGlyph = (glyphItemId: number, glyphPosition: number) => {
+			const spellId = this.simUI.sim.db.glyphItemToSpellId(glyphItemId);
+			if (!spellId) {
+				return;
+			}
+			glyphStr += d[glyphPosition];
+			glyphStr += d[(spellId >> 15) & 0b00011111];
+			glyphStr += d[(spellId >> 10) & 0b00011111];
+			glyphStr += d[(spellId >>  5) & 0b00011111];
+			glyphStr += d[(spellId >>  0) & 0b00011111];
+		};
+		addGlyph(glyphs.major1, 0);
+		addGlyph(glyphs.major2, 1);
+		addGlyph(glyphs.major3, 2);
+		addGlyph(glyphs.minor1, 3);
+		addGlyph(glyphs.minor2, 4);
+		addGlyph(glyphs.minor3, 5);
+		if (glyphStr) {
+			glyphBytes.push(0x30);
+			for (let i = 0; i < glyphStr.length; i++) {
+				glyphBytes.push(glyphStr.charCodeAt(i));
+			}
+		}
+		bytes.push(glyphBytes.length);
+		bytes = bytes.concat(glyphBytes)
 
 		const to2Bytes = (val: number): Array<number> => {
 			return [
@@ -195,9 +193,10 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 			});
 		});
 
+		//console.log('Hex: ' + buf2hex(new Uint8Array(bytes)));
 		const binaryString = String.fromCharCode(...bytes);
 		const b64encoded = btoa(binaryString);
-		const b64converted = b64encoded.replaceAll('/', '_').replaceAll('+', '-');
+		const b64converted = b64encoded.replaceAll('/', '_').replaceAll('+', '-').replace(/=+$/, '');
 
 		return url + b64converted;
 	}
