@@ -473,6 +473,7 @@ func (priest *Priest) registerInnerFocus() {
 			// Remove the buff and put skill on CD
 			aura.Deactivate(sim)
 			priest.InnerFocus.CD.Use(sim)
+			priest.UpdateMajorCooldowns()
 		},
 	})
 

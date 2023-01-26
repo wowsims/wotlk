@@ -12,38 +12,12 @@ func (shaman *Shaman) registerLightningBoltSpell() {
 	shaman.LightningBoltLO = shaman.RegisterSpell(shaman.newLightningBoltSpellConfig(true))
 }
 
-func (shaman *Shaman) RegisterMaelstromLightningBoltSpells(minStacks int32) []*core.Spell {
-	var spells []*core.Spell
-
-	spellConfig := shaman.newLightningBoltSpellConfig(false)
-
-	for i := minStacks; i <= 5; i++ {
-		spellConfig.ActionID.Tag = i
-		spell := shaman.RegisterSpell(spellConfig)
-		spells = append(spells, spell)
-	}
-
-	return spells
-}
-
 func (shaman *Shaman) newLightningBoltSpellConfig(isLightningOverload bool) core.SpellConfig {
 	spellConfig := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: 49238},
 		0.1*core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthShatterGarb, 2), 0.95, 1),
 		time.Millisecond*2500,
 		isLightningOverload)
-
-	if !isLightningOverload {
-		spellConfig.Cast.ModifyCast = func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-			shaman.applyElectricSpellCastInitModifiers(spell, cast)
-			if shaman.NaturesSwiftnessAura.IsActive() {
-				cast.CastTime = 0
-			} else {
-				spell.ActionID.Tag = shaman.MaelstromWeaponAura.GetStacks()
-				shaman.modifyCastMaelstrom(spell, cast)
-			}
-		}
-	}
 
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningBolt) {
 		spellConfig.DamageMultiplier += 0.04

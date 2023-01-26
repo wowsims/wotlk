@@ -125,10 +125,6 @@ type Shaman struct {
 
 	FlameShockDot *core.Dot
 
-	ClearcastingAura         *core.Aura
-	ElementalMasteryAura     *core.Aura
-	ElementalMasteryBuffAura *core.Aura
-	NaturesSwiftnessAura     *core.Aura
 	MaelstromWeaponAura      *core.Aura
 }
 
