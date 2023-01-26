@@ -35,7 +35,6 @@ func (mage *Mage) registerPyroblastSpell() {
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if mage.HotStreakAura.IsActive() {
 					cast.CastTime = 0
-					// cast.AfterCastDelay could be used for CQS to avoid ignite munching. Going to wait to implement for now though
 					if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 						mage.HotStreakAura.Deactivate(sim)
 					}
