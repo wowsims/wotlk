@@ -109,6 +109,18 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'minimumComboPointsEviscerate',
+			label: 'Minimum CP (Eviscerate)',
+			labelTooltip: 'Minimum number of combo points spent on Eviscerate',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 2
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'hemoWithDagger',
+			label: 'Hemorrhage with Dagger',
+			labelTooltip: 'Use Hemorrhage with Dagger in mainhand',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 2 || player.getTalents().hemorrhage
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithGarrote',
 			label: 'Open with Garrote',
