@@ -170,21 +170,18 @@ func (warlock *Warlock) setupEmpoweredImp() {
 }
 
 func (warlock *Warlock) setupDecimation() {
-	decimationMod := 0.2*float64(warlock.Talents.Decimation)
+	decimationMod := 0.2 * float64(warlock.Talents.Decimation)
 	warlock.DecimationAura = warlock.RegisterAura(core.Aura{
 		Label:    "Decimation Proc Aura",
 		ActionID: core.ActionID{SpellID: 63167},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.SoulFire.CastTimeMultiplier -= decimationMod
+			warlock.SoulFire.DefaultCast.GCD = time.Duration(float64(warlock.SoulFire.DefaultCast.GCD) * (1 - decimationMod))
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.SoulFire.CastTimeMultiplier += decimationMod
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.SoulFire {
-				aura.Deactivate(sim)
-			}
+			warlock.SoulFire.DefaultCast.GCD = time.Duration(float64(warlock.SoulFire.DefaultCast.GCD) / (1 - decimationMod))
 		},
 	})
 
@@ -324,7 +321,8 @@ func (warlock *Warlock) setupNightfall() {
 			warlock.ShadowBolt.CastTimeMultiplier += 1
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == warlock.ShadowBolt {
+			// Check if the shadowbolt was instant cast and not a normal one
+			if spell == warlock.ShadowBolt && spell.CurCast.CastTime == 0 {
 				aura.Deactivate(sim)
 			}
 		},
@@ -347,7 +345,7 @@ func (warlock *Warlock) setupNightfall() {
 }
 
 func (warlock *Warlock) setupMoltenCore() {
-	incinerateCastTimeReduction := 0.1 * float64(warlock.Talents.MoltenCore)
+	castReduction := 0.1 * float64(warlock.Talents.MoltenCore)
 	moltenCoreDamageBonus := 1 + 0.06*float64(warlock.Talents.MoltenCore)
 	moltenCoreCritBonus := 5 * float64(warlock.Talents.MoltenCore) * core.CritRatingPerCritChance
 
@@ -358,13 +356,15 @@ func (warlock *Warlock) setupMoltenCore() {
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier *= moltenCoreDamageBonus
-			warlock.Incinerate.CastTimeMultiplier -= incinerateCastTimeReduction
+			warlock.Incinerate.CastTimeMultiplier -= castReduction
+			warlock.Incinerate.DefaultCast.GCD = time.Duration(float64(warlock.Incinerate.DefaultCast.GCD) * (1 - castReduction))
 			warlock.SoulFire.DamageMultiplier *= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating += moltenCoreCritBonus
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warlock.Incinerate.DamageMultiplier /= moltenCoreDamageBonus
-			warlock.Incinerate.CastTimeMultiplier += incinerateCastTimeReduction
+			warlock.Incinerate.CastTimeMultiplier += castReduction
+			warlock.Incinerate.DefaultCast.GCD = time.Duration(float64(warlock.Incinerate.DefaultCast.GCD) / (1 - castReduction))
 			warlock.SoulFire.DamageMultiplier /= moltenCoreDamageBonus
 			warlock.SoulFire.BonusCritRating -= moltenCoreCritBonus
 		},

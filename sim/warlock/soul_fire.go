@@ -40,10 +40,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 			})
-
-			if warlock.MoltenCoreAura.IsActive() {
-				warlock.MoltenCoreAura.RemoveStack(sim)
-			}
 		},
 	})
 }
