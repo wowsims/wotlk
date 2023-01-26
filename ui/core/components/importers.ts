@@ -265,20 +265,53 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		const numTalentBytes = data[3];
 		const talentBytes = data.subarray(4, 4 + numTalentBytes);
 		const talentsHexStr = buf2hex(talentBytes);
+		//console.log('Talents hex: ' + talentsHexStr);
 		const talentsStr = talentsHexStr.split('f').slice(0, 3).join('-');
 		//console.log('Talents: ' + talentsStr);
 
 		let cur = 4 + numTalentBytes;
-		const numGlyphsBytes = data[cur];
+		const numGlyphBytes = data[cur];
 		cur++;
-		const glyphsBytes = data.subarray(cur, cur + numGlyphsBytes);
-		const gearBytes = data.subarray(cur + numGlyphsBytes);
-		//console.log(`Next ${numGlyphsBytes} bytes: ${buf2hex(glyphsBytes)}`);
+		const glyphBytes = data.subarray(cur, cur + numGlyphBytes);
+		const gearBytes = data.subarray(cur + numGlyphBytes);
+		//console.log(`Glyphs have ${numGlyphBytes} bytes: ${buf2hex(glyphBytes)}`);
 		//console.log(`Remaining ${gearBytes.length} bytes: ${buf2hex(gearBytes)}`);
 
 		// First byte in glyphs section seems to always be 0x30
-		cur++;
-		// TODO: Figure out glyphs format
+		cur = 1;
+		let hasGlyphs = false;
+		const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		const glyphStr = String.fromCharCode(...glyphBytes);
+		const glyphIds = [0, 0, 0, 0, 0, 0];
+		while (cur < glyphBytes.length) {
+
+			// First byte for each glyph is 0x3z, where z is the glyph position.
+			// 0, 1, 2 are major glyphs, 3, 4, 5 are minor glyphs.
+			const glyphPosition = d.indexOf(glyphStr[cur]);
+			cur++;
+
+			// For some reason, wowhead uses the spell IDs for the glyphs and
+			// applies a ridiculous hashing scheme.
+			const spellId = 0 +
+				(d.indexOf(glyphStr[cur + 0]) << 15) +
+				(d.indexOf(glyphStr[cur + 1]) << 10) +
+				(d.indexOf(glyphStr[cur + 2]) <<  5) +
+				(d.indexOf(glyphStr[cur + 3]) <<  0);
+			const itemId = this.simUI.sim.db.glyphSpellToItemId(spellId);
+			//console.log(`Glyph position: ${glyphPosition}, spellID: ${spellId}`);
+
+			hasGlyphs = true;
+			glyphIds[glyphPosition] = itemId;
+			cur += 4;
+		}
+		const glyphs = Glyphs.create({
+			major1: glyphIds[0],
+			major2: glyphIds[1],
+			major3: glyphIds[2],
+			minor1: glyphIds[3],
+			minor2: glyphIds[4],
+			minor3: glyphIds[5],
+		});
 
 		// Binary schema for each item:
 		// 8-bit slotNumber, high bit = is enchanted
@@ -307,6 +340,9 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			if (isEnchanted) {
 				// Ignore first byte, seems to always be 0?
+				if (gearBytes[cur] != 0) {
+					throw new Error('other ench byte: ' + gearBytes[cur]);
+				}
 				cur++;
 
 				// Note: this is the enchant SPELL id, not the effect ID.
@@ -341,7 +377,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		}
 		const gear = this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, hasGlyphs ? glyphs : null, []);
 	}
 
 	static slotIDs: Record<ItemSlot, number> = {
