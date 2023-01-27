@@ -47,14 +47,28 @@ jobs:
         id: date
         run: |
           echo "builddate=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          add-paths: |
+            git add assets/db_inputs/wowhead_item_tooltips.csv
+            git add assets/database/db.bin
+            git add assets/database/db.json
+          branch: update_item_db
+          delete-branch: true
+          commit-message: 'Update Item DB at ${{ steps.date.outputs.builddate}}'
+          title: 'Update Item DB at ${{ steps.date.outputs.builddate}}'
+          body: |
+            Update Item DB at ${{ steps.date.outputs.builddate}}
         
-      - name: Push Updates
-        continue-on-error: true
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add assets/db_inputs/wowhead_item_tooltips.csv
-          git add assets/database/db.bin
-          git add assets/database/db.json
-          git commit -am "Update Item DB at ${{ steps.date.outputs.builddate}}"
-          git push
+      #- name: Push Updates
+      #  continue-on-error: true
+      #  run: |
+      #    git config user.name github-actions
+      #    git config user.email github-actions@github.com
+      #    git add assets/db_inputs/wowhead_item_tooltips.csv
+      #    git add assets/database/db.bin
+      #    git add assets/database/db.json
+      #    git commit -am "Update Item DB at ${{ steps.date.outputs.builddate}}"
+      #    git push
