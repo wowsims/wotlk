@@ -18,6 +18,7 @@ import {
 	Rogue_Rotation_AssassinationPriority,
 	Rogue_Rotation_CombatPriority,
 	Rogue_Rotation_SubtletyPriority,
+	Rogue,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -60,6 +61,18 @@ export const SubtletyTalents = {
 	}),
 }
 
+export const HemoSubtletyTalents = {
+	name: 'Hemo Sub',
+	data: SavedTalents.create({
+		talentsString: '30532000224--502003203032112135011503115',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfHemorrhage,
+			major2: RogueMajorGlyph.GlyphOfEviscerate,
+			major3: RogueMajorGlyph.GlyphOfFeint,
+		})
+	}),
+}
+
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
 	minimumComboPointsExposeArmor: 4,
@@ -70,6 +83,7 @@ export const DefaultRotation = RogueRotation.create({
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
 	envenomEnergyThreshold: 60,
+	hemoWithDagger: false,
 });
 
 export const DefaultOptions = RogueOptions.create({

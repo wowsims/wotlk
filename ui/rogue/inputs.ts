@@ -110,6 +110,12 @@ export const RogueRotationConfig = {
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: 'hemoWithDagger',
+			label: 'Hemorrhage with Dagger',
+			labelTooltip: 'Use Hemorrhage with Dagger in mainhand',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hemorrhage
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithGarrote',
 			label: 'Open with Garrote',
 			labelTooltip: 'Open the encounter by casting Garrote.',

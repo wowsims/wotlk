@@ -200,6 +200,8 @@ message Rogue {
 		bool rupture_for_bleed = 18;
 
 		int32 envenom_energy_threshold = 19;
+
+		bool hemo_with_dagger = 20;
 	}
 	Rotation rotation = 1;
 	

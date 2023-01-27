@@ -16,24 +16,29 @@ type subtletyPrio struct {
 func (rogue *Rogue) setSubtletyBuilder() {
 	mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	// Garrote
-	if !rogue.Garrote.Dot(rogue.CurrentTarget).Aura.IsActive() && rogue.ShadowDanceAura.IsActive() {
+	if !rogue.Garrote.Dot(rogue.CurrentTarget).Aura.IsActive() && rogue.ShadowDanceAura.IsActive() && !rogue.PseudoStats.InFrontOfTarget {
 		rogue.Builder = rogue.Garrote
 		rogue.BuilderPoints = 1
 	} else
 	// Ambush
-	if rogue.ShadowDanceAura.IsActive() && mhDagger {
+	if rogue.ShadowDanceAura.IsActive() && mhDagger && !rogue.PseudoStats.InFrontOfTarget {
 		rogue.Builder = rogue.Ambush
 		rogue.BuilderPoints = 2
 	} else
 	// Backstab
-	if mhDagger {
+	if mhDagger && !rogue.Rotation.HemoWithDagger && !rogue.PseudoStats.InFrontOfTarget {
 		rogue.Builder = rogue.Backstab
 		rogue.BuilderPoints = 1
 	} else
 	// Hemorrhage
 	{
-		rogue.Builder = rogue.Hemorrhage
-		rogue.BuilderPoints = 1
+		if rogue.Talents.Hemorrhage {
+			rogue.Builder = rogue.Hemorrhage
+			rogue.BuilderPoints = 1
+		} else {
+			rogue.Builder = rogue.SinisterStrike
+			rogue.BuilderPoints = 1
+		}
 	}
 	// Ghostly Strike
 }
@@ -267,7 +272,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 			}
 			energyNeeded := r.Eviscerate[1].DefaultCast.Cost
-			minimumCP := int32(4)
+			minimumCP := int32(5)
 			if rogue.Rotation.AllowCpOvercap {
 				if r.ComboPoints() == 4 && r.getExpectedComboPointPerSecond() >= 1 {
 					return Wait
@@ -279,7 +284,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
 				return Cast
 			}
-			if r.ComboPoints() < 4 && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
+			if r.ComboPoints() < minimumCP && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
 				return Build
 			}
 			return Wait
