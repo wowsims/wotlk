@@ -102,8 +102,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5768.56567
-  tps: 6152.71881
+  dps: 5792.42058
+  tps: 6123.40116
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DreamwalkerGarb"
  value: {
-  dps: 5646.01728
-  tps: 6059.60147
+  dps: 5661.83729
+  tps: 6063.84119
  }
 }
 dps_results: {
@@ -369,15 +369,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 7024.41479
-  tps: 7447.46635
+  dps: 7033.71812
+  tps: 7499.19202
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 5701.26746
-  tps: 6108.09988
+  dps: 5711.46916
+  tps: 6099.84065
  }
 }
 dps_results: {
@@ -517,15 +517,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 7808.53216
-  tps: 8256.08958
+  dps: 7813.04639
+  tps: 8301.85202
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveRegalia"
  value: {
-  dps: 5798.38575
-  tps: 6224.99531
+  dps: 5815.24713
+  tps: 6251.56428
  }
 }
 dps_results: {
@@ -545,15 +545,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 6955.14063
-  tps: 7424.58327
+  dps: 6946.18178
+  tps: 7392.40869
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 5576.23311
-  tps: 5993.19235
+  dps: 5573.87999
+  tps: 5989.45368
  }
 }
 dps_results: {
@@ -573,15 +573,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-NightsongBattlegear"
  value: {
-  dps: 6910.40663
-  tps: 7291.18793
+  dps: 6962.57697
+  tps: 7426.30486
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-NightsongGarb"
  value: {
-  dps: 5595.58345
-  tps: 5928.47156
+  dps: 5616.94092
+  tps: 5960.10918
  }
 }
 dps_results: {
@@ -755,8 +755,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
-  dps: 5823.24946
-  tps: 6115.48965
+  dps: 5840.89967
+  tps: 6137.92006
  }
 }
 dps_results: {
@@ -804,15 +804,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ThunderheartHarness"
  value: {
-  dps: 5639.216
-  tps: 6044.00625
+  dps: 5620.10339
+  tps: 6025.33223
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-ThunderheartRegalia"
  value: {
-  dps: 4998.00946
-  tps: 5379.89215
+  dps: 4976.56214
+  tps: 5354.7857
  }
 }
 dps_results: {
@@ -874,8 +874,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6110.75602
-  tps: 6482.16929
+  dps: 6060.1563
+  tps: 6399.86395
  }
 }
 dps_results: {
