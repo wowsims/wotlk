@@ -83,7 +83,6 @@ export const DefaultRotation = RogueRotation.create({
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
 	envenomEnergyThreshold: 60,
-	minimumComboPointsEviscerate: 5,
 	hemoWithDagger: false,
 });
 

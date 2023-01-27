@@ -201,9 +201,7 @@ message Rogue {
 
 		int32 envenom_energy_threshold = 19;
 
-		int32 minimum_combo_points_eviscerate = 20;
-
-		bool hemo_with_dagger = 21;
+		bool hemo_with_dagger = 20;
 	}
 	Rotation rotation = 1;
 	

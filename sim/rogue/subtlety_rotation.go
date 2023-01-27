@@ -272,7 +272,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 			}
 			energyNeeded := r.Eviscerate[1].DefaultCast.Cost
-			minimumCP := rogue.Rotation.MinimumComboPointsEviscerate
+			minimumCP := int32(5)
 			if rogue.Rotation.AllowCpOvercap {
 				if r.ComboPoints() == 4 && r.getExpectedComboPointPerSecond() >= 1 {
 					return Wait
@@ -284,7 +284,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
 				return Cast
 			}
-			if r.ComboPoints() < 4 && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
+			if r.ComboPoints() < minimumCP && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
 				return Build
 			}
 			return Wait
