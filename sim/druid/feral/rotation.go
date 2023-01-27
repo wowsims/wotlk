@@ -686,14 +686,27 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		return
 	}
 
+	hasT72P := cat.HasSetBonus(druid.ItemSetDreamwalkerBattlegear, 2)
+	hasT84P := cat.HasSetBonus(druid.ItemSetNightsongBattlegear, 4)
+
 	cat.Rotation.UseRake = true
 	cat.Rotation.UseBite = true
-	if cat.Rotation.FlowerWeave {
-		cat.Rotation.MinRoarOffset = 13 * time.Second
-		cat.Rotation.BiteTime = 4 * time.Second
 
+	if cat.Rotation.FlowerWeave {
+		if hasT84P {
+			cat.Rotation.MinRoarOffset = 26 * time.Second
+		} else {
+			cat.Rotation.MinRoarOffset = 13 * time.Second
+		}
+		cat.Rotation.BiteTime = 4 * time.Second
 	} else {
-		cat.Rotation.MinRoarOffset = 14 * time.Second
+		if hasT72P {
+			cat.Rotation.MinRoarOffset = 14 * time.Second
+		} else if hasT84P {
+			cat.Rotation.MinRoarOffset = 27 * time.Second
+		} else {
+			cat.Rotation.MinRoarOffset = 12 * time.Second
+		}
 		cat.Rotation.BiteTime = 10 * time.Second
 	}
 }
