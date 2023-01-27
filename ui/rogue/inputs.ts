@@ -113,7 +113,7 @@ export const RogueRotationConfig = {
 			fieldName: 'hemoWithDagger',
 			label: 'Hemorrhage with Dagger',
 			labelTooltip: 'Use Hemorrhage with Dagger in mainhand',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 2 || player.getTalents().hemorrhage
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hemorrhage
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithGarrote',
