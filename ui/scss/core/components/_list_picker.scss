@@ -31,7 +31,7 @@
 
 			&:not(.inline) {
 				padding: map.get($spacers, 3) map.get($spacers, 3) 0 map.get($spacers, 3);
-				border: 1px solid $primary;
+				border: 1px solid $link-color;
 
 				.list-picker-item-header {
 					.list-picker-item-action:first-of-type {

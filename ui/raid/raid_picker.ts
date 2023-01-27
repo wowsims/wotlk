@@ -611,7 +611,7 @@ export class PlayerPicker extends Component {
 
 class PlayerEditorModal extends BaseModal {
 	constructor(player: Player<any>) {
-		super('player-editor-modal', {
+		super(document.body, 'player-editor-modal', {
 			closeButton: {fixed: true, text: false},
 			header: false
 		});

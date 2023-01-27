@@ -54,7 +54,7 @@ class EpWeightsMenu extends Popup {
 		this.rootElem.innerHTML = `
 			<div class="ep-weights-header">
 				<div class="ep-weights-actions">
-					<button class="btn btn-${this.simUI.cssScheme} calc-weights">CALCULATE</button>
+					<button class="btn calc-weights">CALCULATE</button>
 				</div>
 				<div class="ep-weights-results"></div>
 			</div>
@@ -67,7 +67,7 @@ class EpWeightsMenu extends Popup {
 				</div>
 				<div class="show-all-stats-container">
 				</div>
-				<button class="btn btn-${this.simUI.cssScheme} optimize-gems">OPTIMIZE GEMS</button>
+				<button class="btn optimize-gems">OPTIMIZE GEMS</button>
 			</div>
 			<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items. Use <span class="fa fa-copy text-${this.simUI.cssScheme}"></span> icon above the EPs to use newly calculated EPs. </p>
 			<div class="ep-weights-table">

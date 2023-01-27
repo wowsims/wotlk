@@ -29,6 +29,7 @@ import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
 import {ItemSwapGear } from '../proto_utils/gear.js'
 import { SimUI } from '../sim_ui.js';
+import { BaseModal } from './base_modal.js';
 
 declare var $: any;
 declare var tippy: any;
@@ -401,28 +402,26 @@ interface GearData {
 	changeEvent: TypedEvent<any>,
 }
 
-class SelectorModal extends Popup {
+class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
-		super(parent);
+		super(parent, 'selector-modal', {header: false});
 		this.simUI = simUI;
 		this.player = player;
 
 		window.scrollTo({top: 0});
 
-		this.rootElem.classList.add('selector-modal');
-		this.rootElem.innerHTML = `
+		this.body.innerHTML = `
 			<ul class="nav nav-tabs selector-modal-tabs">
 			</ul>
 			<div class="tab-content selector-modal-tab-content">
 			</div>
 		`;
 
-		this.addCloseButton();
 		this.tabsElem = this.rootElem.getElementsByClassName('selector-modal-tabs')[0] as HTMLElement;
 		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
 
@@ -644,7 +643,7 @@ class SelectorModal extends Popup {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn btn-${this.simUI.cssScheme}">Filters</button>
+					<button class="selector-modal-filters-button btn">Filters</button>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>

@@ -1,5 +1,41 @@
 @use "sass:map";
 
+:root {
+  --container-padding: 3rem;
+}
+
+@include media-breakpoint-up(xxl) {
+  :root {
+    --container-padding: 4rem;
+  }
+}
+
+@include media-breakpoint-up(1080p) {
+  :root {
+    --bs-body-font-size: 16px !important;
+  }
+}
+
+// // We want to apply only to 1440p monitors, NOT 1080p Ultrawide
+// @media (min-width: map.get($grid-breakpoints, 1440p)) and (max-aspect-ratio: 16/9) {
+//   :root {
+//     --bs-body-font-size: 20px !important;
+//   }
+// }
+
+// @include media-breakpoint-up(4k) {
+//   :root {
+//     --bs-body-font-size: 32px !important;
+//   }
+// }
+
+// Use larger padding on 1080p+ ultrawide monitors
+@media (min-width: map.get($grid-breakpoints, 1080p)) and (min-aspect-ratio: 17/9) {
+  :root {
+    --container-padding: 6rem;
+  }
+}
+
 * {
   letter-spacing: 1px;
 }
@@ -7,6 +43,7 @@
 html {
   height: 100%;
   color-scheme: dark;
+  font-size: var(--bs-body-font-size);
 }
 
 body {
@@ -32,7 +69,7 @@ a {
     color: white;
 
     &:hover, &:focus, &.active {
-      color: $brand-color;
+      color: $primary;
     }
   }
 }

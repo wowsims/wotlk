@@ -121,9 +121,9 @@ export class EncounterPicker extends Component {
 			}
 
 			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('advanced-button', 'btn', `btn-${simUI.cssScheme}`);
+			advancedButton.classList.add('advanced-button', 'btn');
 			advancedButton.textContent = 'Advanced';
-			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(this.rootElem, simUI, modEncounter));
+			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
 		});
 	}
@@ -133,7 +133,7 @@ class AdvancedEncounterModal extends BaseModal {
 	private readonly encounter: Encounter;
 
 	constructor(parent: HTMLElement, simUI: SimUI, encounter: Encounter) {
-		super('advanced-encounter-picker-modal');
+		super(parent, 'advanced-encounter-picker-modal');
 
 		this.encounter = encounter;
 

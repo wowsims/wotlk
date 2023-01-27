@@ -1,10 +1,8 @@
-$theme: 'warrior';
-
 // Set color variables which control the site theme.
 .warrior-sim-ui {
-	--theme-color-background: #1e0f0c;
-	--theme-color-background-raw: 29, 21, 16;
-	--theme-background-image: url('/wotlk/assets/img/warrior_background.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$warrior,
+		.95,
+		'/wotlk/assets/img/warrior_background.jpg'
+	);
 }

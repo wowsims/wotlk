@@ -1,10 +1,8 @@
-$theme: 'death-knight';
-
 // Set color variables which control the site theme.
 .tank-deathknight-sim-ui {
-	--theme-color-background: #1d1626;
-	--theme-color-background-raw: 19, 5, 7;
-	--theme-background-image: url('/wotlk/assets/img/death_knight_background.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$death-knight,
+		.95,
+		'/wotlk/assets/img/death_knight_background.jpg'
+	);
 }

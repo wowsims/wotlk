@@ -48,12 +48,12 @@ export class RaidSimUI extends SimUI {
 
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
+			cssClass: 'raid-sim-ui',
 			cssScheme: 'raid',
 			spec: null,
 			launchStatus: raidSimStatus,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
-		this.rootElem.classList.add('raid-sim-ui');
 
 		this.config = config;
 		this.settingsMuuri = null;

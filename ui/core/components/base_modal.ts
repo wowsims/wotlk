@@ -20,8 +20,8 @@ export class BaseModal extends Component {
 	readonly header: HTMLElement | undefined;
 	readonly body: HTMLElement;
 
-	constructor(cssClass: string, config: BaseModalConfig = {}) {
-		super(document.body, 'modal');
+	constructor(parent: HTMLElement, cssClass: string, config: BaseModalConfig = {}) {
+		super(parent, 'modal');
 		this.config = {...DEFAULT_CONFIG, ...config};
 
 		this.rootElem.classList.add('fade');
@@ -69,7 +69,8 @@ export class BaseModal extends Component {
 		this.rootElem.addEventListener('hide.bs.modal', () => {
 			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
 			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
-			siblingModals[siblingModals.length - 1].style.zIndex = '1055';
+			const modalIndex = siblingModals.length - 1 < 0 ? 0 : siblingModals.length - 1;
+			siblingModals[modalIndex].style.zIndex = '1055';
 		});
 
 		this.modal.show();

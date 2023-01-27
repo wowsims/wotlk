@@ -26,12 +26,22 @@
   padding: 0;
   margin-bottom: $block-spacer;
   margin-right: $block-spacer;
+  border: 1px solid var(--theme-color-primary);
   display: flex;
   font-size: $content-font-size;
   transition: $btn-transition;
 
+  &:hover:not(.active) {
+    background: var(--theme-color-primary-dampened);
+  }
+
   &.disabled {
     display: none;
+  }  
+
+  &.active {
+    background-color: var(--theme-color-primary);
+    color: var(--theme-component-text-color);
   }
 
   .saved-data-set-name {

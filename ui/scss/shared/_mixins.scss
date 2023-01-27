@@ -1,0 +1,47 @@
+@mixin theme-color($base-color, $opacity, $background-image-url) {
+  $background-color-hex: mix(black, $base-color, 90);
+  $interact-color: shade-color($base-color, $btn-hover-bg-shade-amount);
+  $text-color: color-contrast($base-color);
+
+  --theme-background-color:   #{red($background-color-hex), green($background-color-hex), blue($background-color-hex)};
+  --theme-background-image:   url(#{$background-image-url});
+  --theme-background-opacity: #{$opacity};
+
+  // Primary component color
+  --theme-color-primary: #{$base-color};
+  // Shaded version of the primary color used for things like btn hover
+  --theme-color-primary-shade: #{shade-color($base-color, $btn-hover-bg-shade-amount)};
+  --theme-color-primary-dampened: #{mix(black, $base-color, 75)};
+
+  // Defines the text color of components using the primary color as a background
+  --theme-component-text-color: #{color-contrast($base-color)};
+
+  --bs-primary: #{$base-color};
+  --bs-primary-rgb: #{to-rgb($base-color)};
+
+  .btn {
+    --bs-btn-bg:                 #{$base-color};
+    --bs-btn-border-color:       #{$base-color};
+    --bs-btn-color:              #{$text-color};
+    --bs-btn-hover-bg:           #{$interact-color};
+    --bs-btn-hover-border-color: #{$interact-color};
+    --bs-btn-hover-color:        #{$text-color};
+  }
+
+  .dropdown-menu {
+    --bs-dropdown-border-color: #{$base-color};
+    --bs-dropdown-border-width: 1px;
+  }
+
+  .modal {
+    --bs-modal-border-color: #{$base-color};
+  }
+
+  // These are custom variables but parsed SVGs can't use CSS vars so we need to assign them with Sass
+  --bs-form-check-box-bg-image: #{escape-svg(
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$text-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>")
+  )};
+  --bs-form-check-radio-bg-image: #{escape-svg(
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{$text-color}'/></svg>")
+  )};
+}

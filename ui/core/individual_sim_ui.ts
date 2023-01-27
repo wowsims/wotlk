@@ -176,12 +176,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: IndividualSimUIConfig<SpecType>) {
 		super(parentElem, player.sim, {
+			cssClass: config.cssClass,
 			cssScheme: config.cssScheme,
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
 		});
-		this.rootElem.classList.add('individual-sim-ui', config.cssClass);
+		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
 		this.individualConfig = config;
 		this.raidSimResultsManager = null;

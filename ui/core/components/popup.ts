@@ -4,14 +4,8 @@ import { Component } from './component.js';
 declare var $: any;
 
 export class Popup extends Component {
-
 	constructor(parent: HTMLElement) {
 		super(parent, 'popup');
-
-		const computedStyles = window.getComputedStyle(parent);
-		this.rootElem.style.setProperty('--main-text-color', computedStyles.getPropertyValue('--main-text-color').trim());
-		this.rootElem.style.setProperty('--theme-color-background', computedStyles.getPropertyValue('--theme-color-background').trim());
-		this.rootElem.style.setProperty('--theme-color-background-raw', computedStyles.getPropertyValue('--theme-color-background-raw').trim());
 
 		if (parent.closest('.hide-damage-metrics')) {
 			this.rootElem.classList.add('hide-damage-metrics');

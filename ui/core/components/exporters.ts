@@ -25,8 +25,8 @@ export abstract class Exporter extends Popup {
 				<textarea class="exporter-textarea form-control" readonly></textarea>
 			</div>
 			<div class="actions-row">
-				<button class="exporter-button btn btn-${simUI.cssScheme} clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button btn btn-${simUI.cssScheme} download-button">DOWNLOAD</button>
+				<button class="exporter-button btn clipboard-button">COPY TO CLIPBOARD</button>
+				<button class="exporter-button btn download-button">DOWNLOAD</button>
 			</div>
 		`;
 

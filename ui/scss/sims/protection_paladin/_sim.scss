@@ -1,10 +1,8 @@
-$theme: 'paladin';
-
 // Set color variables which control the site theme.
 .protection-paladin-sim-ui {
-	--theme-color-background: rgb(20, 13, 18);
-	--theme-color-background-raw: 20, 13, 18;
-	--theme-background-image: url('/wotlk/assets/img/prot_paladin.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$paladin,
+		.95,
+		'/wotlk/assets/img/prot_paladin.jpg'
+	);
 }
