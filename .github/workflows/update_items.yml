@@ -1,0 +1,60 @@
+name: Update Items
+
+on:
+  workflow_dispatch
+
+jobs:
+  update-items:
+    permissions: 
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.x
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Protoc Go plugin
+        run: go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+          
+      - name: Test
+        run: make test
+          
+      - name: Delete Old DB
+        run: rm assets/db_inputs/wowhead_item_tooltips.csv
+          
+      - name: Update DB
+        run: go run ./tools/database/gen_tooltips -source=wowhead-items -output=assets/db_inputs/wowhead_item_tooltips.csv
+          
+      - name: Make Items
+        run: make items
+        
+      - name: Set Date
+        id: date
+        run: |
+          echo "builddate=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        
+      - name: Push Updates
+        continue-on-error: true
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add assets/db_inputs/wowhead_item_tooltips.csv
+          git add assets/database/db.bin
+          git add assets/database/db.json
+          git commit -am "Update Item DB at ${{ steps.date.outputs.builddate}}"
+          git push
