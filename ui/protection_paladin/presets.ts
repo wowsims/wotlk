@@ -68,7 +68,6 @@ export const DefaultRotation = ProtectionPaladinRotation.create({
 export const DefaultOptions = ProtectionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
 	judgement: PaladinJudgement.JudgementOfWisdom,
-	damageTakenPerSecond: 0,
 });
 
 export const DefaultConsumes = Consumes.create({
