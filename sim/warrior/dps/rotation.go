@@ -112,8 +112,6 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 			war.CastSlam(sim, war.CurrentTarget)
 		} else if war.CanShieldSlam(sim) {
 			war.ShieldSlam.Cast(sim, war.CurrentTarget)
-		} else if war.ShouldBerserkerRage(sim) {
-			war.BerserkerRage.Cast(sim, nil)
 		}
 	}
 	war.tryQueueHsCleave(sim)
@@ -155,8 +153,6 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
 		} else if war.CanExecute() {
 			war.CastExecute(sim, war.CurrentTarget)
-		} else if war.ShouldBerserkerRage(sim) {
-			war.BerserkerRage.Cast(sim, nil)
 		}
 	}
 
