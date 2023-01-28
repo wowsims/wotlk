@@ -29,10 +29,9 @@ func TestProtection(t *testing.T) {
 				SpecOptions: &proto.Player_ProtectionPaladin{
 					ProtectionPaladin: &proto.ProtectionPaladin{
 						Options: &proto.ProtectionPaladin_Options{
-							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-							Seal:                 proto.PaladinSeal_Command,
-							Aura:                 proto.PaladinAura_RetributionAura,
-							DamageTakenPerSecond: 0,
+							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:      proto.PaladinSeal_Command,
+							Aura:      proto.PaladinAura_RetributionAura,
 						},
 						Rotation: defaultProtRotation,
 					},
@@ -43,10 +42,9 @@ func TestProtection(t *testing.T) {
 				SpecOptions: &proto.Player_ProtectionPaladin{
 					ProtectionPaladin: &proto.ProtectionPaladin{
 						Options: &proto.ProtectionPaladin_Options{
-							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-							Seal:                 proto.PaladinSeal_Righteousness,
-							Aura:                 proto.PaladinAura_RetributionAura,
-							DamageTakenPerSecond: 0,
+							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:      proto.PaladinSeal_Righteousness,
+							Aura:      proto.PaladinAura_RetributionAura,
 						},
 						Rotation: defaultProtRotation,
 					},

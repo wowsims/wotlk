@@ -78,11 +78,7 @@ export const DefaultRotation = ProtectionWarriorRotation.create({
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
 	shout: WarriorShout.WarriorShoutCommanding,
-	precastShout: true,
-	precastShoutSapphire: false,
-	precastShoutT2: false,
   useShatteringThrow: false,
-
 	startingRage: 0,
 });
 
