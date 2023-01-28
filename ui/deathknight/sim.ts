@@ -30,7 +30,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood DPS is a work in progress.",
 			],
 
 			// All stats for which EP should be calculated.

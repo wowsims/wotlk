@@ -9,6 +9,7 @@ import {
 	TankDeathknight_Rotation_Opener as Opener,
 	TankDeathknight_Rotation_BloodSpell as BloodSpell,
 	TankDeathknight_Rotation_Presence as Presence,
+	TankDeathknight_Rotation_BloodTapPrio as BloodTapPrio,
 } from '../core/proto/deathknight.js';
 
 
@@ -23,6 +24,12 @@ export const StartingRunicPower = InputHelpers.makeSpecOptionsNumberInput<Spec.S
 	fieldName: 'startingRunicPower',
 	label: 'Starting Runic Power',
 	labelTooltip: 'Initial RP at the start of each iteration.',
+})
+
+export const DefensiveCdDelay = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecTankDeathknight>({
+	fieldName: 'defensiveDelay',
+	label: 'Defensives Delay',
+	labelTooltip: 'Minimum delay between using more defensive cooldowns.',
 })
 
 export const TankDeathKnightRotationConfig = {
@@ -41,9 +48,9 @@ export const TankDeathKnightRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, Opener>({
 			fieldName: 'opener',
 			label: 'Opener',
-			labelTooltip: '<p>Chose what opener to perform:</p>\
-				<p><b>Regular</b>: Regular opener.</p>\
-				<p><b>Threat</b>: Full IT spam for max threat.</p>',
+			labelTooltip: 'Chose what opener to perform:<br>\
+				<b>Regular</b>: Regular opener.<br>\
+				<b>Threat</b>: Full IT spam for max threat.',
 			values: [
 				{ name: 'Regular', value: Opener.Regular },
 				{ name: 'Threat', value: Opener.Threat },
@@ -53,25 +60,35 @@ export const TankDeathKnightRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, OptimizationSetting>({
 			fieldName: 'optimizationSetting',
 			label: 'Optimization Setting',
-			labelTooltip: '<p>Chose what metric to optimize :</p>\
-				<p><b>Hps</b>: Prioritizes holding runes for healing after damage taken.</p>\
-				<p><b>Tps</b>: Prioritizes spending runes for icy touch spam.</p>\
-				<p><b>Dps</b>: Prioritizes spending runes for maximizing damage.</p>',
+			labelTooltip: 'Chose what metric to optimize:<br>\
+				<b>Hps</b>: Prioritizes holding runes for healing after damage taken.<br>\
+				<b>Tps</b>: Prioritizes spending runes for icy touch spam.',
 			values: [
 				{ name: 'Hps', value: OptimizationSetting.Hps },
 				{ name: 'Tps', value: OptimizationSetting.Tps },
-				{ name: 'Dps', value: OptimizationSetting.Dps },
 			],
 			changeEmitter: (player: Player<Spec.SpecTankDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, BloodSpell>({
 			fieldName: 'bloodSpell',
 			label: 'Blood Spell',
-			labelTooltip: '<p>Chose what blood rune spender to use.</p>',
+			labelTooltip: 'Chose what blood rune spender to use.',
 			values: [
 				{ name: 'Blood Strike', value: BloodSpell.BloodStrike },
 				{ name: 'Blood Boil', value: BloodSpell.BloodBoil },
 				{ name: 'Heart Strike', value: BloodSpell.HeartStrike },
+			],
+			changeEmitter: (player: Player<Spec.SpecTankDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecTankDeathknight, BloodTapPrio>({
+			fieldName: 'bloodTapPrio',
+			label: 'Blood Tap',
+			labelTooltip: 'Chose how to use Blood Tap:<br>\
+				<b>Defensive</b>: Save Blood Tap for activating defensive cds.<br>\
+				<b>Offensive</b>: Use Blood Tap for extra Icy Touches.',
+			values: [
+				{ name: 'Defensive', value: BloodTapPrio.Defensive },
+				{ name: 'Offensive', value: BloodTapPrio.Offensive },
 			],
 			changeEmitter: (player: Player<Spec.SpecTankDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),

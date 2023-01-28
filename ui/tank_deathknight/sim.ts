@@ -32,7 +32,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Completely unfinished.</p>"
+				"<p>Defensive CDs use is very basic and wip.</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -169,6 +169,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					OtherInputs.HealingCadence,
 					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
+					DeathKnightInputs.DefensiveCdDelay,
 					OtherInputs.InFrontOfTarget,
 					DeathKnightInputs.StartingRunicPower,
 				],

@@ -57,12 +57,17 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell: dk.UnbreakableArmor,
-			Type:  core.CooldownTypeSurvival,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.UnbreakableArmor.CanCast(sim, nil)
-			},
-		})
+		// dk.AddMajorCooldown(core.MajorCooldown{
+		// 	Spell: dk.UnbreakableArmor,
+		// 	Type:  core.CooldownTypeSurvival,
+		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+		// 		success := dk.UnbreakableArmor.CanCast(sim, nil)
+		// 		if !success && dk.BloodTap.IsReady(sim) {
+		// 			dk.BloodTap.Cast(sim, nil)
+		// 			success = dk.UnbreakableArmor.CanCast(sim, nil)
+		// 		}
+		// 		return success
+		// 	},
+		// })
 	}
 }
