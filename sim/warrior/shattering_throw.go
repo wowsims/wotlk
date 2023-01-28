@@ -43,7 +43,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if !warrior.StanceMatches(BattleStance) {
+			if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
 				warrior.BattleStance.Cast(sim, nil)
 			}
 
