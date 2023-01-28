@@ -68,11 +68,15 @@
 
 .modal {
   .modal-dialog {
-    .modal-header {
+    .modal-header,
+    .modal-footer {
       padding-left: 0;
       padding-right: 0;
       margin-left: $modal-header-padding-x;
       margin-right: $modal-header-padding-x;
+    }
+
+    .modal-header {
       align-items: flex-start;
     }
   }

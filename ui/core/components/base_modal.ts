@@ -5,11 +5,13 @@ import { Modal } from 'bootstrap';
 
 type BaseModalConfig = {
 	closeButton?: CloseButtonConfig,
+	footer?: Boolean,
 	header?: boolean,
 };
 
 const DEFAULT_CONFIG = {
 	closeButton: {},
+	footer: false,
 	header: true,
 }
 
@@ -19,6 +21,7 @@ export class BaseModal extends Component {
 	readonly modal: Modal;
 	readonly header: HTMLElement | undefined;
 	readonly body: HTMLElement;
+	readonly footer: HTMLElement | undefined;
 
 	constructor(parent: HTMLElement, cssClass: string, config: BaseModalConfig = {}) {
 		super(parent, 'modal');
@@ -46,6 +49,12 @@ export class BaseModal extends Component {
 
 		this.addCloseButton();
 
+		if (this.config.footer) {
+			this.footer = document.createElement('div');
+			this.footer.classList.add('modal-footer');
+			container.appendChild(this.footer);
+		}
+
 		this.modal = new Modal(this.rootElem);
 		this.open();
 		
@@ -69,8 +78,9 @@ export class BaseModal extends Component {
 		this.rootElem.addEventListener('hide.bs.modal', () => {
 			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
 			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
-			const modalIndex = siblingModals.length - 1 < 0 ? 0 : siblingModals.length - 1;
-			siblingModals[modalIndex].style.zIndex = '1055';
+
+			if (siblingModals.length)
+				siblingModals[siblingModals.length - 1].style.zIndex = '1055';
 		});
 
 		this.modal.show();

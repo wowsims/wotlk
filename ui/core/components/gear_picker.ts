@@ -21,7 +21,6 @@ import {
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';
-import { Popup } from './popup.js';
 import { makePhaseSelector } from './other_inputs.js';
 import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
@@ -31,7 +30,6 @@ import {ItemSwapGear } from '../proto_utils/gear.js'
 import { SimUI } from '../sim_ui.js';
 import { BaseModal } from './base_modal.js';
 
-declare var $: any;
 declare var tippy: any;
 declare var WowSim: any;
 
@@ -409,21 +407,17 @@ class SelectorModal extends BaseModal {
 	private readonly contentElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
-		super(parent, 'selector-modal', {header: false});
+		super(parent, 'selector-modal', {header: true});
 		this.simUI = simUI;
 		this.player = player;
 
 		window.scrollTo({top: 0});
 
-		this.body.innerHTML = `
-			<ul class="nav nav-tabs selector-modal-tabs">
-			</ul>
-			<div class="tab-content selector-modal-tab-content">
-			</div>
-		`;
+		this.header!.insertAdjacentHTML('afterbegin', `<ul class="nav nav-tabs selector-modal-tabs"></ul>`);
+		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
 
-		this.tabsElem = this.rootElem.getElementsByClassName('selector-modal-tabs')[0] as HTMLElement;
-		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
+		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
 
 		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants, gearData);
 	}
@@ -643,7 +637,7 @@ class SelectorModal extends BaseModal {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn">Filters</button>
+					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>

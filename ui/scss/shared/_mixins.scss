@@ -1,36 +1,40 @@
 @mixin theme-color($base-color, $opacity, $background-image-url) {
   $background-color-hex: mix(black, $base-color, 90);
-  $interact-color: shade-color($base-color, $btn-hover-bg-shade-amount);
+  $hover-color: shade-color($base-color, $btn-hover-bg-shade-amount);
+  $interact-color: shade-color($base-color, $btn-active-bg-shade-amount);
   $text-color: color-contrast($base-color);
 
+  // Used to style the SimUI background
   --theme-background-color:   #{red($background-color-hex), green($background-color-hex), blue($background-color-hex)};
   --theme-background-image:   url(#{$background-image-url});
   --theme-background-opacity: #{$opacity};
 
-  // Primary component color
-  --theme-color-primary: #{$base-color};
-  // Shaded version of the primary color used for things like btn hover
-  --theme-color-primary-shade: #{shade-color($base-color, $btn-hover-bg-shade-amount)};
-  --theme-color-primary-dampened: #{mix(black, $base-color, 75)};
-
   // Defines the text color of components using the primary color as a background
   --theme-component-text-color: #{color-contrast($base-color)};
 
+  // Override Bootstrap primary variables
   --bs-primary: #{$base-color};
   --bs-primary-rgb: #{to-rgb($base-color)};
 
-  .btn {
-    --bs-btn-bg:                 #{$base-color};
-    --bs-btn-border-color:       #{$base-color};
-    --bs-btn-color:              #{$text-color};
-    --bs-btn-hover-bg:           #{$interact-color};
-    --bs-btn-hover-border-color: #{$interact-color};
-    --bs-btn-hover-color:        #{$text-color};
-  }
+  // Custom variants we use for styling some components
+  --bs-primary-dampened: #{mix(black, $base-color, 75)};
 
-  .dropdown-menu {
-    --bs-dropdown-border-color: #{$base-color};
-    --bs-dropdown-border-width: 1px;
+  .btn-primary {
+    --bs-btn-bg:                    #{$base-color};
+    --bs-btn-border-color:          #{$base-color};
+    --bs-btn-color:                 #{$text-color};
+
+    --bs-btn-hover-bg:              #{$hover-color};
+    --bs-btn-hover-border-color:    #{$hover-color};
+    --bs-btn-hover-color:           #{$text-color};
+
+    --bs-btn-active-bg:             #{$interact-color};
+    --bs-btn-active-border-color:   #{$interact-color};
+    --bs-btn-active-color:          #{$text-color};
+
+    --bs-btn-disabled-bg:           #{mix(gray, $base-color, 50)};
+    --bs-btn-disabled-border-color: #{mix(gray, $base-color, 50)};
+    --bs-btn-disabled-color:        #{$text-color};
   }
 
   .modal {

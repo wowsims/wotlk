@@ -32,14 +32,14 @@ $class-colors: (
 
 $theme-colors: map-merge($theme-colors, $class-colors);
 
-$primary: #e0a335;
+$brand: #e0a335;
 $success: #1eff00;
 $quality-uncommon: $success;
 $quality-rare: #0070dd;
 $quality-epic: #a335ee;
 
 $custom-colors: (
-  "primary": $primary,
+  "brand": $brand,
   "quality-epic": $quality-epic,
   "quality-rare": $quality-rare,
   "quality-uncommon": $quality-uncommon,
@@ -71,6 +71,7 @@ $body-bg: #15171e;
 $body-color: white;
 $border-color: dimgrey;
 $font-size-root: 16px;
+$grid-gutter-width: .75rem;
 
 // This option doesn't seem to be working for some reason. Carets hidden manually instead
 // $enable-caret: false;
@@ -131,6 +132,7 @@ $input-font-size: $content-font-size;
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;
 $modal-header-border-color: $border-color;
+$modal-footer-margin-between: 0px;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;
@@ -140,6 +142,8 @@ $navbar-padding-y: 0;
 $nav-link-font-size: .875rem;
 $nav-link-padding-y: map.get($spacers, 3);
 $nav-link-transition: $link-transition;
+
+$nav-tabs-border-color: $border-color;
 $nav-tabs-link-active-bg: transparent;
 $nav-tabs-link-active-color: white;
 

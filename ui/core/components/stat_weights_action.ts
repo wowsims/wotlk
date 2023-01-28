@@ -1,26 +1,24 @@
-import { StatWeightsRequest, StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
+import { StatWeightsResult, StatWeightValues, ProgressMetrics } from '../proto/api.js';
 import { ItemSlot } from '../proto/common.js';
 import { GemColor } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
 import { Stat, PseudoStat, UnitStats } from '../proto/common.js';
 import { Stats, UnitStat } from '../proto_utils/stats.js';
 import { Gear } from '../proto_utils/gear.js';
-import { getClassStatName, statOrder, pseudoStatOrder, pseudoStatNames } from '../proto_utils/names.js';
+import { getClassStatName } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
 import { stDevToConf90 } from '../utils.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
-import { ResultsViewer } from '../components/results_viewer.js';
-import { combinations, combinationsWithDups, permutations, getEnumValues, maxIndex, sum } from '../utils.js';
-import {
-	UIGem as Gem,
-} from '../proto/ui.js';
+import { combinationsWithDups, permutations, sum } from '../utils.js';
+import { UIGem as Gem } from '../proto/ui.js';
 
 import * as Gems from '../proto_utils/gems.js';
 
-import { Popup } from './popup.js';
+import { BaseModal } from './base_modal.js';
+import { Tooltip } from 'bootstrap';
 
 declare var tippy: any;
 
@@ -30,12 +28,10 @@ export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array
 	});
 }
 
-class EpWeightsMenu extends Popup {
+class EpWeightsMenu extends BaseModal {
 	private readonly simUI: IndividualSimUI<any>;
-	private readonly tableContainer: HTMLElement;
+	private readonly table: HTMLElement;
 	private readonly tableBody: HTMLElement;
-	private readonly tableHeader: HTMLElement;
-	private readonly resultsViewer: ResultsViewer;
 
 	private statsType: string;
 	private epStats: Array<Stat>;
@@ -43,36 +39,29 @@ class EpWeightsMenu extends Popup {
 	private epReferenceStat: Stat;
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
-		super(simUI.rootElem);
+		super(simUI.rootElem, 'ep-weights-menu', {footer: true});
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
 		this.epPseudoStats = epPseudoStats;
 		this.epReferenceStat = epReferenceStat;
 
-		this.rootElem.classList.add('ep-weights-menu');
-		this.rootElem.innerHTML = `
-			<div class="ep-weights-header">
-				<div class="ep-weights-actions">
-					<button class="btn calc-weights">CALCULATE</button>
-				</div>
-				<div class="ep-weights-results"></div>
-			</div>
-			<div class="stats-controls-row">
-				<div class="ep-weights-options">
+		this.header?.insertAdjacentHTML('afterbegin', '<h5 class="modal-title">Calculate Stat Weights</h5>');
+		this.body.innerHTML = `
+			<div class="ep-weights-options row">
+				<div class="col-3">
 					<select class="ep-type-select form-select">
 						<option value="ep">EP</option>
 						<option value="weight">Weights</option>
 					</select>
 				</div>
-				<div class="show-all-stats-container">
-				</div>
-				<button class="btn optimize-gems">OPTIMIZE GEMS</button>
+				<div class="show-all-stats-container col-3"></div>
 			</div>
-			<p>The 'Current EPs' column displays the values currently used by the item pickers to sort items. Use <span class="fa fa-copy text-${this.simUI.cssScheme}"></span> icon above the EPs to use newly calculated EPs. </p>
-			<div class="ep-weights-table">
+			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
+			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
+			<div class="results-ep-table-container">
 				<table class="results-ep-table">
-					<tbody id="ep-tbody">
+					<thead>
 						<tr>
 							<th>Stat</th>
 							<th class="damage-metrics type-weight">
@@ -130,25 +119,41 @@ class EpWeightsMenu extends Popup {
 								e"ap
 							an></th>
 						</tr>
+					</thead>
+					<tbody>
 					</tbody>
 				</table>
 			</div>
 		`;
+		this.footer!.innerHTML = `
+			<button
+				class="btn btn-primary optimize-gems me-2"
+				data-bs-toggle="tooltip"
+				data-bs-title="
+					<p><span class='warnings link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
+					<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
+					<p class='mb-0'>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
+				"
+				data-bs-html="true"
+			>
+				Optimize Gems
+			</button>
+			<button class="btn btn-primary calc-weights">
+				<i class="fas fa-calculator"></i>
+				Calculate
+			</button>
+		`;
 
-		this.tableContainer = this.rootElem.getElementsByClassName('ep-weights-table')[0] as HTMLElement;
-		this.tableBody = this.rootElem.querySelector('#ep-tbody') as HTMLElement;
-		this.tableHeader = this.rootElem.querySelector('#ep-tbody > tr') as HTMLElement;
-
-		const resultsViewerElem = this.rootElem.getElementsByClassName('ep-weights-results')[0] as HTMLElement;
-		this.resultsViewer = new ResultsViewer(resultsViewerElem);
+		this.table = this.rootElem.querySelector('.results-ep-table') as HTMLElement;
+		this.tableBody = this.rootElem.querySelector('.results-ep-table tbody') as HTMLElement;
 
 		const updateType = () => {
 			if (this.statsType == 'ep') {
-				this.tableContainer.classList.remove('stats-type-weight');
-				this.tableContainer.classList.add('stats-type-ep');
+				this.table.classList.remove('stats-type-weight');
+				this.table.classList.add('stats-type-ep');
 			} else {
-				this.tableContainer.classList.add('stats-type-weight');
-				this.tableContainer.classList.remove('stats-type-ep');
+				this.table.classList.add('stats-type-weight');
+				this.table.classList.remove('stats-type-ep');
 			}
 		};
 
@@ -160,14 +165,28 @@ class EpWeightsMenu extends Popup {
 		selectElem.value = this.statsType;
 		updateType();
 
+		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
+		Tooltip.getOrCreateInstance(optimizeGemsButton);
+		optimizeGemsButton.addEventListener('click', async event => {
+			const previousContents = optimizeGemsButton.innerHTML;
+			optimizeGemsButton.classList.add('disabled');
+			optimizeGemsButton.style.width = `${optimizeGemsButton.getBoundingClientRect().width.toFixed(3)}px`;
+			optimizeGemsButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
+			await this.optimizeGems(TypedEvent.nextEventID());
+			optimizeGemsButton.innerHTML = previousContents;
+			optimizeGemsButton.classList.remove('disabled');
+		});
+
 		const calcButton = this.rootElem.getElementsByClassName('calc-weights')[0] as HTMLElement;
 		calcButton.addEventListener('click', async event => {
-			this.resultsViewer.setPending();
+			const previousContents = calcButton.innerHTML;
+			calcButton.classList.add('disabled');
+			calcButton.style.width = `${calcButton.getBoundingClientRect().width.toFixed(3)}px`;
+			calcButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
 			const iterations = this.simUI.sim.getIterations();
-			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epPseudoStats, this.epReferenceStat, (progress: ProgressMetrics) => {
-				this.setSimProgress(progress);
-			});
-			this.resultsViewer.hideAll();
+			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epPseudoStats, this.epReferenceStat, (progress: ProgressMetrics) => {});
+			calcButton.innerHTML = previousContents;
+			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
 			this.simUI.prevEpSimResult = result;
 			this.updateTable(iterations, result);
@@ -205,49 +224,20 @@ class EpWeightsMenu extends Popup {
 			label: 'Show All Stats',
 			inline: true,
 			changedEvent: () => new TypedEvent(),
-			getValue: () => this.tableContainer.classList.contains('show-all-stats'),
+			getValue: () => this.table.classList.contains('show-all-stats'),
 			setValue: (eventID: EventID, menu: EpWeightsMenu, newValue: boolean) => {
 				if (newValue) {
-					this.tableContainer.classList.add('show-all-stats');
+					this.table.classList.add('show-all-stats');
 				} else {
-					this.tableContainer.classList.remove('show-all-stats');
+					this.table.classList.remove('show-all-stats');
 				}
-				this.applyAlternatingColors();
 			},
 		});
 
 		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
-
-		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
-		tippy(optimizeGemsButton, {
-			'content': `
-				<p><span class="warnings fa fa-exclamation-triangle"></span>WARNING: This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
-				<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
-				<p>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
-			`,
-			'allowHTML': true,
-		});
-		optimizeGemsButton.addEventListener('click', event => this.optimizeGems(TypedEvent.nextEventID()));
-
-		this.addCloseButton();
-	}
-
-	setSimProgress(progress: ProgressMetrics) {
-		this.resultsViewer.setContent(`
-  <div class="results-sim">
-  			<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
-  			<div class="">
-				${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
-			</div>
-  </div>
-`);
 	}
 
 	private updateTable(iterations: number, result: StatWeightsResult) {
-		this.tableHeader.remove();
-		this.tableBody.innerHTML = '';
-		this.tableBody.appendChild(this.tableHeader);
-
 		EpWeightsMenu.epUnitStats.forEach(stat => {
 			const row = this.makeTableRow(stat, iterations, result);
 			if ((stat.isStat() && !this.epStats.includes(stat.getStat())) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {
@@ -255,16 +245,23 @@ class EpWeightsMenu extends Popup {
 			}
 			this.tableBody.appendChild(row);
 		});
-
-		this.applyAlternatingColors();
 	}
-
 	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult): HTMLElement {
 		const row = document.createElement('tr');
 		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
 			return `
-				<td class="stdev-cell ${className} type-weight"><span>${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span><span>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)}</span></td>
-				<td class="stdev-cell ${className} type-ep"><span>${stat.getProtoValue(statWeights.epValues!).toFixed(2)}</span><span>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)}</span></td>
+				<td class="stdev-cell ${className} type-weight">
+					<span>${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
+					<span class="results-stdev">
+						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
+					</span>
+				</td>
+				<td class="stdev-cell ${className} type-ep">
+					<span>${stat.getProtoValue(statWeights.epValues!).toFixed(2)}</span>
+					<span class="results-stdev">
+						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
+					</span>
+				</td>
 			`;
 		};
 		row.innerHTML = `
@@ -288,18 +285,6 @@ class EpWeightsMenu extends Popup {
 		});
 
 		return row;
-	}
-
-	private applyAlternatingColors() {
-		(Array.from(this.tableBody.childNodes) as Array<HTMLElement>)
-			.filter(row => window.getComputedStyle(row).getPropertyValue('display') != 'none')
-			.forEach((row, i) => {
-				if (i % 2 == 0) {
-					row.classList.remove('odd');
-				} else {
-					row.classList.add('odd');
-				}
-			});
 	}
 
 	private getPrevSimResult(): StatWeightsResult {
@@ -331,7 +316,7 @@ class EpWeightsMenu extends Popup {
 		});
 	}
 
-	private optimizeGems(eventID: EventID) {
+	private async optimizeGems(eventID: EventID) {
 		// Replace 0 weights with a very tiny value, so we always prefer to take free stats even if the user gave a 0 weight.
 		let epWeights = this.simUI.player.getEpWeights();
 		epWeights = new Stats(epWeights.asArray().map(w => w == 0 ? 1e-8 : w));

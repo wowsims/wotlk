@@ -364,7 +364,7 @@ export class EmbeddedDetailedResults extends DetailedResults {
 
 		const newTabBtn = document.createElement('div');
 		newTabBtn.classList.add('detailed-results-controls-div');
-		newTabBtn.innerHTML = `<button class="detailed-results-new-tab-button btn">View in Separate Tab</button>`;
+		newTabBtn.innerHTML = `<button class="detailed-results-new-tab-button btn btn-primary">View in Separate Tab</button>`;
 
 		this.rootElem.prepend(newTabBtn);
 

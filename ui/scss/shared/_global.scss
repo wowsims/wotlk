@@ -74,13 +74,17 @@ a {
   }
 }
 
+hr {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+
 label {
   font-weight: bold;
 }
 
-hr {
-  border-top: 1px solid;
-  border-bottom: 1px solid;
+p {
+  margin-bottom: $block-spacer;
 }
 
 .dragto:not(.dragfrom) {
@@ -89,6 +93,13 @@ hr {
 
 .hide {
   display: none !important;
+}
+
+.warnings {
+  text-shadow:
+    0 0 10px $danger,
+    0 0 10px $danger,
+    0 0 10px $danger;
 }
 
 [contenteditable="true"]:active,

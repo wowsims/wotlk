@@ -41,7 +41,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 				>${config.title}</label>` : ''
 			}
 			<div class="list-picker-items"></div>
-			<button class="list-picker-new-button btn">New ${config.itemLabel}</button>
+			<button class="list-picker-new-button btn btn-primary">New ${config.itemLabel}</button>
 		`;
 
 		if (this.config.titleTooltip)

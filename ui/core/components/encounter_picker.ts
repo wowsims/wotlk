@@ -121,7 +121,7 @@ export class EncounterPicker extends Component {
 			}
 
 			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('advanced-button', 'btn');
+			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
 			advancedButton.textContent = 'Advanced';
 			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
@@ -179,7 +179,7 @@ class AdvancedEncounterModal extends BaseModal {
 
 		new EnumPicker<Encounter>(this.header as HTMLElement, this.encounter, {
 			label: 'Encounter',
-			extraCssClasses: ['encounter-picker', 'mb-0'],
+			extraCssClasses: ['encounter-picker', 'mb-0', 'pe-2'],
 			values: [
 				{ name: 'Custom', value: -1 },
 			].concat(presetEncounters.map((pe, i) => {

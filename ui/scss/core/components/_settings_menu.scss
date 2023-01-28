@@ -1,43 +1,5 @@
-@use "sass:map";
-
-@import "./popup";
-
 .settings-menu {
-	.menu-title {
-		text-align: center;
-		margin: 20px;
-		font-size: 24px;
-	}
-	
-	.menu-content {
-		margin: 20px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-evenly;
-		overflow-y: auto;
-		max-height: 80vh;
-
-		.settings-menu-content-left {
-			margin-right: 2 * map.get($spacers, 3);
-			flex: 1;
-		}
-
-		.settings-menu-content-right {
-			flex: 1;
-		}
-
-		.restore-defaults-button {
-			margin-bottom: $block-spacer;
-		}
-
-		.fixed-rng-seed {
-			.input-root {
-				margin-bottom: 0;
-			}
-		}
-
-		.last-used-rng-seed-container {
-			margin-bottom: $block-spacer;
-		}
+	.fixed-rng-seed-container {
+		margin-bottom: $block-spacer;
 	}
 }

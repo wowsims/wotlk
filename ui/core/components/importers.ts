@@ -1,4 +1,3 @@
-import { Popup } from './popup';
 import { IndividualSimUI } from '../individual_sim_ui';
 import { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
@@ -16,40 +15,38 @@ import { Database } from '../proto_utils/database';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
 import { GlyphConfig } from '../talents/glyphs_picker';
+import { BaseModal } from './base_modal';
 
-export abstract class Importer extends Popup {
+export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
 	protected readonly descriptionElem: HTMLElement;
 	protected readonly importButton: HTMLButtonElement;
 	private readonly includeFile: boolean;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, includeFile: boolean) {
-		super(parent);
+		super(parent, 'importer', {footer: true});
 		this.includeFile = includeFile;
 		const uploadInputId = 'upload-input-' + title.toLowerCase().replaceAll(' ', '-');
 
-		this.rootElem.classList.add('importer');
-		let htmlVal = `
-			<span class="importer-title">${title}</span>
-			<div class="import-description">
-			</div>
-			<div class="import-content">
-				<textarea class="importer-textarea form-control"></textarea>
-			</div>
-			<div class="actions-row">
+		this.header!.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${title}</h5>`);
+		this.body.innerHTML = `
+			<div class="import-description"></div>
+			<textarea class="importer-textarea form-control"></textarea>
 		`;
-		if (this.includeFile) {
-			htmlVal += `<label for="${uploadInputId}" class="importer-button btn upload-button">UPLOAD FROM FILE</label>
-				<input type="file" id="${uploadInputId}" class="importer-upload-input" hidden>
-			`
-		}
-		htmlVal += `<button class="importer-button btn import-button">IMPORT</button>
-			</div>
+		this.footer!.innerHTML = `
+			${this.includeFile ? `
+				<label for="${uploadInputId}" class="importer-button btn btn-primary upload-button me-2">
+					<i class="fas fa-file-arrow-up"></i>
+					Upload File
+				</label>
+				<input type="file" id="${uploadInputId}" class="importer-upload-input d-none" hidden>
+			` : ''
+			}
+			<button class="importer-button btn btn-primary import-button">
+				<i class="fa fa-download"></i>
+				Import
+			</button>
 		`;
-
-		this.rootElem.innerHTML = htmlVal
-
-		this.addCloseButton();
 
 		this.textElem = this.rootElem.getElementsByClassName('importer-textarea')[0] as HTMLTextAreaElement;
 		this.descriptionElem = this.rootElem.getElementsByClassName('import-description')[0] as HTMLElement;
@@ -127,12 +124,8 @@ export class IndividualJsonImporter<SpecType extends Spec> extends Importer {
 		this.simUI = simUI;
 
 		this.descriptionElem.innerHTML = `
-			<p>
-				Import settings from a JSON text file, which can be created using the JSON Export feature of this site.
-			</p>
-			<p>
-				To import, paste the JSON text below and click, 'Import'.
-			</p>
+			<p>Import settings from a JSON file, which can be created using the JSON Export feature.</p>
+			<p>To import, upload the file or paste the text below, then click, 'Import'.</p>
 		`;
 	}
 

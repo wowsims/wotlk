@@ -3,21 +3,6 @@
 @import "./filters_menu";
 @import "./popup";
 
-.item-swap-picker-root {
-  .picker-group {
-    align-items: center;
-    justify-content: flex-end;
-
-    &> * {
-      margin-bottom: 0 !important;
-    }
-
-    &> :last-child {
-      margin-right: 0;
-    }
-  }  
-}
-
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;
@@ -107,17 +92,33 @@
   cursor: pointer;
 }
 
-.selector-modal-tab-content {
-  .selector-modal-tab-pane {
-    padding: 0;
-  
-    .selector-modal-tab-content-header {
-      margin: map.get($spacers, 3) 0;
-      display: flex;
-      align-items: center;
+.selector-modal {
+  .modal-header {
+    padding-bottom: 0;
+    border-bottom: none;
 
-      &> *:not(:last-child) {
-        margin-right: map.get($spacers, 2);
+    .nav-tabs {
+      width: 100%;
+    }
+  }
+
+  .selector-modal-tab-content {
+    .selector-modal-tab-pane {
+      padding: 0;
+    
+      .selector-modal-tab-content-header {
+        margin-bottom: map.get($spacers, 3);
+        display: flex;
+  
+        &> *:not(:last-child) {
+          margin-right: map.get($spacers, 2);
+        }
+
+        input, select {
+          padding-top: $btn-padding-y;
+          padding-bottom: $btn-padding-y;
+          font-size: $btn-font-size;
+        }
       }
     }
   }

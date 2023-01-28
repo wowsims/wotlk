@@ -26,22 +26,27 @@
   padding: 0;
   margin-bottom: $block-spacer;
   margin-right: $block-spacer;
-  border: 1px solid var(--theme-color-primary);
+  border: 1px solid var(--bs-primary);
   display: flex;
   font-size: $content-font-size;
+  font-weight: normal;
   transition: $btn-transition;
 
+  &.active {
+    background-color: var(--bs-primary);
+
+    .saved-data-set-name,
+    .saved-data-set-delete {
+      color: var(--theme-component-text-color);
+    }
+  }
+
   &:hover:not(.active) {
-    background: var(--theme-color-primary-dampened);
+    background: var(--bs-primary-dampened);
   }
 
   &.disabled {
     display: none;
-  }  
-
-  &.active {
-    background-color: var(--theme-color-primary);
-    color: var(--theme-component-text-color);
   }
 
   .saved-data-set-name {
@@ -53,25 +58,6 @@
     padding: map.get($spacers, 2) 0;
     margin-right: map.get($spacers, 2);
     color: $body-color;
-  }
-}
-
-@each $color, $value in $theme-colors {
-  .saved-data-set-chip-#{$color} {
-    @extend .saved-data-set-chip;
-    border: 1px solid $value;
-
-    &.active {
-      @extend .text-bg-#{$color};
-
-      .saved-data-set-name, .saved-data-set-delete {
-        color: color-contrast($value);
-      }
-    }
-
-    &:hover:not(.active) {
-      background: rgba($value, .2);
-    }
   }
 }
 
