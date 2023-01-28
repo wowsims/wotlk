@@ -82,7 +82,7 @@ func (mage *Mage) doArcaneRotation(sim *core.Simulation) *core.Spell {
 	}
 	if abStacks < maxAbStacks {
 		return mage.ArcaneBlast
-	} else if mage.ArcaneBarrage != nil && mage.ArcaneBarrage.IsReady(sim) {
+	} else if mage.Rotation.UseArcaneBarrage && mage.ArcaneBarrage.IsReady(sim) {
 		return mage.ArcaneBarrage
 	} else {
 		return mage.ArcaneMissiles

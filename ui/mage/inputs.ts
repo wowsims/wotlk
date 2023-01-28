@@ -187,6 +187,14 @@ export const MageRotationConfig = {
 			labelTooltip: 'When below this mana %, use Missile Barrage proc as soon as possible. Can be useful to conserve mana.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
+			fieldName: 'useArcaneBarrage',
+			label: 'Use Arcane Barrage',
+			labelTooltip: 'Includes Arcane Barrage in the rotation.',
+			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().arcaneBarrage,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
 
 		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
 			fieldName: 'maintainImprovedScorch',
