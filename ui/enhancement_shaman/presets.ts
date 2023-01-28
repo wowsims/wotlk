@@ -57,6 +57,7 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		air: AirTotem.WindfuryTotem,
 		fire: FireTotem.MagmaTotem,
 		water: WaterTotem.ManaSpringTotem,
+		useFireElemental: true,
 	}),
 	maelstromweaponMinStack: 3,
 	lightningboltWeave: true,

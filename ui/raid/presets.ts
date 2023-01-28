@@ -219,9 +219,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: BalanceDruidPresets.P1_PRESET.gear,
+				2: BalanceDruidPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: BalanceDruidPresets.P1_PRESET.gear,
+				2: BalanceDruidPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
@@ -243,9 +245,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
+				2: FeralDruidPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
+				2: FeralDruidPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
@@ -267,9 +271,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
+				2: FeralTankDruidPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralTankDruidPresets.P1_PRESET.gear,
+				2: FeralTankDruidPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralTankDruid],
@@ -291,9 +297,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: RestorationDruidPresets.P1_PRESET.gear,
+				2: RestorationDruidPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: RestorationDruidPresets.P1_PRESET.gear,
+				2: RestorationDruidPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationDruid],
@@ -474,9 +482,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
+				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
 			},
 			[Faction.Horde]: {
 				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
+				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
 			},
 		},
 		tooltip: 'Assassination Rogue',
@@ -498,9 +508,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: RoguePresets.P1_PRESET_COMBAT.gear,
+				2: RoguePresets.P2_PRESET_COMBAT.gear,
 			},
 			[Faction.Horde]: {
 				1: RoguePresets.P1_PRESET_COMBAT.gear,
+				2: RoguePresets.P2_PRESET_COMBAT.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',
@@ -522,9 +534,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ElementalShamanPresets.P1_PRESET.gear,
+				2: ElementalShamanPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ElementalShamanPresets.P1_PRESET.gear,
+				2: ElementalShamanPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -546,9 +560,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
+				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
 			},
 			[Faction.Horde]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
+				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecEnhancementShaman],
@@ -570,9 +586,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: RestorationShamanPresets.P1_PRESET.gear,
+				2: RestorationShamanPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: RestorationShamanPresets.P1_PRESET.gear,
+				2: RestorationShamanPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationShaman],
@@ -594,9 +612,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HealingPriestPresets.DISC_P1_PRESET.gear,
+				2: HealingPriestPresets.DISC_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HealingPriestPresets.DISC_P1_PRESET.gear,
+				2: HealingPriestPresets.DISC_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Discipline Priest',
@@ -618,9 +638,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HealingPriestPresets.HOLY_P1_PRESET.gear,
+				2: HealingPriestPresets.HOLY_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HealingPriestPresets.HOLY_P1_PRESET.gear,
+				2: HealingPriestPresets.HOLY_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Holy Priest',
@@ -642,9 +664,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
+				2: ShadowPriestPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
+				2: ShadowPriestPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
@@ -742,9 +766,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
+				2: ProtectionWarriorPresets.P2_SURVIVAL_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
+				2: ProtectionWarriorPresets.P2_SURVIVAL_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Warrior',
@@ -766,9 +792,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: HolyPaladinPresets.P1_PRESET.gear,
+				2: HolyPaladinPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: HolyPaladinPresets.P1_PRESET.gear,
+				2: HolyPaladinPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Holy Paladin',
@@ -790,9 +818,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
+				2: ProtectionPaladinPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ProtectionPaladinPresets.P1_PRESET.gear,
+				2: ProtectionPaladinPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: 'Protection Paladin',
@@ -843,17 +873,14 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Horde]: Race.RaceOrc,
 		},
 		defaultGear: {
-			[Faction.Unknown]: {
-				1: WarlockPresets.P1_Preset_Affliction.gear,
-				2: WarlockPresets.P1_PreBiS_11.gear,
-			},
+			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Affliction.gear,
-				2: WarlockPresets.P1_PreBiS_11.gear,
+				2: WarlockPresets.P2_Preset_Affliction.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Affliction.gear,
-				2: WarlockPresets.P1_PreBiS_11.gear,
+				2: WarlockPresets.P2_Preset_Affliction.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
@@ -873,17 +900,14 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Horde]: Race.RaceOrc,
 		},
 		defaultGear: {
-			[Faction.Unknown]: {
-				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
-			},
+			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
+				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
+				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
@@ -903,17 +927,14 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Horde]: Race.RaceOrc,
 		},
 		defaultGear: {
-			[Faction.Unknown]: {
-				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
-			},
+			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
+				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
-				2: WarlockPresets.P1_PreBiS_14.gear,
+				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,

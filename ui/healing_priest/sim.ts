@@ -126,8 +126,10 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				gear: [
 					Presets.DISC_PRERAID_PRESET,
 					Presets.DISC_P1_PRESET,
+					Presets.DISC_P2_PRESET,
 					Presets.HOLY_PRERAID_PRESET,
 					Presets.HOLY_P1_PRESET,
+					Presets.HOLY_P2_PRESET,
 				],
 			},
 		});
