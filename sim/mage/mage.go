@@ -166,6 +166,9 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 	mage.EnableManaBar()
 	mage.EnableResumeAfterManaWait(mage.tryUseGCD)
 
+	if !mage.Talents.ArcaneBarrage {
+		mage.Rotation.UseArcaneBarrage = false
+	}
 	if mage.Talents.ImprovedScorch == 0 {
 		mage.Rotation.MaintainImprovedScorch = false
 	}
