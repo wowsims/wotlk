@@ -80,6 +80,8 @@ type Warlock struct {
 	petStmBonusSP                float64
 	masterDemonologistFireCrit   float64
 	masterDemonologistShadowCrit float64
+
+	CritDebuffCategory *core.ExclusiveCategory
 }
 
 type SpellRotation struct {
