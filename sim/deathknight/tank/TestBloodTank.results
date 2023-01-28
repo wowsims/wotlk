@@ -627,10 +627,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBloodTank-AllItems-SigilofDeflection-45144"
+ value: {
+  dps: 1416.65
+  tps: 4506.26045
+ }
+}
+dps_results: {
  key: "TestBloodTank-AllItems-SigilofHauntedDreams-40715"
  value: {
   dps: 1419.5128
   tps: 4512.19648
+ }
+}
+dps_results: {
+ key: "TestBloodTank-AllItems-SigilofInsolence-47672"
+ value: {
+  dps: 1416.65
+  tps: 4506.26045
  }
 }
 dps_results: {
@@ -641,7 +655,21 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBloodTank-AllItems-SigiloftheBoneGryphon-50462"
+ value: {
+  dps: 1416.65
+  tps: 4506.26045
+ }
+}
+dps_results: {
  key: "TestBloodTank-AllItems-SigiloftheHangedMan-50459"
+ value: {
+  dps: 1416.65
+  tps: 4506.26045
+ }
+}
+dps_results: {
+ key: "TestBloodTank-AllItems-SigiloftheUnfalteringKnight-40714"
  value: {
   dps: 1416.65
   tps: 4506.26045
@@ -748,8 +776,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Thassarian'sPlate"
  value: {
-  dps: 1408.37121
-  tps: 4498.26679
+  dps: 1408.96142
+  tps: 4468.32507
  }
 }
 dps_results: {
@@ -853,9 +881,9 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Average-Default"
  value: {
-  dps: 1826.46784
-  tps: 6297.29594
-  dtps: 261.22007
+  dps: 1814.34013
+  tps: 6239.12063
+  dtps: 261.4616
  }
 }
 dps_results: {
@@ -945,8 +973,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1837.81898
-  tps: 6291.95049
-  dtps: 261.76055
+  dps: 1826.48575
+  tps: 6237.5373
+  dtps: 261.54833
  }
 }

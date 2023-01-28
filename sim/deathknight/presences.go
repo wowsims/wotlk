@@ -130,6 +130,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	})
 
 	threatMult := 2.0735
+	dmgMitigation := 1.0 - (0.01 * float64(dk.Talents.ImprovedFrostPresence))
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
 	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.6)
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
@@ -138,6 +139,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= dmgMitigation
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			aura.Unit.EnableDynamicStatDep(sim, armorDep)
@@ -146,6 +148,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= dmgMitigation
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			aura.Unit.DisableDynamicStatDep(sim, armorDep)

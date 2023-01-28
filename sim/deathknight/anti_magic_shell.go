@@ -107,9 +107,8 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.AntiMagicShell,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityLow,
+			Spell: dk.AntiMagicShell,
+			Type:  core.CooldownTypeSurvival,
 		})
 	} else if dk.Inputs.UseAMS {
 		dk.AddMajorCooldown(core.MajorCooldown{

@@ -112,6 +112,7 @@ type Deathknight struct {
 	HeartStrikeOffHit *core.Spell
 
 	RuneStrike     *core.Spell
+	RuneStrikeOh   *core.Spell
 	RuneStrikeAura *core.Aura
 
 	GhoulFrenzy *core.Spell

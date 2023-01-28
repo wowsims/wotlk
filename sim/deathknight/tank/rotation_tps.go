@@ -17,22 +17,22 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
 	b, _, _ := dk.NormalCurrentRunes()
 
-	if ff <= 0 && dk.IcyTouch.CanCast(sim, nil) {
+	if ff <= 0 && dk.IcyTouch.CanCast(sim, target) {
 		dk.IcyTouch.Cast(sim, target)
 		return -1
 	}
 
-	if bp <= 0 && dk.PlagueStrike.CanCast(sim, nil) {
+	if bp <= 0 && dk.PlagueStrike.CanCast(sim, target) {
 		dk.PlagueStrike.Cast(sim, target)
 		return -1
 	}
 
-	if ff <= 2*time.Second || bp <= 2*time.Second && dk.Pestilence.CanCast(sim, nil) {
+	if ff <= 2*time.Second || bp <= 2*time.Second && dk.Pestilence.CanCast(sim, target) {
 		dk.Pestilence.Cast(sim, target)
 		return -1
 	}
 
-	if dk.switchIT && dk.IcyTouch.CanCast(sim, nil) {
+	if dk.switchIT && dk.IcyTouch.CanCast(sim, target) {
 		dk.IcyTouch.Cast(sim, target)
 
 		if dk.DeathRunesInFU() == 0 {
@@ -42,7 +42,7 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if !dk.switchIT && dk.DeathStrike.CanCast(sim, nil) {
+	if !dk.switchIT && dk.DeathStrike.CanCast(sim, target) {
 		dk.DeathStrike.Cast(sim, target)
 
 		if dk.DeathRunesInFU() == 4 {
@@ -52,10 +52,20 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if dk.BloodTap.CanCast(sim, nil) {
+	if dk.BloodTap.CanCast(sim, target) {
 		dk.BloodTap.Cast(sim, target)
 		dk.IcyTouch.Cast(sim, target)
 		dk.CancelBloodTap(sim)
+		return -1
+	}
+
+	if dk.Talents.FrostStrike && dk.CurrentRunicPower() > 60 && dk.FrostStrike.CanCast(sim, target) {
+		dk.FrostStrike.Cast(sim, target)
+		return -1
+	}
+
+	if dk.Talents.HowlingBlast && dk.RimeAura.IsActive() && dk.HowlingBlast.CanCast(sim, target) {
+		dk.HowlingBlast.Cast(sim, target)
 		return -1
 	}
 

@@ -17,7 +17,7 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 	healthMetrics := dk.NewHealthMetrics(actionID)
 
 	cdTimer := dk.NewTimer()
-	cd := time.Minute * 1
+	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.VampiricBlood)
 
 	var bonusHealth float64
 	dk.VampiricBloodAura = dk.RegisterAura(core.Aura{
@@ -58,9 +58,8 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.VampiricBlood,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityDefault,
+			Spell: dk.VampiricBlood,
+			Type:  core.CooldownTypeSurvival,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return dk.VampiricBlood.CanCast(sim, nil)
 			},

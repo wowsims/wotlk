@@ -18,7 +18,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 	}
 
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
-	sigilOfTheUnfalteringKnight := dk.sigilOfTheUnfalteringKnight()
 
 	dk.IcyTouch = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    IcyTouchActionID,
@@ -54,10 +53,6 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 			if result.Landed() {
 				dk.FrostFeverExtended[target.Index] = 0
 				dk.FrostFeverSpell.Cast(sim, target)
-
-				if sigilOfTheUnfalteringKnight != nil {
-					sigilOfTheUnfalteringKnight.Activate(sim)
-				}
 			}
 
 			spell.DealDamage(sim, result)

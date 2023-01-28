@@ -627,10 +627,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-SigilofDeflection-45144"
+ value: {
+  dps: 7523.0757
+  tps: 4392.04851
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-SigilofHauntedDreams-40715"
  value: {
   dps: 7538.82609
   tps: 4401.49874
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-SigilofInsolence-47672"
+ value: {
+  dps: 7523.0757
+  tps: 4392.04851
  }
 }
 dps_results: {
@@ -641,10 +655,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-SigiloftheBoneGryphon-50462"
+ value: {
+  dps: 7523.0757
+  tps: 4392.04851
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-SigiloftheHangedMan-50459"
  value: {
   dps: 7964.99725
   tps: 4652.99494
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-SigiloftheUnfalteringKnight-40714"
+ value: {
+  dps: 7523.0757
+  tps: 4392.04851
  }
 }
 dps_results: {
