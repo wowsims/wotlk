@@ -55,7 +55,7 @@ export const SubtletyTalents = {
 		talentsString: '30522300014--5020032030321121350115031151',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfBackstab,
-			major2: RogueMajorGlyph.GlyphOfGarrote,
+			major2: RogueMajorGlyph.GlyphOfEviscerate,
 			major3: RogueMajorGlyph.GlyphOfShadowDance,
 		})
 	}),
@@ -64,7 +64,7 @@ export const SubtletyTalents = {
 export const HemoSubtletyTalents = {
 	name: 'Hemo Sub',
 	data: SavedTalents.create({
-		talentsString: '30532000224--502003203032112135011503115',
+		talentsString: '30532000235--502003203032112135011503113',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfHemorrhage,
 			major2: RogueMajorGlyph.GlyphOfEviscerate,
