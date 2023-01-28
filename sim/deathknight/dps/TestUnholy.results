@@ -692,10 +692,26 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-SigilofDeflection-45144"
+ value: {
+  dps: 8038.80538
+  tps: 5096.9724
+  hps: 270.9904
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-SigilofHauntedDreams-40715"
  value: {
   dps: 8046.99997
   tps: 5105.90149
+  hps: 270.9904
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-SigilofInsolence-47672"
+ value: {
+  dps: 8038.80538
+  tps: 5096.9724
   hps: 270.9904
  }
 }
@@ -708,7 +724,23 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-SigiloftheBoneGryphon-50462"
+ value: {
+  dps: 8038.80538
+  tps: 5096.9724
+  hps: 270.9904
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-SigiloftheHangedMan-50459"
+ value: {
+  dps: 8038.80538
+  tps: 5096.9724
+  hps: 270.9904
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-SigiloftheUnfalteringKnight-40714"
  value: {
   dps: 8038.80538
   tps: 5096.9724

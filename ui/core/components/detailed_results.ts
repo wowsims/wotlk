@@ -8,6 +8,7 @@ import { SimResultData } from './detailed_results/result_component';
 import { ResultsFilter } from './detailed_results/results_filter';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DtpsMeleeMetricsTable } from './detailed_results/dtps_melee_metrics';
+import { DtpsSpellMetricsTable } from './detailed_results/dtps_spell_metrics';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
 import { MeleeMetricsTable } from './detailed_results/melee_metrics';
 import { SpellMetricsTable } from './detailed_results/spell_metrics';
@@ -247,6 +248,7 @@ export abstract class DetailedResults extends Component {
 		const dpsHistogram = new DpsHistogram({ parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
 
 		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
+		const dtpsSpellMetrics = new DtpsSpellMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
 
 		const timeline = new Timeline({
 			parent: this.rootElem.getElementsByClassName('timeline')[0] as HTMLElement,

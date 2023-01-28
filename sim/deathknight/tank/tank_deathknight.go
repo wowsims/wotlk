@@ -50,7 +50,8 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if tankDk.RuneStrike.CanCast(sim, nil) {
+			// Save up RP for defensives
+			if tankDk.CurrentRunicPower() > 40 && tankDk.RuneStrike.CanCast(sim, nil) {
 				return tankDk.RuneStrike
 			} else {
 				return nil

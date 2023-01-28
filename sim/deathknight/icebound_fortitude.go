@@ -52,9 +52,8 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.IceboundFortitude,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityDefault,
+			Spell: dk.IceboundFortitude,
+			Type:  core.CooldownTypeSurvival,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
 				return dk.IceboundFortitude.CanCast(sim, nil)
 			},
