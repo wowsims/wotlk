@@ -111,7 +111,7 @@ func (warlock *Warlock) defineRotation() {
 
 		// Affliction spec check
 		if warlock.Talents.EverlastingAffliction > 0 {
-			if (!warlock.Corruption.CurDot().IsActive() && (core.ShadowMasteryAura(warlock.CurrentTarget).IsActive() || warlock.Talents.ImprovedShadowBolt == 0)) ||
+			if (!warlock.Corruption.CurDot().IsActive() && (warlock.Talents.ImprovedShadowBolt == 0 || warlock.CritDebuffCategory.AnyActive())) ||
 				// Wait for SM to be applied to cast first Corruption
 				warlock.Corruption.CurDot().IsActive() && (warlock.corruptionTracker() > warlock.CorruptionRolloverPower) {
 				// If the active corruption multipliers are lower than the ones for a potential new corruption, then reapply corruption
