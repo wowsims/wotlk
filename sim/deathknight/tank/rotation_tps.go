@@ -4,12 +4,17 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
 func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if !dk.GCD.IsReady(sim) {
 		return dk.NextGCDAt()
+	}
+
+	if dk.DoDefensiveCds(sim, target, s) {
+		return -1
 	}
 
 	t := sim.CurrentTime
@@ -52,11 +57,13 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if dk.BloodTap.CanCast(sim, target) {
-		dk.BloodTap.Cast(sim, target)
-		dk.IcyTouch.Cast(sim, target)
-		dk.CancelBloodTap(sim)
-		return -1
+	if dk.Rotation.BloodTapPrio == proto.TankDeathknight_Rotation_Offensive {
+		if dk.BloodTap.CanCast(sim, target) {
+			dk.BloodTap.Cast(sim, target)
+			dk.IcyTouch.Cast(sim, target)
+			dk.CancelBloodTap(sim)
+			return -1
+		}
 	}
 
 	if dk.Talents.FrostStrike && dk.CurrentRunicPower() > 60 && dk.FrostStrike.CanCast(sim, target) {
@@ -69,9 +76,10 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if b >= 1 && dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second && dk.BloodSpell.CanCast(sim, nil) {
-		dk.BloodSpell.Cast(sim, target)
-		return -1
+	if b >= 1 {
+		if dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second {
+			dk.BloodSpell.Cast(sim, target)
+		}
 	}
 
 	return -1
