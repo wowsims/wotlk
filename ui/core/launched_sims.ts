@@ -35,7 +35,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarrior]: LaunchStatus.Beta,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Beta,
 	[Spec.SpecDeathknight]: LaunchStatus.Beta,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Alpha,
 };
 
 // Meme specs are excluded from title drop-down menu.
