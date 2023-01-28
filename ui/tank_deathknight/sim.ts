@@ -48,6 +48,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
+				Stat.StatHealth,
 				Stat.StatArmor,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
@@ -83,7 +84,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_BLOOD_BIS_PRESET.gear,
+				gear: Presets.P2_BLOOD_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.05,
@@ -183,10 +184,16 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.BloodTalents,
+					Presets.DoubleBuffBloodTalents,
+					Presets.FrostTalents,
+					Presets.DoubleBuffFrostTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_BLOOD_BIS_PRESET,
+					Presets.P1_BLOOD_PRESET,
+					Presets.P1_FROST_PRESET,
+					Presets.P2_BLOOD_PRESET,
+					Presets.P2_FROST_PRESET,
 				],
 			},
 		});

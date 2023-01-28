@@ -119,10 +119,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: TankDeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+				1: TankDeathknightPresets.P1_BLOOD_PRESET.gear,
+				2: TankDeathknightPresets.P2_BLOOD_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: TankDeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+				1: TankDeathknightPresets.P1_BLOOD_PRESET.gear,
+				2: TankDeathknightPresets.P2_BLOOD_PRESET.gear,
 			},
 		},
 		tooltip: 'Blood Tank Death Knight',
@@ -144,9 +146,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_BLOOD_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_BLOOD_BIS_PRESET.gear,
 			},
 		},
 		tooltip: 'Blood DPS Death Knight',
@@ -168,9 +172,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_FROST_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_FROST_BIS_PRESET.gear,
 			},
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
@@ -193,9 +199,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_UNHOLY_DW_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
+				2: DeathknightPresets.P2_UNHOLY_DW_BIS_PRESET.gear,
 			},
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
