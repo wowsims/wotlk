@@ -30,16 +30,7 @@ type Encounter struct {
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
-	if options.ExecuteProportion_20 == 0 {
-		options.ExecuteProportion_20 = 0.2
-	}
-	if options.ExecuteProportion_25 == 0 {
-		options.ExecuteProportion_25 = 0.25
-	}
 	options.ExecuteProportion_25 = MaxFloat(options.ExecuteProportion_25, options.ExecuteProportion_20)
-	if options.ExecuteProportion_35 == 0 {
-		options.ExecuteProportion_35 = 0.35
-	}
 	options.ExecuteProportion_35 = MaxFloat(options.ExecuteProportion_35, options.ExecuteProportion_25)
 
 	encounter := Encounter{
