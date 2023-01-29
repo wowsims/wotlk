@@ -67,7 +67,7 @@ export const DefaultRotation = WarriorRotation.create({
 	useCleave: false,
 
 	prioritizeWw: true,
-	sunderArmor: SunderArmor.SunderArmorNone,
+	sunderArmor: SunderArmor.SunderArmorMaintain,
 
 	msRageThreshold: 35,
 	hsRageThreshold: 30,
@@ -87,7 +87,7 @@ export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
 	useCleave: false,
-	sunderArmor: SunderArmor.SunderArmorNone,
+	sunderArmor: SunderArmor.SunderArmorMaintain,
 	msRageThreshold: 355,
 	slamRageThreshold: 25,
 	hsRageThreshold: 50,
