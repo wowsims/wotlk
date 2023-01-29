@@ -92,17 +92,14 @@ export class RaidPicker extends Component {
 			},
 		});
 
+		const latestPhaseWithAllPresets = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
 		const phaseSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
-			values: [
-				{ name: 'Phase 1', value: 1 },
-				// Presets aren't filled for most roles so disable these options for now.
-				//{ name: 'Phase 2', value: 2 },
-				//{ name: 'Phase 3', value: 3 },
-				//{ name: 'Phase 4', value: 4 },
-				//{ name: 'Phase 5', value: 5 },
-			],
+			values: [...Array(latestPhaseWithAllPresets).keys()].map(val => {
+				const phase = val + 1;
+				return { name: 'Phase ' + phase, value: phase };
+			}),
 			changedEvent: (picker: NewPlayerPicker) => this.raid.sim.phaseChangeEmitter,
 			getValue: (picker: NewPlayerPicker) => this.raid.sim.getPhase(),
 			setValue: (eventID: EventID, picker: NewPlayerPicker, newValue: number) => {

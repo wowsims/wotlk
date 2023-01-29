@@ -698,9 +698,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
+				2: ShadowPriestPresets.P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: SmitePriestPresets.P1_PRESET.gear,
+				2: ShadowPriestPresets.P2_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecSmitePriest],
