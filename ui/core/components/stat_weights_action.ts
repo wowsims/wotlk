@@ -20,8 +20,6 @@ import * as Gems from '../proto_utils/gems.js';
 import { BaseModal } from './base_modal.js';
 import { Tooltip } from 'bootstrap';
 
-declare var tippy: any;
-
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>|undefined, epReferenceStat: Stat) {
 	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epPseudoStats || [], epReferenceStat);
@@ -63,7 +61,7 @@ class EpWeightsMenu extends BaseModal {
 				<table class="results-ep-table">
 					<thead>
 						<tr>
-							<th>Stat</th>
+							<th>Stats</th>
 							<th class="damage-metrics type-weight">
 								<span>DPS Weight</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
@@ -194,14 +192,17 @@ class EpWeightsMenu extends BaseModal {
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
 		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
-			tippy(button.previousElementSibling, {
-				'content': labelTooltip,
-				'allowHTML': true,
-			});
-			tippy(button, {
-				'content': tooltip,
-				'allowHTML': true,
-			});
+			const label = button.previousElementSibling as HTMLElement;
+			label!.setAttribute('data-bs-toggle', 'tooltip');
+			label!.setAttribute('data-bs-title', labelTooltip);
+			label!.setAttribute('data-bs-html',	'true');
+			button.setAttribute('data-bs-toggle', 'tooltip');
+			button.setAttribute('data-bs-title', tooltip);
+			button.setAttribute('data-bs-html', 'true');
+
+			Tooltip.getOrCreateInstance(label);
+			Tooltip.getOrCreateInstance(button);
+
 			button.addEventListener('click', event => {
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
 			});
@@ -238,6 +239,8 @@ class EpWeightsMenu extends BaseModal {
 	}
 
 	private updateTable(iterations: number, result: StatWeightsResult) {
+		this.tableBody.innerHTML = ``;
+
 		EpWeightsMenu.epUnitStats.forEach(stat => {
 			const row = this.makeTableRow(stat, iterations, result);
 			if ((stat.isStat() && !this.epStats.includes(stat.getStat())) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {

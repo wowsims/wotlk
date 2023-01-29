@@ -12,10 +12,9 @@ export class SettingsMenu extends BaseModal {
 	private readonly simUI: SimUI;
 
 	constructor(parent: HTMLElement, simUI: SimUI) {
-		super(parent, 'settings-menu', {footer: true});
+		super(parent, 'settings-menu', {title: "Options", footer: true});
 		this.simUI = simUI;
 
-		this.header!.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">Options</h5>`);
 		this.body.innerHTML = `
 			<div class="picker-group">
 				<div class="fixed-rng-seed-container">

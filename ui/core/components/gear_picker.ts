@@ -407,7 +407,7 @@ class SelectorModal extends BaseModal {
 	private readonly contentElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
-		super(parent, 'selector-modal', {header: true});
+		super(parent, 'selector-modal');
 		this.simUI = simUI;
 		this.player = player;
 

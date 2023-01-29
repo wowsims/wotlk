@@ -24,11 +24,10 @@ export abstract class Importer extends BaseModal {
 	private readonly includeFile: boolean;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, includeFile: boolean) {
-		super(parent, 'importer', {footer: true});
+		super(parent, 'importer', {title: title, footer: true});
 		this.includeFile = includeFile;
 		const uploadInputId = 'upload-input-' + title.toLowerCase().replaceAll(' ', '-');
 
-		this.header!.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${title}</h5>`);
 		this.body.innerHTML = `
 			<div class="import-description"></div>
 			<textarea class="importer-textarea form-control"></textarea>

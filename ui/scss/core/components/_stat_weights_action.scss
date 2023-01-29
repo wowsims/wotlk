@@ -48,6 +48,10 @@
 				}
 			}
 
+			tbody tr {
+				border-bottom: 1px solid $border-color;
+			}
+
 			.input-root {
 				margin-bottom: 0;
 			}

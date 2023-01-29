@@ -3,16 +3,26 @@ import { Component } from './component';
 
 import { Modal } from 'bootstrap';
 
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+
 type BaseModalConfig = {
 	closeButton?: CloseButtonConfig,
-	footer?: Boolean,
+	// Whether or not to add a modal-footer element
+	footer?: boolean,
+	// Whether or not to add a modal-header element
 	header?: boolean,
+	// Specify the size of the modal
+	size?: ModalSize,
+	// A title for the modal
+	title?: string | null,
 };
 
 const DEFAULT_CONFIG = {
 	closeButton: {},
 	footer: false,
 	header: true,
+	size: 'lg' as ModalSize,
+	title: null,
 }
 
 export class BaseModal extends Component {
@@ -27,9 +37,11 @@ export class BaseModal extends Component {
 		super(parent, 'modal');
 		this.config = {...DEFAULT_CONFIG, ...config};
 
+		const modalSizeKlass = this.config.size && this.config.size != 'md' ? `modal-${this.config.size}` : '';
+
 		this.rootElem.classList.add('fade');
 		this.rootElem.innerHTML = `
-			<div class="modal-dialog modal-lg ${cssClass}">
+			<div class="modal-dialog ${cssClass} ${modalSizeKlass}">
 				<div class="modal-content">
 				</div>
 			</div>
@@ -41,6 +53,10 @@ export class BaseModal extends Component {
 			this.header = document.createElement('div');
 			this.header.classList.add('modal-header');
 			container.appendChild(this.header);
+
+			if (this.config.title) {
+				this.header.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${this.config.title}</h5>`);
+			}
 		}
 
 		this.body = document.createElement('div');

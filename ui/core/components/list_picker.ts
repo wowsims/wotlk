@@ -105,7 +105,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		itemContainer.innerHTML = `
 			${this.config.inlineMenuBar ? itemHTML : ''}
 			<div class="list-picker-item-header">
-				${this.config.itemLabel && !this.config.inlineMenuBar ? `<h6 class="list-picker-item-title">${this.config.itemLabel}</h6>` : ''}
+				${this.config.itemLabel && !this.config.inlineMenuBar ? `<h6 class="list-picker-item-title">${this.config.itemLabel} ${this.itemPickerPairs.length + 1}</h6>` : ''}
 				<a href="javascript:void(0)" class="list-picker-item-action list-picker-item-up" role="button" data-bs-toggle="tooltip" data-bs-title="Move Up">
 					<i class="fa fa-angle-up fa-xl"></i>
 				</a>

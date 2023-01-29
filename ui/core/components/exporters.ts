@@ -16,9 +16,8 @@ export abstract class Exporter extends BaseModal {
 	private readonly textElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, allowDownload: boolean) {
-		super(parent, 'exporter', {footer: true});
+		super(parent, 'exporter', {title: title, footer: true});
 
-		this.header!.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${title}</h5>`);
 		this.body.innerHTML = `
 			<textarea class="exporter-textarea form-control"></textarea>
 		`;

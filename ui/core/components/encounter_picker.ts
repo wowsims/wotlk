@@ -139,10 +139,8 @@ class AdvancedEncounterModal extends BaseModal {
 
 		this.addHeader();
 		this.body.innerHTML = `
-			<div class="encounter-header">
-			</div>
-			<div class="encounter-targets">
-			</div>
+			<div class="encounter-header"></div>
+			<div class="encounter-targets"></div>
 		`;
 
 		const header = this.rootElem.getElementsByClassName('encounter-header')[0] as HTMLElement;
