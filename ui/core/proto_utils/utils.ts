@@ -1541,7 +1541,7 @@ export const classToMaxArmorType: Record<Class, ArmorType> = {
 	[Class.ClassDeathknight]: ArmorType.ArmorTypePlate,
 };
 
-const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponType>> = {
+export const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponType>> = {
 	[Class.ClassUnknown]: [],
 	[Class.ClassDruid]: [RangedWeaponType.RangedWeaponTypeIdol],
 	[Class.ClassHunter]: [

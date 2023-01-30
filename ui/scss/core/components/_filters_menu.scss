@@ -27,8 +27,11 @@
 .filters-menu-section-bool-list > * {
 	margin: 5px 20px;
 }
+.filters-menu-section-bool-list .boolean-picker-root {
+	justify-content: center;
+}
 .filters-menu-section-bool-list .boolean-picker-input {
-	width: 15px;
+	margin: 0 5px !important;
 }
 
 .filters-menu-section-number-list {
