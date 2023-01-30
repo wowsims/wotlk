@@ -40,8 +40,8 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 	var spell *core.Spell
 	var waitTime time.Duration
-	var AoEtarget *core.Unit
-	AoEtarget = spriest.CurrentTarget
+	target := spriest.CurrentTarget
+
 	switch spriest.rotation.RotationType {
 	case proto.ShadowPriest_Rotation_Ideal:
 		spell, waitTime = spriest.chooseSpellIdeal(sim)
@@ -50,7 +50,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	case proto.ShadowPriest_Rotation_Clipping:
 		spell = spriest.chooseSpellBasicOrClipping(sim, true)
 	case proto.ShadowPriest_Rotation_AoE:
-		spell, AoEtarget = spriest.chooseSpellAOE(sim)
+		spell, target = spriest.chooseSpellAOE(sim)
 	default:
 		spell, waitTime = spriest.chooseSpellIdeal(sim)
 	}
@@ -60,7 +60,7 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 			spriest.InnerFocus.Cast(sim, nil)
 		}
 
-		if success := spell.Cast(sim, AoEtarget); !success {
+		if success := spell.Cast(sim, target); !success {
 			spriest.WaitForMana(sim, spell.CurCast.Cost)
 		}
 	} else if waitTime != 0 {
@@ -71,26 +71,26 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 }
 
 func (spriest *ShadowPriest) chooseSpellAOE(sim *core.Simulation) (*core.Spell, *core.Unit) {
-	var spell *core.Spell
-	if len(sim.Encounter.Targets) < 4 {
-		for _, t := range sim.Encounter.TargetUnits {
-			if !spriest.VampiricTouch.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 5 {
-				return spriest.VampiricTouch, t
-			}
-		}
-		for _, t := range sim.Encounter.TargetUnits {
-			if !spriest.ShadowWordPain.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 12 {
-				return spriest.ShadowWordPain, t
-			}
-			if spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 2 {
-				return spriest.MindFlay[2], t
-			}
-		}
-		spell, _ = spriest.chooseSpellIdeal(sim)
-	}
 	if len(sim.Encounter.Targets) >= 4 {
 		return spriest.MindSear[5], spriest.CurrentTarget
 	}
+
+	for _, t := range sim.Encounter.TargetUnits {
+		if !spriest.VampiricTouch.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 5 {
+			return spriest.VampiricTouch, t
+		}
+	}
+
+	for _, t := range sim.Encounter.TargetUnits {
+		if !spriest.ShadowWordPain.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 12 {
+			return spriest.ShadowWordPain, t
+		}
+		if spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 2 {
+			return spriest.MindFlay[2], t
+		}
+	}
+
+	spell, _ := spriest.chooseSpellIdeal(sim)
 	return spell, spriest.CurrentTarget
 }
 
