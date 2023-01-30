@@ -15,11 +15,8 @@ import { EventID, TypedEvent } from './typed_event.js';
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './components/sim_tab.js';
 
-declare var tippy: any;
-declare var pako: any;
-
 const URLMAXLEN = 2048;
-const noticeText = '';
+const noticeText = "We're currently aware of an issue where Wowhead tooltips do not correctly reflect Tier 8 set bonuses.";
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
@@ -118,7 +115,6 @@ export abstract class SimUI extends Component {
 		updateShowExperimental();
 		this.sim.showExperimentalChangeEmitter.on(updateShowExperimental);
 
-		this.addNoticeBanner();
 		this.addKnownIssues(config);
 
 		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
@@ -184,14 +180,6 @@ export abstract class SimUI extends Component {
 
 	addWarning(warning: SimWarning) {
 		this.simHeader.addWarning(warning);
-	}
-
-	private addNoticeBanner() {
-		const noticesElem = document.querySelector('.notices-banner') as HTMLElement;
-
-		if (!noticeText) {
-			noticesElem.remove();
-		}
 	}
 
 	private addKnownIssues(config: SimUIConfig) {
@@ -299,7 +287,7 @@ export abstract class SimUI extends Component {
 const simHTML = `
 <div class="sim-root">
 	<div class="sim-bg"></div>
-	<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>
+	${noticeText ? `<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>` : ''}
   <aside class="sim-sidebar">
     <div class="sim-title"></div>
 		<div class="sim-sidebar-content">

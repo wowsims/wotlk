@@ -12,6 +12,7 @@ td, th {
 	.sim-root {
 		height: 100%;
 		display: flex;
+		flex-wrap: wrap;
 
 		.sim-bg {
 			position: fixed;
