@@ -68,9 +68,6 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 	})
 
-	// TODO: Probably improve this
-	isDps := dk.Talents.HowlingBlast || dk.Talents.SummonGargoyle
-
 	actionID := core.ActionID{SpellID: 50689}
 	healthMetrics := dk.NewHealthMetrics(actionID)
 	statDep := dk.NewDynamicMultiplyStat(stats.Stamina, staminaMult)
@@ -97,7 +94,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 	}
 
-	if !isDps {
+	if !dk.Inputs.IsDps {
 		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Damage > 0 {
 				healthGain := (0.04 * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
@@ -157,6 +154,17 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 	})
 	dk.FrostPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
+
+	if !dk.Inputs.IsDps && dk.Talents.ImprovedBloodPresence > 0 {
+		healFactor := 0.02 * float64(dk.Talents.ImprovedBloodPresence)
+		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
+		dk.FrostPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+				dk.GainHealth(sim, healthGain, healthMetrics)
+			}
+		}
+	}
 }
 
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
@@ -237,6 +245,17 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 	})
 	dk.UnholyPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
+
+	if !dk.Inputs.IsDps && dk.Talents.ImprovedBloodPresence > 0 {
+		healFactor := 0.02 * float64(dk.Talents.ImprovedBloodPresence)
+		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
+		dk.UnholyPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+				dk.GainHealth(sim, healthGain, healthMetrics)
+			}
+		}
+	}
 }
 
 func (dk *Deathknight) registerPresences() {

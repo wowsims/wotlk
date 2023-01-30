@@ -8,8 +8,29 @@ import (
 )
 
 func (dk *TankDeathknight) DoDefensiveCds(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
-	if dk.CurrentHealthPercent() < dk.HpPercentForDefensives {
+	bigCdThreshold := 0.35
+	smallCdThreshold := 0.5
+
+	if dk.CurrentHealthPercent() < bigCdThreshold {
 		// Roll out Defensives in Prio Order
+		if dk.IceboundFortitude.CanCast(sim, target) {
+			dk.IceboundFortitude.Cast(sim, target)
+			return true
+		}
+	}
+
+	if dk.CurrentHealthPercent() < smallCdThreshold {
+		// Roll out Defensives in Prio Order
+
+		if dk.DeathPact.CanCast(sim, target) {
+			dk.DeathPact.Cast(sim, target)
+			return true
+		}
+		if dk.RaiseDead.IsReady(sim) {
+			dk.RaiseDead.Cast(sim, nil)
+			return true
+		}
+
 		if dk.Talents.RuneTap {
 			if !dk.RuneTap.CanCast(sim, target) && dk.BloodTap.CanCast(sim, nil) {
 				dk.BloodTap.Cast(sim, nil)
@@ -20,14 +41,11 @@ func (dk *TankDeathknight) DoDefensiveCds(sim *core.Simulation, target *core.Uni
 			}
 		}
 
-		if dk.DeathPact.CanCast(sim, target) {
-			dk.DeathPact.Cast(sim, target)
-			return true
-		}
-
+		// TODO: Should only be used before incoming magic damage
+		// add support to enemy ai to broadcast events that tanks
+		// can react to
 		if dk.AntiMagicShell.CanCast(sim, target) {
 			dk.AntiMagicShell.Cast(sim, target)
-			return true
 		}
 
 		if dk.Talents.VampiricBlood {
@@ -49,16 +67,6 @@ func (dk *TankDeathknight) DoDefensiveCds(sim *core.Simulation, target *core.Uni
 				return true
 			}
 		}
-
-		if dk.IceboundFortitude.CanCast(sim, target) {
-			dk.IceboundFortitude.Cast(sim, target)
-			return true
-		}
-	}
-
-	if dk.CurrentHealthPercent() < 0.5 && dk.RaiseDead.IsReady(sim) {
-		dk.RaiseDead.Cast(sim, nil)
-		return true
 	}
 
 	return false
