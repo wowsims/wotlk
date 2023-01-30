@@ -50,10 +50,9 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 
 export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: [
-			'show-matching-gems-selector',
-		],
+		extraCssClasses: ['show-matching-gems-selector', 'mb-0'],
 		label: 'Match Socket',
+		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().matchingGemsOnly,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
