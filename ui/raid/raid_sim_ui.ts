@@ -44,8 +44,6 @@ export class RaidSimUI extends SimUI {
 
 	readonly referenceChangeEmitter = new TypedEvent<void>();
 
-	private settingsMuuri: any;
-
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
 			cssScheme: 'raid',
@@ -56,7 +54,6 @@ export class RaidSimUI extends SimUI {
 		this.rootElem.classList.add('raid-sim-ui');
 
 		this.config = config;
-		this.settingsMuuri = null;
 
 		this.sim.raid.compChangeEmitter.on(eventID => this.compChangeEmitter.emit(eventID));
 		[
@@ -143,9 +140,6 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private recomputeSettingsLayout() {
-		if (this.settingsMuuri) {
-			//this.settingsMuuri.refreshItems();
-		}
 		window.dispatchEvent(new Event('resize'));
 	}
 
