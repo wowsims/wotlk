@@ -16,7 +16,7 @@ import { Tooltip } from 'bootstrap';
 import { SimTab } from './components/sim_tab.js';
 
 const URLMAXLEN = 2048;
-const noticeText = "We're currently aware of an issue where Wowhead tooltips do not correctly reflect Tier 8 set bonuses.";
+const noticeText = '';
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
