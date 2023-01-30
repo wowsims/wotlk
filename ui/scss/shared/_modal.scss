@@ -8,14 +8,14 @@
       }
 
       .modal-body {
-        overflow: scroll;
+        overflow: auto;
       }
     }
   }
 
   .modal-scroll-table {
     flex: 1;
-		overflow-y: scroll;
+		overflow-y: auto;
     padding-left: var(--bs-modal-padding);
     padding-right: var(--bs-modal-padding);
     margin-left: calc(var(--bs-modal-padding) * -1);

@@ -98,8 +98,7 @@ class ItemPicker extends Component {
 
 		this.rootElem.innerHTML = `
       <a class="item-picker-icon">
-        <div class="item-picker-sockets-container">
-        </div>
+        <div class="item-picker-sockets-container"></div>
       </a>
       <div class="item-picker-labels-container">
         <a class="item-picker-name"></a><br>
@@ -637,7 +636,7 @@ class SelectorModal extends BaseModal {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn btn-primary">Filters</button>
+					${label == 'Items' ? '<button class="selector-modal-filters-button btn btn-primary">Filters</button>' : ''}
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
@@ -672,11 +671,14 @@ class SelectorModal extends BaseModal {
 
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
 
-		const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
-		if (FiltersMenu.anyFiltersForSlot(slot)) {
-			filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
-		} else {
-			filtersButton.style.display = 'none';
+		// TODO: Refactor
+		if (label == 'Gear') {
+			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
+			if (FiltersMenu.anyFiltersForSlot(slot)) {
+				filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
+			} else {
+				filtersButton.style.display = 'none';
+			}
 		}
 
 		if (label == 'Items') {
