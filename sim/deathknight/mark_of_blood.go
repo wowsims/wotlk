@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerMarkOfBloodSpell() {
@@ -16,20 +15,17 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 3
 
-	baseCost := float64(core.NewRuneCost(10, 0, 1, 0, 0))
 	var markOfBloodAura *core.Aura = nil
-	dk.MarkOfBlood = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     actionID,
-		Flags:        core.SpellFlagNoOnCastComplete,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.MarkOfBlood = dk.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost: 1,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
@@ -43,19 +39,15 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 
 			markOfBloodAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0, 1, 0, 0) && dk.MarkOfBlood.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
 		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.MarkOfBlood.Spell,
-			Priority: core.CooldownPriorityDefault,
-			Type:     core.CooldownTypeSurvival,
+			Spell: dk.MarkOfBlood,
+			Type:  core.CooldownTypeSurvival,
 			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.MarkOfBlood.CanCast(sim)
+				return dk.MarkOfBlood.CanCast(sim, nil)
 			},
 		})
 	}
 }
-

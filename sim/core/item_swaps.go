@@ -31,8 +31,9 @@ type ItemSwap struct {
 }
 
 /*
-	TODO All the extra parameters here and the code in multiple places for handling the Weapon struct is really messy,
-		we'll need to figure out something cleaner as this will be quite error-prone
+TODO All the extra parameters here and the code in multiple places for handling the Weapon struct is really messy,
+
+	we'll need to figure out something cleaner as this will be quite error-prone
 */
 func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap, mhCritMultiplier float64, ohCritMultiplier float64, rangedCritMultiplier float64) {
 	items := getItems(itemSwap)
@@ -55,7 +56,7 @@ func (character *Character) RegisterOnItemSwap(callback OnSwapItem) {
 	character.ItemSwap.onSwapCallbacks = append(character.ItemSwap.onSwapCallbacks, callback)
 }
 
-//Helper for handling Effects that use PPMManager to toggle the aura on/off
+// Helper for handling Effects that use PPMManager to toggle the aura on/off
 func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, ppm float64, ppmm *PPMManager, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
@@ -74,7 +75,7 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, 
 
 }
 
-//Helper for handling Effects that use the effectID to toggle the aura on and off
+// Helper for handling Effects that use the effectID to toggle the aura on and off
 func (swap *ItemSwap) ReigsterOnSwapItemForEffect(effectID int32, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
@@ -137,7 +138,8 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	}
 
 	if character.AutoAttacks.IsEnabled() && meeleWeaponSwapped && sim.CurrentTime > 0 {
-		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
+		character.AutoAttacks.CancelAutoSwing(sim)
+		character.AutoAttacks.restartMelee(sim)
 	}
 
 	if useGCD {

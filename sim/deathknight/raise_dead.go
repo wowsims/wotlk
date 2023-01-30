@@ -24,15 +24,12 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	})
 
-	dk.RaiseDead = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
@@ -43,18 +40,17 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			raiseDeadAura.Activate(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return !dk.Talents.MasterOfGhouls && dk.RaiseDead.IsReady(sim)
-	}, nil)
+	})
 
-	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.RaiseDead.Spell,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityLow,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.RaiseDead.CanCast(sim) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDurationPercent() > 0.15
-			},
-		})
-	}
+	// TODO: Raise Dead should be used from the rotation in a smart way
+	// adding it as a survival MCD with GCDs messes with rotation more then it helps
+	// if !dk.Inputs.IsDps {
+	// 	dk.AddMajorCooldown(core.MajorCooldown{
+	// 		Spell: dk.RaiseDead,
+	// 		Type:  core.CooldownTypeSurvival,
+	// 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+	// 			return dk.RaiseDead.CanCast(sim, nil) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDuration() > 5*time.Second
+	// 		},
+	// 	})
+	// }
 }

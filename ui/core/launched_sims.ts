@@ -11,31 +11,31 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimStatus: LaunchStatus = LaunchStatus.Unlaunched;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
 	[Spec.SpecFeralDruid]: LaunchStatus.Beta,
-	[Spec.SpecFeralTankDruid]: LaunchStatus.Alpha,
+	[Spec.SpecFeralTankDruid]: LaunchStatus.Beta,
 	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
-	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
-	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
+	[Spec.SpecElementalShaman]: LaunchStatus.Beta,
+	[Spec.SpecEnhancementShaman]: LaunchStatus.Beta,
 	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
-	[Spec.SpecHunter]: LaunchStatus.Beta,
-	[Spec.SpecMage]: LaunchStatus.Alpha,
-	[Spec.SpecRogue]: LaunchStatus.Alpha,
+	[Spec.SpecHunter]: LaunchStatus.Launched,
+	[Spec.SpecMage]: LaunchStatus.Beta,
+	[Spec.SpecRogue]: LaunchStatus.Beta,
 	[Spec.SpecHolyPaladin]: LaunchStatus.Unlaunched,
-	[Spec.SpecProtectionPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
+	[Spec.SpecProtectionPaladin]: LaunchStatus.Beta,
+	[Spec.SpecRetributionPaladin]: LaunchStatus.Beta,
 	[Spec.SpecHealingPriest]: LaunchStatus.Alpha,
-	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
-	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
-	[Spec.SpecWarlock]: LaunchStatus.Alpha,
-	[Spec.SpecWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecProtectionWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecDeathknight]: LaunchStatus.Alpha,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecShadowPriest]: LaunchStatus.Beta,
+	[Spec.SpecSmitePriest]: LaunchStatus.Beta,
+	[Spec.SpecWarlock]: LaunchStatus.Beta,
+	[Spec.SpecWarrior]: LaunchStatus.Beta,
+	[Spec.SpecProtectionWarrior]: LaunchStatus.Beta,
+	[Spec.SpecDeathknight]: LaunchStatus.Beta,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Alpha,
 };
 
 // Meme specs are excluded from title drop-down menu.

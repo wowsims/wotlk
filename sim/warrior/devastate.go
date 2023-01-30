@@ -1,8 +1,6 @@
 package warrior
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -10,32 +8,6 @@ import (
 func (warrior *Warrior) registerDevastateSpell() {
 	if !warrior.Talents.Devastate {
 		return
-	}
-
-	if warrior.Talents.SwordAndBoard > 0 {
-		warrior.SwordAndBoardAura = warrior.GetOrRegisterAura(core.Aura{
-			Label:    "Sword And Board",
-			ActionID: core.ActionID{SpellID: 46953},
-			Duration: 5 * time.Second,
-		})
-
-		core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
-			Label: "Sword And Board Trigger",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
-
-				if !(spell == warrior.Revenge || spell == warrior.Devastate) {
-					return
-				}
-
-				if sim.RandomFloat("Sword And Board") <= 0.1*float64(warrior.Talents.SwordAndBoard) {
-					warrior.SwordAndBoardAura.Activate(sim)
-					warrior.ShieldSlam.CD.Reset()
-				}
-			},
-		}))
 	}
 
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)

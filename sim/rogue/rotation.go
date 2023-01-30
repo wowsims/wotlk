@@ -19,13 +19,21 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 	}
 	rogue.TryUseCooldowns(sim)
 	if rogue.GCD.IsReady(sim) {
-		rogue.rotation(sim)
+		if rogue.Talents.Shadowstep {
+			rogue.doSubtletyRotation(sim)
+		} else {
+			rogue.rotation(sim)
+		}
 	}
 }
 
 func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 	if rogue.Talents.Mutilate && sim.GetNumTargets() <= 3 {
 		rogue.OnCanAct(sim)
+		return
+	}
+	if rogue.Talents.Shadowstep && sim.GetNumTargets() <= 3 {
+		rogue.OnCanActSubtlety(sim)
 		return
 	}
 	if rogue.KillingSpreeAura.IsActive() {
@@ -73,6 +81,7 @@ const (
 
 func (rogue *Rogue) energyToBuild(points int32) float64 {
 	costPerBuilder := rogue.Builder.DefaultCast.Cost
+
 	buildersNeeded := math.Ceil(float64(points) / float64(rogue.BuilderPoints))
 	return buildersNeeded * costPerBuilder
 }
@@ -245,16 +254,21 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 }
 
 func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
+	mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+	ohDagger := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Builder = rogue.SinisterStrike
 	rogue.BuilderPoints = 1
-	if rogue.Talents.Mutilate {
-		mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-		ohDagger := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger
+	if rogue.PrimaryTalentTree == AssassinTree {
+
 		if mhDagger && ohDagger {
 			rogue.Builder = rogue.Mutilate
 			rogue.BuilderPoints = 2
 		}
 		rogue.setupAssassinationRotation(sim)
+	}
+	if rogue.PrimaryTalentTree == SubtletyTree {
+		rogue.setSubtletyBuilder()
+		rogue.setupSubtletyRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() > 3
 	// Slice and Dice
@@ -345,7 +359,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rupture := roguePriorityItem{
 		MinimumComboPoints: 3,
 		MaximumComboPoints: 5,
-		Aura:               rogue.ruptureDot.Aura,
+		Aura:               rogue.Rupture[0].CurDot().Aura,
 		EnergyCost:         rogue.Rupture[1].DefaultCast.Cost,
 		GetDuration: func(r *Rogue, cp int32) time.Duration {
 			return r.RuptureDuration(cp)
@@ -414,20 +428,39 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		eviscerate.MinimumComboPoints = 1
 		rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 	} else {
-		switch rogue.Rotation.CombatFinisherPriority {
-		case proto.Rogue_Rotation_RuptureEviscerate:
-			rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.priorityItems = append(rogue.priorityItems, rupture)
-			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
-			eviscerate.IsFiller = true
-			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
-		case proto.Rogue_Rotation_EviscerateRupture:
-			eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
-			rogue.priorityItems = append(rogue.priorityItems, eviscerate)
-			rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
-			rupture.IsFiller = true
-			if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
+		if rogue.PrimaryTalentTree == CombatTree {
+			switch rogue.Rotation.CombatFinisherPriority {
+			case proto.Rogue_Rotation_RuptureEviscerate:
+				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 				rogue.priorityItems = append(rogue.priorityItems, rupture)
+				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
+				eviscerate.IsFiller = true
+				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
+			case proto.Rogue_Rotation_EviscerateRupture:
+				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
+				rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+				rupture.IsFiller = true
+				if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
+					rogue.priorityItems = append(rogue.priorityItems, rupture)
+				}
+			}
+		} else {
+			switch rogue.Rotation.SubtletyFinisherPriority {
+			case proto.Rogue_Rotation_Rupture:
+				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+				rogue.priorityItems = append(rogue.priorityItems, rupture)
+				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
+				eviscerate.IsFiller = true
+				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
+			case proto.Rogue_Rotation_Eviscerate:
+				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
+				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
+				rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher
+				rupture.IsFiller = true
+				if rupture.MinimumComboPoints > 0 && rupture.MinimumComboPoints <= 5 {
+					rogue.priorityItems = append(rogue.priorityItems, rupture)
+				}
 			}
 		}
 	}

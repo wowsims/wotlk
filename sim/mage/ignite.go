@@ -2,7 +2,6 @@ package mage
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -36,7 +35,7 @@ func (mage *Mage) applyIgnite() {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-			if mage.LivingBomb != nil && spell == mage.LivingBombDot.Spell && result.DidCrit() {
+			if mage.LivingBomb != nil && result.DidCrit() {
 				mage.procIgnite(sim, result)
 			}
 		},
@@ -51,33 +50,26 @@ func (mage *Mage) applyIgnite() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			mage.IgniteDots[target.Index].ApplyOrReset(sim)
-			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
-		},
-	})
-
-	mage.IgniteDots = make([]*core.Dot, mage.Env.GetNumTargets())
-	for i := range mage.IgniteDots {
-		mage.IgniteDots[i] = core.NewDot(core.Dot{
-			Spell: mage.Ignite,
-			Aura: mage.Env.GetTargetUnit(int32(i)).RegisterAura(core.Aura{
-				Label:    "Ignite-" + strconv.Itoa(int(mage.Index)),
-				ActionID: mage.Ignite.ActionID,
-				Tag:      "Ignite",
-			}),
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Ignite",
+			},
 			NumberOfTicks: IgniteTicks,
 			TickLength:    time.Second * 2,
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
-			SnapshotAttackerMultiplier: 1,
-		})
-	}
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.Dot(target).ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+		},
+	})
 }
 
 func (mage *Mage) procIgnite(sim *core.Simulation, result *core.SpellResult) {
-	dot := mage.IgniteDots[result.Target.Index]
+	dot := mage.Ignite.Dot(result.Target)
 
 	newDamage := result.Damage * 0.08 * float64(mage.Talents.Ignite)
 	outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
@@ -90,6 +82,7 @@ func (mage *Mage) procIgnite(sim *core.Simulation, result *core.SpellResult) {
 		}
 	}
 
+	dot.SnapshotAttackerMultiplier = 1
 	dot.SnapshotBaseDamage = (outstandingDamage + newDamage - munchPenalty) / float64(IgniteTicks)
 	mage.igniteMunchDmg = newDamage
 	mage.igniteMunchTime = sim.CurrentTime

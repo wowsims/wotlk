@@ -30,9 +30,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood DPS is a work in progress.",
-				"Frost Rotation logic is not fully tuned yet.",
-				"Army of the Dead scaling needs to be fine-tuned."
 			],
 
 			// All stats for which EP should be calculated.
@@ -154,6 +151,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.DrwPestiApply,
 					DeathKnightInputs.SelfUnholyFrenzy,
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
@@ -185,8 +183,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.P2_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
-					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_FROSTSUBUNH_BIS_PRESET,
+					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,

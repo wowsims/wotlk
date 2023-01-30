@@ -223,7 +223,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 
 		procSpell := character.GetOrRegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 31193},
+			ActionID:    core.ActionID{SpellID: 24585},
 			SpellSchool: core.SpellSchoolShadow,
 			ProcMask:    core.ProcMaskEmpty,
 

@@ -100,11 +100,7 @@ var warriorRotation = &proto.ProtectionWarrior_Rotation{
 }
 
 var warriorOptions = &proto.ProtectionWarrior_Options{
-	Shout:                proto.WarriorShout_WarriorShoutCommanding,
-	PrecastShout:         false,
-	PrecastShoutT2:       false,
-	PrecastShoutSapphire: false,
-
+	Shout:        proto.WarriorShout_WarriorShoutCommanding,
 	StartingRage: 0,
 }
 

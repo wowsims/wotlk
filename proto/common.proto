@@ -528,10 +528,7 @@ message Consumes {
 
 	Potions default_potion = 10;
 	Potions prepop_potion = 11;
-
 	Conjured default_conjured = 12;
-	Conjured starting_conjured = 13;
-	int32 num_starting_conjured = 14;
 
 	bool thermal_sapper = 15;
 	bool explosive_decoy = 16;

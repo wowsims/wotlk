@@ -26,6 +26,7 @@ import {
 	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
+	Deathknight_Rotation_DrwDiseases,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -99,11 +100,11 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305120530003303231023001351--230130305003',
+		talentsString: '2305120530003303231023001351--230220305003',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
-			major3: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major3: DeathknightMajorGlyph.GlyphOfDisease,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -118,6 +119,7 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useGargoyle: true,
 	useEmpowerRuneWeapon: true,
 	holdErwArmy: false,
+	preNerfedGargoyle: false,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
 	startingPresence: Deathknight_Rotation_Presence.Unholy,
 	blPresence: Deathknight_Rotation_Presence.Blood,
@@ -126,10 +128,11 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
 	oblitDelayDuration: 1000.0,
-	//oblitdelay is here as a temporary fix
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastGhoulFrenzy: false,
@@ -144,6 +147,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	btGhoulFrenzy: false,
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
+	preNerfedGargoyle: false,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	presence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
@@ -151,6 +155,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	oblitDelayDuration: 1000.0,
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   	frostCustomRotation: CustomRotation.create({
 		spells: [
@@ -168,6 +173,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
@@ -179,14 +185,17 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 export const DefaultBloodRotation = DeathKnightRotation.create({
 	refreshHornOfWinter: false,
 	useEmpowerRuneWeapon: true,
+	preNerfedGargoyle: false,
 	startingPresence: Deathknight_Rotation_Presence.Blood,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
 	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
 	holdErwArmy: false,
 	useAms: false,
+	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
+	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
@@ -263,8 +272,9 @@ export const P1_BLOOD_BIS_PRESET = {
 			]
 		  },
 		  {
-			"id": 40317,
+			"id": 40278,
 			"gems": [
+			  39996,
 			  39996
 			]
 		  },
@@ -273,7 +283,7 @@ export const P1_BLOOD_BIS_PRESET = {
 			"enchant": 3823,
 			"gems": [
 			  39996,
-			  39996
+			  40037
 			]
 		  },
 		  {
@@ -702,7 +712,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 		},
 		{
 			"id": 40703,
-			"enchant": 3790
+			"enchant": 3368
 		},
 		{
 			"id": 40867
@@ -910,7 +920,7 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 		  },
 		  {
 			"id": 46036,
-			"enchant": 3790,
+			"enchant": 3368,
 			"gems": [
 			  39996
 			]

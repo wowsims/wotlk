@@ -5,29 +5,35 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func (dk *Deathknight) registerRuneStrikeSpell() {
-	actionID := core.ActionID{SpellID: 56815}
+var RuneStrikeActionID = core.ActionID{SpellID: 56815}
 
+func (dk *Deathknight) threatOfThassarianRuneStrikeProcMask(isMH bool) core.ProcMask {
+	if isMH {
+		return core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeMHAuto
+	} else {
+		return core.ProcMaskMeleeOHSpecial | core.ProcMaskMeleeOHAuto
+	}
+}
+
+func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 	runeStrikeGlyphCritBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneStrike), 10.0, 0.0)
 
-	baseCost := float64(core.NewRuneCost(20, 0, 0, 0, 0))
-	rs := &RuneSpell{}
-	dk.RuneStrike = dk.RegisterSpell(rs, core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	conf := core.SpellConfig{
+		ActionID:    RuneStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    dk.threatOfThassarianRuneStrikeProcMask(isMH),
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 20,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.RuneStrikeAura.IsActive()
 		},
 
 		BonusCritRating: (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
@@ -37,25 +43,50 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 		ThreatMultiplier: 1.75,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 0 +
-				0.15*spell.MeleeAttackPower() +
-				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
+			var baseDamage = 0.0
+			var outcomeApplier core.OutcomeApplier
+
+			if isMH {
+				baseDamage = 0 +
+					0.15*spell.MeleeAttackPower() +
+					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+
+				outcomeApplier = spell.OutcomeMeleeSpecialNoBlockDodgeParry
+			} else {
+				baseDamage = 0 +
+					0.15*spell.MeleeAttackPower() +
+					spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+
+				outcomeApplier = spell.OutcomeMeleeSpecialCritOnly
+			}
+
 			baseDamage *= dk.RoRTSBonus(target)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
-
-			rs.DoCost(sim)
-			dk.RuneStrikeAura.Deactivate(sim)
+			if isMH {
+				dk.threatOfThassarianProc(sim, result, dk.RuneStrikeOh)
+				dk.RuneStrikeAura.Deactivate(sim)
+			}
 		},
-	}, func(sim *core.Simulation) bool {
-		runeCost := core.RuneCost(dk.RuneStrike.BaseCost)
-		return dk.CastCostPossible(sim, float64(runeCost.RunicPower()), 0, 0, 0) && dk.RuneStrike.IsReady(sim) && dk.RuneStrikeAura.IsActive() && dk.CurrentRunicPower() >= float64(runeCost.RunicPower())
-	}, nil)
+	}
+	if !isMH { // only MH has cost & gcd
+		conf.RuneCost = core.RuneCostOptions{}
+		conf.Cast = core.CastConfig{}
+		conf.ExtraCastCondition = nil
+	}
+
+	return dk.RegisterSpell(conf)
+}
+
+func (dk *Deathknight) registerRuneStrikeSpell() {
+	dk.RuneStrike = dk.newRuneStrikeSpell(true)
+	dk.RuneStrikeOh = dk.newRuneStrikeSpell(false)
 
 	dk.RuneStrikeAura = dk.RegisterAura(core.Aura{
 		Label:    "Rune Strike",
-		ActionID: actionID,
+		ActionID: RuneStrikeActionID,
 		Duration: 6 * time.Second,
 	})
 

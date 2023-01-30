@@ -7,8 +7,6 @@ import (
 )
 
 func (warlock *Warlock) registerSoulFireSpell() {
-	decimationMod := 1.0 - 0.2*float64(warlock.Talents.Decimation)
-
 	warlock.SoulFire = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47825},
 		SpellSchool:  core.SpellSchoolFire,
@@ -23,15 +21,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(6000-400*warlock.Talents.Bane),
-			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				totalMod := warlock.backdraftModifier()
-				if warlock.DecimationAura.IsActive() {
-					totalMod *= decimationMod
-				}
-
-				cast.GCD = time.Duration(float64(cast.GCD) * totalMod)
-				cast.CastTime = time.Duration(float64(cast.CastTime) * totalMod)
 			},
 		},
 
@@ -51,10 +40,6 @@ func (warlock *Warlock) registerSoulFireSpell() {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 			})
-
-			if warlock.MoltenCoreAura.IsActive() {
-				warlock.MoltenCoreAura.RemoveStack(sim)
-			}
 		},
 	})
 }

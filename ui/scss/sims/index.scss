@@ -1,0 +1,23 @@
+// TODO: Could we use a glob import module to avoid hardcoding these?
+@import 'balance_druid/sim';
+@import 'deathknight/sim';
+@import 'elemental_shaman/sim';
+@import 'enhancement_shaman/sim';
+@import 'feral_druid/sim';
+@import 'feral_tank_druid/sim';
+@import 'healing_priest/sim';
+@import 'holy_paladin/sim';
+@import 'hunter/sim';
+@import 'mage/sim';
+@import 'protection_paladin/sim';
+@import 'protection_warrior/sim';
+@import 'raid/sim';
+@import 'restoration_druid/sim';
+@import 'restoration_shaman/sim';
+@import 'retribution_paladin/sim';
+@import 'rogue/sim';
+@import 'shadow_priest/sim';
+@import 'smite_priest/sim';
+@import 'tank_deathknight/sim';
+@import 'warlock/sim';
+@import 'warrior/sim';

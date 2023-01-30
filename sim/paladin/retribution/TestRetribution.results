@@ -536,8 +536,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LibramofThreeTruths-50455"
  value: {
-  dps: 6493.15329
-  tps: 6594.55707
+  dps: 6833.27778
+  tps: 6934.68156
   dtps: 9.92959
  }
 }

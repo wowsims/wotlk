@@ -14,6 +14,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	var shadowMasteryAura *core.Aura
 	if ISBProcChance > 0 {
 		shadowMasteryAura = core.ShadowMasteryAura(warlock.CurrentTarget)
+		warlock.CritDebuffCategory = shadowMasteryAura.ExclusiveEffects[0].Category
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
@@ -32,13 +33,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
-			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
-				if warlock.Talents.Nightfall > 0 {
-					warlock.applyNightfall(cast)
-				}
 			},
 		},
 
@@ -67,9 +61,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					}
 				}
 			})
-			if warlock.DemonicSoulAura.IsActive() {
-				warlock.DemonicSoulAura.Deactivate(sim)
-			}
 		},
 	})
 }

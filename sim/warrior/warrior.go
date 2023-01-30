@@ -34,14 +34,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                 Stance
-	overpowerValidUntil    time.Duration
-	rendValidUntil         time.Duration
-	shoutExpiresAt         time.Duration
-	revengeProcAura        *core.Aura
-	glyphOfRevengeProcAura *core.Aura
-	lastTasteForBloodProc  time.Duration
-	Ymirjar4pcProcAura     *core.Aura
+	Stance                Stance
+	overpowerValidUntil   time.Duration
+	rendValidUntil        time.Duration
+	shoutExpiresAt        time.Duration
+	revengeProcAura       *core.Aura
+	lastTasteForBloodProc time.Duration
+	Ymirjar4pcProcAura    *core.Aura
 
 	munchedDeepWoundsProcs []*core.PendingAction
 
@@ -80,9 +79,6 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	RendDots       *core.Dot
-	DeepWoundsDots []*core.Dot
-
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
 	HSRageThreshold          float64
@@ -93,10 +89,9 @@ type Warrior struct {
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
-	BloodsurgeAura    *core.Aura
-	SuddenDeathAura   *core.Aura
-	SwordAndBoardAura *core.Aura
-	ShieldBlockAura   *core.Aura
+	BloodsurgeAura  *core.Aura
+	SuddenDeathAura *core.Aura
+	ShieldBlockAura *core.Aura
 
 	DemoralizingShoutAuras []*core.Aura
 	BloodFrenzyAuras       []*core.Aura
@@ -164,10 +159,6 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	warrior.DeepWoundsDots = make([]*core.Dot, warrior.Env.GetNumTargets())
-	for i := range warrior.DeepWoundsDots {
-		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(int32(i)))
-	}
 	warrior.munchedDeepWoundsProcs = make([]*core.PendingAction, warrior.Env.GetNumTargets())
 }
 

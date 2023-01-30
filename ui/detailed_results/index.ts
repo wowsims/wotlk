@@ -5,14 +5,8 @@ Database.get();
 
 const urlParams = new URLSearchParams(window.location.search);
 
-if (urlParams.has('themeBackgroundColor')) {
-	document.body.style.setProperty('--theme-background-color', urlParams.get('themeBackgroundColor')!);
-}
-if (urlParams.has('themeBackgroundImage')) {
-	document.body.style.setProperty('--theme-background-image', urlParams.get('themeBackgroundImage')!);
-}
-if (urlParams.has('themeBackgroundOpacity')) {
-	document.body.style.setProperty('--theme-background-opacity', urlParams.get('themeBackgroundOpacity')!);
+if (urlParams.has('cssClass')) {
+	document.body.classList.add(urlParams.get('cssClass')!);
 }
 
 const isIndividualSim = urlParams.has('isIndividualSim');

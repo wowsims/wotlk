@@ -123,16 +123,9 @@ type Shaman struct {
 	WrathOfAirTotem      *core.Spell
 	FlametongueTotem     *core.Spell
 
-	FlameShockDot    *core.Dot
-	SearingTotemDot  *core.Dot
-	MagmaTotemDot    *core.Dot
-	LightningBoltDot *core.Dot
+	FlameShockDot *core.Dot
 
-	ClearcastingAura         *core.Aura
-	ElementalMasteryAura     *core.Aura
-	ElementalMasteryBuffAura *core.Aura
-	NaturesSwiftnessAura     *core.Aura
-	MaelstromWeaponAura      *core.Aura
+	MaelstromWeaponAura *core.Aura
 }
 
 // Implemented by each Shaman spec.

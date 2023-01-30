@@ -1,7 +1,6 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,7 +8,9 @@ import (
 )
 
 func (priest *Priest) registerShadowWordPainSpell() {
-	actionID := core.ActionID{SpellID: 48125}
+	twistedFaithMultiplier := 1 + 0.02*float64(priest.Talents.TwistedFaith)
+	mindFlayMod := twistedFaithMultiplier +
+		core.TernaryFloat64(priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)), 0.1, 0)
 
 	var glyphManaMetrics *core.ResourceMetrics
 	if priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordPain)) {
@@ -17,7 +18,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 	}
 
 	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 48125},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -40,17 +41,62 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "ShadowWordPain",
+				OnGain: func(_ *core.Aura, _ *core.Simulation) {
+					priest.MindBlast.DamageMultiplier *= twistedFaithMultiplier
+					for _, spell := range priest.MindFlay {
+						if spell != nil {
+							spell.DamageMultiplier *= mindFlayMod
+						}
+					}
+				},
+				OnExpire: func(_ *core.Aura, _ *core.Simulation) {
+					priest.MindBlast.DamageMultiplier /= twistedFaithMultiplier
+					for _, spell := range priest.MindFlay {
+						if spell != nil {
+							spell.DamageMultiplier /= mindFlayMod
+						}
+					}
+				},
+			},
+
+			NumberOfTicks: 6 +
+				core.TernaryInt32(priest.HasSetBonus(ItemSetAbsolution, 2), 1, 0),
+			TickLength: time.Second * 3,
+
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = 1380/6 + 0.1833*dot.Spell.SpellPower()
+				if !isRollover {
+					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				}
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				if priest.Talents.Shadowform {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+				} else {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				}
+
+				if glyphManaMetrics != nil {
+					priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics, false)
+				}
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
-				priest.ShadowWordPainDot.Apply(sim)
+				spell.Dot(target).Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
 			if useSnapshot {
-				dot := priest.ShadowWordPainDot
+				dot := spell.Dot(target)
 				if priest.Talents.Shadowform {
 					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
 				} else {
@@ -63,56 +109,6 @@ func (priest *Priest) registerShadowWordPainSpell() {
 				} else {
 					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 				}
-			}
-		},
-	})
-
-	twistedFaithMultiplier := 1 + 0.02*float64(priest.Talents.TwistedFaith)
-	mindFlayMod := twistedFaithMultiplier +
-		core.TernaryFloat64(priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)), 0.1, 0)
-	priest.ShadowWordPainDot = core.NewDot(core.Dot{
-		Spell: priest.ShadowWordPain,
-		Aura: priest.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "ShadowWordPain-" + strconv.Itoa(int(priest.Index)),
-			ActionID: actionID,
-			OnGain: func(_ *core.Aura, _ *core.Simulation) {
-				priest.MindBlast.DamageMultiplier *= twistedFaithMultiplier
-				for _, dot := range priest.MindFlayDot {
-					if dot != nil {
-						dot.Spell.DamageMultiplier *= mindFlayMod
-					}
-				}
-			},
-			OnExpire: func(_ *core.Aura, _ *core.Simulation) {
-				priest.MindBlast.DamageMultiplier /= twistedFaithMultiplier
-				for _, dot := range priest.MindFlayDot {
-					if dot != nil {
-						dot.Spell.DamageMultiplier /= mindFlayMod
-					}
-				}
-			},
-		}),
-
-		NumberOfTicks: 6 +
-			core.TernaryInt32(priest.HasSetBonus(ItemSetAbsolution, 2), 1, 0),
-		TickLength: time.Second * 3,
-
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = 1380/6 + 0.1833*dot.Spell.SpellPower()
-			if !isRollover {
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-			}
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			if priest.Talents.Shadowform {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
-			} else {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-			}
-
-			if glyphManaMetrics != nil {
-				priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics, false)
 			}
 		},
 	})

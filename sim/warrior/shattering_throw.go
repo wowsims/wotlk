@@ -25,12 +25,28 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				Timer:    warrior.NewTimer(),
 				Duration: time.Minute * 5,
 			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
+					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)
+				} else {
+					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)
+				}
+			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim)
+		},
+
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
+				warrior.BattleStance.Cast(sim, nil)
+			}
+
 			baseDamage := 0.5 * spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 			if result.Landed() {
@@ -42,28 +58,5 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: ShatteringThrowSpell,
 		Type:  core.CooldownTypeDPS,
-		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
-			return func(sim *core.Simulation, character *core.Character) {
-				if !warrior.StanceMatches(BattleStance) {
-					if !warrior.BattleStance.IsReady(sim) {
-						return
-					}
-					warrior.BattleStance.Cast(sim, nil)
-				}
-				if warrior.CurrentRage() < ShatteringThrowSpell.DefaultCast.Cost {
-					return
-				}
-				if ShatteringThrowSpell.Cast(sim, character.CurrentTarget) {
-					if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
-						warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime, true)
-					} else {
-						warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+ShatteringThrowSpell.CurCast.CastTime, false)
-					}
-				}
-			}
-		},
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= ShatteringThrowSpell.DefaultCast.Cost && (warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim))
-		},
 	})
 }

@@ -75,6 +75,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			SpellSchool: core.SpellSchoolArcane,
 			ProcMask:    core.ProcMaskSpellDamage,
 
+			BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
 			DamageMultiplier: 1 +
 				0.05*float64(druid.Talents.ImprovedMoonfire) +
 				0.01*float64(druid.Talents.Genesis) +

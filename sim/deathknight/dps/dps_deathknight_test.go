@@ -84,11 +84,11 @@ func TestFrost(t *testing.T) {
 	}))
 }
 
-var BloodTalents = "2305120530003303231023001351--230130305003"
+var BloodTalents = "2305120530003303231023001351--230220305003"
 var BloodDefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfDancingRuneWeapon),
 	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfDeathStrike),
-	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDarkDeath),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDisease),
 	// No interesting minor glyphs.
 }
 
@@ -131,7 +131,9 @@ var PlayerOptionsFrost = &proto.Player_Deathknight{
 
 var bloodRotation = &proto.Deathknight_Rotation{
 	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
+	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
 	UseEmpowerRuneWeapon: true,
+	PreNerfedGargoyle:    false,
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{
@@ -144,6 +146,7 @@ var unholyRotation = &proto.Deathknight_Rotation{
 	UseGargoyle:          true,
 	BtGhoulFrenzy:        false,
 	HoldErwArmy:          false,
+	PreNerfedGargoyle:    false,
 	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
 	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
@@ -152,6 +155,8 @@ var unholyRotation = &proto.Deathknight_Rotation{
 var frostRotation = &proto.Deathknight_Rotation{}
 
 var deathKnightOptions = &proto.Deathknight_Options{
+	UnholyFrenzyTarget:  &proto.RaidTarget{TargetIndex: 0},
+	DrwPestiApply:       true,
 	StartingRunicPower:  0,
 	PetUptime:           1,
 	PrecastGhoulFrenzy:  false,

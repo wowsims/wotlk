@@ -48,6 +48,8 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			PrecastGhoulFrenzy:  dk.Options.PrecastGhoulFrenzy,
 			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
 			PetUptime:           dk.Options.PetUptime,
+			DrwPestiApply:       dk.Options.DrwPestiApply,
+			BloodOpener:         dk.Rotation.BloodOpener,
 			IsDps:               true,
 
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
@@ -60,7 +62,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		Rotation: dk.Rotation,
 	}
 	if dpsDk.Talents.SummonGargoyle {
-		dpsDk.Gargoyle = dpsDk.NewGargoyle(dk.Rotation.NerfedGargoyle)
+		dpsDk.Gargoyle = dpsDk.NewGargoyle(!dk.Rotation.PreNerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
@@ -70,13 +72,17 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if dpsDk.RuneStrike.CanCast(sim) {
-				return dpsDk.RuneStrike.Spell
+			if dpsDk.RuneStrike.CanCast(sim, nil) {
+				return dpsDk.RuneStrike
 			} else {
 				return nil
 			}
 		},
 	})
+
+	if dpsDk.Talents.SummonGargoyle && dpsDk.Rotation.UseGargoyle && dpsDk.Rotation.EnableWeaponSwap {
+		dpsDk.EnableItemSwap(dpsDk.Rotation.WeaponSwap, dpsDk.DefaultMeleeCritMultiplier(), dpsDk.DefaultMeleeCritMultiplier(), 0)
+	}
 
 	dpsDk.br.dk = dpsDk
 	dpsDk.sr.dk = dpsDk
@@ -147,9 +153,6 @@ func (dk *DpsDeathknight) SetupRotations() {
 		}
 	}
 
-	dk.sr.ffFirst = dk.Rotation.FirstDisease == proto.Deathknight_Rotation_FrostFever
-	dk.sr.hasGod = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
-
 	dk.RotationSequence.Clear()
 
 	dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
@@ -201,14 +204,17 @@ func (dk *DpsDeathknight) Initialize() {
 	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
 	dk.setupGargProcTrackers()
 
+	dk.sr.Initialize(dk)
+	dk.br.Initialize(dk)
 	dk.fr.Initialize(dk)
+	dk.ur.Initialize(dk)
 }
 
 func (dk *DpsDeathknight) setupGargProcTrackers() {
 	snapshotManager := dk.ur.gargoyleSnapshot
 
 	// Don't need to wait for haste snapshots anymore
-	if !dk.Rotation.NerfedGargoyle {
+	if dk.Rotation.PreNerfedGargoyle {
 		snapshotManager.AddProc(40211, "Potion of Speed", true)
 		snapshotManager.AddProc(54999, "Hyperspeed Acceleration", true)
 		snapshotManager.AddProc(26297, "Berserking (Troll)", true)
@@ -319,7 +325,7 @@ func (dk *DpsDeathknight) gargoyleAPCooldownSync(actionID core.ActionID, isPotio
 			if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+			if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 
@@ -334,10 +340,16 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 	if majorCd := dk.Character.GetMajorCooldown(actionID); majorCd != nil {
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
-			if dk.Rotation.NerfedGargoyle {
+			if !dk.Rotation.PreNerfedGargoyle {
 				aura := dk.GetAura("Summon Gargoyle")
 
 				if aura != nil && aura.IsActive() {
+					return true
+				}
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration-10*time.Second && !isPotion {
+					return true
+				}
+				if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
 					return true
 				}
 
@@ -346,10 +358,10 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 				if dk.ur.activatingGargoyle {
 					return true
 				}
-				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
+				if dk.SummonGargoyle.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration-10*time.Second && !isPotion {
 					return true
 				}
-				if dk.SummonGargoyle.CD.ReadyAt() > dk.Env.Encounter.Duration {
+				if dk.SummonGargoyle.CD.ReadyAt() > sim.Duration {
 					return true
 				}
 			}
@@ -478,13 +490,20 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 			if sim.CurrentTime < 2*time.Second {
 				return true
 			}
+			// If the fight is long enough for Unholy Frenzy we use potion with it
+			if isPotion && dk.br.activatingDrw && sim.Duration > 200*time.Second {
+				if dk.UnholyFrenzy.IsReady(sim) || dk.UnholyFrenzyAura.IsActive() {
+					return true
+				}
+				return false
+			}
 			if dk.br.activatingDrw {
 				return true
 			}
 			if dk.DancingRuneWeapon.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.DancingRuneWeapon.CD.ReadyAt() > dk.Env.Encounter.Duration {
+			if dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 

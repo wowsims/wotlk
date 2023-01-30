@@ -981,15 +981,22 @@ const idToCategoryMap: Record<number, number> = {
 	[OtherAction.OtherActionShoot]: 0.5,
 
 	// Druid
-	[26996]: 0.1, // Maul
-	[33987]: MELEE_ACTION_CATEGORY + 0.1, // Mangle (Bear)
-	[33745]: MELEE_ACTION_CATEGORY + 0.2, // Lacerate
-	[26997]: MELEE_ACTION_CATEGORY + 0.3, // Swipe
+	[48480]: 0.1, // Maul
+	[48564]: MELEE_ACTION_CATEGORY + 0.10, // Mangle (Bear)
+	[48568]: MELEE_ACTION_CATEGORY + 0.20, // Lacerate
+	[48562]: MELEE_ACTION_CATEGORY + 0.30, // Swipe (Bear)
 
-	[33983]: MELEE_ACTION_CATEGORY + 0.1, // Mangle (Cat)
-	[27002]: MELEE_ACTION_CATEGORY + 0.2, // Shred
-	[27008]: MELEE_ACTION_CATEGORY + 0.3, // Rip
-	[24248]: MELEE_ACTION_CATEGORY + 0.4, // Ferocious Bite
+	[48566]: MELEE_ACTION_CATEGORY + 0.10, // Mangle (Cat)
+	[48572]: MELEE_ACTION_CATEGORY + 0.20, // Shred
+	[49800]: MELEE_ACTION_CATEGORY + 0.51, // Rip
+	[52610]: MELEE_ACTION_CATEGORY + 0.52, // Savage Roar
+	[48577]: MELEE_ACTION_CATEGORY + 0.53, // Ferocious Bite
+
+	[48465]: SPELL_ACTION_CATEGORY + 0.10, // Starfire
+	[48461]: SPELL_ACTION_CATEGORY + 0.20, // Wrath
+	[53201]: SPELL_ACTION_CATEGORY + 0.30, // Starfall
+	[48468]: SPELL_ACTION_CATEGORY + 0.40, // Insect Swarm
+	[48463]: SPELL_ACTION_CATEGORY + 0.50, // Moonfire
 
 	// Hunter
 	[48996]: 0.1, // Raptor Strike
@@ -1011,26 +1018,41 @@ const idToCategoryMap: Record<number, number> = {
 	[58434]: MELEE_ACTION_CATEGORY + 0.34, // Volley
 
 	// Paladin
-	[27156]: 0.1, // Seal of Righteousness Proc
-	[20182]: 0.2, // Reckoning
-	[27179]: SPELL_ACTION_CATEGORY + 0.1, // Holy Shield
-
 	[35395]: MELEE_ACTION_CATEGORY + 0.10, // Crusader Strike
 	[53385]: MELEE_ACTION_CATEGORY + 0.20, // Divine Storm
-	[53408]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Wisdom
-	[20271]: SPELL_ACTION_CATEGORY + 0.10, // Judgement of Light
-	[31804]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Vengeance
-	[20467]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Command
-	[20187]: SPELL_ACTION_CATEGORY + 0.20, // Judgement of Righteousness
+	[42463]: MELEE_ACTION_CATEGORY + 0.30, // Seal of Vengeance
+	[61840]: MELEE_ACTION_CATEGORY + 0.40, // Righteous Vengeance
+	[61411]: MELEE_ACTION_CATEGORY + 0.50, // Shield of Righteousness
+	[53595]: MELEE_ACTION_CATEGORY + 0.51, // Hammer of Righteousness
+	[20182]: MELEE_ACTION_CATEGORY + 0.60, // Reckoning
+	[48952]: SPELL_ACTION_CATEGORY + 0.10, // Holy Shield
+	[31803]: SPELL_ACTION_CATEGORY + 0.20, // Holy Vengeance
 	[48801]: SPELL_ACTION_CATEGORY + 0.30, // Exorcism
 	[48819]: SPELL_ACTION_CATEGORY + 0.40, // Consecration
+	[53408]: SPELL_ACTION_CATEGORY + 0.51, // Judgement of Wisdom
+	[20271]: SPELL_ACTION_CATEGORY + 0.52, // Judgement of Light
+	[31804]: SPELL_ACTION_CATEGORY + 0.53, // Judgement of Vengeance
+	[20467]: SPELL_ACTION_CATEGORY + 0.54, // Judgement of Command
+	[20187]: SPELL_ACTION_CATEGORY + 0.55, // Judgement of Righteousness
+	[31878]: SPELL_ACTION_CATEGORY + 0.56, // Judgements of the Wise
 	[48817]: SPELL_ACTION_CATEGORY + 0.50, // Holy Wrath
 	[48806]: SPELL_ACTION_CATEGORY + 0.60, // Hammer of Wrath
 	[54428]: SPELL_ACTION_CATEGORY + 0.70, // Divine Plea
+	[66233]: SPELL_ACTION_CATEGORY + 0.80, // Ardent Defender
+
+	// Priest
+	[48300]: SPELL_ACTION_CATEGORY + 0.11, // Devouring Plague
+	[48125]: SPELL_ACTION_CATEGORY + 0.12, // Shadow Word: Pain
+	[48160]: SPELL_ACTION_CATEGORY + 0.13, // Vampiric Touch
+	[48135]: SPELL_ACTION_CATEGORY + 0.14, // Holy Fire
+	[48123]: SPELL_ACTION_CATEGORY + 0.19, // Smite
+	[48127]: SPELL_ACTION_CATEGORY + 0.20, // Mind Blast
+	[48158]: SPELL_ACTION_CATEGORY + 0.30, // Shadow Word: Death
+	[48156]: SPELL_ACTION_CATEGORY + 0.40, // Mind Flay
 
 	// Rogue
 	[6774]: MELEE_ACTION_CATEGORY + 0.1, // Slice and Dice
-	[26866]: MELEE_ACTION_CATEGORY + 0.2, // Expose Armor
+	[8647]: MELEE_ACTION_CATEGORY + 0.2, // Expose Armor
 	[48672]: MELEE_ACTION_CATEGORY + 0.3, // Rupture
 	[57993]: MELEE_ACTION_CATEGORY + 0.3, // Envenom
 	[48668]: MELEE_ACTION_CATEGORY + 0.4, // Eviscerate
@@ -1043,19 +1065,22 @@ const idToCategoryMap: Record<number, number> = {
 	[57968]: SPELL_ACTION_CATEGORY + 0.2, // Instant Poison
 
 	// Shaman
-	[17364]: MELEE_ACTION_CATEGORY + 0.1, // Stormstrike
-	[25454]: MELEE_ACTION_CATEGORY + 0.2, // Earth Shock
-	[25457]: MELEE_ACTION_CATEGORY + 0.2, // Flame Shock
-	[25464]: MELEE_ACTION_CATEGORY + 0.2, // Frost Shock
-	[25533]: SPELL_ACTION_CATEGORY + 0.2, // Searing Totem
-	[25552]: SPELL_ACTION_CATEGORY + 0.2, // Magma Totem
-	[25537]: SPELL_ACTION_CATEGORY + 0.2, // Fire Nova Totem
-	[25359]: SPELL_ACTION_CATEGORY + 0.3, // Grace of Air Totem
-	[8512]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r1
-	[10613]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r2
-	[10614]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r3
-	[25585]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r4
-	[25587]: SPELL_ACTION_CATEGORY + 0.3, // Windfury Totem r5
+	[58804]: 0.11, // Windfury Weapon
+	[58790]: 0.12, // Flametongue Weapon
+	[58796]: 0.12, // Frostbrand Weapon
+	[17364]: MELEE_ACTION_CATEGORY + 0.10, // Stormstrike
+	[60103]: MELEE_ACTION_CATEGORY + 0.20, // Lava Lash
+	[49233]: SPELL_ACTION_CATEGORY + 0.21, // Flame Shock
+	[49231]: SPELL_ACTION_CATEGORY + 0.22, // Earth Shock
+	[49236]: SPELL_ACTION_CATEGORY + 0.23, // Frost Shock
+	[60043]: SPELL_ACTION_CATEGORY + 0.31, // Lava Burst
+	[49238]: SPELL_ACTION_CATEGORY + 0.32, // Lightning Bolt
+	[49271]: SPELL_ACTION_CATEGORY + 0.33, // Chain Lightning
+	[61657]: SPELL_ACTION_CATEGORY + 0.41, // Fire Nova
+	[58734]: SPELL_ACTION_CATEGORY + 0.42, // Magma Totem
+	[58704]: SPELL_ACTION_CATEGORY + 0.43, // Searing Totem
+	[49281]: SPELL_ACTION_CATEGORY + 0.51, // Lightning Shield
+	[49279]: SPELL_ACTION_CATEGORY + 0.52, // Lightning Shield (Proc)
 	[2825]: DEFAULT_ACTION_CATEGORY + 0.1, // Bloodlust
 
 	// Warlock
@@ -1105,18 +1130,25 @@ const idToCategoryMap: Record<number, number> = {
 	[44549]: SPELL_ACTION_CATEGORY + 0.61, // Brain Freeze
 	[12536]: SPELL_ACTION_CATEGORY + 0.61, // Clearcasting
 
-
 	// Warrior
-	[25231]: 0.1, // Cleave
-	[29707]: 0.1, // Heroic Strike
-	[25242]: MELEE_ACTION_CATEGORY + 0.05, // Slam
-	[30335]: MELEE_ACTION_CATEGORY + 0.1, // Bloodthirst
-	[30330]: MELEE_ACTION_CATEGORY + 0.1, // Mortal Strike
+	[47520]: 0.1, // Cleave
+	[47450]: 0.1, // Heroic Strike
+	[47475]: MELEE_ACTION_CATEGORY + 0.05, // Slam
+	[23881]: MELEE_ACTION_CATEGORY + 0.1, // Bloodthirst
+	[47486]: MELEE_ACTION_CATEGORY + 0.1, // Mortal Strike
 	[30356]: MELEE_ACTION_CATEGORY + 0.1, // Shield Slam
-	[1680]: MELEE_ACTION_CATEGORY + 0.2, // Whirlwind
-	[11585]: MELEE_ACTION_CATEGORY + 0.3, // Overpower
-	[25212]: MELEE_ACTION_CATEGORY + 0.4, // Hamstring
-	[25236]: MELEE_ACTION_CATEGORY + 0.5, // Execute
+	[47498]: MELEE_ACTION_CATEGORY + 0.21, // Devastate
+	[47467]: MELEE_ACTION_CATEGORY + 0.22, // Sunder Armor
+	[57823]: MELEE_ACTION_CATEGORY + 0.23, // Revenge
+	[1680]: MELEE_ACTION_CATEGORY + 0.24, // Whirlwind
+	[7384]: MELEE_ACTION_CATEGORY + 0.25, // Overpower
+	[47471]: MELEE_ACTION_CATEGORY + 0.42, // Execute
+	[12867]: SPELL_ACTION_CATEGORY + 0.51, // Deep Wounds
+	[58874]: SPELL_ACTION_CATEGORY + 0.52, // Damage Shield
+	[47296]: SPELL_ACTION_CATEGORY + 0.53, // Critical Block
+	[46924]: SPELL_ACTION_CATEGORY + 0.61, // Bladestorm
+	[2565]: SPELL_ACTION_CATEGORY + 0.62, // Shield Block
+	[64382]: SPELL_ACTION_CATEGORY + 0.65, // Shattering Throw
 	[71]: DEFAULT_ACTION_CATEGORY + 0.1, // Defensive Stance
 	[2457]: DEFAULT_ACTION_CATEGORY + 0.1, // Battle Stance
 	[2458]: DEFAULT_ACTION_CATEGORY + 0.1, // Berserker Stance
@@ -1150,10 +1182,13 @@ const idToCategoryMap: Record<number, number> = {
 	[48265]: DEFAULT_ACTION_CATEGORY + 0.1, // Unholy Presence
 
 	// Generic
-	[26992]: SPELL_ACTION_CATEGORY + 0.91, // Thorns
-	[27150]: SPELL_ACTION_CATEGORY + 0.92, // Retribution Aura
-	[27169]: SPELL_ACTION_CATEGORY + 0.93, // Blessing of Sanctuary
-	[54758]: SPELL_ACTION_CATEGORY + 0.94, // Hyperspeed Acceleration
+	[53307]: SPELL_ACTION_CATEGORY + 0.931, // Thorns
+	[54043]: SPELL_ACTION_CATEGORY + 0.932, // Retribution Aura
+	[54758]: SPELL_ACTION_CATEGORY + 0.933, // Hyperspeed Acceleration
+	[42641]: SPELL_ACTION_CATEGORY + 0.941, // Sapper
+	[40536]: SPELL_ACTION_CATEGORY + 0.942, // Explosive Decoy
+	[41119]: SPELL_ACTION_CATEGORY + 0.943, // Saronite Bomb
+	[40771]: SPELL_ACTION_CATEGORY + 0.944, // Cobalt Frag Bomb
 };
 
 const idsToGroupForRotation: Array<number> = [

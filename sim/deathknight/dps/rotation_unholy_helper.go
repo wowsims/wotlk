@@ -8,21 +8,47 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+type WeaponSwapType int32
+
+const (
+	None WeaponSwapType = iota
+	BlackMagic
+	Berserking
+	FallenCrusader
+)
+
 type UnholyRotation struct {
 	dk *DpsDeathknight
 
 	syncTimeFF time.Duration
 
-	gargoyleSnapshot *core.SnapshotManager
-
+	gargoyleSnapshot   *core.SnapshotManager
 	activatingGargoyle bool
+
+	mhSwap    WeaponSwapType
+	mhSwapped bool
+
+	ohSwap    WeaponSwapType
+	ohSwapped bool
+
+	bmIcd time.Duration
 }
 
 func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.syncTimeFF = 0
 	ur.activatingGargoyle = false
 
+	ur.mhSwapped = false
+	ur.ohSwapped = false
+	ur.bmIcd = -1
+
 	ur.gargoyleSnapshot.ResetProcTrackers()
+}
+
+func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {
+	if dk.Talents.SummonGargoyle && dk.Rotation.UseGargoyle {
+		dk.setupWeaponSwap()
+	}
 }
 
 func (dk *DpsDeathknight) getFirstDiseaseAction() deathknight.RotationAction {
@@ -51,12 +77,103 @@ func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationA
 	}
 }
 
+func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
+	if !dk.ItemSwap.IsEnabled() {
+		return false
+	}
+
+	// Swap if gargoyle will still be on CD for full ICD or if gargoyle is already active
+	shouldSwapBm := dk.ur.bmIcd < sim.CurrentTime && (dk.SummonGargoyle.CD.TimeToReady(sim) > 45*time.Second || dk.HasActiveAura("Summon Gargoyle"))
+	shouldSwapBackFromBm := dk.HasActiveAura("Black Magic Proc") // || dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) < 5*time.Second
+
+	if dk.ur.mhSwap == BlackMagic {
+		if !dk.ur.mhSwapped && shouldSwapBm {
+			// Swap to BM
+			if sim.Log != nil {
+				sim.Log("Swapping MH to BM")
+			}
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ur.mhSwapped = true
+		} else if dk.ur.mhSwapped && shouldSwapBackFromBm {
+			// Swap to Normal set and set BM Icd tracker
+			if sim.Log != nil {
+				sim.Log("Swapping MH to Normal")
+			}
+			dk.ur.bmIcd = dk.GetAura("Black Magic Proc").ExpiresAt() + 35*time.Second
+			dk.ur.mhSwapped = false
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+		}
+	}
+
+	if dk.ur.ohSwap == BlackMagic {
+		if !dk.ur.ohSwapped && shouldSwapBm {
+			// Swap to BM
+			if sim.Log != nil {
+				sim.Log("Swapping OH to BM")
+			}
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ur.ohSwapped = true
+		} else if dk.ur.ohSwapped && shouldSwapBackFromBm {
+			// Swap to Normal set and set BM Icd tracker
+			if sim.Log != nil {
+				sim.Log("Swapping OH to Normal")
+			}
+			dk.ur.bmIcd = dk.GetAura("Black Magic Proc").ExpiresAt() + 35*time.Second
+			dk.ur.ohSwapped = false
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+		}
+	}
+
+	shouldSwapBerserking := dk.HasActiveAura("Rune Of The Fallen Crusader Proc") &&
+		dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) > time.Second*10
+
+	shouldSwapBackfromBerserking := false //dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) < 5*time.Second
+
+	if dk.ur.mhSwap == Berserking {
+		if !dk.ur.mhSwapped && !dk.HasActiveAura("Berserking MH Proc") && shouldSwapBerserking {
+			// Swap to Berserking
+			if sim.Log != nil {
+				sim.Log("Swapping MH to Berserking")
+			}
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ur.mhSwapped = true
+		} else if dk.ur.mhSwapped && (dk.HasActiveAura("Berserking MH Proc") || shouldSwapBackfromBerserking) {
+			// Swap to Normal set
+			if sim.Log != nil {
+				sim.Log("Swapping MH to Normal")
+			}
+			dk.ur.mhSwapped = false
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+		}
+	}
+
+	if dk.ur.ohSwap == Berserking {
+		if !dk.ur.ohSwapped && !dk.HasActiveAura("Berserking OH Proc") && shouldSwapBerserking {
+			// Swap to Berserking
+			if sim.Log != nil {
+				sim.Log("Swapping OH to Berserking")
+			}
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ur.ohSwapped = true
+		} else if dk.ur.ohSwapped && (dk.HasActiveAura("Berserking OH Proc") || shouldSwapBackfromBerserking) {
+			// Swap to Normal set
+			if sim.Log != nil {
+				sim.Log("Swapping OH to Normal")
+			}
+			dk.ur.ohSwapped = false
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+		}
+	}
+
+	return false
+}
+
 func (dk *DpsDeathknight) desolationAuraCheck(sim *core.Simulation) bool {
 	return !dk.DesolationAura.IsActive() || dk.DesolationAura.RemainingDuration(sim) < 10*time.Second ||
 		dk.Rotation.BloodRuneFiller == proto.Deathknight_Rotation_BloodStrike
 }
 
-func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *deathknight.RuneSpell, costRunes bool, casts int) bool {
+func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
 }
 
@@ -88,7 +205,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 	// If no Ghoul Frenzy Aura or duration less then 10 seconds we try recasting
 	if !dk.GhoulFrenzyAura.IsActive() || dk.GhoulFrenzyAura.RemainingDuration(sim) < 10*time.Second {
 		// Use Ghoul Frenzy with a Blood Tap and Blood rune if all blood runes are on CD and Garg wont come off cd in less then a minute.
-		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
+		if (dk.Rotation.BloodTap == proto.Deathknight_Rotation_GhoulFrenzy || dk.Rotation.BtGhoulFrenzy) && dk.BloodTap.CanCast(sim, nil) && dk.GhoulFrenzy.IsReady(sim) && dk.CurrentBloodRunes() == 0 && dk.CurrentUnholyRunes() == 0 {
 			if dk.uhDiseaseCheck(sim, target, dk.GhoulFrenzy, true, 1) {
 				dk.uhGhoulFrenzySequence(sim, true)
 				return true
@@ -96,7 +213,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzyCheck(sim *core.Simulation, target *core.
 				dk.uhRecastDiseasesSequence(sim)
 				return true
 			}
-		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim) && dk.IcyTouch.CanCast(sim) {
+		} else if !dk.Rotation.BtGhoulFrenzy && dk.GhoulFrenzy.CanCast(sim, nil) && dk.IcyTouch.CanCast(sim, nil) {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return true
@@ -191,7 +308,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	if dk.uhGargoyleCanCast(sim, castTime) {
-		if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.Rotation.NerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy) {
+		if !dk.PresenceMatches(deathknight.UnholyPresence) && (dk.Rotation.PreNerfedGargoyle || dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy) {
 			if dk.CurrentUnholyRunes() == 0 {
 				if dk.BloodTap.IsReady(sim) {
 					dk.BloodTap.Cast(sim, dk.CurrentTarget)
@@ -216,7 +333,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Go back to Blood Presence after Gargoyle
-	if dk.Rotation.NerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Blood && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAura("Summon Gargoyle") {
+	if !dk.Rotation.PreNerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Blood && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Unholy && dk.PresenceMatches(deathknight.UnholyPresence) && !dk.HasActiveAura("Summon Gargoyle") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
@@ -224,7 +341,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Go back to Unholy Presence after Gargoyle
-	if dk.Rotation.NerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.BloodPresence) && !dk.HasActiveAura("Summon Gargoyle") {
+	if !dk.Rotation.PreNerfedGargoyle && !dk.SummonGargoyle.IsReady(sim) && dk.Rotation.Presence == proto.Deathknight_Rotation_Unholy && dk.Rotation.GargoylePresence == proto.Deathknight_Rotation_Blood && dk.PresenceMatches(deathknight.BloodPresence) && !dk.HasActiveAura("Summon Gargoyle") {
 		if dk.BloodTapAura.IsActive() {
 			dk.BloodTapAura.Deactivate(sim)
 		}
@@ -232,7 +349,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 	}
 
 	// Do not switch presences if gargoyle is still up if it's nerfed gargoyle
-	if dk.Rotation.NerfedGargoyle && dk.HasActiveAura("Summon Gargoyle") {
+	if !dk.Rotation.PreNerfedGargoyle && dk.HasActiveAura("Summon Gargoyle") {
 		return false
 	}
 
@@ -271,7 +388,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
 	}
-	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim) && dk.CurrentUnholyRunes() == 0) {
+	if !dk.PresenceMatches(deathknight.UnholyPresence) && (!dk.BloodTap.CanCast(sim, nil) && dk.CurrentUnholyRunes() == 0) {
 		return false
 	}
 	if !dk.ur.gargoyleSnapshot.CanSnapShot(sim, castTime) {

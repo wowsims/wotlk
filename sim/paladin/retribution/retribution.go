@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"github.com/wowsims/wotlk/sim/paladin"
 )
 
@@ -64,10 +63,6 @@ func NewRetributionPaladin(character core.Character, options *proto.Player) *Ret
 	} else {
 		ret.SelectedRotation = ret.mainRotation
 	}
-
-	// Convert DTPS option to bonus MP5
-	spAtt := retOptions.Options.DamageTakenPerSecond * 5.0 / 10.0
-	ret.AddStat(stats.MP5, spAtt)
 
 	ret.EnableAutoAttacks(ret, core.AutoAttackOptions{
 		MainHand:       ret.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.

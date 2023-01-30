@@ -196,9 +196,14 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 
 			w := wp.owner
 			dots := []*core.Dot{
-				w.UnstableAfflictionDot, w.ImmolateDot, w.CurseOfAgonyDot,
-				w.CurseOfDoomDot, w.CorruptionDot, w.ConflagrateDot,
-				w.SeedDots[target.Index], w.DrainSoulDot,
+				w.UnstableAffliction.Dot(target),
+				w.ImmolateDot,
+				w.CurseOfAgony.Dot(target),
+				w.CurseOfDoom.Dot(target),
+				w.Corruption.Dot(target),
+				w.ConflagrateDot,
+				w.Seed.Dot(target),
+				w.DrainSoul.Dot(target),
 				// missing: drain life, shadowflame
 			}
 			counter := 0

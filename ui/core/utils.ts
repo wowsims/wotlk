@@ -217,3 +217,10 @@ export function combinationsWithDups<T>(arr: Array<T>, k: number): Array<Array<T
 	const sorted = perms.map(permutation => permutation.sort());
 	return distinct(sorted, (permutationA, permutationB) => permutationA.every((elem, i) => elem == permutationB[i]));
 }
+
+// Converts a Uint8Array into a hex string.
+export function buf2hex(data: Uint8Array): string {
+	return [...data]
+		.map(x => x.toString(16).padStart(2, '0'))
+		.join('');
+}

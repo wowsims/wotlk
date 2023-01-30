@@ -143,6 +143,12 @@ enum DeathknightMinorGlyph {
 
 message Deathknight {
 	message Rotation {
+		enum DrwDiseases {
+			DoNotApply = 0;
+			Normal = 1;
+			Pestilence = 2;
+		}
+
 		enum ArmyOfTheDead {
 			DoNotUse = 0;
 			PreCast = 1;
@@ -183,6 +189,12 @@ message Deathknight {
 			Custom = 2;
 		}
 		FrostRotationType frost_rotation_type = 19;
+
+		enum BloodOpener {
+			Standard = 0;
+			Experimental_1 = 1;
+			Experimental_2 = 2;
+		}
 		
 		enum CustomSpellOption {
 			CustomNoSpell = 0;
@@ -239,9 +251,15 @@ message Deathknight {
 		
 		bool use_gargoyle = 23;
 
-		bool nerfed_gargoyle = 24;
+		bool pre_nerfed_gargoyle = 24;
 
 		Presence gargoyle_presence = 25;
+
+		DrwDiseases drw_diseases = 26;
+		BloodOpener blood_opener = 27;
+
+		bool enable_weapon_swap = 28;
+		ItemSwap weapon_swap = 29;
 	}
 	Rotation rotation = 1;
 	
@@ -253,6 +271,8 @@ message Deathknight {
 		bool precast_horn_of_winter = 4;
 
 		RaidTarget unholy_frenzy_target = 5;
+
+		bool drw_pesti_apply = 6;
 	}
 	Options options = 3;
 }
@@ -268,7 +288,6 @@ message TankDeathknight {
 		enum OptimizationSetting {
 			Hps = 0;
 			Tps = 1;
-			Dps = 2;
 		}
 
 		enum BloodSpell {
@@ -277,22 +296,29 @@ message TankDeathknight {
 			HeartStrike = 2;
 		}
 
+		enum BloodTapPrio {
+			Defensive = 0;
+			Offensive = 1;
+		}
+
 		enum Presence {
 			Blood = 0;
 			Frost = 1;
 			Unholy = 2;
 		}
-		Presence presence = 4;
 
 		Opener opener = 1;
 		OptimizationSetting optimization_setting = 2;
 		BloodSpell blood_spell = 3;
+		Presence presence = 4;
+		BloodTapPrio blood_tap_prio = 5;
 	}
 	Rotation rotation = 1;
 	
 	message Options {
 		double starting_runic_power = 1;
 		RaidTarget unholy_frenzy_target = 2;
+		double defensive_delay = 3;
 	}
 	Options options = 3;
 }

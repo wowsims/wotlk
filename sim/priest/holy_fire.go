@@ -1,7 +1,6 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,10 +8,10 @@ import (
 )
 
 func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
-	actionID := core.ActionID{SpellID: 48135}
+	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
 
 	priest.HolyFire = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 48135},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -35,50 +34,38 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "HolyFire",
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					if hasGlyph {
+						priest.Smite.DamageMultiplier *= 1.2
+					}
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					if hasGlyph {
+						priest.Smite.DamageMultiplier /= 1.2
+					}
+				},
+			},
+			NumberOfTicks: 7,
+			TickLength:    time.Second * 1,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 50 + 0.024*dot.Spell.SpellPower()
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(900, 1140) + 0.5711*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
-				priest.HolyFireDot.Apply(sim)
+				spell.Dot(target).Apply(sim)
 			}
 			spell.DealDamage(sim, result)
-		},
-	})
-
-	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
-
-	target := priest.CurrentTarget
-	priest.HolyFireDot = core.NewDot(core.Dot{
-		Spell: priest.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolHoly,
-			ProcMask:    core.ProcMaskSpellDamage,
-
-			DamageMultiplier: priest.HolyFire.DamageMultiplier,
-			ThreatMultiplier: priest.HolyFire.ThreatMultiplier,
-		}),
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "HolyFire-" + strconv.Itoa(int(priest.Index)),
-			ActionID: actionID,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				if hasGlyph {
-					priest.Smite.DamageMultiplier *= 1.2
-				}
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				if hasGlyph {
-					priest.Smite.DamageMultiplier /= 1.2
-				}
-			},
-		}),
-		NumberOfTicks: 7,
-		TickLength:    time.Second * 1,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-			dot.SnapshotBaseDamage = 50 + 0.024*dot.Spell.SpellPower()
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 		},
 	})
 }

@@ -152,6 +152,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: [
 					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET_FT,
+					Presets.P2_PRESET_WF,
 				],
 			},
 		});

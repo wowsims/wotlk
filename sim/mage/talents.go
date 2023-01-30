@@ -75,6 +75,17 @@ func (mage *Mage) applyHotStreak() {
 		Label:    "HotStreak",
 		ActionID: core.ActionID{SpellID: 44448},
 		Duration: time.Second * 10,
+		// This is handled in Pyroblast.ModifyCast instead.
+		//OnGain: func(aura *core.Aura, sim *core.Simulation) {
+		//	if mage.Pyroblast != nil {
+		//		mage.Pyroblast.CastTimeMultiplier -= 1
+		//	}
+		//},
+		//OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+		//	if mage.Pyroblast != nil {
+		//		mage.Pyroblast.CastTimeMultiplier += 1
+		//	}
+		//},
 	})
 
 	mage.RegisterAura(core.Aura{
@@ -119,37 +130,39 @@ func (mage *Mage) applyArcaneConcentration() {
 	var proccedAt time.Duration
 	var proccedSpell *core.Spell
 
-	mage.ArcanePotencyAura = mage.RegisterAura(core.Aura{
-		Label:    "Arcane Potency",
-		ActionID: core.ActionID{SpellID: 31572},
-		Duration: time.Second * 15,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !spell.Flags.Matches(SpellFlagMage) {
-				return
-			}
-			if proccedAt == sim.CurrentTime && proccedSpell == spell {
-				// Means this is another hit from the same cast that procced CC.
-				return
-			}
-			aura.Deactivate(sim)
-		},
-	})
+	if mage.Talents.ArcanePotency > 0 {
+		mage.ArcanePotencyAura = mage.RegisterAura(core.Aura{
+			Label:    "Arcane Potency",
+			ActionID: core.ActionID{SpellID: 31572},
+			Duration: time.Second * 15,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.AddStatDynamic(sim, stats.SpellCrit, bonusCrit)
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.AddStatDynamic(sim, stats.SpellCrit, -bonusCrit)
+			},
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !spell.Flags.Matches(SpellFlagMage) {
+					return
+				}
+				if proccedAt == sim.CurrentTime && proccedSpell == spell {
+					// Means this is another hit from the same cast that procced CC.
+					return
+				}
+				aura.Deactivate(sim)
+			},
+		})
+	}
 
 	mage.ClearcastingAura = mage.RegisterAura(core.Aura{
 		Label:    "Clearcasting",
 		ActionID: core.ActionID{SpellID: 12536},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.NoCost = true
+			aura.Unit.PseudoStats.CostMultiplier -= 1
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.NoCost = false
+			aura.Unit.PseudoStats.CostMultiplier += 1
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if !spell.Flags.Matches(SpellFlagMage) {
@@ -188,7 +201,9 @@ func (mage *Mage) applyArcaneConcentration() {
 			proccedAt = sim.CurrentTime
 			proccedSpell = spell
 			mage.ClearcastingAura.Activate(sim)
-			mage.ArcanePotencyAura.Activate(sim)
+			if mage.ArcanePotencyAura != nil {
+				mage.ArcanePotencyAura.Activate(sim)
+			}
 		},
 	})
 }

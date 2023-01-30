@@ -9,7 +9,6 @@ import (
 
 func (warlock *Warlock) registerIncinerateSpell() {
 	spellCoeff := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
-	mcCastMod := (1.0 - 0.1*float64(warlock.Talents.MoltenCore))
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47838},
@@ -25,14 +24,6 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * time.Duration(2500-50*warlock.Talents.Emberstorm),
-			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				totalMod := warlock.backdraftModifier()
-				if warlock.MoltenCoreAura.IsActive() {
-					totalMod *= mcCastMod
-				}
-				cast.GCD = time.Duration(float64(cast.GCD) * totalMod)
-				cast.CastTime = time.Duration(float64(cast.CastTime) * totalMod)
 			},
 		},
 
@@ -61,13 +52,6 @@ func (warlock *Warlock) registerIncinerateSpell() {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 			})
-
-			if warlock.DemonicSoulAura.IsActive() {
-				warlock.DemonicSoulAura.Deactivate(sim)
-			}
-			if warlock.MoltenCoreAura.IsActive() {
-				warlock.MoltenCoreAura.RemoveStack(sim)
-			}
 		},
 	})
 }

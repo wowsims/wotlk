@@ -17,6 +17,8 @@ message UIDatabase {
 	// Entities for which we just need a name/icon.
 	repeated IconData item_icons = 4;
 	repeated IconData spell_icons = 5;
+
+	repeated GlyphID glyph_ids = 7;
 }
 
 // Contains all information about an Item needed by the UI.
@@ -102,6 +104,11 @@ message IconData {
 	string icon = 3;
 }
 
+message GlyphID {
+	int32 item_id = 1;
+	int32 spell_id = 2;
+}
+
 message DatabaseFilters {
 	// TODO:
 	// Source
@@ -110,11 +117,14 @@ message DatabaseFilters {
 
 	repeated ArmorType armor_types = 1;
 	repeated WeaponType weapon_types = 2;
+	repeated RangedWeaponType ranged_weapon_types = 16;
 
 	double min_mh_weapon_speed = 4;
 	double max_mh_weapon_speed = 5;
 	double min_oh_weapon_speed = 9;
 	double max_oh_weapon_speed = 10;
+	double min_ranged_weapon_speed = 14;
+	double max_ranged_weapon_speed = 15;
 
 	bool one_handed_weapons = 6;
 	bool two_handed_weapons = 7;

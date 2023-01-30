@@ -27,9 +27,10 @@ type TankDeathknight struct {
 	*deathknight.Deathknight
 
 	switchIT   bool
-	BloodSpell *deathknight.RuneSpell
+	BloodSpell *core.Spell
 
-	Rotation *proto.TankDeathknight_Rotation
+	Rotation               *proto.TankDeathknight_Rotation
+	HpPercentForDefensives float64
 }
 
 func NewTankDeathknight(character core.Character, options *proto.Player) *TankDeathknight {
@@ -40,7 +41,12 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
 		}, options.TalentsString),
-		Rotation: dkOptions.Rotation,
+		Rotation:               dkOptions.Rotation,
+		HpPercentForDefensives: 0.35,
+	}
+
+	if options.GetCooldowns() != nil {
+		tankDk.HpPercentForDefensives = options.GetCooldowns().HpPercentForDefensives
 	}
 
 	tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget
@@ -50,8 +56,9 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if tankDk.RuneStrike.CanCast(sim) {
-				return tankDk.RuneStrike.Spell
+			// Save up RP for defensives
+			if tankDk.CurrentRunicPower() > 40 && tankDk.RuneStrike.CanCast(sim, nil) {
+				return tankDk.RuneStrike
 			} else {
 				return nil
 			}
@@ -82,8 +89,6 @@ func (dk *TankDeathknight) SetupRotations() {
 		dk.RotationSequence.NewAction(dk.TankRA_Hps)
 	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Tps {
 		dk.RotationSequence.NewAction(dk.TankRA_Tps)
-	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Dps {
-		dk.RotationSequence.NewAction(dk.TankRA_Hps)
 	}
 
 	if dk.Rotation.BloodSpell == proto.TankDeathknight_Rotation_BloodStrike {

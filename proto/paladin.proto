@@ -200,7 +200,6 @@ message RetributionPaladin {
 		PaladinJudgement judgement = 1;
 		PaladinSeal seal = 2;
 		PaladinAura aura = 3;
-		double damage_taken_per_second = 4;
 		bool use_avenging_wrath = 5;
 	}
 	Options options = 3;
@@ -233,7 +232,6 @@ message ProtectionPaladin {
 		PaladinJudgement judgement = 1;
 		PaladinSeal seal = 2;
 		PaladinAura aura = 3;
-		double damage_taken_per_second = 4;
 		bool use_avenging_wrath = 5;
 	}
 	Options options = 3;

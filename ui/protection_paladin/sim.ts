@@ -191,7 +191,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					ProtectionPaladinInputs.UseAvengingWrath,
 					ProtectionPaladinInputs.JudgementSelection,
 					ProtectionPaladinInputs.StartingSealSelection,
-					ProtectionPaladinInputs.DamageTakenPerSecond,
 					OtherInputs.InFrontOfTarget,
 				],
 			},

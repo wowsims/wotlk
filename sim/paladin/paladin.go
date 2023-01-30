@@ -41,11 +41,9 @@ type Paladin struct {
 	SealOfCommand         *core.Spell
 	AvengingWrath         *core.Spell
 	DivineProtection      *core.Spell
+	SovDotSpell           *core.Spell
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
-
-	ConsecrationDot     *core.Dot
-	SealOfVengeanceDots []*core.Dot
 
 	HolyShieldAura *core.Aura
 	// RighteousFuryAura       *core.Aura
@@ -152,11 +150,6 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerDivinePleaSpell()
 	paladin.registerDivineProtectionSpell()
 	paladin.registerForbearanceDebuff()
-
-	paladin.SealOfVengeanceDots = make([]*core.Dot, paladin.Env.GetNumTargets())
-	for i := range paladin.SealOfVengeanceDots {
-		paladin.SealOfVengeanceDots[i] = paladin.createSealOfVengeanceDot(paladin.Env.GetTargetUnit(int32(i)))
-	}
 
 	for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
 		unit := paladin.Env.GetTargetUnit(i)

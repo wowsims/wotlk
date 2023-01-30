@@ -34,17 +34,17 @@ func (spriest *ShadowPriest) experimentalRotation(sim *core.Simulation) {
 }
 
 func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core.Spell {
-	if !spriest.DevouringPlagueDot.IsActive() {
+	if !spriest.DevouringPlague.CurDot().IsActive() {
 		return spriest.DevouringPlague
 	}
 
 	gcd := core.MaxDuration(core.GCDMin, spriest.ApplyCastSpeed(core.GCDDefault))
 	vtCastTime := gcd
-	if spriest.VampiricTouchDot != nil && (!spriest.VampiricTouchDot.IsActive() || sim.CurrentTime+vtCastTime >= spriest.VampiricTouchDot.ExpiresAt()) {
+	if spriest.VampiricTouch != nil && (!spriest.VampiricTouch.CurDot().IsActive() || sim.CurrentTime+vtCastTime >= spriest.VampiricTouch.CurDot().ExpiresAt()) {
 		return spriest.VampiricTouch
 	}
 
-	if !spriest.ShadowWordPainDot.IsActive() {
+	if !spriest.ShadowWordPain.CurDot().IsActive() {
 		if spriest.CanRolloverSWP {
 			// At the beginning of the iteration, its better to wait for 5 stacks of weaving
 			// before taking the first snapshot.
@@ -108,9 +108,9 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	cadence := [SpellLen]time.Duration{
 		spriest.MindBlast.CD.Duration,
 		spriest.ShadowWordDeath.CD.Duration,
-		spriest.DevouringPlagueDot.TickPeriod() * time.Duration(spriest.DevouringPlagueDot.NumberOfTicks),
-		spriest.VampiricTouchDot.TickPeriod() * time.Duration(spriest.VampiricTouchDot.NumberOfTicks),
-		spriest.ShadowWordPainDot.TickPeriod() * time.Duration(spriest.ShadowWordPainDot.NumberOfTicks),
+		spriest.DevouringPlague.CurDot().TickPeriod() * time.Duration(spriest.DevouringPlague.CurDot().NumberOfTicks),
+		spriest.VampiricTouch.CurDot().TickPeriod() * time.Duration(spriest.VampiricTouch.CurDot().NumberOfTicks),
+		spriest.ShadowWordPain.CurDot().TickPeriod() * time.Duration(spriest.ShadowWordPain.CurDot().NumberOfTicks),
 		castCompleteAt[MindFlay1Idx] - sim.CurrentTime,
 		castCompleteAt[MindFlay2Idx] - sim.CurrentTime,
 		castCompleteAt[MindFlay3Idx] - sim.CurrentTime,
@@ -121,8 +121,8 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	spellDelayStart := [SpellLen]time.Duration{
 		core.MaxDuration(sim.CurrentTime, spriest.MindBlast.ReadyAt()),
 		core.MaxDuration(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()),
-		core.MaxDuration(sim.CurrentTime, spriest.DevouringPlagueDot.ExpiresAt()),
-		core.MaxDuration(sim.CurrentTime, spriest.VampiricTouchDot.ExpiresAt()-vtCastTime),
+		core.MaxDuration(sim.CurrentTime, spriest.DevouringPlague.CurDot().ExpiresAt()),
+		core.MaxDuration(sim.CurrentTime, spriest.VampiricTouch.CurDot().ExpiresAt()-vtCastTime),
 		core.NeverExpires, // SWP rolls over, so it never gets delayed.
 		sim.CurrentTime,   // MF1
 		sim.CurrentTime,   // MF2
@@ -137,8 +137,8 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 		0,
 		0,
 		dpInitDamage + 8*dpTickDamage,
-		spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget) * float64(spriest.VampiricTouchDot.NumberOfTicks),
-		spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget) * float64(spriest.ShadowWordPainDot.NumberOfTicks),
+		spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget) * float64(spriest.VampiricTouch.CurDot().NumberOfTicks),
+		spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget) * float64(spriest.ShadowWordPain.CurDot().NumberOfTicks),
 		0,
 		0,
 		0,

@@ -177,7 +177,10 @@ func makeTestRandSeed(rseed int64, label string) int64 {
 // Shorthand for commonly-used RNG behavior.
 // Returns a random number between min and max.
 func (sim *Simulation) Roll(min float64, max float64) float64 {
-	return min + (max-min)*sim.RandomFloat("Damage Roll")
+	return sim.RollWithLabel(min, max, "Damage Roll")
+}
+func (sim *Simulation) RollWithLabel(min float64, max float64, label string) float64 {
+	return min + (max-min)*sim.RandomFloat(label)
 }
 
 func (sim *Simulation) Proc(p float64, label string) bool {

@@ -84,39 +84,6 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 	});
 }
 
-export const StartingConjured = {
-	type: 'enum' as const,
-	label: 'Starting Conjured',
-	labelTooltip: 'If set, this conjured will be used instead of the default conjured for the first few uses.',
-	values: [
-		{ name: 'None', value: Conjured.ConjuredUnknown },
-		{ name: 'Dark Rune', value: Conjured.ConjuredDarkRune },
-		{ name: 'Flame Cap', value: Conjured.ConjuredFlameCap },
-		{ name: 'Thistle Tea', value: Conjured.ConjuredRogueThistleTea },
-	],
-	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-	getValue: (player: Player<any>) => player.getConsumes().startingConjured,
-	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		const newConsumes = player.getConsumes();
-		newConsumes.startingConjured = newValue;
-		player.setConsumes(eventID, newConsumes);
-	},
-};
-
-export const NumStartingConjured = {
-	type: 'number' as const,
-	label: '# to use',
-	labelTooltip: 'The number of starting conjured items to use before going back to the default conjured.',
-	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-	getValue: (player: Player<any>) => player.getConsumes().numStartingConjured,
-	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		const newConsumes = player.getConsumes();
-		newConsumes.numStartingConjured = newValue;
-		player.setConsumes(eventID, newConsumes);
-	},
-	enableWhen: (player: Player<any>) => player.getConsumes().startingConjured != Conjured.ConjuredUnknown,
-};
-
 export const InFrontOfTarget = {
 	type: 'boolean' as const,
 	label: 'In Front of Target',

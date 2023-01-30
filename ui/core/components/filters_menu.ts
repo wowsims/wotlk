@@ -4,9 +4,11 @@ import {
 } from '../proto/common.js';
 import {
 	armorTypeNames,
+	rangedWeaponTypeNames,
 	weaponTypeNames,
 } from '../proto_utils/names.js';
 import {
+	classToEligibleRangedWeaponTypes,
 	classToEligibleWeaponTypes,
 	classToMaxArmorType,
 	isDualWieldSpec,
@@ -19,6 +21,7 @@ import { getEnumValues } from '../utils.js';
 import { BooleanPicker } from './boolean_picker.js';
 import { NumberPicker } from './number_picker.js';
 import { BaseModal } from './base_modal.js';
+import { Input } from './input.js';
 
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
@@ -130,6 +133,60 @@ export class FiltersMenu extends BaseModal {
 					},
 				});
 			}
+		} else if (slot == ItemSlot.ItemSlotRanged) {
+			const rangedWeaponTypes = classToEligibleRangedWeaponTypes[player.getClass()];
+			if (rangedWeaponTypes.length <= 1) {
+				return;
+			}
+			const rangedWeaponTypeSection = this.newSection('Ranged Weapon Type');
+			rangedWeaponTypeSection.classList.add('filters-menu-section-bool-list');
+
+			rangedWeaponTypes.forEach(rangedWeaponType => {
+				new BooleanPicker<Sim>(rangedWeaponTypeSection, player.sim, {
+					label: rangedWeaponTypeNames[rangedWeaponType],
+					inline: true,
+					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+					getValue: (sim: Sim) => sim.getFilters().rangedWeaponTypes.includes(rangedWeaponType),
+					setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+						const filters = sim.getFilters();
+						if (newValue) {
+							filters.rangedWeaponTypes.push(rangedWeaponType);
+						} else {
+							filters.rangedWeaponTypes = filters.rangedWeaponTypes.filter(at => at != rangedWeaponType);
+						}
+						sim.setFilters(eventID, filters);
+					},
+				});
+			});
+
+			const rangedWeaponSpeedSection = this.newSection('Ranged Weapon Speed');
+			rangedWeaponSpeedSection.classList.add('filters-menu-section-number-list');
+			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
+				label: 'Min Ranged Speed',
+				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
+				float: true,
+				positive: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().minRangedWeaponSpeed,
+				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+					const filters = sim.getFilters();
+					filters.minRangedWeaponSpeed = newValue;
+					sim.setFilters(eventID, filters);
+				},
+			});
+			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
+				label: 'Max Ranged Speed',
+				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
+				float: true,
+				positive: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().maxRangedWeaponSpeed,
+				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+					const filters = sim.getFilters();
+					filters.maxRangedWeaponSpeed = newValue;
+					sim.setFilters(eventID, filters);
+				},
+			});
 		}
 	}
 
@@ -147,6 +204,10 @@ export class FiltersMenu extends BaseModal {
 	}
 
 	static anyFiltersForSlot(slot: ItemSlot) {
-		return Player.ARMOR_SLOTS.includes(slot) || Player.WEAPON_SLOTS.includes(slot);
+		return [
+			Player.ARMOR_SLOTS,
+			Player.WEAPON_SLOTS,
+			ItemSlot.ItemSlotRanged,
+		].flat().includes(slot);
 	}
 }

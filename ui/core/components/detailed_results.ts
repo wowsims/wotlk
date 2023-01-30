@@ -8,6 +8,7 @@ import { SimResultData } from './detailed_results/result_component';
 import { ResultsFilter } from './detailed_results/results_filter';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DtpsMeleeMetricsTable } from './detailed_results/dtps_melee_metrics';
+import { DtpsSpellMetricsTable } from './detailed_results/dtps_spell_metrics';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
 import { MeleeMetricsTable } from './detailed_results/melee_metrics';
 import { SpellMetricsTable } from './detailed_results/spell_metrics';
@@ -238,6 +239,7 @@ export abstract class DetailedResults extends Component {
 		const dpsHistogram = new DpsHistogram({ parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
 
 		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const dtpsSpellMetrics = new DtpsSpellMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
 
 		const timeline = new Timeline({
 			parent: this.rootElem.getElementsByClassName('timeline')[0] as HTMLElement,
@@ -371,10 +373,7 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		const computedStyles = window.getComputedStyle(this.rootElem);
 
 		const url = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/detailed_results/index.html`);
-		url.searchParams.append('cssScheme', simUI.cssScheme);
-		url.searchParams.append('themeBackgroundColor', computedStyles.getPropertyValue('--theme-background-color').trim());
-		url.searchParams.append('themeBackgroundImage', computedStyles.getPropertyValue('--theme-background-image').trim());
-		url.searchParams.append('themeBackgroundOpacity', computedStyles.getPropertyValue('--theme-background-opacity').trim());
+		url.searchParams.append('cssClass', simUI.cssClass);
 
 		if (simUI.isIndividualSim()) {
 			url.searchParams.append('isIndividualSim', '');

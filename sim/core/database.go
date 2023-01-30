@@ -318,6 +318,46 @@ const (
 	ItemSlotRanged
 )
 
+func (is ItemSlot) String() string {
+	switch is {
+	case ItemSlotHead:
+		return "Head"
+	case ItemSlotNeck:
+		return "Neck"
+	case ItemSlotShoulder:
+		return "Shoulder"
+	case ItemSlotBack:
+		return "Back"
+	case ItemSlotChest:
+		return "Chest"
+	case ItemSlotWrist:
+		return "Wrist"
+	case ItemSlotHands:
+		return "Hands"
+	case ItemSlotWaist:
+		return "Waist"
+	case ItemSlotLegs:
+		return "Legs"
+	case ItemSlotFeet:
+		return "Feet"
+	case ItemSlotFinger1:
+		return "Finger1"
+	case ItemSlotFinger2:
+		return "Finger2"
+	case ItemSlotTrinket1:
+		return "Trinket1"
+	case ItemSlotTrinket2:
+		return "Trinket2"
+	case ItemSlotMainHand:
+		return "MainHand"
+	case ItemSlotOffHand:
+		return "OffHand"
+	case ItemSlotRanged:
+		return "Ranged"
+	}
+	return "unknown slot"
+}
+
 func ItemTypeToSlot(it proto.ItemType) ItemSlot {
 	switch it {
 	case proto.ItemType_ItemTypeHead:

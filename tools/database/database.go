@@ -35,6 +35,7 @@ type WowDatabase struct {
 	SpellIcons map[int32]*proto.IconData
 
 	Encounters []*proto.PresetEncounter
+	GlyphIDs   []*proto.GlyphID
 }
 
 func NewWowDatabase() *WowDatabase {
@@ -148,6 +149,7 @@ func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResp
 func (db *WowDatabase) toUIProto() *proto.UIDatabase {
 	uidb := &proto.UIDatabase{
 		Encounters: db.Encounters,
+		GlyphIds:   db.GlyphIDs,
 	}
 
 	for _, v := range db.Items {
@@ -211,6 +213,8 @@ func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
 	tools.WriteProtoArrayToBuilder(uidb.SpellIcons, builder, "spellIcons")
 	builder.WriteString(",\n")
 	tools.WriteProtoArrayToBuilder(uidb.Encounters, builder, "encounters")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uidb.GlyphIds, builder, "glyphIds")
 	builder.WriteString("\n")
 
 	builder.WriteString("}")
