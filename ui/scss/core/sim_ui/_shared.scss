@@ -1,6 +1,6 @@
 @use "sass:map";
 
-$sim-header-height: 72px;
+$sim-header-height: 4.5rem;
 
 td, th {
   padding: auto;
@@ -21,9 +21,11 @@ td, th {
 			width: 100vw;
 			height: 100vh;
 			background-image:
-				linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+				linear-gradient(
+					rgba(var(--theme-background-color), var(--theme-background-opacity)),
+					rgba(var(--theme-background-color), var(--theme-background-opacity))
+				),
 				var(--theme-background-image);
-			background-position: center;
 			background-repeat: no-repeat;
 			background-size: cover;
 			z-index: -1;
@@ -48,14 +50,14 @@ td, th {
 				border-bottom: 1px solid $border-color;
 	
 				.sim-title-dropdown-root {
-					height: $sim-header-height - 1px;
+					height: calc(#{$sim-header-height} - 1px);
 				}
 			}
 		}
 	
 		.sim-content {
-			padding-left: $gap-width * 2;
-			padding-right: $gap-width * 2;
+			padding-left: var(--container-padding);
+			padding-right: var(--container-padding);
 			flex: 4;
 			z-index: 1;
 	

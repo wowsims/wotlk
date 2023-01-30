@@ -10,7 +10,7 @@
     }
 
     .tab-panel-right {
-      margin-left: $gap-width * 2;
+      margin-left: var(--container-padding);
       display: flex;
       flex-direction: column;
       flex: 1;

@@ -1,12 +1,10 @@
 :root {
 	--bs-body-font-size: 14px;
 	--bs-gap: 1vw;
-	--theme-color-background: DarkSlateGrey;
-	--theme-color-background-raw: 0, 0, 0;
+	--theme-background-color: DarkSlateGrey;
 	--theme-background-image: linear-gradient(black, black);
 	--theme-background-opacity: 0.9;
 	--main-bg-color: DarkSlateGrey;
-	--main-text-color: White;
 	--main-secondary-color: Black;
 	--sidebar-text-color: White;
 	--sidebar-highlight-color: Blue;
@@ -206,12 +204,4 @@ a {
 legend {
 	float: none;
 	width: auto;
-}
-
-.dropdown-item {
-	color: var(--main-text-color);
-
-	&:hover {
-		color: var(--main-text-color);
-	}
 }

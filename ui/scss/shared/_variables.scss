@@ -5,8 +5,6 @@
 // individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
 
 // Custom theme color mapping
-$brand-color: #e0a335;
-
 $death-knight: rgb(194, 46, 70);
 $druid:        rgb(255, 125, 10);
 $hunter:       rgb(171, 212, 115);
@@ -25,7 +23,7 @@ $class-colors: (
   "mage":         $mage,
   "paladin":      $paladin,
   "priest":       $priest,
-  "raid":         $brand-color,
+  "raid":         $primary,
   "rogue":        $rogue,
   "shaman":       $shaman,
   "warlock":      $warlock,
@@ -34,23 +32,14 @@ $class-colors: (
 
 $theme-colors: map-merge($theme-colors, $class-colors);
 
-// Theme variable overrides
-@if variable-exists(theme) {
-  $primary: map.get($class-colors, $theme);
-}
-
-@if not variable-exists(theme) {
-  $primary: $brand-color;
-}
-
+$brand: #e0a335;
 $success: #1eff00;
 $quality-uncommon: $success;
 $quality-rare: #0070dd;
 $quality-epic: #a335ee;
 
 $custom-colors: (
-  "brand": $brand-color,
-  "primary": $primary,
+  "brand": $brand,
   "quality-epic": $quality-epic,
   "quality-rare": $quality-rare,
   "quality-uncommon": $quality-uncommon,
@@ -59,20 +48,33 @@ $custom-colors: (
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+$custom-breakpoints: (
+  xxxl: 1600px,
+  1080p: 1900px,
+  1440p: 2500px,
+  4k: 3800px,
+);
+
+$grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
+
 // Custom variables
 $block-spacer: .75rem;
+$table-cell-padding: .5rem;
 $content-font-size: .75rem;
 $gap-width: 1.5rem;
 $gap-width-sm: .5rem;
 $link-danger-color: #ef9eaa;
 $link-warning-color: #faf07f;
+$table-row-even-bg: #202128;
+$table-row-odd-bg: #2d2f35;
 $wrath-blue: #7FCBD8;
 
 // Global Bootstrap variable overrides
 $body-bg: #15171e;
 $body-color: white;
-
 $border-color: dimgrey;
+$font-size-root: 16px;
+$grid-gutter-width: .75rem;
 
 // This option doesn't seem to be working for some reason. Carets hidden manually instead
 // $enable-caret: false;
@@ -93,6 +95,8 @@ $dropdown-bg: $body-bg;
 $dropdown-border-width: 0;
 $dropdown-color: white;
 $dropdown-link-active-bg: $dropdown-bg;
+$dropdown-link-color: white;
+$dropdown-link-hover-color: white;
 $dropdown-link-hover-bg: darken($dropdown-bg, 3);
 $dropdown-padding-y: 0;
 
@@ -130,7 +134,10 @@ $input-font-size: $content-font-size;
 
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;
+$modal-footer-margin-between: 0px;
 $modal-header-border-color: $border-color;
+$modal-header-padding: 1.25rem;
+$modal-inner-padding: 1.25rem;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;
@@ -140,6 +147,8 @@ $navbar-padding-y: 0;
 $nav-link-font-size: .875rem;
 $nav-link-padding-y: map.get($spacers, 3);
 $nav-link-transition: $link-transition;
+
+$nav-tabs-border-color: $border-color;
 $nav-tabs-link-active-bg: transparent;
 $nav-tabs-link-active-color: white;
 

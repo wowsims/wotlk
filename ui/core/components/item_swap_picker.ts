@@ -38,11 +38,11 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		let swapButtonFragment = document.createElement('fragment');
 		swapButtonFragment.innerHTML = `
 			<a
-				href="javascript:void(0)
+				href="javascript:void(0)"
 				class="gear-swap-icon"
 				role="button"
 				data-bs-toggle="tooltip"
-				databs-title="Swap Items with Main Gear"
+				data-bs-title="Swap Items with Main Gear"
 			>
 				<i class="fas fa-arrows-rotate me-1"></i>
 			</a>

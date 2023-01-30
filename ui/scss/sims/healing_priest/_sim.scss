@@ -1,10 +1,8 @@
-$theme: 'priest';
-
 // Set color variables which control the site theme.
 .healing-priest-sim-ui {
-	--theme-color-background: #1c1812;
-	--theme-color-background-raw: 28, 24, 18;
-	--theme-background-image: url('/wotlk/assets/img/healing_priest_background.jpg');
-	--theme-background-opacity: 0.9;
-	--main-text-color: White;
+	@include theme-color(
+		$priest,
+		.9,
+		'/wotlk/assets/img/healing_priest_background.jpg'
+	);
 }

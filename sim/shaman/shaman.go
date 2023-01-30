@@ -125,7 +125,7 @@ type Shaman struct {
 
 	FlameShockDot *core.Dot
 
-	MaelstromWeaponAura      *core.Aura
+	MaelstromWeaponAura *core.Aura
 }
 
 // Implemented by each Shaman spec.
