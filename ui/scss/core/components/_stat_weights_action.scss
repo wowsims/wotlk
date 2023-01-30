@@ -6,50 +6,39 @@
 	}
 
 	.results-ep-table-container {
-		max-height: 50vh;
-		overflow-y: auto;
-
 		.results-ep-table {
 			width: 100%;
 			
 			&.stats-type-ep .type-weight,
-			&.stats-type-weight .type-ep,
-			&:not(.show-all-stats) .non-ep-stat {
+			&.stats-type-weight .type-ep {
 				display: none;
 			}
 
 			th, td {
-				padding-top: map.get($spacers, 2);
-				padding-bottom: map.get($spacers, 2);
-
-				&:not(:last-child) {
-					padding-right: map.get($spacers, 3);
-				}
-
 				&[class*="type-"] {
 					text-align: right;
 				}
 			}
 
 			th {
-				position: sticky;
-				top: 0;
-				background: $body-bg;
+				padding-top: map.get($spacers, 2);
+				padding-bottom: map.get($spacers, 2);
+				padding-right: map.get($spacers, 2);
 				text-align: left;
-
-				&::after {
-					content: "";
-					position: absolute;
-					bottom: 0;
-					left: 0;
-					right: 0;
-					height: 1px;
-					background-color: $border-color;
-				}
 			}
 
-			tbody tr {
-				border-bottom: 1px solid $border-color;
+			tbody {
+				tr:nth-child(even) {
+					background-color: $table-row-even-bg;	
+				}
+
+				tr:nth-child(odd) {
+					background-color: $table-row-odd-bg;	
+				}
+
+				td {
+					padding: $table-cell-padding;
+				}
 			}
 
 			.input-root {

@@ -11,6 +11,9 @@ type BaseModalConfig = {
 	footer?: boolean,
 	// Whether or not to add a modal-header element
 	header?: boolean,
+	// Whether or not to allow modal contents to extend past the screen height.
+	// When true, the modal is fixed to the screen height and body contents will scroll.
+	scrollContents?: boolean,
 	// Specify the size of the modal
 	size?: ModalSize,
 	// A title for the modal
@@ -21,6 +24,7 @@ const DEFAULT_CONFIG = {
 	closeButton: {},
 	footer: false,
 	header: true,
+	scrollContents: false,
 	size: 'lg' as ModalSize,
 	title: null,
 }
@@ -29,6 +33,7 @@ export class BaseModal extends Component {
 	readonly config: BaseModalConfig;
 
 	readonly modal: Modal;
+	readonly dialog: HTMLElement;
 	readonly header: HTMLElement | undefined;
 	readonly body: HTMLElement;
 	readonly footer: HTMLElement | undefined;
@@ -46,6 +51,12 @@ export class BaseModal extends Component {
 				</div>
 			</div>
 		`;
+
+		this.dialog = this.rootElem.querySelector('.modal-dialog') as HTMLElement;
+
+		if (this.config.scrollContents) {
+			this.dialog.classList.add('modal-overflow-scroll');
+		}
 
 		const container = this.rootElem.querySelector('.modal-content') as HTMLElement;
 

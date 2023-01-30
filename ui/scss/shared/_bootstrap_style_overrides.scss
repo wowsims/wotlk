@@ -72,12 +72,17 @@
     .modal-footer {
       padding-left: 0;
       padding-right: 0;
-      margin-left: $modal-header-padding-x;
-      margin-right: $modal-header-padding-x;
+      margin-left: $modal-header-padding;
+      margin-right: $modal-header-padding;
     }
 
     .modal-header {
       align-items: flex-start;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
     }
   }
 }

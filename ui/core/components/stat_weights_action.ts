@@ -35,9 +35,10 @@ class EpWeightsMenu extends BaseModal {
 	private epStats: Array<Stat>;
 	private epPseudoStats: Array<PseudoStat>;
 	private epReferenceStat: Stat;
+	private showAllStats: boolean = false;
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
-		super(simUI.rootElem, 'ep-weights-menu', {footer: true});
+		super(simUI.rootElem, 'ep-weights-menu', {footer: true, scrollContents: true});
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
@@ -47,21 +48,21 @@ class EpWeightsMenu extends BaseModal {
 		this.header?.insertAdjacentHTML('afterbegin', '<h5 class="modal-title">Calculate Stat Weights</h5>');
 		this.body.innerHTML = `
 			<div class="ep-weights-options row">
-				<div class="col-3">
+				<div class="col col-sm-3">
 					<select class="ep-type-select form-select">
 						<option value="ep">EP</option>
 						<option value="weight">Weights</option>
 					</select>
 				</div>
-				<div class="show-all-stats-container col-3"></div>
+				<div class="show-all-stats-container col col-sm-3"></div>
 			</div>
 			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
 			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
-			<div class="results-ep-table-container">
+			<div class="results-ep-table-container modal-scroll-table">
 				<table class="results-ep-table">
 					<thead>
 						<tr>
-							<th>Stats</th>
+							<th>Stat</th>
 							<th class="damage-metrics type-weight">
 								<span>DPS Weight</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
@@ -225,13 +226,10 @@ class EpWeightsMenu extends BaseModal {
 			label: 'Show All Stats',
 			inline: true,
 			changedEvent: () => new TypedEvent(),
-			getValue: () => this.table.classList.contains('show-all-stats'),
+			getValue: () => this.showAllStats,
 			setValue: (eventID: EventID, menu: EpWeightsMenu, newValue: boolean) => {
-				if (newValue) {
-					this.table.classList.add('show-all-stats');
-				} else {
-					this.table.classList.remove('show-all-stats');
-				}
+				this.showAllStats = newValue;
+				this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
 			},
 		});
 
@@ -242,10 +240,14 @@ class EpWeightsMenu extends BaseModal {
 		this.tableBody.innerHTML = ``;
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
-			const row = this.makeTableRow(stat, iterations, result);
-			if ((stat.isStat() && !this.epStats.includes(stat.getStat())) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {
-				row.classList.add('non-ep-stat');
+			// Don't show extra stats when 'Show all stats' is not selected
+			if ((!this.showAllStats && (
+				stat.isStat() && !this.epStats.includes(stat.getStat())) ||
+				(stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))
+			)) {
+				return;
 			}
+			const row = this.makeTableRow(stat, iterations, result);
 			this.tableBody.appendChild(row);
 		});
 	}

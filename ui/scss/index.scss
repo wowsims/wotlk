@@ -33,10 +33,11 @@
 // Bootstrap Utilities API
 @import "./bootstrap/scss/utilities/api";
 
-// Custom styles
+// Custom shared styles
 @import "shared/mixins";
 @import "shared/global";
 @import "shared/global_old";
+@import "shared/modal";
 
 // Custom Bootstrap style overrides
 @import "shared/bootstrap_style_overrides";

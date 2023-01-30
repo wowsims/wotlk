@@ -59,11 +59,14 @@ $grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
 
 // Custom variables
 $block-spacer: .75rem;
+$table-cell-padding: .5rem;
 $content-font-size: .75rem;
 $gap-width: 1.5rem;
 $gap-width-sm: .5rem;
 $link-danger-color: #ef9eaa;
 $link-warning-color: #faf07f;
+$table-row-even-bg: #202128;
+$table-row-odd-bg: #2d2f35;
 $wrath-blue: #7FCBD8;
 
 // Global Bootstrap variable overrides
@@ -131,8 +134,10 @@ $input-font-size: $content-font-size;
 
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;
-$modal-header-border-color: $border-color;
 $modal-footer-margin-between: 0px;
+$modal-header-border-color: $border-color;
+$modal-header-padding: 1.25rem;
+$modal-inner-padding: 1.25rem;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;

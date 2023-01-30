@@ -13,16 +13,12 @@ import {
 } from '../proto_utils/utils.js';
 import { Player } from '../player.js';
 import { Sim } from '../sim.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { EventID } from '../typed_event.js';
 import { getEnumValues } from '../utils.js';
 
 import { BooleanPicker } from './boolean_picker.js';
 import { NumberPicker } from './number_picker.js';
-import { Popup } from './popup.js';
-import { Input } from './input.js';
 import { BaseModal } from './base_modal.js';
-
-declare var tippy: any;
 
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
