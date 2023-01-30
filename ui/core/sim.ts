@@ -13,7 +13,7 @@ import { Race } from './proto/common.js';
 import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
 import { Stat, PseudoStat } from './proto/common.js';
-import { WeaponType } from './proto/common.js';
+import { RangedWeaponType, WeaponType } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
@@ -441,6 +441,7 @@ export class Sim {
 
 	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
 	private static readonly ALL_WEAPON_TYPES = (getEnumValues(WeaponType) as Array<WeaponType>).filter(v => v != 0);
+	private static readonly ALL_RANGED_WEAPON_TYPES = (getEnumValues(RangedWeaponType) as Array<RangedWeaponType>).filter(v => v != 0);
 
 	toProto(): SimSettingsProto {
 		const filters = this.getFilters();
@@ -449,6 +450,9 @@ export class Sim {
 		}
 		if (filters.weaponTypes.length == Sim.ALL_WEAPON_TYPES.length) {
 			filters.weaponTypes = [];
+		}
+		if (filters.rangedWeaponTypes.length == Sim.ALL_RANGED_WEAPON_TYPES.length) {
+			filters.rangedWeaponTypes = [];
 		}
 
 		return SimSettingsProto.create({
@@ -483,6 +487,9 @@ export class Sim {
 			}
 			if (filters.weaponTypes.length == 0) {
 				filters.weaponTypes = Sim.ALL_WEAPON_TYPES.slice();
+			}
+			if (filters.rangedWeaponTypes.length == 0) {
+				filters.rangedWeaponTypes = Sim.ALL_RANGED_WEAPON_TYPES.slice();
 			}
 			this.setFilters(eventID, filters);
 		});
