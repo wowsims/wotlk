@@ -43,6 +43,8 @@ type DeathknightInputs struct {
 }
 
 type DeathknightCoeffs struct {
+	runeTapHealing float64
+
 	glacierRotBonusCoeff      float64
 	mercilessCombatBonusCoeff float64
 	impurityBonusCoeff        float64
@@ -340,6 +342,8 @@ func (dk *Deathknight) registerMindFreeze() {
 
 func (dk *Deathknight) ResetBonusCoeffs() {
 	dk.bonusCoeffs = DeathknightCoeffs{
+		runeTapHealing: 0,
+
 		glacierRotBonusCoeff:      1,
 		mercilessCombatBonusCoeff: 1,
 		impurityBonusCoeff:        1,

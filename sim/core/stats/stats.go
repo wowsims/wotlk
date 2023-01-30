@@ -358,7 +358,7 @@ type PseudoStats struct {
 	BonusRangedAttackPowerTaken float64 // Hunters mark
 	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
 	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
-	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance; still used by Frigid Dreadplate
+	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance;
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc

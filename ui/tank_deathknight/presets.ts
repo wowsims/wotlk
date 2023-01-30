@@ -22,7 +22,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const BloodTalents = {
 	name: 'Blood',
 	data: SavedTalents.create({
-		talentsString: '005510153330330220102013-3050505000023-005',
+		talentsString: '005512153330030320102013-3050505000023-005',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
 			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
@@ -37,7 +37,7 @@ export const BloodTalents = {
 export const DoubleBuffBloodTalents = {
 	name: '2B Blood',
 	data: SavedTalents.create({
-		talentsString: '005510153330330220102013-3050505000023201-002',
+		talentsString: '005512153330030320102013-3050505000023201-002',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
 			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
@@ -52,7 +52,7 @@ export const DoubleBuffBloodTalents = {
 export const FrostTalents = {
 	name: 'Frost',
 	data: SavedTalents.create({
-		talentsString: '005510003-3050535000023301030023310035-0052',
+		talentsString: '005510003-3050535000223301030023310035-005',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
 			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
@@ -67,7 +67,7 @@ export const FrostTalents = {
 export const DoubleBuffFrostTalents = {
 	name: '2B Frost',
 	data: SavedTalents.create({
-		talentsString: '00551005303003002-305053500002330103002301-005',
+		talentsString: '00551005303003002-305053510022330100002301-005',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
 			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
