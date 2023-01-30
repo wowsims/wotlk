@@ -764,6 +764,21 @@ export class Player<SpecType extends Spec> {
 
 				return true;
 			});
+		} else if (slot == ItemSlot.ItemSlotRanged) {
+			return itemData.filter(itemElem => {
+				const item = getItemFunc(itemElem);
+
+				const minSpeed = filters.minRangedWeaponSpeed;
+				const maxSpeed = filters.maxRangedWeaponSpeed;
+				if (minSpeed > 0 && item.weaponSpeed < minSpeed) {
+					return false;
+				}
+				if (maxSpeed > 0 && item.weaponSpeed > maxSpeed) {
+					return false;
+				}
+
+				return true;
+			});
 		} else {
 			return itemData;
 		}
