@@ -187,7 +187,7 @@ export class FiltersMenu extends Popup {
 				float: true,
 				positive: true,
 				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
-				getValue: (sim: Sim) => sim.getFilters().minMhWeaponSpeed,
+				getValue: (sim: Sim) => sim.getFilters().minRangedWeaponSpeed,
 				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
 					const filters = sim.getFilters();
 					filters.minRangedWeaponSpeed = newValue;
@@ -200,7 +200,7 @@ export class FiltersMenu extends Popup {
 				float: true,
 				positive: true,
 				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
-				getValue: (sim: Sim) => sim.getFilters().maxMhWeaponSpeed,
+				getValue: (sim: Sim) => sim.getFilters().maxRangedWeaponSpeed,
 				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
 					const filters = sim.getFilters();
 					filters.maxRangedWeaponSpeed = newValue;

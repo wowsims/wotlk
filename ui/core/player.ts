@@ -768,6 +768,10 @@ export class Player<SpecType extends Spec> {
 			return itemData.filter(itemElem => {
 				const item = getItemFunc(itemElem);
 
+				if (!filters.rangedWeaponTypes.includes(item.rangedWeaponType)) {
+					return false;
+				}
+
 				const minSpeed = filters.minRangedWeaponSpeed;
 				const maxSpeed = filters.maxRangedWeaponSpeed;
 				if (minSpeed > 0 && item.weaponSpeed < minSpeed) {
