@@ -29,6 +29,8 @@ export interface SimWarning {
 
 export interface SimUIConfig {
 	// Additional css class to add to the root element.
+	cssClass: string;
+	// Scheme used for themeing on a per-class Basis or for other sims
 	cssScheme: string;
 	// The spec, if an individual sim, or null if the raid sim.
 	spec: Spec | null,
@@ -39,6 +41,7 @@ export interface SimUIConfig {
 // Shared UI for all individual sims and the raid sim.
 export abstract class SimUI extends Component {
 	readonly sim: Sim;
+	readonly cssClass: string;
 	readonly cssScheme: string;
 	readonly isWithinRaidSim: boolean;
 
@@ -54,11 +57,10 @@ export abstract class SimUI extends Component {
 	readonly iterationsPicker: HTMLElement;
 	readonly simTabContentsContainer: HTMLElement;
 
-	private warningsTippy: any;
-
 	constructor(parentElem: HTMLElement, sim: Sim, config: SimUIConfig) {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
+		this.cssClass = config.cssClass;
 		this.cssScheme = config.cssScheme;
 		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 		this.rootElem.innerHTML = simHTML;
@@ -67,6 +69,8 @@ export abstract class SimUI extends Component {
 		this.simMain = document.createElement('main');
 		this.simMain.classList.add('sim-main', 'tab-content');
 		this.simContentContainer.appendChild(this.simMain);
+
+		this.rootElem.classList.add(this.cssClass);
 
 		if (!this.isWithinRaidSim) {
 			this.rootElem.classList.add('not-within-raid-sim');
@@ -152,7 +156,7 @@ export abstract class SimUI extends Component {
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
 		const button = document.createElement('button');
-		button.classList.add('btn', `btn-${this.cssScheme}`, 'w-100', cssClass);
+		button.classList.add('btn', 'btn-primary', 'w-100', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
 		this.simActionsContainer.appendChild(button);

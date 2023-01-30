@@ -1,0 +1,30 @@
+@use "sass:math";
+
+.modal {
+  .modal-dialog {
+    &.modal-overflow-scroll {
+      .modal-content {
+        max-height: calc(100vh - (2 * var(--bs-modal-margin)));
+      }
+
+      .modal-body {
+        overflow: scroll;
+      }
+    }
+  }
+
+  .modal-scroll-table {
+    flex: 1;
+		overflow-y: scroll;
+    padding-left: var(--bs-modal-padding);
+    padding-right: var(--bs-modal-padding);
+    margin-left: calc(var(--bs-modal-padding) * -1);
+    margin-right: calc(var(--bs-modal-padding) * -1);
+
+    th {
+      position: sticky;
+      top: 0;
+      background: $body-bg;
+    }
+  }
+}

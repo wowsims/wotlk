@@ -37,10 +37,24 @@
       margin: 0;
     }
   }
+}
 
-  .form-check-input {
-    width: $form-check-input-width !important;
-    height: $form-check-input-width !important;
+.form-check-input {
+  width: $form-check-input-width !important;
+  height: $form-check-input-width !important;
+
+  &:focus {
+    box-shadow: 0 0 .25rem var(--bs-primary);
+  }
+
+  &:checked[type="checkbox"] {
+    background-color: var(--bs-primary);
+    background-image: var(--bs-form-check-box-bg-image);
+  }
+
+  &:checked[type="radio"] {
+    background-color: var(--bs-primary);
+    background-image: var(--bs-form-check-radio-bg-image);
   }
 }
 
@@ -54,12 +68,21 @@
 
 .modal {
   .modal-dialog {
-    .modal-header {
+    .modal-header,
+    .modal-footer {
       padding-left: 0;
       padding-right: 0;
-      margin-left: $modal-header-padding-x;
-      margin-right: $modal-header-padding-x;
+      margin-left: $modal-header-padding;
+      margin-right: $modal-header-padding;
+    }
+
+    .modal-header {
       align-items: flex-start;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
     }
   }
 }
@@ -114,30 +137,10 @@
   display: none !important;
 }
 
-
 @each $color, $value in $class-colors {
   // Dampened class themes
   .bg-#{$color}-dampened {
     background: mix(black, $value, 75);
-  }
-
-  // Class-themed form checks
-  .form-check-#{$color} {
-    @extend .form-check;
-
-    .form-check-input:checked[type="checkbox"] {
-      background-color: $value;
-      background-image: escape-svg(
-        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{color-contrast($value)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>")
-      );
-    }
-
-    .form-check-input:checked[type="radio"] {
-      background-color: $value;
-      background-image: escape-svg(
-        url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{color-contrast($value)}'/></svg>")
-      );
-    }
   }
 }
 

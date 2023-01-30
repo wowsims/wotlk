@@ -48,12 +48,12 @@ export class RaidSimUI extends SimUI {
 
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
+			cssClass: 'raid-sim-ui',
 			cssScheme: 'raid',
 			spec: null,
 			launchStatus: raidSimStatus,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
-		this.rootElem.classList.add('raid-sim-ui');
 
 		this.config = config;
 		this.settingsMuuri = null;
@@ -110,10 +110,10 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.simHeader.addImportLink('JSON', parent => new ImportExport.RaidJsonImporter(parent, this));
-		this.simHeader.addImportLink('WCL', parent => new ImportExport.RaidWCLImporter(parent, this));
+		this.simHeader.addImportLink('JSON', (parent) => new ImportExport.RaidJsonImporter(this.rootElem, this));
+		this.simHeader.addImportLink('WCL', (parent) => new ImportExport.RaidWCLImporter(this.rootElem, this));
 
-		this.simHeader.addExportLink('JSON', parent => new ImportExport.RaidJsonExporter(parent, this));
+		this.simHeader.addExportLink('JSON', (parent) => new ImportExport.RaidJsonExporter(this.rootElem, this));
 	}
 
 	private addRaidTab() {

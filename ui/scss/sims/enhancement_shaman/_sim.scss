@@ -1,10 +1,8 @@
-$theme: 'shaman';
-
 // Set color variables which control the site theme.
 .enhancement-shaman-sim-ui {
-	--theme-color-background: #181d2d;
-	--theme-color-background-raw: 24, 29, 45;
-	--theme-background-image: url('/wotlk/assets/img/enhancement_shaman_background.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$shaman,
+		.95,
+		'/wotlk/assets/img/enhancement_shaman_background.jpg'
+	);
 }

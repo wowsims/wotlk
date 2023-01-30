@@ -1,18 +1,14 @@
-import { EquippedItem } from '../proto_utils/equipped_item.js';
-import { Stats } from '../proto_utils/stats.js';
 import { Glyphs } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { setItemQualityCssClass } from '../css_utils.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { formatDeltaTextElem, stringComparator } from '../utils.js';
+import { stringComparator } from '../utils.js';
 
 import { Component } from '../components/component.js';
 import { Input } from '../components/input.js';
-import { Popup } from '../components/popup.js';
-
-declare var $: any;
+import { BaseModal } from '../components/base_modal.js';
 
 export type GlyphConfig = {
 	name: string,
@@ -137,20 +133,16 @@ class GlyphPicker extends Input<Player<any>, number> {
 	}
 }
 
-class GlyphSelectorModal extends Popup {
-
+class GlyphSelectorModal extends BaseModal {
 	constructor(parent: HTMLElement, glyphPicker: GlyphPicker, glyphOptions: Array<GlyphData>) {
-		super(parent);
+		super(parent, 'glyph-modal', {title: 'Glyphs'});
 
-		this.rootElem.classList.add('selector-modal');
-		this.rootElem.classList.add('glyph-modal');
-		this.rootElem.innerHTML = `
-			<div class="selector-modal-tab-content-header">
-				<input class="selector-modal-search" type="text" placeholder="Search...">
+		this.body.innerHTML = `
+			<div class="input-root">
+				<input class="selector-modal-search form-control" type="text" placeholder="Search...">
 			</div>
 			<ul class="selector-modal-list"></ul>
-    `;
-		this.addCloseButton();
+		`;
 
 		const listElem = this.rootElem.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
 

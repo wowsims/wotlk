@@ -1,4 +1,3 @@
-import { Popup } from './popup';
 import { IndividualSimUI } from '../individual_sim_ui';
 import { SimUI } from '../sim_ui';
 import {
@@ -10,30 +9,34 @@ import { IndividualSimSettings } from '../proto/ui';
 import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
-import { buf2hex, downloadString } from '../utils';
+import { downloadString } from '../utils';
+import { BaseModal } from './base_modal';
 import { IndividualWowheadGearPlannerImporter } from './importers';
 
 import * as Mechanics from '../constants/mechanics';
 
-export abstract class Exporter extends Popup {
+export abstract class Exporter extends BaseModal {
 	private readonly textElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, allowDownload: boolean) {
-		super(parent);
+		super(parent, 'exporter', {title: title, footer: true});
 
-		this.rootElem.classList.add('exporter');
-		this.rootElem.innerHTML = `
-			<span class="exporter-title">${title}</span>
-			<div class="export-content">
-				<textarea class="exporter-textarea form-control" readonly></textarea>
-			</div>
-			<div class="actions-row">
-				<button class="exporter-button btn btn-${simUI.cssScheme} clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button btn btn-${simUI.cssScheme} download-button">DOWNLOAD</button>
-			</div>
+		this.body.innerHTML = `
+			<textarea class="exporter-textarea form-control"></textarea>
 		`;
-
-		this.addCloseButton();
+		this.footer!.innerHTML = `
+			<button class="exporter-button btn btn-primary clipboard-button me-2">
+				<i class="fas fa-clipboard"></i>
+				Copy to Clipboard
+			</button>
+			${allowDownload ? `
+				<button class="exporter-button btn btn-primary download-button">
+					<i class="fa fa-download"></i>
+					Download
+				</button>
+			` : ''
+			}
+		`;
 
 		this.textElem = this.rootElem.getElementsByClassName('exporter-textarea')[0] as HTMLElement;
 
@@ -44,17 +47,21 @@ export abstract class Exporter extends Popup {
 				alert(data);
 			} else {
 				navigator.clipboard.writeText(data);
+				const originalContent = clipboardButton.innerHTML;
+				clipboardButton.style.width = `${clipboardButton.getBoundingClientRect().width.toFixed(3)}px`;
+				clipboardButton.innerHTML = `<i class="fas fa-check"></i>&nbsp;Copied`;
+				setTimeout(() => {
+					clipboardButton.innerHTML = originalContent;
+				}, 1500);
 			}
 		});
 
-		const downloadButton = this.rootElem.getElementsByClassName('download-button')[0] as HTMLElement;
 		if (allowDownload) {
+			const downloadButton = this.rootElem.getElementsByClassName('download-button')[0] as HTMLElement;
 			downloadButton.addEventListener('click', event => {
 				const data = this.textElem.textContent!;
 				downloadString(data, 'wowsims.json');
 			});
-		} else {
-			downloadButton.remove();
 		}
 	}
 

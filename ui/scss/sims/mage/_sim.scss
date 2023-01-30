@@ -1,10 +1,8 @@
-$theme: 'mage';
-
 // Set color variables which control the site theme.
 .mage-sim-ui {
-	--theme-color-background: #101a20;
-	--theme-color-background-raw: 16, 26, 32;
-	--theme-background-image: url('/wotlk/assets/img/mage_background.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$mage,
+		.95,
+		'/wotlk/assets/img/mage_background.jpg'
+	);
 }

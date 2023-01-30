@@ -3,8 +3,6 @@ import { SimResult, SimResultFilter } from '../..//proto_utils/sim_result.js';
 import { Component } from '../../components/component.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 
-import { ColorSettings } from './color_settings.js';
-
 export interface SimResultData {
 	eventID: EventID,
 	result: SimResult,
@@ -16,17 +14,13 @@ export interface ResultComponentConfig {
 	rootCssClass?: string,
 	cssScheme?: String | null,
 	resultsEmitter: TypedEvent<SimResultData | null>,
-	colorSettings: ColorSettings,
 };
 
 export abstract class ResultComponent extends Component {
-	private readonly colorSettings: ColorSettings;
-
 	private lastSimResult: SimResultData | null;
 
 	constructor(config: ResultComponentConfig) {
 		super(config.parent, config.rootCssClass || '');
-		this.colorSettings = config.colorSettings;
 		this.lastSimResult = null;
 
 		config.resultsEmitter.on((eventID, resultData) => {
